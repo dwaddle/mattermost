@@ -33,11 +33,11 @@ test(
         await expect(info.about.id.locator).toContainText(channel.id);
 
         // # Mute the channel
-        await expect(info.muteButton.locator).toHaveText('Mute');
+        await expect(info.muteButton).not.toBePressed();
         await info.clickMuteButton();
 
-        // * The button says so, and the server has the channel muted for the user
-        await expect(info.muteButton.locator).toHaveText('Muted');
+        // * The button shows it pressed (its label stays "Mute"), and the server has the channel muted for the user
+        await expect(info.muteButton).toBePressed();
         await expect
             .poll(async () => (await userClient.getChannelMember(channel.id, user.id)).notify_props.mark_unread)
             .toBe('mention');
