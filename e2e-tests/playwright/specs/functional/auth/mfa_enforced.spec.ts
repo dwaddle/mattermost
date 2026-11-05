@@ -30,9 +30,9 @@ test(
             await adminApp.admin.setting('ServiceSettings.EnableMultifactorAuthentication').trueRadio.check();
             await adminApp.admin.setting('ServiceSettings.EnforceMultifactorAuthentication').trueRadio.check();
             await adminApp.admin.clickSaveButton();
-            await expect
-                .poll(async () => (await adminClient.getConfig()).ServiceSettings.EnforceMultifactorAuthentication)
-                .toBe(true);
+
+            // the admin has no MFA either, so once enforcement is saved its API calls are refused: wait on the page
+            await expect(adminApp.admin.saveButton.locator).toBeSaved();
 
             // # Log in as an unenrolled user
             const app = await openLogin(pw, page);
@@ -69,7 +69,11 @@ test('MM-T1781 lets an admin remove MFA from an enrolled user', {tag: '@authenti
         // # Remove MFA from the user in System Console > Users
         const adminApp = await openSystemUsers(pw, adminUser);
         await searchSystemUsers(adminApp, user.username, user);
-        await (await adminApp.admin.users.table.row(user.id).clickActionsButton()).clickRemoveMfaMenuItem();
+        // the table can re-render under an open menu as its search settles, detaching the item: reopen and retry
+        await expect(async () => {
+            const menu = await adminApp.admin.users.table.row(user.id).clickActionsButton();
+            await menu.removeMfaMenuItem.locator.click({timeout: 5000});
+        }).toPass({timeout: 30000});
         await expect.poll(async () => (await adminClient.getUser(user.id)).mfa_active ?? false).toBe(false);
 
         // # Log in as the user
