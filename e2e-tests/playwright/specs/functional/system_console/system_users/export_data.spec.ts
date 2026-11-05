@@ -46,15 +46,15 @@ test.fixme('MM-T5522 Should begin export of data when export button is pressed',
     await systemConsolePage.users.confirmModal.confirm();
 
     // * Verify that we are told that one is already running
-    expect(page.getByText('Export is in progress')).toBeVisible();
+    await expect(page.getByText('Export is in progress')).toBeVisible();
 
     // # Go back to Channels and open the system bot DM
-    channelsPage.goto('ad-1/messages', '@system-bot');
+    await channelsPage.goto('ad-1/messages', '@system-bot');
     await channelsPage.centerView.toBeVisible();
 
     // * Verify that we have started the export and that the second one is running second
     const lastPost = await channelsPage.getLastPost();
-    await lastPost.toContain('export of user data for the last 30 days');
+    await expect(lastPost.body).toContainText('export of user data for the last 30 days');
 
     // * Wait until the first export finishes
     await channelsPage.centerView.waitUntilLastPostContains('contains user data for all time', pw.duration.half_min);
