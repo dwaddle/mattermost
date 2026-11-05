@@ -10,6 +10,7 @@ import {request} from '@playwright/test';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {testConfig} from './test_config';
+import {App} from './ui/generated';
 import {pages} from './ui/pages';
 import {resolvePlaywrightPath} from './util';
 
@@ -44,6 +45,9 @@ export class TestBrowser {
         const threadsPage = new pages.ThreadsPage(page);
         const contentReviewPage = new pages.ContentReviewPage(page);
 
+        // the generated page objects (from the webapp's testids)
+        const app = new App(page);
+
         this.contexts.push(context);
 
         return {
@@ -56,6 +60,7 @@ export class TestBrowser {
             recapsPage,
             threadsPage,
             contentReviewPage,
+            app,
         };
     }
 

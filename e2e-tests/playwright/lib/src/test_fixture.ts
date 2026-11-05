@@ -6,6 +6,7 @@ import {test as base} from '@playwright/test';
 import type {AxeResults} from 'axe-core';
 import {AxeBuilder} from '@axe-core/playwright';
 
+import {expect} from './aria/matchers';
 import {TestBrowser, patchGotoToUseBaseUrl} from './browser_context';
 import {isUpgradePathProjectSelected} from './upgrade_env';
 import {readGlobalSetupFailure} from './global_setup_failure';
@@ -108,7 +109,9 @@ import {
 } from './mock_browser_api';
 import {duration, getRandomId, newTestPassword, simpleEmailRe, wait} from './util';
 
-export {expect} from './expect';
+// Playwright's expect with the subpath-aware path matchers (toHavePath, toHaveHrefPath) and the ARIA driver
+// matchers (toBeOn, toHaveMessage, ...)
+export {expect};
 
 export type ExtendedFixtures = {
     axe: AxeBuilderExtended;

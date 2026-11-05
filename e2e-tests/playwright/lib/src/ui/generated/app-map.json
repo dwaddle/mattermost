@@ -1,0 +1,1159 @@
+{
+    "version": 1,
+    "pages": [
+        {
+            "class": "AdminConsolePage",
+            "getter": "adminConsolePage",
+            "path": "/admin_console",
+            "params": [
+                {
+                    "name": "section",
+                    "optional": true,
+                    "values": [
+                        "about/license",
+                        "authentication/email",
+                        "authentication/gitlab",
+                        "authentication/guest_access",
+                        "authentication/ldap",
+                        "authentication/mfa",
+                        "authentication/oauth",
+                        "authentication/openid",
+                        "authentication/password",
+                        "authentication/saml",
+                        "authentication/signup",
+                        "billing/company_info",
+                        "billing/subscription",
+                        "compliance/audit_logging",
+                        "compliance/custom_terms_of_service",
+                        "compliance/data_retention",
+                        "compliance/data_retention_settings",
+                        "compliance/data_retention_settings/custom_policy",
+                        "compliance/data_retention_settings/custom_policy/${string}",
+                        "compliance/data_retention_settings/global_policy",
+                        "compliance/export",
+                        "compliance/monitoring",
+                        "environment/cache_settings",
+                        "environment/database",
+                        "environment/developer",
+                        "environment/elasticsearch",
+                        "environment/file_storage",
+                        "environment/high_availability",
+                        "environment/image_proxy",
+                        "environment/logging",
+                        "environment/mobile_security",
+                        "environment/mobile_security_feature_discovery",
+                        "environment/notifications",
+                        "environment/performance_monitoring",
+                        "environment/push_notification_server",
+                        "environment/rate_limiting",
+                        "environment/session_lengths",
+                        "environment/smtp",
+                        "environment/web_server",
+                        "experimental/feature_flags",
+                        "experimental/features",
+                        "integrations/bot_accounts",
+                        "integrations/cors",
+                        "integrations/embedding",
+                        "integrations/gif",
+                        "integrations/integration_management",
+                        "plugins/plugin_${string}",
+                        "plugins/plugin_management",
+                        "reporting/server_logs",
+                        "reporting/site_health",
+                        "reporting/system_analytics",
+                        "reporting/team_statistics",
+                        "reporting/workspace_optimization",
+                        "site_config/announcement_banner",
+                        "site_config/classification_markings",
+                        "site_config/customization",
+                        "site_config/data_spillage",
+                        "site_config/emoji",
+                        "site_config/file_sharing_downloads",
+                        "site_config/ip_filtering",
+                        "site_config/localization",
+                        "site_config/notices",
+                        "site_config/posts",
+                        "site_config/public_links",
+                        "site_config/recaps",
+                        "site_config/secure_connections",
+                        "site_config/secure_connections/${string}",
+                        "site_config/users_and_teams",
+                        "site_config/wrangler",
+                        "system_attributes/attribute_based_access_control",
+                        "system_attributes/board_attributes",
+                        "system_attributes/manage_attributes",
+                        "system_attributes/manage_attributes/attribute_details",
+                        "system_attributes/manage_attributes/attribute_details/${string}",
+                        "system_attributes/manage_attributes/classification",
+                        "system_attributes/membership_policies",
+                        "system_attributes/membership_policies/edit_policy",
+                        "system_attributes/membership_policies/edit_policy/${string}",
+                        "system_attributes/permission_policies",
+                        "system_attributes/permission_policies/edit_policy",
+                        "system_attributes/permission_policies/edit_policy/${string}",
+                        "system_attributes/session_attributes",
+                        "system_attributes/user_attributes",
+                        "user_management/channels",
+                        "user_management/channels/${string}",
+                        "user_management/groups",
+                        "user_management/groups/${string}",
+                        "user_management/permissions",
+                        "user_management/permissions/system_scheme",
+                        "user_management/permissions/team_override_scheme",
+                        "user_management/permissions/team_override_scheme/${string}",
+                        "user_management/system_roles",
+                        "user_management/system_roles/${string}",
+                        "user_management/teams",
+                        "user_management/teams/${string}",
+                        "user_management/user/${string}",
+                        "user_management/users"
+                    ]
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "AuthorizePage",
+            "getter": "authorizePage",
+            "path": "/oauth/authorize",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "ChannelPopoutPage",
+            "getter": "channelPopoutPage",
+            "path": "/_popout/channel/:team/:path(channels|messages)/:identifier/:postid?",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                },
+                {
+                    "name": "path",
+                    "values": ["channels", "messages"]
+                },
+                {
+                    "name": "channel",
+                    "entity": "Channel.name"
+                },
+                {
+                    "name": "postid",
+                    "optional": true
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "ChannelsPage",
+            "getter": "channelsPage",
+            "path": "/:team/:path(channels|messages)/:identifier/:postid?",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                },
+                {
+                    "name": "path",
+                    "values": ["channels", "messages"]
+                },
+                {
+                    "name": "channel",
+                    "entity": "Channel.name"
+                },
+                {
+                    "name": "postid",
+                    "optional": true
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "ClaimPage",
+            "getter": "claimPage",
+            "path": "/claim",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "ComponentLibraryPage",
+            "getter": "componentLibraryPage",
+            "path": "/component_library",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "CreateTeamPage",
+            "getter": "createTeamPage",
+            "path": "/create_team",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "DesktopAuthTokenPage",
+            "getter": "desktopAuthTokenPage",
+            "path": "/login/desktop",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "DoVerifyEmailPage",
+            "getter": "doVerifyEmailPage",
+            "path": "/do_verify_email",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "DraftsPage",
+            "getter": "draftsPage",
+            "path": "/:team/drafts",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "EmojiPage",
+            "getter": "emojiPage",
+            "path": "/:team/emoji",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "ErrorPage",
+            "getter": "errorPage",
+            "path": "/error",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "HelpPage",
+            "getter": "helpPage",
+            "path": "/help/:page?",
+            "params": [
+                {
+                    "name": "page",
+                    "optional": true
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "HelpPopoutPage",
+            "getter": "helpPopoutPage",
+            "path": "/_popout/help/:page?",
+            "params": [
+                {
+                    "name": "page",
+                    "optional": true
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "IntegrationsPage",
+            "getter": "integrationsPage",
+            "path": "/:team/integrations",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                },
+                {
+                    "name": "section",
+                    "optional": true,
+                    "values": [
+                        "bots",
+                        "bots/add",
+                        "bots/edit",
+                        "commands",
+                        "commands/add",
+                        "commands/confirm",
+                        "commands/edit",
+                        "commands/installed",
+                        "confirm",
+                        "incoming_webhooks",
+                        "incoming_webhooks/add",
+                        "incoming_webhooks/edit",
+                        "oauth2-apps",
+                        "oauth2-apps/add",
+                        "oauth2-apps/edit",
+                        "outgoing-oauth2-connections",
+                        "outgoing-oauth2-connections/add",
+                        "outgoing-oauth2-connections/edit",
+                        "outgoing_webhooks",
+                        "outgoing_webhooks/add",
+                        "outgoing_webhooks/edit"
+                    ]
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "LinkingLandingPage",
+            "getter": "linkingLandingPage",
+            "path": "/landing",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "LoginPage",
+            "getter": "loginPage",
+            "path": "/login",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "MFAPage",
+            "getter": "mfaPage",
+            "path": "/mfa",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "PasswordResetFormPage",
+            "getter": "passwordResetFormPage",
+            "path": "/reset_password_complete",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "PasswordResetSendLinkPage",
+            "getter": "passwordResetSendLinkPage",
+            "path": "/reset_password",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "PopoutPage",
+            "getter": "popoutPage",
+            "path": "/_popout",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "PreparingWorkspacePage",
+            "getter": "preparingWorkspacePage",
+            "path": "/preparing-workspace",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "RecapsPage",
+            "getter": "recapsPage",
+            "path": "/:team/recaps",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "RhsPopoutPage",
+            "getter": "rhsPopoutPage",
+            "path": "/_popout/rhs/:team",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "ScheduledPostsPage",
+            "getter": "scheduledPostsPage",
+            "path": "/:team/scheduled_posts",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "SelectTeamPage",
+            "getter": "selectTeamPage",
+            "path": "/select_team",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "ShouldVerifyEmailPage",
+            "getter": "shouldVerifyEmailPage",
+            "path": "/should_verify_email",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "SignupPage",
+            "getter": "signupPage",
+            "path": "/signup_user_complete",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "SignupUserCompleteDesktopPage",
+            "getter": "signupUserCompleteDesktopPage",
+            "path": "/signup_user_complete/desktop",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "TeamPage",
+            "getter": "teamPage",
+            "path": "/:team",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "TermsOfServicePage",
+            "getter": "termsOfServicePage",
+            "path": "/terms_of_service",
+            "params": [],
+            "scopes": []
+        },
+        {
+            "class": "ThreadPopoutPage",
+            "getter": "threadPopoutPage",
+            "path": "/_popout/thread/:team/:postId",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                },
+                {
+                    "name": "postId"
+                }
+            ],
+            "scopes": []
+        },
+        {
+            "class": "ThreadsPage",
+            "getter": "threadsPage",
+            "path": "/:team/threads/:threadIdentifier?",
+            "params": [
+                {
+                    "name": "team",
+                    "entity": "Team.name"
+                },
+                {
+                    "name": "threadIdentifier",
+                    "optional": true
+                }
+            ],
+            "scopes": []
+        }
+    ],
+    "scopes": [
+        {
+            "scope": "admin",
+            "class": "Admin",
+            "elements": []
+        },
+        {
+            "scope": "admin.password",
+            "class": "AdminPassword",
+            "elements": [
+                {
+                    "testId": "admin.password.lowercase",
+                    "role": null,
+                    "source": "channels/src/components/admin_console/checkbox_setting.tsx#CheckboxSetting"
+                },
+                {
+                    "testId": "admin.password.number",
+                    "role": null,
+                    "source": "channels/src/components/admin_console/checkbox_setting.tsx#CheckboxSetting"
+                },
+                {
+                    "testId": "admin.password.symbol",
+                    "role": null,
+                    "source": "channels/src/components/admin_console/checkbox_setting.tsx#CheckboxSetting"
+                },
+                {
+                    "testId": "admin.password.uppercase",
+                    "role": null,
+                    "source": "channels/src/components/admin_console/checkbox_setting.tsx#CheckboxSetting"
+                }
+            ]
+        }
+    ],
+    "pluginSlots": [],
+    "operations": [
+        {
+            "op": "AddChannelMember",
+            "method": "POST",
+            "path": "/api/v4/channels/{channel_id}/members",
+            "body": "ChannelMembership"
+        },
+        {
+            "op": "AddTeamMember",
+            "method": "POST",
+            "path": "/api/v4/teams/{team_id}/members",
+            "body": "TeamMembership"
+        },
+        {
+            "op": "AddTeamMembers",
+            "method": "POST",
+            "path": "/api/v4/teams/{team_id}/members/batch",
+            "body": "TeamMembership[]"
+        },
+        {
+            "op": "ApplyIPFilters",
+            "method": "POST",
+            "path": "/api/v4/ip_filtering",
+            "body": "AllowedIPRange[]"
+        },
+        {
+            "op": "ChannelMembersMinusGroupMembers",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/members_minus_group_members",
+            "body": "UsersWithGroupsAndCount"
+        },
+        {
+            "op": "CreateAccessControlPolicy",
+            "method": "PUT",
+            "path": "/api/v4/access_control_policies",
+            "body": "AccessControlPolicy"
+        },
+        {
+            "op": "CreateDirectChannel",
+            "method": "POST",
+            "path": "/api/v4/channels/direct",
+            "body": "ServerChannel"
+        },
+        {
+            "op": "CreateEmoji",
+            "method": "POST",
+            "path": "/api/v4/emoji",
+            "body": "CustomEmoji"
+        },
+        {
+            "op": "CreatePost",
+            "method": "POST",
+            "path": "/api/v4/posts",
+            "body": "Post"
+        },
+        {
+            "op": "CreateScheduledPost",
+            "method": "POST",
+            "path": "/api/v4/posts/schedule",
+            "body": "ScheduledPost"
+        },
+        {
+            "op": "CreateTeam",
+            "method": "POST",
+            "path": "/api/v4/teams",
+            "body": "Team"
+        },
+        {
+            "op": "DeleteAccessControlPolicy",
+            "method": "DELETE",
+            "path": "/api/v4/access_control_policies/{policy_id}",
+            "body": "AccessControlPolicy"
+        },
+        {
+            "op": "DeleteDraftMe",
+            "method": "DELETE",
+            "path": "/api/v4/users/me/channels/{channel_id}/drafts",
+            "body": "null"
+        },
+        {
+            "op": "DeletePreferences",
+            "method": "POST",
+            "path": "/api/v4/users/{user_id}/preferences/delete",
+            "body": "StatusOK"
+        },
+        {
+            "op": "DeletePropertyField",
+            "method": "DELETE",
+            "path": "/api/v4/properties/groups/{group_name}/{object_type}/fields/{field_id}",
+            "body": "StatusOK"
+        },
+        {
+            "op": "DeleteReaction",
+            "method": "DELETE",
+            "path": "/api/v4/users/{user_id}/posts/{post_id}/reactions/{emoji_name}",
+            "body": "StatusOK"
+        },
+        {
+            "op": "DeleteScheduledPost",
+            "method": "DELETE",
+            "path": "/api/v4/posts/schedule/{scheduled_post_id}",
+            "body": "ScheduledPost"
+        },
+        {
+            "op": "DisablePlugin",
+            "method": "POST",
+            "path": "/api/v4/plugins/{plugin_id}/disable",
+            "body": "StatusOK"
+        },
+        {
+            "op": "EnablePlugin",
+            "method": "POST",
+            "path": "/api/v4/plugins/{plugin_id}/enable",
+            "body": "StatusOK"
+        },
+        {
+            "op": "ExecuteCommand",
+            "method": "POST",
+            "path": "/api/v4/commands/execute",
+            "body": "CommandResponse"
+        },
+        {
+            "op": "GenerateCFPostExposureReport",
+            "method": "POST",
+            "path": "/api/v4/content_flagging/post/{post_id}/exposure_report",
+            "body": null
+        },
+        {
+            "op": "GenerateCFPostReport",
+            "method": "POST",
+            "path": "/api/v4/content_flagging/post/{post_id}/report",
+            "body": "Blob"
+        },
+        {
+            "op": "GetAllChannels",
+            "method": "GET",
+            "path": "/api/v4/channels",
+            "body": "ChannelWithTeamData[] | ChannelsWithTotalCount"
+        },
+        {
+            "op": "GetAllTeams",
+            "method": "GET",
+            "path": "/api/v4/teams",
+            "body": "Team[] | TeamsWithCount"
+        },
+        {
+            "op": "GetAnalyticsOld",
+            "method": "GET",
+            "path": "/api/v4/analytics/old",
+            "body": "AnalyticsRow[]"
+        },
+        {
+            "op": "GetChannel",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}",
+            "body": "ServerChannel"
+        },
+        {
+            "op": "GetChannelByName",
+            "method": "GET",
+            "path": "/api/v4/teams/{team_id}/channels/name/{channel_name}",
+            "body": "ServerChannel"
+        },
+        {
+            "op": "GetChannelByNameForTeamName",
+            "method": "GET",
+            "path": "/api/v4/teams/name/{team_name}/channels/name/{channel_name}",
+            "body": "ServerChannel"
+        },
+        {
+            "op": "GetChannelMember",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/members/{user_id}",
+            "body": "ChannelMembership"
+        },
+        {
+            "op": "GetChannelMemberCountsByGroup",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/member_counts_by_group",
+            "body": "ChannelMemberCountsByGroup"
+        },
+        {
+            "op": "GetChannelMemberMe",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/members/me",
+            "body": "ChannelMembership"
+        },
+        {
+            "op": "GetChannelMembers",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/members",
+            "body": "ChannelMembership[]"
+        },
+        {
+            "op": "GetChannelMembersForUserMe",
+            "method": "GET",
+            "path": "/api/v4/users/me/teams/{team_id}/channels/members",
+            "body": "ChannelMembership[]"
+        },
+        {
+            "op": "GetChannelMembersTimezones",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/timezones",
+            "body": "string[]"
+        },
+        {
+            "op": "GetChannelStats",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/stats",
+            "body": "ChannelStats"
+        },
+        {
+            "op": "GetChannelsForTeamForUserMe",
+            "method": "GET",
+            "path": "/api/v4/users/me/teams/{team_id}/channels",
+            "body": "ServerChannel[]"
+        },
+        {
+            "op": "GetChannelsMemberCount",
+            "method": "POST",
+            "path": "/api/v4/channels/stats/member_count",
+            "body": "Record<string, number>"
+        },
+        {
+            "op": "GetEmojisByNames",
+            "method": "POST",
+            "path": "/api/v4/emoji/names",
+            "body": "CustomEmoji[]"
+        },
+        {
+            "op": "GetEndpointForInstallationInformation",
+            "method": "GET",
+            "path": "/api/v4/cloud/installation",
+            "body": "Installation"
+        },
+        {
+            "op": "GetFlaggedPostsForUser",
+            "method": "GET",
+            "path": "/api/v4/users/{user_id}/posts/flagged",
+            "body": "PostList"
+        },
+        {
+            "op": "GetGroups",
+            "method": "GET",
+            "path": "/api/v4/groups",
+            "body": "Group[]"
+        },
+        {
+            "op": "GetGroupsByNames",
+            "method": "POST",
+            "path": "/api/v4/groups/names",
+            "body": "Group[]"
+        },
+        {
+            "op": "GetLdapGroups",
+            "method": "GET",
+            "path": "/api/v4/ldap/groups",
+            "body": null
+        },
+        {
+            "op": "GetPost",
+            "method": "GET",
+            "path": "/api/v4/posts/{post_id}",
+            "body": "Post"
+        },
+        {
+            "op": "GetPostInfo",
+            "method": "GET",
+            "path": "/api/v4/posts/{post_id}/info",
+            "body": "PostInfo"
+        },
+        {
+            "op": "GetPostThread",
+            "method": "GET",
+            "path": "/api/v4/posts/{post_id}/thread",
+            "body": "PaginatedPostList"
+        },
+        {
+            "op": "GetPostsForChannel",
+            "method": "GET",
+            "path": "/api/v4/channels/{channel_id}/posts",
+            "body": "PostList"
+        },
+        {
+            "op": "GetPropertyValues",
+            "method": "GET",
+            "path": "/api/v4/properties/groups/{group_name}/{object_type}/values/{target_id}",
+            "body": null
+        },
+        {
+            "op": "GetRolesByNames",
+            "method": "POST",
+            "path": "/api/v4/roles/names",
+            "body": "Role[]"
+        },
+        {
+            "op": "GetSharedChannelRemotes",
+            "method": "GET",
+            "path": "/api/v4/sharedchannels/{channel_id}/remotes",
+            "body": "RemoteClusterInfo[]"
+        },
+        {
+            "op": "GetTeam",
+            "method": "GET",
+            "path": "/api/v4/teams/{team_id}",
+            "body": "Team"
+        },
+        {
+            "op": "GetTeamByName",
+            "method": "GET",
+            "path": "/api/v4/teams/name/{team_name}",
+            "body": "Team"
+        },
+        {
+            "op": "GetTeamMembersByIds",
+            "method": "POST",
+            "path": "/api/v4/teams/{team_id}/members/ids",
+            "body": "TeamMembership[]"
+        },
+        {
+            "op": "GetTeamMembersForUser",
+            "method": "GET",
+            "path": "/api/v4/users/{user_id}/teams/members",
+            "body": "TeamMembership[]"
+        },
+        {
+            "op": "GetTeamStats",
+            "method": "GET",
+            "path": "/api/v4/teams/{team_id}/stats",
+            "body": "TeamStats"
+        },
+        {
+            "op": "GetTeamsForUser",
+            "method": "GET",
+            "path": "/api/v4/users/{user_id}/teams",
+            "body": "Team[]"
+        },
+        {
+            "op": "GetTeamsUnreadForUserMe",
+            "method": "GET",
+            "path": "/api/v4/users/me/teams/unread",
+            "body": "TeamUnread[]"
+        },
+        {
+            "op": "GetUser",
+            "method": "GET",
+            "path": "/api/v4/users/{user_id}",
+            "body": "UserProfile"
+        },
+        {
+            "op": "GetUserByUsername",
+            "method": "GET",
+            "path": "/api/v4/users/username/{username}",
+            "body": "UserProfile"
+        },
+        {
+            "op": "GetUsers",
+            "method": "GET",
+            "path": "/api/v4/users",
+            "body": "UserProfile[]"
+        },
+        {
+            "op": "GetUsersByGroupChannelIds",
+            "method": "POST",
+            "path": "/api/v4/users/group_channels",
+            "body": "Record<string, UserProfile[]>"
+        },
+        {
+            "op": "GetUsersByIds",
+            "method": "POST",
+            "path": "/api/v4/users/ids",
+            "body": "UserProfile[]"
+        },
+        {
+            "op": "GetUsersByUsernames",
+            "method": "POST",
+            "path": "/api/v4/users/usernames",
+            "body": "UserProfile[]"
+        },
+        {
+            "op": "GetUsersStatusesByIds",
+            "method": "POST",
+            "path": "/api/v4/users/status/ids",
+            "body": "UserStatus[]"
+        },
+        {
+            "op": "InviteGuestsToTeam",
+            "method": "POST",
+            "path": "/api/v4/teams/{team_id}/invite-guests/email",
+            "body": "StatusOK"
+        },
+        {
+            "op": "InviteRemoteClusterToChannel",
+            "method": "POST",
+            "path": "/api/v4/remotecluster/{remote_id}/channels/{channel_id}/invite",
+            "body": "StatusOK"
+        },
+        {
+            "op": "InviteUsersToTeam",
+            "method": "POST",
+            "path": "/api/v4/teams/{team_id}/invite/email",
+            "body": "StatusOK"
+        },
+        {
+            "op": "KeepCFPost",
+            "method": "PUT",
+            "path": "/api/v4/content_flagging/post/{post_id}/keep",
+            "body": "StatusOK"
+        },
+        {
+            "op": "Logout",
+            "method": "POST",
+            "path": "/api/v4/users/logout",
+            "body": null
+        },
+        {
+            "op": "PatchChannel",
+            "method": "PUT",
+            "path": "/api/v4/channels/{channel_id}/patch",
+            "body": "ServerChannel"
+        },
+        {
+            "op": "PatchConfig",
+            "method": "PUT",
+            "path": "/api/v4/config/patch",
+            "body": "AdminConfig"
+        },
+        {
+            "op": "PatchPost",
+            "method": "PUT",
+            "path": "/api/v4/posts/{post_id}/patch",
+            "body": "Post"
+        },
+        {
+            "op": "PatchTeam",
+            "method": "PUT",
+            "path": "/api/v4/teams/{team_id}/patch",
+            "body": "Team"
+        },
+        {
+            "op": "PauseScheduledRecap",
+            "method": "POST",
+            "path": "/api/v4/scheduled_recaps/{scheduled_recap_id}/pause",
+            "body": "ScheduledRecap"
+        },
+        {
+            "op": "PinPost",
+            "method": "POST",
+            "path": "/api/v4/posts/{post_id}/pin",
+            "body": "StatusOK"
+        },
+        {
+            "op": "RegenerateTeamInviteId",
+            "method": "POST",
+            "path": "/api/v4/teams/{team_id}/regenerate_invite_id",
+            "body": "Team"
+        },
+        {
+            "op": "RemoveCFPost",
+            "method": "PUT",
+            "path": "/api/v4/content_flagging/post/{post_id}/remove",
+            "body": "StatusOK"
+        },
+        {
+            "op": "RemoveTeamIcon",
+            "method": "DELETE",
+            "path": "/api/v4/teams/{team_id}/image",
+            "body": "StatusOK"
+        },
+        {
+            "op": "RemoveTeamMember",
+            "method": "DELETE",
+            "path": "/api/v4/teams/{team_id}/members/{user_id}",
+            "body": "StatusOK"
+        },
+        {
+            "op": "RemoveUserFromChannel",
+            "method": "DELETE",
+            "path": "/api/v4/channels/{channel_id}/members/{user_id}",
+            "body": "StatusOK"
+        },
+        {
+            "op": "ResumeScheduledRecap",
+            "method": "POST",
+            "path": "/api/v4/scheduled_recaps/{scheduled_recap_id}/resume",
+            "body": "ScheduledRecap"
+        },
+        {
+            "op": "SaveReaction",
+            "method": "POST",
+            "path": "/api/v4/reactions",
+            "body": "Reaction"
+        },
+        {
+            "op": "SearchAccessControlPolicies",
+            "method": "POST",
+            "path": "/api/v4/access_control_policies/search",
+            "body": "AccessControlPoliciesResult"
+        },
+        {
+            "op": "SearchAllChannels",
+            "method": "POST",
+            "path": "/api/v4/channels/search",
+            "body": "ChannelWithTeamData[] | ChannelsWithTotalCount"
+        },
+        {
+            "op": "SearchFiles",
+            "method": "POST",
+            "path": "/api/v4/files/search",
+            "body": "FileSearchResults"
+        },
+        {
+            "op": "SearchPostsInAllTeams",
+            "method": "POST",
+            "path": "/api/v4/posts/search",
+            "body": "PostSearchResults"
+        },
+        {
+            "op": "SearchTeams",
+            "method": "POST",
+            "path": "/api/v4/teams/search",
+            "body": "Team[] | TeamsWithCount"
+        },
+        {
+            "op": "SetDefaultProfileImage",
+            "method": "DELETE",
+            "path": "/api/v4/users/{user_id}/image",
+            "body": "StatusOK"
+        },
+        {
+            "op": "SetPostUnread",
+            "method": "POST",
+            "path": "/api/v4/users/{user_id}/posts/{post_id}/set_unread",
+            "body": "ChannelUnread"
+        },
+        {
+            "op": "SetProfileImage",
+            "method": "POST",
+            "path": "/api/v4/users/{user_id}/image",
+            "body": "StatusOK"
+        },
+        {
+            "op": "SetTeamIcon",
+            "method": "POST",
+            "path": "/api/v4/teams/{team_id}/image",
+            "body": "StatusOK"
+        },
+        {
+            "op": "SetThreadUnreadByPostId",
+            "method": "POST",
+            "path": "/api/v4/users/{user_id}/teams/{team_id}/threads/{thread_id}/set_unread/{post_id}",
+            "body": "UserThread"
+        },
+        {
+            "op": "SimulateAccessControlPolicyForUsers",
+            "method": "POST",
+            "path": "/api/v4/access_control_policies/cel/simulate_users",
+            "body": "PolicySimulationResponse"
+        },
+        {
+            "op": "StartFollowingThread",
+            "method": "PUT",
+            "path": "/api/v4/users/{user_id}/teams/{team_id}/threads/{thread_id}/following",
+            "body": "StatusOK"
+        },
+        {
+            "op": "StopFollowingThread",
+            "method": "DELETE",
+            "path": "/api/v4/users/{user_id}/teams/{team_id}/threads/{thread_id}/following",
+            "body": "StatusOK"
+        },
+        {
+            "op": "TeamMembersMinusGroupMembers",
+            "method": "GET",
+            "path": "/api/v4/teams/{team_id}/members_minus_group_members",
+            "body": "UsersWithGroupsAndCount"
+        },
+        {
+            "op": "TestAccessControlPolicyExpression",
+            "method": "POST",
+            "path": "/api/v4/access_control_policies/cel/test",
+            "body": "AccessControlTestResult"
+        },
+        {
+            "op": "UninviteRemoteClusterToChannel",
+            "method": "POST",
+            "path": "/api/v4/remotecluster/{remote_id}/channels/{channel_id}/uninvite",
+            "body": "StatusOK"
+        },
+        {
+            "op": "UnpinPost",
+            "method": "POST",
+            "path": "/api/v4/posts/{post_id}/unpin",
+            "body": "StatusOK"
+        },
+        {
+            "op": "UpdateChannelMemberSchemeRoles",
+            "method": "PUT",
+            "path": "/api/v4/channels/{channel_id}/members/{user_id}/schemeRoles",
+            "body": "StatusOK"
+        },
+        {
+            "op": "UpdateChannelPrivacy",
+            "method": "PUT",
+            "path": "/api/v4/channels/{channel_id}/privacy",
+            "body": "ServerChannel"
+        },
+        {
+            "op": "UpdatePreferences",
+            "method": "PUT",
+            "path": "/api/v4/users/{user_id}/preferences",
+            "body": "StatusOK"
+        },
+        {
+            "op": "UpdatePropertyValues",
+            "method": "PATCH",
+            "path": "/api/v4/properties/groups/{group_name}/{object_type}/values/{target_id}",
+            "body": null
+        },
+        {
+            "op": "UpdateScheduledPost",
+            "method": "PUT",
+            "path": "/api/v4/posts/schedule/{scheduled_post_id}",
+            "body": "ScheduledPost"
+        },
+        {
+            "op": "UpdateSidebarCategoriesForTeamForUser",
+            "method": "PUT",
+            "path": "/api/v4/users/{user_id}/teams/{team_id}/channels/categories",
+            "body": "ChannelCategory[]"
+        },
+        {
+            "op": "UpdateTeam",
+            "method": "PUT",
+            "path": "/api/v4/teams/{team_id}",
+            "body": "Team"
+        },
+        {
+            "op": "UpdateTeamMemberSchemeRoles",
+            "method": "PUT",
+            "path": "/api/v4/teams/{team_id}/members/{user_id}/schemeRoles",
+            "body": "StatusOK"
+        },
+        {
+            "op": "UpsertDraft",
+            "method": "POST",
+            "path": "/api/v4/drafts",
+            "body": "Draft"
+        },
+        {
+            "op": "ValidateExpressionAgainstRequester",
+            "method": "POST",
+            "path": "/api/v4/access_control_policies/cel/validate_requester",
+            "body": null
+        },
+        {
+            "op": "ViewChannelMe",
+            "method": "POST",
+            "path": "/api/v4/channels/members/me/view",
+            "body": "ChannelViewResponse"
+        }
+    ]
+}

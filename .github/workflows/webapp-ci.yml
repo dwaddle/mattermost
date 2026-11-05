@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - "webapp/**"
+      - "e2e-tests/playwright/lib/src/ui/generated/**"
       - ".github/workflows/webapp-ci.yml"
       - ".github/actions/webapp-setup/**"
 
@@ -119,14 +120,23 @@ jobs:
         # testid-grammar, testid-no-unscoped-data and the e2e spec rules
         run: |
           npm run test --workspace=platform/eslint-plugin
+      - name: ci/setup-playwright-lib
+        # the generator formats its output with the Playwright project's prettier
+        working-directory: e2e-tests/playwright
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
       - name: ci/test-surface
-        # scan + checks: errors fail, warnings are reported. The committed manifest must be current.
+        # scan + checks: errors fail, warnings are reported. Then regenerate: the committed manifest and page
+        # objects must be current.
         working-directory: webapp/channels
         run: |
           npm run test-surface:check
-          if ! git diff --quiet -- test-surface.json; then
-            echo "::error::test-surface.json is stale. Run 'npm run test-surface' in webapp/channels and commit the result."
-            git --no-pager diff --stat -- test-surface.json
+          npm run test-surface:generate
+          if ! git diff --quiet -- test-surface.json ../../e2e-tests/playwright/lib/src/ui/generated; then
+            echo "::error::test-surface.json or the generated page objects are stale. Run 'npm run test-surface && npm run test-surface:generate' in webapp/channels and commit the result."
+            git --no-pager diff --stat -- test-surface.json ../../e2e-tests/playwright/lib/src/ui/generated
             exit 1
           fi
       - name: ci/test-surface-golden

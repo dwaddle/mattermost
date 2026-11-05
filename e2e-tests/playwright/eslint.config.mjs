@@ -83,4 +83,20 @@ export default [
             ],
         },
     },
+
+    // every spec: hand-written selectors and fixed sleeps are warnings, the to-do list for moving specs onto the
+    // generated page objects
+    {
+        files: ['specs/**/*.ts'],
+        rules: {
+            '@mattermost/e2e-no-literal-locators': 'warn',
+            '@mattermost/e2e-no-wait-for-timeout': 'warn',
+        },
+    },
+    {
+        files: ['lib/src/ui/generated/**/*.ts'], // page objects locate and act; specs assert
+        rules: {
+            '@mattermost/e2e-no-expect-in-page-objects': 'warn',
+        },
+    },
 ];
