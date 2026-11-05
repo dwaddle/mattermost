@@ -446,7 +446,7 @@ function element(ctx: Ctx, node: ScopeNode, e: Element, m: Members, mt: {ops?: s
         const kp = shared?.kp ?? keyParam(ctx, e.key, e.name);
         const id = testIdExpr(node, e.template, kp.expr(fn));
         ctx.imports.locator = true;
-        m.add(fn, e.component.at, `${doc(e, opensDoc, node)}\n${fn}(${kp.decl}) {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(e)}), ${meta(ctx, node, e, id, mt)});\n}`);
+        m.add(fn, e.component.at, `${doc(e, opensDoc, node)}\n${fn}(${kp.decl}) {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, mt)});\n}`);
         addItemsLocator(node, e, m);
         const values = shared?.values ?? ((e.key.kind === 'set' || e.key.kind === 'string') && e.key.set ? e.key.values : undefined);
         if (values) {
@@ -458,7 +458,7 @@ function element(ctx: Ctx, node: ScopeNode, e: Element, m: Members, mt: {ops?: s
         return;
     }
     const id = testIdExpr(node, e.template);
-    m.add(getter, e.component.at, `${doc(e, opensDoc, node)}\nget ${getter}() {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(e)}), ${meta(ctx, node, e, id, mt)});\n}`);
+    m.add(getter, e.component.at, `${doc(e, opensDoc, node)}\nget ${getter}() {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, mt)});\n}`);
     verbs(ctx, node, e, getter, m);
 }
 
@@ -475,11 +475,11 @@ function emitVariant(ctx: Ctx, v: Variant): string {
             const kp = keyParam(ctx, e.key, e.name);
             const fn = memberName(camel(e.name));
             const id = testIdExpr(node, e.template, kp.expr(fn));
-            out.push(`${d}\noverride ${fn}(${kp.decl}) {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(e)}), ${meta(ctx, node, e, id, {ops})});\n}`);
+            out.push(`${d}\noverride ${fn}(${kp.decl}) {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, {ops})});\n}`);
         } else {
             const getter = memberName(camel(e.name) + roleWord(e.role));
             const id = testIdExpr(node, e.template);
-            out.push(`${d}\noverride get ${getter}() {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(e)}), ${meta(ctx, node, e, id, {ops})});\n}`);
+            out.push(`${d}\noverride get ${getter}() {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, {ops})});\n}`);
         }
     }
     const openers = v.openers.slice(0, 3).map((t) => `\`${t}\``).join(', ') + (v.openers.length > 3 ? `, and ${v.openers.length - 3} more` : '');
@@ -488,11 +488,13 @@ function emitVariant(ctx: Ctx, v: Variant): string {
 }
 
 /**
- * `, true` for an element a popup renders in a portal outside its scope's element (an option of a combobox or
- * listbox), so the generated code finds it from the page (Scope.byTestId's `popup`).
+ * `, true` for an element a popup renders in a portal outside its scope's element, so the generated code finds it
+ * from the page (Scope.byTestId's `popup`): a combobox's options, i.e. options whose scope also has the combobox.
+ * A listbox's options (a suggestion list's groups) render inside their own scope, and are found there: from the
+ * page, one group's keys would also take every other group's.
  */
-function popupArg(e: Element): string {
-    return e.role === 'option' ? ', true' : '';
+function popupArg(node: ScopeNode, e: Element): string {
+    return e.role === 'option' && node.members.some((m) => m.role === 'combobox') ? ', true' : '';
 }
 
 function addItemsLocator(node: ScopeNode, e: Element, m: Members) {
@@ -500,9 +502,9 @@ function addItemsLocator(node: ScopeNode, e: Element, m: Members) {
     const [before, after] = splitAtKey(e.template);
     const prefix = base ? '`${this.scope}' + before.slice(base.length) + '`' : `'${before}'`;
     const name = memberName(camel(e.name) + 'Items');
-    m.add(name, e.component.at, `/** Every \`${e.template}\` in the scope. */\nget ${name}(): Locator {\n    return this.byTestIdPattern(${prefix}, '${after}'${popupArg(e)});\n}`);
+    m.add(name, e.component.at, `/** Every \`${e.template}\` in the scope. */\nget ${name}(): Locator {\n    return this.byTestIdPattern(${prefix}, '${after}'${popupArg(node, e)});\n}`);
     const keys = memberName(camel(e.name) + 'Keys');
-    m.add(keys, e.component.at, `/** The keys of every \`${e.template}\` in the scope, in document order. */\n${keys}(): Promise<string[]> {\n    return this.keysOf(${prefix}, '${after}'${popupArg(e)});\n}`);
+    m.add(keys, e.component.at, `/** The keys of every \`${e.template}\` in the scope, in document order. */\n${keys}(): Promise<string[]> {\n    return this.keysOf(${prefix}, '${after}'${popupArg(node, e)});\n}`);
 }
 
 const menuScopesMemo = new WeakMap<Manifest, Set<string>>();
@@ -532,7 +534,7 @@ function childScope(ctx: Ctx, node: ScopeNode, word: string, child: ScopeNode, m
         const id = testIdExpr(node, e.template, kp.expr(fn));
         ctx.imports.locator = true;
         const opensDoc = (e.opens ?? []).map((o) => `Opens ${o.kind} ${o.target}.`).slice(0, 3);
-        m.add(fn, e.component.at, `${doc(e, opensDoc, node)}\n${fn}(${kp.decl}): ${cls.name} {\n    return new ${cls.name}(this.page, ${scopeExpr}, this.byTestId(${id}${popupArg(e)}));\n}`);
+        m.add(fn, e.component.at, `${doc(e, opensDoc, node)}\n${fn}(${kp.decl}): ${cls.name} {\n    return new ${cls.name}(this.page, ${scopeExpr}, this.byTestId(${id}${popupArg(node, e)}));\n}`);
         addItemsLocator(node, e, m);
         return;
     }

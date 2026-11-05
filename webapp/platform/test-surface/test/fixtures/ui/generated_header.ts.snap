@@ -62,7 +62,7 @@ export class Header extends Scope {
      * Renders only when channelId.
      */
     get currentChannelOption() {
-        return drivers.option(this.byTestId(`${this.scope}.current_channel--option`, true), {testId: `${this.scope}.current_channel--option`, role: 'option', effects: [], unknownEffects: false, source: 'src/header.tsx:65'});
+        return drivers.option(this.byTestId(`${this.scope}.current_channel--option`), {testId: `${this.scope}.current_channel--option`, role: 'option', effects: [], unknownEffects: false, source: 'src/header.tsx:65'});
     }
 
     /**

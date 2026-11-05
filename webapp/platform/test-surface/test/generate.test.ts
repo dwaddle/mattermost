@@ -150,6 +150,15 @@ test('generate: a keyed item gets its collection and its keys in document order'
     assert.match(values, /channelKeys\(\): Promise<string\[\]> \{\n {8}return this\.keysOf\(`\$\{this\.scope\}\.channel:`, '--link'\);/);
 });
 
+test('generate: a combobox\'s options are found from the page; a listbox\'s options within the list', async () => {
+    const {read} = await generateFixture('popups');
+    const popups = read('popups.ts');
+    assert.match(popups, /this\.byTestId\(`\$\{this\.scope\}\.choice:\$\{choice\}--option`, true\)/);
+    assert.match(popups, /choiceKeys\(\): Promise<string\[\]> \{\n {8}return this\.keysOf\(`\$\{this\.scope\}\.choice:`, '--option', true\);/);
+    assert.match(popups, /this\.byTestId\(`\$\{this\.scope\}\.item:\$\{item\}--option`\)/);
+    assert.match(popups, /itemKeys\(\): Promise<string\[\]> \{\n {8}return this\.keysOf\(`\$\{this\.scope\}\.item:`, '--option'\);/);
+});
+
 test('generate: two testids that produce the same member name are a collisions error, not a rename', async () => {
     const {result, read} = await generateFixture('values');
     const d = result.diagnostics.filter((x) => x.rule === 'collisions');
