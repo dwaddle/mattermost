@@ -516,7 +516,7 @@ test('opens the modal on a post with no values, listing always fields', {tag: '@
         const postOnScreen = app.center.postList.post(post);
 
         // * Verify the post carries no chip row, so the menu is the only way in
-        await expect(postOnScreen.container).toContainText('nothing set');
+        await expect(postOnScreen.locator).toContainText('nothing set');
         await expect(postOnScreen.attributes.locator).toHaveCount(0);
 
         // # Open the modal from the post's menu
@@ -611,7 +611,7 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
 
         // * Verify the post starts with no chip row at all, so the chip asserted at the
         // end arrived from this test's write rather than from the fixture
-        await expect(postOnScreen.container).toContainText('nothing set yet');
+        await expect(postOnScreen.locator).toContainText('nothing set yet');
         await expect(chips.locator).toHaveCount(0);
 
         const loads = countLoads(page);
