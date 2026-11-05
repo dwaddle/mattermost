@@ -6,9 +6,9 @@
 
 import type {Locator, Page} from '@playwright/test';
 
-import {Scope, drivers} from '../../aria';
+import {Scope} from '../../aria';
 
-import {PostPreview, TeamScope} from './shared';
+import {Value} from './shared';
 
 /** Scope `post_attributes`. */
 export class PostAttributes extends Scope {
@@ -21,129 +21,7 @@ export class PostAttributes extends Scope {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
-    get value(): PostAttributesValue {
-        return new PostAttributesValue(this.page, `${this.scope}.value`, this.root);
-    }
-}
-
-/** Scope `post_attributes.value`. */
-export class PostAttributesValue extends Scope {
-    constructor(page: Page, scope = 'post_attributes.value', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `post_attributes.value.channel` — ChannelPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx)
-     * Renders only when !(field.type !== 'text').
-     */
-    get channel() {
-        return drivers.container(this.byTestId(`${this.scope}.channel`), {
-            testId: `${this.scope}.channel`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx#ChannelPropertyRenderer',
-        });
-    }
-
-    /**
-     * `post_attributes.value.select--text` — OptionPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx)
-     */
-    get selectText() {
-        return drivers.text(this.byTestId(`${this.scope}.select--text`), {
-            testId: `${this.scope}.select--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx#OptionPropertyRenderer',
-        });
-    }
-
-    getSelectText(): Promise<string> {
-        return this.selectText.text();
-    }
-
-    /**
-     * `post_attributes.value.selectable_user` — SelectableUserPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx)
-     * Renders only when field.attrs?.editable.
-     */
-    get selectableUser() {
-        return drivers.container(this.byTestId(`${this.scope}.selectable_user`), {
-            testId: `${this.scope}.selectable_user`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx#SelectableUserPropertyRenderer',
-        });
-    }
-
-    /**
-     * `post_attributes.value.text--text` — TextPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx)
-     * Renders only when !(field.type !== 'text').
-     */
-    get textText() {
-        return drivers.text(this.byTestId(`${this.scope}.text--text`), {
-            testId: `${this.scope}.text--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx#TextPropertyRenderer',
-        });
-    }
-
-    getTextText(): Promise<string> {
-        return this.textText.text();
-    }
-
-    /**
-     * `post_attributes.value.timestamp--text` — TimestampPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx)
-     * Renders only when !(field.type !== 'text').
-     */
-    get timestampText() {
-        return drivers.text(this.byTestId(`${this.scope}.timestamp--text`), {
-            testId: `${this.scope}.timestamp--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx#TimestampPropertyRenderer',
-        });
-    }
-
-    getTimestampText(): Promise<string> {
-        return this.timestampText.text();
-    }
-
-    /**
-     * `post_attributes.value.user` — UserPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx)
-     */
-    get user() {
-        return drivers.container(this.byTestId(`${this.scope}.user`), {
-            testId: `${this.scope}.user`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx#UserPropertyRenderer',
-        });
-    }
-
-    /**
-     * `post_attributes.value.post_preview` — PostPreviewPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/post_preview_property_renderer/post_preview_property_renderer.tsx)
-     * Renders only when !(!post || !channel || !team) and !(field.type !== 'text').
-     */
-    get postPreview(): PostPreview {
-        return new PostPreview(this.page, `${this.scope}.post_preview`, this.root);
-    }
-
-    /**
-     * `post_attributes.value.team` — TeamPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/team_property_renderer/team_property_renderer.tsx)
-     * Renders only when !(field.type !== 'text').
-     */
-    get team(): TeamScope {
-        return new TeamScope(this.page, `${this.scope}.team`, this.root);
+    get value(): Value {
+        return new Value(this.page, `${this.scope}.value`, this.root);
     }
 }

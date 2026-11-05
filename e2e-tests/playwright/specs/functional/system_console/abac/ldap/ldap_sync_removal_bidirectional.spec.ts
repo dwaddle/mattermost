@@ -14,10 +14,9 @@ import {
     ensureUserAttributes,
     createPrivateChannelForABAC,
     activatePolicy,
-    getPolicyIdByName,
     getUserAttributeFieldByName,
 } from '../support';
-import {createMembershipPolicy, runSyncJob, waitForSyncJob} from '../surface';
+import {createMembershipPolicy, policyIdByName, runSyncJob, waitForSyncJob} from '../surface';
 
 /**
  * MM-T5800: Policy enforcement after attribute change (bidirectional)
@@ -49,7 +48,7 @@ test('MM-T5800 Policy enforcement after attribute change (bidirectional)', async
         channels: [privateChannel],
         autoAdd: true,
     });
-    const t5800PolicyId = (await getPolicyIdByName(adminClient, policyName))!;
+    const t5800PolicyId = await policyIdByName(adminClient, policyName);
 
     await activatePolicy(adminClient, t5800PolicyId);
 

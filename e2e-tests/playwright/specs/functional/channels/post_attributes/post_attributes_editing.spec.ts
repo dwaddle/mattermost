@@ -1,81 +1,39 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Page} from '@playwright/test';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import type {ChannelsPage, ChannelsPost} from '@mattermost/playwright-lib';
 import {expect, test} from '@mattermost/playwright-lib';
 
 import {
     VALUES_ROUTE,
+    countLoads,
     createField,
     deleteFields,
     fieldName,
+    openModalFromPostMenu,
+    optionChip,
     optionId,
     purgeFields,
     recordRequests,
     setPostValues,
+    waitForValuesWrite,
 } from './support';
 
-const CHIPS = 'post-attributes-chips';
-const CARD = 'post-attributes-card';
+// Option names and text values the specs create
+const SECRET = 'SECRET';
+const UNCLASSIFIED = 'UNCLASSIFIED';
+const NOFORN = 'NOFORN';
+const ORCON = 'ORCON';
+const Q3 = 'Q3 planning';
+const Q4 = 'Q4 planning';
 
-// `GenericModal` renders `role='none'`, so there is no dialog role to ask for and
-// the element id it forwards is the only stable handle on the modal itself.
-const MODAL = '#postAttributesModal';
-
-// The padlock's accessible name. It is the only thing that distinguishes the padlock
-// from the row's other glyphs: an `<svg>` resolves to `role='img'` too, so a bare role
-// query matches the trash icon as well.
+// The padlock's accessible name. It is what tells a screen reader why the row can't be
+// changed, so the padlock is checked for it rather than only for being there.
 const LOCKED_REASON = "You don't have permission to modify this attribute.";
 
-function rowOf(page: Page, field: PropertyField) {
-    return page.getByTestId(`post-attribute-row-${field.name}`);
-}
-
-function triggerOf(page: Page, field: PropertyField) {
-    return page.getByTestId(`post-attribute-trigger-${field.name}`);
-}
-
-function clearOf(page: Page, field: PropertyField) {
-    return page.getByTestId(`post-attribute-clear-${field.name}`);
-}
-
-function pickerItemOf(page: Page, field: PropertyField) {
-    return page.getByTestId(`post-attribute-add-${field.name}`);
-}
-
-/**
- * Counts full page loads after the point it is called.
- *
- * The write path's whole claim is that a value changes in place, and "without a
- * reload" is otherwise asserted only by the test not writing one — which proves
- * nothing about the code reloading on its own.
- */
-function countLoads(page: Page): () => number {
-    let loads = 0;
-
-    page.on('load', () => {
-        loads++;
-    });
-
-    return () => loads;
-}
-
-/**
- * Opens the post's `…` menu with the pointer and picks `Attributes`.
- *
- * The message text is hovered rather than the post, so the pointer never rests on
- * the chip row and the hover card is not what opened the modal.
- */
-async function openModalFromPostMenu(channelsPage: ChannelsPage, post: ChannelsPost) {
-    await post.messageText.hover();
-    await post.postMenu.toBeVisible();
-    await post.postMenu.dotMenuButton.click();
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.container.getByRole('menuitem', {name: 'Attributes'}).click();
-}
+// Everything a keyboard can land on, for checking the chip row holds none of it
+const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 /**
  * @objective Verify the whole non-pointer route works: the post's `…` menu opens by
@@ -110,24 +68,24 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
 
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'keyboard route'});
-        await setPostValues(adminClient, post.id, [{field_id: note.id, value: 'Q3 planning'}]);
+        await setPostValues(adminClient, post.id, [{field_id: note.id, value: Q3}]);
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        const {page} = app;
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
-        const chips = postOnScreen.container.getByTestId(CHIPS);
+        const postOnScreen = app.center.postList.post(post);
+        const chips = postOnScreen.attributes;
 
-        await expect(chips.getByText('Q3 planning', {exact: true})).toBeVisible();
+        await expect(chips.value.textText.locator).toHaveText(Q3);
 
         // * Verify the chip row holds nothing a keyboard can reach. The row is a
         // read-only summary by design, so it carries no tab stop of its own and none of
         // the chips is a control.
-        await expect(
-            chips.locator('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'),
-        ).toHaveCount(0);
-        await expect(chips).not.toHaveAttribute('tabindex', /.*/);
+        expect(
+            await chips.locator.evaluate((row, focusable) => row.querySelectorAll(focusable).length, FOCUSABLE),
+        ).toBe(0);
+        await expect(chips.locator).not.toHaveAttribute('tabindex', /.*/);
 
         /*
          * # Tab forward from the first control on the post, far enough to cross all of it
@@ -137,9 +95,9 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
          * navigation marks it active, and neither the pointer nor the hover card ever
          * goes near the chip row here.
          */
-        await postOnScreen.messageText.hover();
-        await postOnScreen.postMenu.toBeVisible();
-        await postOnScreen.postMenu.dotMenuButton.focus();
+        await postOnScreen.messageText.locator.hover();
+        await expect(postOnScreen.menu.dotMenuButton.locator).toBeVisible();
+        await postOnScreen.menu.dotMenuButton.locator.focus();
 
         // * Verify no tab stop is inside the chip row. Asserted on each step rather than
         // only at the end, so a row that takes focus and hands it straight back is still
@@ -147,23 +105,22 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
         for (let step = 0; step < 12; step++) {
             await page.keyboard.press('Tab');
 
-            const inChipRow = await page.evaluate(() =>
-                Boolean(document.activeElement?.closest('[data-testid="post-attributes-chips"]')),
-            );
+            const inChipRow = await chips.locator.evaluate((row) => row.contains(document.activeElement));
 
             expect(inChipRow, `tab stop ${step + 1} landed inside the chip row`).toBe(false);
         }
 
         // # Open the post's menu from the keyboard, the pointer having only uncovered
         // the button
-        await postOnScreen.messageText.hover();
-        await postOnScreen.postMenu.toBeVisible();
-        await postOnScreen.postMenu.dotMenuButton.press('Enter');
-        await channelsPage.postDotMenu.toBeVisible();
+        await postOnScreen.messageText.locator.hover();
+        await expect(postOnScreen.menu.dotMenuButton.locator).toBeVisible();
+        await postOnScreen.menu.dotMenuButton.locator.press('Enter');
+        const dotMenu = app.postDotMenu;
+        await expect(dotMenu.locator).toBeVisible();
 
         // # Walk down to `Attributes` with the arrow keys. Its position in the menu
         // depends on what else the post allows, so it is walked to rather than counted to.
-        const attributesItem = channelsPage.postDotMenu.container.getByRole('menuitem', {name: 'Attributes'});
+        const attributesItem = dotMenu.postAttributesMenuItem.locator;
 
         await expect(async () => {
             await page.keyboard.press('ArrowDown');
@@ -173,11 +130,11 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
         // # Open the modal
         await page.keyboard.press('Enter');
 
-        const modal = page.locator(MODAL);
+        const modal = app.postAttributesModal.locator;
         await expect(modal).toBeVisible();
 
         // # Tab to the attribute's own control
-        const input = page.getByTestId(`post-attribute-input-${note.name}`);
+        const input = app.postAttributesModal.attribute(note).valueTextbox.locator;
 
         await expect(async () => {
             await page.keyboard.press('Tab');
@@ -190,13 +147,10 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
 
         // # Replace the value and commit it. Enter blurs rather than writing directly,
         // so blur stays the only commit path.
-        const written = page.waitForResponse(
-            (response) =>
-                response.url().includes(`${VALUES_ROUTE}${post.id}`) && response.request().method() === 'PATCH',
-        );
+        const written = waitForValuesWrite(page, post.id);
 
         await page.keyboard.press('ControlOrMeta+a');
-        await page.keyboard.type('Q4 planning');
+        await page.keyboard.type(Q4);
         await page.keyboard.press('Enter');
 
         expect((await written).status()).toBe(200);
@@ -208,8 +162,8 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
         // * Verify the chip on the post carries the new value. Nothing here touched the
         // chip row, and nothing but the keyboard changed anything, so this is the whole
         // route a keyboard user has.
-        await expect(chips.getByText('Q4 planning', {exact: true})).toBeVisible();
-        await expect(chips.getByText('Q3 planning', {exact: true})).toHaveCount(0);
+        await expect(chips.value.textText.locator).toHaveText(Q4);
+        await expect(chips.locator).not.toContainText(Q3);
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -233,49 +187,49 @@ test('rewrites the chip behind the modal when an option is picked', {tag: '@post
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
 
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'about to be rewritten'});
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        const {page} = app;
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
-        const chips = postOnScreen.container.getByTestId(CHIPS);
+        const postOnScreen = app.center.postList.post(post);
+        const chips = postOnScreen.attributes;
 
-        await expect(chips.getByText('SECRET', {exact: true})).toBeVisible();
+        await expect(optionChip(chips, SECRET)).toBeVisible();
 
         const loads = countLoads(page);
 
         // # Open the modal and pick the other option
-        await openModalFromPostMenu(channelsPage, postOnScreen);
-        await expect(page.locator(MODAL)).toBeVisible();
+        await openModalFromPostMenu(postOnScreen);
+        await expect(app.postAttributesModal.locator).toBeVisible();
 
-        await triggerOf(page, classification).click();
+        await app.postAttributesModal.attribute(classification).valueButton.locator.click();
 
         // # Wait on the write itself rather than on elapsed time
-        const written = page.waitForResponse(
-            (response) =>
-                response.url().includes(`${VALUES_ROUTE}${post.id}`) && response.request().method() === 'PATCH',
-        );
+        const written = waitForValuesWrite(page, post.id);
 
-        await page.getByRole('menuitemradio', {name: 'UNCLASSIFIED'}).click();
+        await app.postAttributesModal
+            .attribute(classification)
+            .valueMenu.option({id: optionId(classification, UNCLASSIFIED)})
+            .click();
         expect((await written).status()).toBe(200);
 
         // * Verify the chip behind the modal changed. The row reads the store, so the
         // write's broadcast is what moves it — nothing re-delivers the post.
-        await expect(chips.getByText('UNCLASSIFIED', {exact: true})).toBeVisible();
-        await expect(chips.getByText('SECRET', {exact: true})).toHaveCount(0);
+        await expect(optionChip(chips, UNCLASSIFIED)).toBeVisible();
+        await expect(chips.locator).not.toContainText(SECRET);
 
         // * Verify the modal stayed open over the post it is editing
-        await expect(page.locator(MODAL)).toBeVisible();
+        await expect(app.postAttributesModal.locator).toBeVisible();
 
         // * Verify nothing reloaded the page to get there
         expect(loads()).toBe(0);
@@ -304,12 +258,12 @@ test('clears a value with the trash button, dropping chip and card row', {tag: '
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET'],
+            options: [SECRET],
             visibility: 'always',
             sortOrder: 1,
         });
         const caveat = await createField(adminClient, fieldName('caveat', suffix), {
-            options: ['NOFORN'],
+            options: [NOFORN],
             sortOrder: 2,
         });
         created.push(classification, caveat);
@@ -317,61 +271,59 @@ test('clears a value with the trash button, dropping chip and card row', {tag: '
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'about to be cleared'});
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
-            {field_id: caveat.id, value: optionId(caveat, 'NOFORN')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
+            {field_id: caveat.id, value: optionId(caveat, NOFORN)},
         ]);
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        const {page} = app;
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
-        const chips = postOnScreen.container.getByTestId(CHIPS);
+        const postOnScreen = app.center.postList.post(post);
+        const chips = postOnScreen.attributes;
 
-        await expect(chips.getByText('SECRET', {exact: true})).toBeVisible();
-        await expect(chips.getByText('NOFORN', {exact: true})).toBeVisible();
+        await expect(optionChip(chips, SECRET)).toBeVisible();
+        await expect(optionChip(chips, NOFORN)).toBeVisible();
 
         // # Open the modal and clear the first attribute
-        await openModalFromPostMenu(channelsPage, postOnScreen);
-        await expect(page.locator(MODAL)).toBeVisible();
+        await openModalFromPostMenu(postOnScreen);
+        await expect(app.postAttributesModal.locator).toBeVisible();
 
-        const written = page.waitForResponse(
-            (response) =>
-                response.url().includes(`${VALUES_ROUTE}${post.id}`) && response.request().method() === 'PATCH',
-        );
+        const written = waitForValuesWrite(page, post.id);
 
         // * Verify the trash button is named after its own attribute, so a modal of
         // several rows does not offer several buttons called "Clear"
-        const clear = clearOf(page, classification);
+        const clear = app.postAttributesModal.attribute(classification).clearButton.locator;
         await expect(clear).toHaveAccessibleName(`Clear ${classification.name}`);
 
         await clear.click();
         expect((await written).status()).toBe(200);
 
         // * Verify the chip left the post and the other one stayed
-        await expect(chips.getByText('SECRET', {exact: true})).toHaveCount(0);
-        await expect(chips.getByText('NOFORN', {exact: true})).toBeVisible();
+        await expect(chips.locator).not.toContainText(SECRET);
+        await expect(optionChip(chips, NOFORN)).toBeVisible();
 
         // * Verify the row kept its place — it is declared `always` — and lost the
         // trash button, there being nothing left to clear
-        await expect(rowOf(page, classification)).toBeVisible();
-        await expect(triggerOf(page, classification)).toHaveText('');
+        await expect(app.postAttributesModal.attribute(classification).locator).toBeVisible();
+        await expect(app.postAttributesModal.attribute(classification).valueButton.locator).toHaveText('');
         await expect(clear).toHaveCount(0);
 
         // # Close the modal and hover what is left of the row
         await page.keyboard.press('Escape');
-        await expect(page.locator(MODAL)).toBeHidden();
+        await expect(app.postAttributesModal.locator).toBeHidden();
 
-        await chips.hover();
+        await chips.locator.hover();
 
-        const card = page.getByTestId(CARD);
-        await expect(card).toBeVisible();
+        const card = app.postAttributesCard;
+        await expect(card.locator).toBeVisible();
 
         // * Verify the card lost the row with the value, rather than keeping a named
         // row with nothing in it
-        await expect(card.getByRole('listitem')).toHaveCount(1);
-        await expect(card).toContainText('NOFORN');
-        await expect(card.getByText(classification.name, {exact: true})).toHaveCount(0);
+        await expect(card.attributeItems).toHaveCount(1);
+        await expect(card.locator).toContainText(NOFORN);
+        await expect(card.attribute(classification).locator).toHaveCount(0);
+        await expect(card.locator).not.toContainText(classification.name);
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -396,16 +348,16 @@ test('locks a field the user may not write, with a padlock and no way in', {tag:
         await purgeFields(adminClient);
 
         const open = await createField(adminClient, fieldName('open', suffix), {
-            options: ['SECRET'],
+            options: [SECRET],
             sortOrder: 1,
         });
         const restricted = await createField(adminClient, fieldName('restricted', suffix), {
-            options: ['NOFORN'],
+            options: [NOFORN],
             permissionValues: 'sysadmin',
             sortOrder: 2,
         });
         const sealed = await createField(adminClient, fieldName('sealed', suffix), {
-            options: ['ORCON'],
+            options: [ORCON],
             permissionValues: 'none',
             visibility: 'always',
             sortOrder: 3,
@@ -419,45 +371,46 @@ test('locks a field the user may not write, with a padlock and no way in', {tag:
         // reaches the server over HTTP, the administering one included. Declaring it
         // `always` is what puts its row in the modal regardless.
         await setPostValues(adminClient, post.id, [
-            {field_id: open.id, value: optionId(open, 'SECRET')},
-            {field_id: restricted.id, value: optionId(restricted, 'NOFORN')},
+            {field_id: open.id, value: optionId(open, SECRET)},
+            {field_id: restricted.id, value: optionId(restricted, NOFORN)},
         ]);
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
-        await openModalFromPostMenu(channelsPage, postOnScreen);
-        await expect(page.locator(MODAL)).toBeVisible();
+        await openModalFromPostMenu(postOnScreen);
+        await expect(app.postAttributesModal.locator).toBeVisible();
 
         // * Verify the writable field offers both controls, so the absences below are
         // about permission rather than about the modal not having drawn
-        await expect(triggerOf(page, open)).toHaveText('SECRET');
-        await expect(clearOf(page, open)).toHaveCount(1);
-        await expect(rowOf(page, open).getByRole('img', {name: LOCKED_REASON})).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(open).valueButton.locator).toHaveText(SECRET);
+        await expect(app.postAttributesModal.attribute(open).clearButton.locator).toHaveCount(1);
+        await expect(app.postAttributesModal.attribute(open).lockedImg.locator).toHaveCount(0);
 
         // * Verify the restricted field shows its value as text, marked with a padlock
         // that carries the reason as its accessible name
-        const restrictedRow = rowOf(page, restricted);
+        const restrictedRow = app.postAttributesModal.attribute(restricted);
 
-        await expect(restrictedRow).toContainText('NOFORN');
-        await expect(restrictedRow.getByRole('img', {name: LOCKED_REASON})).toBeVisible();
+        await expect(restrictedRow.locator).toContainText(NOFORN);
+        await expect(restrictedRow.lockedImg.locator).toBeVisible();
+        await expect(restrictedRow.lockedImg.locator).toHaveAccessibleName(LOCKED_REASON);
 
         // * Verify there is no way in. The trash button is *absent* rather than
         // disabled, which is the deliberate shape: a disabled control on half the rows
         // is one the user has to learn to ignore.
-        await expect(triggerOf(page, restricted)).toHaveCount(0);
-        await expect(clearOf(page, restricted)).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(restricted).valueButton.locator).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(restricted).clearButton.locator).toHaveCount(0);
 
         // * Verify a field nobody may write reads the same way with nothing stored
-        const sealedRow = rowOf(page, sealed);
+        const sealedRow = app.postAttributesModal.attribute(sealed);
 
-        await expect(sealedRow).toBeVisible();
-        await expect(sealedRow.getByRole('img', {name: LOCKED_REASON})).toBeVisible();
-        await expect(triggerOf(page, sealed)).toHaveCount(0);
-        await expect(clearOf(page, sealed)).toHaveCount(0);
+        await expect(sealedRow.locator).toBeVisible();
+        await expect(sealedRow.lockedImg.locator).toBeVisible();
+        await expect(sealedRow.lockedImg.locator).toHaveAccessibleName(LOCKED_REASON);
+        await expect(app.postAttributesModal.attribute(sealed).valueButton.locator).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(sealed).clearButton.locator).toHaveCount(0);
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -481,42 +434,42 @@ test('updates an open modal when another session changes the value', {tag: '@pos
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
 
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'changed elsewhere'});
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        const {page} = app;
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
-        await openModalFromPostMenu(channelsPage, postOnScreen);
-        await expect(page.locator(MODAL)).toBeVisible();
+        await openModalFromPostMenu(postOnScreen);
+        await expect(app.postAttributesModal.locator).toBeVisible();
 
-        const trigger = triggerOf(page, classification);
-        await expect(trigger).toHaveText('SECRET');
+        const trigger = app.postAttributesModal.attribute(classification).valueButton.locator;
+        await expect(trigger).toHaveText(SECRET);
 
         const loads = countLoads(page);
 
         // # Change the value from another session entirely
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'UNCLASSIFIED')},
+            {field_id: classification.id, value: optionId(classification, UNCLASSIFIED)},
         ]);
 
         // * Verify the open modal followed. No row holds a copy of its value, so there
         // is nothing staged for somebody else's write to have to beat.
-        await expect(trigger).toHaveText('UNCLASSIFIED');
+        await expect(trigger).toHaveText(UNCLASSIFIED);
 
         // * Verify the chip behind it moved too, and that the modal survived
-        await expect(postOnScreen.container.getByTestId(CHIPS)).toContainText('UNCLASSIFIED');
-        await expect(page.locator(MODAL)).toBeVisible();
+        await expect(postOnScreen.attributes.locator).toContainText(UNCLASSIFIED);
+        await expect(app.postAttributesModal.locator).toBeVisible();
         expect(loads()).toBe(0);
     } finally {
         await deleteFields(adminClient, created);
@@ -542,12 +495,12 @@ test('opens the modal on a post with no values, listing always fields', {tag: '@
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
             visibility: 'always',
             sortOrder: 1,
         });
         const caveat = await createField(adminClient, fieldName('caveat', suffix), {
-            options: ['NOFORN'],
+            options: [NOFORN],
             visibility: 'when_set',
             sortOrder: 2,
         });
@@ -556,39 +509,44 @@ test('opens the modal on a post with no values, listing always fields', {tag: '@
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'nothing set'});
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        const {page} = app;
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
         // * Verify the post carries no chip row, so the menu is the only way in
         await expect(postOnScreen.container).toContainText('nothing set');
-        await expect(postOnScreen.container.getByTestId(CHIPS)).toHaveCount(0);
+        await expect(postOnScreen.attributes.locator).toHaveCount(0);
 
         // # Open the modal from the post's menu
-        await openModalFromPostMenu(channelsPage, postOnScreen);
+        await openModalFromPostMenu(postOnScreen);
 
-        const modal = page.locator(MODAL);
+        const modal = app.postAttributesModal.locator;
         await expect(modal).toBeVisible();
 
         // * Verify the `always` field has a row waiting to be filled in, with a
         // control and nothing in it
-        await expect(rowOf(page, classification)).toBeVisible();
-        await expect(triggerOf(page, classification)).toHaveText('');
+        await expect(app.postAttributesModal.attribute(classification).locator).toBeVisible();
+        await expect(app.postAttributesModal.attribute(classification).valueButton.locator).toHaveText('');
 
         // * Verify it is genuinely writable from here, rather than a label on an
         // empty row
-        await triggerOf(page, classification).click();
-        await expect(page.getByRole('menuitemradio', {name: 'SECRET'})).toBeVisible();
+        await app.postAttributesModal.attribute(classification).valueButton.locator.click();
+        const secretOption = app.postAttributesModal.attribute(classification).valueMenu.option({
+            id: optionId(classification, SECRET),
+        }).locator;
+        await expect(secretOption).toBeVisible();
+        await expect(secretOption).toHaveAttribute('role', 'menuitemradio');
+        await expect(secretOption).toHaveAccessibleName(SECRET);
         await page.keyboard.press('Escape');
 
         // * Verify the `when_set` field is not listed. An unset field with no
         // instruction to appear is one the channel has not asked the author to fill in.
-        await expect(rowOf(page, caveat)).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(caveat).locator).toHaveCount(0);
 
         // # Open the field picker
-        const add = page.getByTestId('post-attributes-add');
+        const add = app.postAttributesModal.addButton.locator;
 
         await expect(add).toBeVisible();
         await add.click();
@@ -596,8 +554,8 @@ test('opens the modal on a post with no values, listing always fields', {tag: '@
         // * Verify the picker offers the field the modal is not already showing, and
         // only that one. The `always` field has a row above, so offering it would be
         // a choice that changes nothing.
-        await expect(pickerItemOf(page, caveat)).toBeVisible();
-        await expect(pickerItemOf(page, classification)).toHaveCount(0);
+        await expect(app.postAttributesModal.addMenu.field(caveat).locator).toBeVisible();
+        await expect(app.postAttributesModal.addMenu.field(classification).locator).toHaveCount(0);
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -630,12 +588,12 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
             visibility: 'when_set',
             sortOrder: 1,
         });
         const caveat = await createField(adminClient, fieldName('caveat', suffix), {
-            options: ['NOFORN'],
+            options: [NOFORN],
             visibility: 'when_set',
             sortOrder: 2,
         });
@@ -644,17 +602,17 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'nothing set yet'});
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        const {page} = app;
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
-        const chips = postOnScreen.container.getByTestId(CHIPS);
+        const postOnScreen = app.center.postList.post(post);
+        const chips = postOnScreen.attributes;
 
         // * Verify the post starts with no chip row at all, so the chip asserted at the
         // end arrived from this test's write rather than from the fixture
         await expect(postOnScreen.container).toContainText('nothing set yet');
-        await expect(chips).toHaveCount(0);
+        await expect(chips.locator).toHaveCount(0);
 
         const loads = countLoads(page);
 
@@ -665,30 +623,30 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         const writes = recordRequests(page, VALUES_ROUTE);
 
         // # Open the modal
-        await openModalFromPostMenu(channelsPage, postOnScreen);
+        await openModalFromPostMenu(postOnScreen);
 
-        const modal = page.locator(MODAL);
+        const modal = app.postAttributesModal.locator;
         await expect(modal).toBeVisible();
 
         // * Verify neither unset `when_set` field has a row. There is nothing stored
         // and nothing asked for, so the modal has nothing to draw.
-        await expect(rowOf(page, classification)).toHaveCount(0);
-        await expect(rowOf(page, caveat)).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(classification).locator).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(caveat).locator).toHaveCount(0);
 
         // # Add the first one from the picker
-        const add = page.getByTestId('post-attributes-add');
+        const add = app.postAttributesModal.addButton.locator;
 
         await add.click();
-        await pickerItemOf(page, classification).click();
+        await app.postAttributesModal.addMenu.field(classification).locator.click();
 
         // * Verify the row arrived with nothing in it
-        await expect(rowOf(page, classification)).toBeVisible();
-        await expect(triggerOf(page, classification)).toHaveText('');
+        await expect(app.postAttributesModal.attribute(classification).locator).toBeVisible();
+        await expect(app.postAttributesModal.attribute(classification).valueButton.locator).toHaveText('');
 
         // * Verify adding wrote nothing. The trash button appears only when there is
         // something to clear, so its absence is the row saying it holds no value — an
         // added row is a request for somewhere to type, not a value of its own.
-        await expect(clearOf(page, classification)).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(classification).clearButton.locator).toHaveCount(0);
 
         // * Verify that on the wire too. The row showing nothing to clear would also
         // be true of a write that stored an empty value, and an empty value is a real
@@ -698,25 +656,25 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         // * Verify the picker stopped offering the field the moment it gained a row,
         // before any value exists to make it a row on its own
         await add.click();
-        await expect(pickerItemOf(page, classification)).toHaveCount(0);
-        await expect(pickerItemOf(page, caveat)).toBeVisible();
+        await expect(app.postAttributesModal.addMenu.field(classification).locator).toHaveCount(0);
+        await expect(app.postAttributesModal.addMenu.field(caveat).locator).toBeVisible();
 
         // # Add the second one too, and leave it empty. It is the control for the
         // reopen below: one added row gets a value and one does not, and only the
         // first has any reason to come back.
-        await pickerItemOf(page, caveat).click();
-        await expect(rowOf(page, caveat)).toBeVisible();
-        await expect(triggerOf(page, caveat)).toHaveText('');
+        await app.postAttributesModal.addMenu.field(caveat).locator.click();
+        await expect(app.postAttributesModal.attribute(caveat).locator).toBeVisible();
+        await expect(app.postAttributesModal.attribute(caveat).valueButton.locator).toHaveText('');
 
         // # Set a value on the new row, waiting on the write itself rather than on
         // elapsed time
-        const written = page.waitForResponse(
-            (response) =>
-                response.url().includes(`${VALUES_ROUTE}${post.id}`) && response.request().method() === 'PATCH',
-        );
+        const written = waitForValuesWrite(page, post.id);
 
-        await triggerOf(page, classification).click();
-        await page.getByRole('menuitemradio', {name: 'SECRET'}).click();
+        await app.postAttributesModal.attribute(classification).valueButton.locator.click();
+        await app.postAttributesModal
+            .attribute(classification)
+            .valueMenu.option({id: optionId(classification, SECRET)})
+            .click();
         expect((await written).status()).toBe(200);
 
         // # Close the modal
@@ -725,29 +683,29 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
 
         // * Verify the chip reached the post. The field is `when_set`, so the post had
         // no chip row at all until this write gave it one.
-        await expect(chips.getByText('SECRET', {exact: true})).toBeVisible();
+        await expect(optionChip(chips, SECRET)).toBeVisible();
 
         // # Reopen the modal
-        await openModalFromPostMenu(channelsPage, postOnScreen);
+        await openModalFromPostMenu(postOnScreen);
         await expect(modal).toBeVisible();
 
         // * Verify the row that was given a value is still there, carrying it. This
         // row is store-derived: it exists because the post holds a value for the
         // field, not because somebody once pressed Add.
-        await expect(rowOf(page, classification)).toBeVisible();
-        await expect(triggerOf(page, classification)).toHaveText('SECRET');
+        await expect(app.postAttributesModal.attribute(classification).locator).toBeVisible();
+        await expect(app.postAttributesModal.attribute(classification).valueButton.locator).toHaveText(SECRET);
 
         // * Verify the row that was added and left empty is gone. The added set is
         // scoped to one opening of the modal and nothing was written, so there is
         // nothing for the row to have been made of — which is also what makes the
         // assertion above about the store rather than about the set.
-        await expect(rowOf(page, caveat)).toHaveCount(0);
+        await expect(app.postAttributesModal.attribute(caveat).locator).toHaveCount(0);
 
         // * Verify the picker offers the empty field again and still not the one with
         // a value
         await add.click();
-        await expect(pickerItemOf(page, caveat)).toBeVisible();
-        await expect(pickerItemOf(page, classification)).toHaveCount(0);
+        await expect(app.postAttributesModal.addMenu.field(caveat).locator).toBeVisible();
+        await expect(app.postAttributesModal.addMenu.field(classification).locator).toHaveCount(0);
 
         // * Verify nothing reloaded the page to get any of this
         expect(loads()).toBe(0);
@@ -781,7 +739,7 @@ test('omits the field picker when every field already has a row', {tag: '@post_a
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
             visibility: 'always',
         });
         created.push(classification);
@@ -789,31 +747,30 @@ test('omits the field picker when every field already has a row', {tag: '@post_a
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'all fields on show'});
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
         // # Open the modal
-        await openModalFromPostMenu(channelsPage, postOnScreen);
+        await openModalFromPostMenu(postOnScreen);
 
-        const modal = page.locator(MODAL);
+        const modal = app.postAttributesModal.locator;
         await expect(modal).toBeVisible();
 
         // * Verify the field has its row, unset and waiting
-        await expect(rowOf(page, classification)).toBeVisible();
-        await expect(triggerOf(page, classification)).toHaveText('');
+        await expect(app.postAttributesModal.attribute(classification).locator).toBeVisible();
+        await expect(app.postAttributesModal.attribute(classification).valueButton.locator).toHaveText('');
 
         // * Verify the user may write it. Without this the picker's absence would have
         // a second explanation — a field nobody may fill in is not a candidate either.
-        await expect(triggerOf(page, classification)).toHaveCount(1);
+        await expect(app.postAttributesModal.attribute(classification).valueButton.locator).toHaveCount(1);
 
         // * Verify there is no picker at all. Omitted rather than disabled: a channel
         // that declares all its fields `always` would otherwise show a permanently dead
         // `+ Add attribute` on every post, which is the only control those users see
         // here.
-        await expect(page.getByTestId('post-attributes-add')).toHaveCount(0);
+        await expect(app.postAttributesModal.addButton.locator).toHaveCount(0);
     } finally {
         await deleteFields(adminClient, created);
     }

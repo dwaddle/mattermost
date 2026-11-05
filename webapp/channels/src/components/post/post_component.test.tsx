@@ -216,7 +216,7 @@ describe('PostComponent', () => {
                 state,
             );
 
-            expect(screen.getByTestId('post-attributes-chips')).toBeInTheDocument();
+            expect(screen.getByTestId('center.post_list.post.attributes')).toBeInTheDocument();
             expect(screen.getByText('SECRET')).toBeInTheDocument();
         });
 
@@ -229,7 +229,7 @@ describe('PostComponent', () => {
                 state,
             );
 
-            expect(screen.queryByTestId('post-attributes-chips')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('center.post_list.post.attributes')).not.toBeInTheDocument();
             expect(screen.queryByText('SECRET')).not.toBeInTheDocument();
         });
 
@@ -243,7 +243,7 @@ describe('PostComponent', () => {
                 state,
             );
 
-            expect(screen.queryByTestId('post-attributes-chips')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('center.post_list.post.attributes')).not.toBeInTheDocument();
             expect(screen.queryByText('SECRET')).not.toBeInTheDocument();
         });
 
@@ -261,7 +261,7 @@ describe('PostComponent', () => {
                 state,
             );
 
-            expect(screen.queryByTestId('post-attributes-chips-unavailable')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('center.post_list.post.attributes_unavailable')).not.toBeInTheDocument();
         });
     });
 

@@ -14,6 +14,7 @@ import {DeletePostModal} from './delete_post_modal';
 import {FlagPostModal} from './flag_post_modal';
 import {ForwardPostModal} from './forward_post_modal';
 import {MoveThreadModal} from './move_thread_modal';
+import {PostAttributesModal} from './post_attributes_modal';
 import type {PostDotMenuOption} from './sets';
 
 /** Scope `post_dot_menu`. */
@@ -243,7 +244,7 @@ export class PostDotMenu extends Scope {
     /**
      * `post_dot_menu.post_attributes--menuitem` — DotMenuClass (channels/src/components/dot_menu/dot_menu.tsx)
      * Renders only when showPostAttributes.
-     * Opens modal PostAttributesModal.
+     * Opens modal PostAttributesModal (`post_attributes_modal`).
      */
     get postAttributesMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.post_attributes--menuitem`), {
@@ -255,8 +256,10 @@ export class PostDotMenu extends Scope {
         });
     }
 
-    async clickPostAttributesMenuItem(): Promise<void> {
+    /** Clicks postAttributesMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickPostAttributesMenuItem(): Promise<PostAttributesModal> {
         await this.postAttributesMenuItem.click();
+        return new PostAttributesModal(this.page, 'post_attributes_modal');
     }
 
     /**

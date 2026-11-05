@@ -10,8 +10,8 @@ import {
     duration,
 } from '@mattermost/playwright-lib';
 
-import {ensureUserAttributes, createPrivateChannelForABAC, activatePolicy, getPolicyIdByName} from '../support';
-import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
+import {ensureUserAttributes, createPrivateChannelForABAC, activatePolicy} from '../support';
+import {createMembershipPolicy, policyIdByName, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
 
 /**
  * MM-T5799a: LDAP sync - User removed after attribute removed (startsWith operator, auto-add true)
@@ -44,7 +44,7 @@ test('MM-T5799a LDAP sync - User removed with startsWith operator (auto-add true
         channels: [channel1],
         autoAdd: true,
     });
-    const t5799Policy1Id = (await getPolicyIdByName(adminClient, policy1Name))!;
+    const t5799Policy1Id = await policyIdByName(adminClient, policy1Name);
 
     // Activate immediately using the UUID — no creation-sync wait needed.
     await activatePolicy(adminClient, t5799Policy1Id);

@@ -10,7 +10,7 @@ import type {Channel} from '@mattermost/types/channels';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
-import {Message, PostMessagePreview} from './shared';
+import {Message, PostScope} from './shared';
 
 /** Scope `forward_post_modal`. */
 export class ForwardPostModal extends Scope {
@@ -155,8 +155,8 @@ export class ForwardPostModal extends Scope {
      * `forward_post_modal.preview` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
      * Renders only when previewPost.
      */
-    get preview(): PostMessagePreview {
-        return new PostMessagePreview(this.page, `${this.scope}.preview`, this.root);
+    get preview(): PostScope {
+        return new PostScope(this.page, `${this.scope}.preview`, this.root);
     }
 
     /** Every `forward_post_modal.channel:{key}` in the scope as a list by key, for the list matchers: `expect(x.channelList).toHaveKeys([…])`. */

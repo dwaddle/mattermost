@@ -943,6 +943,7 @@ function PostComponent(props: Props) {
                             <PostAttributesChips
                                 post={post}
                                 channel={props.channel}
+                                testIdScope={postTestIdScope}
                             />
                         )}
                         {comment}

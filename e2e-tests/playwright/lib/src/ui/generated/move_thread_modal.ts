@@ -8,7 +8,7 @@ import type {Locator, Page} from '@playwright/test';
 
 import {Scope} from '../../aria';
 
-import {PostMessagePreview} from './shared';
+import {PostScope} from './shared';
 
 /** Scope `move_thread_modal`. */
 export class MoveThreadModal extends Scope {
@@ -25,7 +25,7 @@ export class MoveThreadModal extends Scope {
      * `move_thread_modal.preview` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
      * Renders only when previewPost.
      */
-    get preview(): PostMessagePreview {
-        return new PostMessagePreview(this.page, `${this.scope}.preview`, this.root);
+    get preview(): PostScope {
+        return new PostScope(this.page, `${this.scope}.preview`, this.root);
     }
 }

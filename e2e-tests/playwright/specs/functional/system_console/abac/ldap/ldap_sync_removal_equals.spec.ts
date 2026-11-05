@@ -14,10 +14,9 @@ import {
     ensureUserAttributes,
     createPrivateChannelForABAC,
     activatePolicy,
-    getPolicyIdByName,
     getUserAttributeFieldByName,
 } from '../support';
-import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
+import {createMembershipPolicy, policyIdByName, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
 
 /**
  * MM-T5799b: LDAP sync - User removed after attribute removed (== operator, auto-add true)
@@ -47,7 +46,7 @@ test('MM-T5799b LDAP sync - User removed with == operator (auto-add true)', asyn
         channels: [channel2],
         autoAdd: true,
     });
-    const t5799Policy2Id = (await getPolicyIdByName(adminClient, policy2Name))!;
+    const t5799Policy2Id = await policyIdByName(adminClient, policy2Name);
 
     await activatePolicy(adminClient, t5799Policy2Id);
 

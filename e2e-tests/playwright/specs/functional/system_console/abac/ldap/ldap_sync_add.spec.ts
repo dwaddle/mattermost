@@ -14,10 +14,9 @@ import {
     ensureUserAttributes,
     createPrivateChannelForABAC,
     activatePolicy,
-    getPolicyIdByName,
     getUserAttributeFieldByName,
 } from '../support';
-import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
+import {createMembershipPolicy, policyIdByName, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
 
 /**
  * MM-T5797a: LDAP sync - User auto-added with `= is` operator (auto-add true)
@@ -51,7 +50,7 @@ test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', a
         autoAdd: true,
     });
 
-    const policyId = (await getPolicyIdByName(adminClient, policyName))!;
+    const policyId = await policyIdByName(adminClient, policyName);
     await activatePolicy(adminClient, policyId);
 
     // Initial sync — user has non-qualifying attribute, should not be added.
@@ -115,7 +114,7 @@ test('MM-T5797b LDAP sync - User auto-added with contains operator (auto-add tru
         autoAdd: true,
     });
 
-    const policyId = (await getPolicyIdByName(adminClient, policyName))!;
+    const policyId = await policyIdByName(adminClient, policyName);
     await activatePolicy(adminClient, policyId);
 
     // Initial sync — user has non-qualifying attribute, should not be added.

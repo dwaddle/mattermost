@@ -1,7 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Locator, Page} from '@playwright/test';
 import {expect} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 
@@ -297,10 +296,6 @@ export async function createTeamAdmin(adminClient: Client4, teamId: string) {
 }
 
 /**
- * Adds an attribute rule row in the policy editor and fills in a value.
- * Handles the auto-opening attribute selector menu.
- */
-/**
  * Adds a rule `<attribute> == value` to a rules table (a text attribute, whose value is typed): Add opens the new
  * row's attribute menu by itself. Tab commits the value before the caller goes on.
  */
@@ -311,27 +306,6 @@ export async function addRule(rules: generated.Rules, field: {id: string}, value
     await row.fillValueTextbox(value);
     await row.valueTextbox.press('Tab');
     await expect(row.valueTextbox.locator).toHaveValue(value);
-}
-
-export async function addAttributeRule(container: Locator, page: Page, value: string, attributeName = 'Department') {
-    const addAttrBtn = container.getByRole('button', {name: /Add attribute/});
-    await expect(addAttrBtn).toBeEnabled();
-    await addAttrBtn.click();
-
-    // The attribute selector menu auto-opens — select by name, not by position.
-    // Clicking the first item is unreliable when multiple attributes exist (e.g. Location
-    // sorts before Department and gets picked instead, causing self-inclusion to fail).
-    const attributeMenu = page.locator('[id^="attribute-selector-menu"]');
-    await attributeMenu.waitFor({state: 'visible', timeout: duration.ten_sec});
-    await attributeMenu.locator('li').filter({hasText: attributeName}).first().click();
-
-    // Fill value in the simple input (text-type attribute renders direct input)
-    const valueInput = container.locator('.values-editor__simple-input').first();
-    await valueInput.waitFor({state: 'visible', timeout: duration.ten_sec});
-    await valueInput.fill(value);
-
-    // Blur the input so React commits the onChange before the caller proceeds
-    await valueInput.press('Tab');
 }
 
 export async function enableTeamMembershipABACConfig(client: Client4) {

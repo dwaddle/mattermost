@@ -15,7 +15,8 @@ import {
     duration,
 } from '@mattermost/playwright-lib';
 
-import {createPrivateChannelForABAC, ensureUserAttributes, getPolicyIdByName} from '../support';
+import {createPrivateChannelForABAC, ensureUserAttributes} from '../support';
+import {permissionPolicyIdByName} from '../surface';
 
 export async function setupUserAndChannel(
     adminClient: any,
@@ -68,12 +69,7 @@ export async function ensureABACEnabled(adminClient: Client4): Promise<void> {
 
 /** Block until a just-created policy is readable through the search API. */
 export async function waitForPolicy(adminClient: Client4, policyName: string): Promise<void> {
-    await expect
-        .poll(async () => Boolean(await getPolicyIdByName(adminClient, policyName, 1)), {
-            timeout: duration.half_min,
-            intervals: [500, 1000, 2000],
-        })
-        .toBe(true);
+    await permissionPolicyIdByName(adminClient, policyName);
 }
 
 /** Posts a message with an asset file attached through the composer's file chooser, waiting for the post. */

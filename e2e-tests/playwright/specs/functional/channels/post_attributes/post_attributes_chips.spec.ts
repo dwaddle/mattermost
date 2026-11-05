@@ -11,22 +11,26 @@ import {
     createField,
     deleteFields,
     fieldName,
+    optionChip,
     optionId,
     purgeFields,
     recordRequests,
     setPostValues,
 } from './support';
 
-const CHIPS = 'post-attributes-chips';
-const OVERFLOW = 'post-attributes-overflow';
-
-// One testid per renderer. Asserting on these rather than on text alone is what proves a
-// field type reached the renderer its type selects, not merely that something drew.
-// `select`, `multiselect` and `rank` deliberately share one — the option-bearing family
-// has a single renderer, and the arity cap is what separates them.
-const OPTION_CHIP = 'post_attributes.value.select--text';
-const TEXT_CHIP = 'post_attributes.value.text--text';
-const USER_CHIP = 'post_attributes.value.user';
+// Option names and values the specs create. Chips are found by the renderer that drew them
+// (`attributes.value.selectText` for the option-bearing family, `.textText`, `.user`): asserting
+// on those rather than on text alone is what proves a field type reached the renderer its type
+// selects, not merely that something drew. `select`, `multiselect` and `rank` deliberately share
+// one — the option-bearing family has a single renderer, and the arity cap is what separates them.
+const SECRET = 'SECRET';
+const UNCLASSIFIED = 'UNCLASSIFIED';
+const NOFORN = 'NOFORN';
+const ORCON = 'ORCON';
+const HIGH = 'HIGH';
+const PLAIN = 'PLAIN';
+const ODD = 'ODD';
+const NOTE = 'Q3 planning';
 
 // Two boards palette tokens and the background each resolves to, from COLOR_DESCRIPTOR
 // in utils/board_property_colors. Hard-coded rather than imported: the point is to catch
@@ -56,25 +60,25 @@ test('renders attribute chips on first paint without fetching values', {tag: '@p
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'hydrated post'});
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
 
         // # Start recording requests before the first navigation, since the channel
         // load is where a regression would show
-        const {page, channelsPage, app} = await pw.testBrowser.login(user);
-        const valuesRequests = recordRequests(page, VALUES_ROUTE);
+        const {app} = await pw.testBrowser.login(user);
+        const valuesRequests = recordRequests(app.page, VALUES_ROUTE);
 
-        await app.channelsPage.goto({team, channel: channel.name});
+        await app.channelsPage.goto({team, channel});
 
         // * Verify the chip is on screen with the option's name, not its stored id
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
-        await expect(postOnScreen.container.getByTestId(CHIPS)).toBeVisible();
-        await expect(postOnScreen.container.getByText('SECRET', {exact: true})).toBeVisible();
+        const postOnScreen = app.center.postList.post(post);
+        await expect(postOnScreen.attributes.locator).toBeVisible();
+        await expect(optionChip(postOnScreen.attributes, SECRET)).toBeVisible();
 
         // * Verify the values arrived on the post itself: nothing asked the per-post
         // values endpoint for them. This is the spec's central claim.
@@ -94,11 +98,10 @@ test('asks the posts endpoint to hydrate', {tag: '@post_attributes'}, async ({pw
 
     // # Arm the wait before the navigation that triggers the fetch
     const {user, team} = await pw.initSetup();
-    const {page, app} = await pw.testBrowser.login(user);
-    const hydrated = page.waitForResponse((response) => response.url().includes(HYDRATION_PARAM));
+    const {app} = await pw.testBrowser.login(user);
+    const hydrated = app.page.waitForResponse((response) => response.url().includes(HYDRATION_PARAM));
 
-    await app.teamPage.goto({team});
-    await expect(app.center.composer.locator).toBeVisible();
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // * Verify a posts request carried the hydration parameter. The wait is the
     // assertion: it resolves on the first matching response and fails the test on the
@@ -125,34 +128,34 @@ test('sends no parameter and draws no chips with the flag off', {tag: '@post_att
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET'],
+            options: [SECRET],
         });
         created.push(classification);
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'unflagged post'});
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
 
-        const {page, channelsPage, app} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
 
         // # Turn the flag off for this browser only. Patching the server config would
         // flip it for every spec running in parallel; rewriting the client config
         // response keeps the blast radius to this page.
-        await page.route('**/api/v4/config/client?format=old', async (route) => {
+        await app.page.route('**/api/v4/config/client?format=old', async (route) => {
             const response = await route.fetch();
             const config = await response.json();
 
             await route.fulfill({json: {...config, FeatureFlagPostAttributes: 'false'}});
         });
 
-        const hydrationRequests = recordRequests(page, HYDRATION_PARAM);
+        const hydrationRequests = recordRequests(app.page, HYDRATION_PARAM);
 
-        await app.channelsPage.goto({team, channel: channel.name});
+        await app.channelsPage.goto({team, channel});
 
         // * Verify the post rendered but carries no chip row
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
-        await expect(postOnScreen.container).toContainText('unflagged post');
-        await expect(postOnScreen.container.getByTestId(CHIPS)).toHaveCount(0);
+        const postOnScreen = app.center.postList.post(post);
+        await expect(postOnScreen.locator).toContainText('unflagged post');
+        await expect(postOnScreen.attributes.locator).toHaveCount(0);
 
         // * Verify nothing asked the server to hydrate
         expect(hydrationRequests).toEqual([]);
@@ -178,7 +181,7 @@ test('renders chips on the RHS root and on a reply', {tag: '@post_attributes'}, 
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
         const root = await userClient.createTestPost({channel_id: channel.id, message: 'thread root'});
@@ -189,32 +192,33 @@ test('renders chips on the RHS root and on a reply', {tag: '@post_attributes'}, 
         });
 
         await setPostValues(adminClient, root.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
         await setPostValues(adminClient, reply.id, [
-            {field_id: classification.id, value: optionId(classification, 'UNCLASSIFIED')},
+            {field_id: classification.id, value: optionId(classification, UNCLASSIFIED)},
         ]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: channel.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
         // * Verify the chip is on the root in the centre channel
-        const rootInCenter = await channelsPage.centerView.getPostById(root.id);
-        await expect(rootInCenter.container.getByText('SECRET', {exact: true})).toBeVisible();
+        const rootInCenter = app.center.postList.post(root);
+        await expect(optionChip(rootInCenter.attributes, SECRET)).toBeVisible();
 
         // # Open the thread in the RHS
-        await rootInCenter.reply();
-        await channelsPage.sidebarRight.toBeVisible();
+        await rootInCenter.messageText.locator.hover();
+        await rootInCenter.menu.clickReplyButton();
+        await expect(app.rhs.postCreate.messageTextbox.locator).toBeVisible();
 
         // * Verify the same root carries its chip in the RHS. A value set on a reply has
         // never been gated to roots server-side, so gating it here would make it
         // permanently invisible.
-        const rootInRhs = await channelsPage.sidebarRight.getPostById(root.id);
-        await expect(rootInRhs.container.getByText('SECRET', {exact: true})).toBeVisible();
+        const rootInRhs = app.rhs.thread.post(root);
+        await expect(optionChip(rootInRhs.attributes, SECRET)).toBeVisible();
 
         // * Verify the reply carries its own, different chip
-        const replyInRhs = await channelsPage.sidebarRight.getPostById(reply.id);
-        await expect(replyInRhs.container.getByText('UNCLASSIFIED', {exact: true})).toBeVisible();
+        const replyInRhs = app.rhs.thread.post(reply);
+        await expect(optionChip(replyInRhs.attributes, UNCLASSIFIED)).toBeVisible();
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -237,37 +241,37 @@ test('renders two chips and a +1 badge for three set fields', {tag: '@post_attri
         await purgeFields(adminClient);
 
         const first = await createField(adminClient, fieldName('first', suffix), {
-            options: ['SECRET'],
+            options: [SECRET],
             sortOrder: 1,
         });
         const second = await createField(adminClient, fieldName('second', suffix), {
-            options: ['NOFORN'],
+            options: [NOFORN],
             sortOrder: 2,
         });
         const third = await createField(adminClient, fieldName('third', suffix), {
-            options: ['ORCON'],
+            options: [ORCON],
             sortOrder: 3,
         });
         created.push(first, second, third);
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'three attributes'});
         await setPostValues(adminClient, post.id, [
-            {field_id: first.id, value: optionId(first, 'SECRET')},
-            {field_id: second.id, value: optionId(second, 'NOFORN')},
-            {field_id: third.id, value: optionId(third, 'ORCON')},
+            {field_id: first.id, value: optionId(first, SECRET)},
+            {field_id: second.id, value: optionId(second, NOFORN)},
+            {field_id: third.id, value: optionId(third, ORCON)},
         ]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: channel.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
         // * Verify the first two fields drew chips, in sort_order
-        await expect(postOnScreen.container.getByText('SECRET', {exact: true})).toBeVisible();
-        await expect(postOnScreen.container.getByText('NOFORN', {exact: true})).toBeVisible();
+        await expect(optionChip(postOnScreen.attributes, SECRET)).toBeVisible();
+        await expect(optionChip(postOnScreen.attributes, NOFORN)).toBeVisible();
 
         // * Verify the third became the badge rather than a third chip
-        await expect(postOnScreen.container.getByText('ORCON', {exact: true})).toHaveCount(0);
-        await expect(postOnScreen.container.getByTestId(OVERFLOW)).toHaveText('+1');
+        await expect(postOnScreen.locator).not.toContainText(ORCON);
+        await expect(postOnScreen.attributes.overflowImg.locator).toHaveText('+1');
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -289,28 +293,28 @@ test('draws no chip for a field that is not set', {tag: '@post_attributes'}, asy
     try {
         await purgeFields(adminClient);
 
-        const set = await createField(adminClient, fieldName('set', suffix), {options: ['SECRET'], sortOrder: 1});
+        const set = await createField(adminClient, fieldName('set', suffix), {options: [SECRET], sortOrder: 1});
         const unset = await createField(adminClient, fieldName('unset', suffix), {
-            options: ['NOFORN'],
+            options: [NOFORN],
             visibility: 'when_set',
             sortOrder: 2,
         });
         created.push(set, unset);
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'one of two set'});
-        await setPostValues(adminClient, post.id, [{field_id: set.id, value: optionId(set, 'SECRET')}]);
+        await setPostValues(adminClient, post.id, [{field_id: set.id, value: optionId(set, SECRET)}]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: channel.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
         // * Verify the set field drew its chip
-        await expect(postOnScreen.container.getByText('SECRET', {exact: true})).toBeVisible();
+        await expect(optionChip(postOnScreen.attributes, SECRET)).toBeVisible();
 
         // * Verify the unset field drew nothing at all — no placeholder, and no slot
         // spent that would push a later attribute into the overflow badge
-        await expect(postOnScreen.container.getByText('NOFORN', {exact: true})).toHaveCount(0);
-        await expect(postOnScreen.container.getByTestId(OVERFLOW)).toHaveCount(0);
+        await expect(postOnScreen.locator).not.toContainText(NOFORN);
+        await expect(postOnScreen.attributes.overflowImg.locator).toHaveCount(0);
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -338,7 +342,7 @@ test('ignores a field scoped to a different channel', {tag: '@post_attributes'},
         await adminClient.addToChannel(user.id, other.id);
 
         const scoped = await createField(adminClient, fieldName('scoped', suffix), {
-            options: ['SECRET'],
+            options: [SECRET],
             channelId: owning.id,
         });
         created.push(scoped);
@@ -346,27 +350,27 @@ test('ignores a field scoped to a different channel', {tag: '@post_attributes'},
         // The value is written against a post in the *other* channel, so the only thing
         // keeping it off screen is the field's scope.
         const post = await userClient.createTestPost({channel_id: other.id, message: 'out of scope'});
-        await setPostValues(adminClient, post.id, [{field_id: scoped.id, value: optionId(scoped, 'SECRET')}]);
+        await setPostValues(adminClient, post.id, [{field_id: scoped.id, value: optionId(scoped, SECRET)}]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: other.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: other});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
         // * Verify the post rendered without a chip row
-        await expect(postOnScreen.container).toContainText('out of scope');
-        await expect(postOnScreen.container.getByTestId(CHIPS)).toHaveCount(0);
+        await expect(postOnScreen.locator).toContainText('out of scope');
+        await expect(postOnScreen.attributes.locator).toHaveCount(0);
 
         // # Open the channel the field does belong to
-        await app.channelsPage.goto({team, channel: owning.name});
+        await app.channelsPage.goto({team, channel: owning});
 
         // * Verify the field applies there, so the absence above was scope and not a
         // broken fixture
         const inScope = await userClient.createTestPost({channel_id: owning.id, message: 'in scope'});
-        await setPostValues(adminClient, inScope.id, [{field_id: scoped.id, value: optionId(scoped, 'SECRET')}]);
+        await setPostValues(adminClient, inScope.id, [{field_id: scoped.id, value: optionId(scoped, SECRET)}]);
 
-        const inScopeOnScreen = await channelsPage.centerView.getPostById(inScope.id);
-        await expect(inScopeOnScreen.container.getByText('SECRET', {exact: true})).toBeVisible();
+        const inScopeOnScreen = app.center.postList.post(inScope);
+        await expect(optionChip(inScopeOnScreen.attributes, SECRET)).toBeVisible();
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -390,30 +394,30 @@ test('updates a chip when another session changes the value', {tag: '@post_attri
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET', 'UNCLASSIFIED'],
+            options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'about to change'});
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: channel.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
-        await expect(postOnScreen.container.getByText('SECRET', {exact: true})).toBeVisible();
+        const postOnScreen = app.center.postList.post(post);
+        await expect(optionChip(postOnScreen.attributes, SECRET)).toBeVisible();
 
         // # Change the value from another session entirely
         await setPostValues(adminClient, post.id, [
-            {field_id: classification.id, value: optionId(classification, 'UNCLASSIFIED')},
+            {field_id: classification.id, value: optionId(classification, UNCLASSIFIED)},
         ]);
 
         // * Verify the chip followed without a reload. This is why the row reads the
         // property values slice rather than the post's metadata: the websocket event
         // lands in that slice, and nothing re-delivers the post.
-        await expect(postOnScreen.container.getByText('UNCLASSIFIED', {exact: true})).toBeVisible();
-        await expect(postOnScreen.container.getByText('SECRET', {exact: true})).toHaveCount(0);
+        await expect(optionChip(postOnScreen.attributes, UNCLASSIFIED)).toBeVisible();
+        await expect(postOnScreen.locator).not.toContainText(SECRET);
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -438,11 +442,11 @@ test('renders every single-chip field type through its own renderer', {tag: '@po
 
         const note = await createField(adminClient, fieldName('note', suffix), {type: 'text'});
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: ['SECRET'],
+            options: [SECRET],
         });
         const priority = await createField(adminClient, fieldName('priority', suffix), {
             type: 'rank',
-            options: ['HIGH'],
+            options: [HIGH],
         });
         const owner = await createField(adminClient, fieldName('owner', suffix), {type: 'user'});
         created.push(note, classification, priority, owner);
@@ -450,33 +454,33 @@ test('renders every single-chip field type through its own renderer', {tag: '@po
         // # Give each field its own post, so every post draws exactly one chip and the
         // two-chip budget never enters into it
         const textPost = await userClient.createTestPost({channel_id: channel.id, message: 'text field'});
-        await setPostValues(adminClient, textPost.id, [{field_id: note.id, value: 'Q3 planning'}]);
+        await setPostValues(adminClient, textPost.id, [{field_id: note.id, value: NOTE}]);
 
         const selectPost = await userClient.createTestPost({channel_id: channel.id, message: 'select field'});
         await setPostValues(adminClient, selectPost.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
 
         const rankPost = await userClient.createTestPost({channel_id: channel.id, message: 'rank field'});
-        await setPostValues(adminClient, rankPost.id, [{field_id: priority.id, value: optionId(priority, 'HIGH')}]);
+        await setPostValues(adminClient, rankPost.id, [{field_id: priority.id, value: optionId(priority, HIGH)}]);
 
         const userPost = await userClient.createTestPost({channel_id: channel.id, message: 'user field'});
         await setPostValues(adminClient, userPost.id, [{field_id: owner.id, value: user.id}]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: channel.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
         // * Verify a text field renders its stored string through the text renderer
-        const textOnScreen = await channelsPage.centerView.getPostById(textPost.id);
-        const textChip = textOnScreen.container.getByTestId(TEXT_CHIP);
+        const textOnScreen = app.center.postList.post(textPost);
+        const textChip = textOnScreen.attributes.value.textText.locator;
 
-        await expect(textChip).toHaveText('Q3 planning');
+        await expect(textChip).toHaveText(NOTE);
 
         // * Verify a select renders the option's name, never the stored option id
-        const selectOnScreen = await channelsPage.centerView.getPostById(selectPost.id);
-        const selectChip = selectOnScreen.container.getByTestId(OPTION_CHIP);
+        const selectOnScreen = app.center.postList.post(selectPost);
+        const selectChip = selectOnScreen.attributes.value.selectText.locator;
 
-        await expect(selectChip).toHaveText('SECRET');
+        await expect(selectChip).toHaveText(SECRET);
 
         // * Verify the text value is drawn as the same chip as an option, in the same
         // neutral. Neither field carries a colour, so comparing the two against each
@@ -498,20 +502,20 @@ test('renders every single-chip field type through its own renderer', {tag: '@po
         );
 
         // * Verify a rank goes through that same option renderer and draws one chip
-        const rankOnScreen = await channelsPage.centerView.getPostById(rankPost.id);
-        await expect(rankOnScreen.container.getByTestId(OPTION_CHIP)).toHaveText('HIGH');
+        const rankOnScreen = app.center.postList.post(rankPost);
+        await expect(rankOnScreen.attributes.value.selectText.locator).toHaveText(HIGH);
 
         // * Verify a user field resolves the id to a name. TeammateNameDisplay is
         // 'username' in the E2E config baseline, so that is what it resolves to.
-        const userOnScreen = await channelsPage.centerView.getPostById(userPost.id);
-        const userChip = userOnScreen.container.getByTestId(USER_CHIP);
+        const userOnScreen = app.center.postList.post(userPost);
+        const userChip = userOnScreen.attributes.value.user.locator;
 
         await expect(userChip).toContainText(user.username);
         await expect(userChip).not.toContainText(user.id);
 
         // * Verify the chip carries the avatar beside the name. A user value is the one
         // chip that is not text alone, and the name assertion above would hold without it.
-        await expect(userChip.locator('.Avatar')).toBeVisible();
+        await expect(userChip.getByRole('img')).toBeVisible();
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -537,30 +541,30 @@ test('renders one chip per entry of a multiselect', {tag: '@post_attributes'}, a
         const caveats = await createField(adminClient, fieldName('caveats', suffix), {
             type: 'multiselect',
             options: [
-                {name: 'NOFORN', color: RED_TOKEN.name},
-                {name: 'ORCON', color: BLUE_TOKEN.name},
+                {name: NOFORN, color: RED_TOKEN.name},
+                {name: ORCON, color: BLUE_TOKEN.name},
             ],
         });
         created.push(caveats);
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'two caveats'});
         await setPostValues(adminClient, post.id, [
-            {field_id: caveats.id, value: [optionId(caveats, 'NOFORN'), optionId(caveats, 'ORCON')]},
+            {field_id: caveats.id, value: [optionId(caveats, NOFORN), optionId(caveats, ORCON)]},
         ]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: channel.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        const postOnScreen = await channelsPage.centerView.getPostById(post.id);
+        const postOnScreen = app.center.postList.post(post);
 
         // * Verify both entries drew their own chip, from the one field
-        await expect(postOnScreen.container.getByTestId(OPTION_CHIP)).toHaveCount(2);
-        await expect(postOnScreen.container.getByText('NOFORN', {exact: true})).toBeVisible();
-        await expect(postOnScreen.container.getByText('ORCON', {exact: true})).toBeVisible();
+        await expect(postOnScreen.attributes.value.selectText.locator).toHaveCount(2);
+        await expect(optionChip(postOnScreen.attributes, NOFORN)).toBeVisible();
+        await expect(optionChip(postOnScreen.attributes, ORCON)).toBeVisible();
 
         // * Verify each chip took its own option's colour. Two different colours from one
         // field is what proves colour is resolved per option rather than per field.
-        const noforn = postOnScreen.container.getByText('NOFORN', {exact: true});
-        const orcon = postOnScreen.container.getByText('ORCON', {exact: true});
+        const noforn = optionChip(postOnScreen.attributes, NOFORN);
+        const orcon = optionChip(postOnScreen.attributes, ORCON);
 
         await expect(noforn).toHaveCSS('background-color', RED_TOKEN.background);
         await expect(orcon).toHaveCSS('background-color', BLUE_TOKEN.background);
@@ -568,7 +572,7 @@ test('renders one chip per entry of a multiselect', {tag: '@post_attributes'}, a
         await expect(orcon).toHaveCSS('color', DERIVED_FOREGROUND);
 
         // * Verify two entries exactly fill the budget, leaving nothing to overflow
-        await expect(postOnScreen.container.getByTestId(OVERFLOW)).toHaveCount(0);
+        await expect(postOnScreen.attributes.overflowImg.locator).toHaveCount(0);
     } finally {
         await deleteFields(adminClient, created);
     }
@@ -595,33 +599,33 @@ test('colours a select chip from its option, falling back to neutral', {tag: '@p
         await purgeFields(adminClient);
 
         const classification = await createField(adminClient, fieldName('classification', suffix), {
-            options: [{name: 'SECRET', color: RED_TOKEN.name}, 'PLAIN', {name: 'ODD', color: 'chartreuse'}],
+            options: [{name: SECRET, color: RED_TOKEN.name}, PLAIN, {name: ODD, color: 'chartreuse'}],
         });
         created.push(classification);
 
         // # One post per option, so each draws a single chip
         const colouredPost = await userClient.createTestPost({channel_id: channel.id, message: 'palette colour'});
         await setPostValues(adminClient, colouredPost.id, [
-            {field_id: classification.id, value: optionId(classification, 'SECRET')},
+            {field_id: classification.id, value: optionId(classification, SECRET)},
         ]);
 
         const plainPost = await userClient.createTestPost({channel_id: channel.id, message: 'no colour'});
         await setPostValues(adminClient, plainPost.id, [
-            {field_id: classification.id, value: optionId(classification, 'PLAIN')},
+            {field_id: classification.id, value: optionId(classification, PLAIN)},
         ]);
 
         const oddPost = await userClient.createTestPost({channel_id: channel.id, message: 'unrecognised colour'});
         await setPostValues(adminClient, oddPost.id, [
-            {field_id: classification.id, value: optionId(classification, 'ODD')},
+            {field_id: classification.id, value: optionId(classification, ODD)},
         ]);
 
-        const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: channel.name});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
         // * Verify the palette token resolves to its background and to a derived
         // foreground, both opaque, so the pair holds its contrast in any theme
-        const colouredOnScreen = await channelsPage.centerView.getPostById(colouredPost.id);
-        const colouredChip = colouredOnScreen.container.getByTestId(OPTION_CHIP);
+        const colouredOnScreen = app.center.postList.post(colouredPost);
+        const colouredChip = colouredOnScreen.attributes.value.selectText.locator;
 
         await expect(colouredChip).toHaveCSS('background-color', RED_TOKEN.background);
         await expect(colouredChip).toHaveCSS('color', DERIVED_FOREGROUND);
@@ -629,19 +633,19 @@ test('colours a select chip from its option, falling back to neutral', {tag: '@p
         // * Verify an option with no colour still draws, in a translucent neutral. The
         // alpha channel is the tell: palette backgrounds are opaque hex, the neutral is a
         // theme token at 12%, so this holds whatever theme the account is on.
-        const plainOnScreen = await channelsPage.centerView.getPostById(plainPost.id);
-        const plainChip = plainOnScreen.container.getByTestId(OPTION_CHIP);
+        const plainOnScreen = app.center.postList.post(plainPost);
+        const plainChip = plainOnScreen.attributes.value.selectText.locator;
 
-        await expect(plainChip).toHaveText('PLAIN');
+        await expect(plainChip).toHaveText(PLAIN);
         await expect(plainChip).toHaveCSS('background-color', /^rgba\(/);
 
         // * Verify an unrecognised colour lands on that same neutral rather than being
         // passed through to CSS or dropping the chip
         const neutralBackground = await plainChip.evaluate((el: Element) => getComputedStyle(el).backgroundColor);
-        const oddOnScreen = await channelsPage.centerView.getPostById(oddPost.id);
-        const oddChip = oddOnScreen.container.getByTestId(OPTION_CHIP);
+        const oddOnScreen = app.center.postList.post(oddPost);
+        const oddChip = oddOnScreen.attributes.value.selectText.locator;
 
-        await expect(oddChip).toHaveText('ODD');
+        await expect(oddChip).toHaveText(ODD);
         await expect(oddChip).toHaveCSS('background-color', neutralBackground);
     } finally {
         await deleteFields(adminClient, created);

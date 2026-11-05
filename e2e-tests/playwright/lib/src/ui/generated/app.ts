@@ -131,12 +131,15 @@ import {Plugin} from './plugin';
 import {PolicySelectionModal} from './policy_selection_modal';
 import {PolicyTestModal} from './policy_test_modal';
 import {PostAttributes} from './post_attributes';
+import {PostAttributesCard} from './post_attributes_card';
+import {PostAttributesModal} from './post_attributes_modal';
 import {PostDotMenu} from './post_dot_menu';
 import {PostEdit} from './post_edit';
 import {PostPriorityPicker} from './post_priority_picker';
 import {ProfilePopover} from './profile_popover';
 import {Public} from './public';
 import {QuickSwitchModal} from './quick_switch_modal';
+import {QuoteSelection} from './quote_selection';
 import {Recaps} from './recaps';
 import {RemoveSharingModal} from './remove_sharing_modal';
 import {RenameChannelModal} from './rename_channel_modal';
@@ -720,6 +723,21 @@ export class App extends Scope {
     }
 
     /**
+     * `post_attributes_card` — PostAttributesChips (channels/src/components/post_attributes/post_attributes_chips.tsx)
+     * Renders only when props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED and !(visible.length === 0) and open.
+     */
+    get postAttributesCard(): PostAttributesCard {
+        return new PostAttributesCard(this.page, 'post_attributes_card', this.root);
+    }
+
+    /**
+     * `post_attributes_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get postAttributesModal(): PostAttributesModal {
+        return new PostAttributesModal(this.page, 'post_attributes_modal', this.root);
+    }
+
+    /**
      * `post_dot_menu` — Menu (channels/src/components/menu/menu.tsx)
      */
     get postDotMenu(): PostDotMenu {
@@ -751,6 +769,10 @@ export class App extends Scope {
      */
     get quickSwitchModal(): QuickSwitchModal {
         return new QuickSwitchModal(this.page, 'quick_switch_modal', this.root);
+    }
+
+    get quoteSelection(): QuoteSelection {
+        return new QuoteSelection(this.page, 'quote_selection', this.root);
     }
 
     get recaps(): Recaps {

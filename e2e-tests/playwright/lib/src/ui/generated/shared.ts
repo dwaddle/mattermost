@@ -4079,6 +4079,22 @@ export class PostItem extends Scope {
     }
 
     /**
+     * `center.post_list.post.attributes` — PostAttributesChips (channels/src/components/post_attributes/post_attributes_chips.tsx)
+     * Renders only when props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED and !(visible.length === 0).
+     */
+    get attributes(): PostItemAttributes {
+        return new PostItemAttributes(this.page, `${this.scope}.attributes`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.attributes_unavailable` — PostAttributesChips (channels/src/components/post_attributes/post_attributes_chips.tsx)
+     * Renders only when props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED and post.metadata?.property_values_unavailable.
+     */
+    get attributesUnavailable(): PostItemAttributesUnavailable {
+        return new PostItemAttributesUnavailable(this.page, `${this.scope}.attributes_unavailable`, this.root);
+    }
+
+    /**
      * `center.post_list.post.avatar` — ProfilePicture (channels/src/components/profile_picture/index.tsx)
      * Renders only when !hideProfilePicture && hideProfileCase.
      */
@@ -4126,8 +4142,8 @@ export class PostItem extends Scope {
      * `center.post_list.post.permalink_preview` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
      * Renders only when !showConcealedPlaceholder and embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost.
      */
-    get permalinkPreview(): PostMessagePreview {
-        return new PostMessagePreview(this.page, `${this.scope}.permalink_preview`, this.root);
+    get permalinkPreview(): PostScope {
+        return new PostScope(this.page, `${this.scope}.permalink_preview`, this.root);
     }
 
     /**
@@ -4220,7 +4236,7 @@ export class PostItem extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments`, `center.post_list.post.permalink_preview.attachments`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments`, `flag_post_modal.post_preview.attachments`, `forward_post_modal.preview.attachments`, `move_thread_modal.preview.attachments`, `post_attributes.value.post_preview.post.attachments`, `restore_post_modal.attachments`, `rhs.edit_history.version.attachments`, `rhs.thread.post.attachments`, `rhs.thread.post.permalink_preview.attachments`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments`, `search.results.post.attachments`, `search.results.post.permalink_preview.attachments`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments`, `center.post_list.post.attributes.value.post_preview.post.attachments`, `center.post_list.post.permalink_preview.attachments`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments`, `flag_post_modal.post_preview.attachments`, `forward_post_modal.preview.attachments`, `move_thread_modal.preview.attachments`, `post_attributes.value.post_preview.post.attachments`, `restore_post_modal.attachments`, `rhs.edit_history.version.attachments`, `rhs.thread.post.attachments`, `rhs.thread.post.attributes.value.post_preview.post.attachments`, `rhs.thread.post.permalink_preview.attachments`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments`, `search.results.post.attachments`, `search.results.post.attributes.value.post_preview.post.attachments`, `search.results.post.permalink_preview.attachments`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments`: one class, constructed with the scope it is mounted at. */
 export class Attachments extends Scope {
     /**
      * `center.post_list.post.attachments.file:{key}--button` — ImageTile (channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx)
@@ -4325,7 +4341,7 @@ export class Attachments extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.file_card`, `center.post_list.post.permalink_preview.attachments.file_card`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `flag_post_modal.post_preview.attachments.file_card`, `forward_post_modal.preview.attachments.file_card`, `move_thread_modal.preview.attachments.file_card`, `post_attributes.value.post_preview.post.attachments.file_card`, `restore_post_modal.attachments.file_card`, `rhs.edit_history.version.attachments.file_card`, `rhs.thread.post.attachments.file_card`, `rhs.thread.post.permalink_preview.attachments.file_card`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `search.results.post.attachments.file_card`, `search.results.post.permalink_preview.attachments.file_card`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.file_card`, `center.post_list.post.attributes.value.post_preview.post.attachments.file_card`, `center.post_list.post.permalink_preview.attachments.file_card`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `flag_post_modal.post_preview.attachments.file_card`, `forward_post_modal.preview.attachments.file_card`, `move_thread_modal.preview.attachments.file_card`, `post_attributes.value.post_preview.post.attachments.file_card`, `restore_post_modal.attachments.file_card`, `rhs.edit_history.version.attachments.file_card`, `rhs.thread.post.attachments.file_card`, `rhs.thread.post.attributes.value.post_preview.post.attachments.file_card`, `rhs.thread.post.permalink_preview.attachments.file_card`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `search.results.post.attachments.file_card`, `search.results.post.attributes.value.post_preview.post.attachments.file_card`, `search.results.post.permalink_preview.attachments.file_card`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsFileCard extends Scope {
     /**
      * `center.post_list.post.attachments.file_card:{key}` — FileAttachment (channels/src/components/file_attachment/file_attachment.tsx)
@@ -4397,7 +4413,7 @@ export class AttachmentsFileCard extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.file_card.menu`, `center.post_list.post.permalink_preview.attachments.file_card.menu`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `flag_post_modal.post_preview.attachments.file_card.menu`, `forward_post_modal.preview.attachments.file_card.menu`, `move_thread_modal.preview.attachments.file_card.menu`, `post_attributes.value.post_preview.post.attachments.file_card.menu`, `restore_post_modal.attachments.file_card.menu`, `rhs.edit_history.version.attachments.file_card.menu`, `rhs.thread.post.attachments.file_card.menu`, `rhs.thread.post.permalink_preview.attachments.file_card.menu`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `search.results.post.attachments.file_card.menu`, `search.results.post.permalink_preview.attachments.file_card.menu`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.file_card.menu`, `center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu`, `center.post_list.post.permalink_preview.attachments.file_card.menu`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `flag_post_modal.post_preview.attachments.file_card.menu`, `forward_post_modal.preview.attachments.file_card.menu`, `move_thread_modal.preview.attachments.file_card.menu`, `post_attributes.value.post_preview.post.attachments.file_card.menu`, `restore_post_modal.attachments.file_card.menu`, `rhs.edit_history.version.attachments.file_card.menu`, `rhs.thread.post.attachments.file_card.menu`, `rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu`, `rhs.thread.post.permalink_preview.attachments.file_card.menu`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `search.results.post.attachments.file_card.menu`, `search.results.post.attributes.value.post_preview.post.attachments.file_card.menu`, `search.results.post.permalink_preview.attachments.file_card.menu`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsFileCardMenu extends Scope {
     /**
      * `center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
@@ -4457,7 +4473,7 @@ export class AttachmentsFileCardMenu extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.image`, `center.post_list.post.permalink_preview.attachments.image`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `flag_post_modal.post_preview.attachments.image`, `forward_post_modal.preview.attachments.image`, `move_thread_modal.preview.attachments.image`, `post_attributes.value.post_preview.post.attachments.image`, `restore_post_modal.attachments.image`, `rhs.edit_history.version.attachments.image`, `rhs.thread.post.attachments.image`, `rhs.thread.post.permalink_preview.attachments.image`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `search.results.post.attachments.image`, `search.results.post.permalink_preview.attachments.image`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.image`, `center.post_list.post.attributes.value.post_preview.post.attachments.image`, `center.post_list.post.permalink_preview.attachments.image`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `flag_post_modal.post_preview.attachments.image`, `forward_post_modal.preview.attachments.image`, `move_thread_modal.preview.attachments.image`, `post_attributes.value.post_preview.post.attachments.image`, `restore_post_modal.attachments.image`, `rhs.edit_history.version.attachments.image`, `rhs.thread.post.attachments.image`, `rhs.thread.post.attributes.value.post_preview.post.attachments.image`, `rhs.thread.post.permalink_preview.attachments.image`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `search.results.post.attachments.image`, `search.results.post.attributes.value.post_preview.post.attachments.image`, `search.results.post.permalink_preview.attachments.image`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsImage extends Scope {
     /**
      * `center.post_list.post.attachments.image:{key}` — SingleImageView (channels/src/components/single_image_view/single_image_view.tsx)
@@ -4530,7 +4546,7 @@ export class AttachmentsImage extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.image.picture`, `center.post_list.post.image_preview`, `center.post_list.post.link_preview.image`, `center.post_list.post.permalink_preview.attachments.image.picture`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `flag_post_modal.post_preview.attachments.image.picture`, `forward_post_modal.preview.attachments.image.picture`, `markdown.image`, `move_thread_modal.preview.attachments.image.picture`, `post_attributes.value.post_preview.post.attachments.image.picture`, `restore_post_modal.attachments.image.picture`, `rhs.edit_history.version.attachments.image.picture`, `rhs.thread.post.attachments.image.picture`, `rhs.thread.post.image_preview`, `rhs.thread.post.link_preview.image`, `rhs.thread.post.permalink_preview.attachments.image.picture`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `search.results.post.attachments.image.picture`, `search.results.post.image_preview`, `search.results.post.link_preview.image`, `search.results.post.permalink_preview.attachments.image.picture`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.image.picture`, `center.post_list.post.attributes.value.post_preview.post.attachments.image.picture`, `center.post_list.post.image_preview`, `center.post_list.post.link_preview.image`, `center.post_list.post.permalink_preview.attachments.image.picture`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `flag_post_modal.post_preview.attachments.image.picture`, `forward_post_modal.preview.attachments.image.picture`, `markdown.image`, `move_thread_modal.preview.attachments.image.picture`, `post_attributes.value.post_preview.post.attachments.image.picture`, `restore_post_modal.attachments.image.picture`, `rhs.edit_history.version.attachments.image.picture`, `rhs.thread.post.attachments.image.picture`, `rhs.thread.post.attributes.value.post_preview.post.attachments.image.picture`, `rhs.thread.post.image_preview`, `rhs.thread.post.link_preview.image`, `rhs.thread.post.permalink_preview.attachments.image.picture`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `search.results.post.attachments.image.picture`, `search.results.post.attributes.value.post_preview.post.attachments.image.picture`, `search.results.post.image_preview`, `search.results.post.link_preview.image`, `search.results.post.permalink_preview.attachments.image.picture`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`: one class, constructed with the scope it is mounted at. */
 export class Picture extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -4549,6 +4565,361 @@ export class Picture extends Scope {
             unknownEffects: false,
             source: 'channels/src/components/size_aware_image.tsx#SizeAwareImage',
         });
+    }
+}
+
+/** Rendered at `center.post_list.post.attributes`, `rhs.thread.post.attributes`, `search.results.post.attributes`: one class, constructed with the scope it is mounted at. */
+export class PostItemAttributes extends Scope {
+    /**
+     * `center.post_list.post.attributes.overflow--img` — PostAttributesChips (channels/src/components/post_attributes/post_attributes_chips.tsx)
+     * Renders only when props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED and !(visible.length === 0) and overflow > 0.
+     */
+    get overflowImg() {
+        return drivers.text(this.byTestId(`${this.scope}.overflow--img`), {
+            testId: `${this.scope}.overflow--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips',
+        });
+    }
+
+    get value(): Value {
+        return new Value(this.page, `${this.scope}.value`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.attributes.value`, `post_attributes.value`, `rhs.thread.post.attributes.value`, `search.results.post.attributes.value`: one class, constructed with the scope it is mounted at. */
+export class Value extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.channel` — ChannelPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get channel() {
+        return drivers.container(this.byTestId(`${this.scope}.channel`), {
+            testId: `${this.scope}.channel`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx#ChannelPropertyRenderer',
+        });
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.select--text` — OptionPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx)
+     * Renders only when !(visible.length === 0).
+     */
+    get selectText() {
+        return drivers.text(this.byTestId(`${this.scope}.select--text`), {
+            testId: `${this.scope}.select--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx#OptionPropertyRenderer',
+        });
+    }
+
+    getSelectText(): Promise<string> {
+        return this.selectText.text();
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.selectable_user` — SelectableUserPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx)
+     * Renders only when field.attrs?.editable.
+     */
+    get selectableUser() {
+        return drivers.container(this.byTestId(`${this.scope}.selectable_user`), {
+            testId: `${this.scope}.selectable_user`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx#SelectableUserPropertyRenderer',
+        });
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.text--text` — TextPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get textText() {
+        return drivers.text(this.byTestId(`${this.scope}.text--text`), {
+            testId: `${this.scope}.text--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx#TextPropertyRenderer',
+        });
+    }
+
+    getTextText(): Promise<string> {
+        return this.textText.text();
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.timestamp--text` — TimestampPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get timestampText() {
+        return drivers.text(this.byTestId(`${this.scope}.timestamp--text`), {
+            testId: `${this.scope}.timestamp--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx#TimestampPropertyRenderer',
+        });
+    }
+
+    getTimestampText(): Promise<string> {
+        return this.timestampText.text();
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.user` — UserPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx)
+     * Renders only when !(visible.length === 0).
+     */
+    get user() {
+        return drivers.container(this.byTestId(`${this.scope}.user`), {
+            testId: `${this.scope}.user`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx#UserPropertyRenderer',
+        });
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.post_preview` — PostPreviewPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/post_preview_property_renderer/post_preview_property_renderer.tsx)
+     * Renders only when !(!post || !channel || !team) and !(field.type !== 'text').
+     */
+    get postPreview(): PostPreview {
+        return new PostPreview(this.page, `${this.scope}.post_preview`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.team` — TeamPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/team_property_renderer/team_property_renderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get team(): TeamScope {
+        return new TeamScope(this.page, `${this.scope}.team`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.attributes.value.post_preview`, `center.post_list.post.spillage_report.card.field.value.post_preview`, `post_attributes.value.post_preview`, `rhs.thread.post.attributes.value.post_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview`, `search.results.post.attributes.value.post_preview`, `search.results.post.spillage_report.card.field.value.post_preview`: one class, constructed with the scope it is mounted at. */
+export class PostPreview extends Scope {
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
+     * Renders only when previewPost and !(!post || !channel || !team) and !(field.type !== 'text').
+     */
+    get post(): PostScope {
+        return new PostScope(this.page, `${this.scope}.post`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.attributes.value.post_preview.post`, `center.post_list.post.permalink_preview`, `center.post_list.post.spillage_report.card.field.value.post_preview.post`, `flag_post_modal.post_preview`, `forward_post_modal.preview`, `move_thread_modal.preview`, `post_attributes.value.post_preview.post`, `rhs.thread.post.attributes.value.post_preview.post`, `rhs.thread.post.permalink_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post`, `search.results.post.attributes.value.post_preview.post`, `search.results.post.permalink_preview`, `search.results.post.spillage_report.card.field.value.post_preview.post`: one class, constructed with the scope it is mounted at. */
+export class PostScope extends Scope {
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post.message--text` — PostMessageView (channels/src/components/post_view/post_message_view/post_message_view.tsx)
+     * Renders only when previewPost and !(!post || !channel || !team) and !(field.type !== 'text').
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
+     * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
+     * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [
+                Api.AddChannelMember,
+                Api.AddTeamMember,
+                Api.GetChannel,
+                Api.GetChannelByName,
+                Api.GetChannelByNameForTeamName,
+                Api.GetChannelMember,
+                Api.GetChannelMemberMe,
+                Api.GetChannelMembers,
+                Api.GetChannelMembersForUserMe,
+                Api.GetChannelStats,
+                Api.GetChannelsForTeamForUserMe,
+                Api.GetEmojisByNames,
+                Api.GetGroupsByNames,
+                Api.GetPost,
+                Api.GetPostInfo,
+                Api.GetPostThread,
+                Api.GetPropertyValues,
+                Api.GetRolesByNames,
+                Api.GetTeam,
+                Api.GetTeamByName,
+                Api.GetUsersByGroupChannelIds,
+                Api.GetUsersByIds,
+                Api.GetUsersByUsernames,
+                Api.GetUsersStatusesByIds,
+                Api.SearchFiles,
+                Api.SearchPostsInAllTeams,
+                Api.UpdatePreferences,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/post_message_view/post_message_view.tsx#PostMessageView',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post.priority_label` — PriorityLabel (channels/src/components/post_priority/post_priority_label.tsx)
+     * Renders only when previewPost and previewPost.metadata?.priority && isPostPriorityEnabled and !(!post || !channel || !team).
+     */
+    get priorityLabel() {
+        return drivers.container(this.byTestId(`${this.scope}.priority_label`), {
+            testId: `${this.scope}.priority_label`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_priority/post_priority_label.tsx#PriorityLabel',
+        });
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post.redacted_files` — RedactedFilesPlaceholder (channels/src/components/post_view/redacted_files_placeholder/index.tsx)
+     * Renders only when previewPost and props.permissionPoliciesEnabled && redactedFileCount > 0 and !(!post || !channel || !team).
+     */
+    get redactedFiles() {
+        return drivers.container(this.byTestId(`${this.scope}.redacted_files`), {
+            testId: `${this.scope}.redacted_files`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/redacted_files_placeholder/index.tsx#RedactedFilesPlaceholder',
+        });
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post.translation--button` — PostHeaderTranslateIcon (channels/src/components/post/post_header_translate_icon.tsx)
+     * Renders only when !(postType !== '') and translationState === 'ready' and previewPost.
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get translationButton() {
+        return drivers.button(this.byTestId(`${this.scope}.translation--button`), {
+            testId: `${this.scope}.translation--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon',
+        });
+    }
+
+    async clickTranslationButton(): Promise<void> {
+        await this.translationButton.click();
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post.translation_unavailable` — PostHeaderTranslateIcon (channels/src/components/post/post_header_translate_icon.tsx)
+     * Renders only when !(postType !== '') and translationState === 'unavailable' and previewPost.
+     */
+    get translationUnavailable() {
+        return drivers.container(this.byTestId(`${this.scope}.translation_unavailable`), {
+            testId: `${this.scope}.translation_unavailable`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon',
+        });
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post.attachments` — FileAttachmentList (channels/src/components/file_attachment_list/file_attachment_list.tsx)
+     * Renders only when !(fileInfos.length === 0) and previewPost and !(props.permissionPoliciesEnabled && redactedFileCount > 0).
+     */
+    get attachments(): Attachments {
+        return new Attachments(this.page, `${this.scope}.attachments`, this.root);
+    }
+
+    get message(): ShowMore {
+        return new ShowMore(this.page, `${this.scope}.message`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.attributes.value.post_preview.post.message`, `center.post_list.post.message`, `center.post_list.post.permalink_preview.message`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.message`, `flag_post_modal.post_preview.message`, `forward_post_modal.preview.message`, `move_thread_modal.preview.message`, `post_attributes.value.post_preview.post.message`, `restore_post_modal.message`, `rhs.edit_history.version.message`, `rhs.thread.post.attributes.value.post_preview.post.message`, `rhs.thread.post.message`, `rhs.thread.post.permalink_preview.message`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.message`, `search.results.post.attributes.value.post_preview.post.message`, `search.results.post.message`, `search.results.post.permalink_preview.message`, `search.results.post.spillage_report.card.field.value.post_preview.post.message`: one class, constructed with the scope it is mounted at. */
+export class ShowMore extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.post_preview.post.message.show_more--button` — ShowMore (channels/src/components/post_view/show_more/show_more.tsx)
+     * Renders only when previewPost and isOverflow and !(!post || !channel || !team).
+     */
+    get showMoreButton() {
+        return drivers.button(this.byTestId(`${this.scope}.show_more--button`), {
+            testId: `${this.scope}.show_more--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/show_more/show_more.tsx#ShowMore',
+        });
+    }
+
+    async clickShowMoreButton(): Promise<void> {
+        await this.showMoreButton.click();
+    }
+}
+
+/** Rendered at `center.post_list.post.attributes.value.team`, `center.post_list.post.spillage_report.card.field.value.team`, `post_attributes.value.team`, `rhs.thread.post.attributes.value.team`, `rhs.thread.post.spillage_report.card.field.value.team`, `search.results.post.attributes.value.team`, `search.results.post.spillage_report.card.field.value.team`: one class, constructed with the scope it is mounted at. */
+export class TeamScope extends Scope {
+    /**
+     * `center.post_list.post.attributes.value.team.icon--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when !(field.type !== 'text') and typeof content === 'string' and teamIconUrl.
+     */
+    get iconImg() {
+        return drivers.text(this.byTestId(`${this.scope}.icon--img`), {
+            testId: `${this.scope}.icon--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
+    }
+
+    /**
+     * `center.post_list.post.attributes.value.team.initials--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when !(field.type !== 'text') and typeof content === 'string' and !teamIconUrl.
+     */
+    get initialsImg() {
+        return drivers.text(this.byTestId(`${this.scope}.initials--img`), {
+            testId: `${this.scope}.initials--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
+    }
+}
+
+/** Rendered at `center.post_list.post.attributes_unavailable`, `rhs.thread.post.attributes_unavailable`, `search.results.post.attributes_unavailable`: one class, constructed with the scope it is mounted at. */
+export class PostItemAttributesUnavailable extends Scope {
+    /**
+     * `center.post_list.post.attributes_unavailable.message--text` — PostAttributesChips (channels/src/components/post_attributes/post_attributes_chips.tsx)
+     * Renders only when props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED and post.metadata?.property_values_unavailable.
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
     }
 }
 
@@ -4996,157 +5367,6 @@ export class PostItemMenuRecentReactions extends Scope {
                 source: 'channels/src/components/post_view/post_recent_reactions/recent_reactions_emoji_item.tsx#EmojiItem',
             }),
         );
-    }
-}
-
-/** Rendered at `center.post_list.post.message`, `center.post_list.post.permalink_preview.message`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.message`, `flag_post_modal.post_preview.message`, `forward_post_modal.preview.message`, `move_thread_modal.preview.message`, `post_attributes.value.post_preview.post.message`, `restore_post_modal.message`, `rhs.edit_history.version.message`, `rhs.thread.post.message`, `rhs.thread.post.permalink_preview.message`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.message`, `search.results.post.message`, `search.results.post.permalink_preview.message`, `search.results.post.spillage_report.card.field.value.post_preview.post.message`: one class, constructed with the scope it is mounted at. */
-export class ShowMore extends Scope {
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `center.post_list.post.message.show_more--button` — ShowMore (channels/src/components/post_view/show_more/show_more.tsx)
-     * Renders only when !showConcealedPlaceholder and isOverflow.
-     */
-    get showMoreButton() {
-        return drivers.button(this.byTestId(`${this.scope}.show_more--button`), {
-            testId: `${this.scope}.show_more--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/post_view/show_more/show_more.tsx#ShowMore',
-        });
-    }
-
-    async clickShowMoreButton(): Promise<void> {
-        await this.showMoreButton.click();
-    }
-}
-
-/** Rendered at `center.post_list.post.permalink_preview`, `center.post_list.post.spillage_report.card.field.value.post_preview.post`, `flag_post_modal.post_preview`, `forward_post_modal.preview`, `move_thread_modal.preview`, `post_attributes.value.post_preview.post`, `rhs.thread.post.permalink_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post`, `search.results.post.permalink_preview`, `search.results.post.spillage_report.card.field.value.post_preview.post`: one class, constructed with the scope it is mounted at. */
-export class PostMessagePreview extends Scope {
-    /**
-     * `center.post_list.post.permalink_preview.message--text` — PostMessageView (channels/src/components/post_view/post_message_view/post_message_view.tsx)
-     * Renders only when embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost.
-     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
-     * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
-     * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
-     */
-    get messageText() {
-        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
-            testId: `${this.scope}.message--text`,
-            role: 'text',
-            effects: [
-                Api.AddChannelMember,
-                Api.AddTeamMember,
-                Api.GetChannel,
-                Api.GetChannelByName,
-                Api.GetChannelByNameForTeamName,
-                Api.GetChannelMember,
-                Api.GetChannelMemberMe,
-                Api.GetChannelMembers,
-                Api.GetChannelMembersForUserMe,
-                Api.GetChannelStats,
-                Api.GetChannelsForTeamForUserMe,
-                Api.GetEmojisByNames,
-                Api.GetGroupsByNames,
-                Api.GetPost,
-                Api.GetPostInfo,
-                Api.GetPostThread,
-                Api.GetPropertyValues,
-                Api.GetRolesByNames,
-                Api.GetTeam,
-                Api.GetTeamByName,
-                Api.GetUsersByGroupChannelIds,
-                Api.GetUsersByIds,
-                Api.GetUsersByUsernames,
-                Api.GetUsersStatusesByIds,
-                Api.SearchFiles,
-                Api.SearchPostsInAllTeams,
-                Api.UpdatePreferences,
-            ],
-            unknownEffects: false,
-            source: 'channels/src/components/post_view/post_message_view/post_message_view.tsx#PostMessageView',
-        });
-    }
-
-    getMessageText(): Promise<string> {
-        return this.messageText.text();
-    }
-
-    /**
-     * `center.post_list.post.permalink_preview.priority_label` — PriorityLabel (channels/src/components/post_priority/post_priority_label.tsx)
-     * Renders only when embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost and previewPost.metadata?.priority && isPostPriorityEnabled.
-     */
-    get priorityLabel() {
-        return drivers.container(this.byTestId(`${this.scope}.priority_label`), {
-            testId: `${this.scope}.priority_label`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/post_priority/post_priority_label.tsx#PriorityLabel',
-        });
-    }
-
-    /**
-     * `center.post_list.post.permalink_preview.redacted_files` — RedactedFilesPlaceholder (channels/src/components/post_view/redacted_files_placeholder/index.tsx)
-     * Renders only when embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost and props.permissionPoliciesEnabled && redactedFileCount > 0.
-     */
-    get redactedFiles() {
-        return drivers.container(this.byTestId(`${this.scope}.redacted_files`), {
-            testId: `${this.scope}.redacted_files`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/post_view/redacted_files_placeholder/index.tsx#RedactedFilesPlaceholder',
-        });
-    }
-
-    /**
-     * `center.post_list.post.permalink_preview.translation--button` — PostHeaderTranslateIcon (channels/src/components/post/post_header_translate_icon.tsx)
-     * Renders only when !(postType !== '') and translationState === 'ready' and embed.data && 'post_id' in embed.data && embed.data.post_id.
-     * Calls through data (registries, plugin hooks): pass `wait` to settle.
-     */
-    get translationButton() {
-        return drivers.button(this.byTestId(`${this.scope}.translation--button`), {
-            testId: `${this.scope}.translation--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: true,
-            source: 'channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon',
-        });
-    }
-
-    async clickTranslationButton(): Promise<void> {
-        await this.translationButton.click();
-    }
-
-    /**
-     * `center.post_list.post.permalink_preview.translation_unavailable` — PostHeaderTranslateIcon (channels/src/components/post/post_header_translate_icon.tsx)
-     * Renders only when !(postType !== '') and translationState === 'unavailable' and embed.data && 'post_id' in embed.data && embed.data.post_id.
-     */
-    get translationUnavailable() {
-        return drivers.container(this.byTestId(`${this.scope}.translation_unavailable`), {
-            testId: `${this.scope}.translation_unavailable`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon',
-        });
-    }
-
-    /**
-     * `center.post_list.post.permalink_preview.attachments` — FileAttachmentList (channels/src/components/file_attachment_list/file_attachment_list.tsx)
-     * Renders only when !(fileInfos.length === 0) and embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost.
-     */
-    get attachments(): Attachments {
-        return new Attachments(this.page, `${this.scope}.attachments`, this.root);
-    }
-
-    get message(): ShowMore {
-        return new ShowMore(this.page, `${this.scope}.message`, this.root);
     }
 }
 
@@ -5616,48 +5836,6 @@ export class PostItemSpillageReportCardFieldValue extends Scope {
      */
     get team(): TeamScope {
         return new TeamScope(this.page, `${this.scope}.team`, this.root);
-    }
-}
-
-/** Rendered at `center.post_list.post.spillage_report.card.field.value.post_preview`, `post_attributes.value.post_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview`, `search.results.post.spillage_report.card.field.value.post_preview`: one class, constructed with the scope it is mounted at. */
-export class PostPreview extends Scope {
-    /**
-     * `center.post_list.post.spillage_report.card.field.value.post_preview.post` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
-     * Renders only when previewPost and !(!post || !channel || !team) and !(field.type !== 'text').
-     */
-    get post(): PostMessagePreview {
-        return new PostMessagePreview(this.page, `${this.scope}.post`, this.root);
-    }
-}
-
-/** Rendered at `center.post_list.post.spillage_report.card.field.value.team`, `post_attributes.value.team`, `rhs.thread.post.spillage_report.card.field.value.team`, `search.results.post.spillage_report.card.field.value.team`: one class, constructed with the scope it is mounted at. */
-export class TeamScope extends Scope {
-    /**
-     * `center.post_list.post.spillage_report.card.field.value.team.icon--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
-     * Renders only when !(field.type !== 'text') and typeof content === 'string' and teamIconUrl.
-     */
-    get iconImg() {
-        return drivers.text(this.byTestId(`${this.scope}.icon--img`), {
-            testId: `${this.scope}.icon--img`,
-            role: 'img',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
-        });
-    }
-
-    /**
-     * `center.post_list.post.spillage_report.card.field.value.team.initials--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
-     * Renders only when !(field.type !== 'text') and typeof content === 'string' and !teamIconUrl.
-     */
-    get initialsImg() {
-        return drivers.text(this.byTestId(`${this.scope}.initials--img`), {
-            testId: `${this.scope}.initials--img`,
-            role: 'img',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
-        });
     }
 }
 

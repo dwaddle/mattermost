@@ -209,6 +209,25 @@
                 "center.post_list.post.attachments.image",
                 "center.post_list.post.attachments.image.name",
                 "center.post_list.post.attachments.image.picture.frame",
+                "center.post_list.post.attributes",
+                "center.post_list.post.attributes.value",
+                "center.post_list.post.attributes.value.channel",
+                "center.post_list.post.attributes.value.post_preview",
+                "center.post_list.post.attributes.value.post_preview.post",
+                "center.post_list.post.attributes.value.post_preview.post.attachments",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.file_card",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image.name",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "center.post_list.post.attributes.value.post_preview.post.message",
+                "center.post_list.post.attributes.value.post_preview.post.priority_label",
+                "center.post_list.post.attributes.value.post_preview.post.redacted_files",
+                "center.post_list.post.attributes.value.post_preview.post.translation_unavailable",
+                "center.post_list.post.attributes.value.selectable_user",
+                "center.post_list.post.attributes.value.team",
+                "center.post_list.post.attributes.value.user",
+                "center.post_list.post.attributes_unavailable",
                 "center.post_list.post.avatar",
                 "center.post_list.post.avatar.status",
                 "center.post_list.post.blocks",
@@ -321,6 +340,8 @@
                 "post_attributes.value.selectable_user",
                 "post_attributes.value.team",
                 "post_attributes.value.user",
+                "post_attributes_card",
+                "post_attributes_card.attribute",
                 "post_dot_menu",
                 "post_dot_menu.remind_menu",
                 "post_dot_menu.remind_menu.paper",
@@ -398,6 +419,25 @@
                 "rhs.thread.post.attachments.image",
                 "rhs.thread.post.attachments.image.name",
                 "rhs.thread.post.attachments.image.picture.frame",
+                "rhs.thread.post.attributes",
+                "rhs.thread.post.attributes.value",
+                "rhs.thread.post.attributes.value.channel",
+                "rhs.thread.post.attributes.value.post_preview",
+                "rhs.thread.post.attributes.value.post_preview.post",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image.name",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "rhs.thread.post.attributes.value.post_preview.post.message",
+                "rhs.thread.post.attributes.value.post_preview.post.priority_label",
+                "rhs.thread.post.attributes.value.post_preview.post.redacted_files",
+                "rhs.thread.post.attributes.value.post_preview.post.translation_unavailable",
+                "rhs.thread.post.attributes.value.selectable_user",
+                "rhs.thread.post.attributes.value.team",
+                "rhs.thread.post.attributes.value.user",
+                "rhs.thread.post.attributes_unavailable",
                 "rhs.thread.post.avatar",
                 "rhs.thread.post.avatar.status",
                 "rhs.thread.post.blocks",
@@ -477,6 +517,25 @@
                 "search.results.post.attachments.image",
                 "search.results.post.attachments.image.name",
                 "search.results.post.attachments.image.picture.frame",
+                "search.results.post.attributes",
+                "search.results.post.attributes.value",
+                "search.results.post.attributes.value.channel",
+                "search.results.post.attributes.value.post_preview",
+                "search.results.post.attributes.value.post_preview.post",
+                "search.results.post.attributes.value.post_preview.post.attachments",
+                "search.results.post.attributes.value.post_preview.post.attachments.file_card",
+                "search.results.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "search.results.post.attributes.value.post_preview.post.attachments.image",
+                "search.results.post.attributes.value.post_preview.post.attachments.image.name",
+                "search.results.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "search.results.post.attributes.value.post_preview.post.message",
+                "search.results.post.attributes.value.post_preview.post.priority_label",
+                "search.results.post.attributes.value.post_preview.post.redacted_files",
+                "search.results.post.attributes.value.post_preview.post.translation_unavailable",
+                "search.results.post.attributes.value.selectable_user",
+                "search.results.post.attributes.value.team",
+                "search.results.post.attributes.value.user",
+                "search.results.post.attributes_unavailable",
                 "search.results.post.avatar",
                 "search.results.post.avatar.status",
                 "search.results.post.blocks",
@@ -858,7 +917,7 @@
             "getter": "popoutPage",
             "path": "/_popout",
             "params": [],
-            "scopes": []
+            "scopes": ["quote_selection"]
         },
         {
             "class": "PreparingWorkspacePage",
@@ -1004,6 +1063,7 @@
                 "profile_popover",
                 "profile_popover.actions",
                 "profile_popover.url_icon",
+                "quote_selection",
                 "reset_status_modal",
                 "tour_tip",
                 "tour_tip.header"
@@ -1054,6 +1114,25 @@
                 "center.post_list.post.attachments.image",
                 "center.post_list.post.attachments.image.name",
                 "center.post_list.post.attachments.image.picture.frame",
+                "center.post_list.post.attributes",
+                "center.post_list.post.attributes.value",
+                "center.post_list.post.attributes.value.channel",
+                "center.post_list.post.attributes.value.post_preview",
+                "center.post_list.post.attributes.value.post_preview.post",
+                "center.post_list.post.attributes.value.post_preview.post.attachments",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.file_card",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image.name",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "center.post_list.post.attributes.value.post_preview.post.message",
+                "center.post_list.post.attributes.value.post_preview.post.priority_label",
+                "center.post_list.post.attributes.value.post_preview.post.redacted_files",
+                "center.post_list.post.attributes.value.post_preview.post.translation_unavailable",
+                "center.post_list.post.attributes.value.selectable_user",
+                "center.post_list.post.attributes.value.team",
+                "center.post_list.post.attributes.value.user",
+                "center.post_list.post.attributes_unavailable",
                 "center.post_list.post.avatar",
                 "center.post_list.post.avatar.status",
                 "center.post_list.post.blocks",
@@ -1153,6 +1232,8 @@
                 "post_attributes.value.selectable_user",
                 "post_attributes.value.team",
                 "post_attributes.value.user",
+                "post_attributes_card",
+                "post_attributes_card.attribute",
                 "post_dot_menu",
                 "post_dot_menu.remind_menu",
                 "post_dot_menu.remind_menu.paper",
@@ -1195,6 +1276,25 @@
                 "rhs.thread.post.attachments.image",
                 "rhs.thread.post.attachments.image.name",
                 "rhs.thread.post.attachments.image.picture.frame",
+                "rhs.thread.post.attributes",
+                "rhs.thread.post.attributes.value",
+                "rhs.thread.post.attributes.value.channel",
+                "rhs.thread.post.attributes.value.post_preview",
+                "rhs.thread.post.attributes.value.post_preview.post",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image.name",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "rhs.thread.post.attributes.value.post_preview.post.message",
+                "rhs.thread.post.attributes.value.post_preview.post.priority_label",
+                "rhs.thread.post.attributes.value.post_preview.post.redacted_files",
+                "rhs.thread.post.attributes.value.post_preview.post.translation_unavailable",
+                "rhs.thread.post.attributes.value.selectable_user",
+                "rhs.thread.post.attributes.value.team",
+                "rhs.thread.post.attributes.value.user",
+                "rhs.thread.post.attributes_unavailable",
                 "rhs.thread.post.avatar",
                 "rhs.thread.post.avatar.status",
                 "rhs.thread.post.blocks",
@@ -1265,6 +1365,25 @@
                 "search.results.post.attachments.image",
                 "search.results.post.attachments.image.name",
                 "search.results.post.attachments.image.picture.frame",
+                "search.results.post.attributes",
+                "search.results.post.attributes.value",
+                "search.results.post.attributes.value.channel",
+                "search.results.post.attributes.value.post_preview",
+                "search.results.post.attributes.value.post_preview.post",
+                "search.results.post.attributes.value.post_preview.post.attachments",
+                "search.results.post.attributes.value.post_preview.post.attachments.file_card",
+                "search.results.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "search.results.post.attributes.value.post_preview.post.attachments.image",
+                "search.results.post.attributes.value.post_preview.post.attachments.image.name",
+                "search.results.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "search.results.post.attributes.value.post_preview.post.message",
+                "search.results.post.attributes.value.post_preview.post.priority_label",
+                "search.results.post.attributes.value.post_preview.post.redacted_files",
+                "search.results.post.attributes.value.post_preview.post.translation_unavailable",
+                "search.results.post.attributes.value.selectable_user",
+                "search.results.post.attributes.value.team",
+                "search.results.post.attributes.value.user",
+                "search.results.post.attributes_unavailable",
                 "search.results.post.avatar",
                 "search.results.post.avatar.status",
                 "search.results.post.blocks",
@@ -1373,6 +1492,25 @@
                 "center.post_list.post.attachments.image",
                 "center.post_list.post.attachments.image.name",
                 "center.post_list.post.attachments.image.picture.frame",
+                "center.post_list.post.attributes",
+                "center.post_list.post.attributes.value",
+                "center.post_list.post.attributes.value.channel",
+                "center.post_list.post.attributes.value.post_preview",
+                "center.post_list.post.attributes.value.post_preview.post",
+                "center.post_list.post.attributes.value.post_preview.post.attachments",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.file_card",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image.name",
+                "center.post_list.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "center.post_list.post.attributes.value.post_preview.post.message",
+                "center.post_list.post.attributes.value.post_preview.post.priority_label",
+                "center.post_list.post.attributes.value.post_preview.post.redacted_files",
+                "center.post_list.post.attributes.value.post_preview.post.translation_unavailable",
+                "center.post_list.post.attributes.value.selectable_user",
+                "center.post_list.post.attributes.value.team",
+                "center.post_list.post.attributes.value.user",
+                "center.post_list.post.attributes_unavailable",
                 "center.post_list.post.avatar",
                 "center.post_list.post.avatar.status",
                 "center.post_list.post.blocks",
@@ -1472,6 +1610,8 @@
                 "post_attributes.value.selectable_user",
                 "post_attributes.value.team",
                 "post_attributes.value.user",
+                "post_attributes_card",
+                "post_attributes_card.attribute",
                 "post_dot_menu",
                 "post_dot_menu.remind_menu",
                 "post_dot_menu.remind_menu.paper",
@@ -1514,6 +1654,25 @@
                 "rhs.thread.post.attachments.image",
                 "rhs.thread.post.attachments.image.name",
                 "rhs.thread.post.attachments.image.picture.frame",
+                "rhs.thread.post.attributes",
+                "rhs.thread.post.attributes.value",
+                "rhs.thread.post.attributes.value.channel",
+                "rhs.thread.post.attributes.value.post_preview",
+                "rhs.thread.post.attributes.value.post_preview.post",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image.name",
+                "rhs.thread.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "rhs.thread.post.attributes.value.post_preview.post.message",
+                "rhs.thread.post.attributes.value.post_preview.post.priority_label",
+                "rhs.thread.post.attributes.value.post_preview.post.redacted_files",
+                "rhs.thread.post.attributes.value.post_preview.post.translation_unavailable",
+                "rhs.thread.post.attributes.value.selectable_user",
+                "rhs.thread.post.attributes.value.team",
+                "rhs.thread.post.attributes.value.user",
+                "rhs.thread.post.attributes_unavailable",
                 "rhs.thread.post.avatar",
                 "rhs.thread.post.avatar.status",
                 "rhs.thread.post.blocks",
@@ -1584,6 +1743,25 @@
                 "search.results.post.attachments.image",
                 "search.results.post.attachments.image.name",
                 "search.results.post.attachments.image.picture.frame",
+                "search.results.post.attributes",
+                "search.results.post.attributes.value",
+                "search.results.post.attributes.value.channel",
+                "search.results.post.attributes.value.post_preview",
+                "search.results.post.attributes.value.post_preview.post",
+                "search.results.post.attributes.value.post_preview.post.attachments",
+                "search.results.post.attributes.value.post_preview.post.attachments.file_card",
+                "search.results.post.attributes.value.post_preview.post.attachments.file_card.menu",
+                "search.results.post.attributes.value.post_preview.post.attachments.image",
+                "search.results.post.attributes.value.post_preview.post.attachments.image.name",
+                "search.results.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                "search.results.post.attributes.value.post_preview.post.message",
+                "search.results.post.attributes.value.post_preview.post.priority_label",
+                "search.results.post.attributes.value.post_preview.post.redacted_files",
+                "search.results.post.attributes.value.post_preview.post.translation_unavailable",
+                "search.results.post.attributes.value.selectable_user",
+                "search.results.post.attributes.value.team",
+                "search.results.post.attributes.value.user",
+                "search.results.post.attributes_unavailable",
                 "search.results.post.avatar",
                 "search.results.post.avatar.status",
                 "search.results.post.blocks",
@@ -16402,6 +16580,448 @@
             ]
         },
         {
+            "scope": "center.post_list.post.attributes",
+            "class": "PostItemAttributes",
+            "container": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.overflow--img",
+                    "role": "img",
+                    "renderedWhen": [
+                        "props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED",
+                        "!(visible.length === 0)",
+                        "overflow > 0"
+                    ],
+                    "source": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value",
+            "class": "Value",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.channel",
+                    "role": null,
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx#ChannelPropertyRenderer"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.select--text",
+                    "role": "text",
+                    "renderedWhen": ["!(visible.length === 0)"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx#OptionPropertyRenderer"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.selectable_user",
+                    "role": null,
+                    "renderedWhen": ["field.attrs?.editable"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx#SelectableUserPropertyRenderer"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.text--text",
+                    "role": "text",
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx#TextPropertyRenderer"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.timestamp--text",
+                    "role": "text",
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx#TimestampPropertyRenderer"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.user",
+                    "role": null,
+                    "renderedWhen": ["!(visible.length === 0)"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx#UserPropertyRenderer"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview",
+            "class": "PostPreview",
+            "container": "channels/src/components/properties_card_view/propertyValueRenderer/post_preview_property_renderer/post_preview_property_renderer.tsx#PostPreviewPropertyRenderer",
+            "elements": []
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview.post",
+            "class": "PostScope",
+            "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.message--text",
+                    "role": "text",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
+                            "dialogOps": ["RemoveTeamMember"]
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.POST_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "linkAttribute.value"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "postURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "returnTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "teamUrl + '/channels/' + channelMentionAttribute.value"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "AddTeamMember",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMember",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersForUserMe",
+                        "GetChannelStats",
+                        "GetChannelsForTeamForUserMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPost",
+                        "GetPostInfo",
+                        "GetPostThread",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "GetTeam",
+                        "GetTeamByName",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences"
+                    ],
+                    "renderedWhen": ["previewPost", "!(!post || !channel || !team)", "!(field.type !== 'text')"],
+                    "source": "channels/src/components/post_view/post_message_view/post_message_view.tsx#PostMessageView"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.priority_label",
+                    "role": null,
+                    "renderedWhen": [
+                        "previewPost",
+                        "previewPost.metadata?.priority && isPostPriorityEnabled",
+                        "!(!post || !channel || !team)",
+                        "!(field.type !== 'text')"
+                    ],
+                    "source": "channels/src/components/post_priority/post_priority_label.tsx#PriorityLabel"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.redacted_files",
+                    "role": null,
+                    "renderedWhen": [
+                        "previewPost",
+                        "props.permissionPoliciesEnabled && redactedFileCount > 0",
+                        "!(!post || !channel || !team)",
+                        "!(field.type !== 'text')"
+                    ],
+                    "source": "channels/src/components/post_view/redacted_files_placeholder/index.tsx#RedactedFilesPlaceholder"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.translation--button",
+                    "role": "button",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'ready'",
+                        "previewPost",
+                        "isChannelAutotranslated",
+                        "!(!post || !channel || !team)"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.translation_unavailable",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'unavailable'",
+                        "previewPost",
+                        "isChannelAutotranslated",
+                        "!(!post || !channel || !team)"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview.post.attachments",
+            "class": "Attachments",
+            "container": "channels/src/components/file_attachment_list/file_attachment_list.tsx#FileAttachmentList",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.file:{key}--button",
+                    "role": "button",
+                    "key": "Pick<FileInfo, 'id'>",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "!isInPermalink && !props.firstFileRejected && !hasDeletedFile && !isEditHistory",
+                        "(isMulti || isSingleVideo) && allMedia",
+                        "!(tiles.length === 0)",
+                        "previewPost"
+                    ],
+                    "source": "channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx#ImageTile"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card",
+            "class": "AttachmentsFileCard",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.more_actions--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "Menu",
+                            "scope": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "isMenuVisible",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.thumbnail--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!compactDisplay",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu",
+            "class": "AttachmentsFileCardMenu",
+            "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "PluginKey",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.file_card.menu.public_link--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "GetPublicLinkModal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "enablePublicLink",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview.post.attachments.image",
+            "class": "AttachmentsImage",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.image.name",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.image.picture--img",
+                    "role": "img",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.image.toggle--button",
+                    "role": "button",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.image:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview.post.attachments.image.picture",
+            "class": "Picture",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.post_preview.post.message",
+            "class": "ShowMore",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.post_preview.post.message.show_more--button",
+                    "role": "button",
+                    "renderedWhen": ["previewPost", "isOverflow", "!(!post || !channel || !team)"],
+                    "source": "channels/src/components/post_view/show_more/show_more.tsx#ShowMore"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes.value.team",
+            "class": "TeamScope",
+            "container": "channels/src/components/properties_card_view/propertyValueRenderer/team_property_renderer/team_property_renderer.tsx#TeamPropertyRenderer",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes.value.team.icon--img",
+                    "role": "img",
+                    "renderedWhen": ["!(field.type !== 'text')", "typeof content === 'string'", "teamIconUrl"],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                },
+                {
+                    "testId": "center.post_list.post.attributes.value.team.initials--img",
+                    "role": "img",
+                    "renderedWhen": ["!(field.type !== 'text')", "typeof content === 'string'", "!teamIconUrl"],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.attributes_unavailable",
+            "class": "PostItemAttributesUnavailable",
+            "container": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.attributes_unavailable.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED",
+                        "post.metadata?.property_values_unavailable"
+                    ],
+                    "source": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips"
+                }
+            ]
+        },
+        {
             "scope": "center.post_list.post.avatar",
             "class": "Avatar",
             "container": "channels/src/components/profile_picture/index.tsx#ProfilePicture",
@@ -16736,7 +17356,7 @@
         },
         {
             "scope": "center.post_list.post.permalink_preview",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -17331,7 +17951,7 @@
         },
         {
             "scope": "center.post_list.post.spillage_report.card.field.value.post_preview.post",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -23753,7 +24373,7 @@
         },
         {
             "scope": "flag_post_modal.post_preview",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -24471,7 +25091,7 @@
         },
         {
             "scope": "forward_post_modal.preview",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -29082,7 +29702,7 @@
         },
         {
             "scope": "move_thread_modal.preview",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -31232,7 +31852,7 @@
         },
         {
             "scope": "post_attributes.value",
-            "class": "PostAttributesValue",
+            "class": "Value",
             "elements": [
                 {
                     "testId": "post_attributes.value.channel",
@@ -31278,7 +31898,7 @@
         },
         {
             "scope": "post_attributes.value.post_preview.post",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -31638,6 +32258,175 @@
             ]
         },
         {
+            "scope": "post_attributes_card",
+            "class": "PostAttributesCard",
+            "container": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips",
+            "elements": [
+                {
+                    "testId": "post_attributes_card.edit--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "PostAttributesModal",
+                            "scope": "post_attributes_modal"
+                        }
+                    ],
+                    "renderedWhen": ["!(visible.length === 0)", "open"],
+                    "source": "channels/src/components/post_attributes/post_attributes_hover_card.tsx#PostAttributesHoverCard"
+                }
+            ]
+        },
+        {
+            "scope": "post_attributes_card.attribute",
+            "class": "PostAttributesCardAttribute",
+            "elements": [
+                {
+                    "testId": "post_attributes_card.attribute.name--text",
+                    "role": "text",
+                    "renderedWhen": ["!(visible.length === 0)", "open"],
+                    "source": "channels/src/components/post_attributes/post_attributes_hover_card.tsx#PostAttributesHoverCard"
+                },
+                {
+                    "testId": "post_attributes_card.attribute:{key}",
+                    "role": null,
+                    "key": "Pick<PropertyField, 'id'>",
+                    "renderedWhen": ["!(visible.length === 0)", "open"],
+                    "source": "channels/src/components/post_attributes/post_attributes_hover_card.tsx#PostAttributesHoverCard"
+                }
+            ]
+        },
+        {
+            "scope": "post_attributes_modal",
+            "class": "PostAttributesModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "post_attributes_modal.add--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "postAttributesAddMenu",
+                            "scope": "post_attributes_modal.add_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "post_attributes_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "post_attributes_modal.empty--text",
+                    "role": "text",
+                    "renderedWhen": ["isEmpty"],
+                    "source": "channels/src/components/post_attributes/post_attributes_modal.tsx#PostAttributesModal"
+                },
+                {
+                    "testId": "post_attributes_modal.error:{key}--alert",
+                    "role": "alert",
+                    "key": "Pick<PropertyField, 'id'>",
+                    "renderedWhen": ["errors[field.id]"],
+                    "source": "channels/src/components/post_attributes/post_attributes_modal.tsx#PostAttributesModal"
+                },
+                {
+                    "testId": "post_attributes_modal.reprise",
+                    "role": null,
+                    "source": "channels/src/components/post_attributes/post_attributes_modal.tsx#PostReprise"
+                }
+            ]
+        },
+        {
+            "scope": "post_attributes_modal.add_menu",
+            "class": "PostAttributesModalAddMenu",
+            "container": "channels/src/components/menu/menu.tsx#Menu",
+            "elements": [
+                {
+                    "testId": "post_attributes_modal.add_menu.field:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<PropertyField, 'id'>",
+                    "renderedWhen": ["addable.length > 0"],
+                    "source": "channels/src/components/post_attributes/post_attributes_field_picker.tsx#PostAttributesFieldPicker"
+                }
+            ]
+        },
+        {
+            "scope": "post_attributes_modal.attribute",
+            "class": "PostAttributesModalAttribute",
+            "elements": [
+                {
+                    "testId": "post_attributes_modal.attribute.clear--button",
+                    "role": "button",
+                    "effects": ["UpdatePropertyValues"],
+                    "renderedWhen": ["showClear"],
+                    "source": "channels/src/components/post_attributes/post_attributes_modal_row.tsx#PostAttributesModalRow"
+                },
+                {
+                    "testId": "post_attributes_modal.attribute.locked--img",
+                    "role": "img",
+                    "renderedWhen": ["!canEdit"],
+                    "source": "channels/src/components/post_attributes/post_attributes_modal_row.tsx#PostAttributesModalRow"
+                },
+                {
+                    "testId": "post_attributes_modal.attribute.users",
+                    "role": null,
+                    "effects": ["UpdatePropertyValues"],
+                    "source": "channels/src/components/post_attributes/post_attribute_value_control.tsx#UserPicker"
+                },
+                {
+                    "testId": "post_attributes_modal.attribute.value--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "post_attributes_modal.attribute.value_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "post_attributes_modal.attribute.value--textbox",
+                    "role": "textbox",
+                    "effects": ["UpdatePropertyValues"],
+                    "source": "channels/src/components/post_attributes/post_attribute_value_control.tsx#TextInput"
+                },
+                {
+                    "testId": "post_attributes_modal.attribute:{key}",
+                    "role": null,
+                    "key": "Pick<PropertyField, 'id'>",
+                    "source": "channels/src/components/post_attributes/post_attributes_modal_row.tsx#PostAttributesModalRow"
+                }
+            ]
+        },
+        {
+            "scope": "post_attributes_modal.attribute.value_menu",
+            "class": "PostAttributesModalAttributeValueMenu",
+            "container": "channels/src/components/menu/menu.tsx#Menu",
+            "elements": [
+                {
+                    "testId": "post_attributes_modal.attribute.value_menu.option:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<PropertyFieldOption, 'id'>",
+                    "effects": ["UpdatePropertyValues"],
+                    "source": "channels/src/components/post_attributes/post_attribute_value_control.tsx#OptionMenu"
+                }
+            ]
+        },
+        {
             "scope": "post_dot_menu",
             "class": "PostDotMenu",
             "container": "channels/src/components/menu/menu.tsx#Menu",
@@ -31752,7 +32541,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "PostAttributesModal"
+                            "target": "PostAttributesModal",
+                            "scope": "post_attributes_modal"
                         }
                     ],
                     "renderedWhen": ["showPostAttributes"],
@@ -32997,6 +33787,18 @@
                         "!isItemLoaded(item)"
                     ],
                     "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
+                }
+            ]
+        },
+        {
+            "scope": "quote_selection",
+            "class": "QuoteSelection",
+            "elements": [
+                {
+                    "testId": "quote_selection.quote--button",
+                    "role": "button",
+                    "renderedWhen": ["selection"],
+                    "source": "channels/src/components/quote_selection_button/quote_selection_button.tsx#QuoteSelectionButton"
                 }
             ]
         },
@@ -36479,6 +37281,448 @@
             ]
         },
         {
+            "scope": "rhs.thread.post.attributes",
+            "class": "PostItemAttributes",
+            "container": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.overflow--img",
+                    "role": "img",
+                    "renderedWhen": [
+                        "props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED",
+                        "!(visible.length === 0)",
+                        "overflow > 0"
+                    ],
+                    "source": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value",
+            "class": "Value",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.channel",
+                    "role": null,
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx#ChannelPropertyRenderer"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.select--text",
+                    "role": "text",
+                    "renderedWhen": ["!(visible.length === 0)"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx#OptionPropertyRenderer"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.selectable_user",
+                    "role": null,
+                    "renderedWhen": ["field.attrs?.editable"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx#SelectableUserPropertyRenderer"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.text--text",
+                    "role": "text",
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx#TextPropertyRenderer"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.timestamp--text",
+                    "role": "text",
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx#TimestampPropertyRenderer"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.user",
+                    "role": null,
+                    "renderedWhen": ["!(visible.length === 0)"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx#UserPropertyRenderer"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview",
+            "class": "PostPreview",
+            "container": "channels/src/components/properties_card_view/propertyValueRenderer/post_preview_property_renderer/post_preview_property_renderer.tsx#PostPreviewPropertyRenderer",
+            "elements": []
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview.post",
+            "class": "PostScope",
+            "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.message--text",
+                    "role": "text",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
+                            "dialogOps": ["RemoveTeamMember"]
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.POST_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "linkAttribute.value"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "postURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "returnTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "teamUrl + '/channels/' + channelMentionAttribute.value"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "AddTeamMember",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMember",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersForUserMe",
+                        "GetChannelStats",
+                        "GetChannelsForTeamForUserMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPost",
+                        "GetPostInfo",
+                        "GetPostThread",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "GetTeam",
+                        "GetTeamByName",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences"
+                    ],
+                    "renderedWhen": ["previewPost", "!(!post || !channel || !team)", "!(field.type !== 'text')"],
+                    "source": "channels/src/components/post_view/post_message_view/post_message_view.tsx#PostMessageView"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.priority_label",
+                    "role": null,
+                    "renderedWhen": [
+                        "previewPost",
+                        "previewPost.metadata?.priority && isPostPriorityEnabled",
+                        "!(!post || !channel || !team)",
+                        "!(field.type !== 'text')"
+                    ],
+                    "source": "channels/src/components/post_priority/post_priority_label.tsx#PriorityLabel"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.redacted_files",
+                    "role": null,
+                    "renderedWhen": [
+                        "previewPost",
+                        "props.permissionPoliciesEnabled && redactedFileCount > 0",
+                        "!(!post || !channel || !team)",
+                        "!(field.type !== 'text')"
+                    ],
+                    "source": "channels/src/components/post_view/redacted_files_placeholder/index.tsx#RedactedFilesPlaceholder"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.translation--button",
+                    "role": "button",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'ready'",
+                        "previewPost",
+                        "isChannelAutotranslated",
+                        "!(!post || !channel || !team)"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.translation_unavailable",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'unavailable'",
+                        "previewPost",
+                        "isChannelAutotranslated",
+                        "!(!post || !channel || !team)"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview.post.attachments",
+            "class": "Attachments",
+            "container": "channels/src/components/file_attachment_list/file_attachment_list.tsx#FileAttachmentList",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.file:{key}--button",
+                    "role": "button",
+                    "key": "Pick<FileInfo, 'id'>",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "!isInPermalink && !props.firstFileRejected && !hasDeletedFile && !isEditHistory",
+                        "(isMulti || isSingleVideo) && allMedia",
+                        "!(tiles.length === 0)",
+                        "previewPost"
+                    ],
+                    "source": "channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx#ImageTile"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card",
+            "class": "AttachmentsFileCard",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.more_actions--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "Menu",
+                            "scope": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "isMenuVisible",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.thumbnail--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!compactDisplay",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu",
+            "class": "AttachmentsFileCardMenu",
+            "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "PluginKey",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.file_card.menu.public_link--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "GetPublicLinkModal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "enablePublicLink",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview.post.attachments.image",
+            "class": "AttachmentsImage",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.image.name",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.image.picture--img",
+                    "role": "img",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.image.toggle--button",
+                    "role": "button",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.image:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview.post.attachments.image.picture",
+            "class": "Picture",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.post_preview.post.message",
+            "class": "ShowMore",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.post_preview.post.message.show_more--button",
+                    "role": "button",
+                    "renderedWhen": ["previewPost", "isOverflow", "!(!post || !channel || !team)"],
+                    "source": "channels/src/components/post_view/show_more/show_more.tsx#ShowMore"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes.value.team",
+            "class": "TeamScope",
+            "container": "channels/src/components/properties_card_view/propertyValueRenderer/team_property_renderer/team_property_renderer.tsx#TeamPropertyRenderer",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes.value.team.icon--img",
+                    "role": "img",
+                    "renderedWhen": ["!(field.type !== 'text')", "typeof content === 'string'", "teamIconUrl"],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                },
+                {
+                    "testId": "rhs.thread.post.attributes.value.team.initials--img",
+                    "role": "img",
+                    "renderedWhen": ["!(field.type !== 'text')", "typeof content === 'string'", "!teamIconUrl"],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.attributes_unavailable",
+            "class": "PostItemAttributesUnavailable",
+            "container": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.attributes_unavailable.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED",
+                        "post.metadata?.property_values_unavailable"
+                    ],
+                    "source": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips"
+                }
+            ]
+        },
+        {
             "scope": "rhs.thread.post.avatar",
             "class": "Avatar",
             "container": "channels/src/components/profile_picture/index.tsx#ProfilePicture",
@@ -36813,7 +38057,7 @@
         },
         {
             "scope": "rhs.thread.post.permalink_preview",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -37408,7 +38652,7 @@
         },
         {
             "scope": "rhs.thread.post.spillage_report.card.field.value.post_preview.post",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -38652,6 +39896,448 @@
             ]
         },
         {
+            "scope": "search.results.post.attributes",
+            "class": "PostItemAttributes",
+            "container": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.overflow--img",
+                    "role": "img",
+                    "renderedWhen": [
+                        "props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED",
+                        "!(visible.length === 0)",
+                        "overflow > 0"
+                    ],
+                    "source": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value",
+            "class": "Value",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.channel",
+                    "role": null,
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx#ChannelPropertyRenderer"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.select--text",
+                    "role": "text",
+                    "renderedWhen": ["!(visible.length === 0)"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx#OptionPropertyRenderer"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.selectable_user",
+                    "role": null,
+                    "renderedWhen": ["field.attrs?.editable"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx#SelectableUserPropertyRenderer"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.text--text",
+                    "role": "text",
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx#TextPropertyRenderer"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.timestamp--text",
+                    "role": "text",
+                    "renderedWhen": ["!(field.type !== 'text')"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx#TimestampPropertyRenderer"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.user",
+                    "role": null,
+                    "renderedWhen": ["!(visible.length === 0)"],
+                    "source": "channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx#UserPropertyRenderer"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview",
+            "class": "PostPreview",
+            "container": "channels/src/components/properties_card_view/propertyValueRenderer/post_preview_property_renderer/post_preview_property_renderer.tsx#PostPreviewPropertyRenderer",
+            "elements": []
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview.post",
+            "class": "PostScope",
+            "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.message--text",
+                    "role": "text",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
+                            "dialogOps": ["RemoveTeamMember"]
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.POST_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "linkAttribute.value"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "postURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "returnTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "teamUrl + '/channels/' + channelMentionAttribute.value"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "AddTeamMember",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMember",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersForUserMe",
+                        "GetChannelStats",
+                        "GetChannelsForTeamForUserMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPost",
+                        "GetPostInfo",
+                        "GetPostThread",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "GetTeam",
+                        "GetTeamByName",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences"
+                    ],
+                    "renderedWhen": ["previewPost", "!(!post || !channel || !team)", "!(field.type !== 'text')"],
+                    "source": "channels/src/components/post_view/post_message_view/post_message_view.tsx#PostMessageView"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.priority_label",
+                    "role": null,
+                    "renderedWhen": [
+                        "previewPost",
+                        "previewPost.metadata?.priority && isPostPriorityEnabled",
+                        "!(!post || !channel || !team)",
+                        "!(field.type !== 'text')"
+                    ],
+                    "source": "channels/src/components/post_priority/post_priority_label.tsx#PriorityLabel"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.redacted_files",
+                    "role": null,
+                    "renderedWhen": [
+                        "previewPost",
+                        "props.permissionPoliciesEnabled && redactedFileCount > 0",
+                        "!(!post || !channel || !team)",
+                        "!(field.type !== 'text')"
+                    ],
+                    "source": "channels/src/components/post_view/redacted_files_placeholder/index.tsx#RedactedFilesPlaceholder"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.translation--button",
+                    "role": "button",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'ready'",
+                        "previewPost",
+                        "isChannelAutotranslated",
+                        "!(!post || !channel || !team)"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.translation_unavailable",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'unavailable'",
+                        "previewPost",
+                        "isChannelAutotranslated",
+                        "!(!post || !channel || !team)"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview.post.attachments",
+            "class": "Attachments",
+            "container": "channels/src/components/file_attachment_list/file_attachment_list.tsx#FileAttachmentList",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.file:{key}--button",
+                    "role": "button",
+                    "key": "Pick<FileInfo, 'id'>",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "!isInPermalink && !props.firstFileRejected && !hasDeletedFile && !isEditHistory",
+                        "(isMulti || isSingleVideo) && allMedia",
+                        "!(tiles.length === 0)",
+                        "previewPost"
+                    ],
+                    "source": "channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx#ImageTile"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview.post.attachments.file_card",
+            "class": "AttachmentsFileCard",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.file_card.more_actions--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "Menu",
+                            "scope": "search.results.post.attributes.value.post_preview.post.attachments.file_card.menu"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "isMenuVisible",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.file_card.thumbnail--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!compactDisplay",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.file_card:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview.post.attachments.file_card.menu",
+            "class": "AttachmentsFileCardMenu",
+            "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "PluginKey",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.file_card.menu.public_link--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "GetPublicLinkModal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "enablePublicLink",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview.post.attachments.image",
+            "class": "AttachmentsImage",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.image.name",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.image.picture--img",
+                    "role": "img",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.image.toggle--button",
+                    "role": "button",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.image:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview.post.attachments.image.picture",
+            "class": "Picture",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.attachments.image.picture.frame",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.post_preview.post.message",
+            "class": "ShowMore",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.post_preview.post.message.show_more--button",
+                    "role": "button",
+                    "renderedWhen": ["previewPost", "isOverflow", "!(!post || !channel || !team)"],
+                    "source": "channels/src/components/post_view/show_more/show_more.tsx#ShowMore"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes.value.team",
+            "class": "TeamScope",
+            "container": "channels/src/components/properties_card_view/propertyValueRenderer/team_property_renderer/team_property_renderer.tsx#TeamPropertyRenderer",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes.value.team.icon--img",
+                    "role": "img",
+                    "renderedWhen": ["!(field.type !== 'text')", "typeof content === 'string'", "teamIconUrl"],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                },
+                {
+                    "testId": "search.results.post.attributes.value.team.initials--img",
+                    "role": "img",
+                    "renderedWhen": ["!(field.type !== 'text')", "typeof content === 'string'", "!teamIconUrl"],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.attributes_unavailable",
+            "class": "PostItemAttributesUnavailable",
+            "container": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips",
+            "elements": [
+                {
+                    "testId": "search.results.post.attributes_unavailable.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.isPostAttributesEnabled && !props.shouldDisplayBurnOnReadConcealed && post.state !== Posts.POST_DELETED",
+                        "post.metadata?.property_values_unavailable"
+                    ],
+                    "source": "channels/src/components/post_attributes/post_attributes_chips.tsx#PostAttributesChips"
+                }
+            ]
+        },
+        {
             "scope": "search.results.post.avatar",
             "class": "Avatar",
             "container": "channels/src/components/profile_picture/index.tsx#ProfilePicture",
@@ -38986,7 +40672,7 @@
         },
         {
             "scope": "search.results.post.permalink_preview",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {
@@ -39581,7 +41267,7 @@
         },
         {
             "scope": "search.results.post.spillage_report.card.field.value.post_preview.post",
-            "class": "PostMessagePreview",
+            "class": "PostScope",
             "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
             "elements": [
                 {

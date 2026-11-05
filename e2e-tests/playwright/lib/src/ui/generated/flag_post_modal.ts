@@ -9,7 +9,7 @@ import type {Locator, Page} from '@playwright/test';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
-import {ChannelSettingsModalInfoHeader, PostMessagePreview} from './shared';
+import {ChannelSettingsModalInfoHeader, PostScope} from './shared';
 
 /** The form fields of `flag_post_modal`. */
 export type FlagPostModalFormValues = {
@@ -152,8 +152,8 @@ export class FlagPostModal extends Scope {
      * `flag_post_modal.post_preview` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
      * Renders only when previewPost.
      */
-    get postPreview(): PostMessagePreview {
-        return new PostMessagePreview(this.page, `${this.scope}.post_preview`, this.root);
+    get postPreview(): PostScope {
+        return new PostScope(this.page, `${this.scope}.post_preview`, this.root);
     }
 
     /** Fills the given fields; others are left as they are. */

@@ -1,9 +1,11 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, setWysiwygUserPreference, test, WysiwygEditor} from '@mattermost/playwright-lib';
+import {expect, test} from '@mattermost/playwright-lib';
 
 import {selectTextWithMouse} from '../messaging/quote_selection_helpers';
+
+import {lastPostText, openRichComposer} from './support';
 
 const TAGS = {tag: ['@channels', '@wysiwyg_editor']};
 
@@ -17,41 +19,45 @@ test.describe('WYSIWYG editor - quoting selected text', TAGS, () => {
      * the reply typed right after it goes below the quote rather than into it.
      */
     test('quotes selected text and types the reply below the quote', async ({pw}) => {
-        const {user, userClient, team, townSquare} = await pw.initSetup();
-        await setWysiwygUserPreference(userClient, user.id, true);
-        await userClient.createPost({
+        const setup = await pw.initSetup();
+        const {userClient, team} = setup;
+        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const created = await userClient.createPost({
             channel_id: townSquare.id,
             message: 'Ullamcorper eu mi, dictumst nec. Diam sapien pellentesque vestibulum pretium eget massa.',
         });
 
-        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        const app = await openRichComposer(pw, setup);
         await app.channelsPage.goto({team, channel: townSquare});
-
-        const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
-        await editor.toBeVisible();
+        const composer = app.center.postCreate;
+        const editor = composer.messageTextbox.locator;
+        await expect(editor).toHaveAttribute('contenteditable', 'true');
 
         // # Select part of the message and quote it
-        const post = await channelsPage.getLastPost();
-        await selectTextWithMouse(post.body.locator('.post-message__text'), 'Diam sapien pellentesque');
-        await page.getByRole('button', {name: 'Quote selection'}).click();
+        const post = app.center.postList.post(created);
+        await selectTextWithMouse(post.messageText.locator, 'Diam sapien pellentesque');
+        await app.quoteSelection.clickQuoteButton();
 
         // * Verify the editor has the quote and is focused
-        await expect(editor.input.locator('blockquote')).toHaveText('Diam sapien pellentesque');
-        await expect(editor.input).toBeFocused();
+        await expect(editor.getByRole('blockquote')).toHaveText('Diam sapien pellentesque');
+        await expect(editor).toBeFocused();
 
         // # Type a reply without moving the caret
-        await page.keyboard.type('What do you mean?');
+        await app.page.keyboard.type('What do you mean?');
 
         // * Verify the reply went below the quote, not into it
-        await expect(editor.input.locator('blockquote')).toHaveText('Diam sapien pellentesque');
-        await expect(editor.input.locator(':scope > p').filter({hasText: 'What do you mean?'})).toBeVisible();
+        await expect(editor.getByRole('blockquote')).toHaveText('Diam sapien pellentesque');
+        await expect(editor.getByRole('paragraph').filter({hasText: 'What do you mean?'})).toBeVisible();
 
         // # Send the message
-        await editor.sendByEnter();
+        await expect(composer.sendButton.locator).toBeEnabled();
+        await composer.messageTextbox.press('Enter');
 
         // * Verify the posted message contains the quote followed by the reply
-        const reply = await channelsPage.getLastPost();
-        await expect(reply.body.locator('blockquote')).toHaveText('Diam sapien pellentesque');
-        await reply.toContainText('What do you mean?');
+        await expect.poll(() => lastPostText(app.center.postList)).toContain('What do you mean?');
+        const replyId = (await app.center.postList.postKeys()).at(-1)!;
+        const reply = app.center.postList.post({id: replyId}).messageText.locator;
+        await expect(reply.getByRole('blockquote')).toHaveText('Diam sapien pellentesque');
+        await expect(reply).toContainText('What do you mean?');
     });
 });

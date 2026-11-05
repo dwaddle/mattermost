@@ -14,10 +14,9 @@ import {
     ensureUserAttributes,
     createPrivateChannelForABAC,
     activatePolicy,
-    getPolicyIdByName,
     getUserAttributeFieldByName,
 } from '../support';
-import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
+import {createMembershipPolicy, policyIdByName, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
 
 /**
  * ABAC LDAP Integration - Sync
@@ -83,7 +82,7 @@ test.describe('ABAC LDAP Integration - Sync', () => {
         });
 
         // Get policy ID via API (no DOM scraping, no page reload needed)
-        const policyId1 = (await getPolicyIdByName(adminClient, policy1Name))!;
+        const policyId1 = await policyIdByName(adminClient, policy1Name);
         await activatePolicy(adminClient, policyId1);
 
         // Initial sync — user has non-qualifying attribute, should not be added.
@@ -129,7 +128,7 @@ test.describe('ABAC LDAP Integration - Sync', () => {
             autoAdd: false,
         });
 
-        const policyId2 = (await getPolicyIdByName(adminClient, policy2Name))!;
+        const policyId2 = await policyIdByName(adminClient, policy2Name);
         await activatePolicy(adminClient, policyId2);
 
         // Initial sync — non-qualifying, should not be added
