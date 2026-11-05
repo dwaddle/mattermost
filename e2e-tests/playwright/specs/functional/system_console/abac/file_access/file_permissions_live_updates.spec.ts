@@ -3,7 +3,15 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {AdminPermission, expect, test, getAdminClient, getRandomId, TestBrowser} from '@mattermost/playwright-lib';
+import {
+    AdminPermission,
+    expect,
+    test,
+    getAdminClient,
+    getRandomId,
+    TestBrowser,
+    type PlaywrightExtended,
+} from '@mattermost/playwright-lib';
 
 import {openChannel} from '../../../channels/channel_attributes/surface';
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
@@ -124,13 +132,29 @@ test.describe('ABAC file permissions - live updates', () => {
     /**
      * Create a user who currently satisfies the policy and drop them into the fixture channel.
      * Each test gets its own so that revoking access is not visible to the others.
+     *
+     * Returns once the server lets them upload there: the page asks once, when the channel loads, and a new user's
+     * attributes can trail that check on a busy server, leaving the upload control disabled for good.
      */
-    async function createAllowedMember() {
+    async function createAllowedMember(pw: PlaywrightExtended) {
         const user = await createUserForABAC(sharedAdminClient, attributeFieldsMap, [
             {name: 'Department', type: 'text', value: 'Engineering'},
         ]);
         await sharedAdminClient.addToTeam(team.id, user.id);
         await sharedAdminClient.addToChannel(user.id, channelId);
+
+        const {client} = await pw.makeClient({username: user.username, password: user.password});
+        await expect
+            .poll(
+                async () => {
+                    const result = await client!.searchAccessControlDecisionActions('channel', channelId, [
+                        'upload_file_attachment',
+                    ]);
+                    return result.decisions?.upload_file_attachment?.allowed ?? false;
+                },
+                {timeout: pw.duration.half_min, message: 'the new member should be allowed to upload'},
+            )
+            .toBe(true);
         return user;
     }
 
@@ -158,7 +182,7 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who currently matches the policy opens the channel
-            const user = await createAllowedMember();
+            const user = await createAllowedMember(pw);
             const app = await openChannel(pw, user, team, {name: channelName});
 
             // * Verify upload starts out available
@@ -190,7 +214,7 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who currently matches the policy opens the channel
-            const user = await createAllowedMember();
+            const user = await createAllowedMember(pw);
             const app = await openChannel(pw, user, team, {name: channelName});
 
             // * Verify the file starts out visible
@@ -219,7 +243,7 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who currently matches the policy opens the channel
-            const user = await createAllowedMember();
+            const user = await createAllowedMember(pw);
             const app = await openChannel(pw, user, team, {name: channelName});
 
             // * Verify access starts out granted
@@ -263,7 +287,7 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who matches the policy opens the channel
-            const user = await createAllowedMember();
+            const user = await createAllowedMember(pw);
             const app = await openChannel(pw, user, team, {name: channelName});
 
             // * Verify upload starts out available
