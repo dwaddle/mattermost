@@ -9,6 +9,9 @@
 
 // Group: @channels @incoming_webhook
 
+// An interactive menu's select inside a post, in the center or the RHS (`<post>.select:<action id>`).
+const MM_BLOCKS_SELECT_TESTID = /^(center\.post_list|rhs\.thread)\.post\.select:/;
+
 describe('Incoming webhook', () => {
     let testTeam;
     let testChannel;
@@ -293,9 +296,9 @@ describe('Incoming webhook', () => {
         cy.getLastPost().within(() => {
             cy.get('.post-message__text').should('have.text', id);
 
-            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(1)').should('have.attr', 'data-testid', 'autoCompleteSelector');
+            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(1)').should('have.attr', 'data-testid').and('match', MM_BLOCKS_SELECT_TESTID);
             cy.get('.mm-blocks-container--flow-horizontal > :nth-child(1) input').should('have.attr', 'placeholder', 'Select an option...');
-            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(2)').should('have.attr', 'data-testid', 'autoCompleteSelector');
+            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(2)').should('have.attr', 'data-testid').and('match', MM_BLOCKS_SELECT_TESTID);
             cy.get('.mm-blocks-container--flow-horizontal > :nth-child(2) input').should('have.attr', 'placeholder', 'Select an option...');
 
             cy.get('.mm-blocks-container--flow-horizontal > button:nth-child(3)').should('have.attr', 'data-action-id');
@@ -315,9 +318,9 @@ describe('Incoming webhook', () => {
         cy.getLastPost().within(() => {
             cy.get('.post-message__text').should('have.text', id);
 
-            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(1)').should('have.attr', 'data-testid', 'autoCompleteSelector');
+            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(1)').should('have.attr', 'data-testid').and('match', MM_BLOCKS_SELECT_TESTID);
             cy.get('.mm-blocks-container--flow-horizontal > :nth-child(1) input').should('have.attr', 'placeholder', 'Select an option...');
-            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(2)').should('have.attr', 'data-testid', 'autoCompleteSelector');
+            cy.get('.mm-blocks-container--flow-horizontal > :nth-child(2)').should('have.attr', 'data-testid').and('match', MM_BLOCKS_SELECT_TESTID);
             cy.get('.mm-blocks-container--flow-horizontal > :nth-child(2) input').should('have.attr', 'placeholder', 'Select an option...');
 
             cy.get('.mm-blocks-container--flow-horizontal > button:nth-child(3)').should('have.attr', 'data-action-id');
