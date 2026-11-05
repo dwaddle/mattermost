@@ -118,7 +118,7 @@ test('disabling join/leave messages hides join posts', async ({pw}) => {
     }
     ```
 
-- Literal locators (`getByTestId('…')`, `locator('…')`, `getByRole(…, {name: '…'})`) and `waitForTimeout` are lint warnings in every spec: the list of what's left to move. Specs written on the generated API are listed in `GENERATED_API_SPECS` (`eslint.config.mjs`), where they are errors; add a spec when it moves. Generated page objects may not contain `expect`.
+- Literal locators (`getByTestId('…')`, `locator('…')`, `getByRole(…, {name: '…'})`) and `waitForTimeout` are lint errors in every spec: reach elements through the generated page objects and wait on state. The few reviewed exceptions, where they stay warnings, are listed with their reasons in `LITERAL_LOCATOR_EXCEPTIONS` (`eslint.config.mjs`). Generated page objects may not contain `expect`.
 - Strings in tests are either text a user types or values from generated types (`Api`, `Msg`, key sets like `ChannelSettingsModalTab`).
 
 ## Run tests in UI mode
