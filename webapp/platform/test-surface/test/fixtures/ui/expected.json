@@ -1,0 +1,2945 @@
+{
+  "version": 1,
+  "generatedFrom": {
+    "tsconfig": "tsconfig.json",
+    "scope": [
+      "src"
+    ]
+  },
+  "elements": [
+    {
+      "template": "add_menu.browse--menuitem",
+      "grammar": true,
+      "scope": [
+        "add_menu"
+      ],
+      "name": "browse",
+      "role": "menuitem",
+      "component": {
+        "name": "AddMenu",
+        "at": "src/menu.tsx:52"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "add_menu.create--menuitem",
+      "grammar": true,
+      "scope": [
+        "add_menu"
+      ],
+      "name": "create",
+      "role": "menuitem",
+      "component": {
+        "name": "AddMenu",
+        "at": "src/menu.tsx:50"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "canCreate",
+          "explained": "canCreate",
+          "kind": "permission",
+          "at": "src/menu.tsx:49"
+        }
+      ]
+    },
+    {
+      "template": "add_menu_tour",
+      "grammar": true,
+      "scope": [],
+      "name": "add_menu_tour",
+      "role": null,
+      "component": {
+        "name": "AddMenu",
+        "at": "src/menu.tsx:60"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "banner.leave--togglebutton",
+      "grammar": true,
+      "scope": [
+        "banner"
+      ],
+      "name": "leave",
+      "role": "togglebutton",
+      "component": {
+        "name": "Banner",
+        "at": "src/header.tsx:123"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "togglebutton",
+        "native": true,
+        "state": [
+          "aria-pressed"
+        ]
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "LeaveModal",
+          "at": "src/header.tsx:126",
+          "scope": "leave_modal"
+        }
+      ]
+    },
+    {
+      "template": "banner.url",
+      "grammar": true,
+      "scope": [
+        "banner"
+      ],
+      "name": "url",
+      "role": null,
+      "component": {
+        "name": "UrlRow",
+        "at": "src/modals.tsx:106"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "banner.url.copy--button",
+      "grammar": true,
+      "scope": [
+        "banner",
+        "url"
+      ],
+      "name": "copy",
+      "role": "button",
+      "component": {
+        "name": "CopyIcon",
+        "at": "src/modals.tsx:95"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:107"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "bar.header.open_menu--button",
+      "grammar": true,
+      "scope": [
+        "bar",
+        "header"
+      ],
+      "name": "open_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/header.tsx:163"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "barMenu",
+          "at": "src/header.tsx:163",
+          "scope": "bar.menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "bar.menu.one--menuitem",
+      "grammar": true,
+      "scope": [
+        "bar",
+        "menu"
+      ],
+      "name": "one",
+      "role": "menuitem",
+      "component": {
+        "name": "Bar",
+        "at": "src/header.tsx:167"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "bar.menu.two--menuitem",
+      "grammar": true,
+      "scope": [
+        "bar",
+        "menu"
+      ],
+      "name": "two",
+      "role": "menuitem",
+      "component": {
+        "name": "Bar",
+        "at": "src/header.tsx:168"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "field_menu.field:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "field_menu"
+      ],
+      "name": "field",
+      "role": "menuitem",
+      "component": {
+        "name": "renderField",
+        "at": "src/menu.tsx:239"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "footer.cancel--button",
+      "grammar": true,
+      "scope": [
+        "footer"
+      ],
+      "name": "cancel",
+      "role": "button",
+      "component": {
+        "name": "SharedButton",
+        "at": "src/modals.tsx:54"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:62"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "footer.leave--button",
+      "grammar": true,
+      "scope": [
+        "footer"
+      ],
+      "name": "leave",
+      "role": "button",
+      "component": {
+        "name": "Footer",
+        "at": "src/header.tsx:146"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "LeaveModal",
+          "at": "src/header.tsx:138",
+          "scope": "leave_modal"
+        }
+      ]
+    },
+    {
+      "template": "footer.note--button",
+      "grammar": true,
+      "scope": [
+        "footer"
+      ],
+      "name": "note",
+      "role": "button",
+      "component": {
+        "name": "NoteOpener",
+        "at": "src/modals.tsx:87"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "NoteModal",
+          "at": "src/modals.tsx:88",
+          "scope": "note_modal"
+        }
+      ]
+    },
+    {
+      "template": "footer.save--button",
+      "grammar": true,
+      "scope": [
+        "footer"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "SharedButton",
+        "at": "src/modals.tsx:54"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:61"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "footer.token",
+      "grammar": true,
+      "scope": [
+        "footer"
+      ],
+      "name": "token",
+      "role": null,
+      "component": {
+        "name": "TokenRow",
+        "at": "src/modals.tsx:99"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "footer.token.copy--button",
+      "grammar": true,
+      "scope": [
+        "footer",
+        "token"
+      ],
+      "name": "copy",
+      "role": "button",
+      "component": {
+        "name": "CopyIcon",
+        "at": "src/modals.tsx:95"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:100"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "header.big_close--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "big_close",
+      "role": "button",
+      "component": {
+        "name": "StyledWrappers",
+        "at": "src/menu.tsx:172"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "src/menu.tsx:173"
+        ]
+      }
+    },
+    {
+      "template": "header.close--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "Closer",
+        "at": "src/menu.tsx:114"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "src/menu.tsx:115"
+        ]
+      }
+    },
+    {
+      "template": "header.current_channel--option",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "current_channel",
+      "role": "option",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:65"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "option",
+        "native": false,
+        "state": [
+          "aria-selected"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.dismiss--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "dismiss",
+      "role": "button",
+      "component": {
+        "name": "TwoSites",
+        "at": "src/two_sites.tsx:11"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "alsoAt": [
+        "src/two_sites.tsx:9"
+      ],
+      "renderedWhen": [
+        {
+          "expr": "open",
+          "explained": "open",
+          "kind": "prop",
+          "at": "src/two_sites.tsx:5"
+        }
+      ]
+    },
+    {
+      "template": "header.either--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "either",
+      "role": "button",
+      "component": {
+        "name": "TestIdToggleModalButton",
+        "at": "src/modals.tsx:42"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/header.tsx:68"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "LeaveModal",
+          "at": "src/modals.tsx:40",
+          "scope": "leave_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "SettingsModal",
+          "at": "src/modals.tsx:40",
+          "scope": "settings_modal"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.external--link",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "external",
+      "role": "link",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:95"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "externalUrl",
+          "at": "src/header.tsx:95"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.faq--link",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "faq",
+      "role": "link",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:91"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/help/faq?from=header'",
+          "at": "src/header.tsx:91",
+          "page": "HelpPage"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.follow--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "follow",
+      "role": "button",
+      "component": {
+        "name": "Follow",
+        "at": "src/two_sites.tsx:24"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/two_sites.tsx:30"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "header.follow_icon--togglebutton",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "follow_icon",
+      "role": "togglebutton",
+      "component": {
+        "name": "Follow",
+        "at": "src/two_sites.tsx:20"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/two_sites.tsx:31"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "togglebutton",
+        "native": true,
+        "state": [
+          "aria-pressed"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "iconOnly",
+          "explained": "iconOnly",
+          "kind": "prop",
+          "at": "src/two_sites.tsx:16"
+        }
+      ],
+      "form": {
+        "scope": "header",
+        "field": "follow_icon",
+        "valueType": "boolean"
+      }
+    },
+    {
+      "template": "header.guide--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "guide",
+      "role": "button",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:98"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/help/mobile'",
+          "at": "src/header.tsx:98",
+          "conditional": true,
+          "page": "HelpPage"
+        },
+        {
+          "kind": "popover",
+          "target": "InfoPopover",
+          "at": "src/header.tsx:84",
+          "scope": "info_popover"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.help--link",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "help",
+      "role": "link",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:80"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/help'",
+          "at": "src/header.tsx:80",
+          "page": "HelpPage"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        },
+        {
+          "expr": "!isMobile",
+          "explained": "!isMobile",
+          "kind": "layout",
+          "at": "src/header.tsx:72"
+        }
+      ]
+    },
+    {
+      "template": "header.home--link",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "home",
+      "role": "link",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:87"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "`/${teamName}/channels/town-square`",
+          "at": "src/header.tsx:87",
+          "page": "ChannelsPage"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.info--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "info",
+      "role": "button",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:74"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "popover",
+          "target": "InfoPopover",
+          "at": "src/header.tsx:84",
+          "scope": "info_popover"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        },
+        {
+          "expr": "isMobile",
+          "explained": "isMobile",
+          "kind": "layout",
+          "at": "src/header.tsx:72"
+        }
+      ]
+    },
+    {
+      "template": "header.label",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "label",
+      "role": null,
+      "component": {
+        "name": "Chips",
+        "at": "src/menu.tsx:107"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "header.lazy--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "lazy",
+      "role": "button",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:55"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "LazyModalImpl",
+          "at": "src/header.tsx:53",
+          "scope": "lazy_modal"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.menu.leave--menuitem",
+      "grammar": true,
+      "scope": [
+        "header",
+        "menu"
+      ],
+      "name": "leave",
+      "role": "menuitem",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:45"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "LeaveModal",
+          "at": "src/header.tsx:8",
+          "scope": "leave_modal"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.menu.mute--menuitem",
+      "grammar": true,
+      "scope": [
+        "header",
+        "menu"
+      ],
+      "name": "mute",
+      "role": "menuitem",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:50"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitemcheckbox",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.menu.settings--menuitem",
+      "grammar": true,
+      "scope": [
+        "header",
+        "menu"
+      ],
+      "name": "settings",
+      "role": "menuitem",
+      "component": {
+        "name": "Header",
+        "at": "src/header.tsx:40"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "SettingsModal",
+          "at": "src/header.tsx:41",
+          "scope": "settings_modal"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        },
+        {
+          "expr": "canAccess",
+          "explained": "canManage(state, channelId)",
+          "kind": "permission",
+          "at": "src/header.tsx:38"
+        }
+      ]
+    },
+    {
+      "template": "header.note",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "note",
+      "role": null,
+      "component": {
+        "name": "NoteBase",
+        "at": "src/menu.tsx:164"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:175"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "header.off_topic--link",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "off_topic",
+      "role": "link",
+      "component": {
+        "name": "ChannelLink",
+        "at": "src/header.tsx:19"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/header.tsx:107"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "src/header.tsx:19",
+          "page": "ChannelsPage"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.open_add_menu--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "open_add_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:54"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "addMenu",
+          "at": "src/menu.tsx:54",
+          "scope": "add_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "header.open_field_menu--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "open_field_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:243"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "fieldMenu",
+          "at": "src/menu.tsx:243",
+          "scope": "field_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "header.open_menu--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "open_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/header.tsx:34"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "headerMenu",
+          "at": "src/header.tsx:34",
+          "scope": "header.menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.open_role_menu--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "open_role_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:70"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "roleMenu",
+          "at": "src/menu.tsx:70",
+          "scope": "role_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "header.open_sort_menu--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "open_sort_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:150"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "sortMenu",
+          "at": "src/menu.tsx:150",
+          "scope": "sort_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "header.pick--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "pick",
+      "role": "button",
+      "component": {
+        "name": "Chips",
+        "at": "src/menu.tsx:104"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "src/menu.tsx:105"
+        ]
+      }
+    },
+    {
+      "template": "header.search--textbox",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "search",
+      "role": "textbox",
+      "component": {
+        "name": "QuickSearch",
+        "at": "src/two_sites.tsx:47"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "header",
+        "field": "search",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "header.settings--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "settings",
+      "role": "button",
+      "component": {
+        "name": "TestIdToggleModalButton",
+        "at": "src/modals.tsx:42"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/header.tsx:57"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "SettingsModal",
+          "at": "src/modals.tsx:40",
+          "scope": "settings_modal"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        }
+      ]
+    },
+    {
+      "template": "header.status--textbox",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "status",
+      "role": "textbox",
+      "component": {
+        "name": "StatusText",
+        "at": "src/two_sites.tsx:92"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "header",
+        "field": "status",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "header.status_clear--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "status_clear",
+      "role": "button",
+      "component": {
+        "name": "QuickMemo",
+        "at": "src/two_sites.tsx:77"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/two_sites.tsx:82",
+            "src/two_sites.tsx:90"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "info_popover.body--text",
+      "grammar": true,
+      "scope": [
+        "info_popover"
+      ],
+      "name": "body",
+      "role": "text",
+      "component": {
+        "name": "InfoPopover",
+        "at": "src/modals.tsx:23"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "channelId",
+          "explained": "channelId",
+          "kind": "prop",
+          "at": "src/header.tsx:29"
+        },
+        {
+          "expr": "showInfo",
+          "explained": "showInfo",
+          "kind": "local state",
+          "at": "src/header.tsx:84"
+        }
+      ]
+    },
+    {
+      "template": "lazy_modal.ok--button",
+      "grammar": true,
+      "scope": [
+        "lazy_modal"
+      ],
+      "name": "ok",
+      "role": "button",
+      "component": {
+        "name": "LazyModalImpl",
+        "at": "src/lazy_modal.tsx:2"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "leave_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "leave_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "LeaveModal",
+        "at": "src/modals.tsx:19"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.state.showLeave",
+          "explained": "this.state.showLeave",
+          "kind": "local state",
+          "at": "src/header.tsx:126"
+        },
+        {
+          "expr": "this.state.showLeave",
+          "explained": "this.state.showLeave",
+          "kind": "local state",
+          "at": "src/header.tsx:137"
+        }
+      ]
+    },
+    {
+      "template": "left.actions.action:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "left",
+        "actions"
+      ],
+      "name": "action",
+      "role": "menuitem",
+      "component": {
+        "name": "ActionsList",
+        "at": "src/menu.tsx:262"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:274"
+          ],
+          "keySet": [
+            "archive",
+            "mute"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"archive\" | \"mute\"",
+        "values": [
+          "archive",
+          "mute"
+        ],
+        "set": "LeftAction"
+      }
+    },
+    {
+      "template": "left.actions.open--button",
+      "grammar": true,
+      "scope": [
+        "left",
+        "actions"
+      ],
+      "name": "open",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:255",
+            "src/menu.tsx:274"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "actionsMenu",
+          "at": "src/menu.tsx:255",
+          "scope": "left.actions"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "left.picker.menu.team:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "left",
+        "picker",
+        "menu"
+      ],
+      "name": "team",
+      "role": "menuitem",
+      "component": {
+        "name": "ScopedPicker",
+        "at": "src/menu.tsx:190"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:200"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "left.picker.open_menu--button",
+      "grammar": true,
+      "scope": [
+        "left",
+        "picker"
+      ],
+      "name": "open_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:183",
+            "src/menu.tsx:200"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "scopedPickerMenu",
+          "at": "src/menu.tsx:183",
+          "scope": "left.picker.menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "mention_popover.actions",
+      "grammar": true,
+      "scope": [
+        "mention_popover"
+      ],
+      "name": "actions",
+      "role": null,
+      "component": {
+        "name": "MentionPopover",
+        "at": "src/modals.tsx:72"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "mention_popover.name--text",
+      "grammar": true,
+      "scope": [
+        "mention_popover"
+      ],
+      "name": "name",
+      "role": "text",
+      "component": {
+        "name": "MentionPopover",
+        "at": "src/modals.tsx:71"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "menu_modal",
+      "grammar": true,
+      "scope": [],
+      "name": "menu_modal",
+      "role": null,
+      "component": {
+        "name": "MenuModal",
+        "at": "src/menu.tsx:12"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "menu_modal.list",
+      "grammar": true,
+      "scope": [
+        "menu_modal"
+      ],
+      "name": "list",
+      "role": null,
+      "component": {
+        "name": "MenuModal",
+        "at": "src/menu.tsx:13"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "list",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "note_modal",
+      "grammar": true,
+      "scope": [],
+      "name": "note_modal",
+      "role": null,
+      "component": {
+        "name": "NoteModal",
+        "at": "src/modals.tsx:78"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "note_modal.save--button",
+      "grammar": true,
+      "scope": [
+        "note_modal"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "NoteModal",
+        "at": "src/modals.tsx:79"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "right.actions.action:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "right",
+        "actions"
+      ],
+      "name": "action",
+      "role": "menuitem",
+      "component": {
+        "name": "ActionsList",
+        "at": "src/menu.tsx:262"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:278"
+          ],
+          "keySet": [
+            "pin"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"pin\"",
+        "values": [
+          "pin"
+        ],
+        "set": "RightAction"
+      }
+    },
+    {
+      "template": "right.actions.open--button",
+      "grammar": true,
+      "scope": [
+        "right",
+        "actions"
+      ],
+      "name": "open",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:255",
+            "src/menu.tsx:278"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "actionsMenu",
+          "at": "src/menu.tsx:255",
+          "scope": "right.actions"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "right.picker.menu.team:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "right",
+        "picker",
+        "menu"
+      ],
+      "name": "team",
+      "role": "menuitem",
+      "component": {
+        "name": "ScopedPicker",
+        "at": "src/menu.tsx:190"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:204"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "right.picker.open_menu--button",
+      "grammar": true,
+      "scope": [
+        "right",
+        "picker"
+      ],
+      "name": "open_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:183",
+            "src/menu.tsx:204"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "scopedPickerMenu",
+          "at": "src/menu.tsx:183",
+          "scope": "right.picker.menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "role_menu.make_admin--menuitem",
+      "grammar": true,
+      "scope": [
+        "role_menu"
+      ],
+      "name": "make_admin",
+      "role": "menuitem",
+      "component": {
+        "name": "RoleMenu",
+        "at": "src/menu.tsx:67"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "role_menu.make_member--menuitem",
+      "grammar": true,
+      "scope": [
+        "role_menu"
+      ],
+      "name": "make_member",
+      "role": "menuitem",
+      "component": {
+        "name": "RoleMenu",
+        "at": "src/menu.tsx:68"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "save_bar.confirm_modal",
+      "grammar": true,
+      "scope": [
+        "save_bar"
+      ],
+      "name": "confirm_modal",
+      "role": null,
+      "component": {
+        "name": "ConfirmModal",
+        "at": "src/modals.tsx:117"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:144"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "dialog",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showConfirm",
+          "explained": "showConfirm",
+          "kind": "local state",
+          "at": "src/modals.tsx:143"
+        }
+      ]
+    },
+    {
+      "template": "save_bar.confirm_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "save_bar",
+        "confirm_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "ConfirmModal",
+        "at": "src/modals.tsx:120"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:144"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showConfirm",
+          "explained": "showConfirm",
+          "kind": "local state",
+          "at": "src/modals.tsx:143"
+        }
+      ]
+    },
+    {
+      "template": "save_bar.refused_modal",
+      "grammar": true,
+      "scope": [
+        "save_bar"
+      ],
+      "name": "refused_modal",
+      "role": null,
+      "component": {
+        "name": "ConfirmModal",
+        "at": "src/modals.tsx:117"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:138"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "dialog",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showRefused",
+          "explained": "showRefused",
+          "kind": "local state",
+          "at": "src/modals.tsx:137"
+        }
+      ]
+    },
+    {
+      "template": "save_bar.refused_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "save_bar",
+        "refused_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "ConfirmModal",
+        "at": "src/modals.tsx:120"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:138"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showRefused",
+          "explained": "showRefused",
+          "kind": "local state",
+          "at": "src/modals.tsx:137"
+        }
+      ]
+    },
+    {
+      "template": "save_bar.save--button",
+      "grammar": true,
+      "scope": [
+        "save_bar"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "SaveBar",
+        "at": "src/modals.tsx:134"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "ConfirmModal",
+          "at": "src/modals.tsx:138",
+          "scope": "save_bar.refused_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "ConfirmModal",
+          "at": "src/modals.tsx:144",
+          "scope": "save_bar.confirm_modal"
+        }
+      ]
+    },
+    {
+      "template": "settings_modal.save--button",
+      "grammar": true,
+      "scope": [
+        "settings_modal"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "SettingsModal",
+        "at": "src/modals.tsx:11"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "side.info",
+      "grammar": true,
+      "scope": [
+        "side"
+      ],
+      "name": "info",
+      "role": null,
+      "component": {
+        "name": "InfoPanel",
+        "at": "src/panels.tsx:17"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.isInfo",
+          "explained": "this.props.isInfo",
+          "kind": "prop",
+          "at": "src/panels.tsx:30"
+        }
+      ]
+    },
+    {
+      "template": "side.info.close--button",
+      "grammar": true,
+      "scope": [
+        "side",
+        "info"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "InfoPanel",
+        "at": "src/panels.tsx:18"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.isInfo",
+          "explained": "this.props.isInfo",
+          "kind": "prop",
+          "at": "src/panels.tsx:30"
+        }
+      ]
+    },
+    {
+      "template": "side.members",
+      "grammar": true,
+      "scope": [
+        "side"
+      ],
+      "name": "members",
+      "role": null,
+      "component": {
+        "name": "MembersPanel",
+        "at": "src/panels.tsx:24"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!this.props.isInfo",
+          "explained": "!this.props.isInfo",
+          "kind": "prop",
+          "at": "src/panels.tsx:30"
+        },
+        {
+          "expr": "this.props.isMembers",
+          "explained": "this.props.isMembers",
+          "kind": "prop",
+          "at": "src/panels.tsx:32"
+        }
+      ]
+    },
+    {
+      "template": "sort_menu.field:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "sort_menu"
+      ],
+      "name": "field",
+      "role": "menuitem",
+      "component": {
+        "name": "SortMenu",
+        "at": "src/menu.tsx:145"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "static_items.more--button",
+      "grammar": true,
+      "scope": [
+        "static_items"
+      ],
+      "name": "more",
+      "role": "button",
+      "component": {
+        "name": "SubItem",
+        "at": "src/statics.tsx:7"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/statics.tsx:31"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "team_picker.menu.team:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "team_picker",
+        "menu"
+      ],
+      "name": "team",
+      "role": "menuitem",
+      "component": {
+        "name": "renderTeam",
+        "at": "src/menu.tsx:125"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "team_picker.open_menu--button",
+      "grammar": true,
+      "scope": [
+        "team_picker"
+      ],
+      "name": "open_menu",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:129"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "teamPickerMenu",
+          "at": "src/menu.tsx:129",
+          "scope": "team_picker.menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "tip.close--button",
+      "grammar": true,
+      "scope": [
+        "tip"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "Tip",
+        "at": "src/header.tsx:157"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "toolbar.files--button",
+      "grammar": true,
+      "scope": [
+        "toolbar"
+      ],
+      "name": "files",
+      "role": "button",
+      "component": {
+        "name": "PanelButtons",
+        "at": "src/panels.tsx:61"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "toolbar.info--button",
+      "grammar": true,
+      "scope": [
+        "toolbar"
+      ],
+      "name": "info",
+      "role": "button",
+      "component": {
+        "name": "PanelButtons",
+        "at": "src/panels.tsx:57"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "panel",
+          "target": "InfoPanel",
+          "at": "src/panels.tsx:31",
+          "scope": "side.info"
+        }
+      ]
+    },
+    {
+      "template": "twin.compact_menu.one--menuitem",
+      "grammar": true,
+      "scope": [
+        "twin",
+        "compact_menu"
+      ],
+      "name": "one",
+      "role": "menuitem",
+      "component": {
+        "name": "TwinMenus",
+        "at": "src/menu.tsx:220"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "compact",
+          "explained": "compact",
+          "kind": "prop",
+          "at": "src/menu.tsx:214"
+        }
+      ]
+    },
+    {
+      "template": "twin.edit--button",
+      "grammar": true,
+      "scope": [
+        "twin"
+      ],
+      "name": "edit",
+      "role": "button",
+      "component": {
+        "name": "Menu",
+        "at": "src/menu.tsx:25"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/menu.tsx:216"
+          ]
+        },
+        {
+          "via": [
+            "src/menu.tsx:225"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "menu",
+          "at": "src/menu.tsx:216",
+          "scope": "twin.compact_menu"
+        },
+        {
+          "kind": "menu",
+          "target": "menu",
+          "at": "src/menu.tsx:225",
+          "scope": "twin.full_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "src/menu.tsx:27",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ]
+    },
+    {
+      "template": "twin.full_menu.two--menuitem",
+      "grammar": true,
+      "scope": [
+        "twin",
+        "full_menu"
+      ],
+      "name": "two",
+      "role": "menuitem",
+      "component": {
+        "name": "TwinMenus",
+        "at": "src/menu.tsx:229"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      }
+    }
+  ],
+  "sets": [
+    {
+      "name": "LeftAction",
+      "values": [
+        "archive",
+        "mute"
+      ],
+      "source": "src/menu.tsx:262"
+    },
+    {
+      "name": "RightAction",
+      "values": [
+        "pin"
+      ],
+      "source": "src/menu.tsx:262"
+    }
+  ],
+  "operations": [],
+  "pages": [
+    {
+      "class": "ChannelsPage",
+      "path": "/:team/:path(channels|messages)/:identifier/:postid?",
+      "params": [
+        {
+          "name": "team",
+          "as": "team",
+          "optional": false,
+          "entity": {
+            "type": "Team",
+            "field": "name",
+            "module": "@mattermost/types/teams"
+          }
+        },
+        {
+          "name": "path",
+          "as": "path",
+          "optional": false,
+          "values": [
+            "channels",
+            "messages"
+          ]
+        },
+        {
+          "name": "identifier",
+          "as": "channel",
+          "optional": false,
+          "entity": {
+            "type": "Channel",
+            "field": "name",
+            "module": "@mattermost/types/channels"
+          }
+        },
+        {
+          "name": "postid",
+          "as": "postid",
+          "optional": true
+        }
+      ],
+      "scopes": [
+        "banner",
+        "header",
+        "header.menu",
+        "info_popover",
+        "leave_modal"
+      ],
+      "component": {
+        "name": "ChannelController",
+        "at": "src/routes.tsx:9"
+      },
+      "ready": [
+        "header.label",
+        "banner.url"
+      ]
+    },
+    {
+      "class": "HelpPage",
+      "path": "/help/:page?",
+      "params": [
+        {
+          "name": "page",
+          "as": "page",
+          "optional": true
+        }
+      ],
+      "scopes": [
+        "footer"
+      ],
+      "component": {
+        "name": "HelpController",
+        "at": "src/routes.tsx:18"
+      }
+    }
+  ],
+  "pluginSlots": [],
+  "components": [
+    {
+      "name": "ConfirmModal",
+      "at": "src/modals.tsx:113",
+      "scopes": [
+        "save_bar",
+        "save_bar.confirm_modal",
+        "save_bar.refused_modal"
+      ]
+    },
+    {
+      "name": "InfoPanel",
+      "at": "src/panels.tsx:15",
+      "scopes": [
+        "side",
+        "side.info"
+      ]
+    },
+    {
+      "name": "InfoPopover",
+      "at": "src/modals.tsx:22",
+      "scopes": [
+        "info_popover"
+      ]
+    },
+    {
+      "name": "LazyModalImpl",
+      "at": "src/lazy_modal.tsx:1",
+      "scopes": [
+        "lazy_modal"
+      ]
+    },
+    {
+      "name": "LeaveModal",
+      "at": "src/modals.tsx:18",
+      "scopes": [
+        "leave_modal"
+      ]
+    },
+    {
+      "name": "MenuModal",
+      "at": "src/menu.tsx:10",
+      "scopes": [
+        "menu_modal"
+      ]
+    },
+    {
+      "name": "NoteModal",
+      "at": "src/modals.tsx:76",
+      "scopes": [
+        "mention_popover",
+        "note_modal"
+      ]
+    },
+    {
+      "name": "SettingsModal",
+      "at": "src/modals.tsx:7",
+      "scopes": [
+        "settings_modal"
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "rule": "role-fit",
+      "severity": "warning",
+      "at": "src/header.tsx:19",
+      "message": "\"header.off_topic--link\" is on a <Link> with no ARIA role.",
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+    },
+    {
+      "rule": "role-fit",
+      "severity": "warning",
+      "at": "src/header.tsx:87",
+      "message": "\"header.home--link\" is on a <Link> with no ARIA role.",
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+    },
+    {
+      "rule": "role-fit",
+      "severity": "warning",
+      "at": "src/header.tsx:91",
+      "message": "\"header.faq--link\" is on a <NavLink> with no ARIA role.",
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+    },
+    {
+      "rule": "role-fit",
+      "severity": "warning",
+      "at": "src/header.tsx:95",
+      "message": "\"header.external--link\" is on a <Link> with no ARIA role.",
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/menu.tsx:125",
+      "message": "key of \"team_picker.menu.team:{key}--menuitem\" is an open string (t: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/menu.tsx:145",
+      "message": "key of \"sort_menu.field:{key}--menuitem\" is an open string (f: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/menu.tsx:190",
+      "message": "key of \"left.picker.menu.team:{key}--menuitem\" is an open string (t: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/menu.tsx:190",
+      "message": "key of \"right.picker.menu.team:{key}--menuitem\" is an open string (t: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/menu.tsx:239",
+      "message": "key of \"field_menu.field:{key}--menuitem\" is an open string (field.id: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    }
+  ]
+}

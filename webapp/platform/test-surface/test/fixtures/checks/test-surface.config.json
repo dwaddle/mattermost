@@ -1,0 +1,1 @@
+{"root": ".", "tsconfig": "tsconfig.json", "include": ["src"], "output": {"manifest": "test-surface.json"}, "checks": {"strictPaths": ["src/"]}, "pluginSlots": {"file": "src/plugin_slots.tsx", "export": "SLOTS"}}

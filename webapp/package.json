@@ -108,6 +108,7 @@
     "platform/eslint-plugin",
     "platform/mattermost-redux",
     "platform/shared",
+    "platform/test-surface",
     "platform/types"
   ]
 }

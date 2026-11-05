@@ -1,0 +1,4 @@
+{"version": 1, "pluginSlots": [
+    {"slot": "channel_header_menu_item", "testId": "channel_header.menu.plugin:{key}--menuitem", "key": "PluginKey", "registry": ["registerChannelHeaderMenuAction"]},
+    {"slot": "user_settings_tab", "testId": "user_settings_modal.tabs.plugin:{key}--tab", "key": "PluginKey", "registry": ["registerUserSettings"]}
+]}

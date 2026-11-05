@@ -1,0 +1,1799 @@
+{
+  "version": 1,
+  "generatedFrom": {
+    "tsconfig": "tsconfig.json",
+    "scope": [
+      "src"
+    ]
+  },
+  "elements": [
+    {
+      "template": "values.builder.a--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "builder"
+      ],
+      "name": "a",
+      "role": "text",
+      "component": {
+        "name": "Builder",
+        "at": "src/app.tsx:66"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.builder.b--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "builder"
+      ],
+      "name": "b",
+      "role": "text",
+      "component": {
+        "name": "Builder",
+        "at": "src/app.tsx:66"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.chain.a.b.c.d.e.leaf--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "chain",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "name": "leaf",
+      "role": "text",
+      "component": {
+        "name": "ChainLeaf",
+        "at": "src/dynamic.tsx:130"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:133",
+            "src/dynamic.tsx:136",
+            "src/dynamic.tsx:139",
+            "src/dynamic.tsx:142",
+            "src/dynamic.tsx:145",
+            "src/dynamic.tsx:148"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.channel.{key}",
+      "grammar": false,
+      "scope": [],
+      "name": "values.channel.{key}",
+      "role": null,
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:48"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.channels.channel.draft--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "channels",
+        "channel"
+      ],
+      "name": "draft",
+      "role": "text",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:46"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.channels.channel.unread_count--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "channels",
+        "channel"
+      ],
+      "name": "unread_count",
+      "role": "text",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:45"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.channels.channel:{key}--link",
+      "grammar": true,
+      "scope": [
+        "values",
+        "channels"
+      ],
+      "name": "channel",
+      "role": "link",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:43"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "Channel",
+        "field": "name",
+        "module": "@mattermost/types/channels",
+        "type": "Pick<Channel, 'name'>"
+      }
+    },
+    {
+      "template": "values.choices.choice:{key}--radio",
+      "grammar": true,
+      "scope": [
+        "values",
+        "choices"
+      ],
+      "name": "choice",
+      "role": "radio",
+      "component": {
+        "name": "Choices",
+        "at": "src/app.tsx:114"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "no",
+            "yes"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "radio",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"no\" | \"yes\"",
+        "values": [
+          "no",
+          "yes"
+        ],
+        "set": "ValuesChoice"
+      }
+    },
+    {
+      "template": "values.clear.option:{key}--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "clear"
+      ],
+      "name": "option",
+      "role": "button",
+      "component": {
+        "name": "ClearOptions",
+        "at": "src/dynamic.tsx:221"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "none"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"day\" | \"hour\" | \"none\"",
+        "values": [
+          "day",
+          "hour",
+          "none"
+        ],
+        "set": "ValuesOption"
+      }
+    },
+    {
+      "template": "values.colliding.save--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "colliding"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "Colliding",
+        "at": "src/dynamic.tsx:43"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.colliding.save_button.hint--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "colliding",
+        "save_button"
+      ],
+      "name": "hint",
+      "role": "text",
+      "component": {
+        "name": "Colliding",
+        "at": "src/dynamic.tsx:44"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.connected_a.plain",
+      "grammar": true,
+      "scope": [
+        "values",
+        "connected_a"
+      ],
+      "name": "plain",
+      "role": null,
+      "component": {
+        "name": "TabsInner",
+        "at": "src/dynamic.tsx:51"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:57"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.connected_b.with_extra",
+      "grammar": true,
+      "scope": [
+        "values",
+        "connected_b"
+      ],
+      "name": "with_extra",
+      "role": null,
+      "component": {
+        "name": "TabsInner",
+        "at": "src/dynamic.tsx:51"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:58"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.deep.main--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "deep"
+      ],
+      "name": "main",
+      "role": "text",
+      "component": {
+        "name": "Deep",
+        "at": "src/leaf.tsx:10"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/app.tsx:28"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.defaults.mute--checkbox",
+      "grammar": true,
+      "scope": [
+        "values",
+        "defaults"
+      ],
+      "name": "mute",
+      "role": "checkbox",
+      "component": {
+        "name": "Field",
+        "at": "src/defaults.tsx:7"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/defaults.tsx:10"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.defined.panel:{key}--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "defined"
+      ],
+      "name": "panel",
+      "role": "text",
+      "component": {
+        "name": "DefinedPanel",
+        "at": "src/dynamic.tsx:233"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:241"
+          ],
+          "keySet": [
+            "only"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"only\"",
+        "values": [
+          "only"
+        ],
+        "set": "ValuesPanel"
+      }
+    },
+    {
+      "template": "values.dynamic.created--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "dynamic"
+      ],
+      "name": "created",
+      "role": "text",
+      "component": {
+        "name": "Label",
+        "at": "src/dynamic.tsx:8"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:21"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.dynamic.editor.plain--textbox",
+      "grammar": true,
+      "scope": [
+        "values",
+        "dynamic",
+        "editor"
+      ],
+      "name": "plain",
+      "role": "textbox",
+      "component": {
+        "name": "Plain",
+        "at": "src/dynamic.tsx:12"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:27"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "values.dynamic.editor",
+        "field": "plain",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "values.dynamic.editor.rich--textbox",
+      "grammar": true,
+      "scope": [
+        "values",
+        "dynamic",
+        "editor"
+      ],
+      "name": "rich",
+      "role": "textbox",
+      "component": {
+        "name": "Rich",
+        "at": "src/dynamic.tsx:16"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:27"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": false,
+        "state": []
+      },
+      "form": {
+        "scope": "values.dynamic.editor",
+        "field": "rich",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "values.dynamic.slot--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "dynamic"
+      ],
+      "name": "slot",
+      "role": "text",
+      "component": {
+        "name": "Label",
+        "at": "src/dynamic.tsx:8"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:32"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.fallback.from_id--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "fallback"
+      ],
+      "name": "from_id",
+      "role": "text",
+      "component": {
+        "name": "Fallback",
+        "at": "src/leaf.tsx:28"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/leaf.tsx:38"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.fallback.given--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "fallback"
+      ],
+      "name": "given",
+      "role": "text",
+      "component": {
+        "name": "Fallback",
+        "at": "src/leaf.tsx:28"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/leaf.tsx:34"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.fixed_grid.row:{key}",
+      "grammar": true,
+      "scope": [
+        "values",
+        "fixed_grid"
+      ],
+      "name": "row",
+      "role": null,
+      "component": {
+        "name": "Grid",
+        "at": "src/grid.tsx:12"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/grid.tsx:22"
+          ],
+          "keySet": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"a\" | \"b\"",
+        "values": [
+          "a",
+          "b"
+        ],
+        "set": "ValuesRow"
+      }
+    },
+    {
+      "template": "values.found.channel:{key}--link",
+      "grammar": true,
+      "scope": [
+        "values",
+        "found"
+      ],
+      "name": "channel",
+      "role": "link",
+      "component": {
+        "name": "Found",
+        "at": "src/dynamic.tsx:75"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "Channel",
+        "field": "name",
+        "module": "@mattermost/types/channels",
+        "type": "Pick<Channel, 'name'>"
+      },
+      "renderedWhen": [
+        {
+          "expr": "found",
+          "explained": "found",
+          "kind": "prop (via local value)",
+          "at": "src/dynamic.tsx:69"
+        }
+      ]
+    },
+    {
+      "template": "values.helper.go--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "helper"
+      ],
+      "name": "go",
+      "role": "button",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:33"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.keyed.item:{key}",
+      "grammar": true,
+      "scope": [
+        "values",
+        "keyed"
+      ],
+      "name": "item",
+      "role": null,
+      "component": {
+        "name": "Keyed",
+        "at": "src/dynamic.tsx:194"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:200"
+          ],
+          "keySet": [
+            "one"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"one\"",
+        "values": [
+          "one"
+        ],
+        "set": "ValuesItem"
+      }
+    },
+    {
+      "template": "values.keyed.plain",
+      "grammar": true,
+      "scope": [
+        "values",
+        "keyed"
+      ],
+      "name": "plain",
+      "role": null,
+      "component": {
+        "name": "Keyed",
+        "at": "src/dynamic.tsx:194"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:199"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.leaf.default--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "leaf"
+      ],
+      "name": "default",
+      "role": "button",
+      "component": {
+        "name": "Leaf",
+        "at": "src/leaf.tsx:5"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/app.tsx:22"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.leaf.given--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "leaf"
+      ],
+      "name": "given",
+      "role": "button",
+      "component": {
+        "name": "Leaf",
+        "at": "src/leaf.tsx:5"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/app.tsx:21"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.let.first--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "let"
+      ],
+      "name": "first",
+      "role": "text",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:31"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.let.second--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "let"
+      ],
+      "name": "second",
+      "role": "text",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:31"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.memo.item--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "memo"
+      ],
+      "name": "item",
+      "role": "text",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:30"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.message.quote.post.text--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "message",
+        "quote",
+        "post"
+      ],
+      "name": "text",
+      "role": "text",
+      "component": {
+        "name": "Message",
+        "at": "src/recursive.tsx:37"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/recursive.tsx:44",
+            "src/recursive.tsx:38",
+            "src/recursive.tsx:49"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "quoted",
+          "explained": "quoted",
+          "kind": "prop",
+          "at": "src/recursive.tsx:38"
+        }
+      ]
+    },
+    {
+      "template": "values.message.text--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "message"
+      ],
+      "name": "text",
+      "role": "text",
+      "component": {
+        "name": "Message",
+        "at": "src/recursive.tsx:37"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/recursive.tsx:49"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.mixed.channel:{key}--link",
+      "grammar": true,
+      "scope": [
+        "values",
+        "mixed"
+      ],
+      "name": "channel",
+      "role": "link",
+      "component": {
+        "name": "MixedRow",
+        "at": "src/dynamic.tsx:101"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:106"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "Channel",
+        "field": "name",
+        "module": "@mattermost/types/channels",
+        "type": "Pick<Channel, 'name'>"
+      }
+    },
+    {
+      "template": "values.narrow.plugin:{key}--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "narrow"
+      ],
+      "name": "plugin",
+      "role": "button",
+      "component": {
+        "name": "NarrowButton",
+        "at": "src/dynamic.tsx:153"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:159",
+            "src/dynamic.tsx:183"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "values.narrow.section:{key}",
+      "grammar": true,
+      "scope": [
+        "values",
+        "narrow"
+      ],
+      "name": "section",
+      "role": null,
+      "component": {
+        "name": "NarrowSection",
+        "at": "src/dynamic.tsx:169"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/dynamic.tsx:174"
+          ],
+          "keySet": [
+            "0"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"0\"",
+        "values": [
+          "0"
+        ],
+        "set": "ValuesSection"
+      }
+    },
+    {
+      "template": "values.paired.a_y--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "paired"
+      ],
+      "name": "a_y",
+      "role": "text",
+      "component": {
+        "name": "Paired",
+        "at": "src/dynamic.tsx:123"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.paired.b_x--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "paired"
+      ],
+      "name": "b_x",
+      "role": "text",
+      "component": {
+        "name": "Paired",
+        "at": "src/dynamic.tsx:123"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.paired.draft:{key}--link",
+      "grammar": true,
+      "scope": [
+        "values",
+        "paired"
+      ],
+      "name": "draft",
+      "role": "link",
+      "component": {
+        "name": "Paired",
+        "at": "src/dynamic.tsx:121"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "drft"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"drft\"",
+        "values": [
+          "drft"
+        ],
+        "set": "ValuesDraft"
+      }
+    },
+    {
+      "template": "values.paired.scheduled:{key}--link",
+      "grammar": true,
+      "scope": [
+        "values",
+        "paired"
+      ],
+      "name": "scheduled",
+      "role": "link",
+      "component": {
+        "name": "Paired",
+        "at": "src/dynamic.tsx:121"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "sched"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"sched\"",
+        "values": [
+          "sched"
+        ],
+        "set": "ValuesScheduled"
+      }
+    },
+    {
+      "template": "values.panel.close--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "panel"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "(anonymous)",
+        "at": "src/leaf.tsx:20"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/app.tsx:29"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.panel.save--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "panel"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:32"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.picker.option:{key}",
+      "grammar": true,
+      "scope": [
+        "values",
+        "picker"
+      ],
+      "name": "option",
+      "role": null,
+      "component": {
+        "name": "OptionView",
+        "at": "src/option_view.tsx:12"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/option_view.tsx:20"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "values.picker.selected",
+      "grammar": true,
+      "scope": [
+        "values",
+        "picker"
+      ],
+      "name": "selected",
+      "role": null,
+      "component": {
+        "name": "OptionView",
+        "at": "src/option_view.tsx:12"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/option_view.tsx:20"
+          ]
+        },
+        {
+          "via": [
+            "src/option_view.tsx:30"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "values.previews.file:{key}",
+      "grammar": true,
+      "scope": [
+        "values",
+        "previews"
+      ],
+      "name": "file",
+      "role": null,
+      "component": {
+        "name": "Previews",
+        "at": "src/dynamic.tsx:88"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "FileInfo",
+        "field": "id",
+        "module": "@mattermost/types/files",
+        "type": "Pick<FileInfo, 'id'>"
+      }
+    },
+    {
+      "template": "values.pushed_grid.row:{key}",
+      "grammar": true,
+      "scope": [
+        "values",
+        "pushed_grid"
+      ],
+      "name": "row",
+      "role": null,
+      "component": {
+        "name": "Grid",
+        "at": "src/grid.tsx:12"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/grid.tsx:34"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "values.rows.row:{key}--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "rows"
+      ],
+      "name": "row",
+      "role": "text",
+      "component": {
+        "name": "Row",
+        "at": "src/app.tsx:60"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/app.tsx:50"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "number",
+        "type": "number"
+      }
+    },
+    {
+      "template": "values.sections.option:{key}--radio",
+      "grammar": true,
+      "scope": [
+        "values",
+        "sections"
+      ],
+      "name": "option",
+      "role": "radio",
+      "component": {
+        "name": "Sections",
+        "at": "src/app.tsx:83"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "auto",
+            "compact",
+            "full",
+            "off",
+            "on"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "radio",
+        "native": true,
+        "state": []
+      },
+      "alsoAt": [
+        "src/app.tsx:87",
+        "src/app.tsx:92"
+      ],
+      "key": {
+        "kind": "set",
+        "type": "\"auto\" | \"compact\" | \"full\" | \"off\" | \"on\"",
+        "values": [
+          "auto",
+          "compact",
+          "full",
+          "off",
+          "on"
+        ],
+        "set": "ValuesSectionsOption"
+      }
+    },
+    {
+      "template": "values.setting.value--textbox",
+      "grammar": true,
+      "scope": [
+        "values",
+        "setting"
+      ],
+      "name": "value",
+      "role": "textbox",
+      "component": {
+        "name": "Row",
+        "at": "src/settings.tsx:15"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.setting:{key}",
+      "grammar": true,
+      "scope": [
+        "values"
+      ],
+      "name": "setting",
+      "role": null,
+      "component": {
+        "name": "Row",
+        "at": "src/settings.tsx:12"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/settings.tsx:23"
+          ]
+        },
+        {
+          "via": [
+            "src/settings.tsx:33"
+          ]
+        },
+        {
+          "via": [
+            "src/settings.tsx:55"
+          ]
+        },
+        {
+          "via": [
+            "src/settings.tsx:80"
+          ]
+        },
+        {
+          "via": [
+            "src/settings.tsx:96"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "setting",
+        "type": "AdminSettingPath | \"EnableGitLab\" | \"GitLabSettings.Url\" | \"LdapSettings.TestConnection\" | \"bannerEnabled\" | \"openidType\" | `custom_attribute-${string}`",
+        "values": [
+          "EnableGitLab",
+          "GitLabSettings.Url",
+          "LdapSettings.TestConnection",
+          "bannerEnabled",
+          "openidType"
+        ]
+      }
+    },
+    {
+      "template": "values.spread.local--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "spread"
+      ],
+      "name": "local",
+      "role": "button",
+      "component": {
+        "name": "Leaf",
+        "at": "src/leaf.tsx:5"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/app.tsx:23"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "values.tabs.tab:{key}--link",
+      "grammar": true,
+      "scope": [
+        "values",
+        "tabs"
+      ],
+      "name": "tab",
+      "role": "link",
+      "component": {
+        "name": "App",
+        "at": "src/app.tsx:38"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "info",
+            "members"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"info\" | \"members\"",
+        "values": [
+          "info",
+          "members"
+        ],
+        "set": "ValuesTab"
+      }
+    },
+    {
+      "template": "values.tree.action:{key}--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "tree"
+      ],
+      "name": "action",
+      "role": "button",
+      "component": {
+        "name": "Branch",
+        "at": "src/recursive.tsx:9"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/recursive.tsx:11",
+            "src/recursive.tsx:24"
+          ]
+        },
+        {
+          "via": [
+            "src/recursive.tsx:24"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "values.wrapper.inner--button",
+      "grammar": true,
+      "scope": [
+        "values",
+        "wrapper"
+      ],
+      "name": "inner",
+      "role": "button",
+      "component": {
+        "name": "Leaf",
+        "at": "src/leaf.tsx:5"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/leaf.tsx:15",
+            "src/app.tsx:24"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    }
+  ],
+  "sets": [
+    {
+      "name": "ValuesChoice",
+      "values": [
+        "no",
+        "yes"
+      ],
+      "source": "src/app.tsx:114"
+    },
+    {
+      "name": "ValuesDraft",
+      "values": [
+        "drft"
+      ],
+      "source": "src/dynamic.tsx:121"
+    },
+    {
+      "name": "ValuesItem",
+      "values": [
+        "one"
+      ],
+      "source": "src/dynamic.tsx:194"
+    },
+    {
+      "name": "ValuesOption",
+      "values": [
+        "day",
+        "hour",
+        "none"
+      ],
+      "source": "src/dynamic.tsx:221"
+    },
+    {
+      "name": "ValuesPanel",
+      "values": [
+        "only"
+      ],
+      "source": "src/dynamic.tsx:233"
+    },
+    {
+      "name": "ValuesRow",
+      "values": [
+        "a",
+        "b"
+      ],
+      "source": "src/grid.tsx:12"
+    },
+    {
+      "name": "ValuesScheduled",
+      "values": [
+        "sched"
+      ],
+      "source": "src/dynamic.tsx:121"
+    },
+    {
+      "name": "ValuesSection",
+      "values": [
+        "0"
+      ],
+      "source": "src/dynamic.tsx:169"
+    },
+    {
+      "name": "ValuesSectionsOption",
+      "values": [
+        "auto",
+        "compact",
+        "full",
+        "off",
+        "on"
+      ],
+      "source": "src/app.tsx:83"
+    },
+    {
+      "name": "ValuesTab",
+      "values": [
+        "info",
+        "members"
+      ],
+      "source": "src/app.tsx:38"
+    }
+  ],
+  "operations": [],
+  "pages": [],
+  "pluginSlots": [],
+  "components": [],
+  "diagnostics": [
+    {
+      "rule": "grammar",
+      "severity": "warning",
+      "at": "src/app.tsx:48",
+      "message": "\"values.channel.{key}\" has runtime data outside the key.",
+      "fix": "Only the last word may carry runtime data, after \":\" (`name:${value}`). Suggested: \"values.channel:{key}\"."
+    },
+    {
+      "rule": "role-fit",
+      "severity": "warning",
+      "at": "src/defaults.tsx:7",
+      "message": "\"values.defaults.mute--checkbox\" is on a textbox (<input>).",
+      "fix": "Use --textbox, or render an element with role checkbox."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/dynamic.tsx:153",
+      "message": "key of \"values.narrow.plugin:{key}--button\" is an open string (o.plugin: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/grid.tsx:12",
+      "message": "key of \"values.pushed_grid.row:{key}\" is an open string (name: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/grid.tsx:12",
+      "message": "key of \"values.pushed_grid.row:{key}\" is an open string (row.testKey ?? String(index): string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/option_view.tsx:12",
+      "message": "key of \"values.picker.option:{key}\" is an open string (details.id: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/recursive.tsx:9",
+      "message": "key of \"values.tree.action:{key}--button\" is an open string (child.id: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    },
+    {
+      "rule": "key-origin",
+      "severity": "warning",
+      "at": "src/recursive.tsx:9",
+      "message": "key of \"values.tree.action:{key}--button\" is an open string (tree.id: string).",
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    }
+  ]
+}

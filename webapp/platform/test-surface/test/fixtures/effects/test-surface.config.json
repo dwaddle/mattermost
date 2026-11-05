@@ -1,0 +1,9 @@
+{
+    "root": ".",
+    "tsconfig": "tsconfig.json",
+    "include": ["src"],
+    "entityTypeDirs": ["types"],
+    "client": {"file": "client/client4.ts", "className": "Client4", "urlVersion": "/api/v4"},
+    "openapiDir": "openapi",
+    "output": {"manifest": "test-surface.json"}
+}

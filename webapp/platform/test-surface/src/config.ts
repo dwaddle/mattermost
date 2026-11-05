@@ -1,0 +1,251 @@
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+import fs from 'node:fs';
+import path from 'node:path';
+
+/**
+ * Everything the scanner needs to know about a project. The webapp's config lives in
+ * `webapp/channels/test-surface.config.json`; a plugin repo writes its own.
+ * Every path in the file is relative to the file's own directory.
+ */
+export type ConfigFile = {
+
+    /** Directory that locations in the manifest are relative to. */
+    root: string;
+
+    /** The tsconfig whose program is scanned. */
+    tsconfig: string;
+
+    /** `paths` entries added to the tsconfig so workspace packages resolve to their source (relative to its baseUrl, as tsconfig `paths` are). */
+    pathOverrides?: Record<string, string[]>;
+
+    /** Directories (relative to root) whose files are scanned. */
+    include: string[];
+
+    /** Regular expressions; matching files are not scanned (tests, mocks, stories). */
+    exclude?: string[];
+
+    /** Directories (relative to root) where entity types are declared (`Channel`, `Team`...). */
+    entityTypeDirs?: string[];
+
+    /** The REST client whose methods are matched to OpenAPI operations. */
+    client?: {file: string; className: string; urlVersion: string} | null;
+
+    /** Directory (relative to root) of OpenAPI yaml files. */
+    openapiDir?: string | null;
+
+    /** i18n catalog (relative to root). */
+    i18n?: string | null;
+
+    /** Calls whose subtree is an error path, not part of what an action does. */
+    errorCalls?: string[];
+
+    /** Where outputs are written (relative to root). */
+    output: {
+        manifest: string;
+        generated?: string | null;
+        reports?: string | null;
+
+        /** Library mode: where `test-surface parts` writes `test-parts.json`. */
+        parts?: string | null;
+    };
+
+    /** Library mode (a component library such as compass-ui): its entry module and the part helper's name. */
+    library?: {entry: string; helper?: string; testIdProp?: string};
+
+    /**
+     * Component libraries whose published `test-parts.json` the scan reads: a package name (from its
+     * installed copy) or `{"package": …, "parts": "path/to/test-parts.json"}` (relative to root).
+     */
+    libraries?: LibraryRef[];
+
+    /** When set, `generate` only emits elements whose template starts with one of these scopes. */
+    generateScopes?: string[] | null;
+
+    /**
+     * The app's entry modules (relative to this file: a file, or a directory with an index). When set, elements
+     * in files the entries never import (dead code, or code only tests use) are flagged `unreachable` and
+     * not generated.
+     */
+    entries?: string[];
+
+    /**
+     * E2E code to check for testids the app no longer renders (relative to this file), and reviewed
+     * exceptions: a testid the check can't see is fine (a column-named cell, an id built at runtime).
+     */
+    staleReferences?: {roots: string[]; allow?: Array<{testid: string; file?: string; reason: string}>};
+
+    /** Where checks are errors rather than warnings (the migrated area grows over time). */
+    checks?: {strictScopes?: string[]; strictPaths?: string[]; strictKeys?: boolean; allow?: AllowEntry[]};
+
+    /** Page class names for route components (`{"ChannelIdentifierRouter": "ChannelsPage"}`); default `<Component>Page`. */
+    pageNames?: Record<string, string>;
+
+    /**
+     * Route params that take an entity or its key, and what tests call them:
+     * `{"identifier": {"as": "channel", "entity": "Channel", "field": "name", "module": "@mattermost/types/channels"}}`.
+     */
+    pageParams?: Record<string, PageParamConfig>;
+
+    /**
+     * What shows a page is up, by page class: its `goto` waits for the first of these testids to be visible
+     * (`{"ChannelsPage": ["center.composer", "center.archived_notice"]}`). Each must be an element the page renders.
+     */
+    pageReady?: Record<string, string[]>;
+
+    /**
+     * The published plugin slot contract: a `const` object of slot name -> testid template with `{plugin}`
+     * (`{"file": "platform/shared/src/utils/test_id/index.ts", "export": "PLUGIN_SLOT_TEST_IDS"}`, file relative to root),
+     * and optionally the object of slot name -> registry methods that fill it (`"registryExport": "PLUGIN_SLOT_REGISTRY_METHODS"`).
+     */
+    pluginSlots?: {file: string; export: string; registryExport?: string};
+
+    /**
+     * Plugin mode: the plugin's `plugin.json` and the host versions it supports, each the `app-map.json` the
+     * host's generated page objects ship (`{"name": "12.1", "appMap": "…/app-map.json"}`), relative to root.
+     * Its testids live under `plugins.<plugin key>`, its registry calls say which host slots it uses, and
+     * `generate` writes a test package that adds the plugin to `app.plugins`.
+     */
+    plugin?: {manifest: string; hosts?: Array<{name: string; appMap: string}>; runtime?: string};
+};
+
+export type AllowEntry = {rule: string; template: string; reason: string};
+
+export type LibraryRef = string | {package: string; parts: string};
+
+export type PageParamConfig = {as?: string; entity: string; field: string; module: string};
+
+export type Config = {
+    configPath: string;
+    root: string;
+    tsconfig: string;
+    pathOverrides: Record<string, string[]>;
+    include: string[];
+    exclude: RegExp[];
+    entityTypeDirs: string[];
+    client: {file: string; className: string; urlVersion: string} | null;
+    openapiDir: string | null;
+    i18n: string | null;
+    errorCalls: RegExp;
+    output: {manifest: string; generated: string | null; reports: string | null; parts: string | null};
+    library: {entry: string; helper: string; testIdProp: string} | null;
+    libraries: LibraryRef[];
+    generateScopes: string[] | null;
+    entries: string[];
+    staleReferences: {roots: string[]; allow: Array<{testid: string; file?: string; reason: string}>} | null;
+    checks: {strictScopes: string[]; strictPaths: string[]; strictKeys: boolean; allow: AllowEntry[]};
+    pageNames: Record<string, string>;
+    pageParams: Record<string, PageParamConfig>;
+    pageReady: Record<string, string[]>;
+    pluginSlots: {file: string; export: string; registryExport?: string} | null;
+    plugin: PluginConfig | null;
+};
+
+export type PluginConfig = {
+    id: string;
+
+    /** The plugin's id normalized for a testid key (`com_mattermost_calls`); its testids live under `plugins.<key>`. */
+    key: string;
+    hosts: Array<{name: string; appMap: string}>;
+
+    /** Module the generated package imports the runtime from. */
+    runtime: string;
+};
+
+/** A plugin id as a testid key: the webapp's `pluginTestKey()`. */
+export function pluginKeyOf(pluginId: string): string {
+    return pluginId.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+}
+
+export const DEFAULT_EXCLUDE = [
+    '\\.test\\.',
+    '__mocks__',
+    '/tests?/',
+    'test_helpers',
+    'testUtils',
+    '/testing/',
+    '\\.stories\\.',
+];
+
+export function loadConfig(configPath: string): Config {
+    const abs = path.resolve(configPath);
+    const dir = path.dirname(abs);
+    const raw = JSON.parse(fs.readFileSync(abs, 'utf8')) as ConfigFile;
+    return resolveConfig(raw, dir, abs);
+}
+
+export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.join(dir, 'test-surface.config.json')): Config {
+    const root = path.resolve(dir, raw.root);
+    const fromDir = (p: string) => path.resolve(dir, p);
+    return {
+        configPath,
+        root,
+        tsconfig: fromDir(raw.tsconfig),
+        pathOverrides: raw.pathOverrides ?? {},
+        include: raw.include.map((p) => path.resolve(dir, p)),
+        exclude: (raw.exclude ?? DEFAULT_EXCLUDE).map((r) => new RegExp(r)),
+        entityTypeDirs: (raw.entityTypeDirs ?? []).map(fromDir),
+        client: raw.client ? {...raw.client, file: fromDir(raw.client.file)} : null,
+        openapiDir: raw.openapiDir ? fromDir(raw.openapiDir) : null,
+        i18n: raw.i18n ? fromDir(raw.i18n) : null,
+        errorCalls: new RegExp(`^(${(raw.errorCalls ?? ['logError', 'forceLogoutIfNecessary', 'handleServerError']).join('|')})$`),
+        output: {
+            manifest: fromDir(raw.output.manifest),
+            generated: raw.output.generated ? fromDir(raw.output.generated) : null,
+            reports: raw.output.reports ? fromDir(raw.output.reports) : null,
+            parts: raw.output.parts ? fromDir(raw.output.parts) : null,
+        },
+        library: raw.library ? {entry: fromDir(raw.library.entry), helper: raw.library.helper ?? 'testIdPart', testIdProp: raw.library.testIdProp ?? 'testId'} : null,
+        libraries: raw.libraries ?? [],
+        generateScopes: raw.generateScopes ?? null,
+        entries: (raw.entries ?? []).map(fromDir),
+        staleReferences: raw.staleReferences ? {roots: raw.staleReferences.roots.map(fromDir), allow: raw.staleReferences.allow ?? []} : null,
+        checks: {
+            strictScopes: raw.checks?.strictScopes ?? [],
+            strictPaths: raw.checks?.strictPaths ?? [],
+            strictKeys: raw.checks?.strictKeys ?? false,
+            allow: raw.checks?.allow ?? [],
+        },
+        pageNames: raw.pageNames ?? {},
+        pageParams: raw.pageParams ?? {},
+        pageReady: raw.pageReady ?? {},
+        pluginSlots: raw.pluginSlots ? {...raw.pluginSlots, file: path.resolve(root, raw.pluginSlots.file)} : null,
+        plugin: raw.plugin ? resolvePlugin(raw.plugin, root) : null,
+    };
+}
+
+function resolvePlugin(raw: NonNullable<ConfigFile['plugin']>, root: string): PluginConfig {
+    const manifest = JSON.parse(fs.readFileSync(path.resolve(root, raw.manifest), 'utf8')) as {id?: string};
+    if (!manifest.id) {
+        throw new Error(`${raw.manifest} has no "id"`);
+    }
+    return {
+        id: manifest.id,
+        key: pluginKeyOf(manifest.id),
+        hosts: (raw.hosts ?? []).map((h) => ({name: h.name, appMap: path.resolve(root, h.appMap)})),
+        runtime: raw.runtime ?? '@mattermost/playwright-lib',
+    };
+}
+
+/** Finds the config: an explicit path, else the nearest test-surface.config.json at or above cwd. */
+export function findConfig(explicit: string | undefined, cwd = process.cwd()): string {
+    if (explicit) {
+        return path.resolve(cwd, explicit);
+    }
+    for (let d = cwd; ; d = path.dirname(d)) {
+        for (const candidate of [path.join(d, 'test-surface.config.json'), path.join(d, 'channels', 'test-surface.config.json')]) {
+            if (fs.existsSync(candidate)) {
+                return candidate;
+            }
+        }
+        if (path.dirname(d) === d) {
+            throw new Error('No test-surface.config.json found. Pass --config <path>.');
+        }
+    }
+}
+
+/** Manifest locations are repo-relative to the config root, with forward slashes. */
+export function relativeToRoot(config: Pick<Config, 'root'>, file: string): string {
+    return path.relative(config.root, file).split(path.sep).join('/');
+}

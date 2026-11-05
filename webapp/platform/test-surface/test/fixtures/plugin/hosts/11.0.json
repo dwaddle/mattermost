@@ -1,0 +1,3 @@
+{"version": 1, "pluginSlots": [
+    {"slot": "channel_header_menu_item", "testId": "channel_header.menu.plugin:{key}--menuitem", "key": "PluginKey", "registry": ["registerChannelHeaderMenuAction"]}
+]}

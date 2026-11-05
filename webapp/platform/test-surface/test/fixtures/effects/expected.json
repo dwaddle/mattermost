@@ -1,0 +1,996 @@
+{
+  "version": 1,
+  "generatedFrom": {
+    "tsconfig": "tsconfig.json",
+    "scope": [
+      "src"
+    ]
+  },
+  "elements": [
+    {
+      "template": "effects.about.name.edit--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "about",
+        "name"
+      ],
+      "name": "edit",
+      "role": "button",
+      "component": {
+        "name": "AreaBase",
+        "at": "src/modals.tsx:76"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:84"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.channels.row.delete--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "channels",
+        "row"
+      ],
+      "name": "delete",
+      "role": "button",
+      "component": {
+        "name": "DeleteRowLink",
+        "at": "src/modals.tsx:157"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:164"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "ConfirmDialogRedux",
+          "at": "src/modals.tsx:153",
+          "dialogOps": [
+            "PatchChannel"
+          ],
+          "scope": "effects.delete_row_modal"
+        }
+      ]
+    },
+    {
+      "template": "effects.console.save--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "console"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "SavePage",
+        "at": "src/buttons.tsx:148"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.delete_hook_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "delete_hook_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "ConfirmDialog",
+        "at": "src/modals.tsx:22"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:29",
+            "src/modals.tsx:41"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.delete_row_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "delete_row_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "ConfirmDialog",
+        "at": "src/modals.tsx:22"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:29",
+            "src/modals.tsx:153"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser",
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.file--link",
+      "grammar": true,
+      "scope": [
+        "effects"
+      ],
+      "name": "file",
+      "role": "link",
+      "component": {
+        "name": "FileLink",
+        "at": "src/modals.tsx:120"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "FilePreview",
+          "at": "src/modals.tsx:107"
+        }
+      ]
+    },
+    {
+      "template": "effects.flags.apply--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "flags"
+      ],
+      "name": "apply",
+      "role": "button",
+      "component": {
+        "name": "FlagForm",
+        "at": "src/buttons.tsx:190"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.flags.name--textbox",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "flags"
+      ],
+      "name": "name",
+      "role": "textbox",
+      "component": {
+        "name": "FlagForm",
+        "at": "src/buttons.tsx:186"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "effects.form.cancel--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "form"
+      ],
+      "name": "cancel",
+      "role": "button",
+      "component": {
+        "name": "Panel",
+        "at": "src/buttons.tsx:70"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "effects.form.submit--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "form"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "Panel",
+        "at": "src/buttons.tsx:67"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.graph.grant--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "graph"
+      ],
+      "name": "grant",
+      "role": "button",
+      "component": {
+        "name": "GrantLink",
+        "at": "src/modals.tsx:142"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "GrantModal",
+          "at": "src/modals.tsx:143",
+          "scope": "effects.graph.grant_modal"
+        }
+      ]
+    },
+    {
+      "template": "effects.graph.grant_modal",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "graph"
+      ],
+      "name": "grant_modal",
+      "role": null,
+      "component": {
+        "name": "GrantModal",
+        "at": "src/modals.tsx:130"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "effects.graph.grant_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "graph",
+        "grant_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "GrantModal",
+        "at": "src/modals.tsx:132"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "effects.helper_me.value--textbox",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "helper_me"
+      ],
+      "name": "value",
+      "role": "textbox",
+      "component": {
+        "name": "renderInput",
+        "at": "src/buttons.tsx:203"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/buttons.tsx:213"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.helper_patch.value--textbox",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "helper_patch"
+      ],
+      "name": "value",
+      "role": "textbox",
+      "component": {
+        "name": "renderInput",
+        "at": "src/buttons.tsx:203"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/buttons.tsx:217"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.hooks.delete--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "hooks"
+      ],
+      "name": "delete",
+      "role": "button",
+      "component": {
+        "name": "DeleteHookLink",
+        "at": "src/modals.tsx:52"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "ConfirmDialogRedux",
+          "at": "src/modals.tsx:41",
+          "dialogOps": [
+            "PatchChannel"
+          ],
+          "scope": "effects.delete_hook_modal"
+        }
+      ]
+    },
+    {
+      "template": "effects.join.action--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "join"
+      ],
+      "name": "action",
+      "role": "button",
+      "component": {
+        "name": "ActionButton",
+        "at": "src/buttons.tsx:32"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/buttons.tsx:48"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "RequestJoinChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.leave--button",
+      "grammar": true,
+      "scope": [
+        "effects"
+      ],
+      "name": "leave",
+      "role": "button",
+      "component": {
+        "name": "LeaveLink",
+        "at": "src/modals.tsx:61"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "ConfirmDialogRedux",
+          "at": "src/modals.tsx:62",
+          "dialogOps": [
+            "GetUser"
+          ],
+          "scope": "effects.leave_modal"
+        }
+      ]
+    },
+    {
+      "template": "effects.leave_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "leave_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "ConfirmDialog",
+        "at": "src/modals.tsx:22"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:29",
+            "src/modals.tsx:62"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.me.action--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "me"
+      ],
+      "name": "action",
+      "role": "button",
+      "component": {
+        "name": "ActionButton",
+        "at": "src/buttons.tsx:32"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/buttons.tsx:44"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.me_dialog.confirm.action--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "me_dialog",
+        "confirm"
+      ],
+      "name": "action",
+      "role": "button",
+      "component": {
+        "name": "ActionButton",
+        "at": "src/buttons.tsx:32"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/buttons.tsx:87",
+            "src/buttons.tsx:99"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.me_rows.row.delete--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "me_rows",
+        "row"
+      ],
+      "name": "delete",
+      "role": "button",
+      "component": {
+        "name": "DeleteRowLink",
+        "at": "src/modals.tsx:157"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/modals.tsx:172"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "ConfirmDialogRedux",
+          "at": "src/modals.tsx:153",
+          "dialogOps": [
+            "GetUser"
+          ],
+          "scope": "effects.delete_row_modal"
+        }
+      ]
+    },
+    {
+      "template": "effects.panel.done--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "panel"
+      ],
+      "name": "done",
+      "role": "button",
+      "component": {
+        "name": "Panel",
+        "at": "src/buttons.tsx:59"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "src/buttons.tsx:60"
+        ]
+      }
+    },
+    {
+      "template": "effects.panel.dynamic--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "panel"
+      ],
+      "name": "dynamic",
+      "role": "button",
+      "component": {
+        "name": "Panel",
+        "at": "src/buttons.tsx:63"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": true,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.panel.iife--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "panel"
+      ],
+      "name": "iife",
+      "role": "button",
+      "component": {
+        "name": "Panel",
+        "at": "src/buttons.tsx:53"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.panel.save--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "panel"
+      ],
+      "name": "save",
+      "role": "button",
+      "component": {
+        "name": "SaveButton",
+        "at": "src/buttons.tsx:17"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.patch_dialog.confirm.action--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "patch_dialog",
+        "confirm"
+      ],
+      "name": "action",
+      "role": "button",
+      "component": {
+        "name": "ActionButton",
+        "at": "src/buttons.tsx:32"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/buttons.tsx:87",
+            "src/buttons.tsx:103"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.reaction--button",
+      "grammar": true,
+      "scope": [
+        "effects"
+      ],
+      "name": "reaction",
+      "role": "button",
+      "component": {
+        "name": "Reaction",
+        "at": "src/buttons.tsx:121"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.restore--button",
+      "grammar": true,
+      "scope": [
+        "effects"
+      ],
+      "name": "restore",
+      "role": "button",
+      "component": {
+        "name": "RestoreButton",
+        "at": "src/buttons.tsx:133"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "RestoreChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    }
+  ],
+  "sets": [],
+  "operations": [
+    {
+      "opId": "GetUser",
+      "verb": "GET",
+      "path": "/api/v4/users/{user_id}",
+      "body": "UserProfile",
+      "bodyImports": {
+        "UserProfile": "@mattermost/types/users"
+      },
+      "inSpec": true
+    },
+    {
+      "opId": "PatchChannel",
+      "verb": "PUT",
+      "path": "/api/v4/channels/{channel_id}/patch",
+      "body": "Channel",
+      "bodyImports": {
+        "Channel": "@mattermost/types/channels"
+      },
+      "inSpec": true
+    },
+    {
+      "opId": "RequestJoinChannel",
+      "verb": "POST",
+      "path": "/api/v4/channels/{channelId}/join_request",
+      "body": null,
+      "inSpec": false
+    },
+    {
+      "opId": "RestoreChannel",
+      "verb": "POST",
+      "path": "/api/v4/channels/{channelId}/restore",
+      "body": "Channel",
+      "bodyImports": {
+        "Channel": "@mattermost/types/channels"
+      },
+      "inSpec": false
+    }
+  ],
+  "pages": [],
+  "pluginSlots": [],
+  "components": [
+    {
+      "name": "ConfirmDialogRedux",
+      "at": "src/modals.tsx:27",
+      "scopes": [
+        "effects.delete_hook_modal",
+        "effects.delete_row_modal",
+        "effects.leave_modal"
+      ]
+    },
+    {
+      "name": "FilePreview",
+      "at": "src/modals.tsx:101",
+      "scopes": []
+    },
+    {
+      "name": "GrantModal",
+      "at": "src/modals.tsx:128",
+      "scopes": [
+        "effects.graph",
+        "effects.graph.grant_modal"
+      ]
+    }
+  ],
+  "diagnostics": []
+}

@@ -91,6 +91,31 @@ jobs:
         run: |
           npm run i18n-extract:check
 
+  check-test-surface:
+    permissions:
+      contents: read
+    needs: check-lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: webapp
+    steps:
+      - name: ci/checkout-repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: ci/setup
+        uses: ./.github/actions/webapp-setup
+        with:
+          read-only: "true"
+      - name: ci/test-surface-tool-tests
+        # the scanner's lint, types and fixture tests; nothing in the webapp uses it yet
+        run: |
+          npm run check --workspace=platform/test-surface
+          npm run check-types --workspace=platform/test-surface
+          npm run test --workspace=platform/test-surface
+
   check-external-links:
     permissions:
       contents: read

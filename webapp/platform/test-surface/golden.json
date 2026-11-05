@@ -1,0 +1,10 @@
+{
+  "domSites": 651,
+  "domResolved": 614,
+  "domFromPropsResolved": 99,
+  "matchedToOpenAPI": 528,
+  "elementsWithRole": 702,
+  "elementsWithEffects": 124,
+  "elementsWithOpens": 170,
+  "grammarElements": 210
+}
