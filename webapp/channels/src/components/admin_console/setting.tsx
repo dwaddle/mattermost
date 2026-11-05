@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import {settingTestKey} from '@mattermost/shared/utils/test_id';
+
 import SetByEnv from './set_by_env';
 
 export type Props = {
@@ -16,7 +18,7 @@ export type Props = {
 const Settings = ({children, setByEnv, helpText, inputId, label}: Props) => {
     return (
         <div
-            data-testid={inputId}
+            data-testid={inputId ? `admin.setting:${settingTestKey(inputId)}` : undefined}
             className='form-group'
         >
             <label
@@ -30,7 +32,7 @@ const Settings = ({children, setByEnv, helpText, inputId, label}: Props) => {
             >
                 {children}
                 <div
-                    data-testid={inputId + 'help-text'}
+                    data-testid={inputId ? 'admin.setting.help--text' : undefined}
                     className='help-text'
                 >
                     {helpText}

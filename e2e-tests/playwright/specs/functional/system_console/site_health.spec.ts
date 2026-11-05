@@ -27,17 +27,17 @@ test('shows the Site health page to a system admin', {tag: '@system_console'}, a
     await pw.ensureFeatureFlag('HealthDashboard', true);
 
     const {adminUser} = await pw.initSetup();
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+    const {app} = await pw.testBrowser.login(adminUser);
 
     // # Open Reporting > Site health
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
-    await systemConsolePage.sidebar.reporting.siteHealth.click();
+    await app.adminConsolePage.goto();
+    await app.admin.sidebar.category('reporting').section('site_health').clickTitleLink();
 
-    // * Verify the page loaded from the findings API without an error
-    await expect(systemConsolePage.page.getByTestId('admin-console-header')).toHaveText('Site health');
-    await expect(systemConsolePage.page.getByText(/^(Not evaluated yet|Last evaluated)/)).toBeVisible();
-    await expect(systemConsolePage.page.getByText('Health findings could not be loaded')).not.toBeVisible();
+    // * Verify the page loaded from the findings API without an error: either not evaluated yet or evaluated
+    const {health} = app.admin;
+    await expect(app.admin.header.locator).toHaveText('Site health');
+    await expect(health.notEvaluated.locator.or(health.lastEvaluatedText.locator)).toBeVisible();
+    await expect(health.loadError.locator).toHaveCount(0);
 });
 
 /**
@@ -48,13 +48,13 @@ test('hides Site health when the feature flag is off', {tag: '@system_console'},
     await pw.ensureFeatureFlag('HealthDashboard', false);
 
     const {adminUser} = await pw.initSetup();
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+    const {app} = await pw.testBrowser.login(adminUser);
 
     // # Open the System Console
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
+    await app.adminConsolePage.goto();
 
     // * Verify Reporting is listed but Site health is not
-    await expect(systemConsolePage.sidebar.reporting.siteStatistics.link).toBeVisible();
-    await expect(systemConsolePage.sidebar.reporting.siteHealth.link).not.toBeVisible();
+    const reporting = app.admin.sidebar.category('reporting');
+    await expect(reporting.section('system_analytics').titleLink.locator).toBeVisible();
+    await expect(reporting.section('site_health').locator).toHaveCount(0);
 });

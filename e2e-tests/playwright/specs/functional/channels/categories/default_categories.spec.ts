@@ -1,9 +1,16 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import type {Client4} from '@mattermost/client';
+import type {Channel} from '@mattermost/types/channels';
 
-async function enableChannelCategorySorting(adminClient: any) {
+import {expect, generated, Msg, test, type App} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the new-channel dialog and Channel Settings' Info tab (each with its default
+// category selector: input, "Create new category" option), the save panel, the sidebar's categories keyed by
+// category id and its channel links, and the System Console's setting rows by config path.
+
+async function enableChannelCategorySorting(adminClient: Client4) {
     await adminClient.patchConfig({
         TeamSettings: {
             EnableChannelCategorySorting: true,
@@ -11,12 +18,47 @@ async function enableChannelCategorySorting(adminClient: any) {
     });
 }
 
-async function disableChannelCategorySorting(adminClient: any) {
+async function disableChannelCategorySorting(adminClient: Client4) {
     await adminClient.patchConfig({
         TeamSettings: {
             EnableChannelCategorySorting: false,
         },
     });
+}
+
+/** Waits for the user's sidebar category named `name` on the team, and returns its id. */
+async function categoryIdByName(client: Client4, userId: string, teamId: string, name: string) {
+    let id = '';
+    await expect
+        .poll(async () => {
+            const {categories} = await client.getChannelCategories(userId, teamId);
+            id = categories.find((category) => category.display_name === name)?.id ?? '';
+            return id;
+        })
+        .not.toBe('');
+    return id;
+}
+
+/** Opens Channel Settings on the Info tab from the channel header menu. */
+async function openChannelSettingsInfo(app: App) {
+    const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+    await settings.tabs.infoTab.select();
+    await expect(settings.info.nameTextbox.locator).toBeVisible();
+    return settings;
+}
+
+/** Types a new category name in a default category selector and picks "Create new category". */
+async function createCategoryIn(selector: generated.CategorySelector, name: string) {
+    // fill focuses the input itself; a click would land on the placeholder drawn over it
+    await selector.inputCombobox.locator.fill(name);
+    await expect(selector.createOption.locator).toContainText(name);
+    await selector.createOption.select();
+}
+
+/** The channel's sidebar link inside the given category (the channel list, rooted at the category's element). */
+function channelInCategory(app: App, categoryId: string, channel: Pick<Channel, 'name'>) {
+    const category = app.lhs.channelList.category({id: categoryId}).locator;
+    return new generated.LhsChannelList(app.page, 'lhs.channel_list', category).channel(channel).link.locator;
 }
 
 test.describe('Channel Category Sorting', () => {
@@ -34,20 +76,14 @@ test.describe('Channel Category Sorting', () => {
             await adminClient.addToTeam(team.id, adminUser.id);
 
             // # Log in and open channel settings
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: 'town-square'});
+            const settings = await openChannelSettingsInfo(app);
 
-            const channelSettingsModal = await channelsPage.openChannelSettings();
-            await channelSettingsModal.openInfoTab();
+            // * Verify the default category selector is not rendered (the tests below see it when sorting is on)
+            await expect(settings.info.defaultCategory.locator).toHaveCount(0);
 
-            // * Verify the default category selector is not rendered
-            const defaultCategorySelector = channelSettingsModal.container
-                .locator('.CategorySelector')
-                .filter({hasText: 'Choose a default category (optional)'});
-            await expect(defaultCategorySelector).toHaveCount(0);
-
-            await channelSettingsModal.close();
+            await settings.clickCloseButton();
         },
     );
 
@@ -65,35 +101,24 @@ test.describe('Channel Category Sorting', () => {
             await adminClient.addToTeam(team.id, adminUser.id);
 
             // # Log in and open the new channel modal
-            const {page, channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
-
-            const newChannelModal = await channelsPage.openNewChannelModal();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: 'town-square'});
+            const modal = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickCreateChannelMenuItem();
             const displayName = `New Default Cat ${Date.now()}`;
-            await newChannelModal.fillDisplayName(displayName);
+            await modal.fillNameTextbox(displayName);
 
-            // # Locate the default category selector and select a new category
-            const defaultCategorySection = newChannelModal.container.locator('.CategorySelector').first();
-            await expect(defaultCategorySection).toContainText('Choose a default category (optional)');
+            // # Pick "Create new category" in the default category selector
+            await expect(modal.defaultCategory).toContainMessage(Msg.default_category.placeholder);
+            await createCategoryIn(modal.defaultCategory, 'Flight Ops');
 
-            const defaultCategoryControl = defaultCategorySection.locator('.CategorySelector__control');
-            await defaultCategoryControl.click();
-
-            const input = defaultCategorySection.getByRole('combobox');
-            await input.fill('Flight Ops');
-
-            const createOption = page.getByRole('option', {name: 'Create new category: Flight Ops'});
-            await expect(createOption).toBeVisible();
-            await createOption.click();
-
-            await newChannelModal.create();
-            await channelsPage.toBeVisible();
-            await pw.wait(pw.duration.two_sec);
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             // * Verify the new category appears in the sidebar
-            const sidebar = channelsPage.sidebarLeft.container;
-            await expect(sidebar.getByText('Flight Ops')).toBeVisible();
+            const categoryId = await categoryIdByName(adminClient, adminUser.id, team.id, 'Flight Ops');
+            await expect(app.lhs.channelList.category({id: categoryId}).headerButton.locator).toHaveAccessibleName(
+                'Flight Ops',
+            );
         },
     );
 
@@ -108,46 +133,35 @@ test.describe('Channel Category Sorting', () => {
         await enableChannelCategorySorting(adminClient);
         await adminClient.addToTeam(team.id, adminUser.id);
 
-        // # Log in and navigate to town-square
-        const {page, channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
-
-        // # Create a new channel
-        const channelName = `default-assign-${Date.now()}`;
-        await channelsPage.newChannel(channelName, 'O');
-        await channelsPage.toBeVisible();
+        // # Create a new channel and open it
+        const channel = await adminClient.createChannel({
+            team_id: team.id,
+            name: `default-assign-${Date.now()}`,
+            display_name: `Default assign ${Date.now()}`,
+            type: 'O',
+        } as Channel);
+        await adminClient.addToChannel(adminUser.id, channel.id);
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel});
 
         // # Open channel settings and navigate to info tab
-        const channelSettingsModal = await channelsPage.openChannelSettings();
-        await channelSettingsModal.openInfoTab();
+        const settings = await openChannelSettingsInfo(app);
 
         // * Verify the default category selector is visible
-        const defaultCategorySection = channelSettingsModal.container.locator('.CategorySelector').first();
-        await expect(defaultCategorySection).toContainText('Choose a default category (optional)');
+        const selector = settings.info.defaultCategory;
+        await expect(selector).toContainMessage(Msg.default_category.placeholder);
 
-        // # Click the selector, type a new category name, and select "Create new category"
-        const defaultCategoryControl = defaultCategorySection.locator('.CategorySelector__control');
-        await defaultCategoryControl.click();
-
-        const input = defaultCategorySection.getByRole('combobox');
-        await input.fill('Operations');
-
-        const createOption = page.getByRole('option', {name: 'Create new category: Operations'});
-        await expect(createOption).toBeVisible();
-        await createOption.click();
+        // # Type a new category name and select "Create new category"
+        await createCategoryIn(selector, 'Operations');
 
         // # Save and close
-        await channelSettingsModal.save();
-        await pw.wait(pw.duration.two_sec);
-        await channelSettingsModal.close();
+        await settings.savePanel.clickSaveButton();
+        await expect(settings.savePanel.messageText).toHaveMessage(Msg.saveChangesPanel.saved);
+        await settings.clickCloseButton();
 
         // * Verify the default category appears in the sidebar with the channel under it
-        const sidebar = channelsPage.sidebarLeft.container;
-        await expect(sidebar.getByText('Operations')).toBeVisible();
-
-        const operationsSection = sidebar.locator('.SidebarChannelGroup').filter({hasText: 'Operations'});
-        await expect(operationsSection.locator(`#sidebarItem_${channelName}`)).toBeVisible();
+        const categoryId = await categoryIdByName(adminClient, adminUser.id, team.id, 'Operations');
+        await expect(channelInCategory(app, categoryId, channel)).toBeVisible();
     });
 
     /**
@@ -166,48 +180,42 @@ test.describe('Channel Category Sorting', () => {
             name: `default-cat-remove-${Date.now()}`,
             display_name: `Default remove ${Date.now()}`,
             type: 'O',
-        });
+        } as Channel);
         await adminClient.patchChannel(channel.id, {default_category_name: 'Removable'});
         await adminClient.addToChannel(adminUser.id, channel.id);
 
         // # Log in and navigate to the channel
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel});
 
         // * Verify the default category is visible in the sidebar (admin was added after the patch set it)
-        const sidebar = channelsPage.sidebarLeft.container;
-        await expect(sidebar.getByText('Removable')).toBeVisible();
+        const categoryId = await categoryIdByName(adminClient, adminUser.id, team.id, 'Removable');
+        await expect(channelInCategory(app, categoryId, channel)).toBeVisible();
 
-        // # Open channel settings and click the clear button on the default category selector
-        let channelSettingsModal = await channelsPage.openChannelSettings();
-        await channelSettingsModal.openInfoTab();
+        // # Open channel settings and clear the default category (Backspace in the empty input removes the value)
+        let settings = await openChannelSettingsInfo(app);
+        const selector = settings.info.defaultCategory;
+        await expect(selector.locator).toContainText('Removable');
+        await selector.inputCombobox.locator.focus();
+        await selector.inputCombobox.locator.press('Backspace');
 
-        const defaultCategorySection = channelSettingsModal.container.locator('.CategorySelector').first();
-        await expect(defaultCategorySection).toContainText('Removable');
-
-        const clearButton = defaultCategorySection.locator('.CategorySelector__clear-indicator');
-        await expect(clearButton).toBeVisible();
-        await clearButton.click();
-        await pw.wait(pw.duration.half_sec);
-
-        // * Verify the clear button is gone (no value selected)
-        await expect(clearButton).not.toBeVisible();
+        // * Verify the value is gone
+        await expect(selector.locator).not.toContainText('Removable');
 
         // # Save and close
-        await channelSettingsModal.save();
-        await pw.wait(pw.duration.two_sec);
-        await channelSettingsModal.close();
+        await settings.savePanel.clickSaveButton();
+        await expect(settings.savePanel.messageText).toHaveMessage(Msg.saveChangesPanel.saved);
+        await settings.clickCloseButton();
+        await expect(settings.locator).not.toBeVisible();
 
         // # Reopen channel settings to verify the cleared value persisted
-        channelSettingsModal = await channelsPage.openChannelSettings();
-        await channelSettingsModal.openInfoTab();
+        settings = await openChannelSettingsInfo(app);
 
         // * Verify the default category selector shows the placeholder (value is cleared)
-        const reopenedDefaultCategorySection = channelSettingsModal.container.locator('.CategorySelector').first();
-        await expect(reopenedDefaultCategorySection).toContainText('Choose a default category (optional)');
+        await expect(settings.info.defaultCategory).toContainMessage(Msg.default_category.placeholder);
+        await expect(settings.info.defaultCategory.locator).not.toContainText('Removable');
 
-        await channelSettingsModal.close();
+        await settings.clickCloseButton();
     });
 
     /**
@@ -222,20 +230,14 @@ test.describe('Channel Category Sorting', () => {
             const {adminUser} = await pw.initSetup({withDefaultProfileImage: false});
             await pw.skipIfNoLicense();
 
-            // # Log in and navigate to the System Console
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.goto();
-            await systemConsolePage.toBeVisible();
-
-            // # Navigate to Users and Teams
-            await systemConsolePage.sidebar.siteConfiguration.usersAndTeams.click();
-            await systemConsolePage.usersAndTeams.toBeVisible();
+            // # Log in and navigate to Users and Teams in the System Console
+            const {app, page} = await pw.testBrowser.login(adminUser);
+            await page.goto(`${generated.AdminConsolePage.path()}/site_config/users_and_teams`);
 
             // * Verify the setting is visible
-            const setting = systemConsolePage.usersAndTeams.container.getByTestId(
-                'TeamSettings.EnableChannelCategorySortingtrue',
-            );
-            await expect(setting).toBeVisible();
+            await expect(
+                app.admin.setting('TeamSettings.EnableChannelCategorySorting').trueRadio.locator,
+            ).toBeVisible();
         },
     );
 });

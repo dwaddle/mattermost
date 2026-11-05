@@ -65,7 +65,7 @@ test('MM-T5782 System admin can enable or disable system-wide ABAC', async ({pw}
     await systemConsolePage.page.waitForLoadState('networkidle');
 
     // * Verify we're on the correct page
-    const abacSection = systemConsolePage.page.getByTestId('sysconsole_section_AttributeBasedAccessControl');
+    const abacSection = systemConsolePage.page.getByTestId('admin.page:AttributeBasedAccessControl');
     await expect(abacSection).toBeVisible();
 
     const enableRadio = systemConsolePage.page.locator(

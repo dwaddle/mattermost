@@ -7,6 +7,8 @@ import type {CSSProperties, JSX} from 'react';
 import {FormattedMessage, injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import type {FilterOptions} from 'components/admin_console/filter/filter';
 import PaginationButtons from 'components/common/pagination_buttons';
 import LoadingSpinner from 'components/widgets/loading/loading_spinner';
@@ -34,9 +36,16 @@ export type Row = {
         [key: string]: JSX.Element | string | null;
     };
     onClick?: () => void;
+
+    // With the grid's testIdScope, the row is `<testIdScope>.row:<testKey>` (its position when unset).
+    testKey?: string;
 };
 
 type Props = {
+
+    // Names the grid's parts (`<testIdScope>.row:<key>`, `.search--textbox`, `.footer.pagination--text`); without it they
+    // keep their old shared ids (`dataGrid-row`), which every grid on a page repeats.
+    testIdScope?: TestId;
     rows: Row[];
     columns: Column[];
     placeholderEmpty?: JSX.Element;
@@ -177,6 +186,8 @@ class DataGrid extends React.PureComponent<Props, State> {
                         key={index}
                         row={row}
                         columns={visibleColumns}
+                        testIdScope={this.props.testIdScope}
+                        testKey={row.testKey ?? String(index)}
                     />
                 );
             });
@@ -184,7 +195,7 @@ class DataGrid extends React.PureComponent<Props, State> {
         return (
             <div
                 className='DataGrid_rows'
-                data-testid='dataGrid-rows'
+                data-testid={this.props.testIdScope ? `${this.props.testIdScope}.rows` : 'dataGrid-rows'}
                 style={rowsContainerStyles || {}}
             >
                 {rowsToRender}
@@ -196,6 +207,7 @@ class DataGrid extends React.PureComponent<Props, State> {
         return (
             <DataGridHeader
                 columns={this.state.visibleColumns}
+                testIdScope={this.props.testIdScope}
             />
         );
     }
@@ -209,6 +221,7 @@ class DataGrid extends React.PureComponent<Props, State> {
                     filterProps={this.props.filterProps}
                     extraComponent={this.props.extraComponent}
                     disabled={this.props.disabled}
+                    testIdScope={this.props.testIdScope}
                 />
             );
         }
@@ -254,10 +267,10 @@ class DataGrid extends React.PureComponent<Props, State> {
             footer = (
                 <div
                     className='DataGrid_footer'
-                    data-testid='dataGrid-footer'
+                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.footer` : 'dataGrid-footer'}
                 >
                     <div className='DataGrid_cell'>
-                        <span data-testid='dataGrid-footer-paginationInfo'>
+                        <span data-testid={this.props.testIdScope ? `${this.props.testIdScope}.footer.pagination--text` : 'dataGrid-footer-paginationInfo'}>
                             <FormattedMessage
                                 id='admin.data_grid.paginatorCount'
                                 defaultMessage='{startCount, number} - {endCount, number} of {total, number}'
@@ -275,6 +288,8 @@ class DataGrid extends React.PureComponent<Props, State> {
                             disableNext={lastPage}
                             previousButtonClassName='ml-2 prev'
                             nextButtonClassName='next'
+                            previousButtonTestId={this.props.testIdScope ? `${this.props.testIdScope}.footer.previous--button` : undefined}
+                            nextButtonTestId={this.props.testIdScope ? `${this.props.testIdScope}.footer.next--button` : undefined}
                         />
                     </div>
                 </div>
@@ -288,7 +303,7 @@ class DataGrid extends React.PureComponent<Props, State> {
         return (
             <div
                 className={classNames('DataGrid', this.props.className)}
-                data-testid='dataGrid'
+                data-testid={this.props.testIdScope ?? 'dataGrid'}
                 ref={this.ref}
             >
                 {this.renderSearch()}

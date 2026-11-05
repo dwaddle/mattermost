@@ -9,6 +9,8 @@
 
 // Group: @channels @enterprise @system_console
 
+import {permissionToggle} from './channel_moderation/helpers';
+
 import {getAdminAccount} from '@/support/env';
 
 describe('System Scheme Channel Mentions Permissions Test', () => {
@@ -76,7 +78,7 @@ const saveConfig = () => {
 };
 
 const enablePermission = (permissionCheckBoxTestId) => {
-    cy.findByTestId(permissionCheckBoxTestId).then((el) => {
+    permissionToggle(permissionCheckBoxTestId).then((el) => {
         if (!el.hasClass('checked')) {
             el.click();
         }
@@ -84,7 +86,7 @@ const enablePermission = (permissionCheckBoxTestId) => {
 };
 
 const removePermission = (permissionCheckBoxTestId) => {
-    cy.findByTestId(permissionCheckBoxTestId).then((el) => {
+    permissionToggle(permissionCheckBoxTestId).then((el) => {
         if (el.hasClass('checked')) {
             el.click();
         }
@@ -138,7 +140,7 @@ const resetPermissionsToDefault = () => {
     cy.visit('/admin_console/user_management/permissions/system_scheme');
 
     // # Click reset to defaults and confirm
-    cy.findByTestId('resetPermissionsToDefault').click();
+    cy.findByTestId('admin.permissions.reset--button').click();
     cy.get('#confirmModalButton').click();
 
     // # Save
@@ -168,7 +170,7 @@ const checkChannelPermission = (permissionName, hasChannelPermissionCheckFunc, n
 
     // * Ensure permission is enabled at each scope by default
     testIds.forEach((testId) => {
-        cy.findByTestId(testId).should('have.class', 'checked');
+        permissionToggle(testId).should('have.class', 'checked');
     });
 
     // # Remove permission from guests and save
@@ -176,34 +178,34 @@ const checkChannelPermission = (permissionName, hasChannelPermissionCheckFunc, n
     saveConfig();
 
     // * Ensure that the permission removed is now removed
-    cy.findByTestId(guestsTestId).should('not.have.class', 'checked');
+    permissionToggle(guestsTestId).should('not.have.class', 'checked');
 
     // # Remove permission from all users and save
     removePermission(usersTestId);
     saveConfig();
 
     // * Ensure that the permission is not removed from all roles except All Members
-    cy.findByTestId(usersTestId).should('not.have.class', 'checked');
-    cy.findByTestId(channelTestId).should('have.class', 'checked');
-    cy.findByTestId(teamTestId).should('have.class', 'checked');
+    permissionToggle(usersTestId).should('not.have.class', 'checked');
+    permissionToggle(channelTestId).should('have.class', 'checked');
+    permissionToggle(teamTestId).should('have.class', 'checked');
 
     // # Remove permission for channel admins and save
     removePermission(channelTestId);
     saveConfig();
 
     // * Ensure that the permission is removed from all roles except team admins
-    cy.findByTestId(teamTestId).should('have.class', 'checked');
-    cy.findByTestId(channelTestId).should('not.have.class', 'checked');
-    cy.findByTestId(usersTestId).should('not.have.class', 'checked');
+    permissionToggle(teamTestId).should('have.class', 'checked');
+    permissionToggle(channelTestId).should('not.have.class', 'checked');
+    permissionToggle(usersTestId).should('not.have.class', 'checked');
 
     // # Enable permission for channel admins and save
     enablePermission(channelTestId);
     saveConfig();
 
     // * Ensure that the permission is only removed from regular users
-    cy.findByTestId(teamTestId).should('have.class', 'checked');
-    cy.findByTestId(channelTestId).should('have.class', 'checked');
-    cy.findByTestId(usersTestId).should('not.have.class', 'checked');
+    permissionToggle(teamTestId).should('have.class', 'checked');
+    permissionToggle(channelTestId).should('have.class', 'checked');
+    permissionToggle(usersTestId).should('not.have.class', 'checked');
 
     // # Setup user as a regular channel member
     setUserTeamAndChannelMemberships(testUser, testTeam, testChannel);

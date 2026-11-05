@@ -99,6 +99,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
                     <div className='setting-content'>
                         <CheckboxSetting
                             id='flagged_reviewers'
+                            testId='admin.content_flagging.notification:flagged_reviewers'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.reviewers'
@@ -113,6 +114,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
 
                         <CheckboxSetting
                             id='flagged_author'
+                            testId='admin.content_flagging.notification:flagged_author'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.author'
@@ -139,6 +141,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
                     <div className='setting-content'>
                         <CheckboxSetting
                             id='assigned_reviewers'
+                            testId='admin.content_flagging.notification:assigned_reviewers'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.reviewers'
@@ -165,6 +168,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
                     <div className='setting-content'>
                         <CheckboxSetting
                             id='removed_reviewers'
+                            testId='admin.content_flagging.notification:removed_reviewers'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.reviewers'
@@ -179,6 +183,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
 
                         <CheckboxSetting
                             id='removed_author'
+                            testId='admin.content_flagging.notification:removed_author'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.author'
@@ -193,6 +198,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
 
                         <CheckboxSetting
                             id='removed_reporter'
+                            testId='admin.content_flagging.notification:removed_reporter'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.reporter'
@@ -219,6 +225,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
                     <div className='setting-content'>
                         <CheckboxSetting
                             id='dismissed_reviewers'
+                            testId='admin.content_flagging.notification:dismissed_reviewers'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.reviewers'
@@ -233,6 +240,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
 
                         <CheckboxSetting
                             id='dismissed_author'
+                            testId='admin.content_flagging.notification:dismissed_author'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.author'
@@ -247,6 +255,7 @@ export default function ContentFlaggingNotificationSettingsSection({id, value, o
 
                         <CheckboxSetting
                             id='dismissed_reporter'
+                            testId='admin.content_flagging.notification:dismissed_reporter'
                             label={
                                 <FormattedMessage
                                     id='admin.dataSpillage.notificationSettings.reporter'

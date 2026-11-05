@@ -16,7 +16,9 @@
 import {gotoTeamAndPostImage} from './helpers';
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
+// A System Console setting's row is `admin.setting:<key>` (its id, with `.` as `_`); its controls are parts of it.
 describe('Compliance Export', () => {
     let teamName;
 
@@ -62,12 +64,12 @@ describe('Compliance Export', () => {
         } = Cypress.expose();
 
         // # Update S3 Storage settings
-        cy.findByTestId('FileSettings.DriverNamedropdown').select('amazons3');
-        cy.findByTestId('FileSettings.AmazonS3Bucketinput').clear().type(minioS3Bucket);
-        cy.findByTestId('FileSettings.AmazonS3AccessKeyIdinput').clear().type(minioAccessKey);
-        cy.findByTestId('FileSettings.AmazonS3SecretAccessKeyinput').clear().type(minioSecretKey);
-        cy.findByTestId('FileSettings.AmazonS3Endpointinput').clear().type(minioS3Endpoint);
-        cy.findByTestId(`FileSettings.AmazonS3SSL${minioS3SSL}`).check();
+        settingPart('FileSettings.DriverName', 'value--combobox').select('amazons3');
+        settingPart('FileSettings.AmazonS3Bucket', 'value--textbox').clear().type(minioS3Bucket);
+        settingPart('FileSettings.AmazonS3AccessKeyId', 'value--textbox').clear().type(minioAccessKey);
+        settingPart('FileSettings.AmazonS3SecretAccessKey', 'value--textbox').clear().type(minioSecretKey);
+        settingPart('FileSettings.AmazonS3Endpoint', 'value--textbox').clear().type(minioS3Endpoint);
+        settingPart('FileSettings.AmazonS3SSL', `${minioS3SSL}--radio`).check();
 
         // # Save file storage settings
         cy.uiSaveConfig();

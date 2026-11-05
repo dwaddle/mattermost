@@ -119,6 +119,7 @@ function SecureConnectionCreateInviteModal({
             modalHeaderText={title}
             onExited={onExited}
             compassDesign={true}
+            testId='admin.create_invite_modal'
             autoCloseOnConfirmButton={done}
             backdrop='static'
         >
@@ -144,7 +145,7 @@ function SecureConnectionCreateInviteModal({
                                     defaultMessage: 'Encrypted invitation code',
                                 })}
                                 value={inviteCode}
-                                data-testid='invite-code'
+                                data-testid='admin.create_invite_modal.code--textbox'
                                 readOnly={true}
                                 addon={(
                                     <Button
@@ -168,7 +169,7 @@ function SecureConnectionCreateInviteModal({
                             })}
                             value={password}
                             onChange={handlePasswordChange}
-                            data-testid='password'
+                            data-testid='admin.create_invite_modal.password--textbox'
                             readOnly={done}
                             addon={done ? (
                                 <Button

@@ -2,7 +2,8 @@
 // See LICENSE.txt for license information.
 
 import type {Locator} from '@playwright/test';
-import {expect} from '@playwright/test';
+
+import {expect} from '@/aria';
 
 /**
  * System Console -> Authentication -> AD/LDAP
@@ -24,12 +25,14 @@ export default class AdLdap {
         this.container = container;
 
         this.usernameAttribute = container.getByRole('textbox', {name: 'Username Attribute:'});
-        this.loginIdAttribute = container.getByTestId('LdapSettings.LoginIdAttributeinput');
+        this.loginIdAttribute = container
+            .getByTestId('admin.setting:LdapSettings_LoginIdAttribute')
+            .getByTestId('admin.setting.value--textbox');
         this.testConnectionButton = container.getByRole('button', {name: 'Test Connection'});
         this.testConnectionSuccess = container.getByText('Test Connection Successful');
         this.successIcon = container.getByTitle('Success Icon');
-        this.saveButton = container.getByRole('button', {name: 'Save'});
-        this.errorMessage = container.getByTestId('errorMessage');
+        this.saveButton = container.getByTestId('admin.save--button');
+        this.errorMessage = container.getByTestId('admin.save_error');
         this.usernameAttributeRequiredError = container.getByText('AD/LDAP field "Username Attribute" is required.');
         this.loginIdAttributeRequiredError = container.getByText('AD/LDAP field "Login ID Attribute" is required.');
     }
@@ -44,6 +47,6 @@ export default class AdLdap {
     }
 
     async expectSaveComplete() {
-        await expect(this.saveButton).toBeDisabled();
+        await expect(this.saveButton).toBeSaved();
     }
 }

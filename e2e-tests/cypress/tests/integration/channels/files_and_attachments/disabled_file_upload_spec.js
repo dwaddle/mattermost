@@ -11,6 +11,7 @@
 // Group: @channels @not_cloud @files_and_attachments
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Upload Files - Settings', () => {
     let channelUrl;
@@ -26,7 +27,7 @@ describe('Upload Files - Settings', () => {
             and('have.text', 'File Sharing and Downloads');
 
         // # Set file sharing to false
-        cy.findByTestId('FileSettings.EnableFileAttachmentsfalse').click();
+        settingPart('FileSettings.EnableFileAttachments', 'false--radio').click();
         cy.get('#saveSetting').click();
 
         // # Create new team and new user and visit test channel

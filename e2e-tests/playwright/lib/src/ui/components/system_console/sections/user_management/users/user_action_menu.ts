@@ -34,38 +34,40 @@ export class UserActionMenu {
     }
 
     async clickDeactivate() {
-        await this.clickMenuItem('Deactivate');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.deactivate--menuitem').click();
     }
 
     async clickActivate() {
-        await this.clickMenuItem('Activate');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.activate--menuitem').click();
     }
 
     async clickManageRoles() {
-        await this.clickMenuItem('Manage roles');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.manage_roles--menuitem').click();
     }
 
     async clickManageTeams() {
-        await this.clickMenuItem('Manage teams');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.manage_teams--menuitem').click();
     }
 
     async clickResetPassword() {
-        await this.clickMenuItem('Reset password');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.reset_password--menuitem').click();
     }
 
     async clickUpdateEmail() {
-        await this.clickMenuItem('Update email');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.update_email--menuitem').click();
     }
 
     async clickRevokeSessions() {
-        await this.clickMenuItem('Revoke sessions');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.revoke_sessions--menuitem').click();
     }
 
     async clickRemoveMfa() {
-        await this.clickMenuItem('Remove MFA');
+        await this.container.getByTestId('admin.users.table.row.actions_menu.remove_mfa--menuitem').click();
     }
 
     async expectRemoveMfaHidden() {
-        await expect(this.getMenuItem('Remove MFA')).toHaveCount(0);
+        await expect(this.container.getByTestId('admin.users.table.row.actions_menu.remove_mfa--menuitem')).toHaveCount(
+            0,
+        );
     }
 }

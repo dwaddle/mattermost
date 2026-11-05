@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {settingPart} from '@/utils/admin_setting';
+
 // ***************************************************************
 // - [#] indicates a test step (e.g. # Go to a page)
 // - [*] indicates an assertion (e.g. * Check the title)
@@ -84,11 +86,11 @@ describe('MM-T2574 Session Lengths', () => {
             });
         });
         it('Setting "Session Length AD/LDAP and Email (hours)" should save in UI', () => {
-            cy.findByTestId('sessionLengthWebInHoursinput').
+            settingPart('sessionLengthWebInHours', 'value--spinbutton').
                 should('have.value', '720').
                 clear().type('744');
             saveConfig();
-            cy.findByTestId('sessionLengthWebInHoursinput').should('have.value', '744');
+            settingPart('sessionLengthWebInHours', 'value--spinbutton').should('have.value', '744');
         });
         it('Setting "Session Length AD/LDAP and Email (hours)" should be saved in the server configuration', () => {
             cy.apiGetConfig().then(({config}) => {
@@ -97,11 +99,11 @@ describe('MM-T2574 Session Lengths', () => {
             });
         });
         it('Setting "Session Length Mobile (hours)" should save in UI', () => {
-            cy.findByTestId('sessionLengthMobileInHoursinput').
+            settingPart('sessionLengthMobileInHours', 'value--spinbutton').
                 should('have.value', '720').
                 clear().type('744');
             saveConfig();
-            cy.findByTestId('sessionLengthMobileInHoursinput').should('have.value', '744');
+            settingPart('sessionLengthMobileInHours', 'value--spinbutton').should('have.value', '744');
         });
         it('Setting "Session Length Mobile (hours)" should be saved in the server configuration', () => {
             cy.apiGetConfig().then(({config}) => {
@@ -110,11 +112,11 @@ describe('MM-T2574 Session Lengths', () => {
             });
         });
         it('Setting "Session Length SSO (hours)" should save in UI', () => {
-            cy.findByTestId('sessionLengthSSOInHoursinput').
+            settingPart('sessionLengthSSOInHours', 'value--spinbutton').
                 should('have.value', '720').
                 clear().type('744');
             saveConfig();
-            cy.findByTestId('sessionLengthSSOInHoursinput').should('have.value', '744');
+            settingPart('sessionLengthSSOInHours', 'value--spinbutton').should('have.value', '744');
         });
         it('Setting "Session Length SSO (hours)" should be saved in the server configuration', () => {
             cy.apiGetConfig().then(({config}) => {

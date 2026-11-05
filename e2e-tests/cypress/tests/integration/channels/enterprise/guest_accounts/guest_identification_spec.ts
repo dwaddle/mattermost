@@ -17,6 +17,7 @@ import authenticator from 'authenticator';
 import type {UserProfile} from '@mattermost/types/users';
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 import {
     getJoinEmailTemplate,
     getRandomId,
@@ -24,6 +25,7 @@ import {
     verifyEmailBody,
 } from '@/utils';
 
+// A System Console setting's row is `admin.setting:<key>` (its id, with `.` as `_`); its controls are parts of it.
 describe('Guest Accounts', () => {
     let sysadmin: Cypress.UserProfile;
     let testTeam: Cypress.Team;
@@ -70,10 +72,10 @@ describe('Guest Accounts', () => {
         cy.visit('/admin_console/authentication/mfa');
 
         // # Ensure the setting 'Enable Multi factor authentication' is set to true in the MFA page.
-        cy.findByTestId('ServiceSettings.EnableMultifactorAuthenticationtrue').check();
+        settingPart('ServiceSettings.EnableMultifactorAuthentication', 'true--radio').check();
 
         // # Also ensure that this MFA setting is enforced.
-        cy.findByTestId('ServiceSettings.EnforceMultifactorAuthenticationtrue').check();
+        settingPart('ServiceSettings.EnforceMultifactorAuthentication', 'true--radio').check();
 
         // # Click "Save".
         cy.findByText('Save').click().wait(TIMEOUTS.ONE_SEC);
@@ -90,10 +92,10 @@ describe('Guest Accounts', () => {
         cy.url().should('include', '/admin_console/authentication/guest_access');
 
         // # Enable guest accounts.
-        cy.findByTestId('GuestAccountsSettings.Enabletrue').check();
+        settingPart('GuestAccountsSettings.Enable', 'true--radio').check();
 
         // # Check if user is allowed to enforce MFA for Guest accounts.
-        cy.findByTestId('GuestAccountsSettings.EnforceMultifactorAuthenticationtrue').check();
+        settingPart('GuestAccountsSettings.EnforceMultifactorAuthentication', 'true--radio').check();
 
         // # Click "Save".
         cy.get('#saveSetting').scrollIntoView().click();

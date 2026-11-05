@@ -5,14 +5,34 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {Team} from '@mattermost/types/teams';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
-import {AddGroupsToChannelModalGroups} from './shared';
+import {Api} from './api';
+import {ConfirmModal} from './shared';
 
 /** Scope `team_selector_modal`. */
 export class TeamSelectorModal extends Scope {
     constructor(page: Page, scope = 'team_selector_modal', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_selector_modal.confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmModal(): ConfirmModal {
+        return new ConfirmModal(this.page, `${this.scope}.confirm_modal`, this.root);
+    }
+
+    get teams(): TeamSelectorModalTeams {
+        return new TeamSelectorModalTeams(this.page, `${this.scope}.teams`, this.root);
+    }
+}
+
+/** Scope `team_selector_modal.teams`. */
+export class TeamSelectorModalTeams extends Scope {
+    constructor(page: Page, scope = 'team_selector_modal.teams', root?: Locator) {
         super(page, scope, root);
     }
 
@@ -21,7 +41,292 @@ export class TeamSelectorModal extends Scope {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
-    get teams(): AddGroupsToChannelModalGroups {
-        return new AddGroupsToChannelModalGroups(this.page, `${this.scope}.teams`, this.root);
+    /**
+     * `team_selector_modal.teams.error--alert` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when this.state.hasError.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /**
+     * `team_selector_modal.teams.help--text` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `team_selector_modal.teams.next--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and options.length > pageEnd.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [Api.GetAllTeams],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `team_selector_modal.teams.previous--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and this.state.page > 0.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [Api.GetAllTeams],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+
+    /**
+     * `team_selector_modal.teams.remove:{key}--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    remove(remove: string) {
+        return drivers.button(this.byTestId(`${this.scope}.remove:${remove}--button`), {
+            testId: `${this.scope}.remove:${remove}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /** Every `team_selector_modal.teams.remove:{key}--button` in the scope. */
+    get removeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.remove:`, '--button');
+    }
+
+    /** The keys of every `team_selector_modal.teams.remove:{key}--button` in the scope, in document order. */
+    removeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.remove:`, '--button');
+    }
+
+    /**
+     * `team_selector_modal.teams.save--button` — SaveButton (channels/src/components/save_button.tsx)
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [Api.AddTeamMember],
+            unknownEffects: false,
+            source: 'channels/src/components/save_button.tsx#SaveButton',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
+    }
+
+    /**
+     * `team_selector_modal.teams.search--combobox` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get searchCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.search--combobox`), {
+            testId: `${this.scope}.search--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async chooseSearchCombobox(option: string | RegExp): Promise<void> {
+        await this.searchCombobox.choose(option);
+    }
+
+    /**
+     * `team_selector_modal.teams.results` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get results(): TeamSelectorModalTeamsResults {
+        return new TeamSelectorModalTeamsResults(this.page, `${this.scope}.results`, this.root);
+    }
+
+    /** Every `team_selector_modal.teams.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
+    get removeList() {
+        return this.keyedList(`${this.scope}.remove:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.remove:${key}--button`), {
+                testId: `${this.scope}.remove:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+            }),
+        );
+    }
+}
+
+/** Scope `team_selector_modal.teams.results`. */
+export class TeamSelectorModalTeamsResults extends Scope {
+    constructor(page: Page, scope = 'team_selector_modal.teams.results', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_selector_modal.teams.results.live_region` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     */
+    get liveRegion() {
+        return drivers.container(this.byTestId(`${this.scope}.live_region`), {
+            testId: `${this.scope}.live_region`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    /**
+     * `team_selector_modal.teams.results.no_results--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and options == null || options.length === 0 and !customNoOptionsMessage.
+     */
+    get noResultsText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_results--text`), {
+            testId: `${this.scope}.no_results--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getNoResultsText(): Promise<string> {
+        return this.noResultsText.text();
+    }
+
+    /**
+     * `team_selector_modal.teams.results.selection--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get selectionText() {
+        return drivers.text(this.byTestId(`${this.scope}.selection--text`), {
+            testId: `${this.scope}.selection--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getSelectionText(): Promise<string> {
+        return this.selectionText.text();
+    }
+
+    /**
+     * `team_selector_modal.teams.results.team:{key}` — TeamSelectorModal (channels/src/components/team_selector_modal/team_selector_modal.tsx)
+     */
+    team(team: Pick<Team, 'id'>): TeamSelectorModalTeamsResultsTeam {
+        return new TeamSelectorModalTeamsResultsTeam(
+            this.page,
+            `${this.scope}.team`,
+            this.byTestId(`${this.scope}.team:${team.id}`),
+        );
+    }
+
+    /** Every `team_selector_modal.teams.results.team:{key}` in the scope. */
+    get teamItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.team:`, '');
+    }
+
+    /** The keys of every `team_selector_modal.teams.results.team:{key}` in the scope, in document order. */
+    teamKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.team:`, '');
+    }
+
+    /** Every `team_selector_modal.teams.results.team:{key}` in the scope as a list by key, for the list matchers: `expect(x.teamList).toHaveKeys([…])`. */
+    get teamList() {
+        return this.keyedList(
+            `${this.scope}.team:`,
+            '',
+            (key: string) =>
+                new TeamSelectorModalTeamsResultsTeam(
+                    this.page,
+                    `${this.scope}.team`,
+                    this.byTestId(`${this.scope}.team:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `team_selector_modal.teams.results.team`. */
+export class TeamSelectorModalTeamsResultsTeam extends Scope {
+    constructor(page: Page, scope = 'team_selector_modal.teams.results.team', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_selector_modal.teams.results.team:{key}` — TeamSelectorModal (channels/src/components/team_selector_modal/team_selector_modal.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'team_selector_modal.teams.results.team:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_selector_modal/team_selector_modal.tsx#TeamSelectorModal',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `team_selector_modal.teams.results.team.icon--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when typeof content === 'string' and teamIconUrl.
+     */
+    get iconImg() {
+        return drivers.text(this.byTestId(`${this.scope}.icon--img`), {
+            testId: `${this.scope}.icon--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
+    }
+
+    /**
+     * `team_selector_modal.teams.results.team.initials--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when typeof content === 'string' and !teamIconUrl.
+     */
+    get initialsImg() {
+        return drivers.text(this.byTestId(`${this.scope}.initials--img`), {
+            testId: `${this.scope}.initials--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
     }
 }

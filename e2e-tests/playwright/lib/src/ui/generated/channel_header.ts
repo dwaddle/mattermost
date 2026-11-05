@@ -10,6 +10,7 @@ import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {AddGroupsToChannelModal} from './add_groups_to_channel_modal';
 import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {ChannelSettingsModal} from './channel_settings_modal';
 import {ConvertGmToChannelModal} from './convert_gm_to_channel_modal';
@@ -17,7 +18,7 @@ import {DeleteChannelModal} from './delete_channel_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {RhsChannelInfo, RhsChannelMembers} from './rhs';
-import {AddGroupsToChannelModalGroups, MoveToMenu} from './shared';
+import {MoveToMenu} from './shared';
 
 /** Scope `channel_header`. */
 export class ChannelHeader extends Scope {
@@ -376,7 +377,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.add_groups--menuitem` — Groups (channels/src/components/channel_header_menu/menu_items/groups.tsx)
      * Renders only when !isArchived && !isDefault and isGroupConstrained && isLicensedForLDAPGroups.
-     * Opens modal AddGroupsToChannelModal (`add_groups_to_channel_modal.groups`).
+     * Opens modal AddGroupsToChannelModal (`add_groups_to_channel_modal`).
      */
     get addGroupsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.add_groups--menuitem`), {
@@ -389,9 +390,9 @@ export class ChannelHeaderMenu extends Scope {
     }
 
     /** Clicks addGroupsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickAddGroupsMenuItem(): Promise<AddGroupsToChannelModalGroups> {
+    async clickAddGroupsMenuItem(): Promise<AddGroupsToChannelModal> {
         await this.addGroupsMenuItem.click();
-        return new AddGroupsToChannelModalGroups(this.page, 'add_groups_to_channel_modal.groups');
+        return new AddGroupsToChannelModal(this.page, 'add_groups_to_channel_modal');
     }
 
     /**

@@ -42,7 +42,7 @@ test.describe('Permission Policies - List Page', () => {
         await expect(systemConsolePage.page.getByRole('heading', {name: 'Permission Policies'})).toBeVisible();
 
         // * List columns are present
-        const section = systemConsolePage.page.getByTestId('sysconsole_section_PermissionPolicies');
+        const section = systemConsolePage.page.getByTestId('admin.page:PermissionPolicies');
         await expect(section.getByText('Name')).toBeVisible();
         await expect(section.getByText('Role')).toBeVisible();
         await expect(section.getByText('Permissions', {exact: true})).toBeVisible();

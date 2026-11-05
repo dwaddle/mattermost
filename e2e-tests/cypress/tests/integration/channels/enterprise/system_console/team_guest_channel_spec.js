@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @channels @enterprise @system_console
 
+import {permissionToggle} from './channel_moderation/helpers';
+
 import {getRandomId} from '@/utils';
 import * as TIMEOUTS from '@/fixtures/timeouts';
 
@@ -20,7 +22,7 @@ const getButtonId = (permission) => {
 
 const disableAllGuestPermissions = () => {
     permissions.forEach((permission) => {
-        cy.findByTestId(getButtonId(permission)).then((btn) => {
+        permissionToggle(getButtonId(permission)).then((btn) => {
             if (btn.hasClass('checked')) {
                 btn.click();
             }
@@ -30,7 +32,7 @@ const disableAllGuestPermissions = () => {
 
 const enableAllGuestPermissions = () => {
     permissions.forEach((permission) => {
-        cy.findByTestId(getButtonId(permission)).then((btn) => {
+        permissionToggle(getButtonId(permission)).then((btn) => {
             if (!btn.hasClass('checked')) {
                 btn.click();
             }
@@ -41,9 +43,9 @@ const enableAllGuestPermissions = () => {
 const verifyAllGuestPermissions = (selected) => {
     permissions.forEach((permission) => {
         if (selected) {
-            cy.findByTestId(getButtonId(permission)).should('have.class', 'checked');
+            permissionToggle(getButtonId(permission)).should('have.class', 'checked');
         } else {
-            cy.findByTestId(getButtonId(permission)).should('not.have.class', 'checked');
+            permissionToggle(getButtonId(permission)).should('not.have.class', 'checked');
         }
     });
 };
@@ -89,7 +91,7 @@ describe('Team Scheme Guest Permissions Test', () => {
         // * Ensure all checkboxes have the correct unchecked state
         verifyAllGuestPermissions(false);
 
-        cy.findByTestId('permission-scheme-cancel-button').should('be.visible').click();
+        cy.findByTestId('admin.permissions.cancel--link').should('be.visible').click();
 
         //Clean up - Delete scheme
         cy.findByText(`TestScheme-${randomId}`).siblings('.actions').children('.delete-button').click().wait(TIMEOUTS.HALF_SEC);

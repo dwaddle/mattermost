@@ -4,6 +4,8 @@
 import classNames from 'classnames';
 import React, {type JSX, type ReactNode} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import './admin_settings_segmented_row.scss';
 
 export type AdminSettingsSegment = {
@@ -11,11 +13,16 @@ export type AdminSettingsSegment = {
     label: ReactNode;
     selected: boolean;
     onSelect: () => void;
-    testId?: string;
+
+    // the segment's own testid, e.g. `admin.channel.public--togglebutton`
+    testId: TestId;
 };
 
 type Props = {
     id: string;
+
+    // the row's testid; each segment carries its own
+    testId: TestId;
     children: ReactNode;
     secondaryLabel: ReactNode;
     segments: AdminSettingsSegment[];
@@ -39,11 +46,12 @@ const AdminSettingsSegmentedRow = ({
     disabled,
     footer,
     groupAriaLabel,
+    testId,
 }: Props): JSX.Element => (
     <>
         <div
             className='AdminSettingsSegmentedRow'
-            data-testid={id}
+            data-testid={testId}
         >
             <div className='AdminSettingsSegmentedRow__text'>
                 <div className='AdminSettingsSegmentedRow__title'>
@@ -63,7 +71,7 @@ const AdminSettingsSegmentedRow = ({
                         key={segment.id}
                         type='button'
                         id={`${id}-${segment.id}`}
-                        data-testid={segment.testId ?? `${id}-${segment.id}`}
+                        data-testid={segment.testId}
                         className={classNames('AdminSettingsSegmentedRow__segment', {
                             'AdminSettingsSegmentedRow__segment--active': segment.selected,
                         })}

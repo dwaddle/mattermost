@@ -13,6 +13,7 @@
 import {verifyExportedMessagesCount, gotoTeamAndPostImage} from './helpers';
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Compliance Export', () => {
     let teamName;
@@ -145,7 +146,7 @@ describe('Compliance Export', () => {
     it('MM-T1165 - Compliance Export - Fields disabled when disabled', () => {
         // # Go to compliance page and disable export
         cy.uiGoToCompliancePage();
-        cy.findByTestId('enableComplianceExportfalse').click();
+        settingPart('enableComplianceExport', 'false--radio').click();
 
         // * Verify that exported button is disabled
         cy.findByRole('button', {name: /run compliance export job now/i}).should('be.not.enabled');

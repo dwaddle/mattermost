@@ -11,6 +11,7 @@
 // Group: @channels @not_cloud
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Environment', () => {
     let townsquareLink;
@@ -29,7 +30,7 @@ describe('Environment', () => {
         cy.visit('/admin_console/environment/web_server');
 
         // # Click dropdown to open selection
-        cy.findByTestId('ServiceSettings.WebserverModedropdown').should('have.value', 'gzip');
+        settingPart('ServiceSettings.WebserverMode', 'value--combobox').should('have.value', 'gzip');
 
         // # Navigate to a channel
         cy.visit(townsquareLink);
@@ -70,7 +71,7 @@ describe('Environment', () => {
         cy.visit('/admin_console/environment/web_server');
 
         // # Click dropdown to open selection
-        cy.findByTestId('ServiceSettings.WebserverModedropdown').select('Uncompressed');
+        settingPart('ServiceSettings.WebserverMode', 'value--combobox').select('Uncompressed');
 
         // # Click Save button to save the settings
         cy.get('#saveSetting').click().wait(TIMEOUTS.ONE_SEC);
@@ -114,7 +115,7 @@ describe('Environment', () => {
         cy.visit('/admin_console/environment/web_server');
 
         // # Click dropdown to open selection
-        cy.findByTestId('ServiceSettings.WebserverModedropdown').select('Disabled');
+        settingPart('ServiceSettings.WebserverMode', 'value--combobox').select('Disabled');
 
         // # Click Save button to save the settings
         cy.get('#saveSetting').click().wait(TIMEOUTS.ONE_SEC);
@@ -159,8 +160,8 @@ describe('Environment', () => {
 
         const queryTimeoutValue = 100;
         const maxOpenConnsValue = 1000;
-        cy.findByTestId('queryTimeoutinput').clear().type(queryTimeoutValue);
-        cy.findByTestId('maxOpenConnsinput').clear().type(maxOpenConnsValue);
+        cy.findByTestId('admin.setting:queryTimeout').findByTestId('admin.setting.value--textbox').clear().type(queryTimeoutValue);
+        cy.findByTestId('admin.setting:maxOpenConns').findByTestId('admin.setting.value--textbox').clear().type(maxOpenConnsValue);
 
         // # Click Save button to save the settings
         cy.get('#saveSetting').click().wait(TIMEOUTS.ONE_SEC);
@@ -178,7 +179,7 @@ describe('Environment', () => {
         const minimumHashtagLength = 2;
 
         function setAndVerifyHashtagLength(length) {
-            cy.findByTestId('minimumHashtagLengthinput').clear().type(length);
+            cy.findByTestId('admin.setting:minimumHashtagLength').findByTestId('admin.setting.value--textbox').clear().type(length);
 
             // # Click Save button to save the settings
             cy.get('#saveSetting').click({force: true}).wait(TIMEOUTS.ONE_SEC);
@@ -201,23 +202,23 @@ describe('Environment', () => {
         cy.visit('/admin_console/environment/file_storage');
 
         // # CLick dropdown to open selection
-        cy.findByTestId('FileSettings.DriverNamedropdown').select('Amazon S3');
+        settingPart('FileSettings.DriverName', 'value--combobox').select('Amazon S3');
 
         // Check that these fields are disabled
-        cy.findByTestId('FileSettings.Directoryinput').should('be.disabled');
+        settingPart('FileSettings.Directory', 'value--textbox').should('be.disabled');
 
         // Check that these fields are not disabled
-        cy.findByTestId('FileSettings.MaxFileSizenumber').should('not.be.disabled');
-        cy.findByTestId('FileSettings.AmazonS3Bucketinput').should('not.be.disabled');
-        cy.findByTestId('FileSettings.AmazonS3PathPrefixinput').should('not.be.disabled');
-        cy.findByTestId('FileSettings.AmazonS3Regioninput').should('not.be.disabled');
-        cy.findByTestId('FileSettings.AmazonS3AccessKeyIdinput').should('not.be.disabled');
+        settingPart('FileSettings.MaxFileSize', 'value--spinbutton').should('not.be.disabled');
+        settingPart('FileSettings.AmazonS3Bucket', 'value--textbox').should('not.be.disabled');
+        settingPart('FileSettings.AmazonS3PathPrefix', 'value--textbox').should('not.be.disabled');
+        settingPart('FileSettings.AmazonS3Region', 'value--textbox').should('not.be.disabled');
+        settingPart('FileSettings.AmazonS3AccessKeyId', 'value--textbox').should('not.be.disabled');
 
         const amazonS3BucketName = 'test';
         const amazonS3PathPrefix = 'test';
-        cy.findByTestId('FileSettings.MaxFileSizenumber').clear().type(52428800);
-        cy.findByTestId('FileSettings.AmazonS3Bucketinput').clear().type(amazonS3BucketName);
-        cy.findByTestId('FileSettings.AmazonS3PathPrefixinput').clear().type(amazonS3PathPrefix);
+        settingPart('FileSettings.MaxFileSize', 'value--spinbutton').clear().type(52428800);
+        settingPart('FileSettings.AmazonS3Bucket', 'value--textbox').clear().type(amazonS3BucketName);
+        settingPart('FileSettings.AmazonS3PathPrefix', 'value--textbox').clear().type(amazonS3PathPrefix);
 
         // # Click Save button to save the settings
         cy.get('#saveSetting').click().wait(TIMEOUTS.ONE_SEC);
@@ -234,11 +235,11 @@ describe('Environment', () => {
         cy.visit('/admin_console/environment/file_storage');
 
         // # CLick dropdown to open selection
-        cy.findByTestId('FileSettings.DriverNamedropdown').select('Amazon S3');
+        settingPart('FileSettings.DriverName', 'value--combobox').select('Amazon S3');
 
         const amazonS3PathPrefix = 'test';
-        cy.findByTestId('FileSettings.AmazonS3Bucketinput').clear();
-        cy.findByTestId('FileSettings.AmazonS3PathPrefixinput').scrollIntoView().clear().type(amazonS3PathPrefix);
+        settingPart('FileSettings.AmazonS3Bucket', 'value--textbox').clear();
+        settingPart('FileSettings.AmazonS3PathPrefix', 'value--textbox').scrollIntoView().clear().type(amazonS3PathPrefix);
 
         // # Click Save button to save the settings
         cy.get('#saveSetting').click().wait(TIMEOUTS.ONE_SEC);
@@ -249,7 +250,7 @@ describe('Environment', () => {
         });
 
         const amazonS3BucketName = '12';
-        cy.findByTestId('FileSettings.AmazonS3Bucketinput').clear().type(amazonS3BucketName);
+        settingPart('FileSettings.AmazonS3Bucket', 'value--textbox').clear().type(amazonS3BucketName);
 
         // # Click Save button to save the settings
         cy.get('#saveSetting').click().wait(TIMEOUTS.ONE_SEC);
@@ -293,11 +294,11 @@ describe('Environment', () => {
         it('can be set back to gzip and persists', () => {
             cy.visit('/admin_console/environment/web_server');
 
-            cy.findByTestId('ServiceSettings.WebserverModedropdown').select('gzip');
+            settingPart('ServiceSettings.WebserverMode', 'value--combobox').select('gzip');
             cy.get('#saveSetting').click().wait(TIMEOUTS.ONE_SEC);
 
             cy.reload();
-            cy.findByTestId('ServiceSettings.WebserverModedropdown').should('have.value', 'gzip');
+            settingPart('ServiceSettings.WebserverMode', 'value--combobox').should('have.value', 'gzip');
 
             cy.apiGetConfig().then(({config}) => {
                 expect(config.ServiceSettings.WebserverMode).to.equal('gzip');

@@ -32,7 +32,7 @@ describe('admin_console/team_channel_settings/team/TeamList', () => {
         );
 
         // Wait for the component to finish loading
-        const teamDisplayNames = await screen.findAllByTestId('team-display-name');
+        const teamDisplayNames = await screen.findAllByTestId(/^admin\.teams\.name:/);
         expect(actions.getData).toHaveBeenCalled();
 
         // Verify the team name is displayed
@@ -63,7 +63,7 @@ describe('admin_console/team_channel_settings/team/TeamList', () => {
         );
 
         // Wait for the component to finish loading
-        const teamDisplayNames = await screen.findAllByTestId('team-display-name');
+        const teamDisplayNames = await screen.findAllByTestId(/^admin\.teams\.name:/);
         expect(actions.getData).toHaveBeenCalled();
 
         // Verify pagination is working - only first page of teams should be displayed
@@ -251,12 +251,12 @@ describe('admin_console/team_channel_settings/team/TeamList', () => {
         );
 
         // Wait for teams to load
-        const openManagement = await screen.findByTestId('openManagement');
+        const openManagement = await screen.findByTestId('admin.teams.management:1--text');
         expect(actions.getData).toHaveBeenCalled();
 
         // Verify management type is displayed using testid
-        const inviteManagement = screen.getByTestId('inviteManagement');
-        const policyManagement = screen.getByTestId('policyManagement');
+        const inviteManagement = screen.getByTestId('admin.teams.management:2--text');
+        const policyManagement = screen.getByTestId('admin.teams.management:3--text');
 
         expect(openManagement).toBeInTheDocument();
         expect(openManagement).toHaveTextContent('Anyone Can Join');

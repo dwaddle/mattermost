@@ -42,14 +42,14 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
             // * Sidebar menu entry and page heading are both visible ("Attribute Management"
             // renders in both places, so each is asserted within its own scope)
             await expect(
-                systemConsolePage.page.getByTestId('admin-sidebar').getByText('Attribute Management'),
+                systemConsolePage.page.getByTestId('admin.sidebar').getByText('Attribute Management'),
             ).toBeVisible();
             await expect(
-                systemConsolePage.page.getByTestId('admin-console-header').getByText('Attribute Management'),
+                systemConsolePage.page.getByTestId('admin.header').getByText('Attribute Management'),
             ).toBeVisible();
             // * The old User Attributes sidebar entry is replaced by Attribute Management
             await expect(
-                systemConsolePage.page.getByTestId('admin-sidebar').getByText('User Attributes', {exact: true}),
+                systemConsolePage.page.getByTestId('admin.sidebar').getByText('User Attributes', {exact: true}),
             ).not.toBeVisible();
             // * Page frame's static subtitle is present (renders regardless of fetch state)
             await expect(

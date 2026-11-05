@@ -129,9 +129,10 @@ export class AdminConsolePage {
         return buildPath(AdminConsolePage.route, {}) + (params.section ? `/${params.section}` : '');
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves AdminConsole to the grammar names one). */
+    /** Navigates here and waits until `admin.sidebar` shows. */
     async goto(params: AdminConsolePageParams = {}): Promise<void> {
         await this.page.goto(AdminConsolePage.path(params));
+        await this.page.getByTestId('admin.sidebar').waitFor();
     }
 }
 

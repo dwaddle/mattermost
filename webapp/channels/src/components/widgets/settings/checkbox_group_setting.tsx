@@ -5,6 +5,7 @@ import React, {memo, useCallback} from 'react';
 import type {ChangeEventHandler} from 'react';
 
 import {Checkbox} from '@mattermost/compass-ui/components/checkbox';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Setting from './setting';
 
@@ -19,6 +20,12 @@ type Props = {
     helpText?: React.ReactNode;
     labelPosition?: 'before' | 'after';
     disabled?: boolean;
+
+    /** The row's parts render under it; without it, the legacy ids. */
+    testIdScope?: TestId;
+
+    /** The row's own testid when it isn't the scope (a keyed row). */
+    testId?: TestId;
 };
 
 const CheckboxGroupSetting = ({
@@ -32,6 +39,8 @@ const CheckboxGroupSetting = ({
     value,
     labelPosition = 'after',
     disabled,
+    testIdScope,
+    testId,
 }: Props) => {
     const selected = value || [];
 
@@ -59,6 +68,8 @@ const CheckboxGroupSetting = ({
             inputClassName={`inline-choice-setting ${inputClassName}`.trim()}
             helpText={helpText}
             inputId={id}
+            testIdScope={testIdScope}
+            testId={testId}
         >
             <fieldset>
                 <legend className='form-legend hidden-label'>{label}</legend>
@@ -70,6 +81,7 @@ const CheckboxGroupSetting = ({
                         >
                             <Checkbox
                                 className={labelBeforeClass}
+                                data-testid={testIdScope ? `${testIdScope}.choice:${optionValue}--checkbox` : undefined}
                                 value={optionValue}
                                 name={id}
                                 checked={selected.includes(optionValue)}

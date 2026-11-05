@@ -689,7 +689,7 @@ const LDAPWizard = (props: Props) => {
     return (
         <div
             className={'wrapper--fixed ldap-wizard-wrapper'}
-            data-testid={`sysconsole_section_${schema?.id}`}
+            data-testid={`admin.page:${schema?.id}`}
         >
             {renderTitle()}
             <div className='ldap-wizard-content-wrapper'>
@@ -712,11 +712,12 @@ const LDAPWizard = (props: Props) => {
                     disabled={!state.saveNeeded || (canSave && !canSave())}
                     onClick={handleSubmit}
                     savingMessage={props.intl.formatMessage({id: 'admin.saving', defaultMessage: 'Saving Config...'})}
+                    testId='admin.save'
                 />
                 <WithTooltip title={state?.serverError ?? ''}>
                     <div
                         className='error-message'
-                        data-testid='errorMessage'
+                        data-testid='admin.save_error'
                     >
                         <FormError
                             iconClassName='fa-exclamation-triangle'

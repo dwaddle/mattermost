@@ -95,6 +95,9 @@ export const searchableStrings = [
     messages.singleChannelGuests,
 ];
 
+// a plugin statistic is keyed `<plugin id>.<name>`: as a testid key, without its dots
+const statTestKey = (key: string) => key.replace(/[^A-Za-z0-9_-]/g, '_');
+
 export default class SystemAnalytics extends React.PureComponent<Props, State> {
     state = {
         pluginSiteStats: {} as Record<string, PluginAnalyticsRow>,
@@ -447,7 +450,7 @@ export default class SystemAnalytics extends React.PureComponent<Props, State> {
                         key={'pluginstat.' + key}
                     >
                         <LineChart
-                            id={key}
+                            id={statTestKey(key)}
                             title={stat.name}
                             data={stat.value}
                             width={740}
@@ -475,7 +478,7 @@ export default class SystemAnalytics extends React.PureComponent<Props, State> {
             default:
                 pluginCounts.push((
                     <StatisticCount
-                        id={key}
+                        id={statTestKey(key)}
                         key={'pluginstat.' + key}
                         title={stat.name}
                         icon={stat.icon!}
@@ -553,7 +556,7 @@ export default class SystemAnalytics extends React.PureComponent<Props, State> {
                         {pluginLineCharts}
                         <details
                             onToggle={this.handleLineChartsToggle}
-                            data-testid='details-expander'
+                            data-testid='admin.statistics.details'
                         >
                             <summary>
                                 <FormattedMessage

@@ -21,12 +21,18 @@ export default class SelfDeletingMessages {
         this.container = container;
         this.page = page;
 
-        this.enableToggleTrue = this.container.getByTestId('ServiceSettings.EnableBurnOnReadtrue');
-        this.enableToggleFalse = this.container.getByTestId('ServiceSettings.EnableBurnOnReadfalse');
-        this.durationDropdown = this.container.getByTestId('ServiceSettings.BurnOnReadDurationSecondsdropdown');
-        this.maxTimeToLiveDropdown = this.container.getByTestId(
-            'ServiceSettings.BurnOnReadMaximumTimeToLiveSecondsdropdown',
-        );
+        this.enableToggleTrue = this.container
+            .getByTestId('admin.setting:ServiceSettings_EnableBurnOnRead')
+            .getByTestId('admin.setting.true--radio');
+        this.enableToggleFalse = this.container
+            .getByTestId('admin.setting:ServiceSettings_EnableBurnOnRead')
+            .getByTestId('admin.setting.false--radio');
+        this.durationDropdown = this.container
+            .getByTestId('admin.setting:ServiceSettings_BurnOnReadDurationSeconds')
+            .getByTestId('admin.setting.value--combobox');
+        this.maxTimeToLiveDropdown = this.container
+            .getByTestId('admin.setting:ServiceSettings_BurnOnReadMaximumTimeToLiveSeconds')
+            .getByTestId('admin.setting.value--combobox');
         this.saveButton = this.container.getByRole('button', {name: 'Save'});
     }
 

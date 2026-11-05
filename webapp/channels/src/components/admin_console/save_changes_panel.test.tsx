@@ -22,6 +22,7 @@ describe('components/admin_console/SaveChangesPanel', () => {
         saving: false,
         saveNeeded: true,
         onClick: jest.fn(),
+        testId: 'admin.test.save_panel' as const,
     };
 
     const push = jest.fn();
@@ -110,5 +111,16 @@ describe('components/admin_console/SaveChangesPanel', () => {
         await userEvent.click(cancel);
         expect(onCancel).toHaveBeenCalled();
         expect(push).not.toHaveBeenCalled();
+    });
+
+    test('renders its parts under the testId, and the legacy ids without one', () => {
+        const {unmount} = renderPanel({serverError: 'Failed'});
+        expect(screen.getByTestId('admin.test.save_panel.save--button')).toBeInTheDocument();
+        expect(screen.getByTestId('admin.test.save_panel.error--text')).toHaveTextContent('Failed');
+        unmount();
+
+        renderPanel({testId: undefined, serverError: 'Failed'});
+        expect(screen.getByTestId('saveSetting')).toBeInTheDocument();
+        expect(screen.getByTestId('saveChangesPanel-errorMessage')).toHaveTextContent('Failed');
     });
 });

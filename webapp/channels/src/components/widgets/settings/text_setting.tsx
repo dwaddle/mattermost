@@ -4,6 +4,8 @@
 import React from 'react';
 import type {ChangeEvent, ReactNode} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import Setting from './setting';
 
 const INPUT_TYPES = ['text', 'textarea', 'number', 'email', 'tel', 'url', 'password'] as const;
@@ -27,6 +29,12 @@ export type Props = {
     type?: InputTypes;
     autoFocus?: boolean;
     multiple?: boolean;
+
+    /** The row's parts render under it (`${testIdScope}.value--textbox`, `--spinbutton` for numbers); without it, the legacy ids. */
+    testIdScope?: TestId;
+
+    /** The row's own testid when it isn't the scope (a keyed row). */
+    testId?: TestId;
 };
 
 function TextSetting(props: Props) {
@@ -51,7 +59,7 @@ function TextSetting(props: Props) {
         input = (
             <textarea
                 id={props.id}
-                data-testid={`${props.id}input`} // a lot of our e2e test rely on 'input' being in the test id if it's a text/textarea input
+                data-testid={props.testIdScope ? `${props.testIdScope}.value--textbox` : `${props.id}input`} // legacy: e2e tests rely on 'input' in the test id
                 className='form-control'
                 autoFocus={props.autoFocus}
                 dir='auto'
@@ -67,25 +75,36 @@ function TextSetting(props: Props) {
     } else {
         const inputType = INPUT_TYPES.includes(type) ? type : 'text';
 
-        // a lot of our e2e test rely on 'input' being in the test id if it's a text/textarea input
-        const testId = inputType === 'text' ? `${props.id}input` : `${props.id}${inputType}`;
+        // legacy (without testIdScope): e2e tests rely on 'input' being in the test id if it's a text/textarea input
+        const legacyTestId = inputType === 'text' ? `${props.id}input` : `${props.id}${inputType}`;
 
         // An incomplete number like "-" parses to NaN. Rendering NaN makes React overwrite the input
         // and discard what was typed, while an empty value leaves the browser's in-progress text alone.
         const value = Number.isNaN(props.value) ? '' : props.value;
 
-        input = (
+        const inputProps = {
+            id: props.id,
+            className: 'form-control',
+            autoFocus: props.autoFocus,
+            placeholder: props.placeholder,
+            value,
+            maxLength,
+            onChange: handleChange,
+            disabled: props.disabled,
+        };
+
+        // a number input is a spinbutton: its own element, so its testid's role matches
+        input = inputType === 'number' ? (
             <input
-                id={props.id}
-                data-testid={testId}
-                className='form-control'
-                autoFocus={props.autoFocus}
+                {...inputProps}
+                type='number'
+                data-testid={props.testIdScope ? `${props.testIdScope}.value--spinbutton` : legacyTestId}
+            />
+        ) : (
+            <input
+                {...inputProps}
                 type={inputType}
-                placeholder={props.placeholder}
-                value={value}
-                maxLength={maxLength}
-                onChange={handleChange}
-                disabled={props.disabled}
+                data-testid={props.testIdScope ? `${props.testIdScope}.value--textbox` : legacyTestId}
             />
         );
     }
@@ -98,6 +117,8 @@ function TextSetting(props: Props) {
             helpText={props.helpText}
             inputId={props.id}
             footer={props.footer}
+            testIdScope={props.testIdScope}
+            testId={props.testId}
         >
             {input}
         </Setting>

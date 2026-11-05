@@ -14,6 +14,7 @@ import type {Team} from '@mattermost/types/teams';
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {getRandomId} from '@/utils';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Edit bot username', () => {
     let team: Team;
@@ -29,7 +30,7 @@ describe('Edit bot username', () => {
         cy.visit('/admin_console/integrations/bot_accounts');
 
         // # Verify that the setting is enabled
-        cy.findByTestId('ServiceSettings.EnableBotAccountCreationtrue', {timeout: TIMEOUTS.ONE_MIN}).should('be.checked');
+        settingPart('ServiceSettings.EnableBotAccountCreation', 'true--radio', {timeout: TIMEOUTS.ONE_MIN}).should('be.checked');
 
         // # Visit the integrations
         goToCreateBot();

@@ -2,8 +2,8 @@
 // See LICENSE.txt for license information.
 
 import type {Locator} from '@playwright/test';
-import {expect} from '@playwright/test';
 
+import {expect} from '@/aria';
 import {ConfirmModal} from '@/ui/components/system_console/base_modal';
 
 /**
@@ -17,7 +17,7 @@ export class SaveChangesModal extends ConfirmModal {
     constructor(container: Locator) {
         super(container);
         this.messageBody = this.container.locator('#confirmModalBody');
-        this.changesList = this.messageBody.getByTestId('changesList');
+        this.changesList = this.messageBody.getByTestId('admin.user.save_modal.changes--list');
     }
 
     /**
@@ -60,14 +60,14 @@ export default class UserDetail {
     readonly errorMessage: Locator;
 
     constructor(container: Locator) {
-        this.container = container.getByTestId('systemUserDetail');
+        this.container = container.getByTestId('admin.user');
 
         // Header
-        this.backLink = this.container.getByTestId('adminHeader-backLink');
+        this.backLink = this.container.getByTestId('admin.user.back--link');
         this.header = this.container.getByText('User Configuration', {exact: true});
 
         // User Card
-        this.userCard = new AdminUserCard(this.container.getByTestId('adminUserCard'));
+        this.userCard = new AdminUserCard(this.container.getByTestId('admin.user.card'));
 
         // Team Membership Panel
         this.teamMembershipPanel = new TeamMembershipPanel(this.container.locator('#teamMembershipPanel'));
@@ -78,9 +78,9 @@ export default class UserDetail {
         );
 
         // Save section
-        this.saveButton = this.container.getByTestId('saveSetting');
+        this.saveButton = this.container.getByTestId('admin.user.save--button');
         this.cancelButton = this.container.getByRole('button', {name: 'Cancel'});
-        this.errorMessage = this.container.getByTestId('saveChangesPanel-errorMessage');
+        this.errorMessage = this.container.getByTestId('admin.user.save_error--text');
     }
 
     async toBeVisible() {
@@ -108,7 +108,7 @@ export default class UserDetail {
      */
     async waitForSaveComplete() {
         await expect(this.cancelButton).not.toBeVisible();
-        await expect(this.saveButton).toBeDisabled();
+        await expect(this.saveButton).toBeSaved();
     }
 }
 
@@ -143,16 +143,16 @@ class AdminUserCard {
         this.container = container;
 
         // Header
-        const header = container.getByTestId('adminUserCard-header');
+        const header = container.getByTestId('admin.user.card.header');
         this.profileImage = header.locator('img').first();
-        this.displayName = container.getByTestId('adminUserCard-userInfo').locator('span').first();
-        this.nickname = container.getByTestId('adminUserCard-userNickname');
-        this.userId = container.getByTestId('adminUserCard-userId');
+        this.displayName = container.getByTestId('admin.user.card.info').locator('span').first();
+        this.nickname = container.getByTestId('admin.user.card.nickname--text');
+        this.userId = container.getByTestId('admin.user.card.user_id--text');
 
         // Body
-        this.body = container.getByTestId('adminUserCard-body');
-        this.twoColumnLayout = this.body.getByTestId('twoColumnLayout');
-        this.fieldRows = this.body.getByTestId('fieldRow');
+        this.body = container.getByTestId('admin.user.card.body');
+        this.twoColumnLayout = this.body.getByTestId('admin.user.fields');
+        this.fieldRows = this.body.locator('[data-testid^="admin.user.fields.row:"]');
 
         // System fields — use exact label text to avoid substring matches (e.g., "Email" vs "Work Email")
         this.usernameInput = this.getFieldInputByExactLabel('Username');
@@ -161,10 +161,10 @@ class AdminUserCard {
         this.lastNameInput = this.getFieldInputByExactLabel('Last Name');
         this.authDataInput = this.getFieldInputByExactLabel('Auth Data');
         this.authenticationMethod =
-            this.getFieldColumn('Authentication Method').getByTestId('authenticationMethodValue');
+            this.getFieldColumn('Authentication Method').getByTestId('admin.user.auth_method--text');
 
         // Footer
-        const footer = container.getByTestId('adminUserCard-footer');
+        const footer = container.getByTestId('admin.user.card.footer');
         this.resetPasswordButton = footer.getByRole('button', {name: 'Reset Password'});
         this.deactivateButton = footer.getByRole('button', {name: 'Deactivate'});
         this.manageUserSettingsButton = footer.getByRole('button', {name: 'Manage User Settings'});
@@ -182,7 +182,9 @@ class AdminUserCard {
      * Get the field-column container for a field by its exact label text.
      */
     private getFieldColumn(labelText: string): Locator {
-        return this.body.getByTestId('fieldColumn').filter({has: this.body.page().getByText(labelText, {exact: true})});
+        return this.body
+            .locator('[data-testid="admin.user.fields.row.left"], [data-testid="admin.user.fields.row.right"]')
+            .filter({has: this.body.page().getByText(labelText, {exact: true})});
     }
 
     /**
@@ -197,7 +199,8 @@ class AdminUserCard {
      * Get the field-error validation message locator for a field by its exact label text.
      */
     getFieldError(labelText: string): Locator {
-        return this.getFieldColumn(labelText).getByTestId('fieldError');
+        // standard fields' errors are `admin.user.<field>_error--alert`, attribute fields' `admin.user.attribute.error--alert`
+        return this.getFieldColumn(labelText).getByTestId(/(_error|\.error)--alert$/);
     }
 
     // ── Select / multiselect / rank CPA combobox ────────────────────────
@@ -281,7 +284,7 @@ class TeamMembershipPanel {
         this.title = container.getByRole('heading', {name: 'Team Membership'});
         this.description = container.getByText('Teams to which this user belongs');
         this.addTeamButton = container.getByRole('button', {name: 'Add Team'});
-        this.teamRows = container.getByTestId('teamRow');
+        this.teamRows = container.locator('[data-testid^="admin.user.teams.team:"]');
     }
 
     async toBeVisible() {

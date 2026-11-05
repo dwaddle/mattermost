@@ -7,6 +7,7 @@ import {FormattedMessage} from 'react-intl';
 import {Link} from 'react-router-dom';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import AdminPanel from './admin_panel';
 
@@ -20,6 +21,9 @@ type Props = {
     url: string;
     disabled?: boolean;
     linkText: MessageDescriptor;
+
+    // The panel's testid; its link is `<testId>.action--link`.
+    testId: TestId;
 };
 
 const AdminPanelWithLink = ({
@@ -32,15 +36,18 @@ const AdminPanelWithLink = ({
     disabled,
     id,
     subtitleValues,
+    testId,
 }: Props) => {
     const button = (
         <Button
             asChild={true}
             emphasis='primary'
             disabled={disabled}
-            data-testid={`${id}-link`}
         >
-            <Link to={url}>
+            <Link
+                to={url}
+                data-testid={`${testId}.action--link`}
+            >
                 <FormattedMessage
                     {...linkText}
                 />
@@ -52,7 +59,7 @@ const AdminPanelWithLink = ({
         <AdminPanel
             className={'AdminPanelWithLink ' + className}
             id={id}
-            data-testid={id}
+            data-testid={testId}
             title={title}
             subtitle={subtitle}
             subtitleValues={subtitleValues}

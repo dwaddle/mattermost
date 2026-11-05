@@ -244,7 +244,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         await expect(disconnectModal).not.toBeVisible({timeout: 5000});
 
         // * Custom rule still governs, so enforcement stays on
-        await expect(page.locator('[data-testid="policy-enforce-toggle-button"]')).toBeChecked();
+        await expect(page.locator('[data-testid="admin.team.policy_enforce--switch"]')).toBeChecked();
 
         // * Save goes straight through: removal is not new criteria, so no apply modal
         await page.getByRole('button', {name: 'Save'}).click();
@@ -281,7 +281,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
 
         await openTeamConfig(page, team.display_name);
 
-        const toggle = page.locator('[data-testid="policy-enforce-toggle-button"]');
+        const toggle = page.locator('[data-testid="admin.team.policy_enforce--switch"]');
         await toggle.waitFor({state: 'visible', timeout: 10000});
         await expect(toggle).toBeDisabled();
         await expect(page.getByText(/Group synced teams cannot use a membership policy/i)).toBeVisible();
@@ -291,7 +291,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         await page.reload();
         await page.waitForLoadState('networkidle');
 
-        const toggleAfter = page.locator('[data-testid="policy-enforce-toggle-button"]');
+        const toggleAfter = page.locator('[data-testid="admin.team.policy_enforce--switch"]');
         await toggleAfter.waitFor({state: 'visible', timeout: 10000});
         await expect(toggleAfter).toBeEnabled();
     });
@@ -1104,7 +1104,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         await searchDone;
 
         // * The governed team's Management cell reads "Attribute Based", not "Invite Only"
-        const management = page.locator(`[data-testid="${team.name}Management"]`);
+        const management = page.locator(`[data-testid="admin.teams.management:${team.id}--text"]`);
         await expect(management).toBeVisible({timeout: 10000});
         await expect(management).toHaveText('Attribute Based');
     });

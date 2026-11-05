@@ -13,7 +13,8 @@ import {Markdown} from './markdown';
 import {
     CategorySelector,
     ChannelSettingsModalConfigurationBannerText,
-    ClassificationLevel,
+    ColorInput,
+    DropdownInput,
     Input,
     SavePanel,
     Tabs,
@@ -238,8 +239,8 @@ export class ChannelSettingsModalConfiguration extends Scope {
      * `channel_settings_modal.configuration.banner_color` — ColorInput (channels/src/components/color_input.tsx)
      * Renders only when canManageBanner and bannerSectionOn.
      */
-    get bannerColor(): ChannelSettingsModalConfigurationBannerColor {
-        return new ChannelSettingsModalConfigurationBannerColor(this.page, `${this.scope}.banner_color`, this.root);
+    get bannerColor(): ColorInput {
+        return new ColorInput(this.page, `${this.scope}.banner_color`, this.root);
     }
 
     get bannerText(): ChannelSettingsModalConfigurationBannerText {
@@ -250,8 +251,8 @@ export class ChannelSettingsModalConfiguration extends Scope {
      * `channel_settings_modal.configuration.classification_level` — DropdownInput (channels/src/components/dropdown_input.tsx)
      * Renders only when canManageClassification and classificationEnabled.
      */
-    get classificationLevel(): ClassificationLevel {
-        return new ClassificationLevel(this.page, `${this.scope}.classification_level`, this.root);
+    get classificationLevel(): DropdownInput {
+        return new DropdownInput(this.page, `${this.scope}.classification_level`, this.root);
     }
 
     /**
@@ -313,77 +314,6 @@ export class ChannelSettingsModalConfiguration extends Scope {
     /** `markdown` rendered inside this element. */
     get markdown(): Markdown {
         return Markdown.within(this.locator);
-    }
-}
-
-/** Scope `channel_settings_modal.configuration.banner_color`. */
-export class ChannelSettingsModalConfigurationBannerColor extends Scope {
-    constructor(page: Page, scope = 'channel_settings_modal.configuration.banner_color', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /**
-     * `channel_settings_modal.configuration.banner_color.picker` — ColorInput (channels/src/components/color_input.tsx)
-     * Renders only when canManageBanner and bannerSectionOn and isOpened.
-     */
-    get picker() {
-        return drivers.container(this.byTestId(`${this.scope}.picker`), {
-            testId: `${this.scope}.picker`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/color_input.tsx#ColorInput',
-        });
-    }
-
-    /**
-     * `channel_settings_modal.configuration.banner_color.swatch` — ColorInput (channels/src/components/color_input.tsx)
-     * Renders only when canManageBanner and bannerSectionOn.
-     */
-    get swatch() {
-        return drivers.container(this.byTestId(`${this.scope}.swatch`), {
-            testId: `${this.scope}.swatch`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/color_input.tsx#ColorInput',
-        });
-    }
-
-    /**
-     * `channel_settings_modal.configuration.banner_color.toggle--button` — ColorInput (channels/src/components/color_input.tsx)
-     * Renders only when canManageBanner and bannerSectionOn.
-     */
-    get toggleButton() {
-        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
-            testId: `${this.scope}.toggle--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/color_input.tsx#ColorInput',
-        });
-    }
-
-    async clickToggleButton(): Promise<void> {
-        await this.toggleButton.click();
-    }
-
-    /**
-     * `channel_settings_modal.configuration.banner_color.value--textbox` — ColorInput (channels/src/components/color_input.tsx)
-     * Renders only when canManageBanner and bannerSectionOn.
-     */
-    get valueTextbox() {
-        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
-            testId: `${this.scope}.value--textbox`,
-            role: 'textbox',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/color_input.tsx#ColorInput',
-        });
-    }
-
-    async fillValueTextbox(value: string): Promise<void> {
-        await this.valueTextbox.fill(value);
     }
 }
 

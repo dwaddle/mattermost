@@ -22,6 +22,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
             defaultMessage: 'test-button-text-default',
         },
         disabled: false,
+        testId: 'test.panel' as const,
     };
 
     test('should render with link button', () => {
@@ -37,7 +38,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
         expect(screen.getByText('test-subtitle-default')).toBeInTheDocument();
         expect(screen.getByText('Test')).toBeInTheDocument();
 
-        const link = screen.getByTestId('test-id-link');
+        const link = screen.getByTestId('test.panel.action--link');
         expect(link).toBeInTheDocument();
         expect(link.className).toMatch(/_button_/);
         expect(link.className).toMatch(/_button--emphasis-primary_/);
@@ -57,7 +58,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
             </AdminPanelWithLink>,
         );
 
-        const link = screen.getByTestId('test-id-link');
+        const link = screen.getByTestId('test.panel.action--link');
         expect(link).toBeInTheDocument();
         expect(link.className).toMatch(/_button_/);
         expect(link.className).toMatch(/_button--emphasis-primary_/);
@@ -76,7 +77,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
             </AdminPanelWithLink>,
         );
 
-        const link = screen.getByTestId('test-id-link');
+        const link = screen.getByTestId('test.panel.action--link');
 
         // Click the disabled link
         await userEvent.click(link);
@@ -97,7 +98,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
             </AdminPanelWithLink>,
         );
 
-        const link = screen.getByTestId('test-id-link');
+        const link = screen.getByTestId('test.panel.action--link');
 
         // Link should be enabled
         expect(link.className).not.toMatch(/_button--disabled_/);

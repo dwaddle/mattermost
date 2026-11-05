@@ -193,48 +193,34 @@ export default class TeamAnalytics extends React.PureComponent<Props, State> {
         const postCountsDay = formatPostsPerDayData(labels, stats[StatTypes.POST_PER_DAY]);
         const userCountsWithPostsDay = formatUsersWithPostsPerDayData(labels, stats[StatTypes.USERS_WITH_POSTS_PER_DAY]);
 
-        let banner = (
-            <div
-                data-testid='team-statistics-banner'
-                className='banner'
-            >
-                <div className='banner__content'>
-                    <FormattedMessage {...messages.info}/>
-                </div>
-            </div>
-        );
+        let bannerContent: React.ReactNode = <FormattedMessage {...messages.info}/>;
 
         let totalPostsCount;
         let postTotalGraph;
         let userActiveGraph;
         if (stats[StatTypes.TOTAL_POSTS] === -1) {
-            banner = (
-                <div
-                    data-testid='team-statistics-banner'
-                    className='banner'
-                >
-                    <div className='banner__content'>
-                        <FormattedMessage
-                            id='analytics.system.infoAndSkippedIntensiveQueries1'
-                            defaultMessage='Use data for only the chosen team. Exclude posts in direct message channels that are not tied to a team.'
-                        />
-                        <p/>
-                        <FormattedMessage
-                            id='analytics.system.infoAndSkippedIntensiveQueries2'
-                            defaultMessage='To maximize performance, some statistics are disabled. You can <link>re-enable them in config.json</link>.'
-                            values={{
-                                link: (msg: React.ReactNode) => (
-                                    <ExternalLink
-                                        href='https://docs.mattermost.com/administration/statistics.html'
-                                        location='team_analytics'
-                                    >
-                                        {msg}
-                                    </ExternalLink>
-                                ),
-                            }}
-                        />
-                    </div>
-                </div>
+            bannerContent = (
+                <>
+                    <FormattedMessage
+                        id='analytics.system.infoAndSkippedIntensiveQueries1'
+                        defaultMessage='Use data for only the chosen team. Exclude posts in direct message channels that are not tied to a team.'
+                    />
+                    <p/>
+                    <FormattedMessage
+                        id='analytics.system.infoAndSkippedIntensiveQueries2'
+                        defaultMessage='To maximize performance, some statistics are disabled. You can <link>re-enable them in config.json</link>.'
+                        values={{
+                            link: (msg: React.ReactNode) => (
+                                <ExternalLink
+                                    href='https://docs.mattermost.com/administration/statistics.html'
+                                    location='team_analytics'
+                                >
+                                    {msg}
+                                </ExternalLink>
+                            ),
+                        }}
+                    />
+                </>
             );
         } else {
             totalPostsCount = (
@@ -297,11 +283,22 @@ export default class TeamAnalytics extends React.PureComponent<Props, State> {
             );
         });
 
+        const banner = (
+            <div
+                data-testid='admin.statistics.banner'
+                className='banner'
+            >
+                <div className='banner__content'>
+                    {bannerContent}
+                </div>
+            </div>
+        );
+
         return (
             <div className='wrapper--fixed team_statistics'>
                 <AdminHeader>
                     <div
-                        data-testid='team-statistics-header'
+                        data-testid='admin.statistics.header--text'
                         className='team-statistics__header'
                     >
                         <FormattedMessage
@@ -313,7 +310,7 @@ export default class TeamAnalytics extends React.PureComponent<Props, State> {
                     </div>
                     <div className='team-statistics__team-filter'>
                         <select
-                            data-testid='teamFilter'
+                            data-testid='admin.statistics.team--combobox'
                             className='form-control team-statistics__team-filter__dropdown'
                             onChange={this.handleTeamChange}
                             value={this.state.team.id}
@@ -327,7 +324,7 @@ export default class TeamAnalytics extends React.PureComponent<Props, State> {
                     <div className='admin-console__content'>
                         {banner}
                         <div
-                            data-testid='grid-statistics'
+                            data-testid='admin.statistics.grid'
                             className='grid-statistics'
                         >
                             <ActivatedUserCard

@@ -3,20 +3,24 @@
 
 import React, {type JSX} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import CheckboxCheckedIcon from 'components/widgets/icons/checkbox_checked_icon';
 import CheckboxPartialIcon from 'components/widgets/icons/checkbox_partial_icon';
 
 type Props = {
     value?: string;
-    id?: string;
+
+    // The checkbox is `<testIdScope>`, and shows `<testIdScope>.checked` when checked.
+    testIdScope?: TestId;
 };
 
-const PermissionCheckbox = ({value = '', id = ''}: Props): JSX.Element => {
+const PermissionCheckbox = ({value = '', testIdScope}: Props): JSX.Element => {
     let icon = null;
     let extraClass = '';
     if (value === 'checked') {
         icon = (
-            <span data-testid='permissionCheckbox-checked'>
+            <span data-testid={testIdScope ? `${testIdScope}.checked` : undefined}>
                 <CheckboxCheckedIcon/>
             </span>
         );
@@ -28,7 +32,7 @@ const PermissionCheckbox = ({value = '', id = ''}: Props): JSX.Element => {
     return (
         <div
             className={'permission-check ' + extraClass}
-            data-testid={id}
+            data-testid={testIdScope}
         >
             {icon}
         </div>

@@ -20,6 +20,8 @@ import {
     enablePermission,
     goToPermissionsAndCreateTeamOverrideScheme,
     goToSystemScheme,
+    moderationNotice,
+    permissionToggle,
     saveConfigForChannel,
     saveConfigForScheme,
     visitChannel,
@@ -140,11 +142,11 @@ describe('MM-23102 - Channel Moderation - Post Reactions', () => {
         visitChannelConfigPage(testChannel);
 
         // * Assert that post reaction is disabled for guest and not disabled for members and a message is displayed
-        cy.findByTestId('admin-channel_settings-channel_moderation-postReactions-disabledGuest').
+        moderationNotice('create_reactions', 'disabledGuests').
             should('exist').
             and('have.text', 'Post reactions for guests are disabled in System Scheme.');
-        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('not.be.disabled');
-        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_GUESTS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('not.be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.POST_REACTIONS_GUESTS).should('be.disabled');
 
         // # Go to system admin page and then go to the system scheme and remove post reaction option for all members and save
         goToSystemScheme();
@@ -154,11 +156,11 @@ describe('MM-23102 - Channel Moderation - Post Reactions', () => {
         visitChannelConfigPage(testChannel);
 
         // * Post Reaction option should be disabled for a Members. A message Post reactions for guests & members are disabled in the System Scheme should be displayed.
-        cy.findByTestId('admin-channel_settings-channel_moderation-postReactions-disabledBoth').
+        moderationNotice('create_reactions', 'disabledBoth').
             should('exist').
             and('have.text', 'Post reactions for members and guests are disabled in System Scheme.');
-        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('be.disabled');
-        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_GUESTS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.POST_REACTIONS_GUESTS).should('be.disabled');
 
         // # Login as a Guest user and visit the same channel
         visitChannel(guestUser, testChannel, testTeam);
@@ -192,7 +194,7 @@ describe('MM-23102 - Channel Moderation - Post Reactions', () => {
         visitChannelConfigPage(testChannel);
 
         // * Assert that post reaction is disabled for members
-        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('be.checked');
+        permissionToggle(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('be.checked');
 
         // # Login as a Member user and visit the same channel
         visitChannel(regularUser, testChannel, testTeam);
@@ -215,7 +217,7 @@ describe('MM-23102 - Channel Moderation - Post Reactions', () => {
         visitChannelConfigPage(testChannel);
 
         // * Assert that post reaction is disabled for members
-        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('be.disabled');
 
         // # Login as a Member user and visit the same channel
         visitChannel(regularUser, testChannel, testTeam);

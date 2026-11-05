@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {Client4} from 'mattermost-redux/client';
@@ -11,10 +12,14 @@ import ProfilePicture from 'components/profile_picture';
 
 type Props = {
     user: UserProfile;
+
+    // The grid row: `.name`, `.display_name--text`, `.email--text`.
+    testIdScope: TestId;
 };
 
 const UserGridName = ({
     user,
+    testIdScope,
 }: Props) => {
     return (
         <div className='UserGrid_nameRow'>
@@ -26,14 +31,14 @@ const UserGridName = ({
 
             <div
                 className='UserGrid_name'
-                data-testid='userGrid-name'
+                data-testid={`${testIdScope}.name`}
             >
-                <span data-testid='userGrid-displayName'>
+                <span data-testid={`${testIdScope}.display_name--text`}>
                     {`${user.username} - ${user.first_name} ${user.last_name}`}
                 </span>
                 <span
                     className='ug-email'
-                    data-testid='userGrid-email'
+                    data-testid={`${testIdScope}.email--text`}
                 >
                     {user.email}
                 </span>

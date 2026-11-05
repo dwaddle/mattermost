@@ -9,6 +9,8 @@
 
 // Group: @channels @enterprise @not_cloud @system_console
 
+import {settingPart, settingRow, settingSelector} from '@/utils/admin_setting';
+
 describe('MM-T2574 Session Lengths', () => {
     before(() => {
         cy.shouldNotRunOnCloudEdition();
@@ -79,17 +81,17 @@ describe('MM-T2574 Session Lengths', () => {
 
         cy.get('#extendSessionLengthWithActivityfalse').should('exist').check();
         Object.entries(helpText).forEach(([key, value]) => {
-            cy.findByTestId(key).should('exist');
-            cy.findByTestId(`${key}help-text`).should('have.text', value.false);
+            settingRow(key).should('exist');
+            settingPart(key, 'help--text').should('have.text', value.false);
         });
 
         cy.get('#extendSessionLengthWithActivitytrue').should('exist').check();
         Object.entries(helpText).forEach(([key, value]) => {
             if (value.true) {
-                cy.findByTestId(key).should('exist');
-                cy.findByTestId(`${key}help-text`).should('have.text', value.true);
+                settingRow(key).should('exist');
+                settingPart(key, 'help--text').should('have.text', value.true);
             } else {
-                cy.findByTestId(key).should('not.exist');
+                cy.get(settingSelector(key)).should('not.exist');
             }
         });
     });

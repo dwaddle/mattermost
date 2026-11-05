@@ -51,7 +51,7 @@ const DropdownSetting = ({
             setByEnv={setByEnv}
         >
             <select
-                data-testid={id + 'dropdown'}
+                data-testid='admin.setting.value--combobox'
                 className='form-control'
                 id={id}
                 value={value}

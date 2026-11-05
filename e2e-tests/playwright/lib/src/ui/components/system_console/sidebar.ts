@@ -28,17 +28,23 @@ export default class SystemConsoleSidebar {
         this.header = new SystemConsoleSidebarHeader(container.locator('#admin-sidebar-header'));
         this.searchInput = container.getByPlaceholder('Find settings');
 
-        this.about = new AboutCategory(container.getByTestId('about'));
-        this.reporting = new ReportingCategory(container.getByTestId('reporting'));
-        this.userManagement = new UserManagementCategory(container.getByTestId('user_management'));
-        this.systemAttributes = new SystemAttributesCategory(container.getByTestId('system_attributes'));
-        this.environment = new EnvironmentCategory(container.getByTestId('environment'));
-        this.siteConfiguration = new SiteConfigurationCategory(container.getByTestId('site'));
-        this.authentication = new AuthenticationCategory(container.getByTestId('authentication'));
-        this.plugins = new PluginsCategory(container.getByTestId('plugins'));
-        this.integrations = new IntegrationsCategory(container.getByTestId('integrations'));
-        this.compliance = new ComplianceCategory(container.getByTestId('compliance'));
-        this.experimental = new ExperimentalCategory(container.getByTestId('experimental'));
+        this.about = new AboutCategory(container.getByTestId('admin.sidebar.category:about'));
+        this.reporting = new ReportingCategory(container.getByTestId('admin.sidebar.category:reporting'));
+        this.userManagement = new UserManagementCategory(
+            container.getByTestId('admin.sidebar.category:user_management'),
+        );
+        this.systemAttributes = new SystemAttributesCategory(
+            container.getByTestId('admin.sidebar.category:system_attributes'),
+        );
+        this.environment = new EnvironmentCategory(container.getByTestId('admin.sidebar.category:environment'));
+        this.siteConfiguration = new SiteConfigurationCategory(container.getByTestId('admin.sidebar.category:site'));
+        this.authentication = new AuthenticationCategory(
+            container.getByTestId('admin.sidebar.category:authentication'),
+        );
+        this.plugins = new PluginsCategory(container.getByTestId('admin.sidebar.category:plugins'));
+        this.integrations = new IntegrationsCategory(container.getByTestId('admin.sidebar.category:integrations'));
+        this.compliance = new ComplianceCategory(container.getByTestId('admin.sidebar.category:compliance'));
+        this.experimental = new ExperimentalCategory(container.getByTestId('admin.sidebar.category:experimental'));
     }
 
     async toBeVisible() {
@@ -120,8 +126,8 @@ class SidebarCategory {
 
     constructor(container: Locator) {
         this.container = container;
-        this.title = container.getByTestId('sidebar-category-title');
-        this.sections = container.getByTestId('sidebar-category-sections');
+        this.title = container.getByTestId(/^admin\.sidebar\.category\.title--/);
+        this.sections = container.getByTestId('admin.sidebar.category.sections--list');
     }
 
     protected section(name: string): SidebarSection {

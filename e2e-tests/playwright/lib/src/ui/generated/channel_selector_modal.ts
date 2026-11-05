@@ -5,14 +5,44 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {Channel} from '@mattermost/types/channels';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
-import {AddGroupsToChannelModalGroups} from './shared';
+import {Api} from './api';
 
 /** Scope `channel_selector_modal`. */
 export class ChannelSelectorModal extends Scope {
     constructor(page: Page, scope = 'channel_selector_modal', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_selector_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    get channels(): ChannelSelectorModalChannels {
+        return new ChannelSelectorModalChannels(this.page, `${this.scope}.channels`, this.root);
+    }
+}
+
+/** Scope `channel_selector_modal.channels`. */
+export class ChannelSelectorModalChannels extends Scope {
+    constructor(page: Page, scope = 'channel_selector_modal.channels', root?: Locator) {
         super(page, scope, root);
     }
 
@@ -21,7 +51,240 @@ export class ChannelSelectorModal extends Scope {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
-    get channels(): AddGroupsToChannelModalGroups {
-        return new AddGroupsToChannelModalGroups(this.page, `${this.scope}.channels`, this.root);
+    /**
+     * `channel_selector_modal.channels.error--alert` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when this.state.hasError.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /**
+     * `channel_selector_modal.channels.help--text` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `channel_selector_modal.channels.next--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and options.length > pageEnd.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [Api.GetAllChannels],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `channel_selector_modal.channels.previous--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and this.state.page > 0.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [Api.GetAllChannels],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+
+    /**
+     * `channel_selector_modal.channels.remove:{key}--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    remove(remove: string) {
+        return drivers.button(this.byTestId(`${this.scope}.remove:${remove}--button`), {
+            testId: `${this.scope}.remove:${remove}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /** Every `channel_selector_modal.channels.remove:{key}--button` in the scope. */
+    get removeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.remove:`, '--button');
+    }
+
+    /** The keys of every `channel_selector_modal.channels.remove:{key}--button` in the scope, in document order. */
+    removeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.remove:`, '--button');
+    }
+
+    /**
+     * `channel_selector_modal.channels.save--button` — SaveButton (channels/src/components/save_button.tsx)
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/save_button.tsx#SaveButton',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
+    }
+
+    /**
+     * `channel_selector_modal.channels.search--combobox` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get searchCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.search--combobox`), {
+            testId: `${this.scope}.search--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async chooseSearchCombobox(option: string | RegExp): Promise<void> {
+        await this.searchCombobox.choose(option);
+    }
+
+    /**
+     * `channel_selector_modal.channels.results` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get results(): ChannelSelectorModalChannelsResults {
+        return new ChannelSelectorModalChannelsResults(this.page, `${this.scope}.results`, this.root);
+    }
+
+    /** Every `channel_selector_modal.channels.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
+    get removeList() {
+        return this.keyedList(`${this.scope}.remove:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.remove:${key}--button`), {
+                testId: `${this.scope}.remove:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+            }),
+        );
+    }
+}
+
+/** Scope `channel_selector_modal.channels.results`. */
+export class ChannelSelectorModalChannelsResults extends Scope {
+    constructor(page: Page, scope = 'channel_selector_modal.channels.results', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_selector_modal.channels.results.channel:{key}` — ChannelSelectorModal (channels/src/components/channel_selector_modal/channel_selector_modal.tsx)
+     */
+    channel(channel: Pick<Channel, 'id'>) {
+        return drivers.container(this.byTestId(`${this.scope}.channel:${channel.id}`), {
+            testId: `${this.scope}.channel:${channel.id}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_selector_modal/channel_selector_modal.tsx#ChannelSelectorModal',
+        });
+    }
+
+    /** Every `channel_selector_modal.channels.results.channel:{key}` in the scope. */
+    get channelItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.channel:`, '');
+    }
+
+    /** The keys of every `channel_selector_modal.channels.results.channel:{key}` in the scope, in document order. */
+    channelKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.channel:`, '');
+    }
+
+    /**
+     * `channel_selector_modal.channels.results.live_region` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     */
+    get liveRegion() {
+        return drivers.container(this.byTestId(`${this.scope}.live_region`), {
+            testId: `${this.scope}.live_region`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    /**
+     * `channel_selector_modal.channels.results.no_results--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and options == null || options.length === 0 and !customNoOptionsMessage.
+     */
+    get noResultsText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_results--text`), {
+            testId: `${this.scope}.no_results--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getNoResultsText(): Promise<string> {
+        return this.noResultsText.text();
+    }
+
+    /**
+     * `channel_selector_modal.channels.results.selection--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get selectionText() {
+        return drivers.text(this.byTestId(`${this.scope}.selection--text`), {
+            testId: `${this.scope}.selection--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getSelectionText(): Promise<string> {
+        return this.selectionText.text();
+    }
+
+    /** Every `channel_selector_modal.channels.results.channel:{key}` in the scope as a list by key, for the list matchers: `expect(x.channelList).toHaveKeys([…])`. */
+    get channelList() {
+        return this.keyedList(`${this.scope}.channel:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.channel:${key}`), {
+                testId: `${this.scope}.channel:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_selector_modal/channel_selector_modal.tsx#ChannelSelectorModal',
+            }),
+        );
     }
 }

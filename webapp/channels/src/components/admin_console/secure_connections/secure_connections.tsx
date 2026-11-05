@@ -42,7 +42,7 @@ export default function SecureConnections() {
     return (
         <div
             className='wrapper--fixed'
-            data-testid='secureConnectionsSection'
+            data-testid='admin.secure_connections'
         >
             <AdminHeader>
                 <FormattedMessage {...msg.pageTitle}/>

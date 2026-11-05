@@ -300,6 +300,7 @@ export default class PermissionGroup extends React.PureComponent<Props, State> {
                         className={'permission-group-row ' + classes}
                         onClick={this.toggleSelectGroup}
                         id={uniqId}
+                        data-testid={`admin.permissions.group:${uniqId}`}
                     >
                         {!combined &&
                             <div
@@ -308,7 +309,7 @@ export default class PermissionGroup extends React.PureComponent<Props, State> {
                             />}
                         <PermissionCheckbox
                             value={this.getStatus(this.props.permissions)}
-                            id={`${uniqId}-checkbox`}
+                            testIdScope='admin.permissions.group.checkbox'
                         />
                         <span className='permission-name'>
                             {name}

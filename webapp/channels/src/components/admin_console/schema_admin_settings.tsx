@@ -95,6 +95,11 @@ export type SchemaAdminSettingsProps = {
     pluginVersion?: string;
 } & WrappedComponentProps;
 
+// A section key is `Settings.Section`; a testid key can't hold the dot.
+function sectionTestKey(key: string): string {
+    return key.replace(/\./g, '_');
+}
+
 type State = {
     [x: string]: any;
     saveNeeded: false | 'both' | 'permissions' | 'config';
@@ -403,6 +408,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
                                     homepageUrl={this.props.plugin.homepage_url}
                                     releaseNotesUrl={this.props.plugin.release_notes_url}
                                     hideName={true}
+                                    testIdScope='admin.plugin.metadata'
                                 />
                                 {description && (
                                     <p className='PluginMetadataPanel__description'>
@@ -432,7 +438,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
         const badge = (modifier: string, icon: React.ReactNode, message: React.ReactNode) => (
             <span
                 className={`PluginMetadataPanel__statusBadge PluginMetadataPanel__statusBadge--${modifier}`}
-                data-testid='plugin-metadata-status'
+                data-testid='admin.plugin.status--text'
             >
                 {icon}
                 {message}
@@ -534,7 +540,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
         return (
             <div
                 className='PluginMetadataPanel__statusError'
-                data-testid='plugin-metadata-status-error'
+                data-testid='admin.plugin.status_error'
             >
                 <SectionNotice
                     type='warning'
@@ -706,6 +712,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
                 <FormError
                     type='backstrage'
                     error={err}
+                    testId='admin.setting.validation_error'
                 />
             ) : footer;
         }
@@ -1309,7 +1316,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
                     sections.push((
                         <div
                             key={section.key}
-                            data-testid={section.key}
+                            data-testid={`admin.section:${sectionTestKey(section.key)}`}
                         >
                             <CustomComponent
                                 settingsList={settingsList}
@@ -1379,7 +1386,8 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
                             title={section.title}
                             description={sectionDescription}
                             licenseSku={section.license_sku}
-                            data-testid={section.key}
+                            data-testid={`admin.section:${sectionTestKey(section.key)}`}
+                            testIdScope='admin.section'
                         >
                             {header}
                             {settingsList}
@@ -1602,7 +1610,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
         return (
             <div
                 className={'wrapper--fixed ' + this.state.customComponentWrapperClass}
-                data-testid={`sysconsole_section_${this.props.schema.id}`}
+                data-testid={`admin.page:${this.props.schema.id}`}
             >
                 {this.renderTitle()}
                 <div className='admin-console__wrapper'>
@@ -1620,6 +1628,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
                 </div>
                 <div className='admin-console-save'>
                     <SaveButton
+                        testId='admin.save'
                         saving={this.state.saving}
                         disabled={!this.state.saveNeeded || (this.canSave && !this.canSave())}
                         onClick={this.handleSubmit}
@@ -1630,7 +1639,7 @@ export class SchemaAdminSettings extends React.PureComponent<SchemaAdminSettings
                     >
                         <div
                             className='error-message'
-                            data-testid='errorMessage'
+                            data-testid='admin.save_error'
                         >
                             <FormError
                                 iconClassName='fa-exclamation-triangle'

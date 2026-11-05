@@ -12,6 +12,7 @@ import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {AddGroupsToTeamModal} from './add_groups_to_team_modal';
 import {ChannelInviteModal} from './channel_invite_modal';
 import {DirectMessagesModal} from './direct_messages_modal';
 import {InvitationModal} from './invitation_modal';
@@ -20,7 +21,7 @@ import {LeaveTeamModal} from './leave_team_modal';
 import {NewChannelModal} from './new_channel_modal';
 import {ChannelsPage, CreateTeamPage, DraftsPage, SelectTeamPage} from './pages';
 import {QuickSwitchModal} from './quick_switch_modal';
-import {AddGroupsToChannelModalGroups, MoveToMenu, Users} from './shared';
+import {MoveToMenu, Users} from './shared';
 import {TeamMembersModal} from './team_members_modal';
 import {TeamSettingsModal} from './team_settings_modal';
 
@@ -962,7 +963,7 @@ export class LhsTeamMenu extends Scope {
     /**
      * `lhs.team_menu.add_groups--menuitem` — AddGroupsToTeamMenuItem (channels/src/components/sidebar/sidebar_header/sidebar_team_menu.tsx)
      * Renders only when isTeamGroupConstrained && isLicensedForLDAPGroups && haveICurrentTeamPermission(state, Permissions.MANAGE_TEA….
-     * Opens modal AddGroupsToTeamModal (`add_groups_to_team_modal.groups`).
+     * Opens modal AddGroupsToTeamModal (`add_groups_to_team_modal`).
      */
     get addGroupsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.add_groups--menuitem`), {
@@ -975,9 +976,9 @@ export class LhsTeamMenu extends Scope {
     }
 
     /** Clicks addGroupsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickAddGroupsMenuItem(): Promise<AddGroupsToChannelModalGroups> {
+    async clickAddGroupsMenuItem(): Promise<AddGroupsToTeamModal> {
         await this.addGroupsMenuItem.click();
-        return new AddGroupsToChannelModalGroups(this.page, 'add_groups_to_team_modal.groups');
+        return new AddGroupsToTeamModal(this.page, 'add_groups_to_team_modal');
     }
 
     /**

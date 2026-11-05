@@ -5,6 +5,7 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
@@ -27,6 +28,9 @@ type Props = {
     scope: 'team' | 'channel';
     handleUpdateMembership: (membership: BaseMembership) => void;
     isDisabled?: boolean;
+
+    // The grid row: the dropdown is `.role--button`, its items under `.role_menu`.
+    testIdScope: TestId;
 };
 
 export type Role = 'system_admin' | 'team_admin' | 'team_user' | 'channel_admin' | 'channel_user' | 'shared_member' | 'guest';
@@ -123,7 +127,7 @@ export default class UserGridRoleDropdown extends React.PureComponent<Props> {
             return null;
         }
 
-        const {user, isDisabled} = this.props;
+        const {user, isDisabled, testIdScope} = this.props;
 
         const {makeAdmin, makeMember} = this.getDropDownOptions();
         const currentRole = this.getCurrentRole();
@@ -164,6 +168,7 @@ export default class UserGridRoleDropdown extends React.PureComponent<Props> {
             >
                 <button
                     id={`userGridRoleDropdown_${user.username}`}
+                    data-testid={`${testIdScope}.role--button`}
                     className='dropdown-toggle theme color--link style--none'
                     type='button'
                     aria-expanded='true'
@@ -171,13 +176,18 @@ export default class UserGridRoleDropdown extends React.PureComponent<Props> {
                     <span>{localizedRole} </span>
                     <DropdownIcon/>
                 </button>
-                <Menu ariaLabel={ariaLabel}>
+                <Menu
+                    ariaLabel={ariaLabel}
+                    testId={`${testIdScope}.role_menu`}
+                >
                     <Menu.ItemAction
+                        testId={`${testIdScope}.role_menu.make_admin`}
                         show={showMakeAdmin}
                         onClick={this.handleMakeAdmin}
                         text={makeAdmin}
                     />
                     <Menu.ItemAction
+                        testId={`${testIdScope}.role_menu.make_member`}
                         show={showMakeMember}
                         onClick={this.handleMakeUser}
                         text={makeMember}

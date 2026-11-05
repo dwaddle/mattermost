@@ -33,25 +33,24 @@ export default class TeamStatistics {
 
     constructor(container: Locator) {
         this.container = container;
-        this.header = container.getByTestId('team-statistics-header');
+        this.header = container.getByTestId('admin.statistics.header--text');
 
-        this.teamFilterDropdown = container.getByTestId('teamFilter');
+        this.teamFilterDropdown = container.getByTestId('admin.statistics.team--combobox');
 
-        this.banner = container.getByTestId('team-statistics-banner');
+        this.banner = container.getByTestId('admin.statistics.banner');
 
-        this.totalActivatedUsers = new StatCard(container.getByTestId('totalActiveUsersCard'), 'totalActiveUsers');
-        this.publicChannels = new StatCard(container.getByTestId('publicChannelsCard'), 'publicChannels');
-        this.privateChannels = new StatCard(container.getByTestId('privateChannelsCard'), 'privateChannels');
-        this.totalPosts = new StatCard(container.getByTestId('totalPostsCard'), 'totalPosts');
+        this.totalActivatedUsers = new StatCard(container.getByTestId('admin.statistics.stat:totalActiveUsers'));
+        this.publicChannels = new StatCard(container.getByTestId('admin.statistics.stat:publicChannels'));
+        this.privateChannels = new StatCard(container.getByTestId('admin.statistics.stat:privateChannels'));
+        this.totalPosts = new StatCard(container.getByTestId('admin.statistics.stat:totalPosts'));
 
-        this.totalPostsChart = new ChartSection(container.getByTestId('totalPostsChart'), 'totalPosts');
+        this.totalPostsChart = new ChartSection(container.getByTestId('admin.statistics.chart:totalPosts'));
         this.activeUsersWithPostsChart = new ChartSection(
-            container.getByTestId('activeUsersWithPostsChart'),
-            'activeUsersWithPosts',
+            container.getByTestId('admin.statistics.chart:activeUsersWithPosts'),
         );
 
-        this.recentActiveUsers = new TableSection(container.getByTestId('recentActiveUsersChart'), 'recentActiveUsers');
-        this.newlyCreatedUsers = new TableSection(container.getByTestId('newlyCreatedUsersChart'), 'newlyCreatedUsers');
+        this.recentActiveUsers = new TableSection(container.getByTestId('admin.statistics.table:recentActiveUsers'));
+        this.newlyCreatedUsers = new TableSection(container.getByTestId('admin.statistics.table:newlyCreatedUsers'));
     }
 
     async toBeVisible() {
@@ -89,11 +88,10 @@ class StatCard {
     readonly title: Locator;
     readonly value: Locator;
 
-    constructor(container: Locator, id: string) {
+    constructor(container: Locator) {
         this.container = container;
-        // statistic_count.tsx renders data-testid="{id}Title" and data-testid="{id}" for title/value
-        this.title = container.getByTestId(id + 'Title');
-        this.value = container.getByTestId(id);
+        this.title = container.getByTestId('admin.statistics.stat.title--text');
+        this.value = container.getByTestId('admin.statistics.stat.value--text');
     }
 
     async toBeVisible() {
@@ -110,11 +108,10 @@ class ChartSection {
     readonly title: Locator;
     readonly content: Locator;
 
-    constructor(container: Locator, id: string) {
+    constructor(container: Locator) {
         this.container = container;
-        // line_chart.tsx renders data-testid="{id}Title" and data-testid="{id}Content"
-        this.title = container.getByTestId(id + 'Title');
-        this.content = container.getByTestId(id + 'Content');
+        this.title = container.getByTestId('admin.statistics.chart.title--text');
+        this.content = container.getByTestId('admin.statistics.chart.content');
     }
 
     async toBeVisible() {
@@ -132,11 +129,10 @@ class TableSection {
     readonly title: Locator;
     readonly table: Locator;
 
-    constructor(container: Locator, id: string) {
+    constructor(container: Locator) {
         this.container = container;
-        // table_chart.tsx renders data-testid="{id}Title" and data-testid="{id}Content"
-        this.title = container.getByTestId(id + 'Title');
-        this.table = container.getByTestId(id + 'Content').locator('table');
+        this.title = container.getByTestId('admin.statistics.table.title--text');
+        this.table = container.getByTestId('admin.statistics.table.content').locator('table');
     }
 
     async toBeVisible() {

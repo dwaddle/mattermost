@@ -14,6 +14,8 @@ import type {Channel} from '@mattermost/types/channels';
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
+import {permissionToggle} from '../enterprise/system_console/channel_moderation/helpers';
+
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {getRandomId, stubClipboard} from '@/utils';
 
@@ -372,8 +374,8 @@ describe('Channel Bookmarks', () => {
         before(() => {
             // # Prep: disable manage bookmarks for users - public and private channels
             cy.uiResetPermissionsToDefault();
-            cy.findByTestId('all_users-public_channel-manage_public_channel_bookmarks-checkbox').click();
-            cy.findByTestId('all_users-private_channel-manage_private_channel_bookmarks-checkbox').click();
+            permissionToggle('all_users-public_channel-manage_public_channel_bookmarks-checkbox').click();
+            permissionToggle('all_users-private_channel-manage_private_channel_bookmarks-checkbox').click();
             cy.uiSaveConfig();
             cy.visit(`/${testTeam.name}/channels/${publicChannel.name}`);
         });

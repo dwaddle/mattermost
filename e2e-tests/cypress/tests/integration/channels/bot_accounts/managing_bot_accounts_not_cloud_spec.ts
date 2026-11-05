@@ -14,6 +14,7 @@ import type {Team} from '@mattermost/types/teams';
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {matterpollPlugin} from '@/utils/plugins';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Managing bot accounts', () => {
     let newTeam: Team;
@@ -37,10 +38,10 @@ describe('Managing bot accounts', () => {
         cy.visit('/admin_console/integrations/bot_accounts');
 
         // # Click 'false' to disable
-        cy.findByTestId('ServiceSettings.DisableBotsWhenOwnerIsDeactivatedfalse', {timeout: TIMEOUTS.ONE_MIN}).click();
+        settingPart('ServiceSettings.DisableBotsWhenOwnerIsDeactivated', 'false--radio', {timeout: TIMEOUTS.ONE_MIN}).click();
 
         // # Save
-        cy.findByTestId('saveSetting').should('be.enabled').click();
+        cy.findByTestId('admin.save--button').should('be.enabled').click();
 
         // # Create another admin account
         cy.apiCreateCustomAdmin().then(({sysadmin}) => {
@@ -89,10 +90,10 @@ describe('Managing bot accounts', () => {
         cy.visit('/admin_console/integrations/bot_accounts');
 
         // # Click 'false' to disable
-        cy.findByTestId('ServiceSettings.EnableBotAccountCreationfalse', {timeout: TIMEOUTS.ONE_MIN}).click();
+        settingPart('ServiceSettings.EnableBotAccountCreation', 'false--radio', {timeout: TIMEOUTS.ONE_MIN}).click();
 
         // # Save
-        cy.findByTestId('saveSetting').should('be.enabled').click();
+        cy.findByTestId('admin.save--button').should('be.enabled').click();
 
         // # Visit the integrations
         cy.visit(`/${newTeam.name}/integrations/bots`);

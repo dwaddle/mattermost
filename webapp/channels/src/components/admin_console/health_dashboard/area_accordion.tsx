@@ -29,11 +29,15 @@ const AreaAccordion = ({area, findings, expandAll, now, expanded, onToggle, onMu
     const [open, setOpen] = useState(expandAll || counts.critical > 0);
 
     return (
-        <section className={classNames('HealthDashboard__area', {'HealthDashboard__area--open': open})}>
+        <section
+            className={classNames('HealthDashboard__area', {'HealthDashboard__area--open': open})}
+            data-testid={`admin.health.area:${area}`}
+        >
             <h3 className='HealthDashboard__areaHeading'>
                 <button
                     type='button'
                     className='HealthDashboard__areaToggle'
+                    data-testid='admin.health.area.toggle--button'
                     aria-expanded={open}
                     aria-controls={panelId}
                     onClick={() => setOpen(!open)}

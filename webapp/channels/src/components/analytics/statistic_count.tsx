@@ -37,7 +37,7 @@ const StatisticCount = ({
 
     return (
         <div
-            data-testid={id ? `${id}Card` : undefined}
+            data-testid={id ? `admin.statistics.stat:${id}` : undefined}
             className='grid-statistics__card'
         >
             <div
@@ -47,7 +47,7 @@ const StatisticCount = ({
                 })}
             >
                 <div
-                    data-testid={`${id}Title`}
+                    data-testid={id ? 'admin.statistics.stat.title--text' : undefined}
                     className={classNames({
                         title: true,
                         'team_statistics--warning': status === 'warning',
@@ -58,7 +58,7 @@ const StatisticCount = ({
                     <i className={'fa ' + icon}/>
                 </div>
                 <div
-                    data-testid={id}
+                    data-testid={id ? 'admin.statistics.stat.value--text' : undefined}
                     className={classNames({
                         content: true,
                         'team_statistics--warning': status === 'warning',

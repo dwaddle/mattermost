@@ -53,6 +53,8 @@ import {Latex} from './latex';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {LeaveTeamModal} from './leave_team_modal';
 import {Lhs} from './lhs';
+import {ManageRolesModal} from './manage_roles_modal';
+import {ManageTeamsModal} from './manage_teams_modal';
 import {Markdown} from './markdown';
 import {MenuModal} from './menu_modal';
 import {MobileHeader} from './mobile_header';
@@ -105,6 +107,7 @@ import {ProfilePopover} from './profile_popover';
 import {QuickSwitchModal} from './quick_switch_modal';
 import {RemoveSharingModal} from './remove_sharing_modal';
 import {RenameChannelModal} from './rename_channel_modal';
+import {ResetPasswordModal} from './reset_password_modal';
 import {RestorePostModal} from './restore_post_modal';
 import {Rhs} from './rhs';
 import {Search} from './search';
@@ -119,6 +122,7 @@ import {ThreadMenu} from './thread_menu';
 import {Threads} from './threads';
 import {UserSettingsModal} from './user_settings_modal';
 import {UserSyncModal} from './user_sync_modal';
+import {UsersToBeRemovedModal} from './users_to_be_removed_modal';
 
 /**
  * Plugin test packages add their page objects here by declaration merging (types only):
@@ -138,10 +142,16 @@ export class App extends Scope {
         super(page, '');
     }
 
+    /**
+     * `add_groups_to_channel_modal` — AddGroupsToChannelModal (channels/src/components/add_groups_to_channel_modal/add_groups_to_channel_modal.tsx)
+     */
     get addGroupsToChannelModal(): AddGroupsToChannelModal {
         return new AddGroupsToChannelModal(this.page, 'add_groups_to_channel_modal', this.root);
     }
 
+    /**
+     * `add_groups_to_team_modal` — AddGroupsToTeamModal (channels/src/components/add_groups_to_team_modal/add_groups_to_team_modal.tsx)
+     */
     get addGroupsToTeamModal(): AddGroupsToTeamModal {
         return new AddGroupsToTeamModal(this.page, 'add_groups_to_team_modal', this.root);
     }
@@ -150,6 +160,9 @@ export class App extends Scope {
         return new AddUsersToGroupModal(this.page, 'add_users_to_group_modal', this.root);
     }
 
+    /**
+     * `add_users_to_role_modal` — AddUsersToRoleModal (channels/src/components/admin_console/system_roles/system_role/add_users_to_role_modal/add_users_to_role_modal.tsx)
+     */
     get addUsersToRoleModal(): AddUsersToRoleModal {
         return new AddUsersToRoleModal(this.page, 'add_users_to_role_modal', this.root);
     }
@@ -237,6 +250,9 @@ export class App extends Scope {
         return new ChannelNotificationsModal(this.page, 'channel_notifications_modal', this.root);
     }
 
+    /**
+     * `channel_selector_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
     get channelSelectorModal(): ChannelSelectorModal {
         return new ChannelSelectorModal(this.page, 'channel_selector_modal', this.root);
     }
@@ -400,6 +416,20 @@ export class App extends Scope {
         return new Lhs(this.page, 'lhs', this.root);
     }
 
+    /**
+     * `manage_roles_modal` — ManageRolesModal (channels/src/components/admin_console/manage_roles_modal/manage_roles_modal.tsx)
+     */
+    get manageRolesModal(): ManageRolesModal {
+        return new ManageRolesModal(this.page, 'manage_roles_modal', this.root);
+    }
+
+    /**
+     * `manage_teams_modal` — ManageTeamsModal (channels/src/components/admin_console/manage_teams_modal/manage_teams_modal.tsx)
+     */
+    get manageTeamsModal(): ManageTeamsModal {
+        return new ManageTeamsModal(this.page, 'manage_teams_modal', this.root);
+    }
+
     get markdown(): Markdown {
         return new Markdown(this.page, 'markdown', this.root);
     }
@@ -495,6 +525,14 @@ export class App extends Scope {
     }
 
     /**
+     * `reset_password_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when user.
+     */
+    get resetPasswordModal(): ResetPasswordModal {
+        return new ResetPasswordModal(this.page, 'reset_password_modal', this.root);
+    }
+
+    /**
      * `restore_post_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
     get restorePostModal(): RestorePostModal {
@@ -539,6 +577,9 @@ export class App extends Scope {
         return new TeamMembersModal(this.page, 'team_members_modal', this.root);
     }
 
+    /**
+     * `team_selector_modal` — TeamSelectorModal (channels/src/components/team_selector_modal/team_selector_modal.tsx)
+     */
     get teamSelectorModal(): TeamSelectorModal {
         return new TeamSelectorModal(this.page, 'team_selector_modal', this.root);
     }
@@ -568,6 +609,13 @@ export class App extends Scope {
 
     get userSyncModal(): UserSyncModal {
         return new UserSyncModal(this.page, 'user_sync_modal', this.root);
+    }
+
+    /**
+     * `users_to_be_removed_modal` — UsersToBeRemovedModal (channels/src/components/admin_console/team_channel_settings/users_to_be_removed_modal.tsx)
+     */
+    get usersToBeRemovedModal(): UsersToBeRemovedModal {
+        return new UsersToBeRemovedModal(this.page, 'users_to_be_removed_modal', this.root);
     }
 
     /** `/admin_console` */

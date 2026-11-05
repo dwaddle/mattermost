@@ -133,7 +133,7 @@ export default function IPFilteringAddOrEditModal({onExited, onSave, existingRan
                     {formatMessage({id: 'admin.ip_filtering.cancel', defaultMessage: 'Cancel'})}
                 </Button>
                 <Button
-                    data-testid='save-add-edit-button'
+                    data-testid='admin.ip_filtering.edit_modal.save--button'
                     type='button'
                     emphasis='primary'
                     onClick={handleSave}

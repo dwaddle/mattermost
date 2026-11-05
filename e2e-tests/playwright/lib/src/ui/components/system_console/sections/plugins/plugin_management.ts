@@ -4,8 +4,13 @@
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
-import {ConfirmModal} from '@/ui/components/system_console/base_modal';
+import {settingTestKey} from '@/aria';
 import {duration} from '@/util';
+
+/** A plugin id as the list's row key (`com.mattermost.calls` -> `com_mattermost_calls`), as the webapp builds it. */
+export function pluginRowKey(pluginId: string): string {
+    return pluginId.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+}
 
 /**
  * System Console -> Plugins -> Plugin Management
@@ -24,20 +29,20 @@ export default class PluginManagement {
     constructor(container: Locator) {
         this.container = container;
 
-        // A plain <input type="file">, no testid/id — exactly one on this page.
-        this.pluginFileInput = container.locator('input[type="file"]');
-        this.uploadButton = container.locator('#uploadPlugin');
+        // Hidden; the upload button opens it, and choosing a file starts the upload.
+        this.pluginFileInput = container.getByTestId('admin.plugins.upload_file');
+        this.uploadButton = container.getByTestId('admin.plugins.upload--button');
         this.saveButton = container.getByRole('button', {name: 'Save'});
 
-        this.restrictUnauthenticatedWebappPluginsTrue = container.getByTestId(
-            'restrictUnauthenticatedWebappPluginstrue',
+        const restrictUnauthenticatedWebappPlugins = container.getByTestId(
+            `admin.setting:${settingTestKey('restrictUnauthenticatedWebappPlugins')}`,
         );
-        this.restrictUnauthenticatedWebappPluginsFalse = container.getByTestId(
-            'restrictUnauthenticatedWebappPluginsfalse',
-        );
-        this.restrictUnauthenticatedWebappPluginsHelpText = container.getByTestId(
-            'restrictUnauthenticatedWebappPluginshelp-text',
-        );
+        this.restrictUnauthenticatedWebappPluginsTrue =
+            restrictUnauthenticatedWebappPlugins.getByTestId('admin.setting.true--radio');
+        this.restrictUnauthenticatedWebappPluginsFalse =
+            restrictUnauthenticatedWebappPlugins.getByTestId('admin.setting.false--radio');
+        this.restrictUnauthenticatedWebappPluginsHelpText =
+            restrictUnauthenticatedWebappPlugins.getByTestId('admin.setting.help--text');
     }
 
     async toBeVisible() {
@@ -54,7 +59,7 @@ export default class PluginManagement {
      * Locates an installed plugin's row by its manifest id.
      */
     pluginRow(pluginId: string): Locator {
-        return this.container.getByTestId(pluginId);
+        return this.container.getByTestId(`admin.plugins.plugin:${pluginRowKey(pluginId)}`);
     }
 
     async notToHavePlugin(pluginId: string) {
@@ -63,35 +68,35 @@ export default class PluginManagement {
 
     /**
      * Removes the given plugin via its "Remove" control and confirms the "Remove plugin?" dialog.
-     * The Enable/Remove controls in this list aren't real buttons or links (no ARIA role, no href),
-     * so this uses a scoped text locator rather than getByRole.
      */
     async removePlugin(pluginId: string) {
-        const row = this.pluginRow(pluginId);
-        await row.getByText('Remove', {exact: true}).click();
+        await this.pluginRow(pluginId).getByTestId('admin.plugins.plugin.remove--button').click();
 
-        const confirmModal = new ConfirmModal(this.container.page().getByRole('dialog', {name: 'Remove plugin?'}));
-        await confirmModal.toBeVisible();
-        await confirmModal.confirm();
+        const page = this.container.page();
+        const confirmModal = page.getByTestId('admin.plugins.remove_modal');
+        await expect(confirmModal).toBeVisible();
+        await page.getByTestId('admin.plugins.remove_modal.confirm--button').click();
+        await expect(confirmModal).not.toBeVisible();
     }
 
     /**
-     * Uploads a plugin bundle (.tar.gz) via the real <input type="file">, then clicks "Upload".
-     * If a plugin with the same id is already installed, confirms the "Overwrite existing
-     * plugin?" dialog that appears instead of failing.
+     * Uploads a plugin bundle (.tar.gz) through the file input; choosing the file starts the upload.
+     * If a plugin with the same id is already installed, confirms the overwrite review dialog that
+     * appears instead of failing.
      */
     async uploadPlugin(filePath: string) {
-        await this.pluginFileInput.setInputFiles(filePath);
         await expect(this.uploadButton).toBeEnabled();
-        await this.uploadButton.click();
+        await this.pluginFileInput.setInputFiles(filePath);
 
-        const overwriteDialog = this.container.page().getByRole('dialog', {name: 'Overwrite existing plugin?'});
+        const page = this.container.page();
+        const overwriteDialog = page.getByTestId('admin.plugins.overwrite_modal');
         const sawOverwriteDialog = await overwriteDialog
             .waitFor({state: 'visible', timeout: duration.ten_sec})
             .then(() => true)
             .catch(() => false);
         if (sawOverwriteDialog) {
-            await new ConfirmModal(overwriteDialog).confirm();
+            await page.getByTestId('admin.plugins.overwrite_modal.confirm--button').click();
+            await expect(overwriteDialog).not.toBeVisible();
         }
     }
 
@@ -100,11 +105,10 @@ export default class PluginManagement {
      * auto-enable it — this is always a separate step.
      */
     async enablePlugin(pluginId: string) {
-        const row = this.pluginRow(pluginId);
-        await row.getByText('Enable', {exact: true}).click();
+        await this.pluginRow(pluginId).getByTestId('admin.plugins.plugin.enable--button').click();
     }
 
     async toBeEnabled(pluginId: string) {
-        await expect(this.pluginRow(pluginId).getByText('Enable', {exact: true})).not.toBeVisible();
+        await expect(this.pluginRow(pluginId).getByTestId('admin.plugins.plugin.disable--button')).toBeVisible();
     }
 }

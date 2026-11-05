@@ -16,6 +16,7 @@ import type {Group} from '@mattermost/types/groups';
 import {
     disablePermission,
     enablePermission,
+    permissionToggle,
 } from '../system_console/channel_moderation/helpers';
 
 import {enableGroupMention} from './helpers';
@@ -100,7 +101,7 @@ describe('Group Mentions', () => {
         cy.get('.admin-console__header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').and('have.text', 'System Scheme');
 
         // # Click reset to defaults and confirm
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('admin.permissions.reset--button').click();
         cy.get('#confirmModalButton').click();
 
         // # Save
@@ -273,8 +274,8 @@ describe('Group Mentions', () => {
         // # Verify that group mentions for all users & guests are disabled
         cy.visit('/admin_console/user_management/permissions/system_scheme');
         cy.get('.admin-console__header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').and('have.text', 'System Scheme');
-        cy.findByTestId('all_users-posts-use_group_mentions-checkbox').should('not.have.class', 'checked');
-        cy.findByTestId('guests-guest_use_group_mentions-checkbox').should('not.have.class', 'checked');
+        permissionToggle('all_users-posts-use_group_mentions-checkbox').should('not.have.class', 'checked');
+        permissionToggle('guests-guest_use_group_mentions-checkbox').should('not.have.class', 'checked');
 
         // # Create a new channel as a sysadmin
         cy.apiCreateChannel(testTeam.id, 'group-mention', 'Group Mentions').then(({channel}) => {

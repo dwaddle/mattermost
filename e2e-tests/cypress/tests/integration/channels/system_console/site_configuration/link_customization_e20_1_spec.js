@@ -14,6 +14,7 @@ import {backToTeam, saveSetting} from './helper';
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {TERMS_OF_SERVICE_LINK} from '@/utils/constants';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('SupportSettings', () => {
     const tosLink = 'https://github.com/mattermost/platform/blob/master/README.md';
@@ -38,12 +39,12 @@ describe('SupportSettings', () => {
 
     it('MM-T1031 - Customization Change all links', () => {
         // # Edit links in the TOS, Privacy, About, Help, Report fields
-        cy.findByTestId('SupportSettings.TermsOfServiceLinkinput').clear().type(tosLink);
-        cy.findByTestId('SupportSettings.PrivacyPolicyLinkinput').clear().type(privacyLink);
-        cy.findByTestId('SupportSettings.AboutLinkinput').clear().type(aboutLink);
-        cy.findByTestId('SupportSettings.HelpLinkinput').clear().type(helpLink);
-        cy.findByTestId('SupportSettings.ReportAProblemTypedropdown').select('Custom link');
-        cy.findByTestId('SupportSettings.ReportAProblemLinkinput').clear().type(problemLink);
+        settingPart('SupportSettings.TermsOfServiceLink', 'value--textbox').clear().type(tosLink);
+        settingPart('SupportSettings.PrivacyPolicyLink', 'value--textbox').clear().type(privacyLink);
+        settingPart('SupportSettings.AboutLink', 'value--textbox').clear().type(aboutLink);
+        settingPart('SupportSettings.HelpLink', 'value--textbox').clear().type(helpLink);
+        settingPart('SupportSettings.ReportAProblemType', 'value--combobox').select('Custom link');
+        settingPart('SupportSettings.ReportAProblemLink', 'value--textbox').clear().type(problemLink);
 
         // # Save setting then back to team view
         saveSetting();
@@ -96,7 +97,7 @@ describe('SupportSettings', () => {
 
     it('MM-T1033 - Customization: Blank TOS link field (login page)', () => {
         // # Empty the "terms of services" field
-        cy.findByTestId('SupportSettings.TermsOfServiceLinkinput').type('any').clear();
+        settingPart('SupportSettings.TermsOfServiceLink', 'value--textbox').type('any').clear();
 
         // # Save setting
         saveSetting();
@@ -114,8 +115,8 @@ describe('SupportSettings', () => {
 
     it('MM-T1036 - Customization: Blank Help and Report a Problem hides options from help menu', () => {
         // # Change help and report links to blanks
-        cy.findByTestId('SupportSettings.HelpLinkinput').type('any').clear();
-        cy.findByTestId('SupportSettings.ReportAProblemTypedropdown').select('Hide link');
+        settingPart('SupportSettings.HelpLink', 'value--textbox').type('any').clear();
+        settingPart('SupportSettings.ReportAProblemType', 'value--combobox').select('Hide link');
 
         // # Save setting and back to team view
         saveSetting();
@@ -135,7 +136,7 @@ describe('SupportSettings', () => {
 
         // # Edit links in the support email field
         const link = 'https://github.com/mattermost/desktop/releases';
-        cy.findByTestId('NativeAppSettings.AppDownloadLinkinput').clear().type(link);
+        settingPart('NativeAppSettings.AppDownloadLink', 'value--textbox').clear().type(link);
 
         // # Save setting then back to team view
         saveSetting();
@@ -150,10 +151,10 @@ describe('SupportSettings', () => {
 
     it('MM-T3289_1 - Help (Ask community link setting)', () => {
         // * Verify enable ask community link to be true by default
-        cy.findByTestId('SupportSettings.EnableAskCommunityLinktrue').should('be.checked');
+        settingPart('SupportSettings.EnableAskCommunityLink', 'true--radio').should('be.checked');
 
         // * Verify the help text
-        cy.findByTestId('SupportSettings.EnableAskCommunityLinkhelp-text').should('contain', 'When true, "Ask the community" link appears on the Mattermost user interface and Help Menu, which allows users to join the Mattermost Community to ask questions and help others troubleshoot issues. When false, the link is hidden from users.');
+        settingPart('SupportSettings.EnableAskCommunityLink', 'help--text').should('contain', 'When true, "Ask the community" link appears on the Mattermost user interface and Help Menu, which allows users to join the Mattermost Community to ask questions and help others troubleshoot issues. When false, the link is hidden from users.');
 
         // # Back to team view
         backToTeam();
@@ -182,12 +183,12 @@ describe('SupportSettings', () => {
 
     it('MM-T3289_2 - Help (Ask community link setting)', () => {
         // Disable setting for ask community
-        cy.findByTestId('SupportSettings.EnableAskCommunityLinkfalse').click();
+        settingPart('SupportSettings.EnableAskCommunityLink', 'false--radio').click();
 
         // Edit help link and report a problem link
-        cy.findByTestId('SupportSettings.HelpLinkinput').clear().type(helpLink);
-        cy.findByTestId('SupportSettings.ReportAProblemTypedropdown').select('Custom link');
-        cy.findByTestId('SupportSettings.ReportAProblemLinkinput').clear().type(problemLink);
+        settingPart('SupportSettings.HelpLink', 'value--textbox').clear().type(helpLink);
+        settingPart('SupportSettings.ReportAProblemType', 'value--combobox').select('Custom link');
+        settingPart('SupportSettings.ReportAProblemLink', 'value--textbox').clear().type(problemLink);
 
         // # Save setting and back to team view
         saveSetting();

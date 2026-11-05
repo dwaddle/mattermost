@@ -4,6 +4,14 @@
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
+import {settingTestKey} from '@/aria';
+
+/** The setting's row: the container itself when it is that row, else the row inside it. */
+function settingRow(container: Locator, settingId: string): Locator {
+    const rowId = `admin.setting:${settingTestKey(settingId)}`;
+    return container.getByTestId(rowId).or(container.and(container.page().getByTestId(rowId)));
+}
+
 /**
  * Radio Setting - represents a true/false radio button group
  * Uses getByRole for radio buttons, getByText for help text
@@ -23,7 +31,7 @@ export class RadioSetting {
         this.container = container;
         this.trueOption = container.getByRole('radio', {name: 'True'});
         this.falseOption = container.getByRole('radio', {name: 'False'});
-        this.helpText = settingId ? container.getByTestId(settingId + 'help-text') : null;
+        this.helpText = settingId ? settingRow(container, settingId).getByTestId('admin.setting.help--text') : null;
     }
 
     /**
@@ -75,7 +83,7 @@ export class TextInputSetting {
         this.container = container;
         this.label = container.getByText(labelText);
         this.input = container.getByRole('textbox').first();
-        this.helpText = settingId ? container.getByTestId(settingId + 'help-text') : null;
+        this.helpText = settingId ? settingRow(container, settingId).getByTestId('admin.setting.help--text') : null;
     }
 
     async fill(value: string) {
@@ -109,7 +117,7 @@ export class NumberInputSetting {
         this.container = container;
         this.label = container.getByText(labelText);
         this.input = container.getByRole('spinbutton');
-        this.helpText = settingId ? container.getByTestId(settingId + 'help-text') : null;
+        this.helpText = settingId ? settingRow(container, settingId).getByTestId('admin.setting.help--text') : null;
     }
 
     async fill(value: string) {
@@ -143,7 +151,7 @@ export class DropdownSetting {
         this.label = container.getByText(labelText);
         // Scope combobox to this form-group (unscoped matches e.g. sidebar search).
         this.dropdown = container.getByRole('combobox').first();
-        this.helpText = settingId ? container.getByTestId(settingId + 'help-text') : null;
+        this.helpText = settingId ? settingRow(container, settingId).getByTestId('admin.setting.help--text') : null;
     }
 
     async select(option: string) {
@@ -171,8 +179,8 @@ export class AdminSectionPanel {
     constructor(container: Locator, titleText: string) {
         this.container = container;
         this.title = container.getByRole('heading', {name: titleText});
-        this.description = container.getByTestId('admin-section-panel-description');
-        this.body = container.getByTestId('admin-section-panel-body');
+        this.description = container.getByTestId('admin.section.description--text');
+        this.body = container.getByTestId('admin.section.body');
     }
 
     async toBeVisible() {

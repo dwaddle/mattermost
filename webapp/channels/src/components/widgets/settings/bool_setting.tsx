@@ -4,6 +4,8 @@
 import type {ChangeEvent} from 'react';
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import Setting from './setting';
 
 type Props = {
@@ -18,6 +20,12 @@ type Props = {
     onChange(name: string, value: any): void; // value is any since onChange is a common func for inputs and checkboxes
     autoFocus?: boolean;
     labelPosition?: 'before' | 'after';
+
+    /** The row's parts render under it; without it, the legacy ids. */
+    testIdScope?: TestId;
+
+    /** The row's own testid when it isn't the scope (a keyed row). */
+    testId?: TestId;
 };
 
 const BoolSetting = ({
@@ -32,6 +40,8 @@ const BoolSetting = ({
     onChange,
     autoFocus,
     labelPosition = 'after',
+    testIdScope,
+    testId,
 }: Props) => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         onChange(id, e.target.checked);
@@ -49,12 +59,15 @@ const BoolSetting = ({
             inputClassName={`inline-choice-setting ${inputClassName}`.trim()}
             helpText={helpText}
             inputId={id}
+            testIdScope={testIdScope}
+            testId={testId}
         >
             <div className='checkbox'>
                 <label>
                     {!isAfter && checkboxLabel}
                     <input
                         id={id}
+                        data-testid={testIdScope ? `${testIdScope}.value--checkbox` : undefined}
                         disabled={disabled}
                         autoFocus={autoFocus}
                         type='checkbox'

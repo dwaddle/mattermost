@@ -155,6 +155,7 @@ const FindingDetail = ({id, finding, now, hidden}: Props) => {
                     <button
                         type='button'
                         className='btn btn-primary'
+                        data-testid='admin.health.finding.go_to_setting--button'
                         onClick={() => history.push(consolePath)}
                     >
                         <FormattedMessage

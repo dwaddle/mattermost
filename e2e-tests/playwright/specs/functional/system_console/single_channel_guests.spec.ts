@@ -83,7 +83,11 @@ test.describe('Single-channel guests', () => {
             );
 
             // * Verify the single-channel guests card is visible
-            await expect(systemConsolePage.page.getByTestId('singleChannelGuests')).toBeVisible({timeout: 30000});
+            await expect(
+                systemConsolePage.page
+                    .getByTestId('admin.statistics.stat:singleChannelGuests')
+                    .getByTestId('admin.statistics.stat.value--text'),
+            ).toBeVisible({timeout: 30000});
 
             // * Verify the count is at least 1.
             // Analytics are indexed asynchronously on the server — poll with reload until
@@ -98,7 +102,8 @@ test.describe('Single-channel guests', () => {
                         await systemConsolePage.page.reload();
                         await systemConsolePage.page.waitForLoadState('networkidle');
                         const text = await systemConsolePage.page
-                            .getByTestId('singleChannelGuests')
+                            .getByTestId('admin.statistics.stat:singleChannelGuests')
+                            .getByTestId('admin.statistics.stat.value--text')
                             .textContent()
                             .catch(() => '');
                         return Number(text?.match(/(\d+)/)?.[1] ?? 0);
@@ -181,7 +186,11 @@ test.describe('Single-channel guests', () => {
             );
 
             // * Verify the single-channel guests card is not in the DOM
-            await expect(systemConsolePage.page.getByTestId('singleChannelGuests')).not.toBeVisible();
+            await expect(
+                systemConsolePage.page
+                    .getByTestId('admin.statistics.stat:singleChannelGuests')
+                    .getByTestId('admin.statistics.stat.value--text'),
+            ).not.toBeVisible();
         },
     );
 
@@ -261,7 +270,9 @@ test.describe('Single-channel guests', () => {
             );
 
             // * Verify the card title does NOT have error class (count is within limit)
-            const cardTitle = systemConsolePage.page.getByTestId('singleChannelGuestsTitle');
+            const cardTitle = systemConsolePage.page
+                .getByTestId('admin.statistics.stat:singleChannelGuests')
+                .getByTestId('admin.statistics.stat.title--text');
             await expect(cardTitle).toBeVisible({timeout: 15000});
             await expect(cardTitle).not.toHaveClass(/team_statistics--error/);
         },
@@ -366,7 +377,9 @@ test.describe('Single-channel guests', () => {
             );
 
             // * Verify the card title has error styling
-            const cardTitle = systemConsolePage.page.getByTestId('singleChannelGuestsTitle');
+            const cardTitle = systemConsolePage.page
+                .getByTestId('admin.statistics.stat:singleChannelGuests')
+                .getByTestId('admin.statistics.stat.title--text');
             await expect(cardTitle).toBeVisible({timeout: 15000});
             await expect(cardTitle).toHaveClass(/team_statistics--error/);
 
@@ -431,7 +444,9 @@ test.describe('Single-channel guests', () => {
             );
 
             // * Verify the single-channel guests card is visible
-            const singleChannelGuestsCard = systemConsolePage.page.getByTestId('singleChannelGuests');
+            const singleChannelGuestsCard = systemConsolePage.page
+                .getByTestId('admin.statistics.stat:singleChannelGuests')
+                .getByTestId('admin.statistics.stat.value--text');
             await expect(singleChannelGuestsCard).toBeVisible({timeout: 15000});
 
             // * Verify the count text is present — multi-channel guest should not increment it

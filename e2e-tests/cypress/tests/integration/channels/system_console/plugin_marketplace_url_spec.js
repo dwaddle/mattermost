@@ -31,13 +31,13 @@ describe('System Console > Plugin Management ', () => {
         cy.visit('/admin_console/plugins/plugin_management');
 
         // * Verify marketplace URL is disabled.
-        cy.findByTestId('marketplaceUrlinput').should('be.disabled');
+        cy.findByTestId('admin.setting:marketplaceUrl').findByTestId('admin.setting.value--textbox').should('be.disabled');
 
         cy.exec('tests/fixtures/mmctl --local config set PluginSettings.EnableUploads true');
 
         cy.reload();
 
         // * Verify marketplace URL is enabled.
-        cy.findByTestId('marketplaceUrlinput').should('be.enabled');
+        cy.findByTestId('admin.setting:marketplaceUrl').findByTestId('admin.setting.value--textbox').should('be.enabled');
     });
 });

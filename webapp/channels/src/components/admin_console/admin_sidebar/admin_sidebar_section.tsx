@@ -13,7 +13,9 @@ type Props = {
     title: string | JSX.Element;
     action?: JSX.Element;
     children?: JSX.Element | JSX.Element[];
-    definitionKey?: string;
+
+    // The section's key in its testid, under its category: `admin.sidebar.category.section:<testKey>`.
+    testKey?: string;
     type?: string;
     parentLink?: string;
     subsection?: boolean;
@@ -21,7 +23,7 @@ type Props = {
     restrictedIndicator?: string | JSX.Element;
 };
 
-const AdminSidebarSection = ({name, title, action, children = [], definitionKey, type, parentLink = '', subsection = false, tag, restrictedIndicator}: Props) => {
+const AdminSidebarSection = ({name, title, action, children = [], testKey, type, parentLink = '', subsection = false, tag, restrictedIndicator}: Props) => {
     const getLink = () => parentLink + '/' + name;
 
     const link = getLink();
@@ -64,6 +66,7 @@ const AdminSidebarSection = ({name, title, action, children = [], definitionKey,
             className={`${className}-title`}
             activeClassName={`${className}-title ${className}-title--active`}
             to={link}
+            data-testid={testKey ? 'admin.sidebar.category.section.title--link' : undefined}
         >
             <span className={`${className}-title__text`}>
                 {title}{tagDiv}
@@ -87,7 +90,7 @@ const AdminSidebarSection = ({name, title, action, children = [], definitionKey,
     return (
         <li
             className={className}
-            data-testid={definitionKey}
+            data-testid={testKey ? `admin.sidebar.category.section:${testKey}` : undefined}
         >
             {sidebarItem}
             {clonedChildren}

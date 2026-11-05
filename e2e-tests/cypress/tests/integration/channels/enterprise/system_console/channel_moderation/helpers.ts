@@ -21,6 +21,26 @@ export const visitChannelConfigPage = (channel: Channel) => {
     cy.wait(TIMEOUTS.ONE_SEC);
 };
 
+// A permission's control, by its key (see constants.ts):
+// - `<scope>-<group>[-<permission>]-checkbox`, in the System and team schemes: the checkbox in that group's or
+//   permission's row, both keyed by the id without `-checkbox`;
+// - `<permission>-guests` / `<permission>-members`, on Channel Configuration: that role's button in the
+//   permission's row.
+export const permissionToggle = (key: string) => {
+    if (key.endsWith('-checkbox')) {
+        const id = key.slice(0, -'-checkbox'.length);
+        return cy.get(`[data-testid="admin.permissions.group:${id}"] > [data-testid="admin.permissions.group.checkbox"], [data-testid="admin.permissions.row:${id}"] > [data-testid="admin.permissions.row.checkbox"]`);
+    }
+    const role = key.endsWith('-guests') ? 'guests' : 'members';
+    const permission = key.slice(0, -(role.length + 1));
+    return cy.findByTestId(`admin.channel.moderation.permission:${permission}`).findByTestId(`admin.channel.moderation.permission.${role}--checkbox`);
+};
+
+// A notice in a permission's row on Channel Configuration (`disabledMembers`, `disabled_both_due_to_create_posts`, …).
+export const moderationNotice = (permission: string, key: string) => {
+    return cy.findByTestId(`admin.channel.moderation.permission:${permission}`).findByTestId(`admin.channel.moderation.permission.error:${key}--text`);
+};
+
 const isNativeCheckbox = ($el: JQuery<HTMLElement>) => $el.is('input[type="checkbox"]');
 
 const isPermissionChecked = ($el: JQuery<HTMLElement>) => {
@@ -34,7 +54,7 @@ const isPermissionChecked = ($el: JQuery<HTMLElement>) => {
 };
 
 const assertPermissionUnchecked = (permission: string) => {
-    cy.findByTestId(permission).then(($el) => {
+    permissionToggle(permission).then(($el) => {
         if (isNativeCheckbox($el)) {
             cy.wrap($el).should('not.be.checked');
             return;
@@ -44,7 +64,7 @@ const assertPermissionUnchecked = (permission: string) => {
 };
 
 const assertPermissionChecked = (permission: string) => {
-    cy.findByTestId(permission).then(($el) => {
+    permissionToggle(permission).then(($el) => {
         if (isNativeCheckbox($el)) {
             cy.wrap($el).should('be.checked');
             return;
@@ -56,7 +76,7 @@ const assertPermissionChecked = (permission: string) => {
 // # Disable a permission
 // Supports Compass Checkbox (opacity: 0 native input) and Bootstrap scheme widgets.
 export const disablePermission = (permission: string) => {
-    cy.findByTestId(permission).scrollIntoView().should('exist').then(($el) => {
+    permissionToggle(permission).scrollIntoView().should('exist').then(($el) => {
         if (isPermissionChecked($el)) {
             cy.wrap($el).click({force: true});
         }
@@ -138,7 +158,7 @@ export const postChannelMentionsAndVerifySystemMessageExist = (channelName: stri
 // # Enable a permission
 // Supports Compass Checkbox (opacity: 0 native input) and Bootstrap scheme widgets.
 export const enablePermission = (permission: string) => {
-    cy.findByTestId(permission).scrollIntoView().should('exist').then(($el) => {
+    permissionToggle(permission).scrollIntoView().should('exist').then(($el) => {
         if (!isPermissionChecked($el)) {
             cy.wrap($el).click({force: true});
         }
@@ -213,9 +233,9 @@ export const goToSystemScheme = () => {
 export const goToPermissionsAndCreateTeamOverrideScheme = (schemeName: string, team: Team) => {
     cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions');
-    cy.findByTestId('team-override-schemes-link').click();
+    cy.findByTestId('admin.permission_schemes.team_overrides.action--link').click();
     cy.get('#scheme-name').type(schemeName);
-    cy.findByTestId('add-teams').click();
+    cy.findByTestId('admin.permission_scheme.teams.add--button').click();
     cy.get('#selectItems input').typeWithForce(team.display_name);
     cy.get('#multiSelectList').should('be.visible').children().first().click({force: true});
     cy.get('#saveItems').should('be.visible').click();
@@ -227,7 +247,7 @@ export const goToPermissionsAndCreateTeamOverrideScheme = (schemeName: string, t
 export const deleteOrEditTeamScheme = (schemeDisplayName: string, editOrDelete: string) => {
     cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions');
-    cy.findByTestId(`${schemeDisplayName}-${editOrDelete}`).click();
+    cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeDisplayName).findByTestId(`admin.permission_schemes.scheme.${editOrDelete}--link`).click();
     if (editOrDelete === 'delete') {
         cy.get('#confirmModalButton').click();
     }
@@ -290,7 +310,7 @@ export const enableDisableAllChannelModeratedPermissionsViaAPI = (channel: Chann
 export const resetSystemSchemePermissionsToDefault = () => {
     cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions/system_scheme');
-    cy.findByTestId('resetPermissionsToDefault').click();
+    cy.findByTestId('admin.permissions.reset--button').click();
     cy.get('#confirmModalButton').click();
     saveConfigForScheme();
 };
@@ -322,8 +342,8 @@ export const promoteToChannelOrTeamAdmin = (userId: string, id: string, channels
 // # Disable (uncheck) all the permissions in the channel moderation widget
 export const disableAllChannelModeratedPermissions = () => {
     checkBoxes.forEach((buttonId) => {
-        cy.findByTestId(buttonId).then(($btn) => {
-            if ($btn.prop('checked')) {
+        permissionToggle(buttonId).then(($btn) => {
+            if (isPermissionChecked($btn)) {
                 cy.wrap($btn).click({force: true});
             }
         });
@@ -333,8 +353,8 @@ export const disableAllChannelModeratedPermissions = () => {
 // # Enable (check) all the permissions in the channel moderation widget
 export const enableAllChannelModeratedPermissions = () => {
     checkBoxes.forEach((buttonId) => {
-        cy.findByTestId(buttonId).then(($btn) => {
-            if (!$btn.prop('checked')) {
+        permissionToggle(buttonId).then(($btn) => {
+            if (!isPermissionChecked($btn)) {
                 cy.wrap($btn).click({force: true});
             }
         });

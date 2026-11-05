@@ -10,7 +10,7 @@ import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
-import {CategorySelector, ChannelSettingsModalConfigurationBannerText, ClassificationLevel, Input, Url} from './shared';
+import {CategorySelector, ChannelSettingsModalConfigurationBannerText, DropdownInput, Input, Url} from './shared';
 
 /** The form fields of `new_channel_modal`. */
 export type NewChannelModalFormValues = {
@@ -170,8 +170,8 @@ export class NewChannelModal extends Scope {
      * `new_channel_modal.classification_level` — DropdownInput (channels/src/components/dropdown_input.tsx)
      * Renders only when canManageClassification and classificationEnabled.
      */
-    get classificationLevel(): ClassificationLevel {
-        return new ClassificationLevel(this.page, `${this.scope}.classification_level`, this.root);
+    get classificationLevel(): DropdownInput {
+        return new DropdownInput(this.page, `${this.scope}.classification_level`, this.root);
     }
 
     /**

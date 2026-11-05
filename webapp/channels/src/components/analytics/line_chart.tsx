@@ -108,7 +108,7 @@ export default class LineChart extends React.PureComponent<Props> {
         } else {
             content = (
                 <canvas
-                    data-testid={this.props.id}
+                    data-testid='admin.statistics.chart.canvas'
                     ref={this.canvasRef}
                     width={this.props.width}
                     height={this.props.height}
@@ -120,17 +120,17 @@ export default class LineChart extends React.PureComponent<Props> {
         return (
             <div className='col-sm-12'>
                 <div
-                    data-testid={this.props.id + 'Chart'}
+                    data-testid={`admin.statistics.chart:${this.props.id}`}
                     className='total-count by-day'
                 >
                     <div
-                        data-testid={this.props.id + 'Title'}
+                        data-testid='admin.statistics.chart.title--text'
                         className='title'
                     >
                         {this.props.title}
                     </div>
                     <div
-                        data-testid={this.props.id + 'Content'}
+                        data-testid='admin.statistics.chart.content'
                         className='content'
                     >
                         {content}

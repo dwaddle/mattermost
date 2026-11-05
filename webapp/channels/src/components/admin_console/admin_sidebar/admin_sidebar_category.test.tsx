@@ -14,13 +14,13 @@ describe('components/AdminSidebarCategory', () => {
         renderWithContext(
             <MemoryRouter initialEntries={['/some/unrelated/path']}>
                 <AdminSidebarCategory
-                    definitionKey='environment'
+                    testKey='environment'
                     parentLink='/admin_console'
                     icon={<span data-testid='category-icon'/>}
                     title='Environment'
                 >
                     <AdminSidebarSection
-                        definitionKey='environment.notifications'
+                        testKey='notifications'
                         name='environment/notifications'
                         title='Notifications'
                     />
@@ -37,14 +37,14 @@ describe('components/AdminSidebarCategory', () => {
         renderWithContext(
             <MemoryRouter initialEntries={['/']}>
                 <AdminSidebarCategory
-                    definitionKey='site'
+                    testKey='site'
                     parentLink='/admin_console'
                     icon={<span data-testid='category-icon'/>}
                     title='Site Configuration'
                 >
                     {null}
                     <AdminSidebarSection
-                        definitionKey='site.users_and_teams'
+                        testKey='users_and_teams'
                         name='site_config/users_and_teams'
                         title='Users and Teams'
                     />

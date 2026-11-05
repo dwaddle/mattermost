@@ -9,6 +9,8 @@
 
 // Group: @channels @enterprise @ldap_group
 
+import {permissionToggle} from '../system_console/channel_moderation/helpers';
+
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import users from '@/fixtures/ldap_users.json';
 
@@ -188,7 +190,7 @@ describe('System Console', () => {
         navigateToGroup(groupID);
 
         // # Enable group mentions
-        cy.findByTestId('allowReferenceSwitch-button').click({force: true});
+        cy.findByTestId('admin.group.allow_reference--switch').click({force: true});
 
         // # Give the group a custom name different from its DisplayName attribute
         cy.get('#groupMention').find('input').clear().type(groupName);
@@ -203,7 +205,7 @@ describe('System Console', () => {
         navigateToGroup(groupID);
 
         // # Disable group mentions
-        cy.findByTestId('allowReferenceSwitch-button').click({force: true});
+        cy.findByTestId('admin.group.allow_reference--switch').click({force: true});
 
         // # Click save button
         saveConfig();
@@ -225,7 +227,7 @@ describe('System Console', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults, confirm and save
-        cy.findByTestId('resetPermissionsToDefault').click({force: true});
+        cy.findByTestId('admin.permissions.reset--button').click({force: true});
         cy.get('#confirmModalButton').click({force: true});
         saveConfig();
 
@@ -240,7 +242,7 @@ describe('System Console', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Disable group mentions for users if enabled and save
-        cy.findByTestId('all_users-posts-use_group_mentions-checkbox').then((btn) => {
+        permissionToggle('all_users-posts-use_group_mentions-checkbox').then((btn) => {
             if (btn.hasClass('checked')) {
                 btn.click();
             }
@@ -261,7 +263,7 @@ describe('System Console', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults confirm and save
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('admin.permissions.reset--button').click();
         cy.get('#confirmModalButton').click();
         saveConfig();
     });

@@ -34,7 +34,9 @@ export default class PermissionsSystemScheme {
      * There can be two (public and private channel).
      */
     getManageChannelAutoTranslationRows(section: Locator): Locator {
-        return section.getByTestId('permissionRow').filter({hasText: 'Manage Channel Auto Translation'});
+        return section
+            .locator('[data-testid^="admin.permissions.row:"]')
+            .filter({hasText: 'Manage Channel Auto Translation'});
     }
 
     /**
@@ -51,7 +53,7 @@ export default class PermissionsSystemScheme {
         }
         for (let i = 0; i < count; i++) {
             const row = rows.nth(i);
-            await expect(row.getByTestId('permissionCheckbox-checked')).toBeVisible();
+            await expect(row.getByTestId('admin.permissions.row.checkbox.checked')).toBeVisible();
         }
     }
 
@@ -69,7 +71,7 @@ export default class PermissionsSystemScheme {
         }
         for (let i = 0; i < count; i++) {
             const row = rows.nth(i);
-            await expect(row.getByTestId('permissionCheckbox-checked')).not.toBeVisible();
+            await expect(row.getByTestId('admin.permissions.row.checkbox.checked')).not.toBeVisible();
         }
     }
 }

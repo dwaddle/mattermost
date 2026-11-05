@@ -6,6 +6,7 @@ import {defineMessage, defineMessages, FormattedMessage} from 'react-intl';
 import type {MessageDescriptor} from 'react-intl';
 
 import {CheckCircleOutlineIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {HealthFindingTab} from 'mattermost-redux/utils/health_utils';
 
@@ -13,10 +14,14 @@ type Props = {
     title: React.ReactNode;
     body: React.ReactNode;
     icon?: boolean;
+    testId?: TestId;
 };
 
-export const EmptyState = ({title, body, icon = false}: Props) => (
-    <div className='HealthDashboard__empty'>
+export const EmptyState = ({title, body, icon = false, testId}: Props) => (
+    <div
+        className='HealthDashboard__empty'
+        data-testid={testId}
+    >
         {icon && (
             <CheckCircleOutlineIcon
                 className='HealthDashboard__emptyIcon'

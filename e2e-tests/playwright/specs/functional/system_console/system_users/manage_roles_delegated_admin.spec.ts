@@ -4,36 +4,29 @@
 import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 
-import type {SystemConsolePage} from '@mattermost/playwright-lib';
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
+
+import {openUsers, search} from './support';
+
+// Written on the generated page objects: System Console > Users' row by user id and its actions menu, and the Manage
+// Roles dialog (role radios, the delegated roles section and its checkboxes by role, Save).
 
 /**
  * Delegated (granular) administration roles surfaced in the Manage Roles modal.
  * Mirrors DELEGATED_ROLE_NAMES in the manage_roles_modal component.
  */
 const USER_MANAGER_ROLE = 'system_user_manager';
-const USER_MANAGER_LABEL = 'User Manager';
 const SYSTEM_MANAGER_ROLE = 'system_manager';
-const SYSTEM_MANAGER_LABEL = 'System Manager';
 
 /**
  * Open the Manage Roles modal for the given user from System Console > User Management > Users.
  */
-async function openManageRolesModal(systemConsolePage: SystemConsolePage, user: UserProfile) {
-    await systemConsolePage.goto();
-    await systemConsolePage.sidebar.users.click();
-    await systemConsolePage.users.toBeVisible();
-
-    await systemConsolePage.users.searchUsers(user.email);
-    const userRow = systemConsolePage.users.usersTable.getRowByIndex(0);
-    await expect(userRow.container.getByText(user.email)).toBeVisible();
-
-    const actionMenu = await userRow.openActionMenu();
-    await actionMenu.clickManageRoles();
-
-    const {manageRolesModal} = systemConsolePage.users;
-    await manageRolesModal.toBeVisible();
-    return manageRolesModal;
+async function openManageRolesModal(pw: PlaywrightExtended, admin: UserProfile, user: UserProfile) {
+    const app = await openUsers(pw, admin);
+    await search(app, user.email, user);
+    const roles = await (await app.admin.users.table.row(user.id).clickActionsButton()).clickManageRolesMenuItem();
+    await expect(roles.saveButton.locator).toBeVisible();
+    return roles;
 }
 
 /**
@@ -60,21 +53,20 @@ test(
         await skipIfNoDelegatedAdminLicense(adminClient);
 
         // # Login as admin and open the Manage Roles modal for a regular user
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        const manageRolesModal = await openManageRolesModal(systemConsolePage, user);
+        const manageRolesModal = await openManageRolesModal(pw, adminUser, user);
 
         // * Verify the Delegated Administration Roles section is shown for a regular member
-        await expect(manageRolesModal.delegatedRolesTitle).toBeVisible();
+        await expect(manageRolesModal.delegatedRoles.locator).toBeVisible();
 
         // # Grant the User Manager role and save
-        const userManagerCheckbox = manageRolesModal.getDelegatedRoleCheckbox(USER_MANAGER_LABEL);
+        const userManagerCheckbox = manageRolesModal.systemUserManagerCheckbox.locator;
         await expect(userManagerCheckbox).not.toBeChecked();
         await userManagerCheckbox.check();
-        await manageRolesModal.save();
+        await manageRolesModal.clickSaveButton();
+        await expect(manageRolesModal.saveButton.locator).not.toBeVisible();
 
         // * Verify the role was persisted via the API
-        const updatedUser = await adminClient.getUser(user.id);
-        expect(updatedUser.roles).toContain(USER_MANAGER_ROLE);
+        await expect.poll(async () => (await adminClient.getUser(user.id)).roles).toContain(USER_MANAGER_ROLE);
     },
 );
 
@@ -92,12 +84,11 @@ test(
         await adminClient.updateUserRoles(user.id, `system_user ${SYSTEM_MANAGER_ROLE}`);
 
         // # Login as admin and open the Manage Roles modal for that user
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        const manageRolesModal = await openManageRolesModal(systemConsolePage, user);
+        const manageRolesModal = await openManageRolesModal(pw, adminUser, user);
 
         // * Verify the already-granted role is pre-checked and others are not
-        await expect(manageRolesModal.getDelegatedRoleCheckbox(SYSTEM_MANAGER_LABEL)).toBeChecked();
-        await expect(manageRolesModal.getDelegatedRoleCheckbox(USER_MANAGER_LABEL)).not.toBeChecked();
+        await expect(manageRolesModal.systemManagerCheckbox.locator).toBeChecked();
+        await expect(manageRolesModal.systemUserManagerCheckbox.locator).not.toBeChecked();
     },
 );
 
@@ -112,16 +103,16 @@ test(
         await skipIfNoDelegatedAdminLicense(adminClient);
 
         // # Login as admin and open the Manage Roles modal for a regular user
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        const manageRolesModal = await openManageRolesModal(systemConsolePage, user);
+        const manageRolesModal = await openManageRolesModal(pw, adminUser, user);
 
         // * Verify the section is initially visible for a member
-        await expect(manageRolesModal.delegatedRolesTitle).toBeVisible();
+        await expect(manageRolesModal.delegatedRoles.locator).toBeVisible();
 
         // # Promote the account to System Admin within the modal
-        await manageRolesModal.systemAdminRadio.check();
+        await manageRolesModal.systemAdminRadio.locator.check();
+        await expect(manageRolesModal.systemAdminRadio.locator).toBeChecked();
 
         // * Verify the delegated roles section is hidden since System Admins already have full access
-        await expect(manageRolesModal.delegatedRolesTitle).not.toBeVisible();
+        await expect(manageRolesModal.delegatedRoles.locator).not.toBeVisible();
     },
 );

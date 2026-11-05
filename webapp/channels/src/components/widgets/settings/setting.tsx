@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 type Props = {
     inputId?: string;
     label: React.ReactNode;
@@ -11,6 +13,15 @@ type Props = {
     children: React.ReactNode;
     helpText?: React.ReactNode;
     footer?: React.ReactNode;
+
+    /**
+     * The row's parts render under it (`${testIdScope}.label--text`, `.help--text`); without it (the apps form and the
+     * access policy editors, for now), the legacy ids.
+     */
+    testIdScope?: TestId;
+
+    /** The row's own testid when it isn't the scope (a keyed row: `admin.setting:<key>`). */
+    testId?: TestId;
 };
 
 const Setting: React.FC<Props> = ({
@@ -21,15 +32,17 @@ const Setting: React.FC<Props> = ({
     children,
     footer,
     helpText,
+    testIdScope,
+    testId,
 }: Props) => {
     return (
         <div
-            data-testid={inputId}
+            data-testid={testIdScope ? testId ?? testIdScope : inputId}
             className='form-group'
         >
             {label && (
                 <label
-                    data-testid={inputId + 'label'}
+                    data-testid={testIdScope ? `${testIdScope}.label--text` : inputId + 'label'}
                     className={'control-label ' + labelClassName}
                     htmlFor={inputId}
                 >
@@ -39,7 +52,7 @@ const Setting: React.FC<Props> = ({
             <div className={inputClassName}>
                 {children}
                 <div
-                    data-testid={inputId + 'help-text'}
+                    data-testid={testIdScope ? `${testIdScope}.help--text` : inputId + 'help-text'}
                     className='help-text'
                 >
                     {helpText}

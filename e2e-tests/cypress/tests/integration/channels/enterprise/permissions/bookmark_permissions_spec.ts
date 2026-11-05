@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @channels @enterprise @permissions
 
+import {permissionToggle} from '../system_console/channel_moderation/helpers';
+
 import * as TIMEOUTS from '@/fixtures/timeouts';
 
 const deleteExistingTeamOverrideSchemes = () => {
@@ -25,7 +27,7 @@ const checkChannelBookmarksPermissionsAreVisibleAndSet = () => {
         'all_users-private_channel-manage_private_channel_bookmarks-checkbox'];
 
     permissionRowIds.forEach((id) => {
-        cy.findByTestId(id).then((el) => {
+        permissionToggle(id).then((el) => {
             expect(el.hasClass('checked')).to.be.true;
         });
     });
@@ -51,7 +53,7 @@ describe('Revoke Bookmarks Permissions', () => {
         cy.visit('/admin_console/user_management/permissions');
 
         // # Click `Edit Scheme` on System Scheme
-        cy.findByTestId('systemScheme-link').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
+        cy.findByTestId('admin.permission_schemes.system_scheme.action--link').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Find and ensure that manage bookmarks permissions are visible and set
         checkChannelBookmarksPermissionsAreVisibleAndSet();
@@ -64,7 +66,7 @@ describe('Revoke Bookmarks Permissions', () => {
         cy.visit('/admin_console/user_management/permissions');
 
         // # Click `New Team Override Scheme`
-        cy.findByTestId('team-override-schemes-link').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
+        cy.findByTestId('admin.permission_schemes.team_overrides.action--link').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Type Name and Description
         cy.get('#scheme-name').should('be.visible').type('custom test schema');
@@ -74,7 +76,7 @@ describe('Revoke Bookmarks Permissions', () => {
         cy.get('#saveSetting').click().wait(TIMEOUTS.TWO_SEC);
 
         // # Edit the schema
-        cy.findByTestId('custom test schema-edit').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
+        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', 'custom test schema').findByTestId('admin.permission_schemes.scheme.edit--link').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Find and ensure that manage bookmarks permissions are visible and set
         checkChannelBookmarksPermissionsAreVisibleAndSet();

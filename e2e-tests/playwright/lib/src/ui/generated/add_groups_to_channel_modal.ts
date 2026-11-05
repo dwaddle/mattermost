@@ -8,7 +8,7 @@ import type {Locator, Page} from '@playwright/test';
 
 import {Scope} from '../../aria';
 
-import {AddGroupsToChannelModalGroups} from './shared';
+import {Groups} from './shared';
 
 /** Scope `add_groups_to_channel_modal`. */
 export class AddGroupsToChannelModal extends Scope {
@@ -16,12 +16,7 @@ export class AddGroupsToChannelModal extends Scope {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    get groups(): AddGroupsToChannelModalGroups {
-        return new AddGroupsToChannelModalGroups(this.page, `${this.scope}.groups`, this.root);
+    get groups(): Groups {
+        return new Groups(this.page, `${this.scope}.groups`, this.root);
     }
 }

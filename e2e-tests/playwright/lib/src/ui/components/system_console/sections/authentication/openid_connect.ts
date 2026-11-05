@@ -25,7 +25,9 @@ export default class OpenIdConnect {
 
         this.serviceProvider = container.getByRole('combobox', {name: 'Select service provider:'});
         this.buttonName = container.getByRole('textbox', {name: 'Button Name:'});
-        this.buttonColor = container.getByTestId('OpenIdSettings.ButtonColor').getByTestId('color-inputColorValue');
+        this.buttonColor = container
+            .getByTestId('admin.setting:OpenIdSettings_ButtonColor')
+            .getByTestId('admin.setting.color.value--textbox');
         this.discoveryEndpoint = container.getByRole('textbox', {name: 'Discovery Endpoint:'});
         this.clientId = container.getByRole('textbox', {name: 'Client ID:'});
         this.clientSecret = container.getByRole('textbox', {name: 'Client Secret:'});

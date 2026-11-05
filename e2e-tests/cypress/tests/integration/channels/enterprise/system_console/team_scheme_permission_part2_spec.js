@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @channels @enterprise @system_console
 
+import {permissionToggle} from './channel_moderation/helpers';
+
 import * as TIMEOUTS from '@/fixtures/timeouts';
 
 describe('Team Scheme', () => {
@@ -30,14 +32,14 @@ describe('Team Scheme', () => {
 
     it('MM-T2855 Create a Team Override Scheme', () => {
         // # Click `New Team Override Scheme`
-        cy.findByTestId('team-override-schemes-link').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
+        cy.findByTestId('admin.permission_schemes.team_overrides.action--link').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Type Name and Description
         cy.get('#scheme-name').should('be.visible').type(schemeName);
         cy.get('#scheme-description').type('Description');
 
         // # Click `Add Teams`
-        cy.findByTestId('add-teams').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
+        cy.findByTestId('admin.permission_scheme.teams.add--button').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Find and select testTeam
         cy.get('#selectItems input').typeWithForce(testTeam.display_name).wait(TIMEOUTS.HALF_SEC);
@@ -48,7 +50,7 @@ describe('Team Scheme', () => {
 
         // # Modify the permissions scheme
         const checkId = 'all_users-public_channel-create_public_channel-checkbox';
-        cy.findByTestId(checkId).click();
+        permissionToggle(checkId).click();
 
         // # Save scheme
         cy.get('#saveSetting').click().wait(TIMEOUTS.TWO_SEC);
@@ -57,37 +59,37 @@ describe('Team Scheme', () => {
         cy.url().should('include', '/admin_console/user_management/permissions');
 
         // * Verify the newly created scheme is visible
-        cy.findByTestId('permissions-scheme-summary').within(() => {
+        cy.get('[data-testid^="admin.permission_schemes.scheme:"]').within(() => {
             cy.get('.permissions-scheme-summary--header').should('include.text', schemeName);
             cy.get('.permissions-scheme-summary--teams').should('include.text', testTeam.display_name);
         });
 
         // * Verify permission got changed as expected
-        cy.findByTestId(schemeName + '-edit').click().wait(TIMEOUTS.HALF_SEC);
-        cy.findByTestId(checkId).should('not.have.class', 'checked');
+        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeName).findByTestId('admin.permission_schemes.scheme.edit--link').click().wait(TIMEOUTS.HALF_SEC);
+        permissionToggle(checkId).should('not.have.class', 'checked');
     });
 
     it('MM-T2857 Delete Scheme', () => {
         // # Click `Delete` for the scheme created above
-        cy.findByTestId(schemeName + '-delete').click().wait(TIMEOUTS.HALF_SEC);
+        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeName).findByTestId('admin.permission_schemes.scheme.delete--link').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Click `Cancel` on the confirmation dialog
         cy.get('#cancelModalButton').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
 
         // * Verify the scheme is still visibile
-        cy.findByTestId('permissions-scheme-summary').within(() => {
+        cy.get('[data-testid^="admin.permission_schemes.scheme:"]').within(() => {
             cy.get('.permissions-scheme-summary--header').should('include.text', schemeName);
             cy.get('.permissions-scheme-summary--teams').should('include.text', testTeam.display_name);
         });
 
         // # Click `Delete` for the scheme created above
-        cy.findByTestId(schemeName + '-delete').click().wait(TIMEOUTS.HALF_SEC);
+        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeName).findByTestId('admin.permission_schemes.scheme.delete--link').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Click `Yes, Delete` on the confirmation dialog
         cy.get('#confirmModalButton').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
 
         // * Verify the scheme is not visibile anymore
-        cy.findByTestId('permissions-scheme-summary').should('not.exist');
+        cy.get('[data-testid^="admin.permission_schemes.scheme:"]').should('not.exist');
     });
 });
 

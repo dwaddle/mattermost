@@ -71,14 +71,14 @@ describe('components/admin_console/health_dashboard/finding_row', () => {
         expect(screen.getByText('Push notification server is not HTTPS')).toBeInTheDocument();
         expect(screen.getByText('The push server uses http://.')).toBeInTheDocument();
         expect(screen.getByText('Critical')).toBeInTheDocument();
-        expect(screen.getByTestId('healthFindingArea')).toHaveTextContent('Notifications');
+        expect(screen.getByTestId('admin.health.finding.area--text')).toHaveTextContent('Notifications');
         expect(header().getByText('Firing for 1m')).toBeInTheDocument();
     });
 
     test('hideArea omits the area tag', () => {
         renderRow(makeFinding(), {hideArea: true});
 
-        expect(screen.queryByTestId('healthFindingArea')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.health.finding.area--text')).not.toBeInTheDocument();
     });
 
     test('an unknown finding shows its message as the cause and how long it has been unevaluated', () => {
@@ -235,7 +235,7 @@ describe('components/admin_console/health_dashboard/finding_row', () => {
                 {state: {entities: {users: {profiles: {user1: {id: 'user1', username: 'alice', first_name: '', last_name: '', nickname: ''}}}}}},
             );
 
-            expect(screen.getByTestId('healthFindingMutedBy')).toHaveTextContent('Muted by @alice 3 hours ago');
+            expect(screen.getByTestId('admin.health.finding.muted_by--text')).toHaveTextContent('Muted by @alice 3 hours ago');
             expect(screen.queryByRole('button', {name: 'Mute'})).not.toBeInTheDocument();
 
             await userEvent.click(screen.getByRole('button', {name: 'Unmute'}));
@@ -249,7 +249,7 @@ describe('components/admin_console/health_dashboard/finding_row', () => {
                 {state: {entities: {users: {profiles: {user1: {id: 'user1', username: 'alice', first_name: '', last_name: '', nickname: ''}}}}}},
             );
 
-            expect(screen.getByTestId('healthFindingMutedBy')).toHaveTextContent('Muted by @alice just now');
+            expect(screen.getByTestId('admin.health.finding.muted_by--text')).toHaveTextContent('Muted by @alice just now');
         });
 
         test('the muter is shown by full name, with their avatar, when names are displayed that way', () => {
@@ -261,7 +261,7 @@ describe('components/admin_console/health_dashboard/finding_row', () => {
                 }}},
             );
 
-            const mutedBy = screen.getByTestId('healthFindingMutedBy');
+            const mutedBy = screen.getByTestId('admin.health.finding.muted_by--text');
             expect(mutedBy).toHaveTextContent('Muted by Alice Liddell 3 hours ago');
             expect(mutedBy.querySelector('img')).toHaveAttribute('src', expect.stringContaining('/users/user1/image'));
         });
@@ -269,7 +269,7 @@ describe('components/admin_console/health_dashboard/finding_row', () => {
         test('an unmuted finding shows no muted attribution', () => {
             renderRow(makeFinding());
 
-            expect(screen.queryByTestId('healthFindingMutedBy')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('admin.health.finding.muted_by--text')).not.toBeInTheDocument();
         });
     });
 });

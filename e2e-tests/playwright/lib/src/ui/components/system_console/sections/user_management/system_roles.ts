@@ -29,15 +29,15 @@ export default class SystemRoles {
     constructor(container: Locator) {
         this.container = container;
 
-        this.backLink = container.getByTestId('adminHeader-backLink');
-        this.roleName = container.getByTestId('adminHeader-roleName');
+        this.backLink = container.getByTestId('admin.role.back--link');
+        this.roleName = container.getByTestId('admin.role.name--text');
 
         this.privilegesPanel = new PrivilegesPanel(container.locator('#SystemRolePermissions'));
         this.assignedPeoplePanel = new AssignedPeoplePanel(container.locator('#SystemRoleUsers'));
 
-        this.saveButton = container.getByTestId('saveSetting');
-        this.cancelButton = container.getByRole('link', {name: 'Cancel'});
-        this.errorMessage = container.getByTestId('saveChangesPanel-errorMessage');
+        this.saveButton = container.getByTestId('admin.role.save_panel.save--button');
+        this.cancelButton = container.getByTestId('admin.role.save_panel.cancel--link');
+        this.errorMessage = container.getByTestId('admin.role.save_panel.error--text');
     }
 
     async toBeVisible() {
@@ -85,16 +85,16 @@ class PrivilegesPanel {
         this.description = container.getByText('Level of access to the system console.');
 
         // Permission sections
-        this.about = new PermissionSection(container, 'permission_section_about');
-        this.reporting = new PermissionSection(container, 'permission_section_reporting');
-        this.userManagement = new PermissionSection(container, 'permission_section_user_management');
-        this.environment = new PermissionSection(container, 'permission_section_environment');
-        this.siteConfiguration = new PermissionSection(container, 'permission_section_site');
-        this.authentication = new PermissionSection(container, 'permission_section_authentication');
-        this.plugins = new PermissionSection(container, 'permission_section_plugins');
-        this.integrations = new PermissionSection(container, 'permission_section_integrations');
-        this.compliance = new PermissionSection(container, 'permission_section_compliance');
-        this.experimental = new PermissionSection(container, 'permission_section_experimental');
+        this.about = new PermissionSection(container, 'about');
+        this.reporting = new PermissionSection(container, 'reporting');
+        this.userManagement = new PermissionSection(container, 'user_management');
+        this.environment = new PermissionSection(container, 'environment');
+        this.siteConfiguration = new PermissionSection(container, 'site');
+        this.authentication = new PermissionSection(container, 'authentication');
+        this.plugins = new PermissionSection(container, 'plugins');
+        this.integrations = new PermissionSection(container, 'integrations');
+        this.compliance = new PermissionSection(container, 'compliance');
+        this.experimental = new PermissionSection(container, 'experimental');
     }
 
     async toBeVisible() {
@@ -113,24 +113,22 @@ class PermissionSection {
     readonly subsectionsContainer: Locator;
 
     private readonly panelContainer: Locator;
-    private readonly testId: string;
     private readonly sectionName: string;
 
-    constructor(panelContainer: Locator, testId: string) {
+    /** @param sectionName the permission section, e.g. 'user_management' */
+    constructor(panelContainer: Locator, sectionName: string) {
         this.panelContainer = panelContainer;
-        this.testId = testId;
-        // Extract section name from testId (e.g., 'permission_section_user_management' -> 'user_management')
-        this.sectionName = testId.replace('permission_section_', '');
+        this.sectionName = sectionName;
 
-        this.container = panelContainer.getByTestId(testId);
-        // Use data-testid to find the row containing this section
-        this.row = panelContainer.getByTestId(`permissionRow_${this.sectionName}`);
-        this.title = this.container.getByTestId('permissionSection-title');
-        this.description = this.container.getByTestId('permissionSection-description');
-        this.subsectionsToggle = this.container.getByTestId('permissionSubsectionsToggle-button');
+        this.container = panelContainer.getByTestId(`admin.role.section:${sectionName}`);
+        // the row holds the section and, when expanded, its subsections
+        this.row = panelContainer.getByTestId(`admin.role.permission:${sectionName}`);
+        this.title = this.container.getByTestId('admin.role.section.title--text');
+        this.description = this.container.getByTestId('admin.role.section.description--text');
+        this.subsectionsToggle = this.container.getByTestId('admin.role.section.subsections_toggle--button');
         // Use the dropdown button ID which is more reliable
         this.dropdownButton = panelContainer.page().locator(`#systemRolePermissionDropdown${this.sectionName}`);
-        this.subsectionsContainer = this.row.getByTestId('permissionSubsections');
+        this.subsectionsContainer = this.row.getByTestId('admin.role.permission.subsections');
     }
 
     async toBeVisible() {
@@ -141,7 +139,7 @@ class PermissionSection {
      * Get the current permission value (e.g., "Can edit", "Read only", "No access", "Mixed access")
      */
     async getPermissionValue(): Promise<string> {
-        return (await this.dropdownButton.getByTestId('permissionDropdownButton-text').textContent()) ?? '';
+        return (await this.dropdownButton.getByTestId('admin.role.section.access--text').textContent()) ?? '';
     }
 
     /**
@@ -205,12 +203,11 @@ class PermissionSection {
     }
 
     /**
-     * Get a subsection by its testId suffix
-     * @param subsectionName - The suffix of the subsection testId (e.g., "team_statistics" for "permission_section_reporting_team_statistics")
+     * Get a subsection by its name within this section
+     * @param subsectionName - e.g. "team_statistics" for the "reporting_team_statistics" subsection
      */
     getSubsection(subsectionName: string): PermissionSubsection {
-        const subsectionTestId = `${this.testId}_${subsectionName}`;
-        return new PermissionSubsection(this.panelContainer, subsectionTestId);
+        return new PermissionSubsection(this.panelContainer, `${this.sectionName}_${subsectionName}`);
     }
 
     // Reporting subsections shortcuts
@@ -253,12 +250,12 @@ class PermissionSubsection {
 
     private readonly sectionName: string;
 
-    constructor(panelContainer: Locator, testId: string) {
-        this.container = panelContainer.getByTestId(testId);
-        this.title = this.container.getByTestId('permissionSection-title');
-        this.description = this.container.getByTestId('permissionSection-description');
-        // Extract section name from testId (e.g., 'permission_section_user_management_teams' -> 'user_management_teams')
-        this.sectionName = testId.replace('permission_section_', '');
+    /** @param sectionName the subsection, e.g. 'user_management_teams' */
+    constructor(panelContainer: Locator, sectionName: string) {
+        this.container = panelContainer.getByTestId(`admin.role.section:${sectionName}`);
+        this.title = this.container.getByTestId('admin.role.section.title--text');
+        this.description = this.container.getByTestId('admin.role.section.description--text');
+        this.sectionName = sectionName;
         // Use the dropdown button ID which is more reliable
         this.dropdownButton = panelContainer.page().locator(`#systemRolePermissionDropdown${this.sectionName}`);
     }
@@ -271,7 +268,7 @@ class PermissionSubsection {
      * Get the current permission value (e.g., "Can edit", "Read only", "No access")
      */
     async getPermissionValue(): Promise<string> {
-        return (await this.dropdownButton.getByTestId('permissionDropdownButton-text').textContent()) ?? '';
+        return (await this.dropdownButton.getByTestId('admin.role.section.access--text').textContent()) ?? '';
     }
 
     /**
@@ -316,11 +313,15 @@ class AssignedPeoplePanel {
         this.title = container.getByRole('heading', {name: 'Assigned People'});
         this.description = container.getByText('List of people assigned to this system role.');
         this.addPeopleButton = container.getByRole('button', {name: 'Add People'});
-        this.searchInput = container.getByTestId('searchInput');
-        this.userRows = container.getByTestId('dataGrid-rows').getByTestId('dataGrid-row');
-        this.paginationInfo = container.getByTestId('dataGrid-footer-paginationInfo');
-        this.previousPageButton = container.getByRole('button', {name: 'Previous page'});
-        this.nextPageButton = container.getByRole('button', {name: 'Next page'});
+        this.searchInput = container.getByTestId('admin.role.users.search--textbox');
+
+        // each row is `admin.role.users.row:<user id>`; its cells are `admin.role.users.row.cell:<column>`
+        this.userRows = container
+            .getByTestId('admin.role.users.rows')
+            .locator('[data-testid^="admin.role.users.row:"]');
+        this.paginationInfo = container.getByTestId('admin.role.users.footer.pagination--text');
+        this.previousPageButton = container.getByTestId('admin.role.users.footer.previous--button');
+        this.nextPageButton = container.getByTestId('admin.role.users.footer.next--button');
     }
 
     async toBeVisible() {
@@ -370,9 +371,9 @@ class AssignedUserRow {
     constructor(container: Locator) {
         this.container = container;
         this.avatar = container.locator('img').first();
-        this.name = container.getByTestId('userGrid-displayName');
-        this.email = container.getByTestId('userGrid-email');
-        this.removeLink = container.getByRole('link', {name: 'Remove'});
+        this.name = container.getByTestId('admin.role.users.row.display_name--text');
+        this.email = container.getByTestId('admin.role.users.row.email--text');
+        this.removeLink = container.getByTestId('admin.role.users.row.remove--button');
     }
 
     async toBeVisible() {

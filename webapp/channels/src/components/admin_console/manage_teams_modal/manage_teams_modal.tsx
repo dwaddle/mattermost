@@ -136,8 +136,12 @@ const ManageTeamsModal = ({locale, onExited, user, actions}: Props) => {
                     <div
                         key={team.id}
                         className='manage-teams__team'
+                        data-testid={`manage_teams_modal.team:${team.id}`}
                     >
-                        <div className='manage-teams__team-name'>
+                        <div
+                            className='manage-teams__team-name'
+                            data-testid='manage_teams_modal.team.name--text'
+                        >
                             {team.display_name}
                         </div>
                         <div className='manage-teams__team-actions'>
@@ -153,7 +157,10 @@ const ManageTeamsModal = ({locale, onExited, user, actions}: Props) => {
         let systemAdminIndicator = null;
         if (isSystemAdmin) {
             systemAdminIndicator = (
-                <div className='manage-teams__system-admin'>
+                <div
+                    className='manage-teams__system-admin'
+                    data-testid='manage_teams_modal.system_admin--text'
+                >
                     <FormattedMessage
                         id='admin.user_item.sysAdmin'
                         defaultMessage='System Admin'
@@ -171,10 +178,16 @@ const ManageTeamsModal = ({locale, onExited, user, actions}: Props) => {
                         size='lg'
                     />
                     <div className='manage-teams__info'>
-                        <div className='manage-teams__name'>
+                        <div
+                            className='manage-teams__name'
+                            data-testid='manage_teams_modal.name--text'
+                        >
                             {name}
                         </div>
-                        <div className='manage-teams__email'>
+                        <div
+                            className='manage-teams__email'
+                            data-testid='manage_teams_modal.email--text'
+                        >
                             {user.email}
                         </div>
                     </div>
@@ -196,6 +209,7 @@ const ManageTeamsModal = ({locale, onExited, user, actions}: Props) => {
             role='none'
             aria-labelledby='manageTeamsModalLabel'
             id='manageTeamsModal'
+            data-testid='manage_teams_modal'
         >
             <Modal.Header closeButton={true}>
                 <Modal.Title

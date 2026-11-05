@@ -45,7 +45,7 @@ class AdminRolesPanel {
         this.container = container;
         this.title = container.getByRole('heading', {name: 'Admin Roles'});
         this.description = container.getByText('Manage different levels of access to the system console.');
-        this.dataGrid = new DataGrid(container.getByTestId('dataGrid'));
+        this.dataGrid = new DataGrid(container.getByTestId('admin.roles'));
     }
 
     async toBeVisible() {
@@ -89,33 +89,33 @@ class DataGrid {
 
     constructor(container: Locator) {
         this.container = container;
-        this.header = container.getByTestId('dataGrid-header');
-        this.rows = container.getByTestId('dataGrid-rows');
+        this.header = container.getByTestId('admin.roles.header');
+        this.rows = container.getByTestId('admin.roles.rows');
 
         // Individual role rows
         this.systemAdmin = new RoleRow(
-            this.rows.getByTestId('dataGrid-row').filter({hasText: 'System Admin'}),
-            'system_admin_edit',
+            this.rows.getByTestId('admin.roles.row:system_admin'),
+            'admin.roles.edit:system_admin',
         );
         this.systemManager = new RoleRow(
-            this.rows.getByTestId('dataGrid-row').filter({hasText: 'System Manager'}),
-            'system_manager_edit',
+            this.rows.getByTestId('admin.roles.row:system_manager'),
+            'admin.roles.edit:system_manager',
         );
         this.userManager = new RoleRow(
-            this.rows.getByTestId('dataGrid-row').filter({hasText: 'User Manager'}),
-            'system_user_manager_edit',
+            this.rows.getByTestId('admin.roles.row:system_user_manager'),
+            'admin.roles.edit:system_user_manager',
         );
         this.customGroupManager = new RoleRow(
-            this.rows.getByTestId('dataGrid-row').filter({hasText: 'Custom Group Manager'}),
-            'system_custom_group_admin_edit',
+            this.rows.getByTestId('admin.roles.row:system_custom_group_admin'),
+            'admin.roles.edit:system_custom_group_admin',
         );
         this.sharedChannelManager = new RoleRow(
-            this.rows.getByTestId('dataGrid-row').filter({hasText: 'Shared Channel Manager'}),
-            'system_shared_channel_manager_edit',
+            this.rows.getByTestId('admin.roles.row:system_shared_channel_manager'),
+            'admin.roles.edit:system_shared_channel_manager',
         );
         this.viewer = new RoleRow(
-            this.rows.getByTestId('dataGrid-row').filter({hasText: 'Viewer'}),
-            'system_read_only_admin_edit',
+            this.rows.getByTestId('admin.roles.row:system_read_only_admin'),
+            'admin.roles.edit:system_read_only_admin',
         );
     }
 
@@ -134,11 +134,10 @@ class RoleRow {
     constructor(container: Locator, editTestId: string) {
         this.container = container;
 
-        const cells = container.getByTestId('dataGrid-cell');
-        this.roleName = cells.nth(0);
-        this.description = cells.nth(1);
-        this.type = cells.nth(2);
-        this.editLink = container.getByTestId(editTestId).getByRole('link', {name: 'Edit'});
+        this.roleName = container.getByTestId('admin.roles.row.cell:role');
+        this.description = container.getByTestId('admin.roles.row.cell:description');
+        this.type = container.getByTestId('admin.roles.row.cell:type');
+        this.editLink = container.getByTestId(`${editTestId}--link`);
     }
 
     async toBeVisible() {

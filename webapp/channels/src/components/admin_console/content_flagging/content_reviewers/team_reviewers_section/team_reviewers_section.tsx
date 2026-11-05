@@ -124,6 +124,7 @@ export default function TeamReviewers({teamReviewersSetting, onChange, disabled}
 
     const rows = useMemo(() => {
         return teams.map((team) => ({
+            testKey: team.id,
             cells: {
                 id: team.id,
                 team: (
@@ -135,7 +136,7 @@ export default function TeamReviewers({teamReviewersSetting, onChange, disabled}
                             intl={intl}
                         />
                         <span
-                            data-testid='teamName'
+                            data-testid={`admin.content_flagging.reviewers.team_name:${team.id}--text`}
                             className='TeamReviewers__team-name'
                         >
                             {team.display_name}
@@ -158,7 +159,7 @@ export default function TeamReviewers({teamReviewersSetting, onChange, disabled}
                         onChange={getHandleToggle(team.id)}
                         checked={teamReviewersSetting[team.id]?.Enabled || false}
                         disabled={disabled}
-                        data-testid={`team_content_reviewer_toggle_${team.id}-button`}
+                        data-testid={`admin.content_flagging.reviewers.enabled:${team.id}--switch`}
                         tabIndex={0}
                         aria-label={intl.formatMessage({id: 'admin.dataSpillage.reviewerSettings.toggle', defaultMessage: 'Enable or disable content reviewers for team {teamName}'}, {teamName: team.display_name})}
                     />
@@ -200,7 +201,7 @@ export default function TeamReviewers({teamReviewersSetting, onChange, disabled}
     const disableAllBtn = useMemo(() => (
         <div className='TeamReviewers__disable-all'>
             <Button
-                data-testid='disableForAllTeamsButton'
+                data-testid='admin.content_flagging.reviewers.disable_all--button'
                 emphasis='link'
                 className='icon-close'
                 aria-label={intl.formatMessage({id: 'admin.dataSpillage.reviewerSettings.disableAll', defaultMessage: 'Disable for all teams'})}
@@ -216,6 +217,7 @@ export default function TeamReviewers({teamReviewersSetting, onChange, disabled}
     return (
         <div className='TeamReviewers'>
             <DataGrid
+                testIdScope='admin.content_flagging.reviewers.teams'
                 rows={rows}
                 columns={columns}
                 startCount={startCount}

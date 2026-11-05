@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import React from 'react';
 import type {MessageDescriptor} from 'react-intl';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
+
 import {LicenseSkuBadge} from 'components/widgets/badges';
 
 import AdminPanel from './admin_panel';
@@ -17,6 +19,9 @@ type Props = {
     licenseSku?: string;
     children: React.ReactNode;
     'data-testid'?: string;
+
+    // The panel's parts: `.description--text`, `.body` (without it, the legacy ids). Unkeyed when the panel is keyed.
+    testIdScope?: TestIdScope;
 };
 
 function asMessageDescriptor(value: string | MessageDescriptor): MessageDescriptor {
@@ -33,6 +38,7 @@ const AdminSectionPanel: React.FC<Props> = ({
     licenseSku,
     children,
     'data-testid': dataTestId,
+    testIdScope,
 }) => {
     // Schema sections without a title/description still need a body wrapper for layout
     // and test hooks; Compass AdminPanel requires a title so skip the panel chrome.
@@ -42,7 +48,7 @@ const AdminSectionPanel: React.FC<Props> = ({
                 className='AdminSectionPanel'
                 data-testid={dataTestId}
             >
-                <div data-testid='admin-section-panel-body'>
+                <div data-testid={testIdScope ? `${testIdScope}.body` : 'admin-section-panel-body'}>
                     {children}
                 </div>
             </div>
@@ -51,6 +57,7 @@ const AdminSectionPanel: React.FC<Props> = ({
 
     const titleDescriptor = title ? asMessageDescriptor(title) : undefined;
     const descriptionDescriptor = description ? asMessageDescriptor(description) : undefined;
+    const descriptionTestId = descriptionDescriptor && testIdScope ? `${testIdScope}.description--text` : undefined;
 
     return (
         <AdminPanel
@@ -62,8 +69,10 @@ const AdminSectionPanel: React.FC<Props> = ({
             subtitle={titleDescriptor ? descriptionDescriptor : undefined}
             button={licenseSku ? <LicenseSkuBadge sku={licenseSku}/> : undefined}
             data-testid={dataTestId}
+            titleTestId={descriptionTestId && !titleDescriptor ? descriptionTestId : undefined}
+            subtitleTestId={descriptionTestId && titleDescriptor ? descriptionTestId : undefined}
         >
-            <div data-testid='admin-section-panel-body'>
+            <div data-testid={testIdScope ? `${testIdScope}.body` : 'admin-section-panel-body'}>
                 {children}
             </div>
         </AdminPanel>

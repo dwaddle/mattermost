@@ -38,6 +38,11 @@ import type {
     RhsControl,
 } from './sets';
 
+/** The read-only parts of a `admin.group.members.row` item. */
+export type DataGridRowRow = {
+    displayName: string | null;
+    email: string | null;
+};
 /** The read-only parts of a `center.post_list.post` item. */
 export type PostItemRow = {
     edited: string | null;
@@ -55,8 +60,8 @@ export type TokenExpiryPickerFormValues = {
     expiry: string;
     expiryDate?: string;
 };
-/** Rendered at `add_groups_to_channel_modal.groups`, `add_groups_to_team_modal.groups`, `add_users_to_role_modal.users`, `channel_selector_modal.channels`, `team_selector_modal.teams`: one class, constructed with the scope it is mounted at. */
-export class AddGroupsToChannelModalGroups extends Scope {
+/** Rendered at `add_groups_to_channel_modal.groups`, `add_groups_to_team_modal.groups`: one class, constructed with the scope it is mounted at. */
+export class Groups extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
@@ -101,7 +106,7 @@ export class AddGroupsToChannelModalGroups extends Scope {
         return drivers.button(this.byTestId(`${this.scope}.next--button`), {
             testId: `${this.scope}.next--button`,
             role: 'button',
-            effects: [Api.GetAllChannels, Api.GetAllTeams, Api.GetGroups, Api.GetUsers],
+            effects: [Api.GetGroups],
             unknownEffects: false,
             source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
         });
@@ -119,7 +124,7 @@ export class AddGroupsToChannelModalGroups extends Scope {
         return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
             testId: `${this.scope}.previous--button`,
             role: 'button',
-            effects: [Api.GetAllChannels, Api.GetAllTeams, Api.GetGroups, Api.GetUsers],
+            effects: [Api.GetGroups],
             unknownEffects: false,
             source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
         });
@@ -159,12 +164,7 @@ export class AddGroupsToChannelModalGroups extends Scope {
         return drivers.button(this.byTestId(`${this.scope}.save--button`), {
             testId: `${this.scope}.save--button`,
             role: 'button',
-            effects: [
-                Api.AddTeamMember,
-                Api.ChannelMembersMinusGroupMembers,
-                Api.LinkGroupSyncable,
-                Api.TeamMembersMinusGroupMembers,
-            ],
+            effects: [Api.ChannelMembersMinusGroupMembers, Api.LinkGroupSyncable, Api.TeamMembersMinusGroupMembers],
             unknownEffects: false,
             source: 'channels/src/components/save_button.tsx#SaveButton',
         });
@@ -383,6 +383,572 @@ export class Users extends Scope {
                 source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
             }),
         );
+    }
+}
+
+/** Rendered at `admin.accept_invite_modal.destination_team`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
+export class DropdownInput extends Scope {
+    /**
+     * `admin.accept_invite_modal.destination_team.menu` — makeMenu (channels/src/components/dropdown_input.tsx)
+     * Renders only when !isPendingState(saving).
+     */
+    get menu(): DropdownInputMenu {
+        return new DropdownInputMenu(this.page, `${this.scope}.menu`, this.root);
+    }
+}
+
+/** Rendered at `admin.accept_invite_modal.destination_team.menu`, `admin.secure_connection.destination_team.menu`, `admin.users.filters.role.menu`, `admin.users.filters.status.menu`, `channel_settings_modal.configuration.classification_level.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
+export class DropdownInputMenu extends Scope {
+    /**
+     * `admin.accept_invite_modal.destination_team.menu.option:{key}--option` — makeOption (channels/src/components/dropdown_input.tsx)
+     * Renders only when !isPendingState(saving).
+     */
+    option(option: string) {
+        return drivers.option(this.byTestId(`${this.scope}.option:${option}--option`), {
+            testId: `${this.scope}.option:${option}--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/dropdown_input.tsx#makeOption',
+        });
+    }
+
+    /** Every `admin.accept_invite_modal.destination_team.menu.option:{key}--option` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '--option');
+    }
+
+    /** The keys of every `admin.accept_invite_modal.destination_team.menu.option:{key}--option` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '--option');
+    }
+
+    /** Every `admin.accept_invite_modal.destination_team.menu.option:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(`${this.scope}.option:`, '--option', (key: string) =>
+            drivers.option(this.byTestId(`${this.scope}.option:${key}--option`), {
+                testId: `${this.scope}.option:${key}--option`,
+                role: 'option',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/dropdown_input.tsx#makeOption',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.channel.archive_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`: one class, constructed with the scope it is mounted at. */
+export class ConfirmModal extends Scope {
+    /**
+     * `admin.channel.archive_modal.cancel--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
+     * Renders only when channel and !hideCancel.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `admin.channel.archive_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when channel and showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `admin.channel.archive_modal.confirm--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
+     * Renders only when channel and !hideConfirm.
+     * Opens modal ChannelAccessRulesConfirmModal (`channel_access_rules_confirm_modal.users`).
+     * Goes to '/admin_console/user_management/channels'.
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [
+                Api.AddChannelMember,
+                Api.AddTeamMember,
+                Api.AssignAccessControlPolicyToChannels,
+                Api.CreateAccessControlPolicy,
+                Api.CreateJob,
+                Api.DeleteAccessControlPolicy,
+                Api.DeleteChannel,
+                Api.DeleteScheme,
+                Api.GetChannelMembers,
+                Api.GetChannelModerations,
+                Api.GetGroupsByChannel,
+                Api.GetGroupsByTeam,
+                Api.GetUser,
+                Api.GetUsersByIds,
+                Api.GetUsersStatusesByIds,
+                Api.LinkGroupSyncable,
+                Api.ListCPAValues,
+                Api.Logout,
+                Api.PatchCPAValuesForUser,
+                Api.PatchChannel,
+                Api.PatchChannelModerations,
+                Api.PatchConfig,
+                Api.PatchGroupSyncable,
+                Api.PatchTeam,
+                Api.PatchUser,
+                Api.RemovePlugin,
+                Api.RemoveTeamMember,
+                Api.RemoveUserFromChannel,
+                Api.RestoreChannel,
+                Api.RestoreTeam,
+                Api.RevokeNonCompliantUserAccessTokens,
+                Api.RevokeSessionsFromAllUsers,
+                Api.SoftDeleteTeam,
+                Api.TestAccessControlPolicyExpression,
+                Api.UnassignAccessControlPolicyFromChannels,
+                Api.UnlinkGroupSyncable,
+                Api.UpdateChannelMemberSchemeRoles,
+                Api.UpdateChannelPrivacy,
+                Api.UpdateTeamMemberSchemeRoles,
+                Api.UpdateUserActive,
+                Api.UpdateUserAuth,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
+        });
+    }
+
+    /** Clicks confirmButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickConfirmButton(): Promise<SearchableUserList> {
+        await this.confirmButton.click();
+        return new SearchableUserList(this.page, 'channel_access_rules_confirm_modal.users');
+    }
+}
+
+/** Rendered at `admin.channel.members.footer`, `admin.channels.footer`, `admin.content_flagging.reviewers.teams.footer`, `admin.data_retention.custom_policies.footer`, `admin.data_retention.global_policy.footer`, `admin.data_retention.policy.channels.footer`, `admin.data_retention.policy.teams.footer`, `admin.group.members.footer`, `admin.role.users.footer`, `admin.roles.footer`, `admin.team.members.footer`, `admin.teams.footer`, `users_to_be_removed_modal.users.footer`: one class, constructed with the scope it is mounted at. */
+export class Footer extends Scope {
+    /**
+     * `admin.channel.members.footer.next--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when total.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [
+                Api.GetAllChannels,
+                Api.GetAllTeams,
+                Api.GetChannelMembersByIds,
+                Api.GetChannelsForRetentionPolicy,
+                Api.GetDataRetentionPolicies,
+                Api.GetEmojisByNames,
+                Api.GetTeamMembersByIds,
+                Api.GetTeamsForRetentionPolicy,
+                Api.GetUsers,
+                Api.GetUsersByIds,
+                Api.GetUsersStatusesByIds,
+                Api.SearchAllChannels,
+                Api.SearchTeams,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `admin.channel.members.footer.pagination--text` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     * Renders only when total.
+     */
+    get paginationText() {
+        return drivers.text(this.byTestId(`${this.scope}.pagination--text`), {
+            testId: `${this.scope}.pagination--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
+        });
+    }
+
+    getPaginationText(): Promise<string> {
+        return this.paginationText.text();
+    }
+
+    /**
+     * `admin.channel.members.footer.previous--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when total.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [
+                Api.GetChannelMembersByIds,
+                Api.GetChannelsForRetentionPolicy,
+                Api.GetDataRetentionPolicies,
+                Api.GetEmojisByNames,
+                Api.GetTeamMembersByIds,
+                Api.GetTeamsForRetentionPolicy,
+                Api.GetUsers,
+                Api.GetUsersByIds,
+                Api.GetUsersStatusesByIds,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+}
+
+/** Rendered at `admin.group.members`, `users_to_be_removed_modal.users`: one class, constructed with the scope it is mounted at. */
+export class DataGrid extends Scope {
+    /**
+     * `admin.group.members.header` — DataGridHeader (channels/src/components/admin_console/data_grid/data_grid_header.tsx)
+     */
+    get header() {
+        return drivers.container(this.byTestId(`${this.scope}.header`), {
+            testId: `${this.scope}.header`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader',
+        });
+    }
+
+    /**
+     * `admin.group.members.rows` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get rows() {
+        return drivers.container(this.byTestId(`${this.scope}.rows`), {
+            testId: `${this.scope}.rows`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
+        });
+    }
+
+    /**
+     * `admin.group.members.search--textbox` — DataGridSearch (channels/src/components/admin_console/data_grid/data_grid_search.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_search.tsx#DataGridSearch',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.group.members.footer` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     * Renders only when total.
+     */
+    get footer(): Footer {
+        return new Footer(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.group.members.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    row(row: string): DataGridRow {
+        return new DataGridRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.group.members.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.group.members.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /** Every `admin.group.members.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) => new DataGridRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Rendered at `admin.group.members.row`, `users_to_be_removed_modal.users.row`: one class, constructed with the scope it is mounted at. */
+export class DataGridRow extends Scope {
+    /**
+     * `admin.group.members.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.group.members.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.group.members.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.group.members.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.group.members.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.group.members.row.display_name--text` — UserGridName (channels/src/components/admin_console/user_grid/user_grid_name.tsx)
+     */
+    get displayNameText() {
+        return drivers.text(this.byTestId(`${this.scope}.display_name--text`), {
+            testId: `${this.scope}.display_name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/user_grid/user_grid_name.tsx#UserGridName',
+        });
+    }
+
+    getDisplayNameText(): Promise<string> {
+        return this.displayNameText.text();
+    }
+
+    /**
+     * `admin.group.members.row.email--text` — UserGridName (channels/src/components/admin_console/user_grid/user_grid_name.tsx)
+     */
+    get emailText() {
+        return drivers.text(this.byTestId(`${this.scope}.email--text`), {
+            testId: `${this.scope}.email--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/user_grid/user_grid_name.tsx#UserGridName',
+        });
+    }
+
+    getEmailText(): Promise<string> {
+        return this.emailText.text();
+    }
+
+    /**
+     * `admin.group.members.row.name` — UserGridName (channels/src/components/admin_console/user_grid/user_grid_name.tsx)
+     */
+    get name() {
+        return drivers.container(this.byTestId(`${this.scope}.name`), {
+            testId: `${this.scope}.name`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/user_grid/user_grid_name.tsx#UserGridName',
+        });
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<DataGridRowRow> {
+        return {
+            displayName: await this.displayNameText.textIfPresent(),
+            email: await this.emailText.textIfPresent(),
+        };
+    }
+
+    /** Every `admin.group.members.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.revoke_tokens.error`, `admin.revoke_tokens.revoked`, `admin.revoke_tokens.status`, `channel_invite_modal.team_warning`, `channel_notifications_modal.muted_banner`, `integrations.bot_create_warnings`: one class, constructed with the scope it is mounted at. */
+export class AlertBanner extends Scope {
+    /**
+     * `admin.revoke_tokens.error.close--button` — AlertBanner (channels/src/components/alert_banner/index.tsx)
+     * Renders only when error.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/alert_banner/index.tsx#AlertBanner',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+}
+
+/** Rendered at `admin.setting.color`, `channel_settings_modal.configuration.banner_color`: one class, constructed with the scope it is mounted at. */
+export class ColorInput extends Scope {
+    /**
+     * `admin.setting.color.picker` — ColorInput (channels/src/components/color_input.tsx)
+     * Renders only when isOpened.
+     */
+    get picker() {
+        return drivers.container(this.byTestId(`${this.scope}.picker`), {
+            testId: `${this.scope}.picker`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/color_input.tsx#ColorInput',
+        });
+    }
+
+    /**
+     * `admin.setting.color.swatch` — ColorInput (channels/src/components/color_input.tsx)
+     */
+    get swatch() {
+        return drivers.container(this.byTestId(`${this.scope}.swatch`), {
+            testId: `${this.scope}.swatch`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/color_input.tsx#ColorInput',
+        });
+    }
+
+    /**
+     * `admin.setting.color.toggle--button` — ColorInput (channels/src/components/color_input.tsx)
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/color_input.tsx#ColorInput',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
+    }
+
+    /**
+     * `admin.setting.color.value--textbox` — ColorInput (channels/src/components/color_input.tsx)
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/color_input.tsx#ColorInput',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+}
+
+/** Rendered at `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`: one class, constructed with the scope it is mounted at. */
+export class Input extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.team.description.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get field() {
+        return drivers.container(this.byTestId(`${this.scope}.field`), {
+            testId: `${this.scope}.field`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.team.description.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get messageAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
+            testId: `${this.scope}.message--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.team.description.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
     }
 }
 
@@ -919,60 +1485,6 @@ export class PostCreateAiActionsRewrite extends Scope {
 
     get prompt(): Input {
         return new Input(this.page, `${this.scope}.prompt`, this.root);
-    }
-}
-
-/** Rendered at `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`: one class, constructed with the scope it is mounted at. */
-export class Input extends Scope {
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `center.post_create.ai_actions.rewrite.prompt.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     * Renders only when hasItems and hasActiveSubmenu && isMenuOpen and isRewriteSubmenu && rewriteMenuProps.
-     */
-    get field() {
-        return drivers.container(this.byTestId(`${this.scope}.field`), {
-            testId: `${this.scope}.field`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `center.post_create.ai_actions.rewrite.prompt.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     * Renders only when hasItems and hasActiveSubmenu && isMenuOpen and isRewriteSubmenu && rewriteMenuProps.
-     */
-    get messageAlert() {
-        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
-            testId: `${this.scope}.message--alert`,
-            role: 'alert',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `center.post_create.ai_actions.rewrite.prompt.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     * Renders only when hasItems and hasActiveSubmenu && isMenuOpen and isRewriteSubmenu && rewriteMenuProps.
-     */
-    get messageText() {
-        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
-            testId: `${this.scope}.message--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    getMessageText(): Promise<string> {
-        return this.messageText.text();
     }
 }
 
@@ -3482,28 +3994,7 @@ export class MoveToMenu extends Scope {
     }
 }
 
-/** Rendered at `channel_invite_modal.team_warning`, `channel_notifications_modal.muted_banner`, `integrations.bot_create_warnings`: one class, constructed with the scope it is mounted at. */
-export class AlertBanner extends Scope {
-    /**
-     * `channel_invite_modal.team_warning.close--button` — AlertBanner (channels/src/components/alert_banner/index.tsx)
-     * Renders only when users.length > 0 || guests.length > 0.
-     */
-    get closeButton() {
-        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
-            testId: `${this.scope}.close--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/alert_banner/index.tsx#AlertBanner',
-        });
-    }
-
-    async clickCloseButton(): Promise<void> {
-        await this.closeButton.click();
-    }
-}
-
-/** Rendered at `channel_invite_modal.users.results`, `add_groups_to_channel_modal.groups.results`, `add_groups_to_team_modal.groups.results`, `add_users_to_group_modal.users.results`, `add_users_to_role_modal.users.results`, `channel_selector_modal.channels.results`, `create_user_groups_modal.users.results`, `direct_messages_modal.list.results`, `team_selector_modal.teams.results`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `channel_invite_modal.users.results`, `add_groups_to_channel_modal.groups.results`, `add_groups_to_team_modal.groups.results`, `add_users_to_group_modal.users.results`, `create_user_groups_modal.users.results`, `direct_messages_modal.list.results`: one class, constructed with the scope it is mounted at. */
 export class Results extends Scope {
     /**
      * `channel_invite_modal.users.results.live_region` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
@@ -3774,57 +4265,6 @@ export class ChannelSettingsModalConfigurationBannerText extends Scope {
     }
 }
 
-/** Rendered at `channel_settings_modal.configuration.classification_level`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
-export class ClassificationLevel extends Scope {
-    /**
-     * `channel_settings_modal.configuration.classification_level.menu` — makeMenu (channels/src/components/dropdown_input.tsx)
-     * Renders only when canManageClassification and classificationEnabled.
-     */
-    get menu(): ClassificationLevelMenu {
-        return new ClassificationLevelMenu(this.page, `${this.scope}.menu`, this.root);
-    }
-}
-
-/** Rendered at `channel_settings_modal.configuration.classification_level.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
-export class ClassificationLevelMenu extends Scope {
-    /**
-     * `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` — makeOption (channels/src/components/dropdown_input.tsx)
-     * Renders only when canManageClassification and classificationEnabled.
-     */
-    option(option: string) {
-        return drivers.option(this.byTestId(`${this.scope}.option:${option}--option`), {
-            testId: `${this.scope}.option:${option}--option`,
-            role: 'option',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/dropdown_input.tsx#makeOption',
-        });
-    }
-
-    /** Every `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` in the scope. */
-    get optionItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.option:`, '--option');
-    }
-
-    /** The keys of every `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` in the scope, in document order. */
-    optionKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.option:`, '--option');
-    }
-
-    /** Every `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
-    get optionList() {
-        return this.keyedList(`${this.scope}.option:`, '--option', (key: string) =>
-            drivers.option(this.byTestId(`${this.scope}.option:${key}--option`), {
-                testId: `${this.scope}.option:${key}--option`,
-                role: 'option',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/dropdown_input.tsx#makeOption',
-            }),
-        );
-    }
-}
-
 /** Rendered at `channel_settings_modal.info.default_category`, `channel_settings_modal.info.managed_category`, `new_channel_modal.default_category`, `new_channel_modal.managed_category`: one class, constructed with the scope it is mounted at. */
 export class CategorySelector extends Scope {
     /**
@@ -4068,7 +4508,7 @@ export class SavePanel extends Scope {
     /**
      * `channel_settings_modal.save_panel.save--button` — SaveChangesPanel (channels/src/components/widgets/modals/components/save_changes_panel.tsx)
      * Opens modal ConfirmModal (`remove_sharing_modal`).
-     * Opens modal ConvertConfirmModal.
+     * Opens modal ConvertConfirmModal (`admin.convert_modal`).
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     get saveButton() {
@@ -4091,10 +4531,13 @@ export class SavePanel extends Scope {
         });
     }
 
-    /** Clicks saveButton and returns what it opens (modal); the page object is returned at once, with no wait. It can also open ConvertConfirmModal (no page object). */
-    async clickSaveButton(): Promise<RemoveSharingModal> {
+    /** Clicks saveButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickSaveButton(): Promise<{removeSharingModal: RemoveSharingModal; convertModal: ConfirmModal}> {
         await this.saveButton.click();
-        return new RemoveSharingModal(this.page, 'remove_sharing_modal');
+        return {
+            removeSharingModal: new RemoveSharingModal(this.page, 'remove_sharing_modal'),
+            convertModal: new ConfirmModal(this.page, 'admin.convert_modal'),
+        };
     }
 }
 
@@ -4710,62 +5153,5 @@ export class TeamSelectorMenu extends Scope {
                 source: 'channels/src/components/new_search/select_team.tsx#SelectTeam',
             }),
         );
-    }
-}
-
-/** Rendered at `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_settings_modal.access.mode_flip_modal`: one class, constructed with the scope it is mounted at. */
-export class ConfirmModal extends Scope {
-    /**
-     * `settings.access_tokens.confirm_modal.cancel--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
-     * Renders only when !hideCancel.
-     */
-    get cancelButton() {
-        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
-            testId: `${this.scope}.cancel--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
-        });
-    }
-
-    async clickCancelButton(): Promise<void> {
-        await this.cancelButton.click();
-    }
-
-    /**
-     * `settings.access_tokens.confirm_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
-     * Renders only when showHeader and showCloseButton.
-     */
-    get closeButton() {
-        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
-            testId: `${this.scope}.close--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
-        });
-    }
-
-    async clickCloseButton(): Promise<void> {
-        await this.closeButton.click();
-    }
-
-    /**
-     * `settings.access_tokens.confirm_modal.confirm--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
-     * Renders only when !hideConfirm.
-     */
-    get confirmButton() {
-        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
-            testId: `${this.scope}.confirm--button`,
-            role: 'button',
-            effects: [Api.GetUser, Api.PatchTeam, Api.UpdateTeamMemberSchemeRoles],
-            unknownEffects: false,
-            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
-        });
-    }
-
-    async clickConfirmButton(): Promise<void> {
-        await this.confirmButton.click();
     }
 }

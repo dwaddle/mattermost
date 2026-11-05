@@ -16,6 +16,7 @@ import {
     FixedPublicLinks,
 } from '@/utils';
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('SupportSettings', () => {
     const tosLink = 'https://github.com/mattermost/platform/blob/master/README.md';
@@ -41,8 +42,8 @@ describe('SupportSettings', () => {
 
     it('MM-T1032 - Customization: Custom Terms and Privacy links in the About modal', () => {
         // # Edit links in the TOS and Privacy fields
-        cy.findByTestId('SupportSettings.TermsOfServiceLinkinput').clear().type(tosLink);
-        cy.findByTestId('SupportSettings.PrivacyPolicyLinkinput').clear().type(privacyLink);
+        settingPart('SupportSettings.TermsOfServiceLink', 'value--textbox').clear().type(tosLink);
+        settingPart('SupportSettings.PrivacyPolicyLink', 'value--textbox').clear().type(privacyLink);
 
         // # Save setting then back to team view
         saveSetting();
@@ -58,7 +59,7 @@ describe('SupportSettings', () => {
 
     it('MM-T1034 - Customization: Blank TOS link field (About modal)', () => {
         // # Empty the "terms of services" field
-        cy.findByTestId('SupportSettings.TermsOfServiceLinkinput').type('any').clear();
+        settingPart('SupportSettings.TermsOfServiceLink', 'value--textbox').type('any').clear();
 
         // # Save setting then back to team view
         saveSetting();
@@ -72,7 +73,7 @@ describe('SupportSettings', () => {
     });
 
     it('MM-T1035 - Customization Blank Privacy hides the link', () => {
-        cy.findByTestId('SupportSettings.PrivacyPolicyLinkinput').clear();
+        settingPart('SupportSettings.PrivacyPolicyLink', 'value--textbox').clear();
 
         // # Save setting then back to team view
         saveSetting();

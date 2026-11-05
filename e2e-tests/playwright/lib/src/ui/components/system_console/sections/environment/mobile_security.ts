@@ -36,15 +36,17 @@ export default class MobileSecurity {
         this.header = container.getByText('Mobile Security', {exact: true});
 
         this.generalMobileSecurity = new GeneralMobileSecurityPanel(
-            container.getByTestId('MobileSecuritySettings.General'),
+            container.getByTestId('admin.section:MobileSecuritySettings_General'),
         );
-        this.microsoftIntune = new MicrosoftIntunePanel(container.getByTestId('MobileSecuritySettings.Intune'));
+        this.microsoftIntune = new MicrosoftIntunePanel(
+            container.getByTestId('admin.section:MobileSecuritySettings_Intune'),
+        );
         this.mobileEphemeralMode = new MobileEphemeralModePanel(
-            container.getByTestId('MobileSecuritySettings.EphemeralMode'),
+            container.getByTestId('admin.section:MobileSecuritySettings_EphemeralMode'),
         );
 
         this.saveButton = container.getByRole('button', {name: 'Save'});
-        this.errorMessage = container.getByTestId('errorMessage');
+        this.errorMessage = container.getByTestId('admin.save_error');
     }
 
     async toBeVisible() {
@@ -141,17 +143,17 @@ class MobileEphemeralModePanel extends AdminSectionPanel {
             this.body.getByRole('group', {name: /Enable Mobile Ephemeral Mode/}),
         );
         this.disconnectionTimeout = new NumberInputSetting(
-            this.body.getByTestId('MobileEphemeralModeSettings.DisconnectionTimeoutSeconds'),
+            this.body.getByTestId('admin.setting:MobileEphemeralModeSettings_DisconnectionTimeoutSeconds'),
             'Disconnection Timeout (seconds):',
             'MobileEphemeralModeSettings.DisconnectionTimeoutSeconds',
         );
         this.offlinePersistenceTimer = new NumberInputSetting(
-            this.body.getByTestId('MobileEphemeralModeSettings.OfflinePersistenceTimerHours'),
+            this.body.getByTestId('admin.setting:MobileEphemeralModeSettings_OfflinePersistenceTimerHours'),
             'Offline Persistence Timer (hours):',
             'MobileEphemeralModeSettings.OfflinePersistenceTimerHours',
         );
         this.autoCacheCleanup = new NumberInputSetting(
-            this.body.getByTestId('MobileEphemeralModeSettings.AutoCacheCleanupDays'),
+            this.body.getByTestId('admin.setting:MobileEphemeralModeSettings_AutoCacheCleanupDays'),
             'Auto Cache Cleanup (days):',
             'MobileEphemeralModeSettings.AutoCacheCleanupDays',
         );
@@ -170,17 +172,17 @@ class MicrosoftIntunePanel extends AdminSectionPanel {
         this.enableIntuneMAM = new RadioSetting(this.body.getByRole('group', {name: /Enable Microsoft Intune MAM/}));
 
         this.authProvider = new DropdownSetting(
-            this.body.getByTestId('IntuneSettings.AuthService'),
+            this.body.getByTestId('admin.setting:IntuneSettings_AuthService'),
             'Auth Provider:',
             'IntuneSettings.AuthService',
         );
         this.tenantId = new TextInputSetting(
-            this.body.getByTestId('IntuneSettings.TenantId'),
+            this.body.getByTestId('admin.setting:IntuneSettings_TenantId'),
             'Tenant ID:',
             'IntuneSettings.TenantId',
         );
         this.clientId = new TextInputSetting(
-            this.body.getByTestId('IntuneSettings.ClientId'),
+            this.body.getByTestId('admin.setting:IntuneSettings_ClientId'),
             'Application (Client) ID:',
             'IntuneSettings.ClientId',
         );

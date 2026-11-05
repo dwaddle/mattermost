@@ -1,17 +1,40 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App} from '@mattermost/playwright-lib';
+
+import {openUsers, search} from './support';
+
+// Written on the generated page objects: System Console > Users' filters popover (team search and options by team id,
+// role and status dropdowns with options by value, Apply), the search box and the table's rows by user id.
+
+/** Opens the filters popover. */
+async function openFilters(app: App) {
+    await app.admin.users.clickFiltersButton();
+    await expect(app.admin.users.filters.applyButton.locator).toBeVisible();
+    return app.admin.users.filters;
+}
+
+/** Picks a value in one of the filters' dropdowns (opened by clicking it). */
+async function pick(
+    dropdown: {
+        locator: import('@playwright/test').Locator;
+        menu: {option(key: string): {locator: import('@playwright/test').Locator}};
+    },
+    value: string,
+) {
+    await dropdown.locator.click();
+    await dropdown.menu.option(value).locator.click();
+}
+
+/** Applies the filters, which closes the popover. */
+async function apply(app: App) {
+    await app.admin.users.filters.clickApplyButton();
+    await expect(app.admin.users.filters.applyButton.locator).not.toBeVisible();
+}
 
 test('MM-T5521-7 Should be able to filter users with team filter', async ({pw}) => {
     const {adminUser, adminClient} = await pw.initSetup();
-
-    if (!adminUser) {
-        throw new Error('Failed to create admin user');
-    }
-
-    // # Log in as admin
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
 
     // # Create a team with a user
     const team1 = await adminClient.createTeam(await pw.random.team());
@@ -23,41 +46,28 @@ test('MM-T5521-7 Should be able to filter users with team filter', async ({pw}) 
     const user2 = await adminClient.createUser(await pw.random.user(), '', '');
     await adminClient.addToTeam(team2.id, user2.id);
 
-    // # Visit system console
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
-
-    // # Go to Users section
-    await systemConsolePage.sidebar.users.click();
-    await systemConsolePage.users.toBeVisible();
+    // # Open System Console > Users
+    const app = await openUsers(pw, adminUser);
 
     // # Open the filter's popover
-    const filterPopover = await systemConsolePage.users.openFilterPopover();
+    const filters = await openFilters(app);
 
     // # Enter the team name of the first user and select it
-    await filterPopover.filterByTeam(team1.display_name);
+    await filters.team.inputCombobox.locator.fill(team1.display_name);
+    await filters.team.option(team1.id).locator.click();
 
     // # Save the filter and close the popover
-    await filterPopover.save();
-    await filterPopover.close();
-    await systemConsolePage.users.isLoadingComplete();
+    await apply(app);
 
     // * Verify that the user corresponding to the first team is visible as team-1 filter was applied
-    await expect(systemConsolePage.users.container.getByText(user1.email)).toBeVisible();
+    await expect(app.admin.users.table.row(user1.id).cell('emailColumn').locator).toHaveText(user1.email);
 
     // * Verify that the user corresponding to the second team is not visible as team-2 filter was not applied
-    await expect(systemConsolePage.users.container.getByText(user2.email)).not.toBeVisible();
+    await expect(app.admin.users.table.row(user2.id).locator).toHaveCount(0);
 });
 
 test('MM-T5521-8 Should be able to filter users with role filter', async ({pw}) => {
     const {adminUser, adminClient} = await pw.initSetup();
-
-    if (!adminUser) {
-        throw new Error('Failed to create admin user');
-    }
-
-    // # Log in as admin
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
 
     // # Create a guest user
     const guestUser = await adminClient.createUser(await pw.random.user(), '', '');
@@ -66,47 +76,35 @@ test('MM-T5521-8 Should be able to filter users with role filter', async ({pw}) 
     // # Create a regular user
     const regularUser = await adminClient.createUser(await pw.random.user(), '', '');
 
-    // # Visit system console
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
-
-    // # Go to Users section
-    await systemConsolePage.sidebar.users.click();
-    await systemConsolePage.users.toBeVisible();
+    // # Open System Console > Users
+    const app = await openUsers(pw, adminUser);
 
     // # Open the filter popover
-    const filterPopover = await systemConsolePage.users.openFilterPopover();
+    const filters = await openFilters(app);
 
     // # Open the role filter in the popover and select Guest
-    await filterPopover.filterByRole('Guests (all)');
+    await pick(filters.role, 'system_guest');
 
     // # Save the filter and close the popover
-    await filterPopover.save();
-    await filterPopover.close();
-    await systemConsolePage.users.isLoadingComplete();
+    await apply(app);
 
     // # Search for the guest user with the filter already applied
-    await systemConsolePage.users.searchUsers(guestUser.email);
+    await search(app, guestUser.email, guestUser);
 
     // * Verify that guest user is visible as a 'Guest' role filter was applied
-    await expect(systemConsolePage.users.container.getByText(guestUser.email)).toBeVisible();
+    await expect(app.admin.users.table.row(guestUser.id).cell('emailColumn').locator).toHaveText(guestUser.email);
 
     // # Search for the regular user with the filter already applied
-    await systemConsolePage.users.searchUsers(regularUser.email);
+    await app.admin.users.fillSearchTextbox(regularUser.email);
 
     // * Verify that regular user is not visible as 'Guest' role filter was applied
-    await expect(systemConsolePage.users.container.getByText('No data')).toBeVisible();
+    await expect(app.admin.users.table.noDataText.locator).toHaveText('No data');
+
+    await expect(app.admin.users.table.row(regularUser.id).locator).toHaveCount(0);
 });
 
 test('MM-T5521-9 Should be able to filter users with status filter', async ({pw}) => {
     const {adminUser, adminClient} = await pw.initSetup();
-
-    if (!adminUser) {
-        throw new Error('Failed to create admin user');
-    }
-
-    // # Log in as admin
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
 
     // # Create a user and then deactivate it
     const deactivatedUser = await adminClient.createUser(await pw.random.user(), '', '');
@@ -115,35 +113,33 @@ test('MM-T5521-9 Should be able to filter users with status filter', async ({pw}
     // # Create a regular user
     const regularUser = await adminClient.createUser(await pw.random.user(), '', '');
 
-    // # Visit system console
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
-
-    // # Go to Users section
-    await systemConsolePage.sidebar.users.click();
-    await systemConsolePage.users.toBeVisible();
+    // # Open System Console > Users
+    const app = await openUsers(pw, adminUser);
 
     // # Open the filter popover
-    const filterPopover = await systemConsolePage.users.openFilterPopover();
+    const filters = await openFilters(app);
 
     // # Open the status filter in the popover and select Deactivated users
-    await filterPopover.filterByStatus('Deactivated users');
+    await pick(filters.status, 'deactivated');
 
     // # Save the filter and close the popover
-    await filterPopover.save();
-    await filterPopover.close();
+    await apply(app);
 
     // # Search for the deactivated user with the filter already applied
-    await systemConsolePage.users.searchUsers(deactivatedUser.email);
+    await search(app, deactivatedUser.email, deactivatedUser);
 
     // * Verify that deactivated user is visible as a 'Deactivated' status filter was applied
-    await expect(systemConsolePage.users.container.getByText(deactivatedUser.email)).toBeVisible();
+    await expect(app.admin.users.table.row(deactivatedUser.id).cell('emailColumn').locator).toHaveText(
+        deactivatedUser.email,
+    );
 
     // # Search for the regular user with the filter already applied
-    await systemConsolePage.users.searchUsers(regularUser.email);
+    await app.admin.users.fillSearchTextbox(regularUser.email);
 
     // * Verify that regular user is not visible as 'Deactivated' status filter was applied
-    await expect(systemConsolePage.users.container.getByText('No data')).toBeVisible();
+    await expect(app.admin.users.table.noDataText.locator).toHaveText('No data');
+
+    await expect(app.admin.users.table.row(regularUser.id).locator).toHaveCount(0);
 });
 
 /**
@@ -152,29 +148,17 @@ test('MM-T5521-9 Should be able to filter users with status filter', async ({pw}
 test('displays all guest filter variants in the role filter dropdown', {tag: '@system_users'}, async ({pw}) => {
     const {adminUser} = await pw.initSetup();
 
-    if (!adminUser) {
-        throw new Error('Failed to create admin user');
-    }
-
-    // # Log in as admin
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-
-    // # Visit system console
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
-
-    // # Go to Users section
-    await systemConsolePage.sidebar.users.click();
-    await systemConsolePage.users.toBeVisible();
+    // # Open System Console > Users
+    const app = await openUsers(pw, adminUser);
 
     // # Open the filter popover
-    const filterPopover = await systemConsolePage.users.openFilterPopover();
+    const filters = await openFilters(app);
 
     // # Open the role filter menu
-    await filterPopover.openRoleMenu();
+    await filters.role.locator.click();
 
     // * Verify all 6 role filter options are present
-    const roleOptions = filterPopover.container.getByRole('option');
+    const roleOptions = filters.role.menu.optionItems;
     const roleTexts = await roleOptions.allInnerTexts();
 
     expect(roleTexts).toEqual([
@@ -199,10 +183,6 @@ test(
     async ({pw}) => {
         const {adminUser, adminClient, team} = await pw.initSetup();
 
-        if (!adminUser) {
-            throw new Error('Failed to create admin user');
-        }
-
         // # Create a channel
         const channelName = `guest-ch-${pw.random.id()}`;
         const channel = await adminClient.createChannel({
@@ -218,28 +198,20 @@ test(
         await adminClient.addToTeam(team.id, guestUser.id);
         await adminClient.addToChannel(guestUser.id, channel.id);
 
-        // # Log in as admin
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+        // # Open System Console > Users
 
-        // # Visit system console
-        await systemConsolePage.goto();
-        await systemConsolePage.toBeVisible();
-
-        // # Go to Users section
-        await systemConsolePage.sidebar.users.click();
-        await systemConsolePage.users.toBeVisible();
+        const app = await openUsers(pw, adminUser);
 
         // # Open the filter popover and filter by single-channel guests
-        const filterPopover = await systemConsolePage.users.openFilterPopover();
-        await filterPopover.filterByRole('Guests in a single channel');
-        await filterPopover.save();
-        await systemConsolePage.users.isLoadingComplete();
+        const filters = await openFilters(app);
+        await pick(filters.role, 'guest_single_channel');
+        await apply(app);
 
         // # Search for the guest user
-        await systemConsolePage.users.searchUsers(guestUser.email);
+        await search(app, guestUser.email, guestUser);
 
         // * Verify the single-channel guest is visible
-        await expect(systemConsolePage.users.container.getByText(guestUser.email)).toBeVisible();
+        await expect(app.admin.users.table.row(guestUser.id).cell('emailColumn').locator).toHaveText(guestUser.email);
     },
 );
 
@@ -254,10 +226,6 @@ test(
     {tag: '@system_users'},
     async ({pw}) => {
         const {adminUser, adminClient, team} = await pw.initSetup();
-
-        if (!adminUser) {
-            throw new Error('Failed to create admin user');
-        }
 
         // # Create two channels
         const ch1Name = `guest-multi-1-${pw.random.id()}`;
@@ -289,33 +257,29 @@ test(
         await adminClient.addToTeam(team.id, singleChannelGuest.id);
         await adminClient.addToChannel(singleChannelGuest.id, channel1.id);
 
-        // # Log in as admin
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+        // # Open System Console > Users
 
-        // # Visit system console
-        await systemConsolePage.goto();
-        await systemConsolePage.toBeVisible();
-
-        // # Go to Users section
-        await systemConsolePage.sidebar.users.click();
-        await systemConsolePage.users.toBeVisible();
+        const app = await openUsers(pw, adminUser);
 
         // # Open the filter popover and filter by multi-channel guests
-        const filterPopover = await systemConsolePage.users.openFilterPopover();
-        await filterPopover.filterByRole('Guests in multiple channels');
-        await filterPopover.save();
-        await systemConsolePage.users.isLoadingComplete();
+        const filters = await openFilters(app);
+        await pick(filters.role, 'guest_multi_channel');
+        await apply(app);
 
         // # Search for the multi-channel guest
-        await systemConsolePage.users.searchUsers(multiChannelGuest.email);
+        await search(app, multiChannelGuest.email, multiChannelGuest);
 
         // * Verify the multi-channel guest is visible
-        await expect(systemConsolePage.users.container.getByText(multiChannelGuest.email)).toBeVisible();
+        await expect(app.admin.users.table.row(multiChannelGuest.id).cell('emailColumn').locator).toHaveText(
+            multiChannelGuest.email,
+        );
 
         // # Search for the single-channel guest
-        await systemConsolePage.users.searchUsers(singleChannelGuest.email);
+        await app.admin.users.fillSearchTextbox(singleChannelGuest.email);
 
         // * Verify the single-channel guest is NOT visible
-        await expect(systemConsolePage.users.container.getByText('No data')).toBeVisible();
+        await expect(app.admin.users.table.noDataText.locator).toHaveText('No data');
+
+        await expect(app.admin.users.table.row(singleChannelGuest.id).locator).toHaveCount(0);
     },
 );

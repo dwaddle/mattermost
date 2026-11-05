@@ -35,7 +35,7 @@ describe('System Console > User Management > Users', () => {
         cy.visit('/admin_console');
 
         // # Go to the User management/Users section.
-        cy.findByTestId('user_management.system_users').
+        cy.findByTestId('admin.sidebar.category:user_management').findByTestId('admin.sidebar.category.section:system_users').
             click().
             wait(TIMEOUTS.ONE_SEC);
     });

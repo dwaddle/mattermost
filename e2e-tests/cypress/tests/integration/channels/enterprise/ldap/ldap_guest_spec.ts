@@ -15,9 +15,11 @@ import ldapUsers from '@/fixtures/ldap_users.json';
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {getAdminAccount} from '@/support/env';
 import {getRandomId} from '@/utils';
+import {settingPart} from '@/utils/admin_setting';
 
 // assumes that E20 license is uploaded
 // for setup with AWS: Follow the instructions mentioned in the mattermost/platform-private/config/ldap-test-setup.txt file
+// A System Console setting's row is `admin.setting:<key>` (its id, with `.` as `_`); its controls are parts of it.
 describe('LDAP guest', () => {
     let testSettings: {siteName: string; siteUrl: string; teamName: string; user: null | Record<string, unknown>};
     let user1Data: Record<string, unknown>;
@@ -72,7 +74,7 @@ describe('LDAP guest', () => {
         gotoLDAPSettings();
 
         // # expand the filters section
-        cy.findByTestId('LdapSettings.AdditionalFiltersbutton').click();
+        cy.findByTestId('admin.ldap.expand:LdapSettings.AdditionalFilters--button').click();
         updateGuestFilter(`(uid=${user1.username})`);
 
         // # Login as LDAP user1
@@ -92,7 +94,7 @@ describe('LDAP guest', () => {
 
             // # Go to LDAP settings page and EMPTY guest filter value
             gotoLDAPSettings();
-            cy.findByTestId('LdapSettings.AdditionalFiltersbutton').click();
+            cy.findByTestId('admin.ldap.expand:LdapSettings.AdditionalFilters--button').click();
             updateGuestFilter('');
 
             // # Login again as LDAP user1
@@ -126,7 +128,7 @@ describe('LDAP guest', () => {
 
         // # Go to LDAP settings page and update guest filter as user1
         gotoLDAPSettings();
-        cy.findByTestId('LdapSettings.AdditionalFiltersbutton').click();
+        cy.findByTestId('admin.ldap.expand:LdapSettings.AdditionalFilters--button').click();
         updateGuestFilter(`(uid=${user1.username})`);
 
         // # Go to Guest access page and disable guest access
@@ -135,12 +137,12 @@ describe('LDAP guest', () => {
 
         // # Go to LDAP settings page
         gotoLDAPSettings();
-        cy.findByTestId('LdapSettings.GuestFilterinput').should('have.attr', 'disabled');
+        settingPart('LdapSettings.GuestFilter', 'value--textbox').should('have.attr', 'disabled');
 
         // # Go to SAML settings page
         cy.visit('/admin_console/authentication/saml');
         cy.get('.admin-console__header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').and('have.text', 'SAML 2.0');
-        cy.findByTestId('SamlSettings.GuestAttributeinput').should('be.disabled');
+        settingPart('SamlSettings.GuestAttribute', 'value--textbox').should('be.disabled');
 
         // # Login again as LDAP user1
         testSettings.user = user1;
@@ -200,7 +202,7 @@ describe('LDAP guest', () => {
                     cy.get('.admin-console__header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').and('have.text', 'Team Configuration');
 
                     // # Turn on sync group members
-                    cy.findByTestId('syncGroupSwitch-button').scrollIntoView().click({force: true});
+                    cy.findByTestId('admin.team.sync_groups--switch').scrollIntoView().click({force: true});
 
                     // # Add board group to team
                     cy.get('#addGroupsToTeamToggle').scrollIntoView().click();
@@ -284,15 +286,15 @@ function removeUserFromAllTeams(user: {id: string}) {
 }
 
 function setGuestAccess(enable: boolean) {
-    const inputId = 'GuestAccountsSettings.' + (enable ? 'Enabletrue' : 'Enablefalse');
-    cy.findByTestId(inputId).then((elem) => {
+    const radio = () => settingPart('GuestAccountsSettings.Enable', enable ? 'true--radio' : 'false--radio');
+    radio().then((elem) => {
         // Proceed only if it's not already checked
         if (!Cypress.$(elem).is(':checked')) {
             // # Check the radio button
-            cy.findByTestId(inputId).check().should('be.checked');
+            radio().check().should('be.checked');
 
             // # Save settings
-            cy.findByTestId('saveSetting').click();
+            cy.get('#saveSetting').click();
 
             if (!enable) {
                 // # Confirm the modal button
@@ -315,19 +317,19 @@ function setLDAPTestSettings(config: Cypress.AdminConfig) {
 function updateGuestFilter(value: string) {
     // # Set guest filter value
     if (value) {
-        cy.findByTestId('LdapSettings.GuestFilterinput').type(value);
+        settingPart('LdapSettings.GuestFilter', 'value--textbox').type(value);
     } else {
-        cy.findByTestId('LdapSettings.GuestFilterinput').clear();
+        settingPart('LdapSettings.GuestFilter', 'value--textbox').clear();
     }
 
     // # Save config settings and wait until saved
-    cy.findByTestId('saveSetting').click();
+    cy.get('#saveSetting').click();
     waitUntilConfigSave();
 }
 
 // # Wait's until the Saving text becomes Save
 const waitUntilConfigSave = () => {
-    cy.waitUntil(() => cy.findByTestId('saveSetting').then((el) => {
+    cy.waitUntil(() => cy.get('#saveSetting').then((el) => {
         return el[0].innerText === 'Save';
     }));
 };

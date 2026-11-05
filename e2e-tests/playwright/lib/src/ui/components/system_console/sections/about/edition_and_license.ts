@@ -17,7 +17,7 @@ export default class EditionAndLicense {
     constructor(container: Locator) {
         this.container = container;
         this.header = container.getByText('Edition and License', {exact: true});
-        this.enterprisePanel = container.getByTestId('EnterpriseEditionLeftPanel');
+        this.enterprisePanel = container.getByTestId('admin.license.enterprise_panel');
     }
 
     async toBeVisible() {
@@ -28,7 +28,7 @@ export default class EditionAndLicense {
     /** Confirms the edition/license body rendered (licensed EE panel, or any edition left panel). */
     async toHaveLicensePanel() {
         const editionBody = this.container.locator(
-            '[data-testid="EnterpriseEditionLeftPanel"], .TeamEditionLeftPanel, .StarterLeftPanel, .EnterpriseEditionLeftPanel',
+            '[data-testid="admin.license.enterprise_panel"], .TeamEditionLeftPanel, .StarterLeftPanel, .EnterpriseEditionLeftPanel',
         );
         await expect(editionBody.first()).toBeVisible();
     }

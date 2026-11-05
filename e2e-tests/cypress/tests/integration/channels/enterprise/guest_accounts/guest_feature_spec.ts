@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {settingPart} from '@/utils/admin_setting';
+
 // ***************************************************************
 // - [#] indicates a test step (e.g. #. Go to a page)
 // - [*] indicates an assertion (e.g. * Check the title)
@@ -30,7 +32,7 @@ describe('Guest Accounts', () => {
         cy.visit('/admin_console/authentication/guest_access');
 
         // # Enable guest accounts.
-        cy.findByTestId('GuestAccountsSettings.Enabletrue').check();
+        settingPart('GuestAccountsSettings.Enable', 'true--radio').check();
 
         // # Click "Save".
         cy.get('#saveSetting').then((btn) => {
@@ -50,7 +52,7 @@ describe('Guest Accounts', () => {
         cy.visit('/admin_console/authentication/guest_access');
 
         // # Set Enable Guest Access to false.
-        cy.findByTestId('GuestAccountsSettings.Enablefalse').check();
+        settingPart('GuestAccountsSettings.Enable', 'false--radio').check();
 
         // # Click "Save".
         cy.get('#saveSetting').scrollIntoView().click();
@@ -65,7 +67,7 @@ describe('Guest Accounts', () => {
         cy.visit('/admin_console/authentication/guest_access');
 
         // # Enable guest accounts.
-        cy.findByTestId('GuestAccountsSettings.Enabletrue').check();
+        settingPart('GuestAccountsSettings.Enable', 'true--radio').check();
 
         // # Click "Save".
         cy.get('#saveSetting').scrollIntoView().click();

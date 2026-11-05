@@ -81,12 +81,13 @@ export default class TeamRow extends React.PureComponent<Props> {
         return (
             <div
                 className={'TeamRow'}
-                data-testid='teamRow'
+                data-testid={`admin.user.teams.team:${team.id}`}
             >
                 <div className='TeamRow__row'>
                     <div className='TeamRow__team-name'>
                         <div className='col-sm-auto'>
                             <TeamIcon
+                                testIdScope='admin.user.teams.team'
                                 size='sm'
                                 url={teamIconUrl}
                                 content={team.display_name}

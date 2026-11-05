@@ -27,6 +27,7 @@ const SyncGroupsToggle = (props: Props): JSX.Element => {
     return (
         <AdminSettingsSwitch
             id='syncGroupSwitch'
+            testId='admin.channel.sync_groups'
             disabled={isDisabled || isDefault || policyEnforced}
             checked={isSynced}
             last={isSynced}
@@ -80,28 +81,33 @@ const AllowAllToggle = (props: Props): JSX.Element | null => {
     return (
         <AdminSettingsSegmentedRow
             id='allow-all-toggle'
+            testId='admin.channel.visibility'
             disabled={disabled}
             last={false}
             groupAriaLabel={formatMessage({
                 id: 'admin.channel_settings.channel_details.isPublic',
                 defaultMessage: 'Public channel or private channel',
             })}
-            secondaryLabel={isDefault ? (
-                <FormattedMessage
-                    id='admin.channel_settings.channel_details.isDefaultDescr'
-                    defaultMessage='This default channel cannot be converted into a private channel.'
-                />
-            ) : (
-                <FormattedMessage
-                    id='admin.channel_settings.channel_details.isPublicDescr'
-                    defaultMessage='Select Public for a channel any user can find and join. {br}Select Private to require channel invitations to join. {br}Use this control to change this channel from public to private or from private to public.'
-                    values={{br: (<br/>)}}
-                />
+            secondaryLabel={(
+                <span data-testid='admin.channel.public_help--text'>
+                    {isDefault ? (
+                        <FormattedMessage
+                            id='admin.channel_settings.channel_details.isDefaultDescr'
+                            defaultMessage='This default channel cannot be converted into a private channel.'
+                        />
+                    ) : (
+                        <FormattedMessage
+                            id='admin.channel_settings.channel_details.isPublicDescr'
+                            defaultMessage='Select Public for a channel any user can find and join. {br}Select Private to require channel invitations to join. {br}Use this control to change this channel from public to private or from private to public.'
+                            values={{br: (<br/>)}}
+                        />
+                    )}
+                </span>
             )}
             segments={[
                 {
                     id: 'public',
-                    testId: 'allow-all-toggle-public',
+                    testId: 'admin.channel.public--togglebutton',
                     selected: isPublic,
                     onSelect: () => setPublic(true),
                     label: (
@@ -113,7 +119,7 @@ const AllowAllToggle = (props: Props): JSX.Element | null => {
                 },
                 {
                     id: 'private',
-                    testId: 'allow-all-toggle-private',
+                    testId: 'admin.channel.private--togglebutton',
                     selected: !isPublic,
                     onSelect: () => setPublic(false),
                     label: (
@@ -166,6 +172,7 @@ const PolicyEnforceToggle = (props: Props): JSX.Element | null => {
     return (
         <AdminSettingsSwitch
             id='policy-enforce-toggle'
+            testId='admin.channel.policy_enforce'
 
             // Keep the visual disabled state aligned with the click guard in
             // onChange (which short-circuits when isDefault is true). Without

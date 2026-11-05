@@ -188,6 +188,7 @@ export function PluginEnableButton({actions, disabled, homepageUrl, id, logsPath
             }
             onConfirm={handleRemovePlugin}
             onCancel={handleRemovePluginCancel}
+            testId='admin.plugin.remove_modal'
         />
     );
 
@@ -209,7 +210,7 @@ export function PluginEnableButton({actions, disabled, homepageUrl, id, logsPath
                         disabled={actionsDisabled}
                         checked={pluginEnabled}
                         onChange={handleTogglePlugin}
-                        data-testid={`${id}-button`}
+                        data-testid='admin.plugin.enable--switch'
                         tabIndex={0}
                         aria-label={toggleAriaLabel}
                     />
@@ -235,6 +236,7 @@ export function PluginEnableButton({actions, disabled, homepageUrl, id, logsPath
                     menuButton={{
                         id: `plugin-actions-menu-button-${pluginId}`,
                         as: PluginActionsMenuTrigger,
+                        dataTestId: 'admin.plugin.actions--button',
                         disabled: actionsDisabled,
                         'aria-label': formatMessage({id: 'admin.plugin.actions.menu.aria_label', defaultMessage: 'Plugin actions'}),
                         children: <Icon glyph={<DotsHorizontalIcon/>}/>,
@@ -250,6 +252,7 @@ export function PluginEnableButton({actions, disabled, homepageUrl, id, logsPath
                     {homepageUrl && (
                         <Menu.Item
                             id={`plugin-actions-more-about-${pluginId}`}
+                            data-testid='admin.plugin.actions_menu.more_about--menuitem'
                             leadingElement={<OpenInNewIcon size={18}/>}
                             labels={
                                 <FormattedMessage
@@ -262,6 +265,7 @@ export function PluginEnableButton({actions, disabled, homepageUrl, id, logsPath
                     )}
                     <Menu.Item
                         id={`plugin-actions-uninstall-${pluginId}`}
+                        data-testid='admin.plugin.actions_menu.uninstall--menuitem'
                         isDestructive={true}
                         leadingElement={<TrashCanOutlineIcon size={18}/>}
                         labels={
@@ -275,7 +279,10 @@ export function PluginEnableButton({actions, disabled, homepageUrl, id, logsPath
                 </Menu.Container>
             </div>
             {serverError && (
-                <div className='PluginMetadataPanel__actionError'>
+                <div
+                    className='PluginMetadataPanel__actionError'
+                    data-testid='admin.plugin.action_error--text'
+                >
                     <i className='fa fa-exclamation-circle'/>
                     {serverError}
                 </div>

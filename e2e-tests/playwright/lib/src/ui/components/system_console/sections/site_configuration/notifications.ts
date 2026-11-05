@@ -57,44 +57,44 @@ export default class Notifications {
         );
 
         this.emailNotificationContents = new DropdownSetting(
-            container.getByTestId('EmailSettings.EmailNotificationContentsType'),
+            container.getByTestId('admin.setting:EmailSettings_EmailNotificationContentsType'),
             'Email Notification Contents:',
             'EmailSettings.EmailNotificationContentsType',
         );
         this.pushNotificationContents = new DropdownSetting(
-            container.getByTestId('EmailSettings.PushNotificationContents'),
+            container.getByTestId('admin.setting:EmailSettings_PushNotificationContents'),
             'Push Notification Contents:',
             'EmailSettings.PushNotificationContents',
         );
 
         this.notificationDisplayName = new TextInputSetting(
-            container.getByTestId('EmailSettings.FeedbackName'),
+            container.getByTestId('admin.setting:EmailSettings_FeedbackName'),
             'Notification Display Name:',
             'EmailSettings.FeedbackName',
         );
         this.notificationFromAddress = new TextInputSetting(
-            container.getByTestId('EmailSettings.FeedbackEmail'),
+            container.getByTestId('admin.setting:EmailSettings_FeedbackEmail'),
             'Notification From Address:',
             'EmailSettings.FeedbackEmail',
         );
         this.supportEmailAddress = new TextInputSetting(
-            container.getByTestId('SupportSettings.SupportEmail'),
+            container.getByTestId('admin.setting:SupportSettings_SupportEmail'),
             'Support Email Address:',
             'SupportSettings.SupportEmail',
         );
         this.notificationReplyToAddress = new TextInputSetting(
-            container.getByTestId('EmailSettings.ReplyToAddress'),
+            container.getByTestId('admin.setting:EmailSettings_ReplyToAddress'),
             'Notification Reply-To Address:',
             'EmailSettings.ReplyToAddress',
         );
         this.notificationFooterMailingAddress = new TextInputSetting(
-            container.getByTestId('EmailSettings.FeedbackOrganization'),
+            container.getByTestId('admin.setting:EmailSettings_FeedbackOrganization'),
             'Notification Footer Mailing Address:',
             'EmailSettings.FeedbackOrganization',
         );
 
         this.saveButton = container.getByRole('button', {name: 'Save'});
-        this.errorMessage = container.getByTestId('errorMessage');
+        this.errorMessage = container.getByTestId('admin.save_error');
     }
 
     async toBeVisible() {

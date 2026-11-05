@@ -15,11 +15,11 @@ describe('Archive channel header spec', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults and confirm
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('admin.permissions.reset--button').click();
         cy.get('#confirmModalButton').click();
 
         // # Ensure permissions for converting channel to private is enabled
-        cy.findByTestId('all_users-public_channel-convert_public_channel_to_private-checkbox').then((el) => {
+        cy.findByTestId('admin.permissions.row:all_users-public_channel-convert_public_channel_to_private').findByTestId('admin.permissions.row.checkbox').then((el) => {
             if (!el.hasClass('checked')) {
                 el.click();
             }

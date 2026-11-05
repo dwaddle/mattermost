@@ -7,6 +7,7 @@ import React, {type JSX} from 'react';
 import {FormattedMessage, injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
 import type {PluginRedux} from '@mattermost/types/plugins';
 
 import AdminSidebarCategory from 'components/admin_console/admin_sidebar/admin_sidebar_category';
@@ -185,7 +186,7 @@ class AdminSidebar extends React.PureComponent<Props, State> {
                     sidebarItems.push((
                         <AdminSidebarSection
                             key={subDefinitionKey}
-                            definitionKey={subDefinitionKey}
+                            testKey={subKey}
                             name={item.url}
                             restrictedIndicator={item.restrictedIndicator?.shouldDisplay() ? item.restrictedIndicator.value(cloud) : undefined}
                             title={typeof item.title === 'string' ? item.title : (
@@ -211,7 +212,7 @@ class AdminSidebar extends React.PureComponent<Props, State> {
                 sidebarSections.push((
                     <AdminSidebarCategory
                         key={key}
-                        definitionKey={key}
+                        testKey={key}
                         parentLink='/admin_console'
                         icon={section.icon}
                         title={typeof section.sectionTitle === 'string' ? section.sectionTitle : (
@@ -249,6 +250,7 @@ class AdminSidebar extends React.PureComponent<Props, State> {
                     return (
                         <AdminSidebarSection
                             key={'customplugin' + plugin.id}
+                            testKey={pluginTestKey(plugin.id)}
                             name={'plugins/plugin_' + plugin.id}
                             title={plugin.name}
                         />
@@ -269,7 +271,7 @@ class AdminSidebar extends React.PureComponent<Props, State> {
         return (
             <div
                 className='admin-sidebar'
-                data-testid='admin-sidebar'
+                data-testid='admin.sidebar'
             >
                 <AdminSidebarHeader/>
                 <div className='filter-container'>

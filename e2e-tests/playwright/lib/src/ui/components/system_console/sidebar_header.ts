@@ -23,7 +23,7 @@ export default class SystemConsoleSidebarHeader {
 
     constructor(container: Locator) {
         this.container = container;
-        this.headerInfo = container.getByTestId('admin-sidebar-header-info');
+        this.headerInfo = container.getByTestId('admin.sidebar.header.info');
         this.title = container.getByText('System Console');
         this.userName = container.getByText(/^@/);
         this.menuButton = container; // container IS the #admin-sidebar-header button

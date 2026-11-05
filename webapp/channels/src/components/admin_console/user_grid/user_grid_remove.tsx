@@ -4,18 +4,23 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
 type Props = {
     user: UserProfile;
     removeUser: (user: UserProfile) => void;
     isDisabled?: boolean;
+
+    // The grid row: the link is `.remove--button`.
+    testIdScope: TestId;
 };
 
 const UserGridRemove = ({
     user,
     removeUser,
     isDisabled,
+    testIdScope,
 }: Props) => {
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
@@ -30,6 +35,7 @@ const UserGridRemove = ({
                 onClick={handleClick}
                 href='#'
                 role='button'
+                data-testid={`${testIdScope}.remove--button`}
                 className={isDisabled ? 'disabled' : ''}
             >
                 <FormattedMessage

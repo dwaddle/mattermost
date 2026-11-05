@@ -57,11 +57,11 @@ const PermissionRow = ({
             className={classNames('permission-row', {'read-only': readOnly, selected: selected === id})}
             onClick={toggleSelect}
             id={uniqId}
-            data-testid='permissionRow'
+            data-testid={`admin.permissions.row:${uniqId}`}
         >
             <PermissionCheckbox
                 value={value}
-                id={`${uniqId}-checkbox`}
+                testIdScope='admin.permissions.row.checkbox'
             />
             <span className='permission-name'>
                 {name}

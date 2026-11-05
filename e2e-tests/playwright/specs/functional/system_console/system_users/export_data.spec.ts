@@ -1,7 +1,18 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App} from '@mattermost/playwright-lib';
+
+import {openUsers} from './support';
+
+// Written on the generated page objects: System Console > Users' date range menu, Export button and the export
+// dialogs it opens, and the post list of the system bot's direct message.
+
+/** The text of the center post list's last post. */
+async function lastPostText(app: App) {
+    const id = (await app.center.postList.postKeys()).at(-1);
+    return id ? app.center.postList.post({id}).locator.textContent() : '';
+}
 
 test.fixme('MM-T5522 Should begin export of data when export button is pressed', async ({pw}) => {
     test.slow();
@@ -10,58 +21,43 @@ test.fixme('MM-T5522 Should begin export of data when export button is pressed',
     await pw.skipIfNoLicense();
 
     const {adminUser} = await pw.initSetup();
-    if (!adminUser) {
-        throw new Error('Failed to create admin user');
-    }
 
-    // # Log in as admin
-    const {page, channelsPage, systemConsolePage} = await pw.testBrowser.login(adminUser);
+    // # Log in as admin and open System Console > Users
+    const app = await openUsers(pw, adminUser);
+    const {users} = app.admin;
 
-    // # Visit system console
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
+    // # Change the export duration to All time, export and confirm
+    await (await users.clickDateRangeButton()).clickAllTimeMenuItem();
+    let dialogs = await users.clickExportButton();
+    await dialogs.exportModal.clickConfirmButton();
 
-    // # Go to Users section
-    await systemConsolePage.sidebar.users.click();
-    await systemConsolePage.users.toBeVisible();
+    // # Change the export duration to Last 30 days, export and confirm
+    await (await users.clickDateRangeButton()).clickLast30DaysMenuItem();
+    dialogs = await users.clickExportButton();
+    await dialogs.exportModal.clickConfirmButton();
 
-    // # Change the export duration to All time
-    const dateRangeMenu = await systemConsolePage.users.openDateRangeSelectorMenu();
-    await dateRangeMenu.clickMenuItem('All time');
-
-    // # Click Export button and confirm the modal
-    await systemConsolePage.users.clickExport();
-    await systemConsolePage.users.confirmModal.confirm();
-
-    // # Change the export duration to Last 30 days
-    const dateRangeMenu2 = await systemConsolePage.users.openDateRangeSelectorMenu();
-    await dateRangeMenu2.clickMenuItem('Last 30 days');
-
-    // # Click Export button and confirm the modal
-    await systemConsolePage.users.clickExport();
-    await systemConsolePage.users.confirmModal.confirm();
-
-    // # Click Export again button and confirm the modal
-    await systemConsolePage.users.clickExport();
-    await systemConsolePage.users.confirmModal.confirm();
+    // # Export again and confirm
+    dialogs = await users.clickExportButton();
+    await dialogs.exportModal.clickConfirmButton();
 
     // * Verify that we are told that one is already running
-    await expect(page.getByText('Export is in progress')).toBeVisible();
+    await expect(dialogs.exportErrorModal.locator).toContainText('Export is in progress');
+    await dialogs.exportErrorModal.clickConfirmButton();
 
     // # Go back to Channels and open the system bot DM
-    await channelsPage.goto('ad-1/messages', '@system-bot');
-    await channelsPage.centerView.toBeVisible();
+    await app.channelsPage.goto({team: 'ad-1', path: 'messages', channel: '@system-bot'});
+    await expect(app.center.postList.locator).toBeVisible();
 
     // * Verify that we have started the export and that the second one is running second
-    const lastPost = await channelsPage.getLastPost();
-    await expect(lastPost.body).toContainText('export of user data for the last 30 days');
+    await expect.poll(() => lastPostText(app)).toContain('export of user data for the last 30 days');
 
     // * Wait until the first export finishes
-    await channelsPage.centerView.waitUntilLastPostContains('contains user data for all time', pw.duration.half_min);
+    await expect
+        .poll(() => lastPostText(app), {timeout: pw.duration.half_min})
+        .toContain('contains user data for all time');
 
     // * Wait until the second export finishes
-    await channelsPage.centerView.waitUntilLastPostContains(
-        'contains user data for the last 30 days',
-        pw.duration.half_min,
-    );
+    await expect
+        .poll(() => lastPostText(app), {timeout: pw.duration.half_min})
+        .toContain('contains user data for the last 30 days');
 });

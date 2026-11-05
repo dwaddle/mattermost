@@ -20,10 +20,18 @@ export default class MfaSettings {
     constructor(container: Locator) {
         this.container = container;
         this.header = container.getByText('Multi-factor Authentication', {exact: true});
-        this.enableTrue = container.getByTestId('ServiceSettings.EnableMultifactorAuthenticationtrue');
-        this.enableFalse = container.getByTestId('ServiceSettings.EnableMultifactorAuthenticationfalse');
-        this.enforceTrue = container.getByTestId('ServiceSettings.EnforceMultifactorAuthenticationtrue');
-        this.enforceFalse = container.getByTestId('ServiceSettings.EnforceMultifactorAuthenticationfalse');
+        this.enableTrue = container
+            .getByTestId('admin.setting:ServiceSettings_EnableMultifactorAuthentication')
+            .getByTestId('admin.setting.true--radio');
+        this.enableFalse = container
+            .getByTestId('admin.setting:ServiceSettings_EnableMultifactorAuthentication')
+            .getByTestId('admin.setting.false--radio');
+        this.enforceTrue = container
+            .getByTestId('admin.setting:ServiceSettings_EnforceMultifactorAuthentication')
+            .getByTestId('admin.setting.true--radio');
+        this.enforceFalse = container
+            .getByTestId('admin.setting:ServiceSettings_EnforceMultifactorAuthentication')
+            .getByTestId('admin.setting.false--radio');
         this.saveButton = container.getByRole('button', {name: 'Save'});
     }
 

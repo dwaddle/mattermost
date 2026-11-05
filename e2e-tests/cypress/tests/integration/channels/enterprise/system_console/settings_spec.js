@@ -11,6 +11,7 @@
 // Group: @channels @system_console
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Settings', () => {
     before(() => {
@@ -21,9 +22,9 @@ describe('Settings', () => {
         cy.visit('/admin_console/compliance/monitoring');
 
         // # Enable compliance reporting
-        cy.findByTestId('ComplianceSettings.Enabletrue').click();
+        settingPart('ComplianceSettings.Enable', 'true--radio').click();
 
-        cy.findByTestId('saveSetting').should('be.enabled').click().wait(TIMEOUTS.HALF_SEC);
+        cy.get('#saveSetting').should('be.enabled').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Fill up the boxes
         cy.get('#desc').clear().type('sample report');

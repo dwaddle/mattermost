@@ -28,19 +28,19 @@ export default class Localization {
 
         this.header = container.getByText('Localization', {exact: true});
         this.featureDiscoveryBlock = container.getByText('Remove language barriers with auto-translation');
-        this.autoTranslationSection = container.getByTestId('autotranslation-section-header');
+        this.autoTranslationSection = container.getByTestId('admin.auto_translation.header');
         // Compass Switch keeps role="switch" on an opacity-0 input; click the
         // wrapping label in turnOnAutoTranslation so the label does not
         // intercept pointer events on the input.
-        this.autoTranslationToggle = container.getByTestId('autotranslation-section-header').getByRole('switch');
-        this.providerDropdown = container.getByTestId('Providerdropdown');
+        this.autoTranslationToggle = this.autoTranslationSection.getByRole('switch');
+        this.providerDropdown = container.getByTestId('admin.auto_translation.provider--combobox');
         this.mattermostAgentsInactiveNotice = container.getByText(
             'LLMs must first be configured in the Agents plugin.',
         );
-        this.mattermostAgentsConfigLink = container.getByRole('link', {name: /Go to Agents plugin config/i});
+        this.mattermostAgentsConfigLink = container.getByTestId('admin.auto_translation.agents_config--link');
         this.libreTranslateUrlInput = container.locator('#URL');
         this.libreTranslateApiKeyInput = container.locator('#APIKey');
-        this.targetLanguagesMultiSelect = container.getByTestId('TargetLanguages');
+        this.targetLanguagesMultiSelect = container.getByTestId('admin.setting:TargetLanguages');
         this.saveButton = container.getByRole('button', {name: 'Save'});
     }
 

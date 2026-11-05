@@ -223,7 +223,7 @@ describe('group configuration', () => {
             teamOrChannelIsPresent(testChannel.display_name);
 
             // # Click remove
-            cy.findByTestId(`${testChannel.display_name}_groupsyncable_remove`).click();
+            groupSyncableRow(testChannel.display_name).findByTestId('admin.group.teams_and_channels.row.remove--button').click();
             cy.get('#confirmModalButton').should('be.visible').click();
 
             // # Click away
@@ -254,7 +254,7 @@ describe('group configuration', () => {
             cy.get('.group-teams-and-channels-row', {timeout: TIMEOUTS.ONE_MIN}).not('.has-children').should('have.length', 2);
 
             // # Click remove
-            cy.findByTestId(`${testChannel.display_name}_groupsyncable_remove`).click();
+            groupSyncableRow(testChannel.display_name).findByTestId('admin.group.teams_and_channels.row.remove--button').click();
             cy.get('#confirmModalButton').should('be.visible').click();
 
             // # Click away
@@ -506,7 +506,7 @@ describe('group configuration', () => {
             // # Change the role
             changeRole(testChannel.display_name, 'Channel Admin');
 
-            cy.findByTestId(`${testChannel.display_name}_groupsyncable_remove`).click();
+            groupSyncableRow(testChannel.display_name).findByTestId('admin.group.teams_and_channels.row.remove--button').click();
             cy.get('#confirmModalButton').should('be.visible').click();
 
             // # Click away
@@ -554,8 +554,13 @@ function addGroupSyncable(type, callback) {
     });
 }
 
+// A team's or channel's row on the group page, keyed by its id, found by its name.
+function groupSyncableRow(name) {
+    return cy.contains('[data-testid^="admin.group.teams_and_channels.row:"]', name, {timeout: TIMEOUTS.ONE_MIN});
+}
+
 function changeRole(teamOrChannel, newRole) {
-    cy.findByTestId(`${teamOrChannel}_current_role`, {timeout: TIMEOUTS.ONE_MIN}).click();
+    groupSyncableRow(teamOrChannel).findByTestId('admin.group.teams_and_channels.row.role').click();
     cy.get('.Menu__content').should('be.visible').findByText(newRole).click();
 }
 
@@ -565,13 +570,13 @@ function savePage() {
 }
 
 function removeAndConfirm(name) {
-    cy.findByTestId(`${name}_groupsyncable_remove`, {timeout: TIMEOUTS.ONE_MIN}).click();
+    groupSyncableRow(name).findByTestId('admin.group.teams_and_channels.row.remove--button').click();
     cy.get('#confirmModalButton').should('be.visible').click();
     verifyNoTeamsOrChannelsIsVisible();
 }
 
 function verifyNewRoleIsVisible(teamOrChannel, newRole) {
-    cy.findByTestId(`${teamOrChannel}_current_role`, {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView().should('be.visible').findByText(newRole).should('be.visible');
+    groupSyncableRow(teamOrChannel).findByTestId('admin.group.teams_and_channels.row.role').scrollIntoView().should('be.visible').findByText(newRole).should('be.visible');
 }
 
 function verifyNoTeamsOrChannelsIsVisible() {

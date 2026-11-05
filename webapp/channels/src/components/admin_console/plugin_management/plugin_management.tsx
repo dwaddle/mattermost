@@ -259,6 +259,10 @@ export const searchableStrings = [
     messages.marketplaceUrlDesc,
 ];
 
+// A plugin id as a row key (`com.mattermost.calls` -> `com_mattermost_calls`); keys can't hold `.`.
+// Not pluginTestKey: that key is for the published plugin slots, and this list isn't one.
+const pluginRowTestKey = (pluginId: string) => pluginId.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+
 const PluginItem = ({
     pluginStatus,
     plugin,
@@ -285,6 +289,7 @@ const PluginItem = ({
         activateButton = (
             <a
                 data-plugin-id={pluginStatus.id}
+                data-testid='admin.plugins.plugin.disable--button'
                 className={deactivating || isDisabled ? 'disabled' : ''}
                 onClick={handleDisable}
             >
@@ -305,6 +310,7 @@ const PluginItem = ({
         activateButton = (
             <a
                 data-plugin-id={pluginStatus.id}
+                data-testid='admin.plugins.plugin.enable--button'
                 className={activating || isDisabled ? 'disabled' : ''}
                 onClick={handleEnable}
             >
@@ -330,6 +336,7 @@ const PluginItem = ({
                 {' - '}
                 <Link
                     to={'/admin_console/plugins/plugin_' + pluginStatus.id}
+                    data-testid='admin.plugins.plugin.settings--link'
                 >
                     <FormattedMessage
                         id='admin.plugin.settingsButton'
@@ -376,6 +383,7 @@ const PluginItem = ({
             {' - '}
             <a
                 data-plugin-id={pluginStatus.id}
+                data-testid='admin.plugins.plugin.remove--button'
                 className={removing || isDisabled ? 'disabled' : ''}
                 onClick={handleRemove}
             >
@@ -387,7 +395,10 @@ const PluginItem = ({
     let description;
     if (pluginStatus.description) {
         description = (
-            <div className='pt-2'>
+            <div
+                className='pt-2'
+                data-testid='admin.plugins.plugin.description--text'
+            >
                 {pluginStatus.description}
             </div>
         );
@@ -494,13 +505,14 @@ const PluginItem = ({
     }
 
     return (
-        <div data-testid={pluginStatus.id}>
+        <div data-testid={`admin.plugins.plugin:${pluginRowTestKey(pluginStatus.id)}`}>
             <PluginMetadataPanel
                 name={pluginStatus.name}
                 id={pluginStatus.id}
                 version={pluginStatus.version}
                 homepageUrl={plugin?.homepage_url}
                 releaseNotesUrl={plugin?.release_notes_url}
+                testIdScope='admin.plugins.plugin.metadata'
             />
             {description}
             <div className='pt-2'>
@@ -1056,6 +1068,7 @@ export class PluginManagement extends OLDAdminSettings<Props, State> {
                 confirmButtonText={removeButton}
                 onConfirm={onConfirm}
                 onCancel={onCancel}
+                testId='admin.plugins.remove_modal'
             />
         );
     };
@@ -1146,7 +1159,10 @@ export class PluginManagement extends OLDAdminSettings<Props, State> {
 
         if (this.state.serverError) {
             serverError = (
-                <div className='PluginManagement__uploadStatus PluginManagement__uploadStatus--error'>
+                <div
+                    className='PluginManagement__uploadStatus PluginManagement__uploadStatus--error'
+                    data-testid='admin.plugins.upload_error--text'
+                >
                     <i
                         className='icon icon-alert-outline'
                         aria-hidden={true}
@@ -1157,7 +1173,10 @@ export class PluginManagement extends OLDAdminSettings<Props, State> {
         }
         if (this.state.lastMessage) {
             lastMessage = (
-                <div className='PluginManagement__uploadStatus PluginManagement__uploadStatus--success'>
+                <div
+                    className='PluginManagement__uploadStatus PluginManagement__uploadStatus--success'
+                    data-testid='admin.plugins.upload_success--text'
+                >
                     <i
                         className='icon icon-check-circle'
                         aria-hidden={true}
@@ -1375,6 +1394,7 @@ export class PluginManagement extends OLDAdminSettings<Props, State> {
                                         className={classNames('PluginManagement__uploadDropzone', {
                                             'PluginManagement__uploadDropzone--active': this.state.draggingUpload,
                                         })}
+                                        data-testid='admin.plugins.upload--button'
                                         onClick={this.handleChooseFileClick}
                                         onDragEnter={this.handleUploadDragEnter}
                                         onDragOver={this.handleUploadDragOver}
@@ -1412,6 +1432,7 @@ export class PluginManagement extends OLDAdminSettings<Props, State> {
                                     <input
                                         ref={this.fileInput}
                                         className='PluginManagement__fileInput'
+                                        data-testid='admin.plugins.upload_file'
                                         type='file'
                                         accept='.tar.gz,.gz'
                                         onChange={this.handleUpload}

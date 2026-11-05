@@ -6,6 +6,7 @@ import React, {useCallback, useMemo} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import useCopyText, {messages as copyMessages} from 'components/common/hooks/useCopyText';
 import ExternalLink from 'components/external_link';
@@ -28,9 +29,12 @@ export type PluginMetadataPanelProps = {
     releaseNotesUrl?: string;
     className?: string;
     hideName?: boolean;
+
+    // The panel's path; its parts are `.id--button` and `.version--link` (or `.version--text` without release notes).
+    testIdScope: TestId;
 };
 
-const PluginMetadataId = ({id}: {id: string}) => {
+const PluginMetadataId = ({id, testId}: {id: string; testId: TestId}) => {
     const intl = useIntl();
     const {copiedRecently, onClick: copyId} = useCopyText({
         text: id,
@@ -60,7 +64,7 @@ const PluginMetadataId = ({id}: {id: string}) => {
         >
             <span
                 className='PluginMetadataPanel__id'
-                data-testid='plugin-metadata-id'
+                data-testid={`${testId}--button`}
                 onClick={handleCopy}
                 onKeyDown={handleKeyDown}
                 role='button'
@@ -81,6 +85,7 @@ const PluginMetadataPanel = ({
     releaseNotesUrl,
     className,
     hideName = false,
+    testIdScope,
 }: PluginMetadataPanelProps) => {
     const displayName = name.trim() || id;
     const formattedVersion = formatPluginVersion(version);
@@ -106,12 +111,12 @@ const PluginMetadataPanel = ({
                     <ExternalLink
                         href={releaseNotesUrl}
                         location='plugin_metadata_panel'
-                        data-testid='plugin-metadata-version'
+                        data-testid={`${testIdScope}.version--link`}
                     >
                         {formattedVersion}
                     </ExternalLink>
                 ) : (
-                    <span data-testid='plugin-metadata-version'>
+                    <span data-testid={`${testIdScope}.version--text`}>
                         {formattedVersion}
                     </span>
                 )}
@@ -122,12 +127,15 @@ const PluginMetadataPanel = ({
     return (
         <span
             className={classNames('PluginMetadataPanel', className)}
-            data-testid='plugin-metadata-panel'
+            data-testid={testIdScope}
         >
             {!hideName && nameElement}
             <span className='PluginMetadataPanel__metadata'>
                 {!hideName && ' ('}
-                <PluginMetadataId id={id}/>
+                <PluginMetadataId
+                    id={id}
+                    testId={`${testIdScope}.id`}
+                />
                 {versionElement}
                 {!hideName && ')'}
             </span>

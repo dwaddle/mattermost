@@ -5,6 +5,8 @@ import React, {type JSX} from 'react';
 import type {MessageDescriptor} from 'react-intl';
 import {useIntl} from 'react-intl';
 
+import {settingTestKey} from '@mattermost/shared/utils/test_id';
+
 import TextSetting from 'components/widgets/settings/text_setting';
 import type {Props as WidgetTextSettingProps} from 'components/widgets/settings/text_setting';
 
@@ -38,6 +40,8 @@ const AdminTextSetting: React.FunctionComponent<Props> = (props: Props): JSX.Ele
             disabled={isTextDisabled}
             footer={setByEnv ? <SetByEnv/> : footer}
             placeholder={placeholderToUse}
+            testIdScope='admin.setting'
+            testId={`admin.setting:${settingTestKey(props.id)}`}
         />
     );
 };

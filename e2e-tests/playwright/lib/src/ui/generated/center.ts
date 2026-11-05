@@ -10,13 +10,15 @@ import type {Post} from '@mattermost/types/posts';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {AddGroupsToChannelModal} from './add_groups_to_channel_modal';
+import {AddGroupsToTeamModal} from './add_groups_to_team_modal';
 import {ChannelInviteModal} from './channel_invite_modal';
 import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {InvitationModal} from './invitation_modal';
 import {Markdown} from './markdown';
 import {SendPostOptions} from './send_post_options';
-import {AddGroupsToChannelModalGroups, Avatar, ChannelBanner, PostCreate, PostItem, Toast} from './shared';
+import {Avatar, ChannelBanner, PostCreate, PostItem, Toast} from './shared';
 import type {CenterToast} from './sets';
 
 /** Scope `center`. */
@@ -273,7 +275,7 @@ export class CenterPostListChannelIntro extends Scope {
     /**
      * `center.post_list.channel_intro.add_groups_to_team--button` — ToggleModalButton (channels/src/components/toggle_modal_button.tsx)
      * Renders only when !isReadOnly && enableUserCreation and teamIsGroupConstrained.
-     * Opens modal AddGroupsToTeamModal (`add_groups_to_team_modal.groups`).
+     * Opens modal AddGroupsToTeamModal (`add_groups_to_team_modal`).
      */
     get addGroupsToTeamButton() {
         return drivers.button(this.byTestId(`${this.scope}.add_groups_to_team--button`), {
@@ -286,15 +288,15 @@ export class CenterPostListChannelIntro extends Scope {
     }
 
     /** Clicks addGroupsToTeamButton and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickAddGroupsToTeamButton(): Promise<AddGroupsToChannelModalGroups> {
+    async clickAddGroupsToTeamButton(): Promise<AddGroupsToTeamModal> {
         await this.addGroupsToTeamButton.click();
-        return new AddGroupsToChannelModalGroups(this.page, 'add_groups_to_team_modal.groups');
+        return new AddGroupsToTeamModal(this.page, 'add_groups_to_team_modal');
     }
 
     /**
      * `center.post_list.channel_intro.add_members--button` — MoreThanMaxFreeUsers (channels/src/components/post_view/channel_intro_message/add_members_button.tsx)
      * Renders only when !inviteUsers and !channelIsArchived.
-     * Opens modal AddGroupsToChannelModal (`add_groups_to_channel_modal.groups`).
+     * Opens modal AddGroupsToChannelModal (`add_groups_to_channel_modal`).
      * Opens modal ChannelInviteModalComponent (`channel_invite_modal`).
      */
     get addMembersButton() {
@@ -309,12 +311,12 @@ export class CenterPostListChannelIntro extends Scope {
 
     /** Clicks addMembersButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickAddMembersButton(): Promise<{
-        groups: AddGroupsToChannelModalGroups;
+        addGroupsToChannelModal: AddGroupsToChannelModal;
         channelInviteModal: ChannelInviteModal;
     }> {
         await this.addMembersButton.click();
         return {
-            groups: new AddGroupsToChannelModalGroups(this.page, 'add_groups_to_channel_modal.groups'),
+            addGroupsToChannelModal: new AddGroupsToChannelModal(this.page, 'add_groups_to_channel_modal'),
             channelInviteModal: new ChannelInviteModal(this.page, 'channel_invite_modal'),
         };
     }

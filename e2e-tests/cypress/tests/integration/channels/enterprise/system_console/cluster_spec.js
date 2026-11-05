@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @channels @enterprise @system_console @high_availability @not_cloud
 
+import {settingRow} from '@/utils/admin_setting';
+
 describe('Cluster', () => {
     before(() => {
         cy.shouldNotRunOnCloudEdition();
@@ -30,7 +32,7 @@ describe('Cluster', () => {
     });
 
     it('SC25050 - Can change Gossip Encryption', () => {
-        cy.findByTestId('EnableGossipEncryption').scrollIntoView().should('be.visible').within(() => {
+        settingRow('EnableGossipEncryption').scrollIntoView().should('be.visible').within(() => {
             // * Verify that setting is visible and matches text content
             cy.get('.control-label').should('be.visible').and('have.text', 'Enable Gossip encryption:');
 
@@ -51,14 +53,14 @@ describe('Cluster', () => {
         });
         cy.reload();
 
-        cy.findByTestId('EnableGossipEncryption').scrollIntoView().should('be.visible').within(() => {
+        settingRow('EnableGossipEncryption').scrollIntoView().should('be.visible').within(() => {
             // * Verify that Gossip Encryption is set to true
             cy.get('#EnableGossipEncryptiontrue').should('have.attr', 'checked');
         });
     });
 
     it('Can change Gossip Compression', () => {
-        cy.findByTestId('EnableGossipCompression').scrollIntoView().should('be.visible').within(() => {
+        settingRow('EnableGossipCompression').scrollIntoView().should('be.visible').within(() => {
             // * Verify that setting is visible and matches text content
             cy.get('.control-label').should('be.visible').and('have.text', 'Enable Gossip compression:');
 
@@ -79,7 +81,7 @@ describe('Cluster', () => {
         });
         cy.reload();
 
-        cy.findByTestId('EnableGossipCompression').scrollIntoView().should('be.visible').within(() => {
+        settingRow('EnableGossipCompression').scrollIntoView().should('be.visible').within(() => {
             // * Verify that Gossip Compression is set to false
             cy.get('#EnableGossipCompressionfalse').should('have.attr', 'checked');
         });

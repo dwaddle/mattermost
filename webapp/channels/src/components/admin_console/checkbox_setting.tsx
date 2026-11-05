@@ -4,6 +4,7 @@
 import React, {memo} from 'react';
 
 import {Checkbox} from '@mattermost/compass-ui/components/checkbox';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import SetByEnv from './set_by_env';
 
@@ -14,6 +15,9 @@ type Props = {
     onChange: (id: string, foo: boolean) => void;
     disabled?: boolean;
     setByEnv: boolean;
+
+    /** Renders `${testId}--checkbox` (without it, the legacy id). */
+    testId?: TestId;
 };
 
 const CheckboxSetting = ({
@@ -23,6 +27,7 @@ const CheckboxSetting = ({
     defaultChecked,
     setByEnv,
     onChange,
+    testId,
 }: Props) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(id, e.target.checked);
@@ -32,7 +37,7 @@ const CheckboxSetting = ({
         <div>
             <Checkbox
                 className='checkbox-inline'
-                data-testid={id}
+                data-testid={testId ? `${testId}--checkbox` : id}
                 id={id}
                 name={id}
                 defaultChecked={defaultChecked}

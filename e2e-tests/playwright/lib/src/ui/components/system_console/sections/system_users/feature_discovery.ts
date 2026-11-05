@@ -19,6 +19,6 @@ export default class FeatureDiscovery {
     }
 
     async toHaveTitle(title: string) {
-        await expect(this.container.getByTestId('featureDiscovery_title')).toHaveText(title);
+        await expect(this.container.getByTestId('admin.feature_discovery.title--text')).toHaveText(title);
     }
 }

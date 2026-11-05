@@ -11,6 +11,7 @@
 // Group: @channels @messaging @collapsed_reply_threads
 
 import timeouts from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Messaging', () => {
     let offTopicPath;
@@ -32,7 +33,7 @@ describe('Messaging', () => {
         cy.visit('/admin_console/site_config/emoji');
         cy.get('.admin-console__header').should('be.visible').and('have.text', 'Emoji');
 
-        cy.findByTestId('ServiceSettings.EnableEmojiPickertrue').check();
+        settingPart('ServiceSettings.EnableEmojiPicker', 'true--radio').check();
 
         cy.get('#saveSetting').then((btn) => {
             if (btn.is(':enabled')) {
@@ -144,7 +145,7 @@ describe('Messaging', () => {
         cy.visit('/admin_console/site_config/emoji');
         cy.get('.admin-console__header').should('be.visible').and('have.text', 'Emoji');
 
-        cy.findByTestId('ServiceSettings.EnableEmojiPickerfalse').check();
+        settingPart('ServiceSettings.EnableEmojiPicker', 'false--radio').check();
 
         cy.get('#saveSetting').then((btn) => {
             if (btn.is(':enabled')) {

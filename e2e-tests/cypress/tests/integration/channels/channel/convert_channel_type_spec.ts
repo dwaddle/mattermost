@@ -5,6 +5,8 @@ import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 import type {Channel} from '@mattermost/types/channels';
 
+import {permissionToggle} from '../enterprise/system_console/channel_moderation/helpers';
+
 import {getAdminAccount} from '@/support/env';
 
 // ***************************************************************
@@ -36,7 +38,7 @@ describe('Channel Type Conversion (Public to Private Only)', () => {
     };
 
     const enablePermission = (permissionCheckBoxTestId: string) => {
-        cy.findByTestId(permissionCheckBoxTestId).then((el) => {
+        permissionToggle(permissionCheckBoxTestId).then((el) => {
             if (!el.hasClass('checked')) {
                 el.click();
             }
@@ -44,7 +46,7 @@ describe('Channel Type Conversion (Public to Private Only)', () => {
     };
 
     const removePermission = (permissionCheckBoxTestId: string) => {
-        cy.findByTestId(permissionCheckBoxTestId).then((el) => {
+        permissionToggle(permissionCheckBoxTestId).then((el) => {
             if (el.hasClass('checked')) {
                 el.click();
             }
@@ -69,7 +71,7 @@ describe('Channel Type Conversion (Public to Private Only)', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults and confirm
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('admin.permissions.reset--button').click();
         cy.get('#confirmModalButton').click();
 
         // # Save

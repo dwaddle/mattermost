@@ -3,10 +3,15 @@
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 
+/** A plugin's row in Plugin Management: the plugin id with every character outside [a-z0-9_] made `_`. */
+export function pluginRowTestId(pluginId) {
+    return `admin.plugins.plugin:${pluginId.toLowerCase().replace(/[^a-z0-9_]/g, '_')}`;
+}
+
 export function waitForAlertMessage(pluginId, message) {
     const checkFn = () => {
         cy.log(`Waiting for ${message}`);
-        return cy.findByTestId(pluginId).scrollIntoView().then((pluginEl) => {
+        return cy.findByTestId(pluginRowTestId(pluginId)).scrollIntoView().then((pluginEl) => {
             return pluginEl[0].innerText.includes(message);
         });
     };

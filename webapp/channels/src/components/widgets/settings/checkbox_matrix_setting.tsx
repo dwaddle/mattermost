@@ -4,6 +4,7 @@
 import React, {memo, useCallback, useMemo} from 'react';
 import type {ChangeEventHandler} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {MatrixConfig} from '@mattermost/types/apps';
 
 type Props = {
@@ -14,6 +15,12 @@ type Props = {
     onChange(name: string, value: string[]): void;
     value?: string[];
     disabled?: boolean;
+
+    /** The row's parts render under it (`${testIdScope}.cell:<row>_<column>--checkbox` or `--radio`); without it, the legacy ids. */
+    testIdScope?: TestId;
+
+    /** The row's own testid when it isn't the scope (a keyed row). */
+    testId?: TestId;
 };
 
 export function parseMatrixValue(entries: string[]): Map<string, Set<string>> {
@@ -53,6 +60,8 @@ const CheckboxMatrixSetting = ({
     onChange,
     value,
     disabled,
+    testIdScope,
+    testId,
 }: Props) => {
     const rows = matrixConfig.rows || [];
     const columns = matrixConfig.columns || [];
@@ -95,12 +104,12 @@ const CheckboxMatrixSetting = ({
     return (
         <div
             className='form-group'
-            data-testid={id}
+            data-testid={testIdScope ? testId ?? testIdScope : id}
         >
             {label && (
                 <label
                     className='control-label'
-                    data-testid={id + 'label'}
+                    data-testid={testIdScope ? `${testIdScope}.label--text` : id + 'label'}
                 >
                     {label}
                 </label>
@@ -131,16 +140,30 @@ const CheckboxMatrixSetting = ({
                                 const checked = rowColumns?.has(col.value) || false;
                                 return (
                                     <td key={col.value}>
-                                        <input
-                                            type={rowSelection === 'single' ? 'radio' : 'checkbox'}
-                                            name={rowSelection === 'single' ? `${id}:${row.value}` : undefined}
-                                            value={col.value}
-                                            data-row={row.value}
-                                            aria-label={`${row.label}, ${col.label}`}
-                                            checked={checked}
-                                            onChange={handleChange}
-                                            disabled={disabled}
-                                        />
+                                        {rowSelection === 'single' ? (
+                                            <input
+                                                type='radio'
+                                                name={`${id}:${row.value}`}
+                                                value={col.value}
+                                                data-row={row.value}
+                                                data-testid={testIdScope ? `${testIdScope}.radio_cell:${row.value}_${col.value}--radio` : undefined}
+                                                aria-label={`${row.label}, ${col.label}`}
+                                                checked={checked}
+                                                onChange={handleChange}
+                                                disabled={disabled}
+                                            />
+                                        ) : (
+                                            <input
+                                                type='checkbox'
+                                                value={col.value}
+                                                data-row={row.value}
+                                                data-testid={testIdScope ? `${testIdScope}.cell:${row.value}_${col.value}--checkbox` : undefined}
+                                                aria-label={`${row.label}, ${col.label}`}
+                                                checked={checked}
+                                                onChange={handleChange}
+                                                disabled={disabled}
+                                            />
+                                        )}
                                     </td>
                                 );
                             })}
@@ -151,7 +174,7 @@ const CheckboxMatrixSetting = ({
             {helpText && (
                 <div
                     className='help-text'
-                    data-testid={id + 'help-text'}
+                    data-testid={testIdScope ? `${testIdScope}.help--text` : id + 'help-text'}
                 >
                     {helpText}
                 </div>

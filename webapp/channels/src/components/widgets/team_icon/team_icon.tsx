@@ -6,6 +6,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Team} from '@mattermost/types/teams';
 
 import {imageURLForTeam} from 'utils/utils';
@@ -35,6 +36,9 @@ type Props = {
 
     /** react-intl helper object */
     intl: IntlShape;
+
+    /** The icon's path: `.icon--img` or `.initials--img`; hosts that don't pass one yet (the team sidebar, content flagging's reviewers and the properties card) keep the legacy `teamIconImage` and `teamIconInitial`. */
+    testIdScope?: TestId;
 };
 
 /**
@@ -47,7 +51,7 @@ export class TeamIcon extends React.PureComponent<Props> {
     };
 
     public render() {
-        const {content, url, size, withHover, className} = this.props;
+        const {content, url, size, withHover, className, testIdScope} = this.props;
         const hoverCss = withHover ? '' : 'no-hover';
         const {formatMessage} = this.props.intl;
 
@@ -58,7 +62,7 @@ export class TeamIcon extends React.PureComponent<Props> {
             if (teamIconUrl) {
                 icon = (
                     <div
-                        data-testid='teamIconImage'
+                        data-testid={testIdScope ? `${testIdScope}.icon--img` : 'teamIconImage'}
                         className={`TeamIcon__image TeamIcon__${size}`}
                         aria-label={
                             formatMessage({
@@ -75,7 +79,7 @@ export class TeamIcon extends React.PureComponent<Props> {
             } else {
                 icon = (
                     <div
-                        data-testid='teamIconInitial'
+                        data-testid={testIdScope ? `${testIdScope}.initials--img` : 'teamIconInitial'}
                         className={`TeamIcon__initials TeamIcon__initials__${size}`}
                         aria-label={
                             formatMessage({

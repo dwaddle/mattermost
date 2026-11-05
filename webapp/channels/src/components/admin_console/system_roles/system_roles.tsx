@@ -58,16 +58,17 @@ const SystemRoles = ({roles}: Props) => {
 
             if (role) {
                 roleRows.push({
+                    testKey: role.name,
                     cells: {
                         role: <FormattedMessage {...rolesStrings[role.name].name}/>,
                         description: <FormattedMessage {...rolesStrings[role.name].description}/>,
                         type: <FormattedMessage {...rolesStrings[role.name].type}/>,
                         edit: (
-                            <span
-                                className='SystemRoles_editRow'
-                                data-testid={`${role.name}_edit`}
-                            >
-                                <Link to={`/admin_console/user_management/system_roles/${role.id}`} >
+                            <span className='SystemRoles_editRow'>
+                                <Link
+                                    to={`/admin_console/user_management/system_roles/${role.id}`}
+                                    data-testid={`admin.roles.edit:${role.name}--link`}
+                                >
                                     <FormattedMessage
                                         id='admin.permissions.roles.edit'
                                         defaultMessage='Edit'
@@ -101,6 +102,7 @@ const SystemRoles = ({roles}: Props) => {
                     >
                         <div className='SystemRoles'>
                             <DataGrid
+                                testIdScope='admin.roles'
                                 rows={rows}
                                 columns={columns}
                                 startCount={0}

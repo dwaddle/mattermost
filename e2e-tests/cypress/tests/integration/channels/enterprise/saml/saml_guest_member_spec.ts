@@ -11,6 +11,7 @@
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {getRandomId} from '@/utils';
+import {settingPart} from '@/utils/admin_setting';
 
 // assumes that E20 license is uploaded
 // Update config.mk to make sure docker images for openldap and keycloak
@@ -95,7 +96,7 @@ describe('SAML Guest', () => {
         cy.visit('/admin_console/authentication/saml');
 
         // # Turn on Guest Attribute Filter
-        cy.findByTestId('SamlSettings.GuestAttributeinput').clear().type('username=e2etest.one');
+        settingPart('SamlSettings.GuestAttribute', 'value--textbox').clear().type('username=e2etest.one');
 
         // # Save SAML Settings
         cy.findByText('Save').click().wait(TIMEOUTS.ONE_SEC);
@@ -104,7 +105,7 @@ describe('SAML Guest', () => {
         cy.visit('/admin_console/authentication/guest_access');
 
         // # Turn off Guest Access
-        cy.findByTestId('GuestAccountsSettings.Enablefalse').check();
+        settingPart('GuestAccountsSettings.Enable', 'false--radio').check();
 
         // # Save Guest Access Settings
         cy.findByText('Save').click().wait(TIMEOUTS.ONE_SEC);
@@ -116,7 +117,7 @@ describe('SAML Guest', () => {
         cy.visit('/admin_console/authentication/saml');
 
         // * verify Guest Attribute is disabled.
-        cy.findByTestId('SamlSettings.GuestAttributeinput').should('be.disabled');
+        settingPart('SamlSettings.GuestAttribute', 'value--textbox').should('be.disabled');
     });
 
     it('MM-T1423_2 - SAML User will login as member', () => {

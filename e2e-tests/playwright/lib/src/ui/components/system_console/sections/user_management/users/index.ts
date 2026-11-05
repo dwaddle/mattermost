@@ -77,29 +77,29 @@ export default class Users {
         this.updateEmailModal = new UpdateEmailModal(this.page.locator('#resetEmailModal'));
 
         this.header = container.getByText('Mattermost Users', {exact: true});
-        this.revokeAllSessionsButton = container.getByRole('button', {name: 'Revoke All Sessions'});
+        this.revokeAllSessionsButton = container.getByTestId('admin.users.revoke_all_sessions--button');
 
-        this.searchInput = container.getByRole('textbox', {name: 'Search users'});
-        this.filtersButton = container.getByRole('button', {name: /Filters/});
-        this.columnToggleMenuButton = container.locator('#systemUsersColumnTogglerMenuButton');
-        this.dateRangeSelectorMenuButton = container.locator('#systemUsersDateRangeSelectorMenuButton');
-        this.exportButton = container.getByText('Export');
+        this.searchInput = container.getByTestId('admin.users.search--textbox');
+        this.filtersButton = container.getByTestId('admin.users.filters--button');
+        this.columnToggleMenuButton = container.getByTestId('admin.users.columns--button');
+        this.dateRangeSelectorMenuButton = container.getByTestId('admin.users.date_range--button');
+        this.exportButton = container.getByTestId('admin.users.export--button');
 
         this.loadingSpinner = container.getByText('Loading');
 
         this.usersTable = new UsersTable(container.locator('#systemUsersTable'));
 
         this.columnToggleMenu = new ColumnToggleMenu(this.page.locator('#systemUsersColumnTogglerMenu'));
-        this.filterPopover = new FilterPopover(this.page.locator('#systemUsersFilterPopover'));
-        this.roleFilterMenu = new FilterMenu(this.page.getByTestId('dropdownMenu').first());
-        this.statusFilterMenu = new FilterMenu(this.page.getByTestId('dropdownMenu').first());
+        this.filterPopover = new FilterPopover(this.page.getByTestId('admin.users.filters'));
+        this.roleFilterMenu = new FilterMenu(this.page.getByTestId('admin.users.filters.role.menu'));
+        this.statusFilterMenu = new FilterMenu(this.page.getByTestId('admin.users.filters.status.menu'));
         this.dateRangeMenu = new DateRangeMenu(this.page.locator('#systemUsersDateRangeSelectorMenu'));
 
-        const footer = container.getByTestId('listTableFoot');
-        this.paginationInfo = footer.getByTestId('listTableFoot-paginationInfo');
-        this.previousPageButton = footer.getByRole('button', {name: 'Go to previous page'});
-        this.nextPageButton = footer.getByRole('button', {name: 'Go to next page'});
-        this.rowsPerPageSelector = footer.getByTestId('listTableFoot-pageSize').getByRole('combobox');
+        const footer = container.getByTestId('admin.users.table.footer');
+        this.paginationInfo = footer.getByTestId('admin.users.table.footer.pagination--text');
+        this.previousPageButton = footer.getByTestId('admin.users.table.footer.previous--button');
+        this.nextPageButton = footer.getByTestId('admin.users.table.footer.next--button');
+        this.rowsPerPageSelector = footer.getByTestId('admin.users.table.footer.page_size').getByRole('combobox');
     }
 
     async toBeVisible() {

@@ -18,6 +18,8 @@ import {checkboxesTitleToIdMap} from './constants';
 import {
     disablePermission,
     enablePermission,
+    moderationNotice,
+    permissionToggle,
     postChannelMentionsAndVerifySystemMessageExist,
     postChannelMentionsAndVerifySystemMessageNotExist,
     saveConfigForChannel,
@@ -26,6 +28,7 @@ import {
     visitChannelConfigPage,
 } from './helpers';
 
+import {settingPart} from '@/utils/admin_setting';
 import {suggestionItemSelector} from '@/utils/suggestion';
 
 describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
@@ -112,9 +115,9 @@ describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
 
         // * Option to allow Channel Mentions for Guests should also be disabled when Create Post option is disabled.
         // * A message Guests can not use channel mentions without the ability to create posts should be displayed.
-        cy.findByTestId('admin-channel_settings-channel_moderation-channelMentions-disabledGuestsDueToCreatePosts').
+        moderationNotice('use_channel_mentions', 'disabled_guests_due_to_create_posts').
             should('have.text', 'Guests can not use channel mentions without the ability to create posts.');
-        cy.findByTestId(checkboxesTitleToIdMap.CHANNEL_MENTIONS_GUESTS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.CHANNEL_MENTIONS_GUESTS).should('be.disabled');
 
         // # check the create posts option for guests and uncheck for members
         enablePermission(checkboxesTitleToIdMap.CREATE_POSTS_GUESTS);
@@ -122,19 +125,19 @@ describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
 
         // * Option to allow Channel Mentions for Members should also be disabled when Create Post option is disabled.
         // * A message Members can not use channel mentions without the ability to create posts should be displayed.
-        cy.findByTestId('admin-channel_settings-channel_moderation-channelMentions-disabledMemberDueToCreatePosts').
+        moderationNotice('use_channel_mentions', 'disabled_members_due_to_create_posts').
             should('have.text', 'Members can not use channel mentions without the ability to create posts.');
-        cy.findByTestId(checkboxesTitleToIdMap.CHANNEL_MENTIONS_MEMBERS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.CHANNEL_MENTIONS_MEMBERS).should('be.disabled');
 
         // # Uncheck the create posts option for guests
         disablePermission(checkboxesTitleToIdMap.CREATE_POSTS_GUESTS);
 
         // * Ensure that channel mentions for members and guests is disabled
         // * Ensure message Guests & Members can not use channel mentions without the ability to create posts
-        cy.findByTestId('admin-channel_settings-channel_moderation-channelMentions-disabledBothDueToCreatePosts').
+        moderationNotice('use_channel_mentions', 'disabled_both_due_to_create_posts').
             should('have.text', 'Guests and members can not use channel mentions without the ability to create posts.');
-        cy.findByTestId(checkboxesTitleToIdMap.CHANNEL_MENTIONS_GUESTS).should('be.disabled');
-        cy.findByTestId(checkboxesTitleToIdMap.CHANNEL_MENTIONS_MEMBERS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.CHANNEL_MENTIONS_GUESTS).should('be.disabled');
+        permissionToggle(checkboxesTitleToIdMap.CHANNEL_MENTIONS_MEMBERS).should('be.disabled');
     });
 
     it('MM-T1556 Message when user without channel mention permission uses special channel mentions', () => {
@@ -163,7 +166,7 @@ describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
 
         // # Set @channel and @all confirmation dialog to true
         cy.visit('admin_console/environment/notifications');
-        cy.findByTestId('TeamSettings.EnableConfirmNotificationsToChanneltrue').check();
+        settingPart('TeamSettings.EnableConfirmNotificationsToChannel', 'true--radio').check();
         saveConfigForScheme();
 
         // # Visit test channel

@@ -8,6 +8,7 @@ import type {MessageDescriptor} from 'react-intl';
 import {FormattedMessage, defineMessage} from 'react-intl';
 
 import {Button, type ButtonEmphasis} from '@mattermost/compass-ui/components/button';
+import {settingTestKey} from '@mattermost/shared/utils/test_id';
 
 import SuccessIcon from 'components/widgets/icons/fa_success_icon';
 import WarningIcon from 'components/widgets/icons/fa_warning_icon';
@@ -201,7 +202,10 @@ export default class RequestButton extends React.PureComponent<Props, State> {
             );
             message = (
                 <div>
-                    <div className='alert alert-warning'>
+                    <div
+                        className='alert alert-warning'
+                        data-testid='admin.setting.request_error--text'
+                    >
                         <WarningIcon/>
                         {text}
                     </div>
@@ -213,7 +217,10 @@ export default class RequestButton extends React.PureComponent<Props, State> {
                 (<FormattedMessage {...this.props.successMessage}/>);
             message = (
                 <div>
-                    <div className='alert alert-success'>
+                    <div
+                        className='alert alert-success'
+                        data-testid='admin.setting.request_success--text'
+                    >
                         <SuccessIcon/>
                         {text}
                     </div>
@@ -240,12 +247,14 @@ export default class RequestButton extends React.PureComponent<Props, State> {
             <div
                 className='form-group'
                 id={this.props.id}
+                data-testid={this.props.id ? `admin.setting:${settingTestKey(this.props.id)}` : undefined}
             >
                 {label}
                 <div className={widgetClassNames}>
                     <div>
                         <Button
                             type='button'
+                            data-testid='admin.setting.request--button'
                             emphasis={this.props.buttonEmphasis || 'tertiary'}
                             onClick={this.handleRequest}
                             disabled={this.props.disabled}

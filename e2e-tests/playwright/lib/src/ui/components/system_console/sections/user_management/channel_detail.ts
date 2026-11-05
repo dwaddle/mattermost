@@ -18,7 +18,7 @@ export default class ChannelDetail {
     constructor(container: Locator) {
         this.container = container;
 
-        this.policyEnforceSwitch = new Switch(container, 'policy-enforce-toggle-button');
+        this.policyEnforceSwitch = new Switch(container, 'admin.channel.policy_enforce--switch');
     }
 
     async enablePolicyEnforcement() {

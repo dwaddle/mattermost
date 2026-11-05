@@ -71,12 +71,13 @@ const FindingRow = ({finding, now, expanded, onToggle, onMute, onUnmute, hideAre
                 'HealthFinding--expanded': expanded,
                 'HealthFinding--muted': muted,
             })}
-            data-testid={`healthFinding-${finding.fingerprint}`}
+            data-testid={`admin.health.finding:${finding.fingerprint}`}
         >
             <div className='HealthFinding__summary'>
                 <button
                     type='button'
                     className='HealthFinding__header'
+                    data-testid='admin.health.finding.toggle--button'
                     aria-expanded={expanded}
                     aria-controls={detailId}
                     onClick={() => onToggle(finding.fingerprint)}
@@ -103,7 +104,7 @@ const FindingRow = ({finding, now, expanded, onToggle, onMute, onUnmute, hideAre
                             {!hideArea && (
                                 <span
                                     className='HealthFinding__tag'
-                                    data-testid='healthFindingArea'
+                                    data-testid='admin.health.finding.area--text'
                                 >
                                     <AreaIcon
                                         area={finding.area}
@@ -126,7 +127,7 @@ const FindingRow = ({finding, now, expanded, onToggle, onMute, onUnmute, hideAre
                             {muted && (
                                 <span
                                     className='HealthFinding__tag'
-                                    data-testid='healthFindingMutedBy'
+                                    data-testid='admin.health.finding.muted_by--text'
                                 >
                                     <BellOffOutlineIcon
                                         size={14}

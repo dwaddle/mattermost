@@ -98,6 +98,7 @@ function SecureConnectionAcceptInviteModal({
             modalHeaderText={title}
             onExited={onExited}
             compassDesign={true}
+            testId='admin.accept_invite_modal'
             bodyOverflowVisible={true}
             autoCloseOnConfirmButton={false}
             errorText={isErrorState(saving) && (
@@ -127,7 +128,7 @@ function SecureConnectionAcceptInviteModal({
                             })}
                             value={displayName}
                             onChange={handleDisplayNameChange}
-                            data-testid='display-name'
+                            data-testid='admin.accept_invite_modal.name--textbox'
                         />
 
                         <FormattedMessage
@@ -136,7 +137,7 @@ function SecureConnectionAcceptInviteModal({
                             tagName={ModalParagraph}
                         />
                         <TeamSelector
-                            testId='destination-team-input'
+                            testId='admin.accept_invite_modal.destination_team'
                             value={defaultTeamId}
                             teamsById={teamsById}
                             onChange={setDefaultTeamId}
@@ -161,7 +162,7 @@ function SecureConnectionAcceptInviteModal({
                             })}
                             value={inviteCode}
                             onChange={handleInviteCodeChange}
-                            data-testid='invite-code'
+                            data-testid='admin.accept_invite_modal.code--textbox'
                         />
                         <Input
                             type='text'
@@ -173,7 +174,7 @@ function SecureConnectionAcceptInviteModal({
                             })}
                             value={password}
                             onChange={handlePasswordChange}
-                            data-testid='password'
+                            data-testid='admin.accept_invite_modal.password--textbox'
                         />
                     </ModalFieldset>
                 </>

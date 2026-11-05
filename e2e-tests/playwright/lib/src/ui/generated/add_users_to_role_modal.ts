@@ -5,14 +5,26 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {UserProfile} from '@mattermost/types/users';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
-import {AddGroupsToChannelModalGroups} from './shared';
+import {Api} from './api';
 
 /** Scope `add_users_to_role_modal`. */
 export class AddUsersToRoleModal extends Scope {
     constructor(page: Page, scope = 'add_users_to_role_modal', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    get users(): AddUsersToRoleModalUsers {
+        return new AddUsersToRoleModalUsers(this.page, `${this.scope}.users`, this.root);
+    }
+}
+
+/** Scope `add_users_to_role_modal.users`. */
+export class AddUsersToRoleModalUsers extends Scope {
+    constructor(page: Page, scope = 'add_users_to_role_modal.users', root?: Locator) {
         super(page, scope, root);
     }
 
@@ -21,7 +33,240 @@ export class AddUsersToRoleModal extends Scope {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
-    get users(): AddGroupsToChannelModalGroups {
-        return new AddGroupsToChannelModalGroups(this.page, `${this.scope}.users`, this.root);
+    /**
+     * `add_users_to_role_modal.users.error--alert` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when this.state.hasError.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /**
+     * `add_users_to_role_modal.users.help--text` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `add_users_to_role_modal.users.next--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and options.length > pageEnd.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [Api.GetUsers],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `add_users_to_role_modal.users.previous--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and this.state.page > 0.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [Api.GetUsers],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+
+    /**
+     * `add_users_to_role_modal.users.remove:{key}--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    remove(remove: string) {
+        return drivers.button(this.byTestId(`${this.scope}.remove:${remove}--button`), {
+            testId: `${this.scope}.remove:${remove}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /** Every `add_users_to_role_modal.users.remove:{key}--button` in the scope. */
+    get removeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.remove:`, '--button');
+    }
+
+    /** The keys of every `add_users_to_role_modal.users.remove:{key}--button` in the scope, in document order. */
+    removeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.remove:`, '--button');
+    }
+
+    /**
+     * `add_users_to_role_modal.users.save--button` — SaveButton (channels/src/components/save_button.tsx)
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/save_button.tsx#SaveButton',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
+    }
+
+    /**
+     * `add_users_to_role_modal.users.search--combobox` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get searchCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.search--combobox`), {
+            testId: `${this.scope}.search--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async chooseSearchCombobox(option: string | RegExp): Promise<void> {
+        await this.searchCombobox.choose(option);
+    }
+
+    /**
+     * `add_users_to_role_modal.users.results` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get results(): AddUsersToRoleModalUsersResults {
+        return new AddUsersToRoleModalUsersResults(this.page, `${this.scope}.results`, this.root);
+    }
+
+    /** Every `add_users_to_role_modal.users.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
+    get removeList() {
+        return this.keyedList(`${this.scope}.remove:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.remove:${key}--button`), {
+                testId: `${this.scope}.remove:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+            }),
+        );
+    }
+}
+
+/** Scope `add_users_to_role_modal.users.results`. */
+export class AddUsersToRoleModalUsersResults extends Scope {
+    constructor(page: Page, scope = 'add_users_to_role_modal.users.results', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `add_users_to_role_modal.users.results.live_region` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     */
+    get liveRegion() {
+        return drivers.container(this.byTestId(`${this.scope}.live_region`), {
+            testId: `${this.scope}.live_region`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    /**
+     * `add_users_to_role_modal.users.results.no_results--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and options == null || options.length === 0 and !customNoOptionsMessage.
+     */
+    get noResultsText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_results--text`), {
+            testId: `${this.scope}.no_results--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getNoResultsText(): Promise<string> {
+        return this.noResultsText.text();
+    }
+
+    /**
+     * `add_users_to_role_modal.users.results.selection--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get selectionText() {
+        return drivers.text(this.byTestId(`${this.scope}.selection--text`), {
+            testId: `${this.scope}.selection--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getSelectionText(): Promise<string> {
+        return this.selectionText.text();
+    }
+
+    /**
+     * `add_users_to_role_modal.users.results.user:{key}` — AddUsersToRoleModal (channels/src/components/admin_console/system_roles/system_role/add_users_to_role_modal/add_users_to_role_modal.tsx)
+     */
+    user(user: Pick<UserProfile, 'id'>) {
+        return drivers.container(this.byTestId(`${this.scope}.user:${user.id}`), {
+            testId: `${this.scope}.user:${user.id}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/system_roles/system_role/add_users_to_role_modal/add_users_to_role_modal.tsx#AddUsersToRoleModal',
+        });
+    }
+
+    /** Every `add_users_to_role_modal.users.results.user:{key}` in the scope. */
+    get userItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.user:`, '');
+    }
+
+    /** The keys of every `add_users_to_role_modal.users.results.user:{key}` in the scope, in document order. */
+    userKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.user:`, '');
+    }
+
+    /** Every `add_users_to_role_modal.users.results.user:{key}` in the scope as a list by key, for the list matchers: `expect(x.userList).toHaveKeys([…])`. */
+    get userList() {
+        return this.keyedList(`${this.scope}.user:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.user:${key}`), {
+                testId: `${this.scope}.user:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/system_roles/system_role/add_users_to_role_modal/add_users_to_role_modal.tsx#AddUsersToRoleModal',
+            }),
+        );
     }
 }

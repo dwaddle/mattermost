@@ -10,6 +10,7 @@
 // Group: @channels @integrations
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Integrations', () => {
     let testTeam;
@@ -64,7 +65,7 @@ describe('Integrations', () => {
 
         // # Disable outgoing webhooks from console
         cy.visit('/admin_console/integrations/integration_management');
-        cy.findByTestId('ServiceSettings.EnableOutgoingWebhooksfalse').click().should('be.checked');
+        settingPart('ServiceSettings.EnableOutgoingWebhooks', 'false--radio').click().should('be.checked');
         cy.get('#saveSetting').click();
         cy.get('#saveSetting').should('be.disabled');
 
@@ -90,7 +91,7 @@ describe('Integrations', () => {
 
         // # Re-enable outgoing webhooks from console
         cy.visit('/admin_console/integrations/integration_management');
-        cy.findByTestId('ServiceSettings.EnableOutgoingWebhookstrue').click().should('be.checked');
+        settingPart('ServiceSettings.EnableOutgoingWebhooks', 'true--radio').click().should('be.checked');
         cy.get('#saveSetting').click();
 
         // * Assert from API that outgoing webhook is active

@@ -104,6 +104,7 @@ export function SystemUsersColumnTogglerMenu(props: Props) {
             <Menu.Container
                 menuButton={{
                     id: 'systemUsersColumnTogglerMenuButton',
+                    dataTestId: 'admin.users.columns--button',
                     class: 'inputWithMenu',
                     'aria-label': formatMessage({
                         id: 'admin.system_users.column_toggler.menuButtonAriaLabel',
@@ -158,6 +159,7 @@ export function SystemUsersColumnTogglerMenu(props: Props) {
                         <Menu.Item
                             key={column.id}
                             id={column.id}
+                            data-testid={`admin.users.columns_menu.column:${column.id}--menuitemcheckbox`}
                             role='menuitemcheckbox'
                             labels={getColumnName(column.id)}
                             disabled={!column.getCanHide()}

@@ -11,6 +11,7 @@
 // Group: @channels @enterprise @not_cloud
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {settingPart} from '@/utils/admin_setting';
 
 describe('Environment', () => {
     before(() => {
@@ -25,29 +26,29 @@ describe('Environment', () => {
         cy.visit('/admin_console/environment/elasticsearch');
 
         // * Verify the ElasticSearch fields are disabled
-        cy.findByTestId('connectionUrlinput').should('be.disabled');
-        cy.findByTestId('skipTLSVerificationfalse').should('be.disabled');
-        cy.findByTestId('usernameinput').should('be.disabled');
-        cy.findByTestId('passwordinput').should('be.disabled');
-        cy.findByTestId('snifftrue').should('be.disabled');
-        cy.findByTestId('snifffalse').should('be.disabled');
-        cy.findByTestId('enableSearchingtrue').should('be.disabled');
-        cy.findByTestId('enableSearchingfalse').should('be.disabled');
-        cy.findByTestId('enableAutocompletetrue').should('be.disabled');
-        cy.findByTestId('enableAutocompletefalse').should('be.disabled');
+        settingPart('connectionUrl', 'value--textbox').should('be.disabled');
+        settingPart('skipTLSVerification', 'false--radio').should('be.disabled');
+        settingPart('username', 'value--textbox').should('be.disabled');
+        settingPart('password', 'value--textbox').should('be.disabled');
+        settingPart('sniff', 'true--radio').should('be.disabled');
+        settingPart('sniff', 'false--radio').should('be.disabled');
+        settingPart('enableSearching', 'true--radio').should('be.disabled');
+        settingPart('enableSearching', 'false--radio').should('be.disabled');
+        settingPart('enableAutocomplete', 'true--radio').should('be.disabled');
+        settingPart('enableAutocomplete', 'false--radio').should('be.disabled');
 
         cy.visit('/admin_console/environment/elasticsearch');
 
         // # Enable Elasticsearch
-        cy.findByTestId('enableIndexingtrue').check();
+        settingPart('enableIndexing', 'true--radio').check();
 
         // * Verify the ElasticSearch fields are enabled
-        cy.findByTestId('connectionUrlinput').should('not.be.disabled');
-        cy.findByTestId('skipTLSVerificationfalse').should('not.be.disabled');
-        cy.findByTestId('usernameinput').should('not.be.disabled');
-        cy.findByTestId('passwordinput').should('not.be.disabled');
-        cy.findByTestId('snifftrue').should('not.be.disabled');
-        cy.findByTestId('snifffalse').should('not.be.disabled');
+        settingPart('connectionUrl', 'value--textbox').should('not.be.disabled');
+        settingPart('skipTLSVerification', 'false--radio').should('not.be.disabled');
+        settingPart('username', 'value--textbox').should('not.be.disabled');
+        settingPart('password', 'value--textbox').should('not.be.disabled');
+        settingPart('sniff', 'true--radio').should('not.be.disabled');
+        settingPart('sniff', 'false--radio').should('not.be.disabled');
 
         cy.get('.sidebar-section').first().click();
 

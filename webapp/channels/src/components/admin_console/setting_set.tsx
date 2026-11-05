@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import {settingTestKey} from '@mattermost/shared/utils/test_id';
+
 import SetByEnv from './set_by_env';
 import type {Props} from './setting';
 
@@ -15,7 +17,7 @@ export default function SettingSet({
 }: Props) {
     return (
         <fieldset
-            data-testid={inputId}
+            data-testid={inputId ? `admin.setting:${settingTestKey(inputId)}` : undefined}
             id={inputId}
             className='form-group'
         >
@@ -26,7 +28,7 @@ export default function SettingSet({
                 {children}
                 {helpText ? (
                     <div
-                        data-testid={inputId + 'help-text'}
+                        data-testid={inputId ? 'admin.setting.help--text' : undefined}
                         className='help-text'
                     >
                         {helpText}
