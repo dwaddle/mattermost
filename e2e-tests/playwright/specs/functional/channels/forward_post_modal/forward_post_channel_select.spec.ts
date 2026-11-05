@@ -8,7 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * forwards the post there.
  *
  * Written on the generated page objects: the post's dot menu, the forward dialog's options by channel id, and the
- * forwarded post's permalink preview. The channel search box is react-select's combobox (no testid).
+ * forwarded post. The channel search box is react-select's combobox (no testid).
  */
 test('forward post channel selector searches and selects a destination channel', {tag: '@channels'}, async ({pw}) => {
     const {team, user, userClient, adminClient} = await pw.initSetup();
@@ -36,11 +36,12 @@ test('forward post channel selector searches and selects a destination channel',
     await forward.clickConfirmButton();
     await expect(forward.confirmButton.locator).not.toBeVisible();
 
-    // * Verify the target channel's latest post previews the forwarded message
+    // * Verify the target channel's latest post links back to the original. Not the permalink preview: the server
+    // * only generates it when the link matches its SiteURL, which isn't the origin the browser uses everywhere.
     await app.channelsPage.goto({team, channel: target});
     await expect.poll(async () => (await app.center.postList.postKeys()).length).toBeGreaterThan(0);
     const lastId = (await app.center.postList.postKeys()).at(-1)!;
-    await expect(app.center.postList.post({id: lastId}).permalinkPreview.messageText.locator).toHaveText(message);
+    await expect(app.center.postList.post({id: lastId}).locator).toContainText(`/pl/${post.id}`);
 });
 
 /**

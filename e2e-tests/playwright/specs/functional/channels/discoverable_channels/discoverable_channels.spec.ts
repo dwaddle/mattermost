@@ -88,11 +88,11 @@ test(
         await channelsPage.findChannelsModal.toBeVisible();
         await channelsPage.findChannelsModal.input.fill(channel.display_name);
 
-        const result = channelsPage.findChannelsModal.getResult(channel.name);
+        const result = channelsPage.findChannelsModal.getResult(channel);
         await expect(result).toBeVisible();
 
         // # Select the discoverable channel
-        await channelsPage.findChannelsModal.selectChannel(channel.name);
+        await channelsPage.findChannelsModal.selectChannel(channel);
 
         // * The Request to Join modal opens instead of the legacy private-channel join
         // confirmation, and no "Join private channel" dialog is shown.

@@ -828,12 +828,12 @@ test.describe('Anonymous URLs', () => {
         await channelsPage.findChannelsModal.input.fill(targetChannel.displayName.substring(0, 15));
 
         // * Verify the anonymous URL channel appears in results
-        const result = channelsPage.findChannelsModal.getResult(targetChannel.channel.name);
+        const result = channelsPage.findChannelsModal.getResult(targetChannel.channel);
         await expect(result).toBeVisible();
         await expect(result).toContainText(targetChannel.displayName);
 
         // # Select the matching anonymous URL channel
-        await channelsPage.findChannelsModal.selectChannel(targetChannel.channel.name);
+        await channelsPage.findChannelsModal.selectChannel(targetChannel.channel);
 
         // * Verify navigation lands on the obfuscated route
         await channelsPage.centerView.header.toHaveTitle(targetChannel.displayName);
@@ -937,8 +937,8 @@ test.describe('Anonymous URLs', () => {
             await channelsPage.findChannelsModal.input.fill(searchableChannel.displayName);
 
             // * Verify search results use the display name and navigate back to the obfuscated slug
-            await expect(channelsPage.findChannelsModal.getResult(searchableChannel.channel.name)).toBeVisible();
-            await channelsPage.findChannelsModal.selectChannel(searchableChannel.channel.name);
+            await expect(channelsPage.findChannelsModal.getResult(searchableChannel.channel)).toBeVisible();
+            await channelsPage.findChannelsModal.selectChannel(searchableChannel.channel);
             await channelsPage.centerView.header.toHaveTitle(searchableChannel.displayName);
             await expect(channelsPage.page).toHaveURL(
                 new RegExp(`/${team.name}/channels/${searchableChannel.channel.name}$`),

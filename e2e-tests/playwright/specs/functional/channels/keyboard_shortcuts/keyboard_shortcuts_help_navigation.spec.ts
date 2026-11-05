@@ -46,7 +46,8 @@ test('MM-T1239 CTRL/CMD+/ and /shortcuts open keyboard shortcuts', async ({pw}) 
  * @objective Verify Ctrl/Cmd+K channel switch keeps focus so typed characters are not lost.
  */
 test('MM-T1242 CTRL/CMD+K typed characters are not lost after switching channels', async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, userClient, team} = await pw.initSetup();
+    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
     const message = 'Hello World!';
 
     // # Open quick switcher, select the current channel, and type into the focused page
@@ -57,7 +58,7 @@ test('MM-T1242 CTRL/CMD+K typed characters are not lost after switching channels
     await page.keyboard.press('ControlOrMeta+K');
     await expect(channelsPage.findChannelsModal.input).toBeVisible();
     await channelsPage.findChannelsModal.input.fill('off');
-    await channelsPage.findChannelsModal.selectChannel('off-topic');
+    await channelsPage.findChannelsModal.selectChannel(offTopic);
     await channelsPage.centerView.header.toHaveTitle('Off-Topic');
     await page.keyboard.type(message);
 
