@@ -5,13 +5,13 @@ import {Api, expect, generated, Msg, settle, test} from '@mattermost/playwright-
 
 /**
  * @objective Verify a thread the user follows is listed in Threads, opens in the thread pane, and leaves
- * the list once unfollowed from the pane's thread menu.
+ * the list once unfollowed from the pane's thread menu (an open thread stays until the user leaves it).
  *
  * Written on the generated page objects: the threads route, the list item (keyed by the root post's id),
  * the pane and the thread menu all come from `app`.
  */
 test(
-    'lists a followed thread, opens it, and drops it from the list when unfollowed from the thread menu',
+    'lists a followed thread, opens it, and drops it from the list once unfollowed from the thread menu and left',
     {tag: '@collapsed_reply_threads'},
     async ({pw}) => {
         const {adminClient, team, user, userClient} = await pw.initSetup();
@@ -44,8 +44,10 @@ test(
         const menu = await app.threads.pane.clickOpenMenuButton();
         await settle(menu.followThreadMenuItem, (m) => m.click(), {wait: Api.StopFollowingThread});
 
-        // * The thread leaves the followed list, and the pane closes with it
+        // # Leave it for the Threads list (an open thread stays in the list until the user leaves it)
+        await app.threadsPage.goto({team});
+
+        // * The thread is no longer in the followed list
         await expect(item.locator).toBeHidden();
-        await expect(app.threads.pane.followButton.locator).toBeHidden();
     },
 );
