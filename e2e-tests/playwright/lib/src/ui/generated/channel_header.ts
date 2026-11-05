@@ -18,7 +18,7 @@ import {DeleteChannelModal} from './delete_channel_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {RhsChannelInfo, RhsChannelMembers} from './rhs';
-import {MoveToMenu} from './shared';
+import {Attributes, MoveToMenu} from './shared';
 
 /** Scope `channel_header`. */
 export class ChannelHeader extends Scope {
@@ -352,6 +352,14 @@ export class ChannelHeader extends Scope {
 
     async clickPopoutButton(): Promise<void> {
         await this.popoutButton.click();
+    }
+
+    /**
+     * `channel_header.attributes` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0) and channel and !isDirect && !isGroup.
+     */
+    get attributes(): Attributes {
+        return new Attributes(this.page, `${this.scope}.attributes`, this.root);
     }
 
     get menu(): ChannelHeaderMenu {

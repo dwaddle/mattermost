@@ -211,6 +211,7 @@ function PostAttributeChip({field, value, maxItems}: {field: PropertyField; valu
             value={value}
             metadata={metadata}
             maxItems={maxItems}
+            testIdScope='post_attributes.value'
         />
     );
 }

@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
@@ -53,6 +54,9 @@ export interface ValueSelectorMenuProps {
 
     field?: UserPropertyField;
     rowIndex?: number;
+
+    // The rule row's scope (`<table>.row`): the value control is `<testId>.value--button` or `--textbox`.
+    testId?: TestId;
 }
 
 const ValueSelectorMenu = ({
@@ -66,6 +70,7 @@ const ValueSelectorMenu = ({
     onSelectTarget,
     field,
     rowIndex = 0,
+    testId,
 }: ValueSelectorMenuProps) => {
     const isMultiOperator = isMultiValueOperator(row.operator);
 
@@ -80,6 +85,7 @@ const ValueSelectorMenu = ({
                 channelFields={channelFields}
                 onSelectTarget={onSelectTarget}
                 rowIndex={rowIndex}
+                testId={testId}
             />
         );
     }
@@ -97,6 +103,7 @@ const ValueSelectorMenu = ({
                 channelFields={channelFields}
                 targetAttribute={row.targetAttribute}
                 onSelectTarget={onSelectTarget}
+                testId={testId}
             />
         );
     }
@@ -113,6 +120,7 @@ const ValueSelectorMenu = ({
             channelFields={channelFields}
             targetAttribute={row.targetAttribute}
             onSelectTarget={onSelectTarget}
+            testId={testId}
         />
     );
 };

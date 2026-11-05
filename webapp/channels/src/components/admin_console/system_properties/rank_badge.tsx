@@ -5,17 +5,22 @@ import classNames from 'classnames';
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import './rank_badge.scss';
 
 type Props = {
     rank?: number;
     className?: string;
+
+    // Renders `<testId>--text`; without it, the legacy `rank-badge`.
+    testId?: TestId;
 };
 
 // A small numbered badge shown in front of a ranked option's label. The number
 // is programmatically labeled so it is not conveyed by position/color alone
 // (WCAG 1.3.1 / 1.4.1).
-const RankBadge = ({rank, className}: Props) => {
+const RankBadge = ({rank, className, testId}: Props) => {
     const {formatMessage} = useIntl();
 
     if (rank === undefined || rank === null) {
@@ -25,7 +30,7 @@ const RankBadge = ({rank, className}: Props) => {
     return (
         <span
             className={classNames('rank-badge', className)}
-            data-testid='rank-badge'
+            data-testid={testId ? `${testId}--text` : 'rank-badge'}
             aria-label={formatMessage({
                 id: 'admin.system_properties.user_properties.rank_badge.aria_label',
                 defaultMessage: 'Rank {rank}',

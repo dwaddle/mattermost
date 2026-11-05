@@ -3,7 +3,14 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-import {setupContentFlagging, createPost} from './../support';
+import {
+    createPost,
+    expectReport,
+    openContentReview,
+    openReportDetails,
+    reportPostId,
+    setupContentFlagging,
+} from './../support';
 
 /**
  * @objective Verify that a deletion report summary is posted to the reviewer's content review thread after removing a flagged post
@@ -13,6 +20,9 @@ import {setupContentFlagging, createPost} from './../support';
  * 3. Create a post, flag it, and remove it via reviewer
  * 4. Login as the reviewer and navigate to the content review DM
  * 5. Verify the deletion report summary table is posted in the reviewer's thread
+ *
+ * Written on the generated page objects: the report post by id (card, View details, Remove, thread footer), the
+ * review dialog's form and skip-confirm steps, and the RHS thread.
  */
 test('Reviewer receives a deletion report summary after removing a flagged post', async ({pw}) => {
     const {adminClient, team, user: reviewerUser} = await pw.initSetup();
@@ -33,54 +43,49 @@ test('Reviewer receives a deletion report summary after removing a flagged post'
     await adminClient.flagPost(post.id, 'Classification mismatch', 'This message contains sensitive data');
 
     // # Login as reviewer and navigate to content review DM
-    const {channelsPage, contentReviewPage} = await pw.testBrowser.login(reviewerUser);
-    await channelsPage.goto(team.name, '@content-review');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(reviewerUser);
+    await openContentReview(app, team);
+    const reportId = await reportPostId(pw, reviewerUser, post.id);
+    await expectReport(app.center.postList.post({id: reportId}).spillageReport.card, {status: 'Pending', message});
 
-    const flaggedPost = await channelsPage.centerView.getLastPost();
-    await flaggedPost.toContainText(message);
+    // # Remove the post via the UI. The remove flow still routes through the skip-confirm step (destructive
+    // action), unlike the keep flow which now bypasses it.
+    await openReportDetails(app, reportId);
+    const reviewDialog = await app.rhs.thread.post({id: reportId}).spillageReport.actions.clickRemoveButton();
+    await reviewDialog.form.fillCommentTextbox('Removing: data spillage confirmed');
+    await reviewDialog.form.setDownloadReportCheckbox(false);
+    await reviewDialog.form.clickPrimaryButton();
+    await reviewDialog.skipConfirm.clickPrimaryButton();
+    await expect(reviewDialog.skipConfirm.primaryButton.locator).not.toBeVisible();
 
-    // # Remove the post via the UI. The remove flow still routes through the
-    // skip-confirm step (destructive action), unlike the keep flow which now
-    // bypasses it.
-    await contentReviewPage.setReportCardByPostID(post.id);
-    await contentReviewPage.openViewDetails();
-    await contentReviewPage.waitForRHSVisible();
-    await contentReviewPage.openViewDetails();
-    await contentReviewPage.clickRemoveMessage();
-    await contentReviewPage.enterConfirmationComment('Removing: data spillage confirmed');
-    await contentReviewPage.confirmRemoveWithoutReport();
-
-    await channelsPage.goto(team.name, '@content-review');
-    await channelsPage.toBeVisible();
+    await openContentReview(app, team);
 
     // * Verify the removed stub is in the content-review thread
-    const removedPost = await channelsPage.centerView.getPostByText(
-        'Content deleted as part of Content Flagging review process',
-    );
-    await removedPost.toBeVisible();
+    const removedPost = app.center.postList.post({id: reportId});
+    await expect(removedPost.locator).toContainText('Content deleted as part of Content Flagging review process');
 
-    // # Open the thread — the deletion report is posted as a reply, not on the
-    // view-details property card.
-    await expect(removedPost.threadFooter.container).toBeVisible();
-    await removedPost.threadFooter.reply();
-    await channelsPage.sidebarRight.toBeVisible();
+    // # Open the thread: the deletion report is posted as a reply, not on the view-details property card.
+    await removedPost.threadFooter.clickReplyButton();
+    const thread = app.rhs.thread.scroller.locator;
 
     // * Verify the async deletion-report file is in the thread before table headers
-    await channelsPage.sidebarRight.toContainText(expectedFileName);
+    await expect(thread).toContainText(expectedFileName);
 
     // * Verify the summary table headers are present (rendered as markdown table)
-    await channelsPage.sidebarRight.toContainText('Step');
-    await channelsPage.sidebarRight.toContainText('Status');
-    await channelsPage.sidebarRight.toContainText('Detail');
-
-    await channelsPage.sidebarRight.toContainText('File attachments');
-    await channelsPage.sidebarRight.toContainText('File attachment records');
-    await channelsPage.sidebarRight.toContainText('Edit history');
-    await channelsPage.sidebarRight.toContainText('Priority metadata');
-    await channelsPage.sidebarRight.toContainText('Persistent notifications');
-    await channelsPage.sidebarRight.toContainText('Acknowledgements');
-    await channelsPage.sidebarRight.toContainText('Reminders');
-    await channelsPage.sidebarRight.toContainText('Thread, replies, and reactions');
-    await channelsPage.sidebarRight.toContainText('Post record');
+    for (const text of [
+        'Step',
+        'Status',
+        'Detail',
+        'File attachments',
+        'File attachment records',
+        'Edit history',
+        'Priority metadata',
+        'Persistent notifications',
+        'Acknowledgements',
+        'Reminders',
+        'Thread, replies, and reactions',
+        'Post record',
+    ]) {
+        await expect(thread).toContainText(text);
+    }
 });

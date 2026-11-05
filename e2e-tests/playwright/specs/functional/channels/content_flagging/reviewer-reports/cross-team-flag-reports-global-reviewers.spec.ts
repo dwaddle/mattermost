@@ -3,7 +3,10 @@
 
 import {test} from '@mattermost/playwright-lib';
 
-import {createPost, verifyFlaggedPostCardDetails, verifyRHSFlaggedPostDetails} from './../support';
+import {createPost, verifyReport, verifyRHSFlaggedPostDetails} from './../support';
+
+// Written on the generated page objects: the content-review bot's report post by id, its card in the center and
+// (after View details) in the RHS.
 
 /**
  * @objective Verify a reviewer from other team can receive a review request for a flagged post
@@ -60,12 +63,12 @@ test('Verify reviewer from another team can receive a review request for a flagg
     await adminClient.flagPost(post.id, reasonToFlag, flagPostComment);
 
     // Reviewer logs in and verifies flagged post in content review
-    const {channelsPage, contentReviewPage} = await pw.testBrowser.login(secondUser);
+    const {app} = await pw.testBrowser.login(secondUser);
 
-    await verifyFlaggedPostCardDetails(post.id, channelsPage, contentReviewPage, secondTeam, message);
+    const reportId = await verifyReport(pw, app, secondUser, secondTeam, post.id, message, 'Pending');
     await verifyRHSFlaggedPostDetails(
-        post.id,
-        contentReviewPage,
+        app,
+        reportId,
         user.username,
         adminUser.username,
         message,

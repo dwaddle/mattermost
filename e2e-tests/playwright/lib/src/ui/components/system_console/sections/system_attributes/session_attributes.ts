@@ -24,10 +24,10 @@ export default class SessionAttributes {
     readonly cancelButton: Locator;
 
     constructor(container: Locator) {
-        this.container = container.getByTestId('sessionAttributes');
+        this.container = container.getByTestId('admin.session_attributes');
         this.page = container.page();
 
-        this.saveButton = this.page.getByTestId('saveSetting');
+        this.saveButton = this.page.getByTestId('admin.session_attributes.save_panel.save--button');
         this.cancelButton = this.page.locator('#cancelButtonSettings');
     }
 
@@ -49,35 +49,35 @@ export default class SessionAttributes {
     }
 
     displayName(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId('session-attribute-display-name');
+        return this.row(fieldId).getByTestId(`admin.session_attributes.name:${fieldId}--text`);
     }
 
     serverLabel(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId('session-attribute-server-label');
+        return this.row(fieldId).getByTestId(`admin.session_attributes.server_label:${fieldId}--text`);
     }
 
     type(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId('session-attribute-type');
+        return this.row(fieldId).getByTestId(`admin.session_attributes.type:${fieldId}--text`);
     }
 
     platforms(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId('session-attribute-platforms');
+        return this.row(fieldId).getByTestId(`admin.session_attributes.platforms:${fieldId}`);
     }
 
     ttl(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId('session-attribute-ttl');
+        return this.row(fieldId).getByTestId(`admin.session_attributes.ttl:${fieldId}--text`);
     }
 
     grace(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId('session-attribute-grace');
+        return this.row(fieldId).getByTestId(`admin.session_attributes.grace:${fieldId}--text`);
     }
 
     status(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId('session-attribute-status');
+        return this.row(fieldId).getByTestId(`admin.session_attributes.status:${fieldId}--text`);
     }
 
     dotMenuButton(fieldId: string): Locator {
-        return this.row(fieldId).getByTestId(`session-attribute-dotmenu-${fieldId}`);
+        return this.row(fieldId).getByTestId(`admin.session_attributes.actions:${fieldId}--button`);
     }
 
     dotMenu(fieldId: string): Locator {
@@ -140,7 +140,7 @@ export default class SessionAttributes {
         // could match a not-yet-unmounted menu from another row and trip
         // Playwright's strict mode.
         const trigger = this.dotMenu(fieldId).getByRole('menuitem', {name: triggerName});
-        const option = this.page.getByTestId(`session-attribute-${kind}-option-${fieldId}-${seconds}`);
+        const option = this.page.getByTestId(`admin.session_attributes.actions_menu.${kind}:${seconds}--menuitemradio`);
 
         await this.scrollRowToCenter(fieldId);
 
@@ -170,7 +170,7 @@ export default class SessionAttributes {
      */
     async enable(fieldId: string) {
         await this.openDotMenu(fieldId);
-        await this.page.getByTestId(`session-attribute-enable-${fieldId}`).click();
+        await this.page.getByTestId('admin.session_attributes.actions_menu.enable--menuitem').click();
     }
 
     /**
@@ -179,7 +179,7 @@ export default class SessionAttributes {
      */
     async openDisableModal(fieldId: string) {
         await this.openDotMenu(fieldId);
-        await this.page.getByTestId(`session-attribute-disable-${fieldId}`).click();
+        await this.page.getByTestId('admin.session_attributes.actions_menu.disable--menuitem').click();
     }
 
     disableModal(): Locator {

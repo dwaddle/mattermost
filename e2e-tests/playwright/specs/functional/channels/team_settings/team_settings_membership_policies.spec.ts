@@ -4,9 +4,12 @@
 /**
  * @objective E2E tests for the Membership Policies tab in Team Settings Modal
  * @reference MM-67669
+ *
+ * Written on the generated page objects: the team menu, the Team Settings tabs keyed by tab id, the Channel
+ * Membership tab's policy list (rows keyed by policy id, cells by column) and its sync status footer.
  */
 
-import {ChannelsPage, expect, getRandomId, test} from '@mattermost/playwright-lib';
+import {expect, getRandomId, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 import {
     enableABACConfig,
@@ -17,18 +20,35 @@ import {
     createTeamAdmin,
 } from './helpers';
 
-async function setupMembershipPoliciesTest(pw: any) {
+async function setupMembershipPoliciesTest(pw: PlaywrightExtended) {
     const {adminClient, adminUser} = await pw.getAdminClient();
+    if (!adminUser) {
+        throw new Error('Failed to get the admin user');
+    }
     const suffix = getRandomId();
     const team = await adminClient.createTeam({
         name: `mp-${suffix}`,
         display_name: `MP ${suffix}`,
         type: 'O',
-    });
+    } as any);
     const user = await pw.createNewUserProfile(adminClient, {prefix: 'mp-user'});
     await adminClient.addToTeam(team.id, user.id);
     await adminClient.addToTeam(team.id, adminUser.id);
     return {adminClient, adminUser, team, user};
+}
+
+/** Opens Team Settings from the team menu. */
+async function openTeamSettings(app: App) {
+    return (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
+}
+
+/** Opens Team Settings on the Channel Membership (access policies) tab and waits for its policy list. */
+async function openPoliciesTab(app: App) {
+    const settings = await openTeamSettings(app);
+    await settings.tabs.tab('access_policies').select();
+    const {policies} = settings.accessPolicies;
+    await expect(policies.rows.locator).toBeVisible();
+    return {settings, policies};
 }
 
 test.describe('Team Settings Modal - Membership Policies Tab', () => {
@@ -40,18 +60,16 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         const {adminUser, adminClient, team} = await setupMembershipPoliciesTest(pw);
         await enableABACConfig(adminClient);
 
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        const teamSettings = await channelsPage.openTeamSettings();
+        const settings = await openTeamSettings(app);
 
         // * Both tabs visible
-        await expect(teamSettings.accessPoliciesTab).toBeVisible();
-        await expect(teamSettings.accessTab).toContainText('Access');
+        await expect(settings.tabs.tab('access_policies').locator).toBeVisible();
+        await expect(settings.tabs.tab('access')).toHaveMessage(Msg.team_settings_modal.accessTab);
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-67669_2 Membership Policies tab hidden when ABAC disabled', async ({pw}) => {
@@ -66,10 +84,11 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
             return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === false;
         });
 
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        const composer = app.center.postCreate.messageTextbox.locator;
+        await app.channelsPage.goto({team, channel: 'town-square'});
+        await expect(composer).toBeVisible();
+
         // Force a full navigation so the team settings bundle reads the latest
         // AccessControlSettings (WebSocket config updates can lag in CI).
         // Re-apply guard immediately before reload: a concurrent initSetup() may have
@@ -77,9 +96,9 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         await adminClient.patchConfig({
             AccessControlSettings: {EnableAttributeBasedAccessControl: false},
         });
-        await page.reload();
-        await page.waitForLoadState('networkidle');
-        await channelsPage.toBeVisible();
+        await app.page.reload();
+        await expect(composer).toBeVisible();
+
         // Re-apply once more after the page has settled to prevent a WebSocket
         // CONFIG_CHANGED event (from a concurrent initSetup()) from flipping it back.
         await adminClient.patchConfig({
@@ -90,12 +109,13 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
             return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === false;
         });
 
-        const teamSettings = await channelsPage.openTeamSettings();
+        const settings = await openTeamSettings(app);
 
-        // * Tab is not visible (WebSocket config update can lag)
-        await expect(teamSettings.accessPoliciesTab).not.toBeVisible({timeout: 30000});
+        // * Tab is not visible (WebSocket config update can lag), while the tabs themselves are there
+        await expect(settings.tabs.tab('info').locator).toBeVisible();
+        await expect(settings.tabs.tab('access_policies').locator).not.toBeVisible({timeout: 30000});
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-67669_4 Empty state displayed when no policies exist', async ({pw}) => {
@@ -103,21 +123,18 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         const {adminUser, adminClient, team} = await setupMembershipPoliciesTest(pw);
         await enableABACConfig(adminClient);
 
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.openAccessPoliciesTab();
+        const {settings, policies} = await openPoliciesTab(app);
 
         // * Empty state shown
-        await expect(teamSettings.container.getByText('No policies found')).toBeVisible();
+        await expect(policies.rows).toContainMessage(Msg.admin.user_settings.policy_list.no_policies_found);
 
-        // * Sync footer hidden when no policies exist
-        await expect(teamSettings.container.locator('.SyncStatusFooter')).not.toBeVisible();
+        // * Sync footer hidden when no policies exist (MM-67669_5 sees it once a policy exists)
+        await expect(settings.accessPolicies.syncStatus.locator).not.toBeVisible();
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-67669_5 Policy list shows team-scoped policy with channel count', async ({pw}) => {
@@ -131,19 +148,20 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         const policy = await createParentPolicy(adminClient, `Team Policy ${Date.now()}`);
         await assignChannelsToPolicy(adminClient, policy.id, [channel.id]);
 
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.openAccessPoliciesTab();
+        const {settings, policies} = await openPoliciesTab(app);
 
-        // * Policy name and channel count shown
-        await expect(teamSettings.container.getByText(policy.name)).toBeVisible();
-        await expect(teamSettings.container.getByText('1 channel')).toBeVisible();
+        // * Policy name and channel count shown, with the sync footer below the list
+        const row = policies.row(policy.id);
+        await expect(row.cell('name').locator).toContainText(policy.name);
+        await expect(row.cell('resources')).toHaveMessage(Msg.admin.access_control.policies.resources.channels, {
+            count: 1,
+        });
+        await expect(settings.accessPolicies.syncStatus.locator).toBeVisible();
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-67669_6 Cross-team policy not shown in team settings', async ({pw}) => {
@@ -164,18 +182,15 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         const crossPolicy = await createParentPolicy(adminClient, `Cross Policy ${Date.now()}`);
         await assignChannelsToPolicy(adminClient, crossPolicy.id, [channel1.id, channel2.id]);
 
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.openAccessPoliciesTab();
+        const {settings, policies} = await openPoliciesTab(app);
 
-        // * Cross-team policy not visible
-        await expect(teamSettings.container.getByText(crossPolicy.name)).not.toBeVisible();
+        // * Cross-team policy not visible (the list has loaded: MM-67669_8 sees a team policy in the same list)
+        await expect(policies.row(crossPolicy.id).locator).toHaveCount(0);
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-67669_7 Team Admin sees Membership Policies tab and team-scoped policies', async ({pw}) => {
@@ -190,23 +205,22 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
 
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
-
-        const teamSettings = await channelsPage.openTeamSettings();
+        const {app} = await pw.testBrowser.login(teamAdmin);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // * Tab visible for Team Admin
-        await expect(teamSettings.accessPoliciesTab).toBeVisible();
-
-        await teamSettings.openAccessPoliciesTab();
+        const settings = await openTeamSettings(app);
+        await expect(settings.tabs.tab('access_policies').locator).toBeVisible();
+        await settings.tabs.tab('access_policies').select();
 
         // * Policy and channel count shown
-        await expect(teamSettings.container.getByText(policy.name)).toBeVisible();
-        await expect(teamSettings.container.getByText('1 channel')).toBeVisible();
+        const row = settings.accessPolicies.policies.row(policy.id);
+        await expect(row.cell('name').locator).toContainText(policy.name);
+        await expect(row.cell('resources')).toHaveMessage(Msg.admin.access_control.policies.resources.channels, {
+            count: 1,
+        });
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-67669_8 Team Admin does not see cross-team policies', async ({pw}) => {
@@ -231,18 +245,15 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
 
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(teamAdmin);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.openAccessPoliciesTab();
+        const {settings, policies} = await openPoliciesTab(app);
 
         // * Single-team policy visible, cross-team policy not visible
-        await expect(teamSettings.container.getByText(teamPolicy.name)).toBeVisible();
-        await expect(teamSettings.container.getByText(crossPolicy.name)).not.toBeVisible();
+        await expect(policies.row(teamPolicy.id).cell('name').locator).toContainText(teamPolicy.name);
+        await expect(policies.row(crossPolicy.id).locator).toHaveCount(0);
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 });

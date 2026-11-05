@@ -25,8 +25,7 @@ type Props = {
     // removes something.
     destructive?: boolean;
 
-    // The panel's button is `<buttonTestId>--button`. Hosts that don't pass one yet (the access policy panels)
-    // keep the legacy id built from the button's text (`link-to-a-policy`).
+    // The panel's button is `<buttonTestId>--button`.
     buttonTestId?: TestId;
 
     // The panel's scope (see AdminPanel).
@@ -48,14 +47,13 @@ const AdminPanelWithButton = ({
 }: Props) => {
     let button;
     if (onButtonClick && buttonText) {
-        const legacyButtonId = (buttonText.defaultMessage as string || '').split(' ').join('-').toLowerCase();
         button = (
             <Button
                 emphasis='primary'
                 destructive={destructive}
                 disabled={disabled}
                 onClick={onButtonClick}
-                data-testid={buttonTestId ? `${buttonTestId}--button` : legacyButtonId}
+                data-testid={buttonTestId ? `${buttonTestId}--button` : undefined}
             >
                 <FormattedMessage
                     {...buttonText}

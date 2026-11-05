@@ -24,9 +24,9 @@ const OVERFLOW = 'post-attributes-overflow';
 // field type reached the renderer its type selects, not merely that something drew.
 // `select`, `multiselect` and `rank` deliberately share one — the option-bearing family
 // has a single renderer, and the arity cap is what separates them.
-const OPTION_CHIP = 'select-property';
-const TEXT_CHIP = 'text-property';
-const USER_CHIP = 'user-property';
+const OPTION_CHIP = 'post_attributes.value.select--text';
+const TEXT_CHIP = 'post_attributes.value.text--text';
+const USER_CHIP = 'post_attributes.value.user';
 
 // Two boards palette tokens and the background each resolves to, from COLOR_DESCRIPTOR
 // in utils/board_property_colors. Hard-coded rather than imported: the point is to catch

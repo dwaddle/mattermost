@@ -49,6 +49,7 @@ export type HierarchicalValueRowProps = {
     onToggleExpand: () => void;
     onFocusSearch: (seedChar: string) => void;
     innerRef: (element: HTMLLIElement | null) => void;
+    testId?: string;
 } & ForwardedMuiItemProps;
 
 export default function HierarchicalValueRow({
@@ -65,6 +66,7 @@ export default function HierarchicalValueRow({
     onToggleExpand,
     onFocusSearch,
     innerRef,
+    testId,
     ...rest
 }: HierarchicalValueRowProps) {
     const {formatMessage} = useIntl();
@@ -136,6 +138,7 @@ export default function HierarchicalValueRow({
         <Menu.Item
             id={rowId}
             ref={innerRef}
+            data-testid={testId}
             role='menuitemcheckbox'
             forceCloseOnSelect={false}
             aria-checked={isSelected}

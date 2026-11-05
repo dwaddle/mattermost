@@ -240,7 +240,7 @@ describe('PostAttributesChips', () => {
         );
 
         expect(screen.getByTestId('post-attributes-chips')).toBeInTheDocument();
-        expect(screen.getByTestId('text-property')).toBeInTheDocument();
+        expect(screen.getByTestId('post_attributes.value.text--text')).toBeInTheDocument();
     });
 
     test('treats an empty array as unset', () => {
@@ -344,7 +344,7 @@ describe('PostAttributesChips', () => {
                 makeState(fields, values),
             );
 
-            expect(screen.getAllByTestId('select-property').map((chip) => chip.textContent)).toEqual(['SECRET']);
+            expect(screen.getAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent)).toEqual(['SECRET']);
             expect(screen.queryByText('opt_withdrawn')).not.toBeInTheDocument();
             expect(screen.queryByTestId('post-attributes-overflow')).not.toBeInTheDocument();
         });
@@ -361,7 +361,7 @@ describe('PostAttributesChips', () => {
                 makeState(fields, values),
             );
 
-            expect(screen.getAllByTestId('select-property').map((chip) => chip.textContent)).toEqual(['SECRET']);
+            expect(screen.getAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent)).toEqual(['SECRET']);
             expect(screen.queryByTestId('post-attributes-overflow')).not.toBeInTheDocument();
         });
     });
@@ -407,7 +407,7 @@ describe('PostAttributesChips', () => {
 
             // Both selects fit. Counting the date would show only SECRET, with a
             // blank second slot and a +1 nobody could account for.
-            expect(screen.getAllByTestId('select-property').map((chip) => chip.textContent)).toEqual(['SECRET', 'UNCLASSIFIED']);
+            expect(screen.getAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent)).toEqual(['SECRET', 'UNCLASSIFIED']);
             expect(screen.queryByTestId('post-attributes-overflow')).not.toBeInTheDocument();
         });
     });
@@ -425,7 +425,7 @@ describe('PostAttributesChips', () => {
                 makeState(fields, values),
             );
 
-            expect(screen.getAllByTestId('user-property')).toHaveLength(2);
+            expect(screen.getAllByTestId('post_attributes.value.user')).toHaveLength(2);
             expect(screen.getByTestId('post-attributes-chips')).toHaveTextContent('alice');
             expect(screen.getByTestId('post-attributes-chips')).toHaveTextContent('bob');
         });
@@ -450,8 +450,8 @@ describe('PostAttributesChips', () => {
 
             // One slot left after the select, so exactly one user is drawn —
             // without `maxItems` all three would render inside that one slot.
-            expect(screen.getAllByTestId('select-property').map((chip) => chip.textContent)).toEqual(['SECRET']);
-            expect(screen.getAllByTestId('user-property')).toHaveLength(1);
+            expect(screen.getAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent)).toEqual(['SECRET']);
+            expect(screen.getAllByTestId('post_attributes.value.user')).toHaveLength(1);
 
             // The two users nobody can see, counted as two.
             expect(screen.getByTestId('post-attributes-overflow')).toHaveTextContent('+2');
@@ -473,7 +473,7 @@ describe('PostAttributesChips', () => {
                 makeState(fields, values),
             );
 
-            expect(screen.getAllByTestId('user-property')).toHaveLength(2);
+            expect(screen.getAllByTestId('post_attributes.value.user')).toHaveLength(2);
             expect(screen.getByTestId('post-attributes-chips')).toHaveTextContent('alice');
 
             expect(screen.getByText('Someone')).toBeInTheDocument();
@@ -511,7 +511,7 @@ describe('PostAttributesChips', () => {
                 makeState(fields, values),
             );
 
-            expect(screen.getAllByTestId('select-property').map((chip) => chip.textContent)).toEqual(['ALPHA', 'BRAVO']);
+            expect(screen.getAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent)).toEqual(['ALPHA', 'BRAVO']);
             expect(screen.queryByText('SECRET')).not.toBeInTheDocument();
 
             // Two unshown entries of the multiselect, plus the whole select.
@@ -536,7 +536,7 @@ describe('PostAttributesChips', () => {
                 makeState(fields, values),
             );
 
-            expect(screen.getAllByTestId('select-property').map((chip) => chip.textContent)).toEqual(['SECRET', 'ALPHA']);
+            expect(screen.getAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent)).toEqual(['SECRET', 'ALPHA']);
             expect(screen.getByTestId('post-attributes-overflow')).toHaveTextContent('+2');
         });
 
@@ -556,7 +556,7 @@ describe('PostAttributesChips', () => {
                 makeState(fields, values),
             );
 
-            expect(screen.getAllByTestId('select-property').map((chip) => chip.textContent)).toEqual(['ALPHA', 'BRAVO']);
+            expect(screen.getAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent)).toEqual(['ALPHA', 'BRAVO']);
             expect(screen.queryByTestId('post-attributes-overflow')).not.toBeInTheDocument();
         });
 
@@ -885,7 +885,7 @@ describe('PostAttributesChips', () => {
         }
 
         function chipLabels() {
-            return screen.queryAllByTestId('select-property').map((chip) => chip.textContent);
+            return screen.queryAllByTestId('post_attributes.value.select--text').map((chip) => chip.textContent);
         }
 
         function overflowCount() {

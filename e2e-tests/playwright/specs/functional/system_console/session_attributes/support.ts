@@ -4,8 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
-import type {PlaywrightExtended, SystemConsolePage} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 export const SESSION_ATTRIBUTES_GROUP = 'session_attributes';
 export const SESSION_ATTRIBUTES_OBJECT_TYPE = 'session';
@@ -19,7 +18,7 @@ export type SessionAttrPatch = Partial<{
 
 export interface SessionAttributesContext {
     adminClient: Client4;
-    systemConsolePage: SystemConsolePage;
+    app: App;
     fields: PropertyField[];
 }
 
@@ -56,11 +55,78 @@ export async function setupSessionAttributesTest(pw: PlaywrightExtended): Promis
 
     captureSessionAttributesBaseline(adminClient, fields);
 
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
+    const {app} = await pw.testBrowser.login(adminUser);
+    await app.adminConsolePage.goto();
+    await expect(app.admin.sidebar.locator).toBeVisible();
 
-    return {adminClient, systemConsolePage, fields};
+    return {adminClient, app, fields};
+}
+
+const SESSION_ATTRIBUTES_PATH = `${generated.AdminConsolePage.path()}/system_attributes/session_attributes`;
+const PATCH_FIELD_URL_FRAGMENT = '/properties/groups/session_attributes/session/fields/';
+
+/** Opens System Console > Session Attributes, waiting for its rows. */
+export async function openSessionAttributes(app: App) {
+    await app.page.goto(SESSION_ATTRIBUTES_PATH);
+    const sa = app.admin.sessionAttributes;
+    await expect(sa.rowItems.first()).toBeVisible();
+    return sa;
+}
+
+/**
+ * Opens a row's actions menu. The row is centred first: one near the bottom of the table can only open its menu
+ * upward, and the popover's flip and remeasure push its first paint (and its hover-opened submenus) past the usual
+ * budget.
+ */
+export async function openActions(app: App, field: {id: string}) {
+    const sa = app.admin.sessionAttributes;
+    await sa.actions(field).locator.evaluate((el) => el.scrollIntoView({block: 'center'}));
+    await sa.actions(field).click();
+    await expect(sa.actionsMenu.enableMenuItem.locator.or(sa.actionsMenu.disableMenuItem.locator)).toBeVisible();
+    return sa.actionsMenu;
+}
+
+/**
+ * Stages a TTL or grace-period preset (in seconds) through the row's actions menu.
+ *
+ * The submenu opens on hover and collapses when the pointer leaves its trigger, so it's opened with the keyboard
+ * (ArrowRight on the trigger) and the pointer never has to travel. The menu's mount and unmount transitions can
+ * swallow a click or drop focus, so the whole open sequence retries, each attempt starting from Escape (closed).
+ */
+export async function choosePreset(app: App, field: {id: string}, kind: 'ttl' | 'grace', seconds: number) {
+    const sa = app.admin.sessionAttributes;
+    const menu = sa.actionsMenu;
+    const trigger = kind === 'ttl' ? menu.ttlOptionsMenuItem : menu.graceOptionsMenuItem;
+    const option = kind === 'ttl' ? menu.ttl(seconds) : menu.grace(seconds);
+    await sa.actions(field).locator.evaluate((el) => el.scrollIntoView({block: 'center'}));
+
+    await expect(async () => {
+        await app.page.keyboard.press('Escape');
+        await expect(trigger.locator).toBeHidden({timeout: 2000});
+        await sa.actions(field).click();
+        await expect(trigger.locator).toBeVisible({timeout: 2000});
+        await trigger.locator.press('ArrowRight');
+        await expect(option.locator).toBeVisible({timeout: 2000});
+    }).toPass({timeout: 20000, intervals: [250, 500, 1000]});
+
+    // choosing a preset closes the whole menu; wait for it so a following menu opens clean
+    await option.click();
+    await expect(trigger.locator).toBeHidden();
+}
+
+/**
+ * Saves the staged edits and waits for the field's PATCH, then for Save to go back to disabled. It awaits one PATCH,
+ * so it assumes the edits are on one field (as every test here stages).
+ */
+export async function saveAndSettle(app: App) {
+    const save = app.admin.sessionAttributes.savePanel.saveButton;
+    await expect(save.locator).toBeEnabled();
+    const patched = app.page.waitForResponse(
+        (resp) => resp.url().includes(PATCH_FIELD_URL_FRAGMENT) && resp.request().method() === 'PATCH',
+    );
+    await save.click();
+    await patched;
+    await expect(save.locator).toBeDisabled({timeout: 10000});
 }
 
 /**

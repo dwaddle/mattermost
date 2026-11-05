@@ -9,9 +9,25 @@
  * console UI and then checks what a user sees, with no API seeding in between.
  */
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {AdminLocation, AdminPolicy, expect, test, type App, type generated} from '@mattermost/playwright-lib';
 
-import {configureChannelAttribute, deleteChannelFieldIfExists, findChannelField} from './applies_to_helpers';
+import {
+    chip,
+    labelChip,
+    openAttributeControl,
+    openChannel,
+    openChannelInfo,
+    openNewChannelModal,
+    pickListOption,
+    row,
+} from '../../channels/channel_attributes/surface';
+
+import {
+    channelFieldNamed,
+    configureChannelAttribute,
+    deleteChannelFieldIfExists,
+    findChannelField,
+} from './applies_to_helpers';
 import {
     createGlobalAttributeField,
     createLinkedDependentField,
@@ -19,6 +35,21 @@ import {
     deleteLinkedDependentField,
     requireGlobalAttributesEnabled,
 } from './global_attributes_helpers';
+
+/** Creates a channel from the open new-channel dialog, picking `option` for the attribute; waits for it to close. */
+async function createChannel(
+    app: App,
+    modal: generated.NewChannelModal,
+    field: {id: string},
+    displayName: string,
+    option: string,
+) {
+    await modal.fillNameTextbox(displayName);
+    await openAttributeControl(modal, field);
+    await pickListOption(app, option);
+    await modal.clickConfirmButton();
+    await expect(modal.nameTextbox.locator).not.toBeVisible();
+}
 
 test.describe(
     'System Console - applying an attribute to channels',
@@ -40,13 +71,13 @@ test.describe(
             let name = '';
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+                const {app: admin} = await pw.testBrowser.login(adminUser);
 
                 // # Apply it to channels, required, shown in the header and the banner
-                name = await configureChannelAttribute(systemConsolePage, {
+                name = await configureChannelAttribute(admin, {
                     displayName,
                     required: true,
-                    displayLocations: ['display_label_header', 'display_banner_top'],
+                    displayLocations: [AdminLocation.DisplayLabelHeader, AdminLocation.DisplayBannerTop],
                 });
 
                 // * The linked channel field carries every configured key
@@ -83,35 +114,30 @@ test.describe(
             let name = '';
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+                const {app: admin} = await pw.testBrowser.login(adminUser);
 
-                name = await configureChannelAttribute(systemConsolePage, {
+                name = await configureChannelAttribute(admin, {
                     displayName: `Caveat ${suffix}`,
-                    type: 'Select',
+                    type: 'select',
                     options: ['NOFORN'],
                     required: true,
-                    displayLocations: ['display_label_header'],
+                    displayLocations: [AdminLocation.DisplayLabelHeader],
                 });
 
                 // # Create a channel as the same admin, who is a member of a team
                 const {team} = await pw.initSetup();
-                const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-                await app.teamPage.goto({team});
-                await expect(app.center.composer.locator).toBeVisible();
+                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
 
-                const modal = await channelsPage.openNewChannelModal();
+                const field = await channelFieldNamed(adminClient, name);
+                const modal = await openNewChannelModal(app);
 
                 // * The attribute is asked for, because it was marked required here
-                await expect(page.getByTestId(`channelAttributeRow-${name}`)).toBeVisible();
+                await expect(modal.attributes.attribute(field).locator).toBeVisible();
 
-                await modal.fillDisplayName(`Attr Console ${suffix}`);
-                await page.getByTestId(`channelAttribute-${name}`).click();
-                await page.getByText('NOFORN', {exact: true}).click();
-                await modal.create();
-                await expect(modal.container).not.toBeVisible();
+                await createChannel(app, modal, field, `Attr Console ${suffix}`, 'NOFORN');
 
                 // * The value renders as a header chip, because it was designated here
-                await expect(channelsPage.centerView.header.attributes.chip('NOFORN')).toBeVisible();
+                await expect(labelChip(app.channelHeader.attributes, 'NOFORN')).toBeVisible();
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -129,31 +155,26 @@ test.describe(
             let name = '';
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+                const {app: admin} = await pw.testBrowser.login(adminUser);
 
-                name = await configureChannelAttribute(systemConsolePage, {
+                name = await configureChannelAttribute(admin, {
                     displayName: `Marking ${suffix}`,
-                    type: 'Select',
+                    type: 'select',
                     options: ['RESTRICTED'],
                     required: true,
-                    displayLocations: ['display_banner_top'],
+                    displayLocations: [AdminLocation.DisplayBannerTop],
                 });
 
                 const {team} = await pw.initSetup();
-                const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-                await app.teamPage.goto({team});
-                await expect(app.center.composer.locator).toBeVisible();
+                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
 
-                const modal = await channelsPage.openNewChannelModal();
-                await modal.fillDisplayName(`Attr Banner ${suffix}`);
-                await page.getByTestId(`channelAttribute-${name}`).click();
-                await page.getByText('RESTRICTED', {exact: true}).click();
-                await modal.create();
-                await expect(modal.container).not.toBeVisible();
+                const field = await channelFieldNamed(adminClient, name);
+                const modal = await openNewChannelModal(app);
+                await createChannel(app, modal, field, `Attr Banner ${suffix}`, 'RESTRICTED');
 
                 // * The value drives the banner and stays out of the header
-                await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('RESTRICTED');
-                await expect(channelsPage.centerView.header.attributes.chip('RESTRICTED')).toHaveCount(0);
+                await expect(app.center.channelBanner.textText.locator).toContainText('RESTRICTED');
+                await expect(labelChip(app.channelHeader.attributes, 'RESTRICTED')).toHaveCount(0);
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -171,27 +192,22 @@ test.describe(
             let name = '';
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+                const {app: admin} = await pw.testBrowser.login(adminUser);
 
-                name = await configureChannelAttribute(systemConsolePage, {
+                name = await configureChannelAttribute(admin, {
                     displayName: `Quiet ${suffix}`,
-                    type: 'Select',
+                    type: 'select',
                     options: ['QUIET'],
                     required: true,
                 });
 
                 const {team} = await pw.initSetup();
-                const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-                await app.teamPage.goto({team});
-                await expect(app.center.composer.locator).toBeVisible();
+                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
 
                 const displayName = `Attr Quiet ${suffix}`;
-                const modal = await channelsPage.openNewChannelModal();
-                await modal.fillDisplayName(displayName);
-                await page.getByTestId(`channelAttribute-${name}`).click();
-                await page.getByText('QUIET', {exact: true}).click();
-                await modal.create();
-                await expect(modal.container).not.toBeVisible();
+                const field = await channelFieldNamed(adminClient, name);
+                const modal = await openNewChannelModal(app);
+                await createChannel(app, modal, field, displayName, 'QUIET');
 
                 // * The value reached the store
                 const channel = await adminClient.getChannelByName(
@@ -202,14 +218,14 @@ test.describe(
                 expect(values?.length).toBeGreaterThan(0);
 
                 // * And is rendered on no display surface
-                await expect(channelsPage.centerView.header.attributes.chip('QUIET')).toHaveCount(0);
-                await expect(page.getByTestId('center.channel_banner')).toHaveCount(0);
+                await expect(labelChip(app.channelHeader.attributes, 'QUIET')).toHaveCount(0);
+                await expect(app.center.channelBanner.locator).toHaveCount(0);
 
                 // * Channel Info still lists it: the display locations govern the
                 // header and banner, never whether an admin can reach a value
-                const info = await channelsPage.openChannelInfo();
-                await expect(info.attributes.chip(name)).toHaveText('QUIET');
-                await expect(info.attributes.editButton(name)).toBeVisible();
+                const info = await openChannelInfo(app);
+                await expect(chip(info, field)).toHaveText('QUIET');
+                await expect(row(info, field).editButton.locator).toBeVisible();
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -227,14 +243,14 @@ test.describe(
             let name = '';
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+                const {app: admin} = await pw.testBrowser.login(adminUser);
 
-                name = await configureChannelAttribute(systemConsolePage, {
+                name = await configureChannelAttribute(admin, {
                     displayName: `Locked ${suffix}`,
-                    type: 'Select',
+                    type: 'select',
                     options: ['FINAL'],
                     required: true,
-                    changePolicy: 'Cannot be changed once set',
+                    changePolicy: AdminPolicy.Never,
                 });
 
                 // * The console wrote both keys: change_policy, and the editable key the
@@ -244,21 +260,16 @@ test.describe(
                 expect(channelField?.attrs?.editable).toBe(false);
 
                 const {team} = await pw.initSetup();
-                const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-                await app.teamPage.goto({team});
-                await expect(app.center.composer.locator).toBeVisible();
+                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
 
-                const modal = await channelsPage.openNewChannelModal();
-                await modal.fillDisplayName(`Attr Locked ${suffix}`);
-                await page.getByTestId(`channelAttribute-${name}`).click();
-                await page.getByText('FINAL', {exact: true}).click();
-                await modal.create();
-                await expect(modal.container).not.toBeVisible();
+                const field = await channelFieldNamed(adminClient, name);
+                const modal = await openNewChannelModal(app);
+                await createChannel(app, modal, field, `Attr Locked ${suffix}`, 'FINAL');
 
                 // * Once set at creation the value is read-only, even to a system admin
-                const info = await channelsPage.openChannelInfo();
-                await expect(info.attributes.lock(name)).toBeVisible();
-                await expect(info.attributes.editButton(name)).toHaveCount(0);
+                const info = await openChannelInfo(app);
+                await expect(row(info, field).locked.locator).toBeVisible();
+                await expect(row(info, field).editButton.locator).toHaveCount(0);
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -280,11 +291,11 @@ test.describe(
             let name = '';
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+                const {app: admin} = await pw.testBrowser.login(adminUser);
 
-                name = await configureChannelAttribute(systemConsolePage, {
+                name = await configureChannelAttribute(admin, {
                     displayName: `Restricted ${suffix}`,
-                    type: 'Select',
+                    type: 'select',
                     options: ['SET'],
                     required: true,
                 });
@@ -293,17 +304,12 @@ test.describe(
                 expect(channelField?.permission_values).toBe('admin');
 
                 const {team, user} = await pw.initSetup();
-                const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-                await app.teamPage.goto({team});
-                await expect(app.center.composer.locator).toBeVisible();
+                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
 
                 const channelDisplayName = `Attr Restricted ${suffix}`;
-                const modal = await channelsPage.openNewChannelModal();
-                await modal.fillDisplayName(channelDisplayName);
-                await page.getByTestId(`channelAttribute-${name}`).click();
-                await page.getByText('SET', {exact: true}).click();
-                await modal.create();
-                await expect(modal.container).not.toBeVisible();
+                const field = await channelFieldNamed(adminClient, name);
+                const modal = await openNewChannelModal(app);
+                await createChannel(app, modal, field, channelDisplayName, 'SET');
 
                 const channel = await adminClient.getChannelByName(
                     team.id,
@@ -312,14 +318,12 @@ test.describe(
                 await adminClient.addToChannel(user.id, channel.id);
 
                 // # Look at the same attribute as an ordinary member
-                const asMember = await pw.testBrowser.login(user);
-                await asMember.channelsPage.goto(team.name, channel.name);
-                await asMember.channelsPage.toBeVisible();
+                const asMember = await openChannel(pw, user, team, channel);
 
                 // * The member reads the value but is offered no way to change it
-                const info = await asMember.channelsPage.openChannelInfo();
-                await expect(info.attributes.chip(name)).toHaveText('SET');
-                await expect(info.attributes.editButton(name)).toHaveCount(0);
+                const info = await openChannelInfo(asMember);
+                await expect(chip(info, field)).toHaveText('SET');
+                await expect(row(info, field).editButton.locator).toHaveCount(0);
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);

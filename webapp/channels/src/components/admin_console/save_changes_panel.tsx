@@ -19,12 +19,8 @@ type Props = {
     isDisabled?: boolean;
     savingMessage?: string;
 
-    /**
-     * The panel's path: `.save--button`, `.cancel--link` (or `.cancel--button`), `.error--text`. Hosts that don't
-     * pass one yet (the attributes and classification markings pages) keep the legacy `saveSetting` and
-     * `saveChangesPanel-errorMessage`.
-     */
-    testId?: TestId;
+    /** The panel's path: `.save--button`, `.cancel--link` (or `.cancel--button`), `.error--text`. */
+    testId: TestId;
 } & (
     {cancelLink: string; onCancel?: never} |
     {cancelLink?: never; onCancel: () => void} |
@@ -52,7 +48,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                 saving={saving}
                 disabled={isDisabled || !saveNeeded}
                 onClick={onClick}
-                testId={part(testId, 'save')}
+                testId={`${testId}.save`}
                 savingMessage={savingMessage ?? formatMessage({id: 'admin.team_channel_settings.saving', defaultMessage: 'Saving Config...'})}
             />
             {showCancel && (
@@ -64,7 +60,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                     >
                         <BlockableLink
                             to={cancelLink}
-                            data-testid={part(testId, 'cancel', 'link')}
+                            data-testid={`${testId}.cancel--link`}
                         >
                             {cancelLabel}
                         </BlockableLink>
@@ -72,7 +68,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                 ) : (
                     <Button
                         id='cancelButtonSettings'
-                        data-testid={part(testId, 'cancel', 'button')}
+                        data-testid={`${testId}.cancel--button`}
                         type='button'
                         emphasis='tertiary'
                         onClick={() => onCancel?.()}
@@ -83,7 +79,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
             )}
             <div
                 className='error-message'
-                data-testid={testId ? `${testId}.error--text` : 'saveChangesPanel-errorMessage'}
+                data-testid={`${testId}.error--text`}
             >
                 {serverError}
             </div>

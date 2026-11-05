@@ -5,18 +5,22 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {CheckCircleIcon, CloseCircleIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './session_attributes.scss';
 
 type Props = {
     enabled: boolean;
+
+    // Renders `<testId>--text`.
+    testId?: TestId;
 };
 
-export default function StatusChip({enabled}: Props) {
+export default function StatusChip({enabled, testId}: Props) {
     return (
         <span
             className='SessionAttributes__status-chip'
-            data-testid='session-attribute-status'
+            data-testid={testId ? `${testId}--text` : undefined}
             data-enabled={enabled}
         >
             {enabled ? (

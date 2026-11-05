@@ -39,16 +39,10 @@ function isNodeInSearchUi(node: Node, combobox: HTMLElement | null): boolean {
 export type EdgeListLabels = {
     back: MessageDescriptor;
     empty: MessageDescriptor;
-    emptyTestId: string;
-    rowTestId: string;
-    removeTestId: string;
     removeAria: MessageDescriptor;
     searchName: string;
-    searchTestId: string;
     searchPlaceholder: MessageDescriptor;
     searchAria: MessageDescriptor;
-    suggestionsTestId: string;
-    createTestId: string;
     removeTooltip?: MessageDescriptor;
     anchorIs: 'parent' | 'child';
 };
@@ -59,32 +53,20 @@ export function edgeListLabels(direction: EdgeDirection): EdgeListLabels {
         return {
             back: messages.childrenOf,
             empty: messages.noChildrenYet,
-            emptyTestId: 'attributeGraphParentsPane__childrenEmpty',
-            rowTestId: 'attributeGraphParentsPane__childRow',
-            removeTestId: 'attributeGraphParentsPane__childRemove',
             removeAria: messages.removeChild,
             searchName: 'attributeGraphParentsPane__childSearch',
-            searchTestId: 'attributeGraphParentsPane__childSearch',
             searchPlaceholder: messages.addChildPlaceholder,
             searchAria: messages.addChildAria,
-            suggestionsTestId: 'attributeGraphParentsPane__childSuggestions',
-            createTestId: 'attributeGraphParentsPane__createChild',
             anchorIs: 'parent',
         };
     case 'parents':
         return {
             back: messages.parentsOf,
             empty: messages.noParentsYet,
-            emptyTestId: 'attributeGraphParentsPane__empty',
-            rowTestId: 'attributeGraphParentsPane__parentRow',
-            removeTestId: 'attributeGraphParentsPane__parentRemove',
             removeAria: messages.removeParent,
             searchName: 'attributeGraphParentsPane__search',
-            searchTestId: 'attributeGraphParentsPane__search',
             searchPlaceholder: messages.addParentPlaceholder,
             searchAria: messages.addParentAria,
-            suggestionsTestId: 'attributeGraphParentsPane__suggestions',
-            createTestId: 'attributeGraphParentsPane__create',
             removeTooltip: messages.removeParentTooltip,
             anchorIs: 'child',
         };
@@ -190,6 +172,7 @@ export function EdgeList({
     }, [atMax, disabled, onAddExisting, onCreate, onSearchClose, suggestions]);
 
     const labels = edgeListLabels(direction);
+    const testIdScope = direction === 'children' ? 'admin.attribute.graph.pane.children' : 'admin.attribute.graph.pane.parents';
     const showSuggestions = searchOpen && suggestions.length > 0 && !disabled;
     const searchFieldBox = searchFieldBoxRef.current;
     const alertChildName = labels.anchorIs === 'parent' ? alertRelatedName : optionName;
@@ -200,7 +183,7 @@ export function EdgeList({
             <button
                 type='button'
                 className='attribute-graph-parents-pane__back'
-                data-testid='attributeGraphParentsPane__back'
+                data-testid='admin.attribute.graph.pane.back--button'
                 onClick={onBack}
             >
                 <ChevronLeftIcon size={16}/>
@@ -214,7 +197,7 @@ export function EdgeList({
                 {relatedNames.length === 0 && (
                     <p
                         className='attribute-graph-parents-pane__empty'
-                        data-testid={labels.emptyTestId}
+                        data-testid={`${testIdScope}.empty--text`}
                     >
                         <FormattedMessage {...labels.empty}/>
                     </p>
@@ -227,7 +210,7 @@ export function EdgeList({
                         <button
                             type='button'
                             className='attribute-graph-parents-pane__row-remove'
-                            data-testid={labels.removeTestId}
+                            data-testid={`${testIdScope}.edge.remove--button`}
                             aria-label={formatMessage(labels.removeAria, removeAriaValues)}
                             disabled={disabled}
                             onClick={() => {
@@ -247,7 +230,7 @@ export function EdgeList({
                         <div
                             key={relatedName}
                             className='attribute-graph-parents-pane__row'
-                            data-testid={labels.rowTestId}
+                            data-testid={`${testIdScope}.edge:${relatedName}`}
                         >
                             <div className='attribute-graph-parents-pane__row-top'>
                                 <span className='attribute-graph-parents-pane__row-label'>{relatedName}</span>
@@ -267,7 +250,7 @@ export function EdgeList({
                     childName={alertChildName}
                     parentName={alertParentName}
                     className='attribute-graph-parents-pane__alert'
-                    testId='attributeGraphParentsPane__alert'
+                    testId='admin.attribute.graph.pane.alert'
                 />
             )}
             <Menu.Separator className='attribute-graph-parents-pane__divider'/>
@@ -293,7 +276,7 @@ export function EdgeList({
                         onKeyUp={(event) => event.stopPropagation()}
                         disabled={disabled || atMax}
                         autoComplete='off'
-                        data-testid={labels.searchTestId}
+                        data-testid={`${testIdScope}.search--textbox`}
                     />
                 </div>
             </div>
@@ -328,7 +311,7 @@ export function EdgeList({
                     >
                         <ul
                             className='attribute-graph-parents-pane__suggestions'
-                            data-testid={labels.suggestionsTestId}
+                            data-testid={`${testIdScope}.suggestions--list`}
                         >
                             {suggestions.map((row) => {
                                 switch (row.kind) {
@@ -338,7 +321,7 @@ export function EdgeList({
                                             <button
                                                 type='button'
                                                 className='attribute-graph-parents-pane__suggestion attribute-graph-parents-pane__suggestion--create'
-                                                data-testid={labels.createTestId}
+                                                data-testid={`${testIdScope}.create--button`}
                                                 disabled={disabled || atMax}
                                                 onMouseDown={(event) => event.preventDefault()}
                                                 onClick={() => onCreate(row.name)}
@@ -360,7 +343,7 @@ export function EdgeList({
                                             <button
                                                 type='button'
                                                 className='attribute-graph-parents-pane__suggestion'
-                                                data-testid={`attributeGraphParentsPane__candidate-${row.name}`}
+                                                data-testid={`admin.attribute.graph.pane.candidate:${row.name}--button`}
                                                 disabled={disabled || atMax}
                                                 onMouseDown={(event) => event.preventDefault()}
                                                 onClick={() => onAddExisting(row.name)}

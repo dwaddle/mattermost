@@ -4,119 +4,98 @@
 /**
  * @objective E2E tests for Team Settings Modal - four-tab layout and Channel Membership label
  * @reference MM-69100
+ *
+ * Written on the generated page objects: the team menu, the Team Settings tabs keyed by tab id, the Team Membership
+ * rules editor and the Channel Membership policy list.
  */
 
-import {ChannelsPage, expect, test, DefaultChannel, Msg} from '@mattermost/playwright-lib';
+import {expect, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 import {enableTeamMembershipABACConfig} from './helpers';
 
+/** Logs in as the admin with team membership ABAC on, and opens Team Settings from the team menu. */
+async function openTeamSettings(pw: PlaywrightExtended) {
+    await pw.skipIfNoLicense();
+    const {adminUser, adminClient, team} = await pw.initSetup();
+    await enableTeamMembershipABACConfig(adminClient);
+    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+
+    const {app} = await pw.testBrowser.login(adminUser);
+    await app.channelsPage.goto({team, channel: townSquare});
+    return openSettings(app);
+}
+
+async function openSettings(app: App) {
+    return (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
+}
+
 test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membership']}, () => {
     test('MM-69100_20 Four-tab order: Info, Access, Team Membership, Channel Membership', async ({pw}) => {
-        await pw.skipIfNoLicense();
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        await enableTeamMembershipABACConfig(adminClient);
+        const settings = await openTeamSettings(pw);
+        const {tabs} = settings;
 
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        // * Exactly four tabs, in order
+        await expect.poll(() => tabs.tabKeys()).toEqual(['info', 'access', 'team_membership', 'access_policies']);
 
-        const teamSettings = await channelsPage.openTeamSettings();
+        // * Each tab carries its label; the fourth is Channel Membership, not the old Membership Policies
+        await expect(tabs.tab('info')).toHaveMessage(Msg.team_settings_modal.infoTab);
+        await expect(tabs.tab('access')).toHaveMessage(Msg.team_settings_modal.accessTab);
+        await expect(tabs.tab('team_membership')).toHaveMessage(Msg.team_settings_modal.teamMembershipTab);
+        await expect(tabs.tab('access_policies')).toHaveMessage(Msg.team_settings_modal.accessPoliciesTab);
+        await expect(tabs.tab('access_policies').locator).not.toContainText('Membership Policies');
 
-        // # Collect all visible tab buttons in order
-        const tabButtons = teamSettings.container.getByTestId(/^team_settings_modal\.tabs\..+--tab$/);
-
-        // * Exactly 4 tabs are visible
-        await expect(tabButtons).toHaveCount(4);
-
-        // * Tabs appear in the correct order
-        await expect(tabButtons.nth(0)).toContainText('Info');
-        await expect(tabButtons.nth(1)).toContainMessage(Msg.team_settings_modal.accessTab);
-        await expect(tabButtons.nth(2)).toContainText('Team Membership');
-        await expect(tabButtons.nth(3)).toContainMessage(Msg.team_settings_modal.accessPoliciesTab);
-
-        // * Fourth tab does NOT contain the old label
-        await expect(tabButtons.nth(3)).not.toContainText('Membership Policies');
-
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-69100_21 Channel Membership tab label is "Channel Membership", not "Membership Policies"', async ({
         pw,
     }) => {
-        await pw.skipIfNoLicense();
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        await enableTeamMembershipABACConfig(adminClient);
+        const settings = await openTeamSettings(pw);
+        const channelMembershipTab = settings.tabs.tab('access_policies');
 
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
-
-        const teamSettings = await channelsPage.openTeamSettings();
-
-        const channelMembershipTab = teamSettings.container.getByTestId(
-            'team_settings_modal.tabs.tab:access_policies--tab',
-        );
-
-        // * Tab button is visible
-        await expect(channelMembershipTab).toBeVisible();
-
-        // * Label is "Channel Membership"
-        await expect(channelMembershipTab).toContainMessage(Msg.team_settings_modal.accessPoliciesTab);
+        // * Tab button is visible and labelled Channel Membership
+        await expect(channelMembershipTab.locator).toBeVisible();
+        await expect(channelMembershipTab).toHaveMessage(Msg.team_settings_modal.accessPoliciesTab);
 
         // * Old label is gone
-        await expect(channelMembershipTab).not.toContainText('Membership Policies');
+        await expect(channelMembershipTab.locator).not.toContainText('Membership Policies');
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-69100_22 Channel Membership tab (4th) opens the policy editor content', async ({pw}) => {
-        await pw.skipIfNoLicense();
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        await enableTeamMembershipABACConfig(adminClient);
-
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
-
-        const teamSettings = await channelsPage.openTeamSettings();
+        const settings = await openTeamSettings(pw);
 
         // # Click Channel Membership tab
-        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:access_policies--tab').click();
+        await settings.tabs.tab('access_policies').select();
 
-        // * Channel Membership tab content is functional (shows empty state or policy list)
-        await expect(teamSettings.container.getByText('No policies found')).toBeVisible();
+        // * Channel Membership tab content is functional (shows the policy list's empty state)
+        await expect(settings.accessPolicies.policies.rows).toContainMessage(
+            Msg.admin.user_settings.policy_list.no_policies_found,
+        );
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     test('MM-69100_23 Team Membership and Channel Membership tabs are independently navigable', async ({pw}) => {
-        await pw.skipIfNoLicense();
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        await enableTeamMembershipABACConfig(adminClient);
-
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
-
-        const teamSettings = await channelsPage.openTeamSettings();
+        const settings = await openTeamSettings(pw);
+        const teamRules = settings.membership.rules.locator;
+        const policies = settings.accessPolicies.policies.rows;
 
         // # Navigate to Team Membership tab
-        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
-        await expect(teamSettings.container.locator('.TeamMembershipTab')).toBeVisible();
+        await settings.tabs.tab('team_membership').select();
+        await expect(teamRules).toBeVisible();
 
         // # Navigate to Channel Membership tab
-        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:access_policies--tab').click();
-        await expect(teamSettings.container.getByText('No policies found')).toBeVisible();
-        await expect(teamSettings.container.locator('.TeamMembershipTab')).not.toBeVisible();
+        await settings.tabs.tab('access_policies').select();
+        await expect(policies).toContainMessage(Msg.admin.user_settings.policy_list.no_policies_found);
+        await expect(teamRules).not.toBeVisible();
 
         // # Navigate back to Team Membership tab
-        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
-        await expect(teamSettings.container.locator('.TeamMembershipTab')).toBeVisible();
+        await settings.tabs.tab('team_membership').select();
+        await expect(teamRules).toBeVisible();
+        await expect(policies.locator).not.toBeVisible();
 
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 });

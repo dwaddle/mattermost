@@ -1626,7 +1626,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                             <AttributeCombobox
                                 key={sectionName}
                                 id={comboboxId}
-                                testId={comboboxId}
+                                testIdScope='settings.section'
                                 label={getUserPropertyFieldLabel(attribute)}
                                 options={attribute.attrs?.options ?? []}
                                 placeholder={placeholder}

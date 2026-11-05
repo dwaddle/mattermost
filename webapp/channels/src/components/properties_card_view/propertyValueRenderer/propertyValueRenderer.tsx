@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyValue} from '@mattermost/types/properties';
 
 import type {
@@ -31,9 +32,12 @@ type Props = {
     value: PropertyValue<unknown>;
     metadata?: FieldMetadata;
     maxItems?: number;
+
+    // The field's value scope; each renderer names its kind under it (`<scope>.text--text`, `<scope>.user`).
+    testIdScope?: TestId;
 };
 
-export default function PropertyValueRenderer({field, value, metadata, maxItems}: Props) {
+export default function PropertyValueRenderer({field, value, metadata, maxItems, testIdScope}: Props) {
     switch (field.type) {
     case 'text':
         return (
@@ -41,6 +45,7 @@ export default function PropertyValueRenderer({field, value, metadata, maxItems}
                 field={field}
                 value={value}
                 metadata={metadata}
+                testIdScope={testIdScope}
             />
         );
     case 'user':
@@ -49,6 +54,7 @@ export default function PropertyValueRenderer({field, value, metadata, maxItems}
                 field={field}
                 value={value}
                 metadata={metadata as UserPropertyMetadata}
+                testIdScope={testIdScope}
             />
         );
 
@@ -69,6 +75,7 @@ export default function PropertyValueRenderer({field, value, metadata, maxItems}
                         field={field}
                         value={{...value, value: userId}}
                         metadata={metadata as UserPropertyMetadata}
+                        testIdScope={testIdScope}
                     />
                 ))}
             </>
@@ -85,6 +92,7 @@ export default function PropertyValueRenderer({field, value, metadata, maxItems}
                 value={value}
                 field={field}
                 maxItems={maxItems}
+                testIdScope={testIdScope}
             />
         );
 
@@ -93,7 +101,7 @@ export default function PropertyValueRenderer({field, value, metadata, maxItems}
     }
 }
 
-function RenderTextSubtype({field, value, metadata}: Omit<Props, 'maxItems'>) {
+function RenderTextSubtype({field, value, metadata, testIdScope}: Omit<Props, 'maxItems'>) {
     if (field.type !== 'text') {
         return null;
     }
@@ -106,6 +114,7 @@ function RenderTextSubtype({field, value, metadata}: Omit<Props, 'maxItems'>) {
             <PostPreviewPropertyRenderer
                 value={value}
                 metadata={metadata as PostPreviewFieldMetadata}
+                testIdScope={testIdScope}
             />
         );
     case 'channel':
@@ -113,6 +122,7 @@ function RenderTextSubtype({field, value, metadata}: Omit<Props, 'maxItems'>) {
             <ChannelPropertyRenderer
                 value={value}
                 metadata={metadata as ChannelFieldMetadata}
+                testIdScope={testIdScope}
             />
         );
     case 'team':
@@ -120,10 +130,16 @@ function RenderTextSubtype({field, value, metadata}: Omit<Props, 'maxItems'>) {
             <TeamPropertyRenderer
                 value={value}
                 metadata={metadata as TeamFieldMetadata}
+                testIdScope={testIdScope}
             />
         );
     case 'timestamp':
-        return <TimestampPropertyRenderer value={value}/>;
+        return (
+            <TimestampPropertyRenderer
+                value={value}
+                testIdScope={testIdScope}
+            />
+        );
 
     // A subtype this client does not know about still stores a string, so it
     // renders as one. Returning nothing would blank the value and, on the post
@@ -134,6 +150,7 @@ function RenderTextSubtype({field, value, metadata}: Omit<Props, 'maxItems'>) {
             <TextPropertyRenderer
                 value={value}
                 metadata={metadata as TextFieldMetadata}
+                testIdScope={testIdScope}
             />
         );
     }

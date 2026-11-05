@@ -5,12 +5,14 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {PropertyField, PropertyFieldOption} from '@mattermost/types/properties';
 
 import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
-import {CategorySelector, ChannelSettingsModalConfigurationBannerText, DropdownInput, Input, Url} from './shared';
+import {Admin} from './admin';
+import {CategorySelector, ChannelSettingsModalInfoHeader, DropdownInput, Input, Url} from './shared';
 
 /** The form fields of `new_channel_modal`. */
 export type NewChannelModalFormValues = {
@@ -18,6 +20,11 @@ export type NewChannelModalFormValues = {
     classificationBannerText: string;
     name: string;
     purpose: string;
+};
+/** The form fields of `new_channel_modal.attributes.attribute`. */
+export type NewChannelModalAttributesAttributeFormValues = {
+    valueCombobox?: string;
+    valueTextbox?: string;
 };
 /** Scope `new_channel_modal`. */
 export class NewChannelModal extends Scope {
@@ -158,12 +165,16 @@ export class NewChannelModal extends Scope {
         await this.purposeTextbox.fill(value);
     }
 
-    get classificationBannerText(): ChannelSettingsModalConfigurationBannerText {
-        return new ChannelSettingsModalConfigurationBannerText(
-            this.page,
-            `${this.scope}.classification_banner_text`,
-            this.root,
-        );
+    /**
+     * `new_channel_modal.attributes` — ChannelAttributesForm (channels/src/components/channel_attributes/channel_attributes_form.tsx)
+     * Renders only when !(supported.length === 0) and isBuiltInType(type).
+     */
+    get attributes(): NewChannelModalAttributes {
+        return new NewChannelModalAttributes(this.page, `${this.scope}.attributes`, this.root);
+    }
+
+    get classificationBannerText(): ChannelSettingsModalInfoHeader {
+        return new ChannelSettingsModalInfoHeader(this.page, `${this.scope}.classification_banner_text`, this.root);
     }
 
     /**
@@ -240,6 +251,205 @@ export class NewChannelModal extends Scope {
             name: vName,
             purpose: vPurpose,
         };
+    }
+}
+
+/** Scope `new_channel_modal.attributes`. */
+export class NewChannelModalAttributes extends Scope {
+    constructor(page: Page, scope = 'new_channel_modal.attributes', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `new_channel_modal.attributes.attribute:{key}` — ChannelAttributesForm (channels/src/components/channel_attributes/channel_attributes_form.tsx)
+     * Renders only when !(supported.length === 0) and isBuiltInType(type).
+     */
+    attribute(attribute: Pick<PropertyField, 'id'>): NewChannelModalAttributesAttribute {
+        return new NewChannelModalAttributesAttribute(
+            this.page,
+            `${this.scope}.attribute`,
+            this.byTestId(`${this.scope}.attribute:${attribute.id}`),
+        );
+    }
+
+    /** Every `new_channel_modal.attributes.attribute:{key}` in the scope. */
+    get attributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.attribute:`, '');
+    }
+
+    /** The keys of every `new_channel_modal.attributes.attribute:{key}` in the scope, in document order. */
+    attributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.attribute:`, '');
+    }
+
+    /** Every `new_channel_modal.attributes.attribute:{key}` in the scope as a list by key, for the list matchers: `expect(x.attributeList).toHaveKeys([…])`. */
+    get attributeList() {
+        return this.keyedList(
+            `${this.scope}.attribute:`,
+            '',
+            (key: string) =>
+                new NewChannelModalAttributesAttribute(
+                    this.page,
+                    `${this.scope}.attribute`,
+                    this.byTestId(`${this.scope}.attribute:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `new_channel_modal.attributes.attribute`. */
+export class NewChannelModalAttributesAttribute extends Scope {
+    constructor(page: Page, scope = 'new_channel_modal.attributes.attribute', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `new_channel_modal.attributes.attribute:{key}` — ChannelAttributesForm (channels/src/components/channel_attributes/channel_attributes_form.tsx)
+     * Renders only when !(supported.length === 0) and isBuiltInType(type).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'new_channel_modal.attributes.attribute:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `new_channel_modal.attributes.attribute.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(supported.length === 0) and !supportsHierarchy(field) and !isTextField(field).
+     */
+    choice(choice: Pick<PropertyFieldOption, 'id'>) {
+        return drivers.option(this.byTestId(`${this.scope}.choice:${choice.id}--option`, true), {
+            testId: `${this.scope}.choice:${choice.id}--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions',
+        });
+    }
+
+    /** Every `new_channel_modal.attributes.attribute.choice:{key}--option` in the scope. */
+    get choiceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** The keys of every `new_channel_modal.attributes.attribute.choice:{key}--option` in the scope, in document order. */
+    choiceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /**
+     * `new_channel_modal.attributes.attribute.clear--button` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(supported.length === 0) and !supportsHierarchy(field) and !isTextField(field).
+     */
+    get clearButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
+            testId: `${this.scope}.clear--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async clickClearButton(): Promise<void> {
+        await this.clearButton.click();
+    }
+
+    /**
+     * `new_channel_modal.attributes.attribute.value--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get valueButton() {
+        return drivers.button(this.byTestId(`${this.scope}.value--button`), {
+            testId: `${this.scope}.value--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks valueButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickValueButton(): Promise<Admin> {
+        await this.valueButton.click();
+        return new Admin(this.page, 'admin');
+    }
+
+    /**
+     * `new_channel_modal.attributes.attribute.value--combobox` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(supported.length === 0) and !supportsHierarchy(field) and !isTextField(field).
+     */
+    get valueCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.value--combobox`), {
+            testId: `${this.scope}.value--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async chooseValueCombobox(option: string | RegExp): Promise<void> {
+        await this.valueCombobox.choose(option);
+    }
+
+    /**
+     * `new_channel_modal.attributes.attribute.value--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !(supported.length === 0) and !supportsHierarchy(field) and isTextField(field).
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+
+    get value(): Input {
+        return new Input(this.page, `${this.scope}.value`, this.root);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<NewChannelModalAttributesAttributeFormValues>): Promise<void> {
+        if (values.valueCombobox !== undefined) {
+            await this.valueCombobox.choose(values.valueCombobox);
+        }
+        if (values.valueTextbox !== undefined) {
+            await this.valueTextbox.fill(values.valueTextbox);
+        }
+    }
+
+    /** Every `new_channel_modal.attributes.attribute.choice:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.choiceList).toHaveKeys([…])`. */
+    get choiceList() {
+        return this.keyedList(
+            `${this.scope}.choice:`,
+            '--option',
+            (key: string) =>
+                drivers.option(this.byTestId(`${this.scope}.choice:${key}--option`, true), {
+                    testId: `${this.scope}.choice:${key}--option`,
+                    role: 'option',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions',
+                }),
+            true,
+        );
     }
 }
 

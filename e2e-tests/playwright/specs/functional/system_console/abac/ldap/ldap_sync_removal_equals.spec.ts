@@ -4,9 +4,6 @@
 import {
     expect,
     test,
-    enableABAC,
-    navigateToABACPage,
-    runSyncJob,
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
@@ -15,11 +12,11 @@ import {
 import {
     ensureUserAttributes,
     createPrivateChannelForABAC,
-    createBasicPolicy,
     activatePolicy,
-    waitForLatestSyncJob,
     getPolicyIdByName,
+    getUserAttributeFieldByName,
 } from '../support';
+import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
 
 /**
  * MM-T5799b: LDAP sync - User removed after attribute removed (== operator, auto-add true)
@@ -38,18 +35,16 @@ test('MM-T5799b LDAP sync - User removed with == operator (auto-add true)', asyn
 
     const channel2 = await createPrivateChannelForABAC(adminClient, team.id);
 
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-    await navigateToABACPage(systemConsolePage.page);
-    await enableABAC(systemConsolePage.page);
+    const {app} = await pw.testBrowser.login(adminUser);
+
+    await setAbacEnabled(app, true);
 
     const policy2Name = `LDAP Remove TwoAttr ${await pw.random.id()}`;
-    await createBasicPolicy(systemConsolePage.page, {
+    await createMembershipPolicy(app, {
         name: policy2Name,
-        attribute: 'Department',
-        operator: '==',
-        value: 'Engineering',
-        autoSync: true,
-        channels: [channel2.display_name],
+        rules: [{field: await getUserAttributeFieldByName(adminClient, 'Department'), value: 'Engineering'}],
+        channels: [channel2],
+        autoAdd: true,
     });
     const t5799Policy2Id = (await getPolicyIdByName(adminClient, policy2Name))!;
 
@@ -58,8 +53,7 @@ test('MM-T5799b LDAP sync - User removed with == operator (auto-add true)', asyn
     // Sync: user has qualifying attribute → gets auto-added.
     // Capture exact job ID so we poll the right job, not the most-recent row
     // (which may belong to a concurrent shard's sync job under PW_WORKERS >= 2).
-    const syncJob5799b1 = await runSyncJob(systemConsolePage.page);
-    await waitForLatestSyncJob(systemConsolePage.page, undefined, syncJob5799b1);
+    await waitForSyncJob(adminClient, await runSyncJob(app));
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user2.id, channel2.id), {
@@ -73,8 +67,7 @@ test('MM-T5799b LDAP sync - User removed with == operator (auto-add true)', asyn
     await updateUserAttributes(adminClient, user2.id, {Department: 'Sales'});
 
     // Sync: user no longer qualifies → gets removed.
-    const syncJob5799b2 = await runSyncJob(systemConsolePage.page);
-    await waitForLatestSyncJob(systemConsolePage.page, undefined, syncJob5799b2);
+    await waitForSyncJob(adminClient, await runSyncJob(app));
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user2.id, channel2.id), {

@@ -4,9 +4,6 @@
 import {
     expect,
     test,
-    enableABAC,
-    navigateToABACPage,
-    runSyncJob,
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
@@ -15,12 +12,11 @@ import {
 import {
     ensureUserAttributes,
     createPrivateChannelForABAC,
-    createBasicPolicy,
-    createAdvancedPolicy,
     activatePolicy,
-    waitForLatestSyncJob,
     getPolicyIdByName,
+    getUserAttributeFieldByName,
 } from '../support';
+import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from '../surface';
 
 /**
  * MM-T5797a: LDAP sync - User auto-added with `= is` operator (auto-add true)
@@ -42,18 +38,16 @@ test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', a
 
     const channel = await createPrivateChannelForABAC(adminClient, team.id);
 
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-    await navigateToABACPage(systemConsolePage.page);
-    await enableABAC(systemConsolePage.page);
+    const {app} = await pw.testBrowser.login(adminUser);
+
+    await setAbacEnabled(app, true);
 
     const policyName = `LDAP AutoAdd Equals ${await pw.random.id()}`;
-    await createBasicPolicy(systemConsolePage.page, {
+    await createMembershipPolicy(app, {
         name: policyName,
-        attribute: 'Department',
-        operator: '==',
-        value: 'Engineering',
-        autoSync: true,
-        channels: [channel.display_name],
+        rules: [{field: await getUserAttributeFieldByName(adminClient, 'Department'), value: 'Engineering'}],
+        channels: [channel],
+        autoAdd: true,
     });
 
     const policyId = (await getPolicyIdByName(adminClient, policyName))!;
@@ -62,8 +56,7 @@ test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', a
     // Initial sync — user has non-qualifying attribute, should not be added.
     // Capture exact job ID so we poll the right job, not the most-recent row
     // (which may belong to a concurrent shard's sync job under PW_WORKERS >= 2).
-    const syncJob5797a1 = await runSyncJob(systemConsolePage.page);
-    await waitForLatestSyncJob(systemConsolePage.page, undefined, syncJob5797a1);
+    await waitForSyncJob(adminClient, await runSyncJob(app));
 
     // Poll: sync job marks itself success before channel_members write is committed.
     await expect
@@ -78,8 +71,7 @@ test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', a
     await updateUserAttributes(adminClient, user.id, {Department: 'Engineering'});
 
     // Sync again — user now qualifies and should be auto-added.
-    const syncJob5797a2 = await runSyncJob(systemConsolePage.page);
-    await waitForLatestSyncJob(systemConsolePage.page, undefined, syncJob5797a2);
+    await waitForSyncJob(adminClient, await runSyncJob(app));
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, channel.id), {
@@ -110,24 +102,23 @@ test('MM-T5797b LDAP sync - User auto-added with contains operator (auto-add tru
 
     const channel = await createPrivateChannelForABAC(adminClient, team.id);
 
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-    await navigateToABACPage(systemConsolePage.page);
-    await enableABAC(systemConsolePage.page);
+    const {app} = await pw.testBrowser.login(adminUser);
+
+    await setAbacEnabled(app, true);
 
     const policyName = `LDAP AutoAdd Contains ${await pw.random.id()}`;
-    await createAdvancedPolicy(systemConsolePage.page, {
+    await createMembershipPolicy(app, {
         name: policyName,
-        celExpression: 'user.attributes.Department.contains("Eng")',
-        autoSync: true,
-        channels: [channel.display_name],
+        cel: 'user.attributes.Department.contains("Eng")',
+        channels: [channel],
+        autoAdd: true,
     });
 
     const policyId = (await getPolicyIdByName(adminClient, policyName))!;
     await activatePolicy(adminClient, policyId);
 
     // Initial sync — user has non-qualifying attribute, should not be added.
-    const syncJob5797b1 = await runSyncJob(systemConsolePage.page);
-    await waitForLatestSyncJob(systemConsolePage.page, undefined, syncJob5797b1);
+    await waitForSyncJob(adminClient, await runSyncJob(app));
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, channel.id), {
@@ -141,8 +132,7 @@ test('MM-T5797b LDAP sync - User auto-added with contains operator (auto-add tru
     await updateUserAttributes(adminClient, user.id, {Department: 'Engineering'});
 
     // Sync again — user now qualifies and should be auto-added.
-    const syncJob5797b2 = await runSyncJob(systemConsolePage.page);
-    await waitForLatestSyncJob(systemConsolePage.page, undefined, syncJob5797b2);
+    await waitForSyncJob(adminClient, await runSyncJob(app));
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, channel.id), {

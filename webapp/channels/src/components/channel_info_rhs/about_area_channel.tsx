@@ -143,6 +143,7 @@ const AboutAreaChannel = ({channel, canEditChannelProperties, actions}: Props) =
 
             <ChannelInfoAttributes
                 channelId={channel.id}
+                testId='rhs.channel_info.about.attributes'
             />
 
             {(channel.purpose || canEditChannelProperties) && (

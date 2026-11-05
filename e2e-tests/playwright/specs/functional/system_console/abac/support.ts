@@ -17,6 +17,14 @@ import {getRandomId, newTestPassword} from '@mattermost/playwright-lib';
 import type {CustomProfileAttribute} from '../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeValuesForUser} from '../../channels/custom_profile_attributes/helpers';
 
+// The access rule table's controls, in whichever rule table is on the page: every table is `<area>.rules`, each rule
+// `<area>.rules.row:<n>` with these parts.
+export const RULE_ATTRIBUTE_BUTTON = /\.rules\.row\.attribute--button$/;
+export const RULE_OPERATOR_BUTTON = /\.rules\.row\.operator--button$/;
+export const RULE_VALUE_BUTTON = /\.rules\.row\.value--button$/;
+export const RULE_VALUE_TEXTBOX = /\.rules\.row\.value--textbox$/;
+export const RULE_VALUE_CONTROL = /\.rules\.row\.value--(button|textbox)$/;
+
 /**
  * Verify policy exists with better waiting and retry logic
  */
@@ -386,14 +394,11 @@ export async function createPrivateChannelForABAC(client: Client4, teamId: strin
  * instead of calling this.
  */
 export async function fillSingleConditionValue(page: Page, value: string): Promise<void> {
-    const inlineInput = page.locator('.values-editor__simple-input').first();
-    const menuButton = page.locator('[data-testid="valueSelectorMenuButton"]').first();
+    const inlineInput = page.getByTestId(RULE_VALUE_TEXTBOX).first();
+    const menuButton = page.getByTestId(RULE_VALUE_BUTTON).first();
 
     // Wait for whichever variant rendered after the operator was chosen.
-    await page
-        .locator('.values-editor__simple-input, [data-testid="valueSelectorMenuButton"]')
-        .first()
-        .waitFor({state: 'visible', timeout: 10000});
+    await page.getByTestId(RULE_VALUE_CONTROL).first().waitFor({state: 'visible', timeout: 10000});
 
     if (await inlineInput.isVisible().catch(() => false)) {
         await inlineInput.fill(value);
@@ -512,7 +517,7 @@ export async function createBasicPolicy(
         const menuIsOpen = await attributeMenu.isVisible({timeout: 2000});
 
         if (!menuIsOpen) {
-            const attributeButton = page.locator('[data-testid="attributeSelectorMenuButton"]').first();
+            const attributeButton = page.getByTestId(RULE_ATTRIBUTE_BUTTON).first();
             await attributeButton.click();
             await page.waitForTimeout(500);
         }
@@ -524,7 +529,7 @@ export async function createBasicPolicy(
         await page.waitForTimeout(500);
 
         // Select operator
-        const operatorButton = page.locator('[data-testid="operatorSelectorMenuButton"]').first();
+        const operatorButton = page.getByTestId(RULE_OPERATOR_BUTTON).first();
         await operatorButton.waitFor({state: 'visible', timeout: 5000});
         await operatorButton.click({force: true});
         await page.waitForTimeout(500);
@@ -545,7 +550,7 @@ export async function createBasicPolicy(
         // Fill value
         if (options.operator === 'in') {
             // Multi-value operator
-            const valueButton = page.locator('[data-testid="valueSelectorMenuButton"]').first();
+            const valueButton = page.getByTestId(RULE_VALUE_BUTTON).first();
             await valueButton.waitFor({state: 'visible', timeout: 10000});
             await valueButton.click({force: true});
             await page.waitForTimeout(500);
@@ -684,7 +689,7 @@ export async function createMultiAttributePolicy(
         }
 
         // Select attribute - click the attribute selector for this row
-        const attributeButtons = page.locator('[data-testid="attributeSelectorMenuButton"]');
+        const attributeButtons = page.getByTestId(RULE_ATTRIBUTE_BUTTON);
         const attributeButton = attributeButtons.nth(i);
         await attributeButton.waitFor({state: 'visible', timeout: 5000});
         await attributeButton.click({force: true});
@@ -698,7 +703,7 @@ export async function createMultiAttributePolicy(
         await page.waitForTimeout(500);
 
         // Select operator
-        const operatorButtons = page.locator('[data-testid="operatorSelectorMenuButton"]');
+        const operatorButtons = page.getByTestId(RULE_OPERATOR_BUTTON);
         const operatorButton = operatorButtons.nth(i);
         await operatorButton.waitFor({state: 'visible', timeout: 5000});
         await operatorButton.click({force: true});
@@ -725,7 +730,7 @@ export async function createMultiAttributePolicy(
             await page.waitForTimeout(300);
         } else {
             // It might be a select/multiselect - click the value selector
-            const valueButtons = page.locator('[data-testid="valueSelectorMenuButton"]');
+            const valueButtons = page.getByTestId(RULE_VALUE_BUTTON);
             const valueButton = valueButtons.nth(i);
             if (await valueButton.isVisible({timeout: 2000})) {
                 await valueButton.click({force: true});

@@ -1,11 +1,18 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Page} from '@playwright/test';
 import {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, getAdminClient, getRandomId, hasEnterpriseLicense, test, testConfig} from '@mattermost/playwright-lib';
+import {
+    type App,
+    expect,
+    getAdminClient,
+    getRandomId,
+    hasEnterpriseLicense,
+    test,
+    testConfig,
+} from '@mattermost/playwright-lib';
 
 import {
     type CpaFieldsMap,
@@ -41,50 +48,11 @@ function botUsername(prefix: string): string {
     return `${prefix}${getRandomId(8)}`;
 }
 
-async function dismissWebpackOverlay(page: Page) {
-    await page
-        .locator('#webpack-dev-server-client-overlay')
-        .evaluateAll((nodes) => {
-            nodes.forEach((node) => node.remove());
-        })
-        .catch(() => null);
-}
-
-function botAttributeCombobox(page: Page, fieldId: string) {
-    return page.getByTestId(`bot-attribute-label-${fieldId}`).getByRole('combobox');
-}
-
-// Focus alone doesn't open the menu, so click and wait for it; the listbox is portaled to the page.
-async function openBotAttributeListbox(page: Page, fieldId: string) {
-    const combobox = botAttributeCombobox(page, fieldId);
-    await combobox.click();
-    await expect(combobox).toHaveAttribute('aria-expanded', 'true');
-    const listboxId = await combobox.getAttribute('aria-controls');
-    if (!listboxId) {
-        throw new Error(`Bot attribute combobox ${fieldId} has no aria-controls`);
-    }
-    return page.locator(`#${listboxId}`);
-}
-
-// Matches the label text, since a rank option's accessible name also carries its rank.
-async function pickBotAttributeOption(page: Page, fieldId: string, optionName: string) {
-    const listbox = await openBotAttributeListbox(page, fieldId);
-    await listbox
-        .getByRole('option')
-        .filter({has: page.getByText(optionName, {exact: true})})
-        .click();
-    await expect(botAttributeCombobox(page, fieldId)).toHaveAttribute('aria-expanded', 'false');
-}
-
-async function openBotEdit(page: Page, teamName: string, username: string) {
-    await page.goto(`/${teamName}/integrations/bots`);
-    await dismissWebpackOverlay(page);
-    await page.locator('#searchInput').fill(username);
-    const botItem = page.locator('.backstage-list__item', {hasText: `@${username}`});
-    await expect(botItem).toBeVisible();
-    await botItem.getByRole('link', {name: 'Edit'}).click();
-    await page.waitForURL(/\/integrations\/bots\/edit\?id=/);
-    await expect(page.getByTestId('botAttributesAddButton')).toBeEnabled();
+async function openBotEdit(app: App, teamName: string, bot: {user_id: string}) {
+    await app.page.goto(`/${teamName}/integrations/bots`);
+    await app.integrations.bots.bot(bot).clickEditLink();
+    await app.page.waitForURL(/\/integrations\/bots\/edit\?id=/);
+    await expect(app.integrations.botForm.attributes.addButton.locator).toBeEnabled();
 }
 
 async function seedBot(adminClient: Client4, values: Record<string, string>) {
@@ -95,10 +63,11 @@ async function seedBot(adminClient: Client4, values: Record<string, string>) {
 }
 
 // A partial save failure keeps the edit page open with an error, so fail fast with its text instead of a URL timeout.
-async function saveBotEdit(page: Page, teamName: string) {
-    const saveError = page.locator('.backstage-form__footer .has-error');
-    await page.locator('#saveBot').click();
-    const saved = page.waitForURL(new RegExp(`/${teamName}/integrations/bots$`)).then(() => 'saved' as const);
+async function saveBotEdit(app: App, teamName: string) {
+    const form = app.integrations.botForm;
+    const saveError = form.errorText.locator;
+    await form.saveButton.click();
+    const saved = app.page.waitForURL(new RegExp(`/${teamName}/integrations/bots$`)).then(() => 'saved' as const);
     const failed = saveError.waitFor({state: 'visible'}).then(
         () => 'error' as const,
         () => new Promise<never>(() => {}),
@@ -182,46 +151,44 @@ test.describe('Bot account attributes @bot_accounts', () => {
         const textValue = `Platform ${suffix}`;
 
         // # Log in as admin and open the Add Bot page
-        const {channelsPage, page} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app, page} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
         await page.goto(`/${team.name}/integrations/bots/add`);
-        await dismissWebpackOverlay(page);
-        await page.locator('#username').fill(botUsername('battr'));
+        const form = app.integrations.botForm;
+        await form.usernameTextbox.fill(botUsername('battr'));
 
         // * The attributes section is ready
-        await expect(page.getByTestId('botAttributesSection')).toBeVisible();
-        const addButton = page.getByTestId('botAttributesAddButton');
-        await expect(addButton).toBeEnabled();
+        const attributes = form.attributes;
+        await expect(attributes.locator).toBeVisible();
+        await expect(attributes.addButton.locator).toBeEnabled();
 
         // # Add the text attribute and enter a value
-        await addButton.click();
-        await page.getByTestId(`botAttributesAdd-${textField.id}`).click();
-        const textRow = page.getByTestId(`bot-attribute-label-${textField.id}`);
-        await textRow.locator('input').fill(textValue);
+        let addMenu = await attributes.clickAddButton();
+        await addMenu.field(textField).click();
+        await attributes.attribute(textField).valueTextbox.fill(textValue);
 
         // # Add the select attribute and pick an option
-        await addButton.click();
-        await page.getByTestId(`botAttributesAdd-${selectField.id}`).click();
-        await pickBotAttributeOption(page, selectField.id, GOLD);
+        addMenu = await attributes.clickAddButton();
+        await addMenu.field(selectField).click();
+        await attributes.attribute(selectField).valueCombobox.choose(GOLD);
 
         // * Added fields are no longer offered in the add menu
-        await addButton.click();
-        await expect(page.getByRole('menu', {name: 'Add attribute'})).toBeVisible();
-        await expect(page.getByTestId(`botAttributesAdd-${textField.id}`)).toHaveCount(0);
-        await expect(page.getByTestId(`botAttributesAdd-${selectField.id}`)).toHaveCount(0);
+        addMenu = await attributes.clickAddButton();
+        await expect(addMenu.manageMenuItem.locator).toBeVisible();
+        await expect(addMenu.field(textField).locator).toHaveCount(0);
+        await expect(addMenu.field(selectField).locator).toHaveCount(0);
         await page.keyboard.press('Escape');
-        await expect(page.getByRole('menu', {name: 'Add attribute'})).toBeHidden();
+        await expect(addMenu.manageMenuItem.locator).toBeHidden();
 
         // # Create the bot
-        await page.locator('#saveBot').click();
+        await form.saveButton.click();
         await page.waitForURL(/\/integrations\/confirm\?type=bots/);
 
         // * The confirmation page shows the token and no partial-failure warnings
         const confirmUrl = new URL(page.url());
         expect(confirmUrl.searchParams.get('bot_warnings')).toBeNull();
-        await expect(page.locator('#botCreateWarnings')).toBeHidden();
-        await expect(page.getByText('Token:')).toBeVisible();
+        await expect(app.integrations.confirm.copyTokenButton.locator).toBeVisible();
+        await expect(app.integrations.botCreateWarnings.locator).toBeHidden();
 
         // * The attribute values were saved on the bot user
         const botUserId = confirmUrl.searchParams.get('id');
@@ -245,23 +212,23 @@ test.describe('Bot account attributes @bot_accounts', () => {
             [textField.id]: initialValue,
             [selectField.id]: optionId(selectField, GOLD),
         });
-        const {page} = await pw.testBrowser.login(adminUser);
-        await openBotEdit(page, team.name, bot.username);
+        const {app} = await pw.testBrowser.login(adminUser);
+        await openBotEdit(app, team.name, bot);
 
         // * Existing values are pre-filled
-        const textInput = page.getByTestId(`bot-attribute-label-${textField.id}`).locator('input');
-        const select = botAttributeCombobox(page, selectField.id);
-        await expect(textInput).toHaveValue(initialValue);
-        await expect(select).toHaveValue(GOLD);
+        const attributes = app.integrations.botForm.attributes;
+        const textInput = attributes.attribute(textField).valueTextbox;
+        const select = attributes.attribute(selectField).valueCombobox;
+        await expect(textInput.locator).toHaveValue(initialValue);
+        await expect(select.locator).toHaveValue(GOLD);
 
         // # Change both values and save
         await textInput.fill(updatedValue);
-        await pickBotAttributeOption(page, selectField.id, SILVER);
-        await saveBotEdit(page, team.name);
+        await select.choose(SILVER);
+        await saveBotEdit(app, team.name);
 
         // * The save returns to the bots list, which still lists the bot
-        await page.locator('#searchInput').fill(bot.username);
-        await expect(page.locator('.backstage-list__item', {hasText: `@${bot.username}`})).toBeVisible();
+        await expect(app.integrations.bots.bot(bot).locator).toBeVisible();
 
         // * The new values were saved
         await expect
@@ -293,25 +260,25 @@ test.describe('Bot account attributes @bot_accounts', () => {
             await adminClient.assignBot(bot.user_id, user.id);
 
             // # Log in as the owner and open the bot's edit page
-            const {page} = await pw.testBrowser.login(user);
-            await openBotEdit(page, team.name, bot.username);
+            const {app} = await pw.testBrowser.login(user);
+            await openBotEdit(app, team.name, bot);
 
             // # Change the existing text value
-            const textInput = page.getByTestId(`bot-attribute-label-${textField.id}`).locator('input');
-            await expect(textInput).toHaveValue(initialValue);
+            const attributes = app.integrations.botForm.attributes;
+            const textInput = attributes.attribute(textField).valueTextbox;
+            await expect(textInput.locator).toHaveValue(initialValue);
             await textInput.fill(updatedValue);
 
             // * The add menu offers the select field but not the admin-managed field or the admin-only manage link
-            await page.getByTestId('botAttributesAddButton').click();
-            await expect(page.getByRole('menu', {name: 'Add attribute'})).toBeVisible();
-            await expect(page.getByTestId(`botAttributesAdd-${selectField.id}`)).toBeVisible();
-            await expect(page.getByTestId(`botAttributesAdd-${adminManagedField.id}`)).toHaveCount(0);
-            await expect(page.getByTestId('botAttributesManage')).toHaveCount(0);
+            const addMenu = await attributes.clickAddButton();
+            await expect(addMenu.field(selectField).locator).toBeVisible();
+            await expect(addMenu.field(adminManagedField).locator).toHaveCount(0);
+            await expect(addMenu.manageMenuItem.locator).toHaveCount(0);
 
             // # Add the select attribute, pick an option, and save
-            await page.getByTestId(`botAttributesAdd-${selectField.id}`).click();
-            await pickBotAttributeOption(page, selectField.id, GOLD);
-            await saveBotEdit(page, team.name);
+            await addMenu.field(selectField).click();
+            await attributes.attribute(selectField).valueCombobox.choose(GOLD);
+            await saveBotEdit(app, team.name);
 
             // * The owner's changes were saved and the admin-managed field was left unset
             await expect
@@ -344,19 +311,20 @@ test.describe('Bot account attributes @bot_accounts', () => {
             [textField.id]: `Remove me ${suffix}`,
             [selectField.id]: optionId(selectField, GOLD),
         });
-        const {page} = await pw.testBrowser.login(adminUser);
-        await openBotEdit(page, team.name, bot.username);
+        const {app} = await pw.testBrowser.login(adminUser);
+        await openBotEdit(app, team.name, bot);
 
         // # Remove the text attribute row
-        await page.getByTestId(`bot-attribute-remove-${textField.id}`).click();
+        const attributes = app.integrations.botForm.attributes;
+        await attributes.attribute(textField).removeButton.click();
 
         // * The text row is gone, the select row remains, and focus moves to the add button
-        await expect(page.getByTestId(`bot-attribute-label-${textField.id}`)).toHaveCount(0);
-        await expect(page.getByTestId(`bot-attribute-label-${selectField.id}`)).toBeVisible();
-        await expect(page.getByTestId('botAttributesAddButton')).toBeFocused();
+        await expect(attributes.attribute(textField).locator).toHaveCount(0);
+        await expect(attributes.attribute(selectField).locator).toBeVisible();
+        await expect(attributes.addButton.locator).toBeFocused();
 
         // # Save the bot
-        await saveBotEdit(page, team.name);
+        await saveBotEdit(app, team.name);
 
         // * The text value is cleared and the select value is unchanged
         await expect
@@ -367,9 +335,9 @@ test.describe('Bot account attributes @bot_accounts', () => {
             .toEqual({text: '', select: optionId(selectField, GOLD)});
 
         // * Reopening the bot shows only the select row
-        await openBotEdit(page, team.name, bot.username);
-        await expect(page.getByTestId(`bot-attribute-label-${textField.id}`)).toHaveCount(0);
-        await expect(page.getByTestId(`bot-attribute-label-${selectField.id}`)).toBeVisible();
+        await openBotEdit(app, team.name, bot);
+        await expect(attributes.attribute(textField).locator).toHaveCount(0);
+        await expect(attributes.attribute(selectField).locator).toBeVisible();
     });
 
     /**
@@ -403,24 +371,23 @@ test.describe('Bot account attributes @bot_accounts', () => {
         const botClient = new Client4();
         botClient.setUrl(testConfig.baseURL);
         botClient.setToken(token);
-        await botClient.createPost({channel_id: channel.id, message});
+        const botPost = await botClient.createPost({channel_id: channel.id, message});
 
         // # Log in as admin and open the channel
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel});
 
-        // * The bot's post is the last post
-        const post = await channelsPage.getLastPost();
-        await post.toContainText(message);
+        // * The bot's post shows
+        const post = app.center.postList.post(botPost);
+        await expect(post.messageText.locator).toContainText(message);
 
         // # Open the bot's profile popover
-        await channelsPage.openProfilePopover(post);
+        await post.avatar.locator.click();
 
         // * The popover belongs to the bot and shows both attributes with their values
-        await expect(channelsPage.userProfilePopover.container).toContainText(`@${bot.username}`);
-        await verifyAttributeInPopover(channelsPage, TEXT_LABEL, textValue);
-        await verifyAttributeInPopover(channelsPage, SELECT_LABEL, SILVER);
+        await expect(app.profilePopover.usernameText.locator).toContainText(`@${bot.username}`);
+        await verifyAttributeInPopover(app, fields!, TEXT_NAME, textValue);
+        await verifyAttributeInPopover(app, fields!, SELECT_NAME, SILVER);
     });
 
     /**

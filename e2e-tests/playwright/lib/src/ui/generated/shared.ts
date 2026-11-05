@@ -9,6 +9,8 @@ import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {FileInfo} from '@mattermost/types/files';
 import type {Group} from '@mattermost/types/groups';
 import type {MmStaticSelectBlock} from '@mattermost/types/mm_blocks';
+import type {PropertyField} from '@mattermost/types/properties';
+import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -17,19 +19,26 @@ import {Scope, drivers, suggestionTestKey} from '../../aria';
 
 import {Api} from './api';
 import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
+import {ChannelAccessRulesConfirmModal} from './channel_access_rules_confirm_modal';
+import {ChannelActivityWarningModal} from './channel_activity_warning_modal';
 import {ChannelInviteModalUsersResultsGroup, ChannelInviteModalUsersResultsUser} from './channel_invite_modal';
+import {ChannelSettingsModal} from './channel_settings_modal';
 import {DeletePostModal} from './delete_post_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {FilePreviewModal} from './file_preview_modal';
+import {FlaggedMessageModal} from './flagged_message_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {Markdown} from './markdown';
 import {NotifyConfirmModal} from './notify_confirm_modal';
 import {ScheduledPostsPage} from './pages';
 import {PostDotMenu} from './post_dot_menu';
 import {RemoveSharingModal} from './remove_sharing_modal';
+import {RhsChannelInfo} from './rhs';
 import {SendPostOptions} from './send_post_options';
 import {UserSettingsModal} from './user_settings_modal';
 import type {
+    AdminOperator,
+    CenterAction,
     CenterControl,
     ChannelSettingsModalTab,
     ModalControl,
@@ -38,6 +47,21 @@ import type {
     RhsControl,
 } from './sets';
 
+/** The form fields of `admin.access_control.policy.channels`. */
+export type ChannelsFormValues = {
+    autoAddAll: boolean;
+    search: string;
+};
+/** The read-only parts of a `admin.access_control.policy.rules.row.operator_menu.operator` item. */
+export type RulesRowOperatorMenuOperatorRow = {
+    functionName: string | null;
+};
+/** The form fields of `admin.access_control.policy.rules.row.value_menu`. */
+export type RulesRowValueMenuFormValues = {
+    filter: string;
+    search: string;
+    value?: string;
+};
 /** The read-only parts of a `admin.group.members.row` item. */
 export type DataGridRowRow = {
     displayName: string | null;
@@ -50,10 +74,19 @@ export type PostItemRow = {
     onlyVisibleToYou: string | null;
     time: string | null;
 };
+/** The read-only parts of a `center.post_list.post.spillage_report.card.field` item. */
+export type PostItemSpillageReportCardFieldRow = {
+    label: string | null;
+};
 /** The read-only parts of a `channel_access_rules_confirm_modal.users.user` item. */
 export type SearchableUserListUserRow = {
     email: string | null;
     name: string | null;
+};
+/** The read-only parts of a `channel_settings_modal.info.attributes.attribute` item. */
+export type ChannelInfoAttributesAttributeRow = {
+    unset: string | null;
+    value: string | null;
 };
 /** The form fields of `integrations.bot_form.default_token`. */
 export type TokenExpiryPickerFormValues = {
@@ -386,7 +419,7 @@ export class Users extends Scope {
     }
 }
 
-/** Rendered at `admin.accept_invite_modal.destination_team`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.accept_invite_modal.destination_team`, `admin.classification.global_banner_level`, `admin.classification.preset`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
 export class DropdownInput extends Scope {
     /**
      * `admin.accept_invite_modal.destination_team.menu` — makeMenu (channels/src/components/dropdown_input.tsx)
@@ -397,7 +430,7 @@ export class DropdownInput extends Scope {
     }
 }
 
-/** Rendered at `admin.accept_invite_modal.destination_team.menu`, `admin.secure_connection.destination_team.menu`, `admin.users.filters.role.menu`, `admin.users.filters.status.menu`, `channel_settings_modal.configuration.classification_level.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.accept_invite_modal.destination_team.menu`, `admin.classification.global_banner_level.menu`, `admin.classification.preset.menu`, `admin.secure_connection.destination_team.menu`, `admin.users.filters.role.menu`, `admin.users.filters.status.menu`, `channel_settings_modal.configuration.classification_level.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
 export class DropdownInputMenu extends Scope {
     /**
      * `admin.accept_invite_modal.destination_team.menu.option:{key}--option` — makeOption (channels/src/components/dropdown_input.tsx)
@@ -437,7 +470,1344 @@ export class DropdownInputMenu extends Scope {
     }
 }
 
-/** Rendered at `admin.channel.archive_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.access_control.policies`, `policy_selection_modal.policies`, `team_settings_modal.access_policies.policies`: one class, constructed with the scope it is mounted at. */
+export class Policies extends Scope {
+    /**
+     * `admin.access_control.policies.add--button` — PolicyList (channels/src/components/admin_console/access_control/policies.tsx)
+     * Goes to '/admin_console/system_attributes/membership_policies/edit_….
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policies.tsx#PolicyList',
+        });
+    }
+
+    async clickAddButton(): Promise<void> {
+        await this.addButton.click();
+    }
+
+    /**
+     * `admin.access_control.policies.header` — DataGridHeader (channels/src/components/admin_console/data_grid/data_grid_header.tsx)
+     */
+    get header() {
+        return drivers.container(this.byTestId(`${this.scope}.header`), {
+            testId: `${this.scope}.header`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader',
+        });
+    }
+
+    /**
+     * `admin.access_control.policies.rows` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get rows() {
+        return drivers.container(this.byTestId(`${this.scope}.rows`), {
+            testId: `${this.scope}.rows`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
+        });
+    }
+
+    /**
+     * `admin.access_control.policies.search--textbox` — DataGridSearch (channels/src/components/admin_console/data_grid/data_grid_search.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [Api.SearchAccessControlPolicies],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_search.tsx#DataGridSearch',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.access_control.policies.delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get deleteModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.delete_modal`, this.root);
+    }
+
+    /**
+     * `admin.access_control.policies.footer` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     * Renders only when total.
+     */
+    get footer(): Footer {
+        return new Footer(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.access_control.policies.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    row(row: string): PoliciesRow {
+        return new PoliciesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.access_control.policies.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.access_control.policies.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /** Every `admin.access_control.policies.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) => new PoliciesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Rendered at `admin.access_control.policies.delete_modal`, `admin.access_control.policy.delete_modal`, `admin.attribute.graph.delete_modal`, `admin.attribute.graph.grant_modal`, `admin.attribute.remove_applies_to_modal`, `admin.attributes.delete_modal`, `admin.board_attributes.delete_modal`, `admin.classification.remove_channel_modal`, `admin.server_logs.custom_range`, `admin.session_attributes.disable_modal`, `policy_selection_modal.policies.delete_modal`, `team_settings_modal.access_policies.policies.delete_modal`: one class, constructed with the scope it is mounted at. */
+export class DeleteModal extends Scope {
+    /**
+     * `admin.access_control.policies.delete_modal.cancel--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `admin.access_control.policies.delete_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `admin.access_control.policies.delete_modal.confirm--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [
+                Api.DeleteAccessControlPolicy,
+                Api.SearchAccessControlPolicies,
+                Api.UnassignAccessControlPolicyFromChannels,
+            ],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
+    }
+}
+
+/** Rendered at `admin.access_control.policies.footer`, `admin.access_control.policy.channels.footer`, `admin.channel.members.footer`, `admin.channels.footer`, `admin.content_flagging.reviewers.teams.footer`, `admin.data_retention.custom_policies.footer`, `admin.data_retention.global_policy.footer`, `admin.data_retention.policy.channels.footer`, `admin.data_retention.policy.teams.footer`, `admin.group.members.footer`, `admin.permission_policies.footer`, `admin.role.users.footer`, `admin.roles.footer`, `admin.team.members.footer`, `admin.teams.footer`, `policy_selection_modal.policies.footer`, `team_settings_modal.access_policies.editor.channels.footer`, `team_settings_modal.access_policies.policies.footer`, `users_to_be_removed_modal.users.footer`: one class, constructed with the scope it is mounted at. */
+export class Footer extends Scope {
+    /**
+     * `admin.access_control.policies.footer.next--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when total.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [
+                Api.GetAllChannels,
+                Api.GetAllTeams,
+                Api.GetChannelMembersByIds,
+                Api.GetChannelsForRetentionPolicy,
+                Api.GetDataRetentionPolicies,
+                Api.GetEmojisByNames,
+                Api.GetTeamMembersByIds,
+                Api.GetTeamsForRetentionPolicy,
+                Api.GetUsers,
+                Api.GetUsersByIds,
+                Api.GetUsersStatusesByIds,
+                Api.SearchAccessControlPolicies,
+                Api.SearchAllChannels,
+                Api.SearchChannelsForAccessControlPolicy,
+                Api.SearchTeams,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `admin.access_control.policies.footer.pagination--text` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     * Renders only when total.
+     */
+    get paginationText() {
+        return drivers.text(this.byTestId(`${this.scope}.pagination--text`), {
+            testId: `${this.scope}.pagination--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
+        });
+    }
+
+    getPaginationText(): Promise<string> {
+        return this.paginationText.text();
+    }
+
+    /**
+     * `admin.access_control.policies.footer.previous--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when total.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [
+                Api.GetChannelMembersByIds,
+                Api.GetChannelsForRetentionPolicy,
+                Api.GetDataRetentionPolicies,
+                Api.GetEmojisByNames,
+                Api.GetTeamMembersByIds,
+                Api.GetTeamsForRetentionPolicy,
+                Api.GetUsers,
+                Api.GetUsersByIds,
+                Api.GetUsersStatusesByIds,
+                Api.SearchAccessControlPolicies,
+                Api.SearchChannelsForAccessControlPolicy,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+}
+
+/** Rendered at `admin.access_control.policies.row`, `policy_selection_modal.policies.row`, `team_settings_modal.access_policies.policies.row`: one class, constructed with the scope it is mounted at. */
+export class PoliciesRow extends Scope {
+    /**
+     * `admin.access_control.policies.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.access_control.policies.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.access_control.policies.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.access_control.policies.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.access_control.policies.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.access_control.policies.row.open_menu--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when !props.simpleMode.
+     * Opens menu menu (`admin.access_control.policies.row.menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get openMenuButton() {
+        return drivers.button(this.byTestId(`${this.scope}.open_menu--button`), {
+            testId: `${this.scope}.open_menu--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks openMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickOpenMenuButton(): Promise<PoliciesRowMenu> {
+        await this.openMenuButton.click();
+        return new PoliciesRowMenu(this.page, `${this.scope}.menu`);
+    }
+
+    get menu(): PoliciesRowMenu {
+        return new PoliciesRowMenu(this.page, `${this.scope}.menu`);
+    }
+
+    /** Every `admin.access_control.policies.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.access_control.policies.row.menu`, `policy_selection_modal.policies.row.menu`, `team_settings_modal.access_policies.policies.row.menu`: one class, constructed with the scope it is mounted at. */
+export class PoliciesRowMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policies.row.menu.delete--menuitem` — PolicyList (channels/src/components/admin_console/access_control/policies.tsx)
+     * Renders only when !props.simpleMode and !props.hideDeleteAction.
+     */
+    get deleteMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.delete--menuitem`), {
+            testId: `${this.scope}.delete--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policies.tsx#PolicyList',
+        });
+    }
+
+    async clickDeleteMenuItem(): Promise<void> {
+        await this.deleteMenuItem.click();
+    }
+
+    /**
+     * `admin.access_control.policies.row.menu.edit--menuitem` — PolicyList (channels/src/components/admin_console/access_control/policies.tsx)
+     * Renders only when !props.simpleMode.
+     * Goes to `/admin_console/system_attributes/membership_policies/edit_….
+     */
+    get editMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.edit--menuitem`), {
+            testId: `${this.scope}.edit--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policies.tsx#PolicyList',
+        });
+    }
+
+    async clickEditMenuItem(): Promise<void> {
+        await this.editMenuItem.click();
+    }
+}
+
+/** Rendered at `admin.access_control.policy.channels`, `team_settings_modal.access_policies.editor.channels`: one class, constructed with the scope it is mounted at. */
+export class Channels extends Scope {
+    /**
+     * `admin.access_control.policy.channels.auto_add_all--checkbox` — ChannelList (channels/src/components/admin_console/access_control/policy_details/channel_list/channel_list.tsx)
+     */
+    get autoAddAllCheckbox() {
+        return drivers.checkbox(this.byTestId(`${this.scope}.auto_add_all--checkbox`), {
+            testId: `${this.scope}.auto_add_all--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/channel_list/channel_list.tsx#ChannelList',
+        });
+    }
+
+    async setAutoAddAllCheckbox(on: boolean): Promise<void> {
+        await this.autoAddAllCheckbox.set(on);
+    }
+
+    /**
+     * `admin.access_control.policy.channels.header` — DataGridHeader (channels/src/components/admin_console/data_grid/data_grid_header.tsx)
+     */
+    get header() {
+        return drivers.container(this.byTestId(`${this.scope}.header`), {
+            testId: `${this.scope}.header`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.channels.rows` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get rows() {
+        return drivers.container(this.byTestId(`${this.scope}.rows`), {
+            testId: `${this.scope}.rows`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.channels.search--textbox` — DataGridSearch (channels/src/components/admin_console/data_grid/data_grid_search.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_search.tsx#DataGridSearch',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.access_control.policy.channels.footer` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     * Renders only when total.
+     */
+    get footer(): Footer {
+        return new Footer(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.access_control.policy.channels.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    row(row: string): ChannelsRow {
+        return new ChannelsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.access_control.policy.channels.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.access_control.policy.channels.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<ChannelsFormValues>): Promise<void> {
+        if (values.autoAddAll !== undefined) {
+            await this.autoAddAllCheckbox.set(values.autoAddAll);
+        }
+        if (values.search !== undefined) {
+            await this.searchTextbox.fill(values.search);
+        }
+    }
+
+    /** Reads every field (a field that isn't rendered reads as `undefined`). */
+    async read(): Promise<ChannelsFormValues> {
+        const vAutoAddAll = await this.autoAddAllCheckbox.isChecked();
+        const vSearch = await this.searchTextbox.value();
+        return {
+            autoAddAll: vAutoAddAll,
+            search: vSearch,
+        };
+    }
+
+    /** Every `admin.access_control.policy.channels.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) => new ChannelsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Rendered at `admin.access_control.policy.channels.row`, `team_settings_modal.access_policies.editor.channels.row`: one class, constructed with the scope it is mounted at. */
+export class ChannelsRow extends Scope {
+    /**
+     * `admin.access_control.policy.channels.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.access_control.policy.channels.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.access_control.policy.channels.row.auto_add--checkbox` — ChannelList (channels/src/components/admin_console/access_control/policy_details/channel_list/channel_list.tsx)
+     */
+    get autoAddCheckbox() {
+        return drivers.checkbox(this.byTestId(`${this.scope}.auto_add--checkbox`), {
+            testId: `${this.scope}.auto_add--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/channel_list/channel_list.tsx#ChannelList',
+        });
+    }
+
+    async setAutoAddCheckbox(on: boolean): Promise<void> {
+        await this.autoAddCheckbox.set(on);
+    }
+
+    /**
+     * `admin.access_control.policy.channels.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.access_control.policy.channels.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.access_control.policy.channels.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.access_control.policy.channels.row.channel_icon` — ChannelIcon (channels/src/components/channel_type_icon/channel_icon.tsx)
+     * Renders only when testId !== undefined.
+     */
+    get channelIcon() {
+        return drivers.container(this.byTestId(`${this.scope}.channel_icon`), {
+            testId: `${this.scope}.channel_icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.channels.row.remove--link` — ChannelList (channels/src/components/admin_console/access_control/policy_details/channel_list/channel_list.tsx)
+     */
+    get removeLink() {
+        return drivers.link(this.byTestId(`${this.scope}.remove--link`), {
+            testId: `${this.scope}.remove--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/channel_list/channel_list.tsx#ChannelList',
+        });
+    }
+
+    async clickRemoveLink(): Promise<void> {
+        await this.removeLink.click();
+    }
+
+    /** Every `admin.access_control.policy.channels.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row`, `admin.channel.access_rules.rules.row`, `admin.permission_policy.rules.row`, `admin.team.access_rules.rules.row`, `channel_settings_modal.access_rules.rules.row`, `channel_settings_modal.permissions_policy.editor.rules.row`, `team_settings_modal.access_policies.editor.rules.row`, `team_settings_modal.membership.rules.row`: one class, constructed with the scope it is mounted at. */
+export class RulesRow extends Scope {
+    /**
+     * `admin.access_control.policy.rules.row:{key}` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.access_control.policy.rules.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx#TableEditor',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.attribute--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     * Opens menu menu (`admin.access_control.policy.rules.row.attribute_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get attributeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.attribute--button`), {
+            testId: `${this.scope}.attribute--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks attributeButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickAttributeButton(): Promise<RulesRowAttributeMenu> {
+        await this.attributeButton.click();
+        return new RulesRowAttributeMenu(this.page, `${this.scope}.attribute_menu`);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.operator--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     * Opens menu operator-selector-menu (`admin.access_control.policy.rules.row.operator_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get operatorButton() {
+        return drivers.button(this.byTestId(`${this.scope}.operator--button`), {
+            testId: `${this.scope}.operator--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks operatorButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickOperatorButton(): Promise<RulesRowOperatorMenu> {
+        await this.operatorButton.click();
+        return new RulesRowOperatorMenu(this.page, `${this.scope}.operator_menu`);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.remove--button` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx#TableEditor',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.access_control.policy.rules.row.value_menu`).
+     * Opens menu value-selector-menu (`admin.access_control.policy.rules.row.value_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get valueButton() {
+        return drivers.button(this.byTestId(`${this.scope}.value--button`), {
+            testId: `${this.scope}.value--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks valueButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickValueButton(): Promise<RulesRowValueMenu> {
+        await this.valueButton.click();
+        return new RulesRowValueMenu(this.page, `${this.scope}.value_menu`);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value--textbox` — SingleValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx)
+     * Renders only when !hasOptions && !hasChannelFields && !inTargetMode and !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.attribute_menu` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    get attributeMenu(): RulesRowAttributeMenu {
+        return new RulesRowAttributeMenu(this.page, `${this.scope}.attribute_menu`);
+    }
+
+    get operatorMenu(): RulesRowOperatorMenu {
+        return new RulesRowOperatorMenu(this.page, `${this.scope}.operator_menu`);
+    }
+
+    get value(): RulesRowValue {
+        return new RulesRowValue(this.page, `${this.scope}.value`, this.root);
+    }
+
+    get valueMenu(): RulesRowValueMenu {
+        return new RulesRowValueMenu(this.page, `${this.scope}.value_menu`);
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row.attribute_menu`, `admin.channel.access_rules.rules.row.attribute_menu`, `admin.permission_policy.rules.row.attribute_menu`, `admin.team.access_rules.rules.row.attribute_menu`, `channel_settings_modal.access_rules.rules.row.attribute_menu`, `channel_settings_modal.permissions_policy.editor.rules.row.attribute_menu`, `team_settings_modal.access_policies.editor.rules.row.attribute_menu`, `team_settings_modal.membership.rules.row.attribute_menu`: one class, constructed with the scope it is mounted at. */
+export class RulesRowAttributeMenu extends Scope {
+    /**
+     * `admin.access_control.policy.rules.row.attribute_menu.attribute:{key}--menuitemradio` — AttributeSelectorMenu (channels/src/components/admin_console/access_control/editors/table_editor/attribute_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    attribute(attribute: Pick<UserPropertyField, 'id'>) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.attribute:${attribute.id}--menuitemradio`), {
+            testId: `${this.scope}.attribute:${attribute.id}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/attribute_selector_menu.tsx#AttributeSelectorMenu',
+        });
+    }
+
+    /** Every `admin.access_control.policy.rules.row.attribute_menu.attribute:{key}--menuitemradio` in the scope. */
+    get attributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.attribute:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.access_control.policy.rules.row.attribute_menu.attribute:{key}--menuitemradio` in the scope, in document order. */
+    attributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.attribute:`, '--menuitemradio');
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.attribute_menu.filter--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !(rows.length === 0).
+     */
+    get filterTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.filter--textbox`), {
+            testId: `${this.scope}.filter--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillFilterTextbox(value: string): Promise<void> {
+        await this.filterTextbox.fill(value);
+    }
+
+    get filter(): Input {
+        return new Input(this.page, `${this.scope}.filter`, this.root);
+    }
+
+    /** Every `admin.access_control.policy.rules.row.attribute_menu.attribute:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.attributeList).toHaveKeys([…])`. */
+    get attributeList() {
+        return this.keyedList(`${this.scope}.attribute:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.attribute:${key}--menuitemradio`), {
+                testId: `${this.scope}.attribute:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/editors/table_editor/attribute_selector_menu.tsx#AttributeSelectorMenu',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row.attribute_menu.filter`, `admin.access_control.policy.rules.row.value_menu.filter`, `admin.access_control.policy.rules.row.value_menu.search`, `admin.access_control.policy.rules.row.value_menu.value`, `admin.attribute.graph.add_top.name`, `admin.attribute.graph.child_draft.name`, `admin.attribute.graph.empty.name`, `admin.attribute.ranks.option_menu.label`, `admin.attribute.values.option_menu.label`, `admin.channel.access_rules.rules.row.attribute_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.search`, `admin.channel.access_rules.rules.row.value_menu.value`, `admin.permission_policy.rules.row.attribute_menu.filter`, `admin.permission_policy.rules.row.value_menu.filter`, `admin.permission_policy.rules.row.value_menu.search`, `admin.permission_policy.rules.row.value_menu.value`, `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.access_rules.rules.row.attribute_menu.filter`, `admin.team.access_rules.rules.row.value_menu.filter`, `admin.team.access_rules.rules.row.value_menu.search`, `admin.team.access_rules.rules.row.value_menu.value`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.access_rules.rules.row.attribute_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.search`, `channel_settings_modal.access_rules.rules.row.value_menu.value`, `channel_settings_modal.info.name`, `channel_settings_modal.permissions_policy.editor.rules.row.attribute_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.search`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.value`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.attributes.attribute.value`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`, `team_settings_modal.access_policies.editor.name`, `team_settings_modal.access_policies.editor.rules.row.attribute_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.search`, `team_settings_modal.access_policies.editor.rules.row.value_menu.value`, `team_settings_modal.membership.rules.row.attribute_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.search`, `team_settings_modal.membership.rules.row.value_menu.value`: one class, constructed with the scope it is mounted at. */
+export class Input extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.attribute_menu.filter.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !(rows.length === 0).
+     */
+    get field() {
+        return drivers.container(this.byTestId(`${this.scope}.field`), {
+            testId: `${this.scope}.field`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.attribute_menu.filter.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !(rows.length === 0).
+     */
+    get messageAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
+            testId: `${this.scope}.message--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.attribute_menu.filter.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !(rows.length === 0).
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row.operator_menu`, `admin.channel.access_rules.rules.row.operator_menu`, `admin.permission_policy.rules.row.operator_menu`, `admin.team.access_rules.rules.row.operator_menu`, `channel_settings_modal.access_rules.rules.row.operator_menu`, `channel_settings_modal.permissions_policy.editor.rules.row.operator_menu`, `team_settings_modal.access_policies.editor.rules.row.operator_menu`, `team_settings_modal.membership.rules.row.operator_menu`: one class, constructed with the scope it is mounted at. */
+export class RulesRowOperatorMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.operator_menu.operator:{key}--menuitemradio` — OperatorSelectorMenu (channels/src/components/admin_console/access_control/editors/table_editor/operator_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    operator(operator: AdminOperator): RulesRowOperatorMenuOperator {
+        return new RulesRowOperatorMenuOperator(
+            this.page,
+            `${this.scope}.operator`,
+            this.byTestId(`${this.scope}.operator:${operator}--menuitemradio`),
+        );
+    }
+
+    /** Every `admin.access_control.policy.rules.row.operator_menu.operator:{key}--menuitemradio` in the scope. */
+    get operatorItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.operator:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.access_control.policy.rules.row.operator_menu.operator:{key}--menuitemradio` in the scope, in document order. */
+    operatorKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.operator:`, '--menuitemradio');
+    }
+
+    /** Every `admin.access_control.policy.rules.row.operator_menu.operator:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.operatorList).toHaveKeys([…])`. */
+    get operatorList() {
+        return this.keyedList(
+            `${this.scope}.operator:`,
+            '--menuitemradio',
+            (key: AdminOperator) =>
+                new RulesRowOperatorMenuOperator(
+                    this.page,
+                    `${this.scope}.operator`,
+                    this.byTestId(`${this.scope}.operator:${key}--menuitemradio`),
+                ),
+        );
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row.operator_menu.operator`, `admin.channel.access_rules.rules.row.operator_menu.operator`, `admin.permission_policy.rules.row.operator_menu.operator`, `admin.team.access_rules.rules.row.operator_menu.operator`, `channel_settings_modal.access_rules.rules.row.operator_menu.operator`, `channel_settings_modal.permissions_policy.editor.rules.row.operator_menu.operator`, `team_settings_modal.access_policies.editor.rules.row.operator_menu.operator`, `team_settings_modal.membership.rules.row.operator_menu.operator`: one class, constructed with the scope it is mounted at. */
+export class RulesRowOperatorMenuOperator extends Scope {
+    /**
+     * `admin.access_control.policy.rules.row.operator_menu.operator:{key}--menuitemradio` — OperatorSelectorMenu (channels/src/components/admin_console/access_control/editors/table_editor/operator_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    get menuItemRadio() {
+        return drivers.menuitemradio(this.root, {
+            testId: 'admin.access_control.policy.rules.row.operator_menu.operator:{key}--menuitemradio',
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/operator_selector_menu.tsx#OperatorSelectorMenu',
+        });
+    }
+
+    async clickMenuItemRadio(): Promise<void> {
+        await this.menuItemRadio.click();
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.operator_menu.operator.function_name--text` — OperatorSelectorMenu (channels/src/components/admin_console/access_control/editors/table_editor/operator_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    get functionNameText() {
+        return drivers.text(this.byTestId(`${this.scope}.function_name--text`), {
+            testId: `${this.scope}.function_name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/operator_selector_menu.tsx#OperatorSelectorMenu',
+        });
+    }
+
+    getFunctionNameText(): Promise<string> {
+        return this.functionNameText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<RulesRowOperatorMenuOperatorRow> {
+        return {
+            functionName: await this.functionNameText.textIfPresent(),
+        };
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row.value`, `admin.channel.access_rules.rules.row.value`, `admin.permission_policy.rules.row.value`, `admin.team.access_rules.rules.row.value`, `channel_settings_modal.access_rules.rules.row.value`, `channel_settings_modal.permissions_policy.editor.rules.row.value`, `team_settings_modal.access_policies.editor.rules.row.value`, `team_settings_modal.membership.rules.row.value`: one class, constructed with the scope it is mounted at. */
+export class RulesRowValue extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value.masked--img` — MaskedChip (channels/src/components/admin_console/access_control/editors/table_editor/masked_chip.tsx)
+     * Renders only when !(rows.length === 0).
+     */
+    get maskedImg() {
+        return drivers.text(this.byTestId(`${this.scope}.masked--img`), {
+            testId: `${this.scope}.masked--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/masked_chip.tsx#MaskedChip',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value.chip:{key}` — MultiValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and isMultiOperator and !(editorMode === 'cel').
+     */
+    chip(chip: number): RulesRowValueChip {
+        return new RulesRowValueChip(this.page, `${this.scope}.chip`, this.byTestId(`${this.scope}.chip:${chip}`));
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value.chip:{key}` in the scope. */
+    get chipItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.chip:`, '');
+    }
+
+    /** The keys of every `admin.access_control.policy.rules.row.value.chip:{key}` in the scope, in document order. */
+    chipKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.chip:`, '');
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value.chip:{key}` in the scope as a list by key, for the list matchers: `expect(x.chipList).toHaveKeys([…])`. */
+    get chipList() {
+        return this.keyedList(
+            `${this.scope}.chip:`,
+            '',
+            (key: string) =>
+                new RulesRowValueChip(this.page, `${this.scope}.chip`, this.byTestId(`${this.scope}.chip:${key}`)),
+        );
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row.value.chip`, `admin.channel.access_rules.rules.row.value.chip`, `admin.permission_policy.rules.row.value.chip`, `admin.team.access_rules.rules.row.value.chip`, `channel_settings_modal.access_rules.rules.row.value.chip`, `channel_settings_modal.permissions_policy.editor.rules.row.value.chip`, `team_settings_modal.access_policies.editor.rules.row.value.chip`, `team_settings_modal.membership.rules.row.value.chip`: one class, constructed with the scope it is mounted at. */
+export class RulesRowValueChip extends Scope {
+    /**
+     * `admin.access_control.policy.rules.row.value.chip:{key}` — MultiValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and isMultiOperator and !(editorMode === 'cel').
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.access_control.policy.rules.row.value.chip:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value.chip.remove--button` — MultiValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx)
+     * Renders only when !disabled and !(rows.length === 0) and isMultiOperator.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+}
+
+/** Rendered at `admin.access_control.policy.rules.row.value_menu`, `admin.channel.access_rules.rules.row.value_menu`, `admin.permission_policy.rules.row.value_menu`, `admin.team.access_rules.rules.row.value_menu`, `channel_settings_modal.access_rules.rules.row.value_menu`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu`, `team_settings_modal.access_policies.editor.rules.row.value_menu`, `team_settings_modal.membership.rules.row.value_menu`: one class, constructed with the scope it is mounted at. */
+export class RulesRowValueMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.channel_attribute:{key}--menuitemradio` — channelAttributeMenuItems (channels/src/components/admin_console/access_control/editors/table_editor/channel_attribute_target.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    channelAttribute(channelAttribute: Pick<UserPropertyField, 'id'>) {
+        return drivers.menuitemradio(
+            this.byTestId(`${this.scope}.channel_attribute:${channelAttribute.id}--menuitemradio`),
+            {
+                testId: `${this.scope}.channel_attribute:${channelAttribute.id}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/editors/table_editor/channel_attribute_target.tsx#channelAttributeMenuItems',
+            },
+        );
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.channel_attribute:{key}--menuitemradio` in the scope. */
+    get channelAttributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.channel_attribute:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.access_control.policy.rules.row.value_menu.channel_attribute:{key}--menuitemradio` in the scope, in document order. */
+    channelAttributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.channel_attribute:`, '--menuitemradio');
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.create--menuitem` — MultiValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    get createMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.create--menuitem`), {
+            testId: `${this.scope}.create--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector',
+        });
+    }
+
+    async clickCreateMenuItem(): Promise<void> {
+        await this.createMenuItem.click();
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.filter--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get filterTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.filter--textbox`), {
+            testId: `${this.scope}.filter--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillFilterTextbox(value: string): Promise<void> {
+        await this.filterTextbox.fill(value);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox` — MultiValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx)
+     * Renders only when !(rows.length === 0) and isMultiOperator and !(editorMode === 'cel').
+     */
+    multiOption(multiOption: number) {
+        return drivers.menuitemcheckbox(this.byTestId(`${this.scope}.multi_option:${multiOption}--menuitemcheckbox`), {
+            testId: `${this.scope}.multi_option:${multiOption}--menuitemcheckbox`,
+            role: 'menuitemcheckbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector',
+        });
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox` in the scope. */
+    get multiOptionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.multi_option:`, '--menuitemcheckbox');
+    }
+
+    /** The keys of every `admin.access_control.policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox` in the scope, in document order. */
+    multiOptionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.multi_option:`, '--menuitemcheckbox');
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.node:{key}--menuitemcheckbox` — HierarchicalValueRow (channels/src/components/property_fields/hierarchical_value_menu/hierarchical_value_row.tsx)
+     * Renders only when !statusKind.
+     */
+    node(node: string) {
+        return drivers.menuitemcheckbox(this.byTestId(`${this.scope}.node:${node}--menuitemcheckbox`), {
+            testId: `${this.scope}.node:${node}--menuitemcheckbox`,
+            role: 'menuitemcheckbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/hierarchical_value_menu/hierarchical_value_row.tsx#HierarchicalValueRow',
+        });
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.node:{key}--menuitemcheckbox` in the scope. */
+    get nodeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.node:`, '--menuitemcheckbox');
+    }
+
+    /** The keys of every `admin.access_control.policy.rules.row.value_menu.node:{key}--menuitemcheckbox` in the scope, in document order. */
+    nodeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.node:`, '--menuitemcheckbox');
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.option:{key}--menuitemradio` — SingleValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx)
+     * Renders only when hasOptions and !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    option(option: number) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.option:${option}--menuitemradio`), {
+            testId: `${this.scope}.option:${option}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector',
+        });
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.option:{key}--menuitemradio` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.access_control.policy.rules.row.value_menu.option:{key}--menuitemradio` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '--menuitemradio');
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.search--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.access_control.policy.rules.row.value_menu.value--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !hasOptions.
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+
+    get filter(): Input {
+        return new Input(this.page, `${this.scope}.filter`, this.root);
+    }
+
+    get search(): Input {
+        return new Input(this.page, `${this.scope}.search`, this.root);
+    }
+
+    get value(): Input {
+        return new Input(this.page, `${this.scope}.value`, this.root);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<RulesRowValueMenuFormValues>): Promise<void> {
+        if (values.filter !== undefined) {
+            await this.filterTextbox.fill(values.filter);
+        }
+        if (values.search !== undefined) {
+            await this.searchTextbox.fill(values.search);
+        }
+        if (values.value !== undefined) {
+            await this.valueTextbox.fill(values.value);
+        }
+    }
+
+    /** Reads every field (a field that isn't rendered reads as `undefined`). */
+    async read(): Promise<RulesRowValueMenuFormValues> {
+        const vFilter = await this.filterTextbox.value();
+        const vSearch = await this.searchTextbox.value();
+        const vValue = (await this.valueTextbox.locator.count()) ? await this.valueTextbox.value() : undefined;
+        return {
+            filter: vFilter,
+            search: vSearch,
+            value: vValue,
+        };
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.channel_attribute:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.channelAttributeList).toHaveKeys([…])`. */
+    get channelAttributeList() {
+        return this.keyedList(`${this.scope}.channel_attribute:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.channel_attribute:${key}--menuitemradio`), {
+                testId: `${this.scope}.channel_attribute:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/editors/table_editor/channel_attribute_target.tsx#channelAttributeMenuItems',
+            }),
+        );
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox` in the scope as a list by key, for the list matchers: `expect(x.multiOptionList).toHaveKeys([…])`. */
+    get multiOptionList() {
+        return this.keyedList(`${this.scope}.multi_option:`, '--menuitemcheckbox', (key: string) =>
+            drivers.menuitemcheckbox(this.byTestId(`${this.scope}.multi_option:${key}--menuitemcheckbox`), {
+                testId: `${this.scope}.multi_option:${key}--menuitemcheckbox`,
+                role: 'menuitemcheckbox',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector',
+            }),
+        );
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.node:{key}--menuitemcheckbox` in the scope as a list by key, for the list matchers: `expect(x.nodeList).toHaveKeys([…])`. */
+    get nodeList() {
+        return this.keyedList(`${this.scope}.node:`, '--menuitemcheckbox', (key: string) =>
+            drivers.menuitemcheckbox(this.byTestId(`${this.scope}.node:${key}--menuitemcheckbox`), {
+                testId: `${this.scope}.node:${key}--menuitemcheckbox`,
+                role: 'menuitemcheckbox',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/property_fields/hierarchical_value_menu/hierarchical_value_row.tsx#HierarchicalValueRow',
+            }),
+        );
+    }
+
+    /** Every `admin.access_control.policy.rules.row.value_menu.option:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(`${this.scope}.option:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.option:${key}--menuitemradio`), {
+                testId: `${this.scope}.option:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.attributes.delete_error`, `admin.revoke_tokens.error`, `admin.revoke_tokens.revoked`, `admin.revoke_tokens.status`, `channel_invite_modal.team_warning`, `channel_notifications_modal.muted_banner`, `channel_settings_modal.access_rules.system_policies`, `integrations.bot_create_warnings`, `team_settings_modal.membership.system_policies`: one class, constructed with the scope it is mounted at. */
+export class AlertBanner extends Scope {
+    /**
+     * `admin.attributes.delete_error.close--button` — AlertBanner (channels/src/components/alert_banner/index.tsx)
+     * Renders only when deleteError.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/alert_banner/index.tsx#AlertBanner',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+}
+
+/** Rendered at `admin.channel.archive_modal`, `admin.classification.switch_preset_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.remove_policy_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`, `team_settings_modal.membership.confirm_modal`: one class, constructed with the scope it is mounted at. */
 export class ConfirmModal extends Scope {
     /**
      * `admin.channel.archive_modal.cancel--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
@@ -478,7 +1848,7 @@ export class ConfirmModal extends Scope {
     /**
      * `admin.channel.archive_modal.confirm--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
      * Renders only when channel and !hideConfirm.
-     * Opens modal ChannelAccessRulesConfirmModal (`channel_access_rules_confirm_modal.users`).
+     * Opens modal ChannelAccessRulesConfirmModal (`channel_access_rules_confirm_modal`).
      * Goes to '/admin_console/user_management/channels'.
      */
     get confirmButton() {
@@ -534,90 +1904,9 @@ export class ConfirmModal extends Scope {
     }
 
     /** Clicks confirmButton and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickConfirmButton(): Promise<SearchableUserList> {
+    async clickConfirmButton(): Promise<ChannelAccessRulesConfirmModal> {
         await this.confirmButton.click();
-        return new SearchableUserList(this.page, 'channel_access_rules_confirm_modal.users');
-    }
-}
-
-/** Rendered at `admin.channel.members.footer`, `admin.channels.footer`, `admin.content_flagging.reviewers.teams.footer`, `admin.data_retention.custom_policies.footer`, `admin.data_retention.global_policy.footer`, `admin.data_retention.policy.channels.footer`, `admin.data_retention.policy.teams.footer`, `admin.group.members.footer`, `admin.role.users.footer`, `admin.roles.footer`, `admin.team.members.footer`, `admin.teams.footer`, `users_to_be_removed_modal.users.footer`: one class, constructed with the scope it is mounted at. */
-export class Footer extends Scope {
-    /**
-     * `admin.channel.members.footer.next--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
-     * Renders only when total.
-     */
-    get nextButton() {
-        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
-            testId: `${this.scope}.next--button`,
-            role: 'button',
-            effects: [
-                Api.GetAllChannels,
-                Api.GetAllTeams,
-                Api.GetChannelMembersByIds,
-                Api.GetChannelsForRetentionPolicy,
-                Api.GetDataRetentionPolicies,
-                Api.GetEmojisByNames,
-                Api.GetTeamMembersByIds,
-                Api.GetTeamsForRetentionPolicy,
-                Api.GetUsers,
-                Api.GetUsersByIds,
-                Api.GetUsersStatusesByIds,
-                Api.SearchAllChannels,
-                Api.SearchTeams,
-            ],
-            unknownEffects: false,
-            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
-        });
-    }
-
-    async clickNextButton(): Promise<void> {
-        await this.nextButton.click();
-    }
-
-    /**
-     * `admin.channel.members.footer.pagination--text` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
-     * Renders only when total.
-     */
-    get paginationText() {
-        return drivers.text(this.byTestId(`${this.scope}.pagination--text`), {
-            testId: `${this.scope}.pagination--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
-        });
-    }
-
-    getPaginationText(): Promise<string> {
-        return this.paginationText.text();
-    }
-
-    /**
-     * `admin.channel.members.footer.previous--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
-     * Renders only when total.
-     */
-    get previousButton() {
-        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
-            testId: `${this.scope}.previous--button`,
-            role: 'button',
-            effects: [
-                Api.GetChannelMembersByIds,
-                Api.GetChannelsForRetentionPolicy,
-                Api.GetDataRetentionPolicies,
-                Api.GetEmojisByNames,
-                Api.GetTeamMembersByIds,
-                Api.GetTeamsForRetentionPolicy,
-                Api.GetUsers,
-                Api.GetUsersByIds,
-                Api.GetUsersStatusesByIds,
-            ],
-            unknownEffects: false,
-            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
-        });
-    }
-
-    async clickPreviousButton(): Promise<void> {
-        await this.previousButton.click();
+        return new ChannelAccessRulesConfirmModal(this.page, 'channel_access_rules_confirm_modal');
     }
 }
 
@@ -816,78 +2105,6 @@ export class DataGridRow extends Scope {
     }
 }
 
-/** Rendered at `admin.revoke_tokens.error`, `admin.revoke_tokens.revoked`, `admin.revoke_tokens.status`, `channel_invite_modal.team_warning`, `channel_notifications_modal.muted_banner`, `integrations.bot_create_warnings`: one class, constructed with the scope it is mounted at. */
-export class AlertBanner extends Scope {
-    /**
-     * `admin.revoke_tokens.error.close--button` — AlertBanner (channels/src/components/alert_banner/index.tsx)
-     * Renders only when error.
-     */
-    get closeButton() {
-        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
-            testId: `${this.scope}.close--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/alert_banner/index.tsx#AlertBanner',
-        });
-    }
-
-    async clickCloseButton(): Promise<void> {
-        await this.closeButton.click();
-    }
-}
-
-/** Rendered at `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`: one class, constructed with the scope it is mounted at. */
-export class Input extends Scope {
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `admin.server_logs.duration.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     */
-    get field() {
-        return drivers.container(this.byTestId(`${this.scope}.field`), {
-            testId: `${this.scope}.field`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `admin.server_logs.duration.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     */
-    get messageAlert() {
-        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
-            testId: `${this.scope}.message--alert`,
-            role: 'alert',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `admin.server_logs.duration.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     */
-    get messageText() {
-        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
-            testId: `${this.scope}.message--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    getMessageText(): Promise<string> {
-        return this.messageText.text();
-    }
-}
-
 /** Rendered at `admin.setting.color`, `channel_settings_modal.configuration.banner_color`: one class, constructed with the scope it is mounted at. */
 export class ColorInput extends Scope {
     /**
@@ -949,6 +2166,136 @@ export class ColorInput extends Scope {
 
     async fillValueTextbox(value: string): Promise<void> {
         await this.valueTextbox.fill(value);
+    }
+}
+
+/** Rendered at `admin.team.access_rules.rules`, `admin.access_control.policy.rules`, `admin.channel.access_rules.rules`, `admin.permission_policy.rules`, `channel_settings_modal.access_rules.rules`, `channel_settings_modal.permissions_policy.editor.rules`, `team_settings_modal.access_policies.editor.rules`, `team_settings_modal.membership.rules`: one class, constructed with the scope it is mounted at. */
+export class Rules extends Scope {
+    /**
+     * `admin.team.access_rules.rules.add--button` — AddAttributeButton (channels/src/components/admin_console/access_control/editors/shared.tsx)
+     * Renders only when !(editorMode === 'cel').
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/shared.tsx#AddAttributeButton',
+        });
+    }
+
+    async clickAddButton(): Promise<void> {
+        await this.addButton.click();
+    }
+
+    /**
+     * `admin.team.access_rules.rules.blank_state--text` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when rows.length === 0 and !(editorMode === 'cel').
+     */
+    get blankStateText() {
+        return drivers.text(this.byTestId(`${this.scope}.blank_state--text`), {
+            testId: `${this.scope}.blank_state--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx#TableEditor',
+        });
+    }
+
+    getBlankStateText(): Promise<string> {
+        return this.blankStateText.text();
+    }
+
+    /**
+     * `admin.team.access_rules.rules.input` — CELEditor (channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx)
+     * Renders only when editorMode === 'cel'.
+     */
+    get input() {
+        return drivers.container(this.byTestId(`${this.scope}.input`), {
+            testId: `${this.scope}.input`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx#CELEditor',
+        });
+    }
+
+    /**
+     * `admin.team.access_rules.rules.masked--alert` — CELEditor (channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx)
+     * Renders only when hasMaskedRows and editorMode === 'cel'.
+     */
+    get maskedAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.masked--alert`), {
+            testId: `${this.scope}.masked--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx#CELEditor',
+        });
+    }
+
+    /**
+     * `admin.team.access_rules.rules.status--text` — CELEditor (channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx)
+     * Renders only when editorMode === 'cel'.
+     */
+    get statusText() {
+        return drivers.text(this.byTestId(`${this.scope}.status--text`), {
+            testId: `${this.scope}.status--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx#CELEditor',
+        });
+    }
+
+    getStatusText(): Promise<string> {
+        return this.statusText.text();
+    }
+
+    /**
+     * `admin.team.access_rules.rules.test--button` — TestButton (channels/src/components/admin_console/access_control/editors/shared.tsx)
+     * Opens modal TestResults.
+     */
+    get testButton() {
+        return drivers.button(this.byTestId(`${this.scope}.test--button`), {
+            testId: `${this.scope}.test--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/shared.tsx#TestButton',
+        });
+    }
+
+    async clickTestButton(): Promise<void> {
+        await this.testButton.click();
+    }
+
+    /**
+     * `admin.team.access_rules.rules.row:{key}` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when !(rows.length === 0) and !(editorMode === 'cel').
+     */
+    row(row: number): RulesRow {
+        return new RulesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.team.access_rules.rules.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.team.access_rules.rules.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /** Every `admin.team.access_rules.rules.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) => new RulesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
     }
 }
 
@@ -1788,7 +3135,7 @@ export class Message extends Scope {
     }
 }
 
-/** Rendered at `center.post_create.message.suggestions`, `center.post_list.post.select.suggestions`, `channel_settings_modal.configuration.banner_text.suggestions`, `channel_settings_modal.info.header.suggestions`, `channel_settings_modal.info.purpose.suggestions`, `drafts.scheduled.post.editor.suggestions`, `edit_channel_header_modal.header.suggestions`, `forward_post_modal.comment.suggestions`, `modal.post_create.message.suggestions`, `new_channel_modal.classification_banner_text.suggestions`, `plugin.post_create.message.suggestions`, `post_edit.editor.message.suggestions`, `quick_switch_modal.suggestions`, `rhs.post_create.message.suggestions`, `rhs.thread.post.select.suggestions`, `search.results.post.select.suggestions`, `search_box.suggestions`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_create.message.suggestions`, `center.post_list.post.select.suggestions`, `channel_settings_modal.configuration.banner_text.suggestions`, `channel_settings_modal.info.header.suggestions`, `channel_settings_modal.info.purpose.suggestions`, `drafts.scheduled.post.editor.suggestions`, `edit_channel_header_modal.header.suggestions`, `flag_post_modal.comment.suggestions`, `flagged_message_modal.form.comment.suggestions`, `forward_post_modal.comment.suggestions`, `modal.post_create.message.suggestions`, `new_channel_modal.classification_banner_text.suggestions`, `plugin.post_create.message.suggestions`, `post_edit.editor.message.suggestions`, `quick_switch_modal.suggestions`, `rhs.post_create.message.suggestions`, `rhs.thread.post.select.suggestions`, `search.results.post.select.suggestions`, `search_box.suggestions`: one class, constructed with the scope it is mounted at. */
 export class Suggestions extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -2451,8 +3798,8 @@ export class PostItem extends Scope {
      * `center.post_list.post.permalink_preview` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
      * Renders only when !showConcealedPlaceholder and embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost.
      */
-    get permalinkPreview(): PermalinkPreview {
-        return new PermalinkPreview(this.page, `${this.scope}.permalink_preview`, this.root);
+    get permalinkPreview(): PostMessagePreview {
+        return new PostMessagePreview(this.page, `${this.scope}.permalink_preview`, this.root);
     }
 
     /**
@@ -2483,6 +3830,14 @@ export class PostItem extends Scope {
     /** The keys of every `center.post_list.post.select:{key}` in the scope, in document order. */
     selectKeys(): Promise<string[]> {
         return this.keysOf(`${this.scope}.select:`, '');
+    }
+
+    /**
+     * `center.post_list.post.spillage_report` — DataSpillageReport (channels/src/components/post_view/data_spillage_report/data_spillage_report.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get spillageReport(): PostItemSpillageReport {
+        return new PostItemSpillageReport(this.page, `${this.scope}.spillage_report`, this.root);
     }
 
     /**
@@ -2537,7 +3892,7 @@ export class PostItem extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments`, `center.post_list.post.permalink_preview.attachments`, `forward_post_modal.preview.attachments`, `restore_post_modal.attachments`, `rhs.edit_history.version.attachments`, `rhs.thread.post.attachments`, `rhs.thread.post.permalink_preview.attachments`, `search.results.post.attachments`, `search.results.post.permalink_preview.attachments`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments`, `center.post_list.post.permalink_preview.attachments`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments`, `flag_post_modal.post_preview.attachments`, `forward_post_modal.preview.attachments`, `post_attributes.value.post_preview.post.attachments`, `restore_post_modal.attachments`, `rhs.edit_history.version.attachments`, `rhs.thread.post.attachments`, `rhs.thread.post.permalink_preview.attachments`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments`, `search.results.post.attachments`, `search.results.post.permalink_preview.attachments`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments`: one class, constructed with the scope it is mounted at. */
 export class Attachments extends Scope {
     /**
      * `center.post_list.post.attachments.file:{key}--button` — ImageTile (channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx)
@@ -2642,7 +3997,7 @@ export class Attachments extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.file_card`, `center.post_list.post.permalink_preview.attachments.file_card`, `forward_post_modal.preview.attachments.file_card`, `restore_post_modal.attachments.file_card`, `rhs.edit_history.version.attachments.file_card`, `rhs.thread.post.attachments.file_card`, `rhs.thread.post.permalink_preview.attachments.file_card`, `search.results.post.attachments.file_card`, `search.results.post.permalink_preview.attachments.file_card`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.file_card`, `center.post_list.post.permalink_preview.attachments.file_card`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `flag_post_modal.post_preview.attachments.file_card`, `forward_post_modal.preview.attachments.file_card`, `post_attributes.value.post_preview.post.attachments.file_card`, `restore_post_modal.attachments.file_card`, `rhs.edit_history.version.attachments.file_card`, `rhs.thread.post.attachments.file_card`, `rhs.thread.post.permalink_preview.attachments.file_card`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `search.results.post.attachments.file_card`, `search.results.post.permalink_preview.attachments.file_card`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsFileCard extends Scope {
     /**
      * `center.post_list.post.attachments.file_card:{key}` — FileAttachment (channels/src/components/file_attachment/file_attachment.tsx)
@@ -2714,7 +4069,7 @@ export class AttachmentsFileCard extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.file_card.menu`, `center.post_list.post.permalink_preview.attachments.file_card.menu`, `forward_post_modal.preview.attachments.file_card.menu`, `restore_post_modal.attachments.file_card.menu`, `rhs.edit_history.version.attachments.file_card.menu`, `rhs.thread.post.attachments.file_card.menu`, `rhs.thread.post.permalink_preview.attachments.file_card.menu`, `search.results.post.attachments.file_card.menu`, `search.results.post.permalink_preview.attachments.file_card.menu`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.file_card.menu`, `center.post_list.post.permalink_preview.attachments.file_card.menu`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `flag_post_modal.post_preview.attachments.file_card.menu`, `forward_post_modal.preview.attachments.file_card.menu`, `post_attributes.value.post_preview.post.attachments.file_card.menu`, `restore_post_modal.attachments.file_card.menu`, `rhs.edit_history.version.attachments.file_card.menu`, `rhs.thread.post.attachments.file_card.menu`, `rhs.thread.post.permalink_preview.attachments.file_card.menu`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `search.results.post.attachments.file_card.menu`, `search.results.post.permalink_preview.attachments.file_card.menu`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsFileCardMenu extends Scope {
     /**
      * `center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
@@ -2774,7 +4129,7 @@ export class AttachmentsFileCardMenu extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.image`, `center.post_list.post.permalink_preview.attachments.image`, `forward_post_modal.preview.attachments.image`, `restore_post_modal.attachments.image`, `rhs.edit_history.version.attachments.image`, `rhs.thread.post.attachments.image`, `rhs.thread.post.permalink_preview.attachments.image`, `search.results.post.attachments.image`, `search.results.post.permalink_preview.attachments.image`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.image`, `center.post_list.post.permalink_preview.attachments.image`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `flag_post_modal.post_preview.attachments.image`, `forward_post_modal.preview.attachments.image`, `post_attributes.value.post_preview.post.attachments.image`, `restore_post_modal.attachments.image`, `rhs.edit_history.version.attachments.image`, `rhs.thread.post.attachments.image`, `rhs.thread.post.permalink_preview.attachments.image`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `search.results.post.attachments.image`, `search.results.post.permalink_preview.attachments.image`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsImage extends Scope {
     /**
      * `center.post_list.post.attachments.image:{key}` — SingleImageView (channels/src/components/single_image_view/single_image_view.tsx)
@@ -2847,7 +4202,7 @@ export class AttachmentsImage extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.image.picture`, `center.post_list.post.image_preview`, `center.post_list.post.link_preview.image`, `center.post_list.post.permalink_preview.attachments.image.picture`, `forward_post_modal.preview.attachments.image.picture`, `markdown.image`, `restore_post_modal.attachments.image.picture`, `rhs.edit_history.version.attachments.image.picture`, `rhs.thread.post.attachments.image.picture`, `rhs.thread.post.image_preview`, `rhs.thread.post.link_preview.image`, `rhs.thread.post.permalink_preview.attachments.image.picture`, `search.results.post.attachments.image.picture`, `search.results.post.image_preview`, `search.results.post.link_preview.image`, `search.results.post.permalink_preview.attachments.image.picture`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.image.picture`, `center.post_list.post.image_preview`, `center.post_list.post.link_preview.image`, `center.post_list.post.permalink_preview.attachments.image.picture`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `flag_post_modal.post_preview.attachments.image.picture`, `forward_post_modal.preview.attachments.image.picture`, `markdown.image`, `post_attributes.value.post_preview.post.attachments.image.picture`, `restore_post_modal.attachments.image.picture`, `rhs.edit_history.version.attachments.image.picture`, `rhs.thread.post.attachments.image.picture`, `rhs.thread.post.image_preview`, `rhs.thread.post.link_preview.image`, `rhs.thread.post.permalink_preview.attachments.image.picture`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `search.results.post.attachments.image.picture`, `search.results.post.image_preview`, `search.results.post.link_preview.image`, `search.results.post.permalink_preview.attachments.image.picture`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`: one class, constructed with the scope it is mounted at. */
 export class Picture extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -3314,7 +4669,7 @@ export class PostItemMenuRecentReactions extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.message`, `center.post_list.post.permalink_preview.message`, `forward_post_modal.preview.message`, `restore_post_modal.message`, `rhs.edit_history.version.message`, `rhs.thread.post.message`, `rhs.thread.post.permalink_preview.message`, `search.results.post.message`, `search.results.post.permalink_preview.message`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.message`, `center.post_list.post.permalink_preview.message`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.message`, `flag_post_modal.post_preview.message`, `forward_post_modal.preview.message`, `post_attributes.value.post_preview.post.message`, `restore_post_modal.message`, `rhs.edit_history.version.message`, `rhs.thread.post.message`, `rhs.thread.post.permalink_preview.message`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.message`, `search.results.post.message`, `search.results.post.permalink_preview.message`, `search.results.post.spillage_report.card.field.value.post_preview.post.message`: one class, constructed with the scope it is mounted at. */
 export class ShowMore extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -3340,8 +4695,8 @@ export class ShowMore extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.permalink_preview`, `forward_post_modal.preview`, `rhs.thread.post.permalink_preview`, `search.results.post.permalink_preview`: one class, constructed with the scope it is mounted at. */
-export class PermalinkPreview extends Scope {
+/** Rendered at `center.post_list.post.permalink_preview`, `center.post_list.post.spillage_report.card.field.value.post_preview.post`, `flag_post_modal.post_preview`, `forward_post_modal.preview`, `post_attributes.value.post_preview.post`, `rhs.thread.post.permalink_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post`, `search.results.post.permalink_preview`, `search.results.post.spillage_report.card.field.value.post_preview.post`: one class, constructed with the scope it is mounted at. */
+export class PostMessagePreview extends Scope {
     /**
      * `center.post_list.post.permalink_preview.message--text` — PostMessageView (channels/src/components/post_view/post_message_view/post_message_view.tsx)
      * Renders only when embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost.
@@ -3569,6 +4924,473 @@ export class PostItemSelect extends Scope {
 
     get suggestions(): Suggestions {
         return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report`, `rhs.thread.post.spillage_report`, `search.results.post.spillage_report`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReport extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.actions` — DataSpillageAction (channels/src/components/post_view/data_spillage_report/data_spillage_actions/data_spillage_actions.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT and reportingUser && reviewIsOpen.
+     */
+    get actions(): PostItemSpillageReportActions {
+        return new PostItemSpillageReportActions(this.page, `${this.scope}.actions`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card` — PropertiesCardView (channels/src/components/properties_card_view/properties_card_view.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get card(): PostItemSpillageReportCard {
+        return new PostItemSpillageReportCard(this.page, `${this.scope}.card`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.download_report` — DataSpillageDownloadReport (channels/src/components/post_view/data_spillage_report/data_spillage_download_report/data_spillage_download_report.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get downloadReport(): PostItemSpillageReportDownloadReport {
+        return new PostItemSpillageReportDownloadReport(this.page, `${this.scope}.download_report`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.exposure_report` — DataSpillageExposureReport (channels/src/components/post_view/data_spillage_report/data_spillage_exposure_report/data_spillage_exposure_report.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get exposureReport(): PostItemSpillageReportExposureReport {
+        return new PostItemSpillageReportExposureReport(this.page, `${this.scope}.exposure_report`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.footer` — DataSpillageFooter (channels/src/components/post_view/data_spillage_report/data_spillage_footer/data_spillage_footer.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT and !isRHS.
+     */
+    get footer(): PostItemSpillageReportFooter {
+        return new PostItemSpillageReportFooter(this.page, `${this.scope}.footer`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.actions`, `rhs.thread.post.spillage_report.actions`, `search.results.post.spillage_report.actions`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReportActions extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.actions.keep--button` — DataSpillageAction (channels/src/components/post_view/data_spillage_report/data_spillage_actions/data_spillage_actions.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT and reportingUser && reviewIsOpen.
+     * Opens modal KeepRemoveFlaggedMessageConfirmationModal (`flagged_message_modal`).
+     */
+    get keepButton() {
+        return drivers.button(this.byTestId(`${this.scope}.keep--button`), {
+            testId: `${this.scope}.keep--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/data_spillage_report/data_spillage_actions/data_spillage_actions.tsx#DataSpillageAction',
+        });
+    }
+
+    /** Clicks keepButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickKeepButton(): Promise<FlaggedMessageModal> {
+        await this.keepButton.click();
+        return new FlaggedMessageModal(this.page, 'flagged_message_modal');
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.actions.remove--button` — DataSpillageAction (channels/src/components/post_view/data_spillage_report/data_spillage_actions/data_spillage_actions.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT and reportingUser && reviewIsOpen.
+     * Opens modal KeepRemoveFlaggedMessageConfirmationModal (`flagged_message_modal`).
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/data_spillage_report/data_spillage_actions/data_spillage_actions.tsx#DataSpillageAction',
+        });
+    }
+
+    /** Clicks removeButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickRemoveButton(): Promise<FlaggedMessageModal> {
+        await this.removeButton.click();
+        return new FlaggedMessageModal(this.page, 'flagged_message_modal');
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.card`, `rhs.thread.post.spillage_report.card`, `search.results.post.spillage_report.card`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReportCard extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.card.action:{key}` — PropertiesCardView (channels/src/components/properties_card_view/properties_card_view.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT and content.
+     */
+    action(action: CenterAction | (string & {})) {
+        return drivers.container(this.byTestId(`${this.scope}.action:${action}`), {
+            testId: `${this.scope}.action:${action}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView',
+        });
+    }
+
+    /** Every `center.post_list.post.spillage_report.card.action:{key}` in the scope. */
+    get actionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.action:`, '');
+    }
+
+    /** The keys of every `center.post_list.post.spillage_report.card.action:{key}` in the scope, in document order. */
+    actionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.action:`, '');
+    }
+
+    get actions() {
+        return this.action('actions');
+    }
+
+    get exposureReport() {
+        return this.action('exposure_report');
+    }
+
+    get report() {
+        return this.action('report');
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.title--text` — PropertiesCardView (channels/src/components/properties_card_view/properties_card_view.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get titleText() {
+        return drivers.text(this.byTestId(`${this.scope}.title--text`), {
+            testId: `${this.scope}.title--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView',
+        });
+    }
+
+    getTitleText(): Promise<string> {
+        return this.titleText.text();
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field:{key}` — PropertiesCardView (channels/src/components/properties_card_view/properties_card_view.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    field(field: Pick<PropertyField, 'name'>): PostItemSpillageReportCardField {
+        return new PostItemSpillageReportCardField(
+            this.page,
+            `${this.scope}.field`,
+            this.byTestId(`${this.scope}.field:${field.name}`),
+        );
+    }
+
+    /** Every `center.post_list.post.spillage_report.card.field:{key}` in the scope. */
+    get fieldItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.field:`, '');
+    }
+
+    /** The keys of every `center.post_list.post.spillage_report.card.field:{key}` in the scope, in document order. */
+    fieldKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.field:`, '');
+    }
+
+    /** Every `center.post_list.post.spillage_report.card.action:{key}` in the scope as a list by key, for the list matchers: `expect(x.actionList).toHaveKeys([…])`. */
+    get actionList() {
+        return this.keyedList(`${this.scope}.action:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.action:${key}`), {
+                testId: `${this.scope}.action:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView',
+            }),
+        );
+    }
+
+    /** Every `center.post_list.post.spillage_report.card.field:{key}` in the scope as a list by key, for the list matchers: `expect(x.fieldList).toHaveKeys([…])`. */
+    get fieldList() {
+        return this.keyedList(
+            `${this.scope}.field:`,
+            '',
+            (key: string) =>
+                new PostItemSpillageReportCardField(
+                    this.page,
+                    `${this.scope}.field`,
+                    this.byTestId(`${this.scope}.field:${key}`),
+                ),
+        );
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.card.field`, `rhs.thread.post.spillage_report.card.field`, `search.results.post.spillage_report.card.field`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReportCardField extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.card.field:{key}` — PropertiesCardView (channels/src/components/properties_card_view/properties_card_view.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'center.post_list.post.spillage_report.card.field:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.label--text` — PropertiesCardView (channels/src/components/properties_card_view/properties_card_view.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get labelText() {
+        return drivers.text(this.byTestId(`${this.scope}.label--text`), {
+            testId: `${this.scope}.label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView',
+        });
+    }
+
+    getLabelText(): Promise<string> {
+        return this.labelText.text();
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value` — PropertiesCardView (channels/src/components/properties_card_view/properties_card_view.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get value(): PostItemSpillageReportCardFieldValue {
+        return new PostItemSpillageReportCardFieldValue(this.page, `${this.scope}.value`, this.root);
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<PostItemSpillageReportCardFieldRow> {
+        return {
+            label: await this.labelText.textIfPresent(),
+        };
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.card.field.value`, `rhs.thread.post.spillage_report.card.field.value`, `search.results.post.spillage_report.card.field.value`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReportCardFieldValue extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.channel` — ChannelPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get channel() {
+        return drivers.container(this.byTestId(`${this.scope}.channel`), {
+            testId: `${this.scope}.channel`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/channel_property_renderer/channel_property_renderer.tsx#ChannelPropertyRenderer',
+        });
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.select--text` — OptionPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx)
+     */
+    get selectText() {
+        return drivers.text(this.byTestId(`${this.scope}.select--text`), {
+            testId: `${this.scope}.select--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/option_property_renderer/option_property_renderer.tsx#OptionPropertyRenderer',
+        });
+    }
+
+    getSelectText(): Promise<string> {
+        return this.selectText.text();
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.selectable_user` — SelectableUserPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx)
+     * Renders only when field.attrs?.editable.
+     */
+    get selectableUser() {
+        return drivers.container(this.byTestId(`${this.scope}.selectable_user`), {
+            testId: `${this.scope}.selectable_user`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/selectable_user_property_renderer.tsx#SelectableUserPropertyRenderer',
+        });
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.text--text` — TextPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get textText() {
+        return drivers.text(this.byTestId(`${this.scope}.text--text`), {
+            testId: `${this.scope}.text--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/text_property_renderer/textPropertyRenderer.tsx#TextPropertyRenderer',
+        });
+    }
+
+    getTextText(): Promise<string> {
+        return this.textText.text();
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.timestamp--text` — TimestampPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get timestampText() {
+        return drivers.text(this.byTestId(`${this.scope}.timestamp--text`), {
+            testId: `${this.scope}.timestamp--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/timestamp_property_renderer/timestamp_property_renderer.tsx#TimestampPropertyRenderer',
+        });
+    }
+
+    getTimestampText(): Promise<string> {
+        return this.timestampText.text();
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.user` — UserPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx)
+     */
+    get user() {
+        return drivers.container(this.byTestId(`${this.scope}.user`), {
+            testId: `${this.scope}.user`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/properties_card_view/propertyValueRenderer/user_property_renderer/userPropertyRenderer.tsx#UserPropertyRenderer',
+        });
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.post_preview` — PostPreviewPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/post_preview_property_renderer/post_preview_property_renderer.tsx)
+     * Renders only when !(!post || !channel || !team) and !(field.type !== 'text').
+     */
+    get postPreview(): PostPreview {
+        return new PostPreview(this.page, `${this.scope}.post_preview`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.team` — TeamPropertyRenderer (channels/src/components/properties_card_view/propertyValueRenderer/team_property_renderer/team_property_renderer.tsx)
+     * Renders only when !(field.type !== 'text').
+     */
+    get team(): TeamScope {
+        return new TeamScope(this.page, `${this.scope}.team`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.card.field.value.post_preview`, `post_attributes.value.post_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview`, `search.results.post.spillage_report.card.field.value.post_preview`: one class, constructed with the scope it is mounted at. */
+export class PostPreview extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.post_preview.post` — PostMessagePreview (channels/src/components/post_view/post_message_preview/post_message_preview.tsx)
+     * Renders only when previewPost and !(!post || !channel || !team) and !(field.type !== 'text').
+     */
+    get post(): PostMessagePreview {
+        return new PostMessagePreview(this.page, `${this.scope}.post`, this.root);
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.card.field.value.team`, `post_attributes.value.team`, `rhs.thread.post.spillage_report.card.field.value.team`, `search.results.post.spillage_report.card.field.value.team`: one class, constructed with the scope it is mounted at. */
+export class TeamScope extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.team.icon--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when !(field.type !== 'text') and typeof content === 'string' and teamIconUrl.
+     */
+    get iconImg() {
+        return drivers.text(this.byTestId(`${this.scope}.icon--img`), {
+            testId: `${this.scope}.icon--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
+    }
+
+    /**
+     * `center.post_list.post.spillage_report.card.field.value.team.initials--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when !(field.type !== 'text') and typeof content === 'string' and !teamIconUrl.
+     */
+    get initialsImg() {
+        return drivers.text(this.byTestId(`${this.scope}.initials--img`), {
+            testId: `${this.scope}.initials--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.download_report`, `rhs.thread.post.spillage_report.download_report`, `search.results.post.spillage_report.download_report`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReportDownloadReport extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.download_report.download--button` — DataSpillageDownloadReport (channels/src/components/post_view/data_spillage_report/data_spillage_download_report/data_spillage_download_report.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get downloadButton() {
+        return drivers.button(this.byTestId(`${this.scope}.download--button`), {
+            testId: `${this.scope}.download--button`,
+            role: 'button',
+            effects: [Api.GenerateCFPostReport],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/data_spillage_report/data_spillage_download_report/data_spillage_download_report.tsx#DataSpillageDownloadReport',
+        });
+    }
+
+    async clickDownloadButton(): Promise<void> {
+        await this.downloadButton.click();
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.exposure_report`, `rhs.thread.post.spillage_report.exposure_report`, `search.results.post.spillage_report.exposure_report`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReportExposureReport extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.exposure_report.download--button` — DataSpillageExposureReport (channels/src/components/post_view/data_spillage_report/data_spillage_exposure_report/data_spillage_exposure_report.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT.
+     */
+    get downloadButton() {
+        return drivers.button(this.byTestId(`${this.scope}.download--button`), {
+            testId: `${this.scope}.download--button`,
+            role: 'button',
+            effects: [Api.GenerateCFPostExposureReport],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/data_spillage_report/data_spillage_exposure_report/data_spillage_exposure_report.tsx#DataSpillageExposureReport',
+        });
+    }
+
+    async clickDownloadButton(): Promise<void> {
+        await this.downloadButton.click();
+    }
+}
+
+/** Rendered at `center.post_list.post.spillage_report.footer`, `rhs.thread.post.spillage_report.footer`, `search.results.post.spillage_report.footer`: one class, constructed with the scope it is mounted at. */
+export class PostItemSpillageReportFooter extends Scope {
+    /**
+     * `center.post_list.post.spillage_report.footer.view_details--button` — DataSpillageFooter (channels/src/components/post_view/data_spillage_report/data_spillage_footer/data_spillage_footer.tsx)
+     * Renders only when this.props.post && this.props.post.type === PostTypes.CUSTOM_DATA_SPILLAGE_REPORT and !isRHS.
+     */
+    get viewDetailsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.view_details--button`), {
+            testId: `${this.scope}.view_details--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/post_view/data_spillage_report/data_spillage_footer/data_spillage_footer.tsx#DataSpillageFooter',
+        });
+    }
+
+    async clickViewDetailsButton(): Promise<void> {
+        await this.viewDetailsButton.click();
     }
 }
 
@@ -3932,6 +5754,133 @@ export class SearchableUserListUser extends Scope {
     }
 }
 
+/** Rendered at `channel_header.attributes`, `rhs.thread.header.attributes`: one class, constructed with the scope it is mounted at. */
+export class Attributes extends Scope {
+    /**
+     * `channel_header.attributes.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
+     * Renders only when !(chipSpecs.length === 0) and spec and channel.
+     */
+    chip(chip: number) {
+        return drivers.container(this.byTestId(`${this.scope}.chip:${chip}`), {
+            testId: `${this.scope}.chip:${chip}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip',
+        });
+    }
+
+    /** Every `channel_header.attributes.chip:{key}` in the scope. */
+    get chipItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.chip:`, '');
+    }
+
+    /** The keys of every `channel_header.attributes.chip:{key}` in the scope, in document order. */
+    chipKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.chip:`, '');
+    }
+
+    /**
+     * `channel_header.attributes.overflow--button` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0) and overflowIds.length > 0 and channel.
+     */
+    get overflowButton() {
+        return drivers.button(this.byTestId(`${this.scope}.overflow--button`), {
+            testId: `${this.scope}.overflow--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_attribute_labels.tsx#ChannelAttributeLabels',
+        });
+    }
+
+    async clickOverflowButton(): Promise<void> {
+        await this.overflowButton.click();
+    }
+
+    /**
+     * `channel_header.attributes.overflow_popover` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0) and isMounted and channel.
+     */
+    get overflowPopover(): OverflowPopover {
+        return new OverflowPopover(this.page, `${this.scope}.overflow_popover`, this.root);
+    }
+
+    /** Every `channel_header.attributes.chip:{key}` in the scope as a list by key, for the list matchers: `expect(x.chipList).toHaveKeys([…])`. */
+    get chipList() {
+        return this.keyedList(`${this.scope}.chip:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.chip:${key}`), {
+                testId: `${this.scope}.chip:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip',
+            }),
+        );
+    }
+}
+
+/** Rendered at `channel_header.attributes.overflow_popover`, `rhs.thread.header.attributes.overflow_popover`, `threads.pane.attributes.overflow_popover`: one class, constructed with the scope it is mounted at. */
+export class OverflowPopover extends Scope {
+    /**
+     * `channel_header.attributes.overflow_popover.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
+     * Renders only when !(chipSpecs.length === 0) and isMounted and spec.
+     */
+    chip(chip: number) {
+        return drivers.container(this.byTestId(`${this.scope}.chip:${chip}`), {
+            testId: `${this.scope}.chip:${chip}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip',
+        });
+    }
+
+    /** Every `channel_header.attributes.overflow_popover.chip:{key}` in the scope. */
+    get chipItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.chip:`, '');
+    }
+
+    /** The keys of every `channel_header.attributes.overflow_popover.chip:{key}` in the scope, in document order. */
+    chipKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.chip:`, '');
+    }
+
+    /**
+     * `channel_header.attributes.overflow_popover.view_all--button` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0) and isMounted and interactive.
+     * Opens panel ChannelInfoRhs (`rhs.channel_info`).
+     */
+    get viewAllButton() {
+        return drivers.button(this.byTestId(`${this.scope}.view_all--button`), {
+            testId: `${this.scope}.view_all--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_attribute_labels.tsx#ChannelAttributeLabels',
+        });
+    }
+
+    /** Clicks viewAllButton and returns what it opens (panel); the page object is returned at once, with no wait. */
+    async clickViewAllButton(): Promise<RhsChannelInfo> {
+        await this.viewAllButton.click();
+        return new RhsChannelInfo(this.page, 'rhs.channel_info');
+    }
+
+    /** Every `channel_header.attributes.overflow_popover.chip:{key}` in the scope as a list by key, for the list matchers: `expect(x.chipList).toHaveKeys([…])`. */
+    get chipList() {
+        return this.keyedList(`${this.scope}.chip:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.chip:${key}`), {
+                testId: `${this.scope}.chip:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip',
+            }),
+        );
+    }
+}
+
 /** Rendered at `channel_header.menu.move_to_menu`, `lhs.channel_menu.move_to_menu`: one class, constructed with the scope it is mounted at. */
 export class MoveToMenu extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
@@ -4203,65 +6152,417 @@ export class RoleMenu extends Scope {
     }
 }
 
-/** Rendered at `channel_settings_modal.configuration.banner_text`, `channel_settings_modal.info.header`, `channel_settings_modal.info.purpose`, `new_channel_modal.classification_banner_text`: one class, constructed with the scope it is mounted at. */
-export class ChannelSettingsModalConfigurationBannerText extends Scope {
+/** Rendered at `channel_settings_modal.access_rules.self_exclusion_modal`, `team_settings_modal.access.self_exclusion_modal`, `team_settings_modal.membership.self_exclusion_modal`: one class, constructed with the scope it is mounted at. */
+export class SelfExclusionModal extends Scope {
+    /**
+     * `channel_settings_modal.access_rules.self_exclusion_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.access_rules.self_exclusion_modal.confirm--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
+     * Renders only when !hideConfirm.
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.attributes`, `rhs.channel_info.about.attributes`: one class, constructed with the scope it is mounted at. */
+export class ChannelInfoAttributes extends Scope {
+    /**
+     * `channel_settings_modal.info.attributes.add--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and addableAttributes.length > 0 and !isDMorGroupChannel.
+     * Opens menu channelInfoAddAttributeMenu (`channel_settings_modal.info.attributes.add_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks addButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickAddButton(): Promise<ChannelInfoAttributesAddMenu> {
+        await this.addButton.click();
+        return new ChannelInfoAttributesAddMenu(this.page, `${this.scope}.add_menu`);
+    }
+
+    get addMenu(): ChannelInfoAttributesAddMenu {
+        return new ChannelInfoAttributesAddMenu(this.page, `${this.scope}.add_menu`);
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute:{key}` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and !isDMorGroupChannel.
+     */
+    attribute(attribute: Pick<PropertyField, 'id'>): ChannelInfoAttributesAttribute {
+        return new ChannelInfoAttributesAttribute(
+            this.page,
+            `${this.scope}.attribute`,
+            this.byTestId(`${this.scope}.attribute:${attribute.id}`),
+        );
+    }
+
+    /** Every `channel_settings_modal.info.attributes.attribute:{key}` in the scope. */
+    get attributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.attribute:`, '');
+    }
+
+    /** The keys of every `channel_settings_modal.info.attributes.attribute:{key}` in the scope, in document order. */
+    attributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.attribute:`, '');
+    }
+
+    /** Every `channel_settings_modal.info.attributes.attribute:{key}` in the scope as a list by key, for the list matchers: `expect(x.attributeList).toHaveKeys([…])`. */
+    get attributeList() {
+        return this.keyedList(
+            `${this.scope}.attribute:`,
+            '',
+            (key: string) =>
+                new ChannelInfoAttributesAttribute(
+                    this.page,
+                    `${this.scope}.attribute`,
+                    this.byTestId(`${this.scope}.attribute:${key}`),
+                ),
+        );
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.attributes.add_menu`, `rhs.channel_info.about.attributes.add_menu`: one class, constructed with the scope it is mounted at. */
+export class ChannelInfoAttributesAddMenu extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
     /**
-     * `channel_settings_modal.configuration.banner_text.description--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
-     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     * `channel_settings_modal.info.attributes.add_menu.attribute:{key}--menuitem` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and addableAttributes.length > 0 and !isDMorGroupChannel.
      */
-    get descriptionText() {
-        return drivers.text(this.byTestId(`${this.scope}.description--text`), {
-            testId: `${this.scope}.description--text`,
-            role: 'text',
+    attribute(attribute: Pick<PropertyField, 'id'>) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.attribute:${attribute.id}--menuitem`), {
+            testId: `${this.scope}.attribute:${attribute.id}--menuitem`,
+            role: 'menuitem',
             effects: [],
             unknownEffects: false,
-            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
+            source: 'channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes',
         });
     }
 
-    getDescriptionText(): Promise<string> {
-        return this.descriptionText.text();
+    /** Every `channel_settings_modal.info.attributes.add_menu.attribute:{key}--menuitem` in the scope. */
+    get attributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.attribute:`, '--menuitem');
     }
 
+    /** The keys of every `channel_settings_modal.info.attributes.add_menu.attribute:{key}--menuitem` in the scope, in document order. */
+    attributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.attribute:`, '--menuitem');
+    }
+
+    /** Every `channel_settings_modal.info.attributes.add_menu.attribute:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.attributeList).toHaveKeys([…])`. */
+    get attributeList() {
+        return this.keyedList(`${this.scope}.attribute:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.attribute:${key}--menuitem`), {
+                testId: `${this.scope}.attribute:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes',
+            }),
+        );
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.attributes.attribute`, `rhs.channel_info.about.attributes.attribute`: one class, constructed with the scope it is mounted at. */
+export class ChannelInfoAttributesAttribute extends Scope {
     /**
-     * `channel_settings_modal.configuration.banner_text.error--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
-     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     * `channel_settings_modal.info.attributes.attribute:{key}` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and !isDMorGroupChannel.
      */
-    get errorText() {
-        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
-            testId: `${this.scope}.error--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
-        });
-    }
-
-    getErrorText(): Promise<string> {
-        return this.errorText.text();
-    }
-
-    /**
-     * `channel_settings_modal.configuration.banner_text.preview` — Textbox (channels/src/components/textbox/textbox.tsx)
-     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
-     */
-    get preview() {
-        return drivers.container(this.byTestId(`${this.scope}.preview`), {
-            testId: `${this.scope}.preview`,
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'channel_settings_modal.info.attributes.attribute:{key}',
             role: null,
             effects: [],
             unknownEffects: false,
-            source: 'channels/src/components/textbox/textbox.tsx#Textbox',
+            source: 'channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes',
         });
     }
 
-    get suggestions(): Suggestions {
-        return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.edit--button` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Opens menu menu (`channel_settings_modal.info.attributes.attribute.edit_menu`).
+     * Opens menu menu (`channel_settings_modal`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes',
+        });
+    }
+
+    /** Clicks editButton, which opens one of several menus depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickEditButton(): Promise<{
+        editMenu: ChannelInfoAttributesAttributeEditMenu;
+        channelSettingsModal: ChannelSettingsModal;
+    }> {
+        await this.editButton.click();
+        return {
+            editMenu: new ChannelInfoAttributesAttributeEditMenu(this.page, `${this.scope}.edit_menu`),
+            channelSettingsModal: new ChannelSettingsModal(this.page, 'channel_settings_modal'),
+        };
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.editor--textbox` — ChannelAttributeRowEditor (channels/src/components/channel_attributes/channel_attribute_row_editor.tsx)
+     * Renders only when isText and !(rows.length === 0 && addableAttributes.length === 0) and showMenu || showTextEditor.
+     */
+    get editorTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.editor--textbox`), {
+            testId: `${this.scope}.editor--textbox`,
+            role: 'textbox',
+            effects: [Api.UpdatePropertyValues],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor',
+        });
+    }
+
+    async fillEditorTextbox(value: string): Promise<void> {
+        await this.editorTextbox.fill(value);
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.error--alert` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and failedFieldId === field.id and !isDMorGroupChannel.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.locked` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and locked and !isDMorGroupChannel.
+     */
+    get locked() {
+        return drivers.container(this.byTestId(`${this.scope}.locked`), {
+            testId: `${this.scope}.locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.unset--text` — ChannelAttributeRowEditor (channels/src/components/channel_attributes/channel_attribute_row_editor.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and !isDMorGroupChannel.
+     */
+    get unsetText() {
+        return drivers.text(this.byTestId(`${this.scope}.unset--text`), {
+            testId: `${this.scope}.unset--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor',
+        });
+    }
+
+    getUnsetText(): Promise<string> {
+        return this.unsetText.text();
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.value--text` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and !(showMenu || showTextEditor) and editable && isText.
+     */
+    get valueText() {
+        return drivers.text(this.byTestId(`${this.scope}.value--text`), {
+            testId: `${this.scope}.value--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes',
+        });
+    }
+
+    getValueText(): Promise<string> {
+        return this.valueText.text();
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0).
+     */
+    chip(chip: number): ChannelInfoAttributesAttributeChip {
+        return new ChannelInfoAttributesAttributeChip(
+            this.page,
+            `${this.scope}.chip`,
+            this.byTestId(`${this.scope}.chip:${chip}`),
+        );
+    }
+
+    /** Every `channel_settings_modal.info.attributes.attribute.chip:{key}` in the scope. */
+    get chipItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.chip:`, '');
+    }
+
+    /** The keys of every `channel_settings_modal.info.attributes.attribute.chip:{key}` in the scope, in document order. */
+    chipKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.chip:`, '');
+    }
+
+    get editMenu(): ChannelInfoAttributesAttributeEditMenu {
+        return new ChannelInfoAttributesAttributeEditMenu(this.page, `${this.scope}.edit_menu`);
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<ChannelInfoAttributesAttributeRow> {
+        return {
+            unset: await this.unsetText.textIfPresent(),
+            value: await this.valueText.textIfPresent(),
+        };
+    }
+
+    /** Every `channel_settings_modal.info.attributes.attribute.chip:{key}` in the scope as a list by key, for the list matchers: `expect(x.chipList).toHaveKeys([…])`. */
+    get chipList() {
+        return this.keyedList(
+            `${this.scope}.chip:`,
+            '',
+            (key: string) =>
+                new ChannelInfoAttributesAttributeChip(
+                    this.page,
+                    `${this.scope}.chip`,
+                    this.byTestId(`${this.scope}.chip:${key}`),
+                ),
+        );
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.attributes.attribute.chip`, `rhs.channel_info.about.attributes.attribute.chip`: one class, constructed with the scope it is mounted at. */
+export class ChannelInfoAttributesAttributeChip extends Scope {
+    /**
+     * `channel_settings_modal.info.attributes.attribute.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'channel_settings_modal.info.attributes.attribute.chip:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.chip.remove--button` — AttributeChipRemoveButton (channels/src/components/channel_attributes/attribute_chip.tsx)
+     * Renders only when !disabled and !(rows.length === 0 && addableAttributes.length === 0) and showMenu || showTextEditor.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [Api.UpdatePropertyValues],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChipRemoveButton',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.attributes.attribute.edit_menu`, `rhs.channel_info.about.attributes.attribute.edit_menu`: one class, constructed with the scope it is mounted at. */
+export class ChannelInfoAttributesAttributeEditMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.info.attributes.attribute.edit_menu.option:{key}--menuitem` — ChannelAttributeRowEditor (channels/src/components/channel_attributes/channel_attribute_row_editor.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and showMenu || showTextEditor and !isDMorGroupChannel.
+     */
+    option(option: number) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.option:${option}--menuitem`), {
+            testId: `${this.scope}.option:${option}--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdatePropertyValues],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor',
+        });
+    }
+
+    /** Every `channel_settings_modal.info.attributes.attribute.edit_menu.option:{key}--menuitem` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '--menuitem');
+    }
+
+    /** The keys of every `channel_settings_modal.info.attributes.attribute.edit_menu.option:{key}--menuitem` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '--menuitem');
+    }
+
+    /** Every `channel_settings_modal.info.attributes.attribute.edit_menu.option:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(`${this.scope}.option:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.option:${key}--menuitem`), {
+                testId: `${this.scope}.option:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [Api.UpdatePropertyValues],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor',
+            }),
+        );
     }
 }
 
@@ -4353,6 +6654,67 @@ export class CategorySelector extends Scope {
                 }),
             true,
         );
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.header`, `channel_settings_modal.info.purpose`, `flag_post_modal.comment`, `flagged_message_modal.form.comment`, `new_channel_modal.classification_banner_text`: one class, constructed with the scope it is mounted at. */
+export class ChannelSettingsModalInfoHeader extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.info.header.description--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
+     * Renders only when descriptionMessage && !internalError.
+     */
+    get descriptionText() {
+        return drivers.text(this.byTestId(`${this.scope}.description--text`), {
+            testId: `${this.scope}.description--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
+        });
+    }
+
+    getDescriptionText(): Promise<string> {
+        return this.descriptionText.text();
+    }
+
+    /**
+     * `channel_settings_modal.info.header.error--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
+     * Renders only when internalError.
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `channel_settings_modal.info.header.preview` — Textbox (channels/src/components/textbox/textbox.tsx)
+     */
+    get preview() {
+        return drivers.container(this.byTestId(`${this.scope}.preview`), {
+            testId: `${this.scope}.preview`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/textbox/textbox.tsx#Textbox',
+        });
+    }
+
+    get suggestions(): Suggestions {
+        return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
     }
 }
 
@@ -4507,8 +6869,9 @@ export class SavePanel extends Scope {
 
     /**
      * `channel_settings_modal.save_panel.save--button` — SaveChangesPanel (channels/src/components/widgets/modals/components/save_changes_panel.tsx)
-     * Opens modal ConfirmModal (`remove_sharing_modal`).
-     * Opens modal ConvertConfirmModal (`admin.convert_modal`).
+     * Opens modal ChannelAccessRulesConfirmModal (`channel_access_rules_confirm_modal`).
+     * Opens modal ChannelActivityWarningModal (`channel_activity_warning_modal`).
+     * Opens modal ConfirmModal (`channel_settings_modal.access_rules.self_exclusion_modal`).
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     get saveButton() {
@@ -4516,15 +6879,23 @@ export class SavePanel extends Scope {
             testId: `${this.scope}.save--button`,
             role: 'button',
             effects: [
+                Api.CreateAccessControlPolicy,
+                Api.DeleteAccessControlPolicy,
+                Api.GetChannelMembers,
                 Api.GetSharedChannelRemotes,
                 Api.GetTeam,
+                Api.GetTeamStats,
+                Api.GetUsersByIds,
+                Api.GetUsersStatusesByIds,
                 Api.InviteRemoteClusterToChannel,
                 Api.PatchChannel,
                 Api.PatchTeam,
                 Api.SetTeamIcon,
+                Api.TestAccessControlPolicyExpression,
                 Api.UninviteRemoteClusterToChannel,
                 Api.UpdateChannelPrivacy,
                 Api.UpdatePropertyValues,
+                Api.ValidateExpressionAgainstRequester,
             ],
             unknownEffects: true,
             source: 'channels/src/components/widgets/modals/components/save_changes_panel.tsx#SaveChangesPanel',
@@ -4532,9 +6903,24 @@ export class SavePanel extends Scope {
     }
 
     /** Clicks saveButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
-    async clickSaveButton(): Promise<{removeSharingModal: RemoveSharingModal; convertModal: ConfirmModal}> {
+    async clickSaveButton(): Promise<{
+        channelAccessRulesConfirmModal: ChannelAccessRulesConfirmModal;
+        channelActivityWarningModal: ChannelActivityWarningModal;
+        selfExclusionModal: SelfExclusionModal;
+        removeSharingModal: RemoveSharingModal;
+        convertModal: ConfirmModal;
+    }> {
         await this.saveButton.click();
         return {
+            channelAccessRulesConfirmModal: new ChannelAccessRulesConfirmModal(
+                this.page,
+                'channel_access_rules_confirm_modal',
+            ),
+            channelActivityWarningModal: new ChannelActivityWarningModal(this.page, 'channel_activity_warning_modal'),
+            selfExclusionModal: new SelfExclusionModal(
+                this.page,
+                'channel_settings_modal.access_rules.self_exclusion_modal',
+            ),
             removeSharingModal: new RemoveSharingModal(this.page, 'remove_sharing_modal'),
             convertModal: new ConfirmModal(this.page, 'admin.convert_modal'),
         };

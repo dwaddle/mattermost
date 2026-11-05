@@ -6,6 +6,8 @@ import {ChromePicker} from 'react-color';
 import type {ColorResult} from 'react-color';
 import tinycolor from 'tinycolor2';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import './classification_color_input.scss';
 
 export type ClassificationColorInputProps = {
@@ -14,9 +16,12 @@ export type ClassificationColorInputProps = {
     onChange: (color: string) => void;
     swatchAriaLabel: string;
     isDisabled?: boolean;
+
+    // The hex input renders `<testId>--textbox`.
+    testId: TestId;
 };
 
-function ClassificationColorInput({id, value, onChange, swatchAriaLabel, isDisabled}: ClassificationColorInputProps) {
+function ClassificationColorInput({id, value, onChange, swatchAriaLabel, isDisabled, testId}: ClassificationColorInputProps) {
     const [focused, setFocused] = useState(false);
     const [isOpened, setIsOpened] = useState(false);
     const [localValue, setLocalValue] = useState(value);
@@ -140,7 +145,7 @@ function ClassificationColorInput({id, value, onChange, swatchAriaLabel, isDisab
                     onKeyDown={handleHexKeyDown}
                     maxLength={7}
                     disabled={isDisabled}
-                    data-testid='color-inputColorValue'
+                    data-testid={`${testId}--textbox`}
                 />
             </div>
             {isOpened && !isDisabled && (

@@ -6,6 +6,7 @@ import React, {useState, useMemo, useCallback} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CheckIcon, ChevronDownIcon, CloseIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
@@ -27,6 +28,7 @@ const MultiValueSelector = ({
     channelFields = [],
     targetAttribute,
     onSelectTarget,
+    testId,
 }: {
     values: string[];
     disabled: boolean;
@@ -38,6 +40,10 @@ const MultiValueSelector = ({
     channelFields?: UserPropertyField[];
     targetAttribute?: string;
     onSelectTarget?: (name: string) => void;
+
+    // The rule row's scope: the value button is `<testId>.value--button` (a free-text value
+    // `<testId>.value--textbox`), its options `<testId>.value_menu.multi_option:<position>` (values are typed by admins).
+    testId?: TestId;
 }) => {
     const {formatMessage} = useIntl();
     const [filter, setFilter] = useState('');
@@ -71,9 +77,7 @@ const MultiValueSelector = ({
     });
 
     const handleSelectItem = useCallback((name: string) => {
-        const newValues = values.includes(name) ?
-            values.filter((v) => v !== name) :
-            [...values, name];
+        const newValues = values.includes(name) ? values.filter((v) => v !== name) : [...values, name];
         updateValues(newValues);
     }, [values, updateValues]);
 
@@ -110,7 +114,7 @@ const MultiValueSelector = ({
             if (hasMaskedValues) {
                 return (
                     <div className='value-selector-menu-button__multi-values-container'>
-                        <MaskedChip/>
+                        <MaskedChip testId={testId ? `${testId}.value.masked--img` : undefined}/>
                     </div>
                 );
             }
@@ -131,15 +135,17 @@ const MultiValueSelector = ({
 
         return (
             <div className='value-selector-menu-button__multi-values-container'>
-                {values.map((value) => (
+                {values.map((value, index) => (
                     <div
                         key={value}
                         className='select__multi-value'
+                        data-testid={testId ? `${testId}.value.chip:${index}` : undefined}
                     >
                         <div className='select__multi-value__label'>{value}</div>
                         {!disabled && (
                             <div
                                 className='select__multi-value__remove'
+                                data-testid={testId ? `${testId}.value.chip.remove--button` : undefined}
                                 onClick={(e) => handleRemoveValue(e, value)}
                                 role='button'
                                 tabIndex={0}
@@ -154,7 +160,7 @@ const MultiValueSelector = ({
                         )}
                     </div>
                 ))}
-                {hasMaskedValues && <MaskedChip/>}
+                {hasMaskedValues && <MaskedChip testId={testId ? `${testId}.value.masked--img` : undefined}/>}
             </div>
         );
     }, [values, disabled, hasMaskedValues]);
@@ -183,7 +189,7 @@ const MultiValueSelector = ({
                             />
                         </span>
                     ),
-                    dataTestId: 'valueSelectorMenuButton',
+                    dataTestId: testId ? `${testId}.value--button` : undefined,
                     disabled,
                 }}
                 menu={{
@@ -195,6 +201,7 @@ const MultiValueSelector = ({
                 <Menu.InputItem
                     key='filter_values'
                     id='filter_values'
+                    testId={testId ? `${testId}.value_menu.filter` : undefined}
                     type='text'
                     placeholder={formatMessage(actualAllowCreateForMenu ? {
                         id: 'admin.access_control.table_editor.selector.filter_or_create',
@@ -216,7 +223,7 @@ const MultiValueSelector = ({
                         })}
                     </Menu.Title>
                 )}
-                {filteredOptions.map((option) => {
+                {filteredOptions.map((option, index) => {
                     const name = option.name || '';
                     const id = option.id || name;
                     const isSelected = values.includes(name);
@@ -225,6 +232,7 @@ const MultiValueSelector = ({
                         <Menu.Item
                             id={`value-option-${id}`}
                             key={id}
+                            data-testid={testId ? `${testId}.value_menu.multi_option:${index}--menuitemcheckbox` : undefined}
                             role='menuitemcheckbox'
                             forceCloseOnSelect={false}
                             aria-checked={isSelected}
@@ -240,6 +248,7 @@ const MultiValueSelector = ({
                     <Menu.Item
                         id='create-value-option'
                         key='create-value-option'
+                        data-testid={testId ? `${testId}.value_menu.create--menuitem` : undefined}
                         onClick={() => handleCreateValue(filter)}
                         labels={<span>
                             {formatMessage({
@@ -249,7 +258,7 @@ const MultiValueSelector = ({
                         </span>}
                     />
                 )}
-                {onSelectTarget && channelAttributeMenuItems(channelFields, targetAttribute, onSelectTarget, formatMessage)}
+                {onSelectTarget && channelAttributeMenuItems(channelFields, targetAttribute, onSelectTarget, formatMessage, testId)}
             </Menu.Container>
         </div>
     );

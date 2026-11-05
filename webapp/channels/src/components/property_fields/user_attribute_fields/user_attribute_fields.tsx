@@ -5,6 +5,7 @@ import React from 'react';
 import {defineMessages, useIntl} from 'react-intl';
 
 import {TrashCanOutlineIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
 import {getUserPropertyFieldLabel} from 'utils/properties';
@@ -30,7 +31,9 @@ export type UserAttributeFieldsProps = {
     canEditAdminManaged: boolean;
     onRemove?: (fieldId: string) => void;
     isRemovable?: (field: UserPropertyField) => boolean;
-    testIdPrefix?: string;
+
+    // Each field is `<testIdScope>:<field id>`, and its remove button `<testIdScope>.remove--button`.
+    testIdScope: TestId;
 };
 
 export default function UserAttributeFields({
@@ -42,15 +45,12 @@ export default function UserAttributeFields({
     canEditAdminManaged,
     onRemove,
     isRemovable,
-    testIdPrefix = 'user-detail-custom-attribute',
+    testIdScope,
 }: UserAttributeFieldsProps) {
     const {formatMessage} = useIntl();
 
     return (
-        <div
-            className='UserAttributeFields'
-            data-testid={`${testIdPrefix}-list`}
-        >
+        <div className='UserAttributeFields'>
             {fields.map((field) => {
                 const removable = Boolean(onRemove) &&
                     canEditUserAttribute(field, {canEditAdminManaged}) &&
@@ -65,13 +65,13 @@ export default function UserAttributeFields({
                         onChange={onChange}
                         disabled={disabled}
                         canEditAdminManaged={canEditAdminManaged}
-                        testIdPrefix={testIdPrefix}
+                        testIdScope={testIdScope}
                         trailing={removable ? (
                             <button
                                 type='button'
                                 className='btn btn-icon btn-sm UserAttributeFields__remove'
                                 aria-label={formatMessage(messages.remove, {name: getUserPropertyFieldLabel(field)})}
-                                data-testid={`${testIdPrefix}-remove-${field.id}`}
+                                data-testid={`${testIdScope}.remove--button`}
                                 disabled={disabled}
                                 onClick={() => onRemove?.(field.id)}
                             >

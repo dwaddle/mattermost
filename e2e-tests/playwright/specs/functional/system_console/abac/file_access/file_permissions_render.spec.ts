@@ -3,21 +3,30 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, test, enableABAC, getAdminClient, getRandomId, TestBrowser} from '@mattermost/playwright-lib';
+import {AdminPermission, expect, test, getAdminClient, getRandomId, TestBrowser} from '@mattermost/playwright-lib';
 
+import {openChannel} from '../../../channels/channel_attributes/surface';
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
 import {
     cleanupAllPermissionPolicies,
-    createPermissionPolicy,
     createPrivateChannelForABAC,
     createUserForABAC,
     deletePermissionPolicyByName,
     enableUserManagedAttributes,
-    navigateToPermissionPoliciesPage,
+    ensureUserAttributes,
 } from '../support';
+import {createPermissionPolicy, setAbacEnabled} from '../surface';
 
-import {ensureABACEnabled, setupUserAndChannel, waitForPolicy} from './helpers';
+import {
+    ensureABACEnabled,
+    expectFilesRedacted,
+    expectFilesVisible,
+    postNamed,
+    postWithFile,
+    setupUserAndChannel,
+    waitForPolicy,
+} from './helpers';
 
 // Targeted by text, not position: joining a channel appends a system message and later tests
 // append their own posts, so the fixture post is not the last one.
@@ -32,6 +41,7 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
     let policyName = '';
     let team: any;
     let channelName = '';
+    let channelId = '';
     let allowedUser: any;
     let deniedUser: any;
     let licensed = true;
@@ -79,6 +89,7 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
 
         const channel = await createPrivateChannelForABAC(adminClient, team.id);
         channelName = channel.name;
+        channelId = channel.id;
         await adminClient.addToChannel(allowedUser.id, channel.id);
         await adminClient.addToChannel(deniedUser.id, channel.id);
 
@@ -90,21 +101,18 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             AccessControlSettings: {EnableAttributeBasedAccessControl: false},
         } as any);
 
-        const {channelsPage: adminChannelsPage} = await sharedBrowser.login(adminUser);
-        await adminChannelsPage.goto(team.name, channelName);
-        await adminChannelsPage.toBeVisible();
-        await adminChannelsPage.centerView.postCreate.postMessage(FIXTURE_MESSAGE, ['sample_text_file.txt']);
+        const {app: adminApp} = await sharedBrowser.login(adminUser);
+        await adminApp.channelsPage.goto({team, channel: {name: channelName}});
+        await expect(adminApp.center.postCreate.messageTextbox.locator).toBeVisible();
+        await postWithFile(adminApp, adminClient, channelId, FIXTURE_MESSAGE);
 
-        const {systemConsolePage} = await sharedBrowser.login(adminUser);
-        await enableABAC(systemConsolePage.page);
-        await navigateToPermissionPoliciesPage(systemConsolePage.page);
-
+        await setAbacEnabled(adminApp, true);
+        await ensureUserAttributes(adminClient);
         policyName = `Dept Render Policy ${getRandomId()}`;
-        await createPermissionPolicy(systemConsolePage.page, {
+        await createPermissionPolicy(adminApp, {
             name: policyName,
-            celExpression: 'user.attributes.Department == "Engineering"',
-            permissions: ['Upload Files', 'Download Files'],
-            adminClient,
+            cel: 'user.attributes.Department == "Engineering"',
+            permissions: [AdminPermission.UploadFileAttachment, AdminPermission.DownloadFileAttachment],
         });
         await waitForPolicy(adminClient, policyName);
     });
@@ -134,13 +142,11 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             test.setTimeout(pw.duration.one_min);
 
             // # Log in as the user whose Department matches the policy
-            const {channelsPage} = await pw.testBrowser.login(allowedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, allowedUser, team, {name: channelName});
 
             // * Verify the post renders its real attachments, not the redacted placeholder
-            const post = await channelsPage.centerView.getPostByText(FIXTURE_MESSAGE);
-            await post.toHaveFilesVisible();
+            const post = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
+            await expectFilesVisible(post);
         },
     );
 
@@ -158,14 +164,12 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             test.setTimeout(pw.duration.one_min);
 
             // # Log in as the user whose Department does not match the policy
-            const {channelsPage} = await pw.testBrowser.login(deniedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, deniedUser, team, {name: channelName});
 
             // * Verify the file is replaced by the redacted placeholder
-            const post = await channelsPage.centerView.getPostByText(FIXTURE_MESSAGE);
-            await post.toHaveFilesRedacted();
-            await expect(post.redactedFilesPlaceholder).toContainText('Files not available');
+            const post = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
+            await expectFilesRedacted(post);
+            await expect(post.redactedFiles.locator).toContainText('Files not available');
         },
     );
 
@@ -182,12 +186,10 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             test.setTimeout(pw.duration.one_min);
 
             // # Log in as the user whose Department matches the policy
-            const {channelsPage} = await pw.testBrowser.login(allowedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, allowedUser, team, {name: channelName});
 
             // * Verify the attachment control is offered
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeEnabled({
+            await expect(app.center.postCreate.attachButton.locator).toBeEnabled({
                 timeout: pw.duration.half_min,
             });
         },
@@ -208,15 +210,13 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             test.setTimeout(pw.duration.one_min);
 
             // # Log in as the user whose Department does not match the policy
-            const {channelsPage} = await pw.testBrowser.login(deniedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, deniedUser, team, {name: channelName});
 
             // * Verify the attachment control stays visible but is not actionable
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeVisible({
+            await expect(app.center.postCreate.attachButton.locator).toBeVisible({
                 timeout: pw.duration.half_min,
             });
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeDisabled();
+            await expect(app.center.postCreate.attachButton.locator).toBeDisabled();
         },
     );
 
@@ -234,16 +234,14 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             test.setTimeout(pw.duration.one_min);
 
             // # Log in as the user whose Department does not match the policy
-            const {channelsPage} = await pw.testBrowser.login(deniedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, deniedUser, team, {name: channelName});
 
             // * Verify existing files are redacted
-            const post = await channelsPage.centerView.getPostByText(FIXTURE_MESSAGE);
-            await post.toHaveFilesRedacted();
+            const post = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
+            await expectFilesRedacted(post);
 
             // * Verify new uploads are not offered
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeDisabled({
+            await expect(app.center.postCreate.attachButton.locator).toBeDisabled({
                 timeout: pw.duration.half_min,
             });
         },
@@ -263,21 +261,18 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # Log in as the user whose Department matches the policy
-            const {channelsPage} = await pw.testBrowser.login(allowedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeEnabled({
+            const app = await openChannel(pw, allowedUser, team, {name: channelName});
+            await expect(app.center.postCreate.attachButton.locator).toBeEnabled({
                 timeout: pw.duration.half_min,
             });
 
             // # Upload a file
             const message = `Upload from allowed user ${getRandomId()}`;
-            await channelsPage.centerView.postCreate.postMessage(message, ['sample_text_file.txt']);
+            const post = await postWithFile(app, sharedAdminClient, channelId, message);
 
             // * Verify the post was accepted with its attachment intact
-            const post = await channelsPage.centerView.getPostByText(message);
-            await post.toContainText(message);
-            await post.toHaveFilesVisible();
+            await expect(post.locator).toContainText(message);
+            await expectFilesVisible(post);
         },
     );
 });
@@ -303,28 +298,23 @@ test.describe('ABAC file permissions - implicit allow with no policy', () => {
 
             // # Set up a team, a private channel, and a member of it
             const {adminUser, adminClient, team} = await pw.initSetup();
-            const {testUser, channelName} = await setupUserAndChannel(adminClient, team);
+            const {testUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
             await cleanupAllPermissionPolicies(adminClient);
 
             // # Admin posts a file into the channel
-            const {channelsPage: adminChannelsPage} = await pw.testBrowser.login(adminUser);
-            await adminChannelsPage.goto(team.name, channelName);
-            await adminChannelsPage.toBeVisible();
-            await adminChannelsPage.centerView.postCreate.postMessage(NO_POLICY_MESSAGE, ['sample_text_file.txt']);
+            const adminApp = await openChannel(pw, adminUser, team, {name: channelName});
+            await postWithFile(adminApp, adminClient, channelId, NO_POLICY_MESSAGE);
 
             // # Enable ABAC without creating any policy
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await enableABAC(systemConsolePage.page);
+            await setAbacEnabled(adminApp, true);
             await ensureABACEnabled(adminClient);
 
             // # The member opens the channel
-            const {channelsPage} = await pw.testBrowser.login(testUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, testUser, team, {name: channelName});
 
             // * Verify the file renders rather than being redacted
-            const post = await channelsPage.centerView.getPostByText(NO_POLICY_MESSAGE);
-            await post.toHaveFilesVisible();
+            const post = await postNamed(app, adminClient, channelId, NO_POLICY_MESSAGE);
+            await expectFilesVisible(post);
         },
     );
 
@@ -340,26 +330,22 @@ test.describe('ABAC file permissions - implicit allow with no policy', () => {
 
             // # Set up a team, a private channel, and a member of it
             const {adminUser, adminClient, team} = await pw.initSetup();
-            const {testUser, channelName} = await setupUserAndChannel(adminClient, team);
+            const {testUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
             await cleanupAllPermissionPolicies(adminClient);
 
             // # Enable ABAC without creating any policy
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await enableABAC(systemConsolePage.page);
+            const {app: adminApp} = await pw.testBrowser.login(adminUser);
+            await setAbacEnabled(adminApp, true);
             await ensureABACEnabled(adminClient);
 
             // # The member uploads a file
-            const {channelsPage} = await pw.testBrowser.login(testUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
-
+            const app = await openChannel(pw, testUser, team, {name: channelName});
             const message = `Upload test ${getRandomId()}`;
-            await channelsPage.centerView.postCreate.postMessage(message, ['sample_text_file.txt']);
+            const post = await postWithFile(app, adminClient, channelId, message);
 
             // * Verify the post was accepted with its attachment intact
-            const post = await channelsPage.centerView.getPostByText(message);
-            await post.toContainText(message);
-            await post.toHaveFilesVisible();
+            await expect(post.locator).toContainText(message);
+            await expectFilesVisible(post);
         },
     );
 });

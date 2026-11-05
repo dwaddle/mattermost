@@ -52,20 +52,24 @@ function isPropertyWrite(request: Request): boolean {
 class ChannelResourceSettings {
     readonly container: Locator;
 
-    constructor(container: Locator) {
+    // where the host page mounts the settings, e.g. `admin.attribute.applies_to.channel.settings`
+    readonly scope: string;
+
+    constructor(container: Locator, scope: string) {
         this.container = container;
+        this.scope = scope;
     }
 
     get requiredToggle() {
-        return this.container.getByTestId('channelsResourceRequired-button');
+        return this.container.getByTestId(`${this.scope}.required--switch`);
     }
 
     get changePolicyButton() {
-        return this.container.getByTestId('channelsResourceChangePolicyButton');
+        return this.container.getByTestId(`${this.scope}.change_policy--button`);
     }
 
     location(location: ChannelDisplayLocation) {
-        return this.container.getByTestId(`channelsResourceLocation-${location}`);
+        return this.container.getByTestId(`${this.scope}.location:${location}--checkbox`);
     }
 
     async setRequired(required: boolean) {
@@ -91,16 +95,20 @@ class ChannelResourceSettings {
  * The Channels row of the Classification page's "Applies to" card.
  */
 export class AppliesToChannels extends ChannelResourceSettings {
+    constructor(container: Locator) {
+        super(container, 'admin.classification.applies_to.channel.settings');
+    }
+
     get addResourceButton() {
-        return this.container.getByTestId('appliesToAddResource');
+        return this.container.getByTestId('admin.classification.applies_to.add--button');
     }
 
     get row() {
-        return this.container.getByTestId('channelsResourceRow');
+        return this.container.getByTestId('admin.classification.applies_to.channel');
     }
 
     get summary() {
-        return this.container.getByTestId('channelsResourceRowSummary');
+        return this.container.getByTestId('admin.classification.applies_to.channel.summary--text');
     }
 
     async addResource() {
@@ -109,7 +117,7 @@ export class AppliesToChannels extends ChannelResourceSettings {
     }
 
     async removeResource() {
-        await this.container.getByTestId('channelsResourceRowRemove').click();
+        await this.container.getByTestId('admin.classification.applies_to.channel.remove--button').click();
     }
 }
 
@@ -118,27 +126,31 @@ export class AppliesToChannels extends ChannelResourceSettings {
  * one row per resource type and starts collapsed.
  */
 export class AttributeAppliesToChannels extends ChannelResourceSettings {
+    constructor(container: Locator) {
+        super(container, 'admin.attribute.applies_to.channel.settings');
+    }
+
     get row() {
-        return this.container.getByTestId('attributeAppliesToRow-channel');
+        return this.container.getByTestId('admin.attribute.applies_to.channel');
     }
 
     get summary() {
-        return this.container.getByTestId('attributeAppliesToRow-channel-summary');
+        return this.container.getByTestId('admin.attribute.applies_to.channel.summary--text');
     }
 
     async addResource() {
-        await this.container.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-        await this.container.page().getByRole('menuitem', {name: 'Channels', exact: true}).click();
+        await this.container.getByTestId('admin.attribute.applies_to.add--button').click();
+        await this.container.page().getByTestId('admin.attribute.applies_to.add.resource:channel--menuitem').click();
         await expect(this.row).toBeVisible();
 
         // The settings live behind the row's own disclosure, so everything below
         // needs it open first.
-        await this.row.getByTestId('attributeAppliesToRow-channel-toggle').click();
-        await expect(this.container.getByTestId('channelsResourceSettings')).toBeVisible();
+        await this.row.getByTestId('admin.attribute.applies_to.channel.toggle--button').click();
+        await expect(this.container.getByTestId(this.scope)).toBeVisible();
     }
 
     async removeResource() {
-        await this.row.getByTestId('attributeAppliesToRow-channel-remove').click();
+        await this.row.getByTestId('admin.attribute.applies_to.channel.remove--button').click();
     }
 }
 
@@ -157,19 +169,19 @@ export default class GlobalAttributes {
     }
 
     get displayNameInput() {
-        return this.container.getByTestId('attributeDisplayNameInput');
+        return this.container.getByTestId('admin.attribute.display_name--textbox');
     }
 
     get typeMenuButton() {
-        return this.container.getByTestId('attributeTypeMenuButton');
+        return this.container.getByTestId('admin.attribute.type--button');
     }
 
     get optionsInput() {
-        return this.container.getByTestId('attributeOptionsValues__addInput');
+        return this.container.getByTestId('admin.attribute.values.add--textbox');
     }
 
     get saveButton() {
-        return this.container.getByTestId('saveSetting');
+        return this.container.getByTestId('admin.save--button');
     }
 
     async gotoListing() {
@@ -274,15 +286,15 @@ export default class GlobalAttributes {
      */
     async gotoClassificationAttribute() {
         await this.container.page().goto(CLASSIFICATION_ATTRIBUTE_PATH);
-        await expect(this.container.getByTestId('classificationAttributeName')).toBeVisible();
+        await expect(this.container.getByTestId('admin.classification.name--textbox')).toBeVisible();
     }
 
     get classificationLevels() {
-        return this.container.getByTestId('classificationAttributeLevels');
+        return this.container.getByTestId('admin.classification.levels--list');
     }
 
     get classificationMarkingsLink() {
-        return this.container.getByTestId('classificationAttributeMarkingsLink');
+        return this.container.getByTestId('admin.classification.markings--link');
     }
 
     /**

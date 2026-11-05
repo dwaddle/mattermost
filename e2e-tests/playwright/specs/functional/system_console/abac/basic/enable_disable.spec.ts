@@ -4,6 +4,7 @@
 import {expect, generated, test, duration} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes} from '../support';
+import {ABAC_SETTINGS_PATH, MEMBERSHIP_POLICIES_PATH, PERMISSION_POLICIES_PATH} from '../surface';
 
 /**
  * Check whether the PermissionPolicies feature flag is enabled at runtime.
@@ -41,12 +42,11 @@ test('MM-T5782 System admin can enable or disable system-wide ABAC', async ({pw}
     } as any);
 
     // # Now login - this ensures the UI will have the attributes loaded
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+    const {app} = await pw.testBrowser.login(adminUser);
 
-    // # Navigate to ABAC page
-    await systemConsolePage.goto();
-    await systemConsolePage.toBeVisible();
-    await systemConsolePage.sidebar.systemAttributes.attributeBasedAccess.click();
+    // # Navigate to the Attribute-Based Access page from the sidebar
+    await app.page.goto(generated.AdminConsolePage.path());
+    await app.admin.sidebar.category('system_attributes').section('attribute_based_access_control').clickTitleLink();
 
     // Re-apply the ABAC=false reset right before UI interaction: a concurrent
     // initSetup() on another shard may have re-enabled ABAC between the initial
@@ -61,29 +61,21 @@ test('MM-T5782 System admin can enable or disable system-wide ABAC', async ({pw}
         const cfg = await adminClient.getConfig();
         return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === false;
     });
-    await systemConsolePage.page.reload();
-    await systemConsolePage.page.waitForLoadState('networkidle');
+    await app.page.reload();
 
     // * Verify we're on the correct page
-    const abacSection = systemConsolePage.page.getByTestId('admin.page:AttributeBasedAccessControl');
-    await expect(abacSection).toBeVisible();
+    await expect(app.admin.pageElement('AttributeBasedAccessControl').locator).toBeVisible();
 
-    const enableRadio = systemConsolePage.page.locator(
-        '#AccessControlSettings\\.EnableAttributeBasedAccessControltrue',
-    );
-    const disableRadio = systemConsolePage.page.locator(
-        '#AccessControlSettings\\.EnableAttributeBasedAccessControlfalse',
-    );
-    const saveButton = systemConsolePage.page.getByRole('button', {name: 'Save'});
+    const setting = app.admin.setting('AccessControlSettings.EnableAttributeBasedAccessControl');
 
     // # Test enable ABAC
-    await enableRadio.click();
-    await expect(enableRadio).toBeChecked();
-    await saveButton.click();
-    await systemConsolePage.page.waitForLoadState('networkidle');
+    await setting.trueRadio.check();
+    await expect(setting.trueRadio.locator).toBeChecked();
+    await app.admin.saveButton.click();
+    await expect(app.admin.saveButton.locator).toBeSaved();
 
     // * Verify the Attribute-Based Access page only has the toggle — no policy management here
-    await expect(systemConsolePage.page.getByRole('button', {name: 'Add policy'})).not.toBeVisible();
+    await expect(app.admin.accessControl.policies.addButton.locator).toHaveCount(0);
 
     // * Verify Membership Policies page shows "Add policy" when ABAC is enabled
     // Re-apply enable guard: a concurrent shard may have disabled ABAC between the
@@ -93,40 +85,29 @@ test('MM-T5782 System admin can enable or disable system-wide ABAC', async ({pw}
         const cfg = await adminClient.getConfig();
         return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === true;
     });
-    await systemConsolePage.page.goto(
-        generated.AdminConsolePage.path({section: 'system_attributes/membership_policies'}),
-    );
-    await systemConsolePage.page.waitForLoadState('networkidle');
-    await expect(systemConsolePage.page.getByRole('button', {name: 'Add policy'})).toBeVisible();
+    await app.page.goto(MEMBERSHIP_POLICIES_PATH);
+    await expect(app.admin.accessControl.policies.addButton.locator).toBeVisible();
 
     // * Verify Permission Policies page shows "Add policy" when ABAC is enabled
     // This section is only testable when the PermissionPolicies feature flag is on.
     if (await isPermissionPoliciesEnabled(adminClient)) {
-        await systemConsolePage.page.goto(
-            generated.AdminConsolePage.path({section: 'system_attributes/permission_policies'}),
-        );
-        await systemConsolePage.page.waitForLoadState('networkidle');
-        await expect(systemConsolePage.page.getByRole('button', {name: 'Add policy'})).toBeVisible();
+        await app.page.goto(PERMISSION_POLICIES_PATH);
+        await expect(app.admin.permissionPolicies.addButton.locator).toBeVisible();
     }
 
     // # Navigate back to Attribute-Based Access to test disable
-    await systemConsolePage.page.goto(
-        generated.AdminConsolePage.path({section: 'system_attributes/attribute_based_access_control'}),
-    );
-    await systemConsolePage.page.waitForLoadState('networkidle');
+    await app.page.goto(ABAC_SETTINGS_PATH);
 
     // # Test disable ABAC
-    await disableRadio.click();
-    await expect(disableRadio).toBeChecked();
-    await saveButton.click();
-    await systemConsolePage.page.waitForLoadState('networkidle');
+    await setting.falseRadio.check();
+    await expect(setting.falseRadio.locator).toBeChecked();
+    await app.admin.saveButton.click();
+    await expect(app.admin.saveButton.locator).toBeSaved();
 
     // * Verify Membership Policies no longer shows "Add policy" when ABAC is disabled
-    await systemConsolePage.page.goto(
-        generated.AdminConsolePage.path({section: 'system_attributes/membership_policies'}),
-    );
-    await systemConsolePage.page.waitForLoadState('networkidle');
-    await expect(systemConsolePage.page.getByRole('button', {name: 'Add policy'})).not.toBeVisible();
+    await app.page.goto(MEMBERSHIP_POLICIES_PATH);
+    await expect(app.admin.sidebar.locator).toBeVisible();
+    await expect(app.admin.accessControl.policies.addButton.locator).not.toBeVisible();
 
     // # Re-enable ABAC for subsequent tests via API — avoids the race where a concurrent
     // shard's initSetup() re-enables ABAC between the disable save and here, leaving the

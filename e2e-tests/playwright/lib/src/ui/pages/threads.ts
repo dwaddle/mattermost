@@ -33,8 +33,8 @@ export default class ThreadsPage {
 
         // The thread header merges the info and header chip slots into one row.
         this.attributes = new ChannelAttributeLabels(
-            this.threadPane.getByTestId('channelAttributeLabels-info-header'),
-            'info-header',
+            this.threadPane.getByTestId('threads.pane.attributes'),
+            'threads.pane.attributes',
         );
     }
 

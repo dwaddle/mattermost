@@ -9,6 +9,7 @@ import type {Locator, Page} from '@playwright/test';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {OverflowPopover} from './shared';
 import {ThreadMenu} from './thread_menu';
 
 /** The read-only parts of a `threads.list.thread` item. */
@@ -398,6 +399,84 @@ export class ThreadsPane extends Scope {
 
     async clickPopoutButton(): Promise<void> {
         await this.popoutButton.click();
+    }
+
+    /**
+     * `threads.pane.attributes` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0).
+     */
+    get attributes(): ThreadsPaneAttributes {
+        return new ThreadsPaneAttributes(this.page, `${this.scope}.attributes`, this.root);
+    }
+}
+
+/** Scope `threads.pane.attributes`. */
+export class ThreadsPaneAttributes extends Scope {
+    constructor(page: Page, scope = 'threads.pane.attributes', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `threads.pane.attributes.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
+     * Renders only when !(chipSpecs.length === 0) and spec.
+     */
+    chip(chip: number) {
+        return drivers.container(this.byTestId(`${this.scope}.chip:${chip}`), {
+            testId: `${this.scope}.chip:${chip}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip',
+        });
+    }
+
+    /** Every `threads.pane.attributes.chip:{key}` in the scope. */
+    get chipItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.chip:`, '');
+    }
+
+    /** The keys of every `threads.pane.attributes.chip:{key}` in the scope, in document order. */
+    chipKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.chip:`, '');
+    }
+
+    /**
+     * `threads.pane.attributes.overflow--button` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0) and overflowIds.length > 0.
+     */
+    get overflowButton() {
+        return drivers.button(this.byTestId(`${this.scope}.overflow--button`), {
+            testId: `${this.scope}.overflow--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/channel_attribute_labels.tsx#ChannelAttributeLabels',
+        });
+    }
+
+    async clickOverflowButton(): Promise<void> {
+        await this.overflowButton.click();
+    }
+
+    /**
+     * `threads.pane.attributes.overflow_popover` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0) and isMounted.
+     */
+    get overflowPopover(): OverflowPopover {
+        return new OverflowPopover(this.page, `${this.scope}.overflow_popover`, this.root);
+    }
+
+    /** Every `threads.pane.attributes.chip:{key}` in the scope as a list by key, for the list matchers: `expect(x.chipList).toHaveKeys([…])`. */
+    get chipList() {
+        return this.keyedList(`${this.scope}.chip:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.chip:${key}`), {
+                testId: `${this.scope}.chip:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip',
+            }),
+        );
     }
 }
 

@@ -5,6 +5,7 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {PropertyFieldOption} from '@mattermost/types/properties';
 
 import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
@@ -43,7 +44,8 @@ export type SettingsSectionItemFormValues = {
     lastName?: string;
     newEmail?: string;
     username?: string;
-    value?: string;
+    valueCombobox?: string;
+    valueTextbox?: string;
 };
 /** The read-only parts of a `settings.section` item. */
 export type SettingsSectionItemRow = {
@@ -764,6 +766,48 @@ export class SettingsSectionItem extends Scope {
     }
 
     /**
+     * `settings.section.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
+     */
+    choice(choice: Pick<PropertyFieldOption, 'id'>) {
+        return drivers.option(this.byTestId(`${this.scope}.choice:${choice.id}--option`, true), {
+            testId: `${this.scope}.choice:${choice.id}--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions',
+        });
+    }
+
+    /** Every `settings.section.choice:{key}--option` in the scope. */
+    get choiceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** The keys of every `settings.section.choice:{key}--option` in the scope, in document order. */
+    choiceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /**
+     * `settings.section.clear--button` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
+     */
+    get clearButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
+            testId: `${this.scope}.clear--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async clickClearButton(): Promise<void> {
+        await this.clearButton.click();
+    }
+
+    /**
      * `settings.section.confirm_email--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
      * Renders only when active and this.props.user.auth_service === ''.
      */
@@ -1359,6 +1403,24 @@ export class SettingsSectionItem extends Scope {
     }
 
     /**
+     * `settings.section.value--combobox` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
+     */
+    get valueCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.value--combobox`), {
+            testId: `${this.scope}.value--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async chooseValueCombobox(option: string | RegExp): Promise<void> {
+        await this.valueCombobox.choose(option);
+    }
+
+    /**
      * `settings.section.value--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
      * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
      */
@@ -1474,8 +1536,11 @@ export class SettingsSectionItem extends Scope {
         if (values.username !== undefined) {
             await this.usernameTextbox.fill(values.username);
         }
-        if (values.value !== undefined) {
-            await this.valueTextbox.fill(values.value);
+        if (values.valueCombobox !== undefined) {
+            await this.valueCombobox.choose(values.valueCombobox);
+        }
+        if (values.valueTextbox !== undefined) {
+            await this.valueTextbox.fill(values.valueTextbox);
         }
     }
 
@@ -1485,6 +1550,23 @@ export class SettingsSectionItem extends Scope {
             managedByAdmin: await this.managedByAdminText.textIfPresent(),
             serverError: await this.serverErrorText.textIfPresent(),
         };
+    }
+
+    /** Every `settings.section.choice:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.choiceList).toHaveKeys([…])`. */
+    get choiceList() {
+        return this.keyedList(
+            `${this.scope}.choice:`,
+            '--option',
+            (key: string) =>
+                drivers.option(this.byTestId(`${this.scope}.choice:${key}--option`, true), {
+                    testId: `${this.scope}.choice:${key}--option`,
+                    role: 'option',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions',
+                }),
+            true,
+        );
     }
 
     /** Every `settings.section.keyword:{key}--checkbox` in the scope as a list by key, for the list matchers: `expect(x.keywordList).toHaveKeys([…])`. */

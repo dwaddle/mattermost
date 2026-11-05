@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyValue} from '@mattermost/types/properties';
 
 import {useUser} from 'components/common/hooks/useUser';
@@ -18,9 +19,10 @@ type Props = {
     field: PropertyField;
     value?: PropertyValue<unknown>;
     metadata?: UserPropertyMetadata;
+    testIdScope?: TestId;
 };
 
-export default function UserPropertyRenderer({field, value, metadata}: Props) {
+export default function UserPropertyRenderer({field, value, metadata, testIdScope}: Props) {
     const userId = value ? value.value as string : '';
     const user = useUser(userId);
 
@@ -30,6 +32,7 @@ export default function UserPropertyRenderer({field, value, metadata}: Props) {
                 field={field}
                 metadata={metadata}
                 initialValue={userId}
+                testIdScope={testIdScope}
             />
         );
     }
@@ -37,7 +40,7 @@ export default function UserPropertyRenderer({field, value, metadata}: Props) {
     return (
         <div
             className='UserPropertyRenderer'
-            data-testid='user-property'
+            data-testid={testIdScope ? `${testIdScope}.user` : undefined}
         >
             {
                 user &&

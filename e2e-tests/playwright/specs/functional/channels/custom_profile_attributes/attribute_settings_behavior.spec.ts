@@ -2,8 +2,9 @@
 // See LICENSE.txt for license information.
 
 import type {Client4} from '@mattermost/client';
+import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 import type {CpaFieldsMap, CustomProfileAttribute} from './helpers';
 import {
@@ -17,6 +18,24 @@ import {
 // job, breaking unrelated specs whose locators assume a generic set of sections. Track whichever
 // fields the running test owns and delete them afterward.
 let ownedFields: {adminClient: Client4; fields: CpaFieldsMap} | undefined;
+
+// Written on the generated page objects: the account menu's Profile item and the Profile settings' sections keyed by
+// section (a custom attribute's is `customAttribute_<field id>`): title, value, Edit, the value's textbox, Cancel.
+
+/** Logs the user in and opens Profile settings. */
+async function openProfile(pw: PlaywrightExtended, user: UserProfile) {
+    const {app} = await pw.testBrowser.login(user);
+    const team = (await (await pw.makeClient(user)).client.getMyTeams())[0];
+    await app.channelsPage.goto({team, channel: 'town-square'});
+    const modal = await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
+    await expect(modal.locator).toBeVisible();
+    return {app, modal};
+}
+
+/** The Profile settings section of the created attribute (the only field created by the test). */
+function attributeSection(app: App, fields: CpaFieldsMap) {
+    return app.settings.section(`customAttribute_${Object.keys(fields).find((k) => k !== 'ownedIds')}`);
+}
 
 test.afterEach(async () => {
     if (!ownedFields) {
@@ -51,16 +70,13 @@ test(
 
         await setupCustomProfileAttributeValues(userClient, attributes, fields);
         // # Open profile settings containing the maximum-length attribute
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
-        const profileModal = await channelsPage.openProfileModal();
-        // * Verify the full label/value exist and the value uses ellipsis styling
-        await expect(profileModal.sectionHeadings.getByText(displayName, {exact: true})).toBeVisible();
+        const {app} = await openProfile(pw, user);
+        const section = attributeSection(app, fields);
 
-        const displayedValue = profileModal.getAttributeValue(displayName, value);
-        await expect(displayedValue).toBeVisible();
-        await expect(displayedValue).toHaveCSS('text-overflow', 'ellipsis');
+        // * Verify the full label/value exist and the value uses ellipsis styling
+        await expect(section.title.locator).toHaveText(displayName);
+        await expect(section.describe.locator).toHaveText(value);
+        await expect(section.describe.locator).toHaveCSS('text-overflow', 'ellipsis');
     },
 );
 
@@ -89,19 +105,18 @@ test(
         ownedFields = {adminClient, fields};
         await setupCustomProfileAttributeValues(userClient, attributes, fields);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
-        const profileModal = await channelsPage.openProfileModal();
+        const {app} = await openProfile(pw, user);
+        const section = attributeSection(app, fields);
 
         // # Change the unique attribute value, then cancel the edit
-        await profileModal.editAttribute(displayName);
-        await profileModal.getAttributeInput(displayName).fill(`Unsaved ${suffix}`);
-        await profileModal.cancelButton.click();
+        await section.clickEditButton();
+        await section.fillValueTextbox(`Unsaved ${suffix}`);
+        await section.clickCancelButton();
 
         // * Verify editing again shows the original persisted value
-        await profileModal.editAttribute(displayName);
-        await expect(profileModal.getAttributeInput(displayName)).toHaveValue(originalValue);
+        await expect(section.describe.locator).toHaveText(originalValue);
+        await section.clickEditButton();
+        await expect(section.valueTextbox.locator).toHaveValue(originalValue);
     },
 );
 
@@ -130,20 +145,19 @@ test(
         await setupCustomProfileAttributeValues(userClient, attributes, fields);
 
         // # Open the attribute editor and change its unsaved value
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
-        const profileModal = await channelsPage.openProfileModal();
-        await profileModal.editAttribute(displayName);
-        await profileModal.getAttributeInput(displayName).fill('Green');
+        const {app, modal} = await openProfile(pw, user);
+        const section = attributeSection(app, fields);
+        await section.clickEditButton();
+        await section.fillValueTextbox('Green');
 
         // # Delete the attribute concurrently through the admin API
         await adminClient.deleteCustomProfileAttributeField(fieldId);
 
         // * Verify the editor disappears and the application remains usable
-        await expect(profileModal.getAttributeInput(displayName)).not.toBeVisible();
-        await expect(profileModal.closeButton).toBeVisible();
-        await profileModal.closeModal();
-        await channelsPage.toBeVisible();
+        await expect(section.valueTextbox.locator).not.toBeVisible();
+        await expect(modal.closeButton.locator).toBeVisible();
+        await modal.clickCloseButton();
+        await expect(modal.locator).not.toBeVisible();
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
     },
 );

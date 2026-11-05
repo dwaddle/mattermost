@@ -3,6 +3,7 @@
 
 import React, {type ComponentProps} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
 import Timestamp from 'components/timestamp';
@@ -12,13 +13,14 @@ const getDateFormat: ComponentProps<typeof Timestamp>['useDate'] = {weekday: 'lo
 
 type Props = {
     value: PropertyValue<unknown>;
+    testIdScope?: TestId;
 };
 
-export default function TimestampPropertyRenderer({value}: Props) {
+export default function TimestampPropertyRenderer({value, testIdScope}: Props) {
     return (
         <div
             className='TimestampPropertyRenderer'
-            data-testid='timestamp-property'
+            data-testid={testIdScope ? `${testIdScope}.timestamp--text` : undefined}
         >
             <Timestamp
                 value={value.value as number}

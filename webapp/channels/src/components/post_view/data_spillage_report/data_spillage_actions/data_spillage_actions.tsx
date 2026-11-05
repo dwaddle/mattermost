@@ -7,6 +7,7 @@ import {useDispatch} from 'react-redux';
 
 import './data_spillage_actions.scss';
 import {Button} from '@mattermost/compass-ui/components/button';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -20,9 +21,10 @@ import {ModalIdentifiers} from 'utils/constants';
 type Props = {
     flaggedPost: Post;
     reportingUser: UserProfile;
+    testIdScope?: TestId;
 };
 
-export default function DataSpillageAction({flaggedPost, reportingUser}: Props) {
+export default function DataSpillageAction({flaggedPost, reportingUser, testIdScope}: Props) {
     const dispatch = useDispatch();
 
     const handleRemoveMessage = useCallback(() => {
@@ -58,12 +60,12 @@ export default function DataSpillageAction({flaggedPost, reportingUser}: Props) 
     return (
         <div
             className='DataSpillageAction'
-            data-testid='data-spillage-action'
+            data-testid={testIdScope}
         >
             <Button
                 size='small'
                 destructive={true}
-                data-testid='data-spillage-action-remove-message'
+                data-testid={testIdScope ? `${testIdScope}.remove--button` : undefined}
                 onClick={handleRemoveMessage}
             >
                 <FormattedMessage
@@ -75,7 +77,7 @@ export default function DataSpillageAction({flaggedPost, reportingUser}: Props) 
             <Button
                 emphasis='tertiary'
                 size='small'
-                data-testid='data-spillage-action-keep-message'
+                data-testid={testIdScope ? `${testIdScope}.keep--button` : undefined}
                 onClick={handleKeepMessage}
             >
                 <FormattedMessage

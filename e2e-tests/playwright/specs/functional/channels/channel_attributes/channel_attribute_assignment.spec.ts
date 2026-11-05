@@ -16,6 +16,10 @@ import {
     trackChannelCreates,
     valueFor,
 } from './helpers';
+import {openAttributeControl, openChannel, openNewChannelModal, pickListOption} from './surface';
+
+// Written on the generated page objects (through ./surface): the new-channel dialog and its attribute rows keyed by
+// field id (value button, text box), with options picked by name.
 
 test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, () => {
     test.describe.configure({mode: 'serial'});
@@ -59,40 +63,40 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program, caveats, note, userScoped);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const modal = await openNewChannelModal(app);
+            const attribute = (field: {id: string}) => modal.attributes.attribute(field);
 
-            const modal = await channelsPage.openNewChannelModal();
+            const openControl = (field: {id: string}) => openAttributeControl(modal, field);
 
             // Only the channel-scoped attributes belong here; a user attribute in
             // the same group must not leak into channel creation.
-            await expect(page.getByTestId(`channelAttributeRow-${program.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelAttributeRow-${caveats.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelAttributeRow-${note.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelAttributeRow-${userScoped.name}`)).toHaveCount(0);
+            await expect(attribute(program).locator).toBeVisible();
+            await expect(attribute(caveats).locator).toBeVisible();
+            await expect(attribute(note).locator).toBeVisible();
+            await expect(attribute(userScoped).locator).toHaveCount(0);
 
             const displayName = `Attr Channel ${suffix}`;
-            await modal.fillDisplayName(displayName);
+            await modal.fillNameTextbox(displayName);
 
-            await page.getByTestId(`channelAttribute-${program.name}`).click();
-            await page.getByText('AURORA', {exact: true}).click();
+            await openControl(program);
+            await pickListOption(app, 'AURORA');
 
             // The menu closes on each pick, so a multiselect needs reopening to
             // add the second value. Two values is what proves the array shape.
-            await page.getByTestId(`channelAttribute-${caveats.name}`).click();
-            await page.getByText('NOFORN', {exact: true}).click();
-            await page.getByTestId(`channelAttribute-${caveats.name}`).click();
-            await page.getByText('ORCON', {exact: true}).click();
+            await openControl(caveats);
+            await pickListOption(app, 'NOFORN');
+            await openControl(caveats);
+            await pickListOption(app, 'ORCON');
 
-            await page.getByLabel(note.name, {exact: true}).fill('handle with care');
+            await attribute(note).valueTextbox.locator.fill('handle with care');
 
-            await modal.create();
+            await modal.clickConfirmButton();
 
             // The values ride the create request, so the modal closing means the
             // channel and its values both landed. The channel header is already
             // visible from before, so waiting on it proves nothing.
-            await expect(modal.container).not.toBeVisible();
+            await expect(modal.locator).not.toBeVisible();
 
             const channel = await adminClient.getChannelByName(team.id, displayName.toLowerCase().replace(/\s+/g, '-'));
             const values = await readChannelValues(adminClient, channel.id);
@@ -126,21 +130,19 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const modal = await openNewChannelModal(app);
+            const openControl = (field: {id: string}) => openAttributeControl(modal, field);
 
             const displayName = `Attr Private ${suffix}`;
-            await modal.fillDisplayName(displayName);
-            await modal.privateTypeButton.click();
+            await modal.fillNameTextbox(displayName);
+            await modal.type.clickPrivateButton();
 
-            await page.getByTestId(`channelAttribute-${program.name}`).click();
-            await page.getByText('BOREALIS', {exact: true}).click();
+            await openControl(program);
+            await pickListOption(app, 'BOREALIS');
 
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             const channel = await adminClient.getChannelByName(team.id, displayName.toLowerCase().replace(/\s+/g, '-'));
             expect(channel.type).toBe('P');

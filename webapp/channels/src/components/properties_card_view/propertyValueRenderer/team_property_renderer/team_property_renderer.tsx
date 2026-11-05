@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
 import type {TeamFieldMetadata} from 'components/properties_card_view/properties_card_view';
@@ -16,9 +17,10 @@ import './team_property_renderer.scss';
 type Props = {
     value: PropertyValue<unknown>;
     metadata?: TeamFieldMetadata;
+    testIdScope?: TestId;
 };
 
-export default function TeamPropertyRenderer({value, metadata}: Props) {
+export default function TeamPropertyRenderer({value, metadata, testIdScope}: Props) {
     const intl = useIntl();
     const teamId = value.value as string;
     const team = metadata?.team;
@@ -26,7 +28,7 @@ export default function TeamPropertyRenderer({value, metadata}: Props) {
     return (
         <div
             className='TeamPropertyRenderer'
-            data-testid='team-property'
+            data-testid={testIdScope ? `${testIdScope}.team` : undefined}
         >
             {
                 team &&
@@ -36,6 +38,7 @@ export default function TeamPropertyRenderer({value, metadata}: Props) {
                         content={team.display_name}
                         intl={intl}
                         url={imageURLForTeam(team)}
+                        testIdScope={testIdScope ? `${testIdScope}.team` : undefined}
                     />
 
                     {team.display_name}

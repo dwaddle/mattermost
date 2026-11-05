@@ -6,6 +6,7 @@ import {FormattedMessage, defineMessage, defineMessages, useIntl} from 'react-in
 import {useDispatch} from 'react-redux';
 
 import {LockOutlineIcon, PlusIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyFieldOption, PropertyValue} from '@mattermost/types/properties';
 import {supportsOptions} from '@mattermost/types/properties';
 
@@ -86,6 +87,11 @@ const headingMessages: KindMessages = {
 type Props = {
     channelId: string;
 
+    // The block is `<testId>`. Each attribute is `<testId>.attribute:<field id>` (field names are typed by
+    // admins; ids are stable), and its parts are under `<testId>.attribute`. "Add attribute" is
+    // `<testId>.add--button`, opening `<testId>.add_menu`.
+    testId: TestId;
+
     // When true, edits are staged locally rather than saved on each change —
     // the host (e.g. a SaveChangesPanel-driven tab) drives flush/discard through
     // the ref handle and decides when a save actually reaches the server.
@@ -115,7 +121,9 @@ function withPendingValue(attribute: ResolvedChannelAttribute, raw: ChannelAttri
  * its reason rather than hidden: hiding it makes a correctly configured channel
  * look like one missing a marking.
  */
-const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({channelId, deferred, onPendingChange}, ref) => {
+const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({channelId, testId, deferred, onPendingChange}, ref) => {
+    const row = `${testId}.attribute` as const;
+
     const {formatMessage} = useIntl();
     const channelKind = useChannelKind({id: channelId});
     const dispatch = useDispatch();
@@ -307,7 +315,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
         <div
             ref={rootRef}
             className='ChannelInfoAttributes'
-            data-testid='channelInfoAttributes'
+            data-testid={testId}
         >
             <div className='ChannelInfoAttributes__heading'>
                 <FormattedMessage {...headingMessages[channelKind]}/>
@@ -342,6 +350,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                             valueControl = (
                                 <ChannelAttributeRowEditor
                                     key={`${channelId}-${field.id}`}
+                                    testId={row}
                                     field={field}
                                     rawValue={attribute.value?.value}
                                     displayValue={attribute.displayValue}
@@ -361,19 +370,19 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                                         {id: 'channel_attributes.info.edit', defaultMessage: 'Edit {label}'},
                                         {label},
                                     )}
-                                    data-testid={`channelInfoAttributeEdit-${field.name}`}
+                                    data-testid={`${row}.edit--button`}
                                 >
                                     {attribute.displayValue ? (
                                         <span
                                             className='ChannelInfoAttributes__textValue'
-                                            data-testid={`channelInfoAttributeTextValue-${field.name}`}
+                                            data-testid={`${row}.value--text`}
                                         >
                                             {attribute.displayValue}
                                         </span>
                                     ) : (
                                         <span
                                             className='ChannelInfoAttributes__empty'
-                                            data-testid={`channelInfoAttributeUnset-${field.name}`}
+                                            data-testid={`${row}.unset--text`}
                                         >
                                             <FormattedMessage
                                                 id='channel_attributes.info.not_set'
@@ -393,6 +402,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                             valueControl = values.length === 1 ? (
                                 <AttributeChip
                                     className='ChannelInfoAttributes__chip'
+                                    testId={`${row}.chip:0`}
                                     label={label}
                                     value={values[0]}
                                     color={optionColor(attribute)}
@@ -401,10 +411,11 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                                 />
                             ) : (
                                 <span className='ChannelInfoAttributes__chips'>
-                                    {values.map((value) => (
+                                    {values.map((value, index) => (
                                         <AttributeChip
                                             key={`${field.id}:${value}`}
                                             className='ChannelInfoAttributes__chip'
+                                            testId={`${row}.chip:${index}`}
                                             label={label}
                                             value={value}
                                             announceLabel={false}
@@ -417,7 +428,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                             valueControl = (
                                 <span
                                     className='ChannelInfoAttributes__empty'
-                                    data-testid={`channelInfoAttributeUnset-${field.name}`}
+                                    data-testid={`${row}.unset--text`}
                                 >
                                     <FormattedMessage
                                         id='channel_attributes.info.not_set'
@@ -431,14 +442,14 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                             <div
                                 key={field.id}
                                 className='ChannelInfoAttributes__row'
-                                data-testid={`channelInfoAttributeRow-${field.name}`}
+                                data-testid={`${row}:${field.id}`}
                             >
                                 <span className='ChannelInfoAttributes__label'>
                                     {label}
                                     {locked && (
                                         <LockOutlineIcon
                                             size={12}
-                                            data-testid={`channelInfoAttributeLock-${field.name}`}
+                                            data-testid={`${row}.locked`}
                                             aria-label={formatMessage(lockReason)}
                                         />
                                     )}
@@ -452,7 +463,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                                     <span
                                         className='ChannelInfoAttributes__error'
                                         role='alert'
-                                        data-testid={`channelInfoAttributeError-${field.name}`}
+                                        data-testid={`${row}.error--alert`}
                                     >
                                         <FormattedMessage
                                             id='channel_attributes.info.save_failed'
@@ -480,7 +491,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                                     />
                                 </>
                             ),
-                            dataTestId: 'channelInfoAddAttributeButton',
+                            dataTestId: `${testId}.add--button`,
                         }}
                         menu={{
                             id: 'channelInfoAddAttributeMenu',
@@ -491,7 +502,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                             <Menu.Item
                                 key={attribute.field.id}
                                 id={`channelInfoAddAttribute-${attribute.field.name}`}
-                                data-testid={`channelInfoAddAttribute-${attribute.field.name}`}
+                                data-testid={`${testId}.add_menu.attribute:${attribute.field.id}--menuitem`}
                                 onClick={() => handleAdd(attribute.field.id)}
                                 labels={<span>{getPropertyFieldLabel(attribute.field)}</span>}
                             />

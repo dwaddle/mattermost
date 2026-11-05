@@ -1615,7 +1615,7 @@ describe('ChannelSettingsConfigurationTab', () => {
         // The composer is contenteditable, so an edit is a DOM mutation followed by
         // the input event React listens for -- userEvent.clear() has nothing to clear.
         const clearComposer = () => {
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = '';
             fireEvent.input(editor);
         };
@@ -1715,7 +1715,7 @@ describe('ChannelSettingsConfigurationTab', () => {
 
             // Off means off: the section collapses and the blocking error is gone,
             // rather than outliving the state that raised it.
-            expect(screen.queryByTestId('bannerTextEditor')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('channel_settings_modal.configuration.banner_text--textbox')).not.toBeInTheDocument();
             expect(screen.queryByText(/Add banner text, or turn off the channel banner/)).not.toBeInTheDocument();
             expect(screen.getByRole('button', {name: 'Save'})).toBeInTheDocument();
         });
@@ -1726,7 +1726,7 @@ describe('ChannelSettingsConfigurationTab', () => {
             await userEvent.click(screen.getByRole('button', {name: 'Save'}));
             expect(screen.getByText(/Add banner text, or turn off the channel banner/)).toBeInTheDocument();
 
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = 'Restricted';
             fireEvent.input(editor);
 
@@ -1764,7 +1764,7 @@ describe('ChannelSettingsConfigurationTab', () => {
 
             // Turning the banner off is how the author resolves "enabled but empty",
             // so it must not quietly restore the text they just deleted.
-            expect(screen.getByTestId('bannerTextEditor')).toHaveTextContent('');
+            expect(screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox')).toHaveTextContent('');
         });
 
         it('previews the emptied text rather than the saved banner', () => {
@@ -1779,14 +1779,14 @@ describe('ChannelSettingsConfigurationTab', () => {
             renderTab();
             clearComposer();
 
-            expect(screen.getByTestId('bannerPreviewEmptyNotice')).toBeInTheDocument();
-            expect(screen.queryByTestId('bannerAttributePreview')).not.toBeInTheDocument();
+            expect(screen.getByTestId('channel_settings_modal.configuration.banner_preview.empty_notice')).toBeInTheDocument();
+            expect(screen.queryByTestId('channel_settings_modal.configuration.banner_preview')).not.toBeInTheDocument();
         });
 
         it('treats the separators left behind by the last deleted attribute as empty', async () => {
             renderTab();
 
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = ' · ';
             fireEvent.input(editor);
 
@@ -1846,7 +1846,7 @@ describe('ChannelSettingsConfigurationTab', () => {
 
             await userEvent.click(screen.getByTestId('channel_settings_modal.configuration.banner--switch'));
 
-            expect(screen.getByTestId('bannerTextEditor').textContent).not.toBe('');
+            expect(screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox').textContent).not.toBe('');
         });
 
         it('does not refill a banner the channel deliberately emptied', async () => {
@@ -1860,7 +1860,7 @@ describe('ChannelSettingsConfigurationTab', () => {
 
             await userEvent.click(screen.getByTestId('channel_settings_modal.configuration.banner--switch'));
 
-            expect(screen.getByTestId('bannerTextEditor').textContent).toBe('');
+            expect(screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox').textContent).toBe('');
         });
 
         it('stops reporting changes once the emptied banner is saved', async () => {
@@ -1874,7 +1874,7 @@ describe('ChannelSettingsConfigurationTab', () => {
 
             const toggle = screen.getByTestId('channel_settings_modal.configuration.banner--switch');
             await userEvent.click(toggle);
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = '';
             fireEvent.input(editor);
             await userEvent.click(toggle);
@@ -1971,18 +1971,18 @@ describe('ChannelSettingsConfigurationTab', () => {
         it('disables the picker while the banner text would display nothing', () => {
             renderTab();
 
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = '';
             fireEvent.input(editor);
 
-            expect(screen.getByTestId('bannerPreviewEmptyNotice')).toBeInTheDocument();
+            expect(screen.getByTestId('channel_settings_modal.configuration.banner_preview.empty_notice')).toBeInTheDocument();
             expect(screen.getByTestId('channel_settings_modal.configuration.banner_color.value--textbox')).toBeDisabled();
         });
 
         it('unlocks the picker once the classification token is removed', () => {
             renderTab();
 
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = 'Handle with care';
             fireEvent.input(editor);
 
@@ -2053,7 +2053,7 @@ describe('ChannelSettingsConfigurationTab', () => {
                 attributesEnabledState,
             );
 
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = 'Handle with care';
             fireEvent.input(editor);
             await userEvent.click(screen.getByRole('button', {name: 'Save'}));
@@ -2074,7 +2074,7 @@ describe('ChannelSettingsConfigurationTab', () => {
                 expect(screen.queryByText('Settings saved')).not.toBeInTheDocument();
             }, {timeout: 5000});
 
-            const nextEdit = screen.getByTestId('bannerTextEditor');
+            const nextEdit = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             nextEdit.textContent = 'Handle with extra care';
             fireEvent.input(nextEdit);
 
@@ -2161,7 +2161,7 @@ describe('ChannelSettingsConfigurationTab', () => {
             patchChannel.mockReturnValue({type: 'MOCK_ACTION', data: {}});
 
             const {rerender} = renderTab();
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = 'Handle with care';
             fireEvent.input(editor);
             await userEvent.click(screen.getByRole('button', {name: 'Save'}));
@@ -2182,7 +2182,7 @@ describe('ChannelSettingsConfigurationTab', () => {
                 />,
             );
 
-            expect(screen.getByTestId('bannerTextEditor')).toBeInTheDocument();
+            expect(screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox')).toBeInTheDocument();
             await waitFor(() => {
                 expect(screen.queryByText('You have unsaved changes')).not.toBeInTheDocument();
             }, {timeout: 5000});
@@ -2193,7 +2193,7 @@ describe('ChannelSettingsConfigurationTab', () => {
             patchChannel.mockClear();
 
             renderTab();
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = '';
             fireEvent.input(editor);
             await userEvent.click(screen.getByRole('button', {name: 'Save'}));
@@ -2209,7 +2209,7 @@ describe('ChannelSettingsConfigurationTab', () => {
             patchChannel.mockClear();
 
             renderTab();
-            const editor = screen.getByTestId('bannerTextEditor');
+            const editor = screen.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
             editor.textContent = 'Handle with care';
             fireEvent.input(editor);
             await userEvent.click(screen.getByRole('button', {name: 'Save'}));

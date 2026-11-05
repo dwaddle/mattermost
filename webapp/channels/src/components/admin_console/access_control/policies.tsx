@@ -9,6 +9,7 @@ import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {SectionNotice} from '@mattermost/compass-ui/components/section-notice';
 import {GenericModal} from '@mattermost/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AccessControlPolicy} from '@mattermost/types/access_control';
 import {getAutoAddFromRules} from '@mattermost/types/access_control';
 
@@ -42,6 +43,9 @@ type Props = {
     hideHeader?: boolean;
     hideDeleteAction?: boolean;
     showRefreshButton?: boolean;
+
+    // The list's grid; the System Console page's when unset.
+    testIdScope?: TestId;
     actions: {
         searchPolicies: (term: string, type: string, after: string, limit: number) => Promise<ActionResult>;
         deletePolicy: (id: string) => Promise<ActionResult>;
@@ -250,6 +254,8 @@ export default function PolicyList(props: Props): JSX.Element {
         fetchPolicies(search);
     }, [pendingDeletePolicy, search, intl]);
 
+    const testIdScope = props.testIdScope ?? 'admin.access_control.policies';
+
     const getRows = (): Row[] => {
         const policyMenuLabel = intl.formatMessage({
             id: 'admin.access_control.policies.menu.aria_label',
@@ -260,6 +266,7 @@ export default function PolicyList(props: Props): JSX.Element {
             const descriptionId = `customDescription-${policy.id}`;
             const appliedToId = `customAppliedTo-${policy.id}`;
             return {
+                testKey: policy.id,
                 cells: {
                     name: (
                         <div
@@ -284,6 +291,7 @@ export default function PolicyList(props: Props): JSX.Element {
                                     menuButton={{
                                         id: `policy-menu-${policy.id}`,
                                         as: PolicyMenuTrigger,
+                                        dataTestId: `${testIdScope}.row.open_menu--button`,
                                         'aria-label': policyMenuLabel,
                                         children: <Icon glyph={<DotsVerticalIcon/>}/>,
                                     }}
@@ -297,6 +305,7 @@ export default function PolicyList(props: Props): JSX.Element {
                                 >
                                     <Menu.Item
                                         id={`policy-menu-edit-${policy.id}`}
+                                        data-testid={`${testIdScope}.row.menu.edit--menuitem`}
                                         onClick={() => {
                                             if (props.onPolicySelected) {
                                                 props.onPolicySelected(policy, getAutoAddFromRules(policy.rules));
@@ -315,6 +324,7 @@ export default function PolicyList(props: Props): JSX.Element {
                                     {!props.hideDeleteAction && (
                                         <Menu.Item
                                             id={`policy-menu-delete-${policy.id}`}
+                                            data-testid={`${testIdScope}.row.menu.delete--menuitem`}
                                             onClick={() => initiateDelete(policy)}
                                             leadingElement={<i className='icon icon-trash-can-outline'/>}
                                             labels={
@@ -448,6 +458,7 @@ export default function PolicyList(props: Props): JSX.Element {
 
     const dataGrid = (
         <DataGrid
+            testIdScope={testIdScope}
             columns={columns}
             rows={rows}
             loading={loading}
@@ -475,6 +486,7 @@ export default function PolicyList(props: Props): JSX.Element {
 
     const deleteModal = pendingDeletePolicy && (
         <GenericModal
+            testId={`${testIdScope}.delete_modal`}
             onExited={() => {
                 setPendingDeletePolicy(null);
                 setDeleteError(null);
@@ -540,6 +552,7 @@ export default function PolicyList(props: Props): JSX.Element {
             button={
                 <Button
                     emphasis='primary'
+                    data-testid={`${testIdScope}.add--button`}
                     onClick={() => {
                         history.push('/admin_console/system_attributes/membership_policies/edit_policy');
                     }}

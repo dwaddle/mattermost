@@ -78,17 +78,24 @@ const SearchableSyncJobTeamList = (props: Props) => {
         const syncChangesDisplay = teamSyncData ? (
             <div className='changes-cell'>
                 <span className='changes-summary'>
-                    <span className='added'>
+                    <span
+                        className='added'
+                        data-testid='job_details_modal.teams.team.added--text'
+                    >
                         {'+' + (teamSyncData.MembersAdded?.length || 0)}
                     </span>
                     {' / '}
-                    <span className='removed'>
+                    <span
+                        className='removed'
+                        data-testid='job_details_modal.teams.team.removed--text'
+                    >
                         {'-' + (teamSyncData.MembersRemoved?.length || 0)}
                     </span>
                 </span>
                 {teamSyncData.MassRemovalWarning && (
                     <span
                         className='mass-removal-warning'
+                        data-testid='job_details_modal.teams.team.mass_removal_warning'
                         title={props.intl.formatMessage({
                             id: 'admin.jobTable.syncResults.teams.massRemovalWarning',
                             defaultMessage: 'More than 50% of members were removed from this team.',
@@ -105,7 +112,7 @@ const SearchableSyncJobTeamList = (props: Props) => {
                 className='more-modal__row job-sync-row'
                 key={team.id}
                 id={`TeamRow-${team.name}`}
-                data-testid={`TeamRow-${team.name}`}
+                data-testid={`job_details_modal.teams.team:${team.name}`}
                 aria-label={ariaLabel}
                 onClick={() => handleRowClick(team)}
                 tabIndex={0}

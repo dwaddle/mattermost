@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
 import type {ChannelFieldMetadata} from 'components/properties_card_view/properties_card_view';
@@ -14,16 +15,17 @@ import './channel_property_renderer.scss';
 type Props = {
     value: PropertyValue<unknown>;
     metadata?: ChannelFieldMetadata;
+    testIdScope?: TestId;
 };
 
-export default function ChannelPropertyRenderer({value, metadata}: Props) {
+export default function ChannelPropertyRenderer({value, metadata, testIdScope}: Props) {
     const channelId = value.value as string;
     const channel = metadata?.channel;
 
     return (
         <div
             className='ChannelPropertyRenderer'
-            data-testid='channel-property'
+            data-testid={testIdScope ? `${testIdScope}.channel` : undefined}
         >
             {
                 channel &&

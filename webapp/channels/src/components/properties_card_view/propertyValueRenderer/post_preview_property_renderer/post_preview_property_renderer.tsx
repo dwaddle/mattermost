@@ -4,6 +4,7 @@
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostPreviewMetadata} from '@mattermost/types/posts';
 import type {PropertyValue} from '@mattermost/types/properties';
 
@@ -15,9 +16,10 @@ const noop = () => {};
 type Props = {
     value?: PropertyValue<unknown>;
     metadata?: PostPreviewFieldMetadata;
+    testIdScope?: TestId;
 };
 
-export default function PostPreviewPropertyRenderer({metadata}: Props) {
+export default function PostPreviewPropertyRenderer({metadata, testIdScope}: Props) {
     const post = metadata?.post;
     const channel = metadata?.channel;
     const team = metadata?.team;
@@ -48,9 +50,10 @@ export default function PostPreviewPropertyRenderer({metadata}: Props) {
     return (
         <div
             className='PostPreviewPropertyRenderer'
-            data-testid='post-preview-property'
+            data-testid={testIdScope ? `${testIdScope}.post_preview` : undefined}
         >
             <PostMessagePreview
+                testIdScope={testIdScope ? `${testIdScope}.post_preview.post` : undefined}
                 metadata={previewMetaData}
                 handleFileDropdownOpened={noop}
                 preventClickAction={true}

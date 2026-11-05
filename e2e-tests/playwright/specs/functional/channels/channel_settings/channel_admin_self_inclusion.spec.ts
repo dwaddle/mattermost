@@ -8,11 +8,15 @@
  */
 
 import type {Client4} from '@mattermost/client';
-import type {Page} from '@playwright/test';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {ChannelsPage, expect, newTestPassword, test} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, test, type App, type generated} from '@mattermost/playwright-lib';
+
+import {closeSettings, openAccessRules, openChannel} from './access_rules';
+
+// Written on the generated page objects: Channel Settings' access rules tab (its rules table's Test button) and the
+// access rule test results dialog (user search and rows by user).
 
 const PROGRAM_OPTIONS = [
     {name: 'Artemis', color: '#FF8800'},
@@ -130,29 +134,24 @@ async function createChannelAccessRule(
     });
 }
 
-async function openAccessControlSettings(channelsPage: ChannelsPage) {
-    const channelSettings = await channelsPage.openChannelSettings();
-    const accessControlTab = channelSettings.container.getByRole('tab', {name: /Membership Policy/i});
-    await expect(accessControlTab).toBeVisible({timeout: 10000});
-    await accessControlTab.click();
-
-    return channelSettings;
+async function verifyTestAccessRuleDisabled(settings: generated.ChannelSettingsModal) {
+    const {testButton} = settings.accessRules.rules;
+    await expect(testButton.locator).toBeVisible();
+    await expect(testButton.locator).toBeDisabled();
 }
 
-async function verifyTestAccessRuleDisabled(page: Page) {
-    await expect(page.getByRole('button', {name: /Test access rule/i})).toBeDisabled({timeout: 10000});
-}
+async function testAccessRuleAndVerifyUser(app: App, settings: generated.ChannelSettingsModal, user: UserProfile) {
+    const {testButton} = settings.accessRules.rules;
+    await expect(testButton.locator).toBeEnabled();
+    await settings.accessRules.rules.clickTestButton();
 
-async function testAccessRuleAndVerifyUser(page: Page, username: string) {
-    const testButton = page.getByRole('button', {name: /Test access rule/i});
-    await expect(testButton).toBeEnabled({timeout: 10000});
-    await testButton.click();
+    const results = app.policyTestModal;
+    await expect(results.users.searchTextbox.locator).toBeVisible();
+    await results.users.fillSearchTextbox(user.username);
+    await expect(results.users.user(user).locator).toContainText(`@${user.username}`);
 
-    const modal = page.locator('.TestResultsModal').filter({hasText: 'Access Rule Test Results'});
-    await expect(modal).toBeVisible({timeout: 10000});
-
-    await modal.getByRole('textbox', {name: /Search users/i}).fill(username);
-    await expect(modal.getByText(`@${username}`)).toBeVisible({timeout: 10000});
+    await results.clickCloseButton();
+    await expect(results.users.searchTextbox.locator).not.toBeVisible();
 }
 
 test.describe('Channel Settings → Membership Policy', () => {
@@ -203,20 +202,17 @@ test.describe('Channel Settings → Membership Policy', () => {
 
         // Alice can open Channel Settings → Membership Policy as channel admin
         // and test the existing rule through the same UI users exercise.
-        const {page} = await pw.testBrowser.login(alice);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const app = await openChannel(pw, alice, team, channel);
 
-        const excludingRuleSettings = await openAccessControlSettings(channelsPage);
-        await verifyTestAccessRuleDisabled(page);
-        await excludingRuleSettings.close();
+        const excludingRuleSettings = await openAccessRules(app);
+        await verifyTestAccessRuleDisabled(excludingRuleSettings);
+        await closeSettings(excludingRuleSettings);
 
         await createChannelAccessRule(adminClient, channel, twoValueOrExpression);
 
-        const includingRuleSettings = await openAccessControlSettings(channelsPage);
-        await testAccessRuleAndVerifyUser(page, alice.username);
+        const includingRuleSettings = await openAccessRules(app);
+        await testAccessRuleAndVerifyUser(app, includingRuleSettings, alice);
 
-        await includingRuleSettings.close();
+        await closeSettings(includingRuleSettings);
     });
 });

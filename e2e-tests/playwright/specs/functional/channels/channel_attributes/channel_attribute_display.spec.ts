@@ -19,6 +19,20 @@ import {
     purgeAttributes,
     setChannelValue,
 } from './helpers';
+import {
+    add,
+    chip,
+    labelChip,
+    openAttributeControl,
+    openChannel,
+    openChannelInfo,
+    openGlobalThread,
+    openNewChannelModal,
+    openOverflow,
+    pickListOption,
+    row,
+    select,
+} from './surface';
 
 test.describe('Channel attribute display and editing', {tag: ['@channel_attributes']}, () => {
     test.describe.configure({mode: 'serial'});
@@ -62,26 +76,25 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await setChannelValue(adminClient, channel.id, program, optionId(program, 'AURORA'));
             await setChannelValue(adminClient, channel.id, hidden, optionId(hidden, 'QUIET'));
 
-            const {page, channelsPage, app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, user, team, channel);
 
             // Visible to an ordinary member, not just whoever set it. Undesignated
             // values never become chips.
-            const {attributes} = channelsPage.centerView.header;
-            await expect(attributes.chip('AURORA')).toBeVisible();
-            await expect(attributes.chip('QUIET')).toHaveCount(0);
+            const {attributes} = app.channelHeader;
+            await expect(labelChip(attributes, 'AURORA')).toBeVisible();
+            await expect(labelChip(attributes, 'QUIET')).toHaveCount(0);
 
             // Channel Info lists what the channel holds regardless of display
             // designation -- it is the only surface a value can be edited from, so a
             // display setting must not be able to strand one.
-            await page.locator('#channel-info-btn').click();
-            await expect(page.getByTestId('channelInfoAttributes')).toBeVisible();
-            await expect(page.getByTestId(`channelInfoAttributeRow-${program.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelInfoAttributeRow-${hidden.name}`)).toBeVisible();
+            await openChannelInfo(app);
+            await expect(app.rhs.channelInfo.about.attributes.locator).toBeVisible();
+            await expect(row(app.rhs.channelInfo.about.attributes, program).locator).toBeVisible();
+            await expect(row(app.rhs.channelInfo.about.attributes, hidden).locator).toBeVisible();
 
             // A member reads, never writes.
-            await expect(page.getByTestId(`channelInfoAttributeEdit-${hidden.name}`)).toHaveCount(0);
-            await expect(page.getByTestId('channelInfoAddAttributeButton')).toHaveCount(0);
+            await expect(row(app.rhs.channelInfo.about.attributes, hidden).editButton.locator).toHaveCount(0);
+            await expect(app.rhs.channelInfo.about.attributes.addButton.locator).toHaveCount(0);
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -138,36 +151,34 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
                 message: 'Reply',
             });
 
-            const {page, channelsPage, threadsPage, app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, user, team, channel);
 
             // # Open the thread from the channel
-            const post = await channelsPage.centerView.getLastPost();
-            await post.reply();
-            await channelsPage.sidebarRight.toBeVisible();
+            const post = app.center.postList.post(root);
+            await post.locator.hover();
+            await post.menu.clickReplyButton();
+            const threadAttributes = app.rhs.thread.header.attributes;
 
             // * Both chips are on the thread header, scoped to the thread chrome since
             // the channel header behind it carries the same merged row
-            await expect(channelsPage.sidebarRight.threadAttributes.chip('AURORA')).toBeVisible();
-            await expect(channelsPage.sidebarRight.threadAttributes.chip('NOFORN')).toBeVisible();
+            await expect(labelChip(threadAttributes, 'AURORA')).toBeVisible();
+            await expect(labelChip(threadAttributes, 'NOFORN')).toBeVisible();
 
             // # Open the same thread from global Threads, which never mounts the channel header
-            await threadsPage.goto(team.name);
-            await threadsPage.toBeVisible();
-            await threadsPage.selectThread(`Root ${suffix}`);
+            const {threads} = await openGlobalThread(app, team, root);
 
             // * The chips follow the thread rather than the view it was opened from, and
             // the channel name they belong to is still legible beside them
-            await expect(threadsPage.threadPane).toContainText(channel.display_name);
-            await expect(threadsPage.attributes.chip('AURORA')).toBeVisible();
-            await expect(threadsPage.attributes.chip('NOFORN')).toBeVisible();
+            await expect(threads.pane.channelButton.locator).toContainText(channel.display_name);
+            await expect(labelChip(threads.pane.attributes, 'AURORA')).toBeVisible();
+            await expect(labelChip(threads.pane.attributes, 'NOFORN')).toBeVisible();
 
             // * Here they are labels only: Channel Info is bound to the channel being
             // viewed, and this route has none, so a chip must not open a panel that
             // would sit there loading forever
-            await threadsPage.attributes.chip('AURORA').click();
-            await expect(page.locator('#sidebar-right')).toHaveCount(0);
-            await expect(threadsPage.attributes.chip('AURORA')).toBeVisible();
+            await labelChip(threads.pane.attributes, 'AURORA').click();
+            await expect(app.rhs.channelInfo.header.locator).toHaveCount(0);
+            await expect(labelChip(threads.pane.attributes, 'AURORA')).toBeVisible();
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -225,42 +236,34 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
                 message: 'Reply',
             });
 
-            const {page, threadsPage} = await pw.testBrowser.login(user);
-            await threadsPage.goto(team.name);
-            await threadsPage.toBeVisible();
-            await threadsPage.selectThread(`Root ${suffix}`);
+            const {app} = await pw.testBrowser.login(user);
+            const {threads} = await openGlobalThread(app, team, root);
+            const labels = threads.pane.attributes;
 
-            await expect(threadsPage.attributes.chips.first()).toBeVisible();
+            await expect(labels.chipItems.first()).toBeVisible();
 
             // # Narrow the window, staying above the mobile breakpoint
-            await page.setViewportSize({width: 900, height: 800});
+            await app.page.setViewportSize({width: 900, height: 800});
 
             // * Whatever no longer fits is reachable through +N instead of being clipped
-            await expect(threadsPage.attributes.overflowButton).toBeVisible();
-            await expect
-                .poll(() => threadsPage.attributes.chips.count(), {message: 'fewer chips fit the narrower row'})
-                .toBeLessThan(5);
+            await expect(labels.overflowButton.locator).toBeVisible();
+            expect(await labels.chipItems.count()).toBeLessThan(5);
 
             // * The row yields to the thread controls rather than growing over them,
             // which is the invariant the 56px header slot has to hold
-            await expect(threadsPage.followButton).toBeVisible();
-            const rowRight = await threadsPage.attributes.container.evaluate(
-                (row: HTMLElement) => row.getBoundingClientRect().right,
-            );
-            const controlsLeft = await threadsPage.followButton.evaluate(
-                (control: HTMLElement) => control.getBoundingClientRect().left,
-            );
+            const follow = threads.pane.followButton.locator;
+            await expect(follow).toBeVisible();
+            const rowRight = await labels.locator.evaluate((row: HTMLElement) => row.getBoundingClientRect().right);
+            const controlsLeft = await follow.evaluate((control: HTMLElement) => control.getBoundingClientRect().left);
             expect(rowRight).toBeLessThanOrEqual(controlsLeft);
 
-            const paneRight = await threadsPage.threadPane.evaluate(
-                (pane: HTMLElement) => pane.getBoundingClientRect().right,
-            );
-            const controlsRight = await threadsPage.followButton.evaluate(
+            const paneRight = app.page.viewportSize()!.width;
+            const controlsRight = await follow.evaluate(
                 (control: HTMLElement) => control.getBoundingClientRect().right,
             );
             expect(controlsRight).toBeLessThanOrEqual(paneRight);
 
-            const popover = await threadsPage.attributes.openOverflow();
+            const popover = await openOverflow(labels);
             await expect(popover).toContainText('LONG_VALUE_NUMBER_4');
         } finally {
             await deleteAttributes(adminClient, created);
@@ -308,35 +311,31 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             created.push(undesignated);
 
             // # Look at the incomplete channel as an ordinary member
-            const asMember = await pw.testBrowser.login(user);
-            await asMember.channelsPage.goto(team.name, channel.name);
-            await asMember.channelsPage.toBeVisible();
+            const asMember = await openChannel(pw, user, team, channel);
 
             // * The member is told nothing: an unset required attribute is not theirs
             // to fix, and an empty row they cannot fill only reads as a broken channel
-            await asMember.channelsPage.openChannelInfo();
-            await expect(asMember.page.getByTestId(`channelInfoAttributeRow-${undesignated.name}`)).toHaveCount(0);
+            const memberAttributes = await openChannelInfo(asMember);
+            await expect(asMember.rhs.channelInfo.header.locator).toBeVisible();
+            await expect(row(memberAttributes, undesignated).locator).toHaveCount(0);
 
             // # Look at the same channel as the channel admin
-            const {channelsPage, app} = await pw.testBrowser.login(channelAdmin);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, channelAdmin, team, channel);
 
             // * No chips in the header, because nothing was designated
-            await expect(channelsPage.centerView.header.attributes.container).toHaveCount(0);
+            await expect(app.channelHeader.attributes.locator).toHaveCount(0);
 
             // * But the row is there, saying the channel is incomplete, and it can be filled
-            const info = await channelsPage.openChannelInfo();
-            await expect(info.attributes.unset(undesignated.name)).toBeVisible();
-            await info.attributes.select(undesignated.name, 'FILLED');
-            await expect(info.attributes.chip(undesignated.name)).toHaveText('FILLED');
+            const info = {attributes: await openChannelInfo(app)};
+            await expect(row(info.attributes, undesignated).unsetText.locator).toBeVisible();
+            await select(app, info.attributes, undesignated, 'FILLED');
+            await expect(chip(info.attributes, undesignated)).toHaveText('FILLED');
 
             // * And once filled it reaches the member too, still read-only
-            const asMemberAgain = await pw.testBrowser.login(user);
-            await asMemberAgain.channelsPage.goto(team.name, channel.name);
-            await asMemberAgain.channelsPage.toBeVisible();
-            const memberInfo = await asMemberAgain.channelsPage.openChannelInfo();
-            await expect(memberInfo.attributes.chip(undesignated.name)).toHaveText('FILLED');
-            await expect(memberInfo.attributes.editButton(undesignated.name)).toHaveCount(0);
+            const asMemberAgain = await openChannel(pw, user, team, channel);
+            const memberInfo = {attributes: await openChannelInfo(asMemberAgain)};
+            await expect(chip(memberInfo.attributes, undesignated)).toHaveText('FILLED');
+            await expect(row(memberInfo.attributes, undesignated).editButton.locator).toHaveCount(0);
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -389,27 +388,25 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
                 await setChannelValue(adminClient, channel.id, field, optionId(field, `LONG_VALUE_NUMBER_${i}`));
             }
 
-            const {page, channelsPage, app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, user, team, channel);
 
-            const infoButton = page.locator('#channel-info-btn');
-            const labels = channelsPage.centerView.header.attributes;
-            const row = labels.visibleRow;
+            const infoButton = app.channelHeader.infoButton.locator;
+            const labels = app.channelHeader.attributes;
 
-            await expect(page.getByTestId('attributeChip').first()).toBeVisible();
+            await expect(labels.chipItems.first()).toBeVisible();
             const wideX = (await infoButton.boundingBox())?.x ?? 0;
 
             // The invariant, at every width: the row never scrolls. A chip clipped by
             // overflow:hidden with no +N beside it is a marking silently hidden.
             // Narrow, but still desktop: below 768px the header switches to the mobile
             // layout and the icon row is not rendered at all.
-            await page.setViewportSize({width: 800, height: 800});
+            await app.page.setViewportSize({width: 800, height: 800});
 
-            await expect(labels.overflowButton).toBeVisible();
+            await expect(labels.overflowButton.locator).toBeVisible();
 
             // Fewer chips shown than exist, and the remainder is reachable. Polled:
             // the strip re-measures after the resize.
-            const visibleChips = row.getByTestId('attributeChip');
+            const visibleChips = labels.chipItems;
             await expect.poll(() => visibleChips.count()).toBeLessThan(5);
             await expect.poll(() => visibleChips.count()).toBeGreaterThan(0);
 
@@ -420,13 +417,13 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
 
             // The row is bounded by its container: whatever it cannot show goes to
             // the popover rather than spilling across the header.
-            const spill = await row.evaluate((el: HTMLElement) => {
-                const parent = el.parentElement!.parentElement!;
+            const spill = await labels.locator.evaluate((el: HTMLElement) => {
+                const parent = el.parentElement!;
                 return el.getBoundingClientRect().right - parent.getBoundingClientRect().right;
             });
             expect(spill).toBeLessThanOrEqual(1);
 
-            await labels.openOverflow();
+            await openOverflow(labels);
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -465,13 +462,12 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, locked, optionId(locked, 'FIXED'));
 
-            const {page, app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: channel.name});
-            await page.locator('#channel-info-btn').click();
+            const app = await openChannel(pw, user, team, channel);
+            await openChannelInfo(app);
 
             // Shown with the reason: hiding it looks like a missing marking.
-            await expect(page.getByTestId(`channelInfoAttributeRow-${locked.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelInfoAttributeEdit-${locked.name}`)).toHaveCount(0);
+            await expect(row(app.rhs.channelInfo.about.attributes, locked).locator).toBeVisible();
+            await expect(row(app.rhs.channelInfo.about.attributes, locked).editButton.locator).toHaveCount(0);
 
             // The key is type-validated, so a truthy string cannot smuggle past it.
             await expect(
@@ -511,24 +507,22 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(optional);
 
-            const {page, channelsPage, app} = await pw.testBrowser.login(user);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const modal = await openNewChannelModal(app);
             const displayName = `Attr Optional ${suffix}`;
-            await modal.fillDisplayName(displayName);
+            await modal.fillNameTextbox(displayName);
 
             // Optional attributes are not asked for at creation.
-            await expect(page.getByTestId(`channelAttributeRow-${optional.name}`)).toHaveCount(0);
+            await expect(modal.nameTextbox.locator).toHaveValue(displayName);
+            await expect(modal.attributes.attribute(optional).locator).toHaveCount(0);
 
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
-            const info = await channelsPage.openChannelInfo();
-            await info.attributes.add(optional.name, 'LATER');
+            const info = {attributes: await openChannelInfo(app)};
+            await add(app, info.attributes, optional, 'LATER');
 
-            await expect(page.getByTestId(`channelInfoAttributeRow-${optional.name}`)).toContainText('LATER');
+            await expect(row(app.rhs.channelInfo.about.attributes, optional).locator).toContainText('LATER');
 
             const channel = await adminClient.getChannelByName(team.id, displayName.toLowerCase().replace(/\s+/g, '-'));
             await expect
@@ -572,11 +566,10 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'RESTRICTED'));
 
-            const {page, app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, user, team, channel);
 
             // Falls back to the value name, reproducing today's classification banner.
-            await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('RESTRICTED');
+            await expect(app.center.channelBanner.textText.locator).toContainText('RESTRICTED');
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -606,28 +599,25 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(caveats);
 
-            const {page, channelsPage, app} = await pw.testBrowser.login(user);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
-            await modal.fillDisplayName(`Attr Banner Multi ${suffix}`);
+            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const modal = await openNewChannelModal(app);
+            await modal.fillNameTextbox(`Attr Banner Multi ${suffix}`);
 
             // The menu closes on each pick, so the second value needs it reopened.
-            await page.getByTestId(`channelAttribute-${caveats.name}`).click();
-            await page.getByText('NOFORN', {exact: true}).click();
-            await page.getByTestId(`channelAttribute-${caveats.name}`).click();
-            await page.getByText('ORCON', {exact: true}).click();
+            await openAttributeControl(modal, caveats);
+            await pickListOption(app, 'NOFORN');
+            await openAttributeControl(modal, caveats);
+            await pickListOption(app, 'ORCON');
 
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             // No reload, no Channel Settings visit: creation alone has to banner it.
-            await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('NOFORN, ORCON');
+            await expect(app.center.channelBanner.textText.locator).toContainText('NOFORN, ORCON');
 
             // Selections may each carry a different colour, so none of them wins and
             // the banner falls back rather than rendering transparent.
-            await expect(page.getByTestId('center.channel_banner')).toHaveCSS('background-color', 'rgb(221, 221, 221)');
+            await expect(app.center.channelBanner.locator).toHaveCSS('background-color', 'rgb(221, 221, 221)');
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -654,19 +644,16 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(note);
 
-            const {page, channelsPage, app} = await pw.testBrowser.login(user);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
+            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const modal = await openNewChannelModal(app);
+            await modal.fillNameTextbox(`Attr Banner Text ${suffix}`);
+            await modal.attributes.attribute(note).fillValueTextbox('HANDLE WITH CARE');
 
-            const modal = await channelsPage.openNewChannelModal();
-            await modal.fillDisplayName(`Attr Banner Text ${suffix}`);
-            await page.getByLabel(note.name, {exact: true}).fill('HANDLE WITH CARE');
-
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             // A text attribute has no options, so the stored string is the banner.
-            await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('HANDLE WITH CARE');
+            await expect(app.center.channelBanner.textText.locator).toContainText('HANDLE WITH CARE');
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -703,20 +690,19 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, adminOnly, optionId(adminOnly, 'SET'));
 
-            const {page, app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: channel.name});
-            await page.locator('#channel-info-btn').click();
+            const app = await openChannel(pw, user, team, channel);
+            await openChannelInfo(app);
 
-            await expect(page.getByTestId(`channelInfoAttributeRow-${adminOnly.name}`)).toContainText('SET');
-            await expect(page.getByTestId(`channelInfoAttributeEdit-${adminOnly.name}`)).toHaveCount(0);
+            await expect(row(app.rhs.channelInfo.about.attributes, adminOnly).locator).toContainText('SET');
+            await expect(row(app.rhs.channelInfo.about.attributes, adminOnly).editButton.locator).toHaveCount(0);
 
             // Asserted per attribute rather than on the button as a whole: the button
             // is shared, so any other attribute this user *can* set would keep it on
             // screen and say nothing about this one.
-            const addButton = page.getByTestId('channelInfoAddAttributeButton');
+            const addButton = app.rhs.channelInfo.about.attributes.addButton.locator;
             if (await addButton.count()) {
                 await addButton.click();
-                await expect(page.getByTestId(`channelInfoAddAttribute-${adminOnly.name}`)).toHaveCount(0);
+                await expect(app.rhs.channelInfo.about.attributes.addMenu.attribute(adminOnly).locator).toHaveCount(0);
             }
         } finally {
             await deleteAttributes(adminClient, created);

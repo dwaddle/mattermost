@@ -5,18 +5,24 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {PropertyField} from '@mattermost/types/properties';
 
 import {Scope, drivers} from '../../aria';
 
 import {ArchiveChannelModal} from './archive_channel_modal';
 import {Markdown} from './markdown';
 import {
+    AlertBanner,
     CategorySelector,
-    ChannelSettingsModalConfigurationBannerText,
+    ChannelInfoAttributes,
+    ChannelSettingsModalInfoHeader,
     ColorInput,
     DropdownInput,
     Input,
+    Rules,
     SavePanel,
+    SelfExclusionModal,
+    Suggestions,
     Tabs,
     Url,
 } from './shared';
@@ -62,6 +68,13 @@ export class ChannelSettingsModal extends Scope {
     }
 
     /**
+     * `channel_settings_modal.access_rules` — ChannelSettingsAccessRulesTab (channels/src/components/channel_settings_modal/channel_settings_access_rules_tab.tsx)
+     */
+    get accessRules(): ChannelSettingsModalAccessRules {
+        return new ChannelSettingsModalAccessRules(this.page, `${this.scope}.access_rules`, this.root);
+    }
+
+    /**
      * `channel_settings_modal.archive` — ChannelSettingsArchiveTab (channels/src/components/channel_settings_modal/channel_settings_archive_tab.tsx)
      */
     get archive(): ChannelSettingsModalArchive {
@@ -82,6 +95,10 @@ export class ChannelSettingsModal extends Scope {
         return new ChannelSettingsModalInfo(this.page, `${this.scope}.info`, this.root);
     }
 
+    get permissionsPolicy(): ChannelSettingsModalPermissionsPolicy {
+        return new ChannelSettingsModalPermissionsPolicy(this.page, `${this.scope}.permissions_policy`, this.root);
+    }
+
     /**
      * `channel_settings_modal.save_panel` — SaveChangesPanel (channels/src/components/widgets/modals/components/save_changes_panel.tsx)
      */
@@ -91,6 +108,67 @@ export class ChannelSettingsModal extends Scope {
 
     get tabs(): Tabs {
         return new Tabs(this.page, `${this.scope}.tabs`, this.root);
+    }
+}
+
+/** Scope `channel_settings_modal.access_rules`. */
+export class ChannelSettingsModalAccessRules extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.access_rules', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_settings_modal.access_rules.auto_sync--checkbox` — ChannelSettingsAccessRulesTab (channels/src/components/channel_settings_modal/channel_settings_access_rules_tab.tsx)
+     */
+    get autoSyncCheckbox() {
+        return drivers.checkbox(this.byTestId(`${this.scope}.auto_sync--checkbox`), {
+            testId: `${this.scope}.auto_sync--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_access_rules_tab.tsx#ChannelSettingsAccessRulesTab',
+        });
+    }
+
+    async setAutoSyncCheckbox(on: boolean): Promise<void> {
+        await this.autoSyncCheckbox.set(on);
+    }
+
+    /**
+     * `channel_settings_modal.access_rules.locked_rules` — ChannelSettingsAccessRulesTab (channels/src/components/channel_settings_modal/channel_settings_access_rules_tab.tsx)
+     * Renders only when rulesLocked.
+     */
+    get lockedRules() {
+        return drivers.container(this.byTestId(`${this.scope}.locked_rules`), {
+            testId: `${this.scope}.locked_rules`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_access_rules_tab.tsx#ChannelSettingsAccessRulesTab',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.access_rules.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when attributesLoaded && rulesEditable.
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
+    }
+
+    /**
+     * `channel_settings_modal.access_rules.self_exclusion_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get selfExclusionModal(): SelfExclusionModal {
+        return new SelfExclusionModal(this.page, `${this.scope}.self_exclusion_modal`, this.root);
+    }
+
+    /**
+     * `channel_settings_modal.access_rules.system_policies` — AlertBanner (channels/src/components/alert_banner/index.tsx)
+     * Renders only when !policiesLoading && systemPolicies.length > 0 and !(safePolicies.length === 0).
+     */
+    get systemPolicies(): AlertBanner {
+        return new AlertBanner(this.page, `${this.scope}.system_policies`, this.root);
     }
 }
 
@@ -243,6 +321,14 @@ export class ChannelSettingsModalConfiguration extends Scope {
         return new ColorInput(this.page, `${this.scope}.banner_color`, this.root);
     }
 
+    /**
+     * `channel_settings_modal.configuration.banner_preview` — BannerPreview (channels/src/components/channel_attributes/banner_preview.tsx)
+     * Renders only when rendered and canManageBanner and bannerSectionOn.
+     */
+    get bannerPreview(): ChannelSettingsModalConfigurationBannerPreview {
+        return new ChannelSettingsModalConfigurationBannerPreview(this.page, `${this.scope}.banner_preview`, this.root);
+    }
+
     get bannerText(): ChannelSettingsModalConfigurationBannerText {
         return new ChannelSettingsModalConfigurationBannerText(this.page, `${this.scope}.banner_text`, this.root);
     }
@@ -314,6 +400,295 @@ export class ChannelSettingsModalConfiguration extends Scope {
     /** `markdown` rendered inside this element. */
     get markdown(): Markdown {
         return Markdown.within(this.locator);
+    }
+}
+
+/** Scope `channel_settings_modal.configuration.banner_preview`. */
+export class ChannelSettingsModalConfigurationBannerPreview extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.configuration.banner_preview', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_preview.empty_notice` — BannerPreview (channels/src/components/channel_attributes/banner_preview.tsx)
+     * Renders only when !rendered and canManageBanner and bannerSectionOn.
+     */
+    get emptyNotice() {
+        return drivers.container(this.byTestId(`${this.scope}.empty_notice`), {
+            testId: `${this.scope}.empty_notice`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/banner_preview.tsx#BannerPreview',
+        });
+    }
+}
+
+/** Scope `channel_settings_modal.configuration.banner_text`. */
+export class ChannelSettingsModalConfigurationBannerText extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.configuration.banner_text', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.description--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     */
+    get descriptionText() {
+        return drivers.text(this.byTestId(`${this.scope}.description--text`), {
+            testId: `${this.scope}.description--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
+        });
+    }
+
+    getDescriptionText(): Promise<string> {
+        return this.descriptionText.text();
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.error--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.insert--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when !(suggestions.length === 0) and canManageBanner and bannerSectionOn.
+     * Opens menu bannerAttributeTokenMenu (`channel_settings_modal.configuration.banner_text.insert_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get insertButton() {
+        return drivers.button(this.byTestId(`${this.scope}.insert--button`), {
+            testId: `${this.scope}.insert--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks insertButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickInsertButton(): Promise<ChannelSettingsModalConfigurationBannerTextInsertMenu> {
+        await this.insertButton.click();
+        return new ChannelSettingsModalConfigurationBannerTextInsertMenu(this.page, `${this.scope}.insert_menu`);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.preview` — Textbox (channels/src/components/textbox/textbox.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     */
+    get preview() {
+        return drivers.container(this.byTestId(`${this.scope}.preview`), {
+            testId: `${this.scope}.preview`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/textbox/textbox.tsx#Textbox',
+        });
+    }
+
+    get insertMenu(): ChannelSettingsModalConfigurationBannerTextInsertMenu {
+        return new ChannelSettingsModalConfigurationBannerTextInsertMenu(this.page, `${this.scope}.insert_menu`);
+    }
+
+    get suggestions(): Suggestions {
+        return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.token:{key}` — BannerTextEditor (channels/src/components/channel_attributes/banner_text_editor.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and channelAttributesEnabled.
+     */
+    token(token: number): ChannelSettingsModalConfigurationBannerTextToken {
+        return new ChannelSettingsModalConfigurationBannerTextToken(
+            this.page,
+            `${this.scope}.token`,
+            this.byTestId(`${this.scope}.token:${token}`),
+        );
+    }
+
+    /** Every `channel_settings_modal.configuration.banner_text.token:{key}` in the scope. */
+    get tokenItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.token:`, '');
+    }
+
+    /** The keys of every `channel_settings_modal.configuration.banner_text.token:{key}` in the scope, in document order. */
+    tokenKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.token:`, '');
+    }
+
+    /** Every `channel_settings_modal.configuration.banner_text.token:{key}` in the scope as a list by key, for the list matchers: `expect(x.tokenList).toHaveKeys([…])`. */
+    get tokenList() {
+        return this.keyedList(
+            `${this.scope}.token:`,
+            '',
+            (key: string) =>
+                new ChannelSettingsModalConfigurationBannerTextToken(
+                    this.page,
+                    `${this.scope}.token`,
+                    this.byTestId(`${this.scope}.token:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `channel_settings_modal.configuration.banner_text.insert_menu`. */
+export class ChannelSettingsModalConfigurationBannerTextInsertMenu extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.configuration.banner_text.insert_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.insert_menu.attribute:{key}--menuitem` — BannerTokenControls (channels/src/components/channel_attributes/banner_token_controls.tsx)
+     * Renders only when !(suggestions.length === 0) and canManageBanner and bannerSectionOn.
+     */
+    attribute(attribute: Pick<PropertyField, 'id'>): ChannelSettingsModalConfigurationBannerTextInsertMenuAttribute {
+        return new ChannelSettingsModalConfigurationBannerTextInsertMenuAttribute(
+            this.page,
+            `${this.scope}.attribute`,
+            this.byTestId(`${this.scope}.attribute:${attribute.id}--menuitem`),
+        );
+    }
+
+    /** Every `channel_settings_modal.configuration.banner_text.insert_menu.attribute:{key}--menuitem` in the scope. */
+    get attributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.attribute:`, '--menuitem');
+    }
+
+    /** The keys of every `channel_settings_modal.configuration.banner_text.insert_menu.attribute:{key}--menuitem` in the scope, in document order. */
+    attributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.attribute:`, '--menuitem');
+    }
+
+    /** Every `channel_settings_modal.configuration.banner_text.insert_menu.attribute:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.attributeList).toHaveKeys([…])`. */
+    get attributeList() {
+        return this.keyedList(
+            `${this.scope}.attribute:`,
+            '--menuitem',
+            (key: string) =>
+                new ChannelSettingsModalConfigurationBannerTextInsertMenuAttribute(
+                    this.page,
+                    `${this.scope}.attribute`,
+                    this.byTestId(`${this.scope}.attribute:${key}--menuitem`),
+                ),
+        );
+    }
+}
+
+/** Scope `channel_settings_modal.configuration.banner_text.insert_menu.attribute`. */
+export class ChannelSettingsModalConfigurationBannerTextInsertMenuAttribute extends Scope {
+    constructor(
+        page: Page,
+        scope = 'channel_settings_modal.configuration.banner_text.insert_menu.attribute',
+        root?: Locator,
+    ) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.insert_menu.attribute:{key}--menuitem` — BannerTokenControls (channels/src/components/channel_attributes/banner_token_controls.tsx)
+     * Renders only when !(suggestions.length === 0) and canManageBanner and bannerSectionOn.
+     */
+    get menuItem() {
+        return drivers.menuitem(this.root, {
+            testId: 'channel_settings_modal.configuration.banner_text.insert_menu.attribute:{key}--menuitem',
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/banner_token_controls.tsx#BannerTokenControls',
+        });
+    }
+
+    async clickMenuItem(): Promise<void> {
+        await this.menuItem.click();
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.insert_menu.attribute.unset` — UnsetValueIndicator (channels/src/components/channel_attributes/unset_value_indicator.tsx)
+     * Renders only when !(suggestions.length === 0) and !suggestion.value and canManageBanner.
+     */
+    get unset() {
+        return drivers.container(this.byTestId(`${this.scope}.unset`), {
+            testId: `${this.scope}.unset`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/unset_value_indicator.tsx#UnsetValueIndicator',
+        });
+    }
+}
+
+/** Scope `channel_settings_modal.configuration.banner_text.token`. */
+export class ChannelSettingsModalConfigurationBannerTextToken extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.configuration.banner_text.token', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.token:{key}` — BannerTextEditor (channels/src/components/channel_attributes/banner_text_editor.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and channelAttributesEnabled.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'channel_settings_modal.configuration.banner_text.token:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/banner_text_editor.tsx#BannerTextEditor',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.token.remove--button` — BannerTextEditor (channels/src/components/channel_attributes/banner_text_editor.tsx)
+     * Renders only when !disabled and canManageBanner and bannerSectionOn.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_attributes/banner_text_editor.tsx#BannerTextEditor',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
     }
 }
 
@@ -477,6 +852,14 @@ export class ChannelSettingsModalInfo extends Scope {
     }
 
     /**
+     * `channel_settings_modal.info.attributes` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and !isDMorGroupChannel.
+     */
+    get attributes(): ChannelInfoAttributes {
+        return new ChannelInfoAttributes(this.page, `${this.scope}.attributes`, this.root);
+    }
+
+    /**
      * `channel_settings_modal.info.default_category` — CategorySelector (channels/src/components/category_selector/category_selector.tsx)
      * Renders only when showDefaultCategoryField.
      */
@@ -484,8 +867,8 @@ export class ChannelSettingsModalInfo extends Scope {
         return new CategorySelector(this.page, `${this.scope}.default_category`, this.root);
     }
 
-    get header(): ChannelSettingsModalConfigurationBannerText {
-        return new ChannelSettingsModalConfigurationBannerText(this.page, `${this.scope}.header`, this.root);
+    get header(): ChannelSettingsModalInfoHeader {
+        return new ChannelSettingsModalInfoHeader(this.page, `${this.scope}.header`, this.root);
     }
 
     /**
@@ -500,8 +883,8 @@ export class ChannelSettingsModalInfo extends Scope {
         return new Input(this.page, `${this.scope}.name`, this.root);
     }
 
-    get purpose(): ChannelSettingsModalConfigurationBannerText {
-        return new ChannelSettingsModalConfigurationBannerText(this.page, `${this.scope}.purpose`, this.root);
+    get purpose(): ChannelSettingsModalInfoHeader {
+        return new ChannelSettingsModalInfoHeader(this.page, `${this.scope}.purpose`, this.root);
     }
 
     get url(): Url {
@@ -543,5 +926,369 @@ export class ChannelSettingsModalInfo extends Scope {
     /** `markdown` rendered inside this element. */
     get markdown(): Markdown {
         return Markdown.within(this.locator);
+    }
+}
+
+/** Scope `channel_settings_modal.permissions_policy`. */
+export class ChannelSettingsModalPermissionsPolicy extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.permissions_policy', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.add_rule--button` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     */
+    get addRuleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_rule--button`), {
+            testId: `${this.scope}.add_rule--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+        });
+    }
+
+    async clickAddRuleButton(): Promise<void> {
+        await this.addRuleButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.list` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     */
+    get list() {
+        return drivers.container(this.byTestId(`${this.scope}.list`), {
+            testId: `${this.scope}.list`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.load_error--text` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when loadError.
+     */
+    get loadErrorText() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--text`), {
+            testId: `${this.scope}.load_error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+        });
+    }
+
+    getLoadErrorText(): Promise<string> {
+        return this.loadErrorText.text();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.or_hint--text` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when showOrHint.
+     */
+    get orHintText() {
+        return drivers.text(this.byTestId(`${this.scope}.or_hint--text`), {
+            testId: `${this.scope}.or_hint--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+        });
+    }
+
+    getOrHintText(): Promise<string> {
+        return this.orHintText.text();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.search--textbox` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.system_banner` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when systemPolicies.length > 0.
+     */
+    get systemBanner() {
+        return drivers.container(this.byTestId(`${this.scope}.system_banner`), {
+            testId: `${this.scope}.system_banner`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null.
+     */
+    get editor(): ChannelSettingsModalPermissionsPolicyEditor {
+        return new ChannelSettingsModalPermissionsPolicyEditor(this.page, `${this.scope}.editor`, this.root);
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.rules` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     */
+    get rules(): ChannelSettingsModalPermissionsPolicyRules {
+        return new ChannelSettingsModalPermissionsPolicyRules(this.page, `${this.scope}.rules`, this.root);
+    }
+}
+
+/** Scope `channel_settings_modal.permissions_policy.editor`. */
+export class ChannelSettingsModalPermissionsPolicyEditor extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.permissions_policy.editor', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.add_permission--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when availableToAdd.length > 0.
+     * Opens menu cpp-add-permission-menu.
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get addPermissionButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_permission--button`), {
+            testId: `${this.scope}.add_permission--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    async clickAddPermissionButton(): Promise<void> {
+        await this.addPermissionButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.cancel--button` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#PermissionRuleEditor',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.error--text` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null and error.
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#PermissionRuleEditor',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.expression` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null.
+     */
+    get expression() {
+        return drivers.container(this.byTestId(`${this.scope}.expression`), {
+            testId: `${this.scope}.expression`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#PermissionRuleEditor',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.name--textbox` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null.
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#PermissionRuleEditor',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.role--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu cpp-role-selector-menu.
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get roleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.role--button`), {
+            testId: `${this.scope}.role--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    async clickRoleButton(): Promise<void> {
+        await this.roleButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.save--button` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null.
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#PermissionRuleEditor',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.permissions` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null.
+     */
+    get permissions(): ChannelSettingsModalPermissionsPolicyEditorPermissions {
+        return new ChannelSettingsModalPermissionsPolicyEditorPermissions(
+            this.page,
+            `${this.scope}.permissions`,
+            this.root,
+        );
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when attributesLoaded.
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
+    }
+}
+
+/** Scope `channel_settings_modal.permissions_policy.editor.permissions`. */
+export class ChannelSettingsModalPermissionsPolicyEditorPermissions extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.permissions_policy.editor.permissions', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.editor.permissions.permission:{key}` — PermissionRuleEditor (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when editingKey !== null and !(draft.actions.length === 0).
+     */
+    permission(permission: string) {
+        return drivers.container(this.byTestId(`${this.scope}.permission:${permission}`), {
+            testId: `${this.scope}.permission:${permission}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#PermissionRuleEditor',
+        });
+    }
+
+    /** Every `channel_settings_modal.permissions_policy.editor.permissions.permission:{key}` in the scope. */
+    get permissionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.permission:`, '');
+    }
+
+    /** The keys of every `channel_settings_modal.permissions_policy.editor.permissions.permission:{key}` in the scope, in document order. */
+    permissionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.permission:`, '');
+    }
+
+    /** Every `channel_settings_modal.permissions_policy.editor.permissions.permission:{key}` in the scope as a list by key, for the list matchers: `expect(x.permissionList).toHaveKeys([…])`. */
+    get permissionList() {
+        return this.keyedList(`${this.scope}.permission:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.permission:${key}`), {
+                testId: `${this.scope}.permission:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#PermissionRuleEditor',
+            }),
+        );
+    }
+}
+
+/** Scope `channel_settings_modal.permissions_policy.rules`. */
+export class ChannelSettingsModalPermissionsPolicyRules extends Scope {
+    constructor(page: Page, scope = 'channel_settings_modal.permissions_policy.rules', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `channel_settings_modal.permissions_policy.rules.rule:{key}` — ChannelSettingsPermissionsPolicyTab (channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx)
+     * Renders only when !(pagedRules.length === 0).
+     */
+    rule(rule: string) {
+        return drivers.container(this.byTestId(`${this.scope}.rule:${rule}`), {
+            testId: `${this.scope}.rule:${rule}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+        });
+    }
+
+    /** Every `channel_settings_modal.permissions_policy.rules.rule:{key}` in the scope. */
+    get ruleItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.rule:`, '');
+    }
+
+    /** The keys of every `channel_settings_modal.permissions_policy.rules.rule:{key}` in the scope, in document order. */
+    ruleKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.rule:`, '');
+    }
+
+    /** Every `channel_settings_modal.permissions_policy.rules.rule:{key}` in the scope as a list by key, for the list matchers: `expect(x.ruleList).toHaveKeys([…])`. */
+    get ruleList() {
+        return this.keyedList(`${this.scope}.rule:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.rule:${key}`), {
+                testId: `${this.scope}.rule:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/channel_settings_modal/channel_settings_permissions_policy_tab.tsx#ChannelSettingsPermissionsPolicyTab',
+            }),
+        );
     }
 }

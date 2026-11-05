@@ -24,7 +24,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.type(screen.getByTestId('attributeOptionsValues__addInput'), 'Marketing{Enter}');
+        await userEvent.type(screen.getByTestId('admin.attribute.values.add--textbox'), 'Marketing{Enter}');
 
         expect(onOptionsChange).toHaveBeenCalledWith([{id: '', name: 'Marketing'}]);
     });
@@ -38,7 +38,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.type(screen.getByTestId('attributeOptionsValues__addInput'), 'Marketing');
+        await userEvent.type(screen.getByTestId('admin.attribute.values.add--textbox'), 'Marketing');
         await userEvent.tab();
 
         expect(onOptionsChange).toHaveBeenCalledWith([...baseOptions(), {id: '', name: 'Marketing'}]);
@@ -53,7 +53,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.type(screen.getByTestId('attributeOptionsValues__addInput'), 'Engineering{Enter}');
+        await userEvent.type(screen.getByTestId('admin.attribute.values.add--textbox'), 'Engineering{Enter}');
 
         expect(onOptionsChange).not.toHaveBeenCalled();
         expect(screen.getByText('Values must be unique.')).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe('AttributeOptionsValues', () => {
             </>,
         );
 
-        await userEvent.type(screen.getByTestId('attributeOptionsValues__addInput'), 'Engineering');
+        await userEvent.type(screen.getByTestId('admin.attribute.values.add--textbox'), 'Engineering');
         await userEvent.tab();
 
         expect(onOptionsChange).not.toHaveBeenCalled();
@@ -101,7 +101,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('attribute-option-chip-1'));
+        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Discarded{Escape}');
@@ -119,7 +119,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('attribute-option-chip-1'));
+        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Engineering{Enter}');
@@ -137,7 +137,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('attribute-option-chip-1'));
+        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Marketing{Enter}');
@@ -157,7 +157,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('attribute-option-chip-1'));
+        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
         await userEvent.click(screen.getByText('Move to position'));
         await userEvent.click(screen.getByRole('menuitemradio', {name: '1'}));
 
@@ -179,7 +179,7 @@ describe('AttributeOptionsValues', () => {
         const list = screen.getByRole('list', {name: 'Options'});
         expect(list).toHaveTextContent('EngineeringSales');
         expect(screen.getAllByRole('listitem')).toHaveLength(2);
-        expect(screen.queryByTestId('attributeOptionsValues__addInput')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.values.add--textbox')).not.toBeInTheDocument();
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
@@ -192,6 +192,6 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        expect(screen.getByTestId('attributeOptionsValues')).toBeEmptyDOMElement();
+        expect(screen.getByTestId('admin.attribute.values')).toBeEmptyDOMElement();
     });
 });

@@ -34,7 +34,8 @@ type Props = {
     cancelButtonText?: React.ReactNode;
     saving?: boolean;
 
-    testId?: TestId;
+    /** The panel's testid; its parts are `<testId>.message--text`, `.save--button`, `.cancel--button`, `.close--button`. */
+    testId: TestId;
 };
 function SaveChangesPanel({
     handleSubmit,
@@ -105,7 +106,7 @@ function SaveChangesPanel({
                     <WithTooltip title={intl.formatMessage({id: 'saveChangesPanel.dismiss', defaultMessage: 'Dismiss'})}>
                         <IconButton
                             id='panelCloseButton'
-                            data-testid={part(testId, 'close', 'button')}
+                            data-testid={`${testId}.close--button`}
                             size='small'
                             icon={<Icon glyph={<CloseIcon/>}/>}
                             onClick={handleClose}
@@ -121,7 +122,7 @@ function SaveChangesPanel({
         return (
             <div className='SaveChangesPanel__btn-ctr'>
                 <Button
-                    data-testid={testId ? `${testId}.cancel--button` : 'SaveChangesPanel__cancel-btn'}
+                    data-testid={`${testId}.cancel--button`}
                     emphasis='tertiary'
                     size='small'
                     className={classNames('SaveChangesPanel__cancel-btn', {error: tabChangeError || state === 'error'})}
@@ -136,7 +137,7 @@ function SaveChangesPanel({
                     )}
                 </Button>
                 <Button
-                    data-testid={testId ? `${testId}.save--button` : 'SaveChangesPanel__save-btn'}
+                    data-testid={`${testId}.save--button`}
                     emphasis='primary'
                     size='small'
                     className={classNames('SaveChangesPanel__save-btn', {error: tabChangeError || state === 'error'})}
@@ -167,7 +168,7 @@ function SaveChangesPanel({
         >
             <p
                 className={messageClassName}
-                data-testid={part(testId, 'message', 'text')}
+                data-testid={`${testId}.message--text`}
             >
                 <AlertCircleOutlineIcon
                     size={18}

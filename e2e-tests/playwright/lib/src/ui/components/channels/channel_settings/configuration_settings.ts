@@ -167,25 +167,30 @@ export default class ConfigurationSettings {
         return this.container.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
     }
 
-    /** With channel attributes on, the banner text is the attributes area's editor, which keeps its own testids. */
+    /** With channel attributes on, the banner text is an editor with attribute tokens (same testid as the textbox). */
     get bannerTextEditor() {
-        return this.container.getByTestId('bannerTextEditor');
+        return this.container.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
     }
 
     get bannerTokenButton() {
-        return this.container.getByTestId('bannerAttributeTokenButton');
+        return this.container.getByTestId('channel_settings_modal.configuration.banner_text.insert--button');
     }
 
     get bannerTokenPreview() {
-        return this.container.getByTestId('bannerAttributePreview');
+        return this.container.getByTestId('channel_settings_modal.configuration.banner_preview');
     }
 
+    /** A token in the banner text, by its attribute's name (tokens are keyed by position; `data-token` names them). */
     bannerTokenChip(name: string) {
-        return this.container.getByTestId(`bannerTextEditorChip-${name}`);
+        return this.container
+            .getByTestId(/^channel_settings_modal\.configuration\.banner_text\.token:\d+$/)
+            .and(this.container.locator(`[data-token="${name}"]`));
     }
 
     bannerTokenChipRemove(name: string) {
-        return this.container.getByTestId(`bannerTextEditorChipRemove-${name}`);
+        return this.bannerTokenChip(name).getByTestId(
+            'channel_settings_modal.configuration.banner_text.token.remove--button',
+        );
     }
 
     async typeBannerText(text: string) {
@@ -210,19 +215,29 @@ export default class ConfigurationSettings {
         await expect(editor).toHaveText('');
     }
 
-    async insertBannerToken(name: string) {
+    /** An attribute in the insert menu, which lists attributes by field id (portalled to the body). */
+    bannerTokenMenuItem(field: {id: string}) {
+        return this.container
+            .page()
+            .getByTestId(
+                `channel_settings_modal.configuration.banner_text.insert_menu.attribute:${field.id}--menuitem`,
+            );
+    }
+
+    /** Inserts an attribute's token. */
+    async insertBannerToken(field: {id: string; name: string}) {
         await expect(this.bannerTokenButton).toBeVisible();
         await this.bannerTokenButton.click();
 
-        const item = this.container.page().getByTestId(`bannerAttributeToken-${name}`);
+        const item = this.bannerTokenMenuItem(field);
         await expect(item).toBeVisible();
         await item.click();
 
-        await expect(this.bannerTokenChip(name)).toHaveCount(1);
+        await expect(this.bannerTokenChip(field.name)).toHaveCount(1);
     }
 
     async removeBannerToken(name: string) {
-        await this.container.getByTestId(`bannerTextEditorChipRemove-${name}`).click();
+        await this.bannerTokenChipRemove(name).click();
         await expect(this.bannerTokenChip(name)).toHaveCount(0);
     }
 

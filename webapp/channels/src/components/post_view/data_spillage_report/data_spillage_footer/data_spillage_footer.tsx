@@ -6,16 +6,17 @@ import {FormattedMessage} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
 import {selectPostFromRightHandSideSearch} from 'actions/views/rhs';
 
 type Props = {
     post: Post;
-    flaggedPostID: string;
+    testIdScope?: TestId;
 };
 
-export default function DataSpillageFooter({post, flaggedPostID}: Props) {
+export default function DataSpillageFooter({post, testIdScope}: Props) {
     const dispatch = useDispatch();
 
     const onClick = useCallback(() => {
@@ -27,12 +28,12 @@ export default function DataSpillageFooter({post, flaggedPostID}: Props) {
     return (
         <div
             className='DataSpillageFooter'
-            data-testid='data-spillage-footer'
+            data-testid={testIdScope}
         >
             <Button
                 emphasis='primary'
                 size='small'
-                data-testid={`data-spillage-action-view-details_${flaggedPostID}`}
+                data-testid={testIdScope ? `${testIdScope}.view_details--button` : undefined}
                 onClick={onClick}
             >
                 <FormattedMessage

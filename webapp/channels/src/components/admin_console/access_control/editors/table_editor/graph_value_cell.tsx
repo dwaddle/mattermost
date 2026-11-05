@@ -4,6 +4,7 @@
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
 import {PolicyHierarchicalValues} from 'components/property_fields/hierarchical_value_menu';
@@ -22,6 +23,9 @@ export type GraphValueCellProps = {
     channelFields?: UserPropertyField[];
     onSelectTarget?: (name: string) => void;
     rowIndex?: number;
+
+    // The rule row's scope: the picker's button is `<testId>.value--button`.
+    testId?: TestId;
 };
 
 export default function GraphValueCell({
@@ -33,6 +37,7 @@ export default function GraphValueCell({
     channelFields = [],
     onSelectTarget,
     rowIndex = 0,
+    testId,
 }: GraphValueCellProps) {
     const {formatMessage} = useIntl();
 
@@ -52,11 +57,12 @@ export default function GraphValueCell({
             disabled={disabled}
             menuId={`value-selector-menu-${rowIndex}`}
             buttonId={`value-selector-button-${rowIndex}`}
-            buttonDataTestId='valueSelectorMenuButton'
+            buttonDataTestId={testId ? `${testId}.value--button` : undefined}
+            menuTestId={testId ? `${testId}.value_menu` : undefined}
             placeholder={placeholder}
             className='values-editor'
-            trailingChips={row.hasMaskedValues ? <MaskedChip/> : undefined}
-            extraMenuItems={onSelectTarget ? channelAttributeMenuItems(channelFields, row.targetAttribute, onSelectTarget, formatMessage) : undefined}
+            trailingChips={row.hasMaskedValues ? <MaskedChip testId={testId ? `${testId}.value.masked--img` : undefined}/> : undefined}
+            extraMenuItems={onSelectTarget ? channelAttributeMenuItems(channelFields, row.targetAttribute, onSelectTarget, formatMessage, testId) : undefined}
         />
     );
 }

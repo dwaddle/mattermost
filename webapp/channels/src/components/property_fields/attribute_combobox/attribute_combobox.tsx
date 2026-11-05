@@ -9,6 +9,7 @@ import type {IntlShape} from 'react-intl';
 
 import {Combobox} from '@mattermost/compass-ui/components/combobox';
 import type {ComboboxOption} from '@mattermost/compass-ui/components/combobox';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FieldType, PropertyFieldOption} from '@mattermost/types/properties';
 
 import {sortOptionsByRank} from 'mattermost-redux/utils/property_utils';
@@ -84,8 +85,8 @@ export type AttributeComboboxProps = {
     options: PropertyFieldOption[];
     id?: string;
 
-    /** Test ID of the input, and prefix for the option and clear-button test IDs. */
-    testId?: string;
+    /** The field's scope: the input is `<scope>.value--combobox`, options `<scope>.choice:<option id>--option`, clear `<scope>.clear--button`. */
+    testIdScope?: TestId;
     disabled?: boolean;
     invalid?: boolean;
 
@@ -133,7 +134,7 @@ function toComboboxOptions(
     options: readonly PropertyFieldOption[],
     type: AttributeComboboxType,
     formatMessage: IntlShape['formatMessage'],
-    testIdPrefix?: string,
+    testIdScope?: TestId,
 ): ComboboxOption[] {
     const visuals = options.map((option) => optionVisual(option, type));
 
@@ -147,7 +148,7 @@ function toComboboxOptions(
         // Compass hides leading visuals from assistive tech, so the rank goes in the row's name instead.
         const rank = optionRank(option, type);
         comboboxOption.menuItemProps = {
-            'data-testid': testIdPrefix ? `${testIdPrefix}-option-${option.id}` : undefined,
+            'data-testid': testIdScope ? `${testIdScope}.choice:${option.id}--option` : undefined,
             'aria-label': rank === undefined ? undefined : formatMessage(messages.rankedOption, {name: option.name, rank}),
         };
         if (visuals[index]) {
@@ -166,7 +167,7 @@ export function AttributeCombobox({
     label,
     options,
     id,
-    testId,
+    testIdScope,
     disabled,
     invalid,
     required,
@@ -188,8 +189,8 @@ export function AttributeCombobox({
     }), [formatMessage, label]);
     const orderedOptions = useMemo(() => (type === 'rank' ? sortOptionsByRank(options) : options), [options, type]);
     const comboboxOptions = useMemo(
-        () => toComboboxOptions(orderedOptions, type, formatMessage, testId),
-        [orderedOptions, type, formatMessage, testId],
+        () => toComboboxOptions(orderedOptions, type, formatMessage, testIdScope),
+        [orderedOptions, type, formatMessage, testIdScope],
     );
     const rankDescriptionId = useId();
 
@@ -229,7 +230,7 @@ export function AttributeCombobox({
         <>
             <Combobox
                 id={id}
-                data-testid={testId}
+                data-testid={testIdScope ? `${testIdScope}.value--combobox` : undefined}
                 aria-label={label}
                 aria-describedby={describedBy}
                 className={classNames('AttributeCombobox', className)}
@@ -238,7 +239,7 @@ export function AttributeCombobox({
                 value={multiple ? values : values[0] ?? ''}
                 selectedOptions={selectedOptions}
                 clearable={true}
-                clearButtonProps={{'data-testid': testId ? `${testId}-clear` : undefined}}
+                clearButtonProps={{'data-testid': testIdScope ? `${testIdScope}.clear--button` : undefined}}
                 disabled={disabled}
                 invalid={invalid}
                 required={required}

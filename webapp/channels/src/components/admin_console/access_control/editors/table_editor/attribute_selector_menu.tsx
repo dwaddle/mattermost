@@ -21,6 +21,7 @@ import {
 } from '@mattermost/compass-icons/components';
 import type IconProps from '@mattermost/compass-icons/components/props';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 import {isSessionAttributeField} from '@mattermost/types/properties_user';
 
@@ -97,6 +98,10 @@ interface AttributeSelectorProps {
     autoOpen?: boolean;
     onMenuOpened?: () => void;
     enableUserManagedAttributes: boolean;
+
+    // The rule row's scope: the button is `<testId>.attribute--button`, opening `<testId>.attribute_menu`
+    // with an item per attribute (`.attribute:<field id>`).
+    testId?: TestId;
 }
 
 // A CPA attribute and a session attribute can share the same name, so the
@@ -105,7 +110,7 @@ const matchesSelection = (attr: UserPropertyField, name: string, objectType?: st
     return attr.name === name && (attr.object_type || 'user') === (objectType || 'user');
 };
 
-const AttributeSelectorMenu = ({currentAttribute, currentAttributeObjectType, availableAttributes, selectableAttributes, disabled, onChange, menuId, buttonId, autoOpen = false, onMenuOpened, enableUserManagedAttributes}: AttributeSelectorProps) => {
+const AttributeSelectorMenu = ({currentAttribute, currentAttributeObjectType, availableAttributes, selectableAttributes, disabled, onChange, menuId, buttonId, autoOpen = false, onMenuOpened, enableUserManagedAttributes, testId}: AttributeSelectorProps) => {
     const {formatMessage} = useIntl();
     const [filter, setFilter] = useState('');
     const prevAutoOpen = useRef(false);
@@ -188,6 +193,7 @@ const AttributeSelectorMenu = ({currentAttribute, currentAttributeObjectType, av
             <Menu.Item
                 id={`attribute-${option.id}`}
                 key={option.id}
+                data-testid={testId ? `${testId}.attribute_menu.attribute:${option.id}--menuitemradio` : undefined}
                 role='menuitemradio'
                 forceCloseOnSelect={true}
                 aria-checked={isSelected}
@@ -306,18 +312,20 @@ const AttributeSelectorMenu = ({currentAttribute, currentAttributeObjectType, av
                         </WithTooltip>
                     </>
                 ),
-                dataTestId: 'attributeSelectorMenuButton',
+                dataTestId: testId ? `${testId}.attribute--button` : undefined,
                 disabled,
             }}
             menu={{
                 id: menuId,
                 'aria-label': 'Select attribute',
                 className: 'select-attribute-mui-menu',
+                testId: testId ? `${testId}.attribute_menu` : undefined,
             }}
         >
             <Menu.InputItem
                 key='filter_attributes'
                 id='filter_attributes'
+                testId={testId ? `${testId}.attribute_menu.filter` : undefined}
                 type='text'
                 placeholder={formatMessage({id: 'admin.access_control.table_editor.selector.filter_attributes', defaultMessage: 'Search attributes...'})}
                 className='attribute-selector-search'

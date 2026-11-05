@@ -5,6 +5,8 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 import {setupContentFlagging, createPost, verifyReporterNotification} from './../support';
 
+// Written on the generated page objects: the content-review bot's DM and its last post.
+
 /**
  * @objective Verify Reporter is notified if the flagged post is Retained by the reviewer
  */
@@ -41,12 +43,10 @@ test('Verify Reporter is notified if flagged post is Retained in a channel', asy
     await reporterUserClient.flagPost(post.id, 'Classification mismatch', 'This message is inappropriate');
     await reviewerUserClient.keepFlaggedPost(post.id, 'Retaining this post after review');
 
-    const {channelsPage} = await pw.testBrowser.login(reporterUser);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(reporterUser);
 
     const expected = `The post having ID ${post.id} in the channel ${townSquare.display_name} which you quarantined for review has been restored by a reviewer.`;
-    await verifyReporterNotification(channelsPage, team.name, expected);
+    await verifyReporterNotification(app, team, expected);
 });
 
 /**
@@ -85,10 +85,8 @@ test('Verify Reporter is notified if flagged post is Removed from a channel', as
     await reporterUserClient.flagPost(post.id, 'Classification mismatch', 'This message is inappropriate');
     await reviewerUserClient.removeFlaggedPost(post.id, 'Retaining this post after review');
 
-    const {channelsPage} = await pw.testBrowser.login(reporterUser);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(reporterUser);
 
     const expected = `The post having ID ${post.id} in the channel ${townSquare.display_name} which you quarantined for review has been permanently removed by a reviewer.`;
-    await verifyReporterNotification(channelsPage, team.name, expected);
+    await verifyReporterNotification(app, team, expected);
 });

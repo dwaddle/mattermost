@@ -40,12 +40,15 @@ export default class ChannelsSidebarRight {
     constructor(container: Locator) {
         this.container = container;
 
-        this.attributes = new ChannelInfoAttributes(container.getByTestId('channelInfoAttributes'));
+        this.attributes = new ChannelInfoAttributes(
+            container.getByTestId('rhs.channel_info.about.attributes'),
+            'rhs.channel_info.about.attributes',
+        );
 
         // The chips on the thread header, which merges the info and header slots.
         this.threadAttributes = new ChannelAttributeLabels(
-            container.getByTestId('channelAttributeLabels-info-header'),
-            'info-header',
+            container.getByTestId('rhs.thread.header.attributes'),
+            'rhs.thread.header.attributes',
         );
 
         this.scheduledPostIndicator = new ScheduledPostIndicator(

@@ -19,17 +19,20 @@
  * FeatureFlags.SessionAttributes flag. Tests skip cleanly when those are not met.
  */
 
-import type {Page} from '@playwright/test';
-
-import {enableABAC, expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App, type generated} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, getUserAttributeFieldByName} from '../abac/support';
+import {openMembershipPolicies, openPermissionPolicies, setAbacEnabled} from '../abac/surface';
 
 import {
+    choosePreset,
     findFieldByName,
+    openActions,
+    openSessionAttributes,
     patchSessionAttribute,
     readSessionAttribute,
     restoreSessionAttributesToBaseline,
+    saveAndSettle,
     setupSessionAttributesTest,
 } from './support';
 
@@ -50,14 +53,14 @@ test.describe('System Console - Session Attributes', () => {
         'renders the listing table with correct type, status, and server labels',
         {tag: '@session_attributes'},
         async ({pw}) => {
-            const {systemConsolePage, fields} = await setupSessionAttributesTest(pw);
-            const sa = systemConsolePage.sessionAttributes;
+            const {app, fields} = await setupSessionAttributesTest(pw);
+            const sa = app.admin.sessionAttributes;
 
             // # Navigate to Session Attributes via the sidebar
-            await systemConsolePage.sidebar.systemAttributes.sessionAttributes.click();
+            await app.admin.sidebar.category('system_attributes').section('session_attributes').clickTitleLink();
 
             // * Verify the page loaded
-            await sa.toBeVisible();
+            await expect(sa.rowItems.first()).toBeVisible();
 
             const ipAddress = findFieldByName(fields, 'ip_address');
             const clientIpAddress = findFieldByName(fields, 'client_ip_address');
@@ -66,26 +69,26 @@ test.describe('System Console - Session Attributes', () => {
             const osVersion = findFieldByName(fields, 'os_version');
 
             // * Verify a representative row is rendered with its platform icons
-            await expect(sa.row(ipAddress.id)).toBeVisible();
-            await expect(sa.platforms(ipAddress.id)).toBeVisible();
+            await expect(sa.row(ipAddress.id).locator).toBeVisible();
+            await expect(sa.platforms(ipAddress).locator).toBeVisible();
 
             // * Verify request-derived fields carry the "Server" label
-            await expect(sa.serverLabel(ipAddress.id)).toBeVisible();
+            await expect(sa.serverLabel(ipAddress).locator).toBeVisible();
 
             // * Verify a seeded-but-client-native field does NOT carry the Server label
-            await expect(sa.serverLabel(clientIpAddress.id)).toHaveCount(0);
+            await expect(sa.serverLabel(clientIpAddress).locator).toHaveCount(0);
 
             // * Verify the derived Type column maps text/select fields correctly. getDisplayType()
             // (session_attributes/utils.ts) only distinguishes Boolean/Enum via select options;
             // every other field type, including ip_address and os_version, renders as String.
-            await expect(sa.type(ipAddress.id)).toContainText('String');
-            await expect(sa.type(vpnActive.id)).toContainText('Boolean');
-            await expect(sa.type(networkInterfaceType.id)).toContainText('Enum');
-            await expect(sa.type(osVersion.id)).toContainText('String');
+            await expect(sa.type(ipAddress).locator).toContainText('String');
+            await expect(sa.type(vpnActive).locator).toContainText('Boolean');
+            await expect(sa.type(networkInterfaceType).locator).toContainText('Enum');
+            await expect(sa.type(osVersion).locator).toContainText('String');
 
             // * Verify seeded fields render as Disabled by default
-            await expect(sa.status(ipAddress.id)).toContainText('Disabled');
-            await expect(sa.status(ipAddress.id)).toHaveAttribute('data-enabled', 'false');
+            await expect(sa.status(ipAddress).locator).toContainText('Disabled');
+            await expect(sa.status(ipAddress).locator).toHaveAttribute('data-enabled', 'false');
         },
     );
 
@@ -94,34 +97,28 @@ test.describe('System Console - Session Attributes', () => {
      * Enable, then Saving, persists the changes after a full page reload.
      */
     test('persists TTL, grace, and enable edits after save and reload', {tag: '@session_attributes'}, async ({pw}) => {
-        const {adminClient, systemConsolePage, fields} = await setupSessionAttributesTest(pw);
-        const sa = systemConsolePage.sessionAttributes;
-
+        const {adminClient, app, fields} = await setupSessionAttributesTest(pw);
         const field = findFieldByName(fields, 'os_version');
 
-        // # Navigate to Session Attributes page
-        await sa.goto();
-
-        // # Stage a new TTL (1h), a new Grace period (5m), and enable the field
-        await sa.setTtlPreset(field.id, 3600);
-        await sa.setGracePreset(field.id, 300);
-        await sa.enable(field.id);
+        // # Open Session Attributes, then stage a new TTL (1h), a new Grace period (5m), and enable the field
+        let sa = await openSessionAttributes(app);
+        await choosePreset(app, field, 'ttl', 3600);
+        await choosePreset(app, field, 'grace', 300);
+        await (await openActions(app, field)).clickEnableMenuItem();
 
         // * Verify the staged values are reflected before saving
-        await expect(sa.ttl(field.id)).toHaveText('1h');
-        await expect(sa.grace(field.id)).toHaveText('5m');
-        await expect(sa.status(field.id)).toContainText('Enabled');
+        await expect(sa.ttl(field).locator).toHaveText('1h');
+        await expect(sa.grace(field).locator).toHaveText('5m');
+        await expect(sa.status(field).locator).toContainText('Enabled');
 
-        // # Save the staged edits (one PATCH per changed field)
-        await sa.saveAndWaitForSettled();
-
-        // # Reload the page
-        await sa.goto();
+        // # Save the staged edits (one PATCH per changed field), and reload
+        await saveAndSettle(app);
+        sa = await openSessionAttributes(app);
 
         // * Verify the edits persisted in the UI after reload
-        await expect(sa.ttl(field.id)).toHaveText('1h');
-        await expect(sa.grace(field.id)).toHaveText('5m');
-        await expect(sa.status(field.id)).toContainText('Enabled');
+        await expect(sa.ttl(field).locator).toHaveText('1h');
+        await expect(sa.grace(field).locator).toHaveText('5m');
+        await expect(sa.status(field).locator).toContainText('Enabled');
 
         // * Verify the edits persisted server-side via the property API
         const persisted = await readSessionAttribute(adminClient, field.id);
@@ -138,40 +135,35 @@ test.describe('System Console - Session Attributes', () => {
      * The target session attribute is enabled via API before the test.
      */
     test('disables an enabled attribute via confirmation modal', {tag: '@session_attributes'}, async ({pw}) => {
-        const {adminClient, systemConsolePage, fields} = await setupSessionAttributesTest(pw);
-        const sa = systemConsolePage.sessionAttributes;
-
+        const {adminClient, app, fields} = await setupSessionAttributesTest(pw);
         const field = findFieldByName(fields, 'client_version');
 
-        // # Enable the field via API so the dot menu offers Disable
+        // # Enable the field via API so the actions menu offers Disable
         await patchSessionAttribute(adminClient, field.id, {enabled: true});
 
-        // # Navigate to Session Attributes page
-        await sa.goto();
+        // # Open Session Attributes
+        let sa = await openSessionAttributes(app);
 
         // * Verify it shows as Enabled
-        await expect(sa.status(field.id)).toContainText('Enabled');
+        await expect(sa.status(field).locator).toContainText('Enabled');
 
-        // # Open the dot menu and trigger Disable (opens the confirmation modal)
-        await sa.openDisableModal(field.id);
-
-        // * Verify the confirmation modal is shown
-        await expect(sa.disableModal()).toBeVisible();
+        // # Choose Disable from the actions menu, which asks for confirmation
+        await (await openActions(app, field)).clickDisableMenuItem();
+        const {disableModal} = sa;
+        await expect(disableModal.locator).toContainText('Disable attribute');
 
         // # Confirm the disable
-        await sa.confirmDisable();
+        await disableModal.clickConfirmButton();
 
         // * Verify the staged status flips to Disabled before saving
-        await expect(sa.status(field.id)).toContainText('Disabled');
+        await expect(sa.status(field).locator).toContainText('Disabled');
 
-        // # Save the staged change
-        await sa.saveAndWaitForSettled();
-
-        // # Reload the page
-        await sa.goto();
+        // # Save the staged change, and reload
+        await saveAndSettle(app);
+        sa = await openSessionAttributes(app);
 
         // * Verify the disabled state persisted in the UI and server-side
-        await expect(sa.status(field.id)).toContainText('Disabled');
+        await expect(sa.status(field).locator).toContainText('Disabled');
         const persisted = await readSessionAttribute(adminClient, field.id);
         expect(persisted.enabled).toBe(false);
     });
@@ -185,41 +177,39 @@ test.describe('System Console - Session Attributes', () => {
      * guard only needs any unsaved edit.
      */
     test('blocks navigation while dirty and reverts on cancel', {tag: '@session_attributes'}, async ({pw}) => {
-        const {systemConsolePage, fields} = await setupSessionAttributesTest(pw);
-        const sa = systemConsolePage.sessionAttributes;
-        const page = systemConsolePage.page;
-
+        const {app, fields} = await setupSessionAttributesTest(pw);
         const field = findFieldByName(fields, 'ssid');
 
-        // # Navigate to Session Attributes page
-        await sa.goto();
+        // # Open Session Attributes
+        const sa = await openSessionAttributes(app);
 
         // # Stage a one-click Enable (dot menu, no duration submenu)
-        await expect(sa.status(field.id)).toContainText('Disabled');
-        await sa.enable(field.id);
+        await expect(sa.status(field).locator).toContainText('Disabled');
+        await (await openActions(app, field)).clickEnableMenuItem();
 
         // * Verify the edit is staged and Save is enabled
-        await expect(sa.status(field.id)).toContainText('Enabled');
-        await expect(sa.saveButton).toBeEnabled();
+        const {saveButton, cancelButton} = sa.savePanel;
+        await expect(sa.status(field).locator).toContainText('Enabled');
+        await expect(saveButton.locator).toBeEnabled();
 
         // # Attempt to navigate away via the sidebar while dirty
-        await systemConsolePage.sidebar.systemAttributes.attributeManagement.click();
+        await app.admin.sidebar.category('system_attributes').section('global_attributes').clickTitleLink();
 
         // * Verify the unsaved-changes navigation guard appears
-        const discardModal = page.getByRole('dialog').filter({hasText: 'Discard Changes?'});
-        await expect(discardModal).toBeVisible();
-        await expect(discardModal.getByText('You have unsaved changes', {exact: false})).toBeVisible();
+        const discard = app.discardChangesModal;
+        await expect(discard.locator).toContainText('Discard Changes?');
+        await expect(discard.locator).toContainText('You have unsaved changes');
 
         // # Decline the discard prompt to stay on the page
-        await discardModal.getByRole('button', {name: 'Cancel'}).click();
-        await expect(discardModal).toBeHidden();
+        await discard.clickCancelButton();
+        await expect(discard.cancelButton.locator).toBeHidden();
 
-        // # Cancel the staged edit via the Save Changes panel
-        await sa.cancel();
+        // # Cancel the staged edit via the save panel
+        await cancelButton.click();
 
         // * Verify the status reverted and Save returned to disabled
-        await expect(sa.status(field.id)).toContainText('Disabled');
-        await expect(sa.saveButton).toBeDisabled();
+        await expect(sa.status(field).locator).toContainText('Disabled');
+        await expect(saveButton.locator).toBeDisabled();
     });
 
     /**
@@ -235,8 +225,7 @@ test.describe('System Console - Session Attributes', () => {
         {tag: '@session_attributes'},
         async ({pw}) => {
             test.setTimeout(120000);
-            const {adminClient, systemConsolePage, fields} = await setupSessionAttributesTest(pw);
-            const page = systemConsolePage.page;
+            const {adminClient, app, fields} = await setupSessionAttributesTest(pw);
 
             const sessionField = findFieldByName(fields, 'ip_address');
 
@@ -249,33 +238,21 @@ test.describe('System Console - Session Attributes', () => {
             await ensureUserAttributes(adminClient, ['Department']);
             await patchSessionAttribute(adminClient, sessionField.id, {enabled: true});
             await patchSessionAttribute(adminClient, disabledSessionField.id, {enabled: false});
-            await enableABAC(page);
-
-            // Picker menu items are keyed by field id (`#attribute-<id>`), not by
-            // name, so resolve the user attribute's id the same way the session
-            // attribute ids come from the property-fields API.
+            await setAbacEnabled(app, true);
             const userField = await getUserAttributeFieldByName(adminClient, 'Department');
 
             // ── Permission policy editor: session attribute IS available ──
 
             // # Open a new permission policy and add an attribute row
-            await page.goto('/admin_console/system_attributes/permission_policies');
-            await page.waitForLoadState('networkidle');
-            await page.getByRole('button', {name: 'Add policy'}).click();
-            await page.waitForLoadState('networkidle');
-            await page.getByPlaceholder('Add a unique policy name').fill(`PP Session ${pw.random.id()}`);
+            const permissionPolicy = await newPermissionPolicy(app, `PP Session ${pw.random.id()}`);
+            const permissionMenu = await addAttributeRow(permissionPolicy.rules);
 
-            await openAttributePicker(page);
-
-            const permissionMenu = page.getByRole('menu', {name: 'Select attribute'});
-            await expect(permissionMenu).toBeVisible();
-
-            // * Verify the SESSION ATTRIBUTES section and the enabled session attribute are present
-            await expect(permissionMenu.getByText('Session attributes', {exact: true})).toBeVisible();
-            await expect(permissionMenu.locator(`#attribute-${sessionField.id}`)).toBeVisible();
+            // * Verify the Session attributes section and the enabled session attribute are present
+            await expect(permissionMenu.locator).toContainText('Session attributes');
+            await expect(permissionMenu.attribute(sessionField).locator).toBeVisible();
 
             // * Verify the DISABLED session attribute is absent (enabled-only filter)
-            await expect(permissionMenu.locator(`#attribute-${disabledSessionField.id}`)).toHaveCount(0);
+            await expect(permissionMenu.attribute(disabledSessionField).locator).toHaveCount(0);
 
             // ── Membership policy editor: session attribute is NOT available ──
             //
@@ -283,25 +260,18 @@ test.describe('System Console - Session Attributes', () => {
             // isn't blocked by the unsaved-changes guard.
 
             // # Open a new membership policy and add an attribute row
-            await page.goto('/admin_console/system_attributes/membership_policies');
-            await page.waitForLoadState('networkidle');
-            await page.getByRole('button', {name: 'Add policy'}).click();
-            await page.waitForLoadState('networkidle');
-            await page
-                .locator('#admin\\.access_control\\.policy\\.edit_policy\\.policyName')
-                .fill(`MP Session ${pw.random.id()}`);
-
-            await openAttributePicker(page);
-
-            const membershipMenu = page.getByRole('menu', {name: 'Select attribute'});
-            await expect(membershipMenu).toBeVisible();
+            const policies = await openMembershipPolicies(app);
+            await policies.clickAddButton();
+            const membershipPolicy = app.admin.accessControl.policy;
+            await membershipPolicy.editPolicy.name.fillValueTextbox(`MP Session ${pw.random.id()}`);
+            const membershipMenu = await addAttributeRow(membershipPolicy.rules);
 
             // * Verify the picker loaded user attributes (proves the menu is populated)
-            await expect(membershipMenu.locator(`#attribute-${userField.id}`)).toBeVisible();
+            await expect(membershipMenu.attribute(userField).locator).toBeVisible();
 
             // * Verify session attributes are absent from the membership picker
-            await expect(membershipMenu.getByText('Session attributes', {exact: true})).toHaveCount(0);
-            await expect(membershipMenu.locator(`#attribute-${sessionField.id}`)).toHaveCount(0);
+            await expect(membershipMenu.locator).not.toContainText('Session attributes');
+            await expect(membershipMenu.attribute(sessionField).locator).toHaveCount(0);
 
             // ── CEL path: a picked session attribute generates user.session.<name> ──
             //
@@ -309,51 +279,39 @@ test.describe('System Console - Session Attributes', () => {
             // navigation must already be complete.
 
             // # Open a fresh permission policy, pick the session attribute, set a value
-            await page.goto('/admin_console/system_attributes/permission_policies');
-            await page.waitForLoadState('networkidle');
-            await page.getByRole('button', {name: 'Add policy'}).click();
-            await page.waitForLoadState('networkidle');
-            await page.getByPlaceholder('Add a unique policy name').fill(`PP CEL ${pw.random.id()}`);
-
-            await openAttributePicker(page);
-
-            const celMenu = page.getByRole('menu', {name: 'Select attribute'});
-            await expect(celMenu).toBeVisible();
-            await celMenu.locator(`#attribute-${sessionField.id}`).click();
-
-            const valueInput = page.locator('.values-editor__simple-input').first();
-            await valueInput.click();
-            await valueInput.fill('10.0.0.1');
-            await valueInput.press('Enter');
+            const celPolicy = await newPermissionPolicy(app, `PP CEL ${pw.random.id()}`);
+            const celMenu = await addAttributeRow(celPolicy.rules);
+            await celMenu.attribute(sessionField).click();
+            const row = celPolicy.rules.row(0);
+            await row.fillValueTextbox('10.0.0.1');
+            await row.valueTextbox.locator.press('Enter');
 
             // # Switch to Advanced (CEL) mode
-            await page.getByRole('button', {name: 'Switch to Advanced Mode'}).click();
+            await celPolicy.clickSwitchModeButton();
 
             // * Verify the generated CEL uses the session namespace, not user.attributes
-            await expect(page.locator('.cel-editor')).toContainText('user.session.ip_address');
-            await expect(page.locator('.cel-editor')).not.toContainText('user.attributes.ip_address');
+            await expect(celPolicy.cel.input.locator).toContainText('user.session.ip_address');
+            await expect(celPolicy.cel.input.locator).not.toContainText('user.attributes.ip_address');
         },
     );
 });
 
-/**
- * Add an attribute row in the policy table editor and open its attribute picker.
- * Shared by the permission and membership editor checks since both reuse the
- * same table-editor attribute selector.
- */
-async function openAttributePicker(page: Page): Promise<void> {
-    const addAttributeButton = page.getByRole('button', {name: /add attribute/i});
-    await expect(addAttributeButton).toBeEnabled({timeout: 15000});
-    await addAttributeButton.click();
+/** Opens a new permission policy and names it. */
+async function newPermissionPolicy(app: App, name: string) {
+    const list = await openPermissionPolicies(app);
+    await list.clickAddButton();
+    await list.edit.name.fillValueTextbox(name);
+    return app.admin.permissionPolicy;
+}
 
-    // Adding a row auto-opens the attribute menu. Only click the selector
-    // button to open it when the auto-open didn't fire — clicking while the
-    // menu is already open would land on its backdrop and be intercepted.
-    const menu = page.getByRole('menu', {name: 'Select attribute'});
-    try {
-        await expect(menu).toBeVisible({timeout: 3000});
-    } catch {
-        await page.getByTestId('attributeSelectorMenuButton').first().click();
-        await expect(menu).toBeVisible();
-    }
+/**
+ * Adds an attribute row in a policy's rule table; the new row's attribute picker opens by itself. Shared by the
+ * permission and membership editor checks, since both reuse the same table editor.
+ */
+async function addAttributeRow(rules: generated.Rules) {
+    const row = rules.row((await rules.rowKeys()).length);
+    await expect(rules.addButton.locator).toBeEnabled({timeout: 15000});
+    await rules.clickAddButton();
+    await expect(row.attributeMenu.locator).toBeVisible();
+    return row.attributeMenu;
 }

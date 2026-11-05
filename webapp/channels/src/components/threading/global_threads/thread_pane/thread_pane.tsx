@@ -139,6 +139,7 @@ const ThreadPane = ({
                             surface={[ChannelLabelSurface.INFO, ChannelLabelSurface.HEADER]}
                             allowEmptyVisible={true}
                             interactive={false}
+                            testId='threads.pane.attributes'
                         />
                     </>
                 )}

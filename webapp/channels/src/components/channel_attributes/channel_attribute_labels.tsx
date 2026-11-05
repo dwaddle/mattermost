@@ -21,6 +21,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
 import {getPropertyFieldLabel} from 'mattermost-redux/utils/property_utils';
@@ -66,6 +67,11 @@ type Props = {
     // Global Threads and the thread popout have no such channel, so there the
     // chips are labels only rather than controls that cannot do anything.
     interactive?: boolean;
+
+    // The row is `<testId>`, its chips `<testId>.chip:<position>` (values are typed by admins). The "+N" button
+    // is `<testId>.overflow--button`; its popover is `<testId>.overflow_popover`, with the hidden chips at the
+    // same positions and `.view_all--button`.
+    testId: TestId;
 };
 
 /**
@@ -82,11 +88,10 @@ type ChipSpec = {
     color?: string;
 };
 
-const ChannelAttributeLabels = ({channelId, surface, allowEmptyVisible = false, interactive = true}: Props) => {
+const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible = false, interactive = true}: Props) => {
     const {formatMessage} = useIntl();
     const dispatch = useDispatch();
     const labels = useChannelLabels(channelId, surface);
-    const surfaceId = Array.isArray(surface) ? surface.join('-') : surface;
 
     // Expand each attribute into one ChipSpec per value (multiselect → N chips).
     const chipSpecs = useMemo((): ChipSpec[] => {
@@ -206,6 +211,7 @@ const ChannelAttributeLabels = ({channelId, surface, allowEmptyVisible = false, 
                             value={spec.value}
                             color={spec.color}
                             size='medium'
+                            testId={`${testId}.chip:${ids.indexOf(id)}`}
                         />,
                     )}
                 </WithTooltip>
@@ -217,7 +223,7 @@ const ChannelAttributeLabels = ({channelId, surface, allowEmptyVisible = false, 
         <div
             ref={containerRef}
             className='ChannelAttributeLabels'
-            data-testid={`channelAttributeLabels-${surfaceId}`}
+            data-testid={testId}
             style={measured ? undefined : {visibility: 'hidden'}}
         >
             {visibleIds.length > 0 && (
@@ -238,7 +244,7 @@ const ChannelAttributeLabels = ({channelId, surface, allowEmptyVisible = false, 
                         {id: 'generic.more_attributes', defaultMessage: '{count, plural, one {# more attribute} other {# more attributes}}', description: 'Accessible label (screen readers only) on the overflow badge that stands in for attribute chips that do not fit, shown on channel attribute labels and on post attribute chips. {count} is the number of hidden attributes.'},
                         {count: overflowIds.length},
                     )}
-                    data-testid={`channelAttributeLabelsOverflow-${surfaceId}`}
+                    data-testid={`${testId}.overflow--button`}
                     {...getReferenceProps()}
                 >
                     <FormattedMessage
@@ -255,7 +261,7 @@ const ChannelAttributeLabels = ({channelId, surface, allowEmptyVisible = false, 
                         ref={setFloating}
                         className='ChannelAttributeLabels__popover'
                         style={{...floatingStyles, ...transitionStyles}}
-                        data-testid={`channelAttributeLabelsPopover-${surfaceId}`}
+                        data-testid={`${testId}.overflow_popover`}
                         {...getFloatingProps()}
                     >
                         {overflowIds.map((id) => {
@@ -279,6 +285,7 @@ const ChannelAttributeLabels = ({channelId, surface, allowEmptyVisible = false, 
                                             color={spec.color}
                                             size='medium'
                                             announceLabel={false}
+                                            testId={`${testId}.overflow_popover.chip:${ids.indexOf(id)}`}
                                         />,
                                     )}
                                 </div>
@@ -294,7 +301,7 @@ const ChannelAttributeLabels = ({channelId, surface, allowEmptyVisible = false, 
                                     type='button'
                                     className='ChannelAttributeLabels__viewAll'
                                     onClick={openChannelInfo}
-                                    data-testid={`channelAttributeLabelsViewAll-${surfaceId}`}
+                                    data-testid={`${testId}.overflow_popover.view_all--button`}
                                 >
                                     <FormattedMessage
                                         id='channel_attributes.labels.view_all'

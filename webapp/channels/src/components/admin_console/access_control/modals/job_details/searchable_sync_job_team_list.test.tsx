@@ -38,19 +38,19 @@ describe('SearchableSyncJobTeamList', () => {
     test('renders team rows with added/removed summary', () => {
         renderWithContext(<SearchableSyncJobTeamList {...baseProps}/>);
 
-        expect(screen.getByTestId('TeamRow-engineering')).toBeInTheDocument();
-        expect(screen.getByTestId('TeamRow-marketing')).toBeInTheDocument();
-        expect(screen.getByTestId('TeamRow-engineering')).toHaveTextContent('+2 / -1');
-        expect(screen.getByTestId('TeamRow-marketing')).toHaveTextContent('+0 / -6');
+        expect(screen.getByTestId('job_details_modal.teams.team:engineering')).toBeInTheDocument();
+        expect(screen.getByTestId('job_details_modal.teams.team:marketing')).toBeInTheDocument();
+        expect(screen.getByTestId('job_details_modal.teams.team:engineering')).toHaveTextContent('+2 / -1');
+        expect(screen.getByTestId('job_details_modal.teams.team:marketing')).toHaveTextContent('+0 / -6');
     });
 
     test('shows mass-removal warning indicator only on rows with MassRemovalWarning true', () => {
         renderWithContext(<SearchableSyncJobTeamList {...baseProps}/>);
 
-        const marketingRow = screen.getByTestId('TeamRow-marketing');
+        const marketingRow = screen.getByTestId('job_details_modal.teams.team:marketing');
         expect(marketingRow.querySelector('.mass-removal-warning')).toBeInTheDocument();
 
-        const engineeringRow = screen.getByTestId('TeamRow-engineering');
+        const engineeringRow = screen.getByTestId('job_details_modal.teams.team:engineering');
         expect(engineeringRow.querySelector('.mass-removal-warning')).not.toBeInTheDocument();
     });
 
@@ -63,7 +63,7 @@ describe('SearchableSyncJobTeamList', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('TeamRow-engineering'));
+        await userEvent.click(screen.getByTestId('job_details_modal.teams.team:engineering'));
 
         expect(onViewDetails).toHaveBeenCalledWith('team1', 'Engineering', syncResults.team1);
     });

@@ -25,8 +25,8 @@ export default class ChannelsHeader {
         this.callButton = container.getByRole('button', {name: /call/i}).first();
         this.pinnedMessagesButton = container.locator('#channelHeaderPinButton');
         this.attributes = new ChannelAttributeLabels(
-            container.getByTestId('channelAttributeLabels-info-header'),
-            'info-header',
+            container.getByTestId('channel_header.attributes'),
+            'channel_header.attributes',
         );
         this.addChannelHeaderButton = container.getByRole('button', {name: 'Add a channel header'});
     }

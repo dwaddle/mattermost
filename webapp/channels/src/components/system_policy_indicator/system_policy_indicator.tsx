@@ -4,6 +4,7 @@
 import React, {useCallback, useMemo} from 'react';
 import {FormattedList, FormattedMessage, defineMessages, useIntl} from 'react-intl';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {AccessControlPolicy} from '@mattermost/types/access_control';
 
 import AlertBanner from 'components/alert_banner';
@@ -16,7 +17,7 @@ export type SystemPolicyIndicatorProps = {
     showPolicyNames?: boolean;
     variant?: 'compact' | 'detailed';
     className?: string;
-    testId?: string;
+    testId: TestIdScope;
     onMorePoliciesClick?: () => void;
 };
 
@@ -69,7 +70,7 @@ const SystemPolicyIndicator: React.FC<SystemPolicyIndicatorProps> = ({
     showPolicyNames = true,
     variant = 'detailed',
     className = '',
-    testId = 'system-policy-indicator',
+    testId,
     onMorePoliciesClick,
 }) => {
     const {formatMessage} = useIntl();
@@ -182,7 +183,8 @@ const SystemPolicyIndicator: React.FC<SystemPolicyIndicatorProps> = ({
 
     return (
         <AlertBanner
-            id={testId}
+            id='system-policy-indicator'
+            testId={testId}
             mode='info'
             className={`system-policy-indicator ${className}`}
             variant='app'

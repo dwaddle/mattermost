@@ -1,11 +1,23 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, enableABAC, expectFilesRedacted, getRandomId, testConfig} from '@mattermost/playwright-lib';
+import type {Client4} from '@mattermost/client';
 
-import {createPermissionPolicy, deletePermissionPolicyByName, navigateToPermissionPoliciesPage} from '../support';
+import {AdminPermission, expect, test, getRandomId, testConfig, type App} from '@mattermost/playwright-lib';
 
-import {ensureABACEnabled, setupUserAndChannel, waitForPolicy} from './helpers';
+import {concealedPost, reveal} from '../../../channels/burn_on_read/support';
+import {openChannel} from '../../../channels/channel_attributes/surface';
+import {deletePermissionPolicyByName, ensureUserAttributes} from '../support';
+import {createPermissionPolicy, setAbacEnabled} from '../surface';
+
+import {
+    ensureABACEnabled,
+    expectFilesRedacted,
+    postNamed,
+    postWithFile,
+    setupUserAndChannel,
+    waitForPolicy,
+} from './helpers';
 
 // Each surface renders attachments through a different React tree, so one that forgets to
 // honour RedactedFileCount is invisible to server-side coverage.
@@ -13,11 +25,27 @@ import {ensureABACEnabled, setupUserAndChannel, waitForPolicy} from './helpers';
 // Denies via a comparison no test user satisfies: policy creation rejects a bare `false`
 // literal, and these users have no Department value.
 const DENY_ALL_CEL = "user.attributes.Department == 'no-such-value-deny-all'";
+
 const THREAD_ROOT_MESSAGE = 'thread root with file';
+
+/** Turns attribute-based access on and denies downloads to everyone; returns the policy's name. */
+async function denyDownloads(app: App, adminClient: Client4, prefix: string) {
+    await setAbacEnabled(app, true);
+    await ensureUserAttributes(adminClient);
+    const name = `${prefix} Download Deny ${getRandomId()}`;
+    await createPermissionPolicy(app, {
+        name,
+        cel: DENY_ALL_CEL,
+        permissions: [AdminPermission.DownloadFileAttachment],
+    });
+    await waitForPolicy(adminClient, name);
+    await ensureABACEnabled(adminClient);
+    return name;
+}
 
 test.describe('ABAC file permissions - redaction across surfaces', () => {
     let lastPolicyName = '';
-    let savedAdminClient: any = null;
+    let savedAdminClient: Client4 | null = null;
 
     test.beforeEach(async ({pw}) => {
         await pw.skipIfNoLicense();
@@ -43,42 +71,24 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
 
             const {adminUser, adminClient, team} = await pw.initSetup();
             savedAdminClient = adminClient;
-            const {testUser: deniedUser, channelName} = await setupUserAndChannel(adminClient, team);
+            const {testUser: deniedUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
 
             // # Admin sends a Burn-on-Read message carrying a file
-            const {channelsPage: adminChannelsPage} = await pw.testBrowser.login(adminUser);
-            await adminChannelsPage.goto(team.name, channelName);
-            await adminChannelsPage.toBeVisible();
-            await adminChannelsPage.centerView.postCreate.toggleBurnOnRead();
-            await adminChannelsPage.centerView.postCreate.postMessage('BOR with file', ['sample_text_file.txt']);
+            const admin = await openChannel(pw, adminUser, team, {name: channelName});
+            await admin.center.postCreate.clickBurnOnReadButton();
+            await expect(admin.center.postCreate.burnOnReadLabel.locator).toBeVisible();
+            await postWithFile(admin, adminClient, channelId, 'BOR with file');
 
             // # Enable ABAC and deny download for everyone
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await enableABAC(systemConsolePage.page);
-            await navigateToPermissionPoliciesPage(systemConsolePage.page);
-
-            lastPolicyName = `BOR Download Deny ${getRandomId()}`;
-            await createPermissionPolicy(systemConsolePage.page, {
-                name: lastPolicyName,
-                celExpression: DENY_ALL_CEL,
-                permissions: ['Download Files'],
-                adminClient,
-            });
-            await waitForPolicy(adminClient, lastPolicyName);
-            await ensureABACEnabled(adminClient);
+            lastPolicyName = await denyDownloads(admin, adminClient, 'BOR');
 
             // # The denied user opens the channel and reveals the concealed message
-            const {channelsPage} = await pw.testBrowser.login(deniedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
-
-            const post = await channelsPage.centerView.getLastPost();
-            await post.concealedPlaceholder.toBeVisible();
-            await post.concealedPlaceholder.clickToReveal();
-            await post.concealedPlaceholder.waitForReveal(pw.duration.ten_sec);
+            const app = await openChannel(pw, deniedUser, team, {name: channelName});
+            const {post} = await concealedPost(app);
+            await reveal(post);
 
             // * Verify the revealed message's file is redacted
-            await post.toHaveFilesRedacted();
+            await expectFilesRedacted(post);
         },
     );
 
@@ -97,61 +107,36 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
             const {testUser: deniedUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
 
             // # Admin posts a file, then posts a permalink to it in the same channel
-            const {channelsPage: adminChannelsPage} = await pw.testBrowser.login(adminUser);
-            await adminChannelsPage.goto(team.name, channelName);
-            await adminChannelsPage.toBeVisible();
-            await adminChannelsPage.centerView.postCreate.postMessage('original with file', ['sample_text_file.txt']);
-
-            const originalPosts = await adminClient.getPosts(channelId, 0, 1);
-            const originalPostId = originalPosts.order[0];
+            const admin = await openChannel(pw, adminUser, team, {name: channelName});
+            const original = await postWithFile(admin, adminClient, channelId, 'original with file');
+            const originalPostId = (await original.locator.getAttribute('data-testid'))!.split(':').pop()!;
 
             // Use testConfig.internalBaseURL rather than the admin client's host-mapped route:
             // the server must recognize this URL as its own SiteURL to embed it through an
             // internal permalink lookup, instead of fetching it back over HTTP as a link
             // (which fails under testcontainers).
             const permalinkUrl = `${testConfig.siteURL}/${team.name}/pl/${originalPostId}`;
-            await adminChannelsPage.centerView.postCreate.postMessage(permalinkUrl);
-            await adminChannelsPage.centerView.waitUntilLastPostContains(permalinkUrl);
+            await admin.center.postCreate.fillMessageTextbox(permalinkUrl);
+            await admin.center.postCreate.clickSendButton();
 
             // Permalink embeds resolve asynchronously. Wait until the admin view has the
             // preview so later assertions are not racing the first metadata fetch.
-            const permalinkPostAdmin = await adminChannelsPage.centerView.getLastPost();
-            await expect(permalinkPostAdmin.postPreview).toBeVisible({timeout: pw.duration.half_min});
-
-            // Both posts are addressed by ID: the embed repeats the original's text, so filtering
-            // by text cannot tell the two of them apart.
-            const permalinkPosts = await adminClient.getPosts(channelId, 0, 1);
-            const permalinkPostId = permalinkPosts.order[0];
-            expect(permalinkPostId).not.toBe(originalPostId);
+            const adminPermalink = await postNamed(admin, adminClient, channelId, permalinkUrl);
+            await expect(adminPermalink.permalinkPreview.locator).toBeVisible({timeout: pw.duration.half_min});
 
             // # Enable ABAC and deny download for everyone
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await enableABAC(systemConsolePage.page);
-            await navigateToPermissionPoliciesPage(systemConsolePage.page);
-
-            lastPolicyName = `Permalink Download Deny ${getRandomId()}`;
-            await createPermissionPolicy(systemConsolePage.page, {
-                name: lastPolicyName,
-                celExpression: DENY_ALL_CEL,
-                permissions: ['Download Files'],
-                adminClient,
-            });
-            await waitForPolicy(adminClient, lastPolicyName);
-            await ensureABACEnabled(adminClient);
+            lastPolicyName = await denyDownloads(admin, adminClient, 'Permalink');
 
             // # The denied user opens the channel
-            const {channelsPage} = await pw.testBrowser.login(deniedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, deniedUser, team, {name: channelName});
 
             // * Verify the standalone original post is redacted
-            const originalPost = await channelsPage.centerView.getPostById(originalPostId);
-            await originalPost.toHaveFilesRedacted();
+            await expectFilesRedacted(await postNamed(app, adminClient, channelId, 'original with file'));
 
             // * Verify the embedded preview is redacted too, and not merely file-less
-            const permalinkPost = await channelsPage.centerView.getPostById(permalinkPostId);
-            await expect(permalinkPost.postPreview).toBeVisible({timeout: pw.duration.half_min});
-            await permalinkPost.toHaveFilesRedacted(permalinkPost.postPreview);
+            const permalinkPost = await postNamed(app, adminClient, channelId, permalinkUrl);
+            await expect(permalinkPost.permalinkPreview.locator).toBeVisible({timeout: pw.duration.half_min});
+            await expectFilesRedacted(permalinkPost.permalinkPreview);
         },
     );
 
@@ -167,42 +152,27 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
 
             const {adminUser, adminClient, team} = await pw.initSetup();
             savedAdminClient = adminClient;
-            const {testUser: deniedUser, channelName} = await setupUserAndChannel(adminClient, team);
+            const {testUser: deniedUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
 
             // # Admin posts a file
-            const {channelsPage: adminChannelsPage} = await pw.testBrowser.login(adminUser);
-            await adminChannelsPage.goto(team.name, channelName);
-            await adminChannelsPage.toBeVisible();
-            await adminChannelsPage.centerView.postCreate.postMessage(THREAD_ROOT_MESSAGE, ['sample_text_file.txt']);
+            const admin = await openChannel(pw, adminUser, team, {name: channelName});
+            await postWithFile(admin, adminClient, channelId, THREAD_ROOT_MESSAGE);
 
             // # Enable ABAC and deny download for everyone
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await enableABAC(systemConsolePage.page);
-            await navigateToPermissionPoliciesPage(systemConsolePage.page);
-
-            lastPolicyName = `Thread Download Deny ${getRandomId()}`;
-            await createPermissionPolicy(systemConsolePage.page, {
-                name: lastPolicyName,
-                celExpression: DENY_ALL_CEL,
-                permissions: ['Download Files'],
-                adminClient,
-            });
-            await waitForPolicy(adminClient, lastPolicyName);
-            await ensureABACEnabled(adminClient);
+            lastPolicyName = await denyDownloads(admin, adminClient, 'Thread');
 
             // # The denied user opens the post in a thread
-            const {channelsPage} = await pw.testBrowser.login(deniedUser);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
-
-            const centerPost = await channelsPage.centerView.getPostByText(THREAD_ROOT_MESSAGE);
-            await centerPost.toHaveFilesRedacted();
-            await centerPost.openAThread();
-            await channelsPage.sidebarRight.toBeVisible();
+            const app = await openChannel(pw, deniedUser, team, {name: channelName});
+            const centerPost = await postNamed(app, adminClient, channelId, THREAD_ROOT_MESSAGE);
+            await expectFilesRedacted(centerPost);
+            await centerPost.locator.hover();
+            await centerPost.menu.clickReplyButton();
 
             // * Verify the thread's copy of the post is redacted as well
-            const rhsPost = await channelsPage.sidebarRight.getFirstPost();
-            await rhsPost.toHaveFilesRedacted();
+            const rootId = (await centerPost.locator.getAttribute('data-testid'))!.split(':').pop()!;
+            const rhsPost = app.rhs.thread.post({id: rootId});
+            await expect(rhsPost.locator).toBeVisible();
+            await expectFilesRedacted(rhsPost);
         },
     );
 
@@ -215,39 +185,26 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
 
         const {adminUser, adminClient, team} = await pw.initSetup();
         savedAdminClient = adminClient;
-        const {testUser: deniedUser, channelName} = await setupUserAndChannel(adminClient, team);
+        const {testUser: deniedUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
 
         // # Admin posts a file with a searchable, unique term
         const searchTerm = `redactme${getRandomId()}`;
-        const {channelsPage: adminChannelsPage} = await pw.testBrowser.login(adminUser);
-        await adminChannelsPage.goto(team.name, channelName);
-        await adminChannelsPage.toBeVisible();
-        await adminChannelsPage.centerView.postCreate.postMessage(searchTerm, ['sample_text_file.txt']);
+        const admin = await openChannel(pw, adminUser, team, {name: channelName});
+        const posted = await postWithFile(admin, adminClient, channelId, searchTerm);
+        const postId = (await posted.locator.getAttribute('data-testid'))!.split(':').pop()!;
 
         // # Enable ABAC and deny download for everyone
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await enableABAC(systemConsolePage.page);
-        await navigateToPermissionPoliciesPage(systemConsolePage.page);
-
-        lastPolicyName = `Search Download Deny ${getRandomId()}`;
-        await createPermissionPolicy(systemConsolePage.page, {
-            name: lastPolicyName,
-            celExpression: DENY_ALL_CEL,
-            permissions: ['Download Files'],
-            adminClient,
-        });
-        await waitForPolicy(adminClient, lastPolicyName);
-        await ensureABACEnabled(adminClient);
+        lastPolicyName = await denyDownloads(admin, adminClient, 'Search');
 
         // # The denied user searches for the post
-        const {channelsPage} = await pw.testBrowser.login(deniedUser);
-        await channelsPage.goto(team.name, channelName);
-        await channelsPage.toBeVisible();
-        await channelsPage.searchFor(searchTerm);
+        const app = await openChannel(pw, deniedUser, team, {name: channelName});
+        await app.globalHeader.search.clickOpenButton();
+        await app.searchBox.inputSearchbox.locator.fill(searchTerm);
+        await app.searchBox.inputSearchbox.locator.press('Enter');
 
         // * Verify the search result shows the redacted placeholder, not the file
-        const result = channelsPage.searchResultsPanel.getResultByText(searchTerm).first();
-        await expect(result).toBeVisible();
+        const result = app.search.results.post({id: postId});
+        await expect(result.locator).toBeVisible();
         await expectFilesRedacted(result);
     });
 });

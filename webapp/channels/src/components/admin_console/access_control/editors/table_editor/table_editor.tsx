@@ -4,6 +4,7 @@
 import React, {useState, useEffect, useCallback, useMemo, type JSX} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AccessControlTestResult, AccessControlVisualAST} from '@mattermost/types/access_control';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 import {CHANNEL_ATTRIBUTES_OBJECT_TYPE, SESSION_ATTRIBUTES_OBJECT_TYPE, isSessionAttributeField} from '@mattermost/types/properties_user';
@@ -143,6 +144,12 @@ export function isRowValueValid(row: TableRow): boolean {
 }
 
 export interface TableEditorProps {
+
+    // The rule table is `<testId>`; each rule `<testId>.row:<position>`, whose controls are under `<testId>.row`
+    // (`.attribute--button`, `.operator--button`, `.value--button` or `--textbox`, `.remove--button`). Adding a
+    // rule is `<testId>.add--button` and testing the rules `<testId>.test--button`. Plugins render the editor
+    // (`AccessControlTableEditor`) without one, and then it renders no testids.
+    testId?: TestId;
     value: string;
     onChange: (value: string) => void;
     onValidate?: (isValid: boolean) => void;
@@ -391,8 +398,10 @@ function TableEditor({
     hiddenPickerAttributeNames,
     helpText,
     emptyStateText,
+    testId,
 }: TableEditorProps): JSX.Element {
     const {formatMessage} = useIntl();
+    const rowTestId = testId ? `${testId}.row` as const : undefined;
 
     const [rows, setRows] = useState<TableRow[]>([]);
     const [showTestResults, setShowTestResults] = useState(false);
@@ -727,7 +736,7 @@ function TableEditor({
     return (
         <div
             className='table-editor'
-            data-testid='table-editor'
+            data-testid={testId}
         >
             <table className='table-editor__table'>
                 <thead>
@@ -761,6 +770,7 @@ function TableEditor({
                             <td
                                 colSpan={4}
                                 className='table-editor__blank-state'
+                                data-testid={testId ? `${testId}.blank_state--text` : undefined}
                             >
                                 <span>
                                     {emptyStateText ?? formatMessage({
@@ -794,6 +804,7 @@ function TableEditor({
                                 <tr
                                     key={index}
                                     className='table-editor__row'
+                                    data-testid={rowTestId ? `${rowTestId}:${index}` : undefined}
                                 >
                                     <td className='table-editor__cell'>
                                         <AttributeSelectorMenu
@@ -808,6 +819,7 @@ function TableEditor({
                                             autoOpen={index === autoOpenAttributeMenuForRow}
                                             onMenuOpened={() => setAutoOpenAttributeMenuForRow(null)}
                                             enableUserManagedAttributes={enableUserManagedAttributes}
+                                            testId={rowTestId}
                                         />
                                     </td>
                                     <td className='table-editor__cell'>
@@ -822,6 +834,7 @@ function TableEditor({
                                             // instead of the ranked one.
                                             attributeType={attributeTypeForRow(row)}
                                             allowedOperators={allowedOperatorLabelsForField(field)}
+                                            testId={rowTestId}
                                         />
                                     </td>
                                     <td className='table-editor__cell'>
@@ -836,6 +849,7 @@ function TableEditor({
                                                 onSelectTarget={(name: string) => updateRowTarget(index, name)}
                                                 field={field}
                                                 rowIndex={index}
+                                                testId={rowTestId}
                                             />
                                             {youngerThanInvalid && (
                                                 <div className='table-editor__value-error'>
@@ -852,6 +866,7 @@ function TableEditor({
                                         <button
                                             type='button'
                                             className='table-editor__row-remove'
+                                            data-testid={rowTestId ? `${rowTestId}.remove--button` : undefined}
                                             onClick={() => requestRemoveRow(index)}
                                             disabled={cellDisabled}
                                             aria-label={formatMessage({id: 'admin.access_control.table_editor.remove_row', defaultMessage: 'Remove row'})}
@@ -871,6 +886,7 @@ function TableEditor({
                             className='table-editor__add-button-container'
                         >
                             <AddAttributeButton
+                                testId={testId ? `${testId}.add` : undefined}
                                 onClick={addRow}
                                 disabled={disabled || pickerFields.length === 0}
                             />
@@ -888,6 +904,7 @@ function TableEditor({
                 />
                 <div className='access-control-test-controls'>
                     <TestButton
+                        testId={testId ? `${testId}.test` : undefined}
                         onClick={onTestClick ?? (() => setShowTestResults(true))}
                         disabled={testButtonDisabled || disabled || (!onTestClick && !value) || userWouldBeExcluded || hasMaskedRows}
                         disabledTooltip={testButtonTooltip ?? (userWouldBeExcluded ? formatMessage({

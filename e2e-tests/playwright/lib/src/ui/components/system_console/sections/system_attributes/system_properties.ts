@@ -24,7 +24,7 @@ export default class SystemProperties {
         this.page = container.page();
 
         this.addAttributeButton = this.container.getByRole('button', {name: 'Add attribute'});
-        this.saveButton = this.page.getByTestId('saveSetting');
+        this.saveButton = this.page.getByTestId('admin.save--button');
     }
 
     // ── Visibility ──────────────────────────────────────────────────────

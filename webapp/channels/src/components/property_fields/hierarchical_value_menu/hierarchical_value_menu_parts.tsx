@@ -10,6 +10,7 @@ import {defineMessages, useIntl} from 'react-intl';
 import {AlertOutlineIcon} from '@mattermost/compass-icons/components';
 import {Button} from '@mattermost/compass-ui/components/button';
 import {Chip} from '@mattermost/compass-ui/components/chip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import AttributeChip, {AttributeChipRemoveButton} from 'components/channel_attributes/attribute_chip';
 import Input from 'components/widgets/inputs/input/input';
@@ -215,9 +216,12 @@ export type HierarchicalMenuSearchProps = {
     onChange: (next: string) => void;
     onArrowDown: () => void;
     inputRef: React.Ref<HTMLInputElement>;
+
+    // The search box renders `<testId>--textbox`.
+    testId?: TestId;
 };
 
-export function HierarchicalMenuSearch({inputName, value, disabled, onChange, onArrowDown, inputRef}: HierarchicalMenuSearchProps) {
+export function HierarchicalMenuSearch({inputName, value, disabled, onChange, onArrowDown, inputRef, testId}: HierarchicalMenuSearchProps) {
     const {formatMessage} = useIntl();
     const placeholder = formatMessage(messages.searchPlaceholder);
 
@@ -230,6 +234,7 @@ export function HierarchicalMenuSearch({inputName, value, disabled, onChange, on
                 ref={inputRef as React.Ref<HTMLInputElement>}
                 type='text'
                 name={inputName}
+                testId={testId}
                 value={value}
                 disabled={disabled}
                 autoComplete='off'

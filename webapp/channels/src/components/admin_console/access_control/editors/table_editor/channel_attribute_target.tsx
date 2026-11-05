@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
 import {CheckIcon, CodeBracketsIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
 import * as Menu from 'components/menu';
@@ -28,6 +29,9 @@ export function channelAttributeMenuItems(
     selectedName: string | undefined,
     onSelect: (name: string) => void,
     formatMessage: IntlShape['formatMessage'],
+
+    // The rule row's scope: each target is `<testId>.value_menu.channel_attribute:<field id>--menuitemradio`.
+    testId?: TestId,
 ): React.ReactNode[] {
     if (channelFields.length === 0) {
         return [];
@@ -52,6 +56,7 @@ export function channelAttributeMenuItems(
             <Menu.Item
                 id={`channel-attr-${field.id}`}
                 key={`channel-attr-${field.id}`}
+                data-testid={testId ? `${testId}.value_menu.channel_attribute:${field.id}--menuitemradio` : undefined}
                 role='menuitemradio'
                 forceCloseOnSelect={true}
                 aria-checked={isSelected}

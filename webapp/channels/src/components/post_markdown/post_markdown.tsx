@@ -115,6 +115,7 @@ export default class PostMarkdown extends React.PureComponent<Props> {
                     <DataSpillageReport
                         post={this.props.post}
                         isRHS={this.props.isRHS}
+                        testIdScope={this.props.postTestIdScope ? `${this.props.postTestIdScope}.spillage_report` : undefined}
                     />
                 </div>
             );

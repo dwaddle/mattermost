@@ -8,6 +8,7 @@ import {defineMessages, useIntl} from 'react-intl';
 import {MonitorIcon, CellphoneIcon, GlobeIcon} from '@mattermost/compass-icons/components';
 import type IconProps from '@mattermost/compass-icons/components/props';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {SESSION_PLATFORMS, type SessionPlatform} from './utils';
 
@@ -42,6 +43,8 @@ type Props = {
 
     /** Optional color override for icons */
     iconColor?: string;
+
+    testId?: TestId;
 };
 
 export default function PlatformIcons({
@@ -51,6 +54,7 @@ export default function PlatformIcons({
     className = 'SessionAttributes__platforms',
     iconClassName,
     iconColor,
+    testId,
 }: Props) {
     const {formatMessage} = useIntl();
 
@@ -59,7 +63,7 @@ export default function PlatformIcons({
     return (
         <span
             className={className}
-            data-testid='session-attribute-platforms'
+            data-testid={testId}
         >
             {platformsToRender.map((platform) => {
                 const Icon = PLATFORM_ICONS[platform];

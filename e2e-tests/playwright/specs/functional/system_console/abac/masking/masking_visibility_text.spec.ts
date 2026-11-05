@@ -1,9 +1,10 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, enableABAC, navigateToABACPage} from '@mattermost/playwright-lib';
+import {expect, test} from '@mattermost/playwright-lib';
 
 import {enableUserManagedAttributes} from '../support';
+import {openMembershipPolicies, setAbacEnabled, setCelExpression} from '../surface';
 
 import {
     createMaskingMultiselectField,
@@ -13,7 +14,7 @@ import {
     deletePolicy,
     disableMaskingFlag,
     enableMaskingFlag,
-    openExistingPolicy,
+    openMaskedPolicy,
     setUserAttribute,
 } from './masking_helpers';
 import {purgeFieldsByPrefix, setFieldAsSharedOnly} from './masking_db_setup';
@@ -45,45 +46,27 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             // → caller holds ALL values in the condition → nothing is masked
             await setUserAttribute(adminClient, adminUser.id, fieldId, 'Alpha');
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
-            await navigateToABACPage(page);
-            await enableABAC(page);
-
-            const policyName = `MaskingPolicy ${pw.random.id()}`;
-            const policyId = await createPolicyWithCEL(page, policyName, `user.attributes.${fieldName} in ["Alpha"]`);
+            const {app} = await pw.testBrowser.login(adminUser);
+            const expression = `user.attributes.${fieldName} in ["Alpha"]`;
+            const policyId = await createPolicyWithCEL(app, adminClient, `MaskingPolicy ${pw.random.id()}`, expression);
             policyIds.push(policyId);
             await setFieldAsSharedOnly(fieldId);
 
-            await openExistingPolicy(page, policyName);
+            const {policy, row} = await openMaskedPolicy(app, policyId);
 
-            // Alpha visible
-            await expect(page.locator('.select__multi-value').filter({hasText: 'Alpha'})).toBeVisible();
+            // * Alpha is the row's only value, and nothing is masked
+            await expect(row.value.chip(0).locator).toContainText('Alpha');
+            await expect(row.value.chipItems).toHaveCount(1);
+            await expect(row.value.maskedImg.locator).toHaveCount(0);
+            await expect(policy.maskedValuesWarning.locator).toHaveCount(0);
 
-            // No masked chip — caller holds all values
-            await expect(page.locator('.select__multi-value--masked')).not.toBeVisible();
+            // * The attribute selector and the access test are usable
+            await expect(row.attributeButton.locator).toBeEnabled();
+            await expect(policy.rules.testButton.locator).toBeEnabled();
 
-            // No warning banner
-            await expect(page.locator('text="This policy contains restricted values"')).not.toBeVisible();
-
-            // Attribute selector is NOT locked
-            const attributeSelector = page.locator('[data-testid="attributeSelectorMenuButton"]').first();
-            await expect(attributeSelector).not.toHaveClass(/disabled/);
-
-            // Test access rule button should be enabled
-            const testRulesBtn = page.locator('button').filter({hasText: 'Test access rule'});
-            await expect(testRulesBtn).toBeVisible();
-            await expect(testRulesBtn).toBeEnabled();
-
-            // CEL mode is editable (no read-only)
-            const advancedBtn = page.getByRole('button', {name: /advanced/i});
-            await expect(advancedBtn).toBeVisible();
-            await advancedBtn.click();
-            await page.waitForTimeout(1000);
-            const monacoEditor = page.locator('.monaco-editor').first();
-            await expect(monacoEditor).toBeVisible();
-            const ariaReadOnly = await monacoEditor.getAttribute('aria-readonly');
-            expect(ariaReadOnly).not.toBe('true');
+            // * The CEL editor takes a new expression (it isn't read-only)
+            await setCelExpression(app, policy, expression);
+            await expect(policy.cel.maskedAlert.locator).toHaveCount(0);
         } finally {
             for (const id of policyIds) {
                 try {
@@ -117,34 +100,27 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             fieldIds.push(fieldId);
             await setUserAttribute(adminClient, adminUser.id, fieldId, 'Alpha');
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
-            await navigateToABACPage(page);
-            await enableABAC(page);
+            const {app} = await pw.testBrowser.login(adminUser);
+            await setAbacEnabled(app, true);
 
-            // Navigate to New Policy form
-            await page.goto('/admin_console/system_attributes/membership_policies');
-            await page.waitForLoadState('networkidle');
-            await page.getByRole('button', {name: 'Add policy'}).click();
-            await page.waitForLoadState('networkidle');
+            // # Open the New Policy form
+            const policies = await openMembershipPolicies(app);
+            await policies.clickAddButton();
+            const {policy} = app.admin.accessControl;
+            await expect(policy.editPolicy.name.valueTextbox.locator).toBeVisible();
 
-            // A fresh editor must show no masked chip and no warning banner
-            await expect(page.locator('.select__multi-value--masked')).not.toBeVisible();
-            await expect(page.locator('text="This policy contains restricted values"')).not.toBeVisible();
+            // * A fresh editor shows no warning banner
+            await expect(policy.maskedValuesWarning.locator).toHaveCount(0);
 
-            // Add a rule row
-            const addAttributeBtn = page.getByRole('button', {name: /add attribute/i});
-            await expect(addAttributeBtn).toBeVisible();
-            await expect(addAttributeBtn).toBeEnabled();
-            await addAttributeBtn.click();
-            await page.waitForTimeout(500);
+            // # Add a rule row
+            await expect(policy.rules.addButton.locator).toBeEnabled();
+            await policy.rules.clickAddButton();
+            const row = policy.rules.row(0);
+            await expect(row.attributeButton.locator).toBeVisible();
 
-            // Still no masked chip after adding a blank row
-            await expect(page.locator('.select__multi-value--masked')).not.toBeVisible();
-
-            // Attribute selector is NOT locked on a new row
-            const attributeSelector = page.locator('[data-testid="attributeSelectorMenuButton"]').first();
-            await expect(attributeSelector).not.toHaveClass(/disabled/);
+            // * Still nothing masked after adding a blank row, and its attribute selector is not locked
+            await expect(row.value.maskedImg.locator).toHaveCount(0);
+            await expect(row.attributeButton.locator).toBeEnabled();
         } finally {
             for (const id of fieldIds) {
                 try {
@@ -177,32 +153,25 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             fieldIds.push(fieldId);
             await setUserAttribute(adminClient, adminUser.id, fieldId, 'Alpha');
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
-            await navigateToABACPage(page);
-            await enableABAC(page);
-
-            const policyName = `MaskingPolicy ${pw.random.id()}`;
+            const {app} = await pw.testBrowser.login(adminUser);
             const policyId = await createPolicyWithCEL(
-                page,
-                policyName,
+                app,
+                adminClient,
+                `MaskingPolicy ${pw.random.id()}`,
                 `user.attributes.${fieldName} in ["Alpha", "Bravo", "Charlie"]`,
             );
             policyIds.push(policyId);
             await setFieldAsSharedOnly(fieldId);
 
-            await openExistingPolicy(page, policyName);
+            const {row} = await openMaskedPolicy(app, policyId);
 
-            // Masked state visible
-            await expect(page.locator('.select__multi-value--masked')).toBeVisible();
+            // * Masked state visible
+            await expect(row.value.maskedImg.locator).toBeVisible();
 
-            // Value selector on the masked row must be disabled
-            const valueSelector = page.locator('[data-testid="valueSelectorMenuButton"]').first();
-            await expect(valueSelector).toBeVisible({timeout: 3000});
-            await expect(valueSelector).toBeDisabled();
-
-            // Attribute selector locked
-            await expect(page.locator('[data-testid="attributeSelectorMenuButton"]').first()).toHaveClass(/disabled/);
+            // * The value and attribute selectors on the masked row are disabled
+            await expect(row.valueButton.locator).toBeVisible();
+            await expect(row.valueButton.locator).toBeDisabled();
+            await expect(row.attributeButton.locator).toBeDisabled();
         } finally {
             for (const id of policyIds) {
                 try {
@@ -237,30 +206,27 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             fieldIds.push(fieldId);
             await setUserAttribute(adminClient, adminUser.id, fieldId, 'Alpha');
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
-            await navigateToABACPage(page);
-            await enableABAC(page);
-
-            const policyName = `MaskingPolicy ${pw.random.id()}`;
+            const {app} = await pw.testBrowser.login(adminUser);
             const policyId = await createPolicyWithCEL(
-                page,
-                policyName,
+                app,
+                adminClient,
+                `MaskingPolicy ${pw.random.id()}`,
                 `user.attributes.${fieldName} in ["Alpha", "Bravo", "Charlie"]`,
             );
             policyIds.push(policyId);
             await setFieldAsSharedOnly(fieldId);
 
-            await openExistingPolicy(page, policyName);
+            const {row} = await openMaskedPolicy(app, policyId);
 
-            // "Alpha" chip visible (held); "Bravo" and "Charlie" are masked
-            await expect(page.locator('.select__multi-value').filter({hasText: 'Alpha'})).toBeVisible();
-            await expect(page.locator('.select__multi-value').filter({hasText: 'Bravo'})).not.toBeVisible();
-            await expect(page.locator('.select__multi-value').filter({hasText: 'Charlie'})).not.toBeVisible();
-            await expect(page.locator('.select__multi-value--masked')).toBeVisible();
+            // * "Alpha" (held) is the only value shown; "Bravo" and "Charlie" sit behind the masked chip
+            await expect(row.value.chip(0).locator).toContainText('Alpha');
+            await expect(row.value.chipItems).toHaveCount(1);
+            await expect(row.value.maskedImg.locator).toBeVisible();
+            await expect(row.locator).not.toContainText('Bravo');
+            await expect(row.locator).not.toContainText('Charlie');
 
-            // Attribute selector on the masked row is locked
-            await expect(page.locator('[data-testid="attributeSelectorMenuButton"]').first()).toHaveClass(/disabled/);
+            // * The attribute selector on the masked row is locked
+            await expect(row.attributeButton.locator).toBeDisabled();
         } finally {
             for (const id of policyIds) {
                 try {
@@ -296,31 +262,24 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             fieldIds.push(fieldId);
             await setUserAttribute(adminClient, adminUser.id, fieldId, 'Building 1');
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
-            await navigateToABACPage(page);
-            await enableABAC(page);
+            const {app} = await pw.testBrowser.login(adminUser);
 
             // Policy: Location != "Building 7"
-            const policyName = `MaskingPolicy ${pw.random.id()}`;
             const policyId = await createPolicyWithCEL(
-                page,
-                policyName,
+                app,
+                adminClient,
+                `MaskingPolicy ${pw.random.id()}`,
                 `user.attributes.${fieldName} != "Building 7"`,
             );
             policyIds.push(policyId);
             await setFieldAsSharedOnly(fieldId);
 
-            await openExistingPolicy(page, policyName);
+            const {policy, row} = await openMaskedPolicy(app, policyId);
 
-            // "Building 7" is not held by the admin → it should be masked in some form
-            await expect(page.locator('text="Building 7"')).not.toBeVisible();
-
-            // The row should still show the masked state: either masked chip or read-only input
-            const maskedState = page.locator(
-                '.select__multi-value--masked, input[disabled], .values-editor__simple-input[disabled]',
-            );
-            await expect(maskedState).toBeVisible({timeout: 5000});
+            // * "Building 7" is not held by the admin, so the row shows only the masked chip
+            await expect(row.value.maskedImg.locator).toBeVisible();
+            await expect(policy.maskedValuesWarning.locator).toBeVisible();
+            await expect(row.locator).not.toContainText('Building 7');
         } finally {
             for (const id of policyIds) {
                 try {
@@ -362,34 +321,28 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
 
             // adminUser holds NONE of the values — the entire condition is fully masked.
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
-            await navigateToABACPage(page);
-            await enableABAC(page);
+            const {app} = await pw.testBrowser.login(adminUser);
 
             // Policy uses hasAnyOf: ("Alpha" in attr || "Bravo" in attr)
-            const policyName = `MaskingPolicy ${pw.random.id()}`;
             const policyId = await createPolicyWithCEL(
-                page,
-                policyName,
+                app,
+                adminClient,
+                `MaskingPolicy ${pw.random.id()}`,
                 `("Alpha" in user.attributes.${fieldName} || "Bravo" in user.attributes.${fieldName})`,
             );
             policyIds.push(policyId);
 
             await setFieldAsSharedOnly(fieldId);
 
-            await openExistingPolicy(page, policyName);
+            const {row} = await openMaskedPolicy(app, policyId);
 
-            // Only the masked chip is visible — caller holds no values.
-            await expect(page.locator('.select__multi-value--masked')).toBeVisible();
-            await expect(page.locator('.select__multi-value').filter({hasText: 'Alpha'})).not.toBeVisible();
-            await expect(page.locator('.select__multi-value').filter({hasText: 'Bravo'})).not.toBeVisible();
+            // * Only the masked chip shows — the caller holds no values
+            await expect(row.value.maskedImg.locator).toBeVisible();
+            await expect(row.value.chipItems).toHaveCount(0);
 
-            // The operator selector on the masked row must show "has any of", NOT "has all of".
-            const operatorBtn = page.locator('[data-testid="operatorSelectorMenuButton"]').first();
-            await operatorBtn.waitFor({state: 'visible', timeout: 10000});
-            await expect(operatorBtn).toContainText('has any of');
-            await expect(operatorBtn).not.toContainText('has all of');
+            // * The operator on the masked row reads "has any of", not "has all of"
+            await expect(row.operatorButton.locator).toContainText('has any of');
+            await expect(row.operatorButton.locator).not.toContainText('has all of');
         } finally {
             for (const id of policyIds) {
                 try {

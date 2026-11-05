@@ -5,6 +5,7 @@ import React, {useMemo} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 import {matchPath, useLocation} from 'react-router-dom';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import {ContentFlaggingStatus} from '@mattermost/types/content_flagging';
 import type {Post} from '@mattermost/types/posts';
 import type {NameMappedPropertyFields, PropertyValue} from '@mattermost/types/properties';
@@ -58,9 +59,12 @@ const shortModeFieldOrder = [
 type Props = {
     post: Post;
     isRHS?: boolean;
+
+    // The post's `spillage_report` scope; its parts render under it.
+    testIdScope?: TestId;
 };
 
-export function DataSpillageReport({post, isRHS}: Props) {
+export function DataSpillageReport({post, isRHS, testIdScope}: Props) {
     const {formatMessage} = useIntl();
     const {pathname} = useLocation();
 
@@ -158,7 +162,7 @@ export function DataSpillageReport({post, isRHS}: Props) {
         return (
             <DataSpillageFooter
                 post={post}
-                flaggedPostID={reportedPostId}
+                testIdScope={testIdScope ? `${testIdScope}.footer` : undefined}
             />
         );
     }, [isRHS, post, reportedPostId]);
@@ -182,23 +186,33 @@ export function DataSpillageReport({post, isRHS}: Props) {
                 />
             ),
             content: (
-                <DataSpillageExposureReport flaggedPostId={reportedPost.id}/>
+                <DataSpillageExposureReport
+                    flaggedPostId={reportedPost.id}
+                    testIdScope={testIdScope ? `${testIdScope}.exposure_report` : undefined}
+                />
             ),
-            testId: 'data-spillage-exposure-report-row',
+            testKey: 'exposure_report',
         });
 
         rows.push({
+            testKey: 'report',
             label: (
                 <FormattedMessage
                     id='data_spillage_report.row.report.label'
                     defaultMessage='Report'
                 />
             ),
-            content: <DataSpillageDownloadReport flaggedPostId={reportedPost.id}/>,
+            content: (
+                <DataSpillageDownloadReport
+                    flaggedPostId={reportedPost.id}
+                    testIdScope={testIdScope ? `${testIdScope}.download_report` : undefined}
+                />
+            ),
         });
 
         if (reportingUser && reviewIsOpen) {
             rows.push({
+                testKey: 'actions',
                 label: (
                     <FormattedMessage
                         id='data_spillage_report.row.actions.label'
@@ -209,6 +223,7 @@ export function DataSpillageReport({post, isRHS}: Props) {
                     <DataSpillageAction
                         flaggedPost={reportedPost}
                         reportingUser={reportingUser}
+                        testIdScope={testIdScope ? `${testIdScope}.actions` : undefined}
                     />
                 ),
             });
@@ -220,7 +235,7 @@ export function DataSpillageReport({post, isRHS}: Props) {
     return (
         <div
             className={`DataSpillageReport mode_${mode}`}
-            data-testid='data-spillage-report'
+            data-testid={testIdScope}
             onClick={(e) => e.stopPropagation()}
         >
             <PropertiesCardView
@@ -233,6 +248,7 @@ export function DataSpillageReport({post, isRHS}: Props) {
                 mode={mode}
                 metadata={metadata}
                 footer={footer}
+                testIdScope={testIdScope ? `${testIdScope}.card` : undefined}
             />
         </div>
     );

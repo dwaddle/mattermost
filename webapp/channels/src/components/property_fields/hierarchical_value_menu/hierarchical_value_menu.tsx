@@ -8,6 +8,7 @@ import {defineMessages, useIntl} from 'react-intl';
 
 import {ChevronDownIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -80,6 +81,10 @@ export type HierarchicalValueMenuProps = {
     buttonId: string;
     buttonDataTestId?: string;
 
+    // The open menu's scope: its search box is `<menuTestId>.search--textbox`, each value
+    // `<menuTestId>.node:<label>--menuitemcheckbox`.
+    menuTestId?: TestId;
+
     placeholder?: string;
     ariaLabel?: string;
 
@@ -150,6 +155,7 @@ export default function HierarchicalValueMenu({
     menuId,
     buttonId,
     buttonDataTestId,
+    menuTestId,
     placeholder,
     ariaLabel,
     className,
@@ -456,6 +462,7 @@ export default function HierarchicalValueMenu({
                     isSelected={selectedIdSet.has(row.valueId)}
                     insideCount={row.insideCount}
                     isFirstRow={index === 0}
+                    testId={menuTestId ? `${menuTestId}.node:${row.label}--menuitemcheckbox` : undefined}
                     onToggleSelect={() => handleToggleSelect(row.valueId)}
                     onToggleExpand={() => handleToggleExpand(row.occKey)}
                     onFocusSearch={focusSearch}
@@ -548,6 +555,7 @@ export default function HierarchicalValueMenu({
                         onChange={setQuery}
                         onArrowDown={focusFirstRow}
                         inputRef={searchInputRef}
+                        testId={menuTestId ? `${menuTestId}.search` : undefined}
                     />
                 }
             >

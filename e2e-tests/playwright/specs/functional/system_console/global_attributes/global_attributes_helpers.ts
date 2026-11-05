@@ -1,11 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {Request} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 import type {PropertyField, PropertyFieldOptionPage} from '@mattermost/types/properties';
 
-import {getAdminClient, licenseTier, test} from '@mattermost/playwright-lib';
-import type {PlaywrightExtended} from '@mattermost/playwright-lib';
+import {AdminResource, expect, getAdminClient, licenseTier, test} from '@mattermost/playwright-lib';
+import type {App, PlaywrightExtended, generated} from '@mattermost/playwright-lib';
 
 export const GLOBAL_ATTRIBUTES_ADMIN_PATH = '/admin_console/system_attributes/manage_attributes';
 
@@ -48,6 +49,92 @@ export async function requireGlobalAttributesEnabled(pw: PlaywrightExtended) {
     );
 
     return {adminUser, adminClient};
+}
+
+/** Opens System Console > Attribute Management, waiting for its page frame. */
+export async function openAttributeManagement(app: App) {
+    await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+    await expect(app.admin.attributes.subtitleText.locator).toBeVisible();
+    return app.admin.attributes;
+}
+
+/** The listed attribute showing `displayName`: its field id keys the row's cells. */
+export async function listedAttribute(attributes: generated.AdminAttributes, displayName: string) {
+    await expect(attributes.nameItems.filter({hasText: displayName})).toHaveCount(1);
+    for (const id of await attributes.nameKeys()) {
+        if ((await attributes.name({id}).locator.textContent()) === displayName) {
+            return {id};
+        }
+    }
+    throw new Error(`No listed attribute shows ${displayName}`);
+}
+
+/** Opens the New attribute form. */
+export async function openNewAttribute(app: App) {
+    await app.page.goto(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}/attribute_details`);
+    await expect(app.admin.attribute.displayNameTextbox.locator).toBeVisible();
+    return app.admin.attribute;
+}
+
+/** Opens classification's own attribute page, whose definition is read-only; only its Applies to card is editable. */
+export async function openClassificationAttribute(app: App) {
+    await app.page.goto(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}/classification`);
+    await expect(app.admin.classification.nameTextbox.locator).toBeVisible();
+    return app.admin.classification;
+}
+
+function isPropertyWrite(request: Request): boolean {
+    return !['GET', 'HEAD', 'OPTIONS'].includes(request.method()) && request.url().includes('/api/v4/properties/');
+}
+
+/**
+ * Saves an attribute page that stays put after saving (classification's), waiting for the property writes the click
+ * starts to finish: Save is disabled while they are in flight too, so its disabled state alone passes before the
+ * server has applied the change that assertions then read from the API.
+ */
+export async function saveInPlace(app: App) {
+    const {saveButton} = app.admin;
+    await expect(saveButton.locator).toBeEnabled();
+    const pending = new Set<Request>();
+    let sent = 0;
+    let lastActivity = Date.now();
+    const onRequest = (request: Request) => {
+        if (isPropertyWrite(request)) {
+            pending.add(request);
+            sent++;
+            lastActivity = Date.now();
+        }
+    };
+    const onDone = (request: Request) => {
+        if (pending.delete(request)) {
+            lastActivity = Date.now();
+        }
+    };
+    app.page.on('request', onRequest);
+    app.page.on('requestfinished', onDone);
+    app.page.on('requestfailed', onDone);
+    try {
+        await saveButton.click();
+
+        // Quiet for a moment, so a write chained after another is not missed.
+        await expect.poll(() => sent > 0 && pending.size === 0 && Date.now() - lastActivity > 150).toBe(true);
+        await expect(saveButton.locator).toBeDisabled();
+    } finally {
+        app.page.off('request', onRequest);
+        app.page.off('requestfinished', onDone);
+        app.page.off('requestfailed', onDone);
+    }
+}
+
+/** Adds the Channels resource to the form's Applies to card and opens its settings, which start collapsed. */
+export async function addChannelResource(form: generated.AdminAttribute) {
+    await form.appliesTo.clickAddButton();
+    await form.appliesTo.add.resource(AdminResource.Channel).click();
+    const {channel} = form.appliesTo;
+    await expect(channel.locator).toBeVisible();
+    await channel.clickToggleButton();
+    await expect(channel.settings.locator).toBeVisible();
+    return channel.settings;
 }
 
 /**
