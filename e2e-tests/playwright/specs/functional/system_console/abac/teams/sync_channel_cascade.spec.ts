@@ -21,7 +21,7 @@
  * @reference MM-69100
  */
 
-import {expect, newTestPassword, test, verifyUserInChannel} from '@mattermost/playwright-lib';
+import {expect, generated, newTestPassword, test, verifyUserInChannel} from '@mattermost/playwright-lib';
 
 import {
     createPrivateChannel,
@@ -212,8 +212,9 @@ test.describe('ABAC - Team Sync Channel Cascade', {tag: ['@abac', '@team_members
         await mkt1App.channelsPage.goto({team: homeTeam, channel: 'town-square'});
         await expect(mkt1App.channelHeader.openMenuButton.locator).toContainText('Town Square');
 
-        // * Navigating to the governed team URL redirects mkt1 away (no membership)
-        await mkt1App.channelsPage.goto({team, channel: 'town-square'});
+        // * Navigating to the governed team URL redirects mkt1 away (no membership). Not channelsPage.goto: it waits
+        // * for the channel to render, and mkt1 lands on "Team not found" instead
+        await mkt1App.page.goto(generated.ChannelsPage.path({team, channel: 'town-square'}));
         await expect(mkt1App.page).not.toHaveURL(new RegExp(`/${team.name}/`), {timeout: 10000});
 
         // =========================================================

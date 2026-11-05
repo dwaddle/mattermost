@@ -111,7 +111,9 @@ test.describe('ABAC Policies - Channel Integration', () => {
         // * Saving returns to the channel list, where the channel is now managed by its attributes
         await configuration.savePanel.saveButton.click();
         await expect(app.page).toHaveURL(/\/user_management\/channels$/);
-        await expect(app.admin.channels.row(channel.id).cell('management').locator).toContainText('Attribute Based');
+        // the list is paged, and other tests' channels can push this one off the first page: search for it
+        const list = await openChannels(app, channel);
+        await expect(list.row(channel.id).cell('management').locator).toContainText('Attribute Based');
 
         // # Run sync to apply the policy
         await waitForSyncJob(adminClient, await runSyncJob(app));

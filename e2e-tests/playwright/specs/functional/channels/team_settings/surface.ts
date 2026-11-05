@@ -58,7 +58,22 @@ export async function closeTeamSettings(settings: generated.TeamSettingsModal) {
     const unsaved = await settings.savePanel.saveButton.locator.isVisible();
     await settings.clickCloseButton();
     if (unsaved) {
-        await settings.clickCloseButton();
+        // the first click only warns while there are unsaved changes (the panel turns into an error), but a
+        // panel left from a finished action (deleting a policy) closes on it: click again only after a warning
+        let after = '';
+        await expect
+            .poll(async () => {
+                if (!(await settings.tabs.tab('info').locator.isVisible())) {
+                    after = 'closed';
+                } else if (/\berror\b/.test((await settings.savePanel.locator.getAttribute('class')) ?? '')) {
+                    after = 'warned';
+                }
+                return after;
+            })
+            .not.toBe('');
+        if (after === 'warned') {
+            await settings.clickCloseButton();
+        }
     }
     await expect(settings.tabs.tab('info').locator).not.toBeVisible();
 }
