@@ -199,8 +199,9 @@ class AdminUserCard {
      * Get the field-error validation message locator for a field by its exact label text.
      */
     getFieldError(labelText: string): Locator {
-        // standard fields' errors are `admin.user.<field>_error--alert`, attribute fields' `admin.user.attribute.error--alert`
-        return this.getFieldColumn(labelText).getByTestId(/(_error|\.error)--alert$/);
+        // standard fields' errors are `admin.user.<field>_error--alert`; attribute fields' are still `fieldError` until
+        // their area migrates (then `admin.user.attribute.error--alert`)
+        return this.getFieldColumn(labelText).getByTestId(/(_error|\.error)--alert$|^fieldError$/);
     }
 
     // ── Select / multiselect / rank CPA combobox ────────────────────────
