@@ -115,6 +115,24 @@ jobs:
           npm run check --workspace=platform/test-surface
           npm run check-types --workspace=platform/test-surface
           npm run test --workspace=platform/test-surface
+      - name: ci/testid-lint-rule-tests
+        # testid-grammar, testid-no-unscoped-data and the e2e spec rules
+        run: |
+          npm run test --workspace=platform/eslint-plugin
+      - name: ci/test-surface
+        # scan + checks: errors fail, warnings are reported. The committed manifest must be current.
+        working-directory: webapp/channels
+        run: |
+          npm run test-surface:check
+          if ! git diff --quiet -- test-surface.json; then
+            echo "::error::test-surface.json is stale. Run 'npm run test-surface' in webapp/channels and commit the result."
+            git --no-pager diff --stat -- test-surface.json
+            exit 1
+          fi
+      - name: ci/test-surface-golden
+        # resolution and tracing coverage may not drop below golden.json
+        run: |
+          npm run test:golden --workspace=platform/test-surface
 
   check-external-links:
     permissions:

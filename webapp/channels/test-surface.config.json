@@ -1,0 +1,474 @@
+{
+    "root": "..",
+    "tsconfig": "tsconfig.json",
+    "pathOverrides": {
+        "@mattermost/types/*": [
+            "../platform/types/src/*"
+        ],
+        "@mattermost/client": [
+            "../platform/client/src/index.ts"
+        ],
+        "@mattermost/client/*": [
+            "../platform/client/src/*"
+        ],
+        "@mattermost/components": [
+            "../platform/components/src/index.tsx"
+        ],
+        "@mattermost/shared/*": [
+            "../platform/shared/src/*"
+        ]
+    },
+    "include": [
+        "src",
+        "../platform"
+    ],
+    "entityTypeDirs": [
+        "../platform/types/src"
+    ],
+    "client": {
+        "file": "../platform/client/src/client4.ts",
+        "className": "Client4",
+        "urlVersion": "/api/v4"
+    },
+    "openapiDir": "../../api/v4/source",
+    "i18n": "src/i18n/en.json",
+    "output": {
+        "manifest": "test-surface.json",
+        "generated": "../../e2e-tests/playwright/lib/src/ui/generated",
+        "runtime": "../../e2e-tests/playwright/lib/src/aria",
+        "reports": "../platform/test-surface/reports"
+    },
+    "checks": {
+        "strictScopes": [],
+        "strictPaths": [],
+        "strictKeys": false,
+        "allow": [
+            {
+                "rule": "aria",
+                "template": "admin.brand_image.file_input",
+                "reason": "the hidden file input is opened by the Select Image button (admin.brand_image.select--button); tests attach files to it directly."
+            },
+            {
+                "rule": "aria",
+                "template": "create_recap_modal.channel:{key}",
+                "reason": "the channel row is a clickable <div> that toggles its checkbox; the checkbox inside is the keyboard control. Making the row a label is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "recaps.recap.channel.actions",
+                "reason": "the wrapper only stops click propagation to the collapsible header; the menu inside is the control."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.plugins.plugin.enable--button",
+                "reason": "the plugin list's Enable, Disable and Remove controls are <a> without href: keyboard users can't reach them. Making them <button>s is an a11y fix for its own review."
+            },
+            {
+                "rule": "grammar",
+                "template": "attributeChip",
+                "reason": "AttributeChip's fallback when its host passes no testId: only the hierarchical value menu's chips (the ABAC policy editor and graph pickers) still do, and they get a scope with the ABAC area."
+            },
+            {
+                "rule": "grammar",
+                "template": "attributeChipRemove",
+                "reason": "AttributeChipRemoveButton's fallback when its host passes no testId: only the hierarchical value menu's chips (the ABAC policy editor and graph pickers) still do, and they get a scope with the ABAC area."
+            },
+            {
+                "rule": "aria",
+                "template": "job_details_modal.teams.team:{key}",
+                "reason": "the sync job's row opens its details on click and is focusable, but has no role and no Enter handling: an a11y fix for the separate review."
+            },
+            {
+                "rule": "aria",
+                "template": "channel_header.description",
+                "reason": "the header text's click handler only routes clicks on links, mentions and hashtags inside the formatted text; hovering or focusing it opens the popover (channel_header.description_popover--tooltip)."
+            },
+            {
+                "rule": "aria",
+                "template": "bookmark_modal.remove_emoji--button",
+                "reason": "the bookmark dialog's Remove emoji control is an <a> without href (keyboard handling is its own onKeyDown): making it a <button> is an a11y fix for the separate review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "bookmark_modal.remove_emoji--button",
+                "reason": "the bookmark dialog's Remove emoji control is an <a> without href (keyboard handling is its own onKeyDown): making it a <button> is an a11y fix for the separate review."
+            },
+            {
+                "rule": "aria",
+                "template": "job_details_modal.channels.channel:{key}",
+                "reason": "the sync job's row opens its details on click and is focusable, but has no role and no Enter handling: an a11y fix for the separate review."
+            },
+            {
+                "rule": "aria",
+                "template": "channel_selector_modal.channels.results.channel:{key}",
+                "reason": "the selector's row adds the channel on click; keyboard selection goes through the search box (arrow keys and Enter), and its round + button is the control. A row role is part of the separate a11y review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "admin.plugins.plugin.enable--button",
+                "reason": "the plugin list's Enable, Disable and Remove controls are <a> without href: keyboard users can't reach them. Making them <button>s is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.plugins.plugin.disable--button",
+                "reason": "the plugin list's Enable, Disable and Remove controls are <a> without href: keyboard users can't reach them. Making them <button>s is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "admin.plugins.plugin.disable--button",
+                "reason": "the plugin list's Enable, Disable and Remove controls are <a> without href: keyboard users can't reach them. Making them <button>s is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.plugins.plugin.remove--button",
+                "reason": "the plugin list's Enable, Disable and Remove controls are <a> without href: keyboard users can't reach them. Making them <button>s is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "admin.plugins.plugin.remove--button",
+                "reason": "the plugin list's Enable, Disable and Remove controls are <a> without href: keyboard users can't reach them. Making them <button>s is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.permission_schemes.scheme.delete--link",
+                "reason": "the scheme row's Delete control is an <a> without href: keyboard users can't reach it. Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "admin.permission_schemes.scheme.delete--link",
+                "reason": "the scheme row's Delete control is an <a> without href: keyboard users can't reach it. Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.setting.color.toggle--button",
+                "reason": "the color swatch toggle is a <span> with a click handler: keyboard users can't open the picker from it (the text box next to it works). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "admin.setting.color.toggle--button",
+                "reason": "the color swatch toggle is a <span> with a click handler: keyboard users can't open the picker from it (the text box next to it works). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "channel_settings_modal.configuration.banner_color.toggle--button",
+                "reason": "the color swatch toggle is a <span> with a click handler: keyboard users can't open the picker from it (the text box next to it works). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "channel_settings_modal.configuration.banner_color.toggle--button",
+                "reason": "the color swatch toggle is a <span> with a click handler: keyboard users can't open the picker from it (the text box next to it works). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "settings.section.color.toggle--button",
+                "reason": "the color swatch toggle is a <span> with a click handler: keyboard users can't open the picker from it (the text box next to it works). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "settings.section.color.toggle--button",
+                "reason": "the color swatch toggle is a <span> with a click handler: keyboard users can't open the picker from it (the text box next to it works). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.plugins.upload_file",
+                "reason": "the hidden file input is opened by the upload dropzone button (admin.plugins.upload--button); tests attach files to it directly."
+            },
+            {
+                "rule": "aria",
+                "template": "*.file_previews.file.remove--button",
+                "reason": "the remove control is an <a> without href: keyboard users can't reach it. Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "*.file_previews.file.remove--button",
+                "reason": "the remove control is an <a> without href: keyboard users can't reach it. Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "settings.section.picture.file_input",
+                "reason": "the hidden file input (aria-hidden) is opened by the Select button (settings.section.picture.select--button); tests attach files to it directly."
+            },
+            {
+                "rule": "aria",
+                "template": "settings.section:{key}",
+                "reason": "clicking a collapsed settings row opens it like its Edit button (settings.section.edit--button), which is the control; the row's handler is a larger click target."
+            },
+            {
+                "rule": "aria",
+                "template": "settings.section:customAttribute_{key}",
+                "reason": "clicking a collapsed settings row opens it like its Edit button (settings.section.edit--button), which is the control; the row's handler is a larger click target."
+            },
+            {
+                "rule": "duplicates",
+                "template": "settings.section:{key}",
+                "reason": "a section renders collapsed (SettingItemMin) or expanded (SettingItemMax), never both: each tab picks one by activeSection."
+            },
+            {
+                "rule": "aria",
+                "template": "threads.list.thread.preview",
+                "reason": "the preview's click handler only catches clicks on links inside the rendered markdown (mentions, channel links); the thread item around it is the control (role=link)."
+            },
+            {
+                "rule": "aria",
+                "template": "center.post_list.post:{key}",
+                "reason": "the post is an A11yController section (focusable, labelled; alt+click marks it unread). Giving it role=\"article\" changes what screen readers announce and needs its own a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "rhs.thread.post:{key}",
+                "reason": "the post is an A11yController section (focusable, labelled; alt+click marks it unread). Giving it role=\"article\" changes what screen readers announce and needs its own a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "search.results.post:{key}",
+                "reason": "the post is an A11yController section (focusable, labelled; alt+click marks it unread). Giving it role=\"article\" changes what screen readers announce and needs its own a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "*.toast.dismiss--button",
+                "reason": "the toast's dismiss control is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "*.toast.dismiss--button",
+                "reason": "the toast's dismiss control is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "*.toast.jump--button",
+                "reason": "the toast's jump action is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "*.toast.jump--button",
+                "reason": "the toast's jump action is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "center.post_list.search_hint.dismiss--button",
+                "reason": "the toast's dismiss control is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "center.post_list.search_hint.dismiss--button",
+                "reason": "the toast's dismiss control is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "center.post_list.scroll_to_bottom.dismiss--button",
+                "reason": "the toast's dismiss control (inside the toast's own button) is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "center.post_list.scroll_to_bottom.dismiss--button",
+                "reason": "the toast's dismiss control (inside the toast's own button) is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
+            },
+            {
+                "rule": "aria",
+                "template": "browse_channels.list.channel:{key}",
+                "reason": "the row is focusable and labelled, and the list's Enter handler clicks it (join, view or request); its buttons are the controls. A row role is part of the separate a11y review."
+            },
+            {
+                "rule": "duplicates",
+                "template": "markdown.link--link",
+                "reason": "the full Markdown renderer and the link-only renderer (used where only links are formatted) build the same message link; a given text is rendered by one of them."
+            },
+            {
+                "rule": "duplicates",
+                "template": "markdown.search_highlight--text",
+                "reason": "search terms and matched phrases are highlighted by two paths that build the same span; a message shows as many highlights as it has matches."
+            },
+            {
+                "rule": "duplicates",
+                "template": "public.footer.link:{key}--link",
+                "reason": "the public pages' footer and the older header/footer template's (password reset, MFA) both link About, Privacy, Terms and Help; a page renders one or the other."
+            },
+            {
+                "rule": "duplicates",
+                "template": "markdown.keyword_highlight--text",
+                "reason": "highlight keywords and their aliases are highlighted by two paths that build the same span; a message shows as many highlights as it has keywords."
+            },
+            {
+                "rule": "aria",
+                "template": "team_selector_modal.teams.results.team:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "channel_invite_modal.users.results.user:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "add_users_to_team_modal.users.results.user:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row (unless a membership policy blocks the user). An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "add_users_to_role_modal.users.results.user:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "channel_invite_modal.users.results.group:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "direct_messages_modal.list.user:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "direct_messages_modal.list.group:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "create_user_groups_modal.users.results.user:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "add_users_to_group_modal.users.results.user:{key}",
+                "reason": "the rows are the multiselect's options: arrow keys move the selection from the search box and Enter adds it; a click adds the row. An option role is part of the separate a11y review."
+            },
+            {
+                "rule": "duplicates",
+                "template": "settings.section.option:{key}--radio",
+                "reason": "an option is an item of its section (settings.section:<key>), and each section's options have distinct values; only one section is expanded at a time, so two sections' `false` options never render together."
+            },
+            {
+                "rule": "aria",
+                "template": "settings.section.color.toggle--button",
+                "reason": "ColorInput's swatch is a clickable span; keyboard users open the picker with Enter or Space in the color's text box. A button is part of the separate a11y review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "settings.section.color.toggle--button",
+                "reason": "ColorInput's swatch is a clickable span; keyboard users open the picker with Enter or Space in the color's text box. A button is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "channel_settings_modal.configuration.banner_color.toggle--button",
+                "reason": "ColorInput's swatch is a clickable span; keyboard users open the picker with Enter or Space in the color's text box. A button is part of the separate a11y review."
+            },
+            {
+                "rule": "role-fit",
+                "template": "channel_settings_modal.configuration.banner_color.toggle--button",
+                "reason": "ColorInput's swatch is a clickable span; keyboard users open the picker with Enter or Space in the color's text box. A button is part of the separate a11y review."
+            },
+            {
+                "rule": "aria",
+                "template": "team_settings_modal.info.picture.file_input",
+                "reason": "the hidden file input (aria-hidden) is opened by the team icon edit control; tests attach files to it directly."
+            },
+            {
+                "rule": "duplicates",
+                "template": "rhs.channel_info.about.id",
+                "reason": "AboutArea renders one variant by channel type (DM, GM or channel), each with its own ID line, never two."
+            },
+            {
+                "rule": "duplicates",
+                "template": "admin.feature_discovery.secondary--link",
+                "reason": "render() picks one call to action, `showPostTrialCta ? renderPostTrialCta() : renderStartTrial()`, and each has its own Learn more link; the scan doesn't see that the two methods are alternatives."
+            },
+            {
+                "rule": "duplicates",
+                "template": "about_build_modal.version--text",
+                "reason": "the cloud and self-hosted About dialogs are separate modals, opened by edition; one renders, never both."
+            },
+            {
+                "rule": "duplicates",
+                "template": "admin.setting.help--text",
+                "reason": "Setting (a row) and SettingSet (a radio group's fieldset) each render one help text inside their own admin.setting:<key> row; a row is one or the other."
+            },
+            {
+                "rule": "duplicates",
+                "template": "admin.setting.value--spinbutton",
+                "reason": "A number setting (TextSetting) and an unlimited-number setting each render one number input inside their own admin.setting:<key> row; a row is one or the other."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.groups.group.role",
+                "reason": "The group's role menu opens from its MenuWrapper; the <a> inside has no href or role. An accessibility fix (a real button), listed for the separate accessibility PR (Q6-Q8)."
+            },
+            {
+                "rule": "plugin-slots",
+                "template": "admin.attribute.owners_source.settings:{key}--link",
+                "reason": "a link to each owning plugin's System Console settings page, keyed by plugin id; it is admin UI, not a slot plugins render into."
+            },
+            {
+                "rule": "role-fit",
+                "template": "*.participants.avatar:{key}--img",
+                "reason": "Avatar renders a <div> only for text avatars; UserAvatar always passes a picture url, so each participant is an <img>."
+            },
+            {
+                "rule": "aria",
+                "template": "*.post.spillage_report",
+                "reason": "the report card's click handler only stops the click reaching the post under it (which would open the thread); the card itself is not a control."
+            },
+            {
+                "rule": "aria",
+                "template": "admin.user.card.picture_input",
+                "reason": "the hidden file input is opened by the picture menu's Upload item (admin.user.card.picture_menu.upload--menuitem); tests attach files to it directly."
+            }
+        ]
+    },
+    "pageNames": {
+        "ChannelIdentifierRouter": "ChannelsPage",
+        "GlobalThreads": "ThreadsPage"
+    },
+    "pageParams": {
+        "team": {
+            "entity": "Team",
+            "field": "name",
+            "module": "@mattermost/types/teams"
+        },
+        "identifier": {
+            "entity": "Channel",
+            "field": "name",
+            "module": "@mattermost/types/channels",
+            "as": "channel"
+        }
+    },
+    "pluginSlots": {
+        "file": "platform/shared/src/utils/test_id/index.ts",
+        "export": "PLUGIN_SLOT_TEST_IDS",
+        "registryExport": "PLUGIN_SLOT_REGISTRY_METHODS"
+    },
+    "libraries": [
+        "@mattermost/compass-ui"
+    ],
+    "staleReferences": {
+        "roots": [
+            "../../e2e-tests/playwright/specs",
+            "../../e2e-tests/playwright/lib/src"
+        ],
+        "allow": [
+            {
+                "testid": "link-to-a-policy",
+                "reason": "AdminPanelWithButton builds its testid from the button's text (Link to a policy); the scan can't follow that. Migrate with the ABAC area (Q28)."
+            },
+            {
+                "testid": "systemProperties",
+                "file": "system_attributes/system_properties.ts",
+                "reason": "the dead System Properties page object (Q29: left for an upstream cleanup)."
+            },
+            {
+                "testid": "/^user_properties\\.validation/",
+                "file": "system_attributes/system_properties.ts",
+                "reason": "the dead System Properties page object (Q29: left for an upstream cleanup)."
+            }
+        ]
+    },
+    "entries": [
+        "src/root.tsx",
+        "src/components/app",
+        "src/stores/redux_store",
+        "src/module_registry"
+    ],
+    "generateScopes": [
+        "admin"
+    ]
+}

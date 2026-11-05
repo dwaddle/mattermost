@@ -50,6 +50,14 @@ export default defineConfig([
         },
     },
     {
+        files: ['src/**/*.tsx', 'src/**/*.ts'], // testids follow the grammar (scope.name:key--role); warnings until each area migrates
+        ignores: ['**/*.test.*', '**/__mocks__/**'],
+        rules: {
+            '@mattermost/testid-grammar': 1,
+            '@mattermost/testid-no-unscoped-data': 1,
+        },
+    },
+    {
         files: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
         plugins: {
             'no-only-tests': noOnlyTestsPlugin,

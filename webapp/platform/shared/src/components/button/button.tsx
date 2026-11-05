@@ -5,6 +5,8 @@ import React from 'react';
 
 import {buttonClassNames, type ButtonEmphasis, type ButtonSize, type ButtonVariant} from './button_classes';
 
+import type {TestId} from '../../utils/test_id';
+
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
 
@@ -28,6 +30,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
      * Defaults to "".
      */
     variant?: ButtonVariant;
+
+    /**
+     * The testid path of the button, without its role (e.g. `channel_settings_modal.save_panel.save`).
+     * The button renders it as `data-testid="<testId>--button"`.
+     */
+    testId?: TestId;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -37,6 +45,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     emphasis,
     size,
     variant,
+    testId,
 
     ...otherProps
 }, ref) => {
@@ -45,6 +54,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
             ref={ref}
             className={buttonClassNames({emphasis, size, variant}, className)}
             {...otherProps}
+            data-testid={testId ? `${testId}--button` : (otherProps as {'data-testid'?: string})['data-testid']}
         >
             {children}
         </button>

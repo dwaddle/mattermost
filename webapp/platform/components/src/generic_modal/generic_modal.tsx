@@ -11,6 +11,7 @@ import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {useFocusTrap} from '../hooks/useFocusTrap';
 import {useStackedModal} from '../hooks/useStackedModal';
@@ -91,6 +92,13 @@ export type Props = {
     dataTestId?: string;
 
     /**
+     * The testid scope of the modal (e.g. `channel_settings_modal`). The modal's root renders it, and
+     * its built-in parts derive from it: `<testId>.close--button`, `<testId>.confirm--button`, `<testId>.cancel--button`.
+     * Takes precedence over `dataTestId`.
+     */
+    testId?: TestIdScope;
+
+    /**
      * Whether to delay activating the focus trap.
      *
      * This is useful for modals with dynamic content that might not be fully
@@ -148,6 +156,7 @@ export const GenericModal: React.FC<Props> = ({
     appendedContent,
     headerButton,
     dataTestId,
+    testId,
     delayFocusTrap,
     isStacked = false,
 }) => {
@@ -240,6 +249,7 @@ export const GenericModal: React.FC<Props> = ({
                 onClick={handleConfirmCallback}
                 disabled={isConfirmDisabled}
                 loading={isConfirmLoading}
+                data-testid={testId ? `${testId}.confirm--button` : undefined}
             >
                 {confirmButtonTextContent}
             </Button>
@@ -263,6 +273,7 @@ export const GenericModal: React.FC<Props> = ({
                 type='button'
                 emphasis='tertiary'
                 onClick={handleCancelCallback}
+                data-testid={testId ? `${testId}.cancel--button` : undefined}
             >
                 {cancelButtonTextContent}
             </Button>
@@ -324,7 +335,7 @@ export const GenericModal: React.FC<Props> = ({
             container={container}
             keyboard={keyboardEscape}
             onEntered={onEntered}
-            data-testid={dataTestId}
+            data-testid={testId ?? dataTestId}
             style={modalStyle}
         >
             <div
@@ -353,6 +364,7 @@ export const GenericModal: React.FC<Props> = ({
                             <WithTooltip title={intl.formatMessage({id: 'generic_modal.close', defaultMessage: 'Close'})}>
                                 <IconButton
                                     className='GenericModal__close'
+                                    data-testid={testId ? `${testId}.close--button` : undefined}
                                     size='medium'
                                     icon={<Icon glyph={<CloseIcon/>}/>}
                                     onClick={onHideCallback}
