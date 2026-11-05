@@ -41,7 +41,7 @@ export default class LoginPage {
 
         this.title = page.getByRole('heading', {name: 'Log in to your account'});
         this.subtitle = page.getByText('Collaborate with your team in real-time');
-        this.bodyCard = page.getByTestId('login-body-card');
+        this.bodyCard = page.getByTestId('login.card');
         this.loginInput = page.locator('#input_loginId');
         this.loginPlaceholder = page.getByRole('textbox', {name: 'Email or Username'});
         this.emailOnlyPlaceholder = page.getByRole('textbox', {name: 'Email', exact: true});
@@ -67,8 +67,8 @@ export default class LoginPage {
         );
         this.userNotRegisteredOnLdapError = page.getByText('User not registered on AD/LDAP server.');
 
-        this.header = new components.MainHeader(page.getByTestId('hfroute-header'));
-        this.footer = new components.Footer(page.getByTestId('hfroute-footer'));
+        this.header = new components.MainHeader(page.getByTestId('public.header'));
+        this.footer = new components.Footer(page.getByTestId('public.footer'));
     }
 
     async toBeVisible() {

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test} from '@mattermost/playwright-lib';
+import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a system admin can open and close the plugin (App) Marketplace.
@@ -13,21 +13,21 @@ test(
     {tag: '@marketplace'},
     async ({pw}) => {
         const {adminUser, team} = await pw.initSetup();
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
+        const {app, channelsPage} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, 'town-square');
         await channelsPage.toBeVisible();
 
         // # Open the App Marketplace from the product menu
-        await channelsPage.globalHeader.openAppMarketplace();
+        const productMenu = await app.globalHeader.clickProductMenuButton();
+        const marketplace = await productMenu.clickMarketplaceMenuItem();
 
         // * Verify the Marketplace is shown
-        const marketplace = channelsPage.marketplaceModal;
-        await marketplace.toBeVisible();
+        await expect(marketplace.locator).toBeVisible();
 
         // # Close the Marketplace
-        await marketplace.close();
+        await marketplace.clickCloseButton();
 
         // * Verify the Marketplace is closed
-        await marketplace.notToBeVisible();
+        await expect(marketplace.locator).not.toBeVisible();
     },
 );

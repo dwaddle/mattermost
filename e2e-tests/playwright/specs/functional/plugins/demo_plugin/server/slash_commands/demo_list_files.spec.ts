@@ -5,7 +5,10 @@ import type {Client4} from '@mattermost/client';
 
 import {expect, getFileFromAsset, test} from '@mattermost/playwright-lib';
 
+import {openChannel} from '../../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../../helpers';
+
+import {postContaining, sendCommand} from './support';
 
 /**
  * Uploads a batch of files to the channel via API and posts them as a single message.
@@ -45,60 +48,29 @@ test('should list uploaded files with running total via /list_files command', as
     const createdChannel = await adminClient.createChannel(channel);
     await adminClient.addToChannel(user.id, createdChannel.id);
 
-    // # Login and navigate to the channel
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'list-files-test');
-    await channelsPage.toBeVisible();
+    // # Log in and open the channel
+    const app = await openChannel(pw, user, team, 'list-files-test');
 
-    const page = channelsPage.page;
+    // * /list_files with no files: the bot replies with none
+    await sendDemoSlashCommand(app.page, () => sendCommand(app, '/list_files'));
+    await postContaining(app, 'Last 0 Files uploaded to this channel');
 
-    // # Send /list_files with no files
-    await sendDemoSlashCommand(page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/list_files');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-
-    // * Verify the bot reply shows 0 files
-    await expect(
-        channelsPage.centerView.container.getByText('Last 0 Files uploaded to this channel', {exact: true}),
-    ).toBeVisible();
-
-    // # Upload first batch of 2 files via API
-    // (avoids demo plugin's custom attachment menu intercepting the UI)
+    // # Upload a first batch of 2 files via the API (the demo plugin's own attachment menu intercepts the UI's)
     await uploadAndPostFiles(adminClient, createdChannel.id, ['sample_text_file.txt', 'mattermost-icon_128x128.png']);
 
-    // # Send /list_files again
-    await sendDemoSlashCommand(page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/list_files');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
+    // * /list_files counts 2 and names both
+    await sendDemoSlashCommand(app.page, () => sendCommand(app, '/list_files'));
+    const {post: response2} = await postContaining(app, 'Last 2 Files uploaded to this channel');
+    await expect(response2.body.locator).toContainText('mattermost-icon_128x128.png');
+    await expect(response2.body.locator).toContainText('sample_text_file.txt');
 
-    // * Verify the bot reply shows a count of 2 and both file names
-    const response2 = channelsPage.centerView.container
-        .getByRole('listitem')
-        .filter({hasText: 'Last 2 Files uploaded to this channel'})
-        .last();
-    await expect(response2).toBeVisible();
-    await expect(response2.getByRole('link', {name: 'mattermost-icon_128x128.png'})).toBeVisible();
-    await expect(response2.getByRole('link', {name: 'sample_text_file.txt'})).toBeVisible();
-
-    // # Upload second batch of 2 more files via API
+    // # Upload a second batch of 2 more files
     await uploadAndPostFiles(adminClient, createdChannel.id, ['mattermost.png', 'archive.zip']);
 
-    // # Send /list_files again
-    await sendDemoSlashCommand(page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/list_files');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-
-    // * Verify the bot reply shows a count of 4 and all file names
-    const response4 = channelsPage.centerView.container
-        .getByRole('listitem')
-        .filter({hasText: 'Last 4 Files uploaded to this channel'})
-        .last();
-    await expect(response4).toBeVisible();
-    await expect(response4.getByRole('link', {name: 'mattermost.png'})).toBeVisible();
-    await expect(response4.getByRole('link', {name: 'archive.zip'})).toBeVisible();
-    await expect(response4.getByRole('link', {name: 'mattermost-icon_128x128.png'})).toBeVisible();
-    await expect(response4.getByRole('link', {name: 'sample_text_file.txt'})).toBeVisible();
+    // * /list_files counts 4 and names them all
+    await sendDemoSlashCommand(app.page, () => sendCommand(app, '/list_files'));
+    const {post: response4} = await postContaining(app, 'Last 4 Files uploaded to this channel');
+    for (const name of ['mattermost.png', 'archive.zip', 'mattermost-icon_128x128.png', 'sample_text_file.txt']) {
+        await expect(response4.body.locator).toContainText(name);
+    }
 });

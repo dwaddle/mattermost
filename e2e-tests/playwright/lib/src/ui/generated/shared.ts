@@ -23,6 +23,7 @@ import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {FilePreviewModal} from './file_preview_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {Markdown} from './markdown';
+import {MarketplaceModal} from './marketplace_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
 import {ScheduledPostsPage} from './pages';
 import {PostDotMenu} from './post_dot_menu';
@@ -437,7 +438,7 @@ export class DropdownInputMenu extends Scope {
     }
 }
 
-/** Rendered at `admin.channel.archive_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.channel.archive_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `marketplace_modal.update_confirm_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`: one class, constructed with the scope it is mounted at. */
 export class ConfirmModal extends Scope {
     /**
      * `admin.channel.archive_modal.cancel--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
@@ -498,9 +499,11 @@ export class ConfirmModal extends Scope {
                 Api.GetChannelModerations,
                 Api.GetGroupsByChannel,
                 Api.GetGroupsByTeam,
+                Api.GetMarketplacePlugins,
                 Api.GetUser,
                 Api.GetUsersByIds,
                 Api.GetUsersStatusesByIds,
+                Api.InstallMarketplacePlugin,
                 Api.LinkGroupSyncable,
                 Api.ListCPAValues,
                 Api.Logout,
@@ -816,7 +819,7 @@ export class DataGridRow extends Scope {
     }
 }
 
-/** Rendered at `admin.revoke_tokens.error`, `admin.revoke_tokens.revoked`, `admin.revoke_tokens.status`, `channel_invite_modal.team_warning`, `channel_notifications_modal.muted_banner`, `integrations.bot_create_warnings`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.revoke_tokens.error`, `admin.revoke_tokens.revoked`, `admin.revoke_tokens.status`, `channel_invite_modal.team_warning`, `channel_notifications_modal.muted_banner`, `integrations.bot_create_warnings`, `login.banner`, `signup.banner`: one class, constructed with the scope it is mounted at. */
 export class AlertBanner extends Scope {
     /**
      * `admin.revoke_tokens.error.close--button` — AlertBanner (channels/src/components/alert_banner/index.tsx)
@@ -837,7 +840,7 @@ export class AlertBanner extends Scope {
     }
 }
 
-/** Rendered at `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `login_mfa.token`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `password_reset.email`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`, `signup.card.email`, `signup.card.username`: one class, constructed with the scope it is mounted at. */
 export class Input extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -949,6 +952,116 @@ export class ColorInput extends Scope {
 
     async fillValueTextbox(value: string): Promise<void> {
         await this.valueTextbox.fill(value);
+    }
+}
+
+/** Rendered at `apps_form.field.calendar`, `custom_status_modal.expiry.custom.calendar`, `date_time_picker_modal.when.calendar`: one class, constructed with the scope it is mounted at. */
+export class Calendar extends Scope {
+    /**
+     * `apps_form.field.calendar.day:{key}--text` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    day(day: string) {
+        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
+            testId: `${this.scope}.day:${day}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `apps_form.field.calendar.day:{key}--text` in the scope. */
+    get dayItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
+    }
+
+    /** The keys of every `apps_form.field.calendar.day:{key}--text` in the scope, in document order. */
+    dayKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.day:`, '--text');
+    }
+
+    /**
+     * `apps_form.field.calendar.next_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    get nextMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.next_month`), {
+            testId: `${this.scope}.next_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /**
+     * `apps_form.field.calendar.previous_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    get previousMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.previous_month`), {
+            testId: `${this.scope}.previous_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `apps_form.field.calendar.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
+    get dayList() {
+        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
+            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
+                testId: `${this.scope}.day:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+            }),
+        );
+    }
+}
+
+/** Rendered at `apps_form.field.time_menu`, `custom_status_modal.expiry.custom.time_menu`, `date_time_picker_modal.when.time_menu`: one class, constructed with the scope it is mounted at. */
+export class TimeMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `apps_form.field.time_menu.time:{key}--menuitem` — DateTimeInputContainer (channels/src/components/datetime_input/datetime_input.tsx)
+     * Renders only when !manualTimeEntry.
+     */
+    time(time: string) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.time:${time}--menuitem`), {
+            testId: `${this.scope}.time:${time}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
+        });
+    }
+
+    /** Every `apps_form.field.time_menu.time:{key}--menuitem` in the scope. */
+    get timeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.time:`, '--menuitem');
+    }
+
+    /** The keys of every `apps_form.field.time_menu.time:{key}--menuitem` in the scope, in document order. */
+    timeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.time:`, '--menuitem');
+    }
+
+    /** Every `apps_form.field.time_menu.time:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.timeList).toHaveKeys([…])`. */
+    get timeList() {
+        return this.keyedList(`${this.scope}.time:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.time:${key}--menuitem`), {
+                testId: `${this.scope}.time:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
+            }),
+        );
     }
 }
 
@@ -1262,6 +1375,7 @@ export class PostCreate extends Scope {
         deletePostModal: DeletePostModal;
         editChannelHeaderModal: EditChannelHeaderModal;
         leaveChannelModal: LeaveChannelModal;
+        marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
         userSettingsModal: UserSettingsModal;
     }> {
@@ -1270,6 +1384,7 @@ export class PostCreate extends Scope {
             deletePostModal: new DeletePostModal(this.page, 'delete_post_modal'),
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
+            marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
@@ -1329,6 +1444,7 @@ export class PostCreate extends Scope {
     async clickSendButton(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
         leaveChannelModal: LeaveChannelModal;
+        marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
         userSettingsModal: UserSettingsModal;
     }> {
@@ -1336,6 +1452,7 @@ export class PostCreate extends Scope {
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
+            marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
@@ -3175,7 +3292,7 @@ export class PostItemMenuActionsMenu extends Scope {
     /**
      * `center.post_list.post.menu.actions_menu.marketplace--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
      * Renders only when !isSystemMessage and this.props.canOpenMarketplace and !isModal && !props.isPostBeingEdited.
-     * Opens modal MarketplaceModal.
+     * Opens modal MarketplaceModal (`marketplace_modal`).
      */
     get marketplaceButton() {
         return drivers.button(this.byTestId(`${this.scope}.marketplace--button`), {
@@ -3187,8 +3304,10 @@ export class PostItemMenuActionsMenu extends Scope {
         });
     }
 
-    async clickMarketplaceButton(): Promise<void> {
+    /** Clicks marketplaceButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickMarketplaceButton(): Promise<MarketplaceModal> {
         await this.marketplaceButton.click();
+        return new MarketplaceModal(this.page, 'marketplace_modal');
     }
 
     /**
@@ -4683,134 +4802,21 @@ export class CustomStatusModalExpiryCustom extends Scope {
     }
 
     /** Clicks timeButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
-    async clickTimeButton(): Promise<CustomStatusModalExpiryCustomTimeMenu> {
+    async clickTimeButton(): Promise<TimeMenu> {
         await this.timeButton.click();
-        return new CustomStatusModalExpiryCustomTimeMenu(this.page, `${this.scope}.time_menu`);
+        return new TimeMenu(this.page, `${this.scope}.time_menu`);
     }
 
     /**
      * `custom_status_modal.expiry.custom.calendar` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
      * Renders only when showDateAndTimeField and isPopperOpen.
      */
-    get calendar(): CustomStatusModalExpiryCustomCalendar {
-        return new CustomStatusModalExpiryCustomCalendar(this.page, `${this.scope}.calendar`, this.root);
+    get calendar(): Calendar {
+        return new Calendar(this.page, `${this.scope}.calendar`, this.root);
     }
 
-    get timeMenu(): CustomStatusModalExpiryCustomTimeMenu {
-        return new CustomStatusModalExpiryCustomTimeMenu(this.page, `${this.scope}.time_menu`);
-    }
-}
-
-/** Rendered at `custom_status_modal.expiry.custom.calendar`, `date_time_picker_modal.when.calendar`: one class, constructed with the scope it is mounted at. */
-export class CustomStatusModalExpiryCustomCalendar extends Scope {
-    /**
-     * `custom_status_modal.expiry.custom.calendar.day:{key}--text` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     * Renders only when showDateAndTimeField.
-     */
-    day(day: string) {
-        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
-            testId: `${this.scope}.day:${day}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /** Every `custom_status_modal.expiry.custom.calendar.day:{key}--text` in the scope. */
-    get dayItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
-    }
-
-    /** The keys of every `custom_status_modal.expiry.custom.calendar.day:{key}--text` in the scope, in document order. */
-    dayKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.day:`, '--text');
-    }
-
-    /**
-     * `custom_status_modal.expiry.custom.calendar.next_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     * Renders only when showDateAndTimeField.
-     */
-    get nextMonth() {
-        return drivers.container(this.byTestId(`${this.scope}.next_month`), {
-            testId: `${this.scope}.next_month`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /**
-     * `custom_status_modal.expiry.custom.calendar.previous_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     * Renders only when showDateAndTimeField.
-     */
-    get previousMonth() {
-        return drivers.container(this.byTestId(`${this.scope}.previous_month`), {
-            testId: `${this.scope}.previous_month`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /** Every `custom_status_modal.expiry.custom.calendar.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
-    get dayList() {
-        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
-                testId: `${this.scope}.day:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-            }),
-        );
-    }
-}
-
-/** Rendered at `custom_status_modal.expiry.custom.time_menu`, `date_time_picker_modal.when.time_menu`: one class, constructed with the scope it is mounted at. */
-export class CustomStatusModalExpiryCustomTimeMenu extends Scope {
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` — DateTimeInputContainer (channels/src/components/datetime_input/datetime_input.tsx)
-     * Renders only when showDateAndTimeField and !manualTimeEntry.
-     */
-    time(time: string) {
-        return drivers.menuitem(this.byTestId(`${this.scope}.time:${time}--menuitem`), {
-            testId: `${this.scope}.time:${time}--menuitem`,
-            role: 'menuitem',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
-        });
-    }
-
-    /** Every `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` in the scope. */
-    get timeItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.time:`, '--menuitem');
-    }
-
-    /** The keys of every `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` in the scope, in document order. */
-    timeKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.time:`, '--menuitem');
-    }
-
-    /** Every `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.timeList).toHaveKeys([…])`. */
-    get timeList() {
-        return this.keyedList(`${this.scope}.time:`, '--menuitem', (key: string) =>
-            drivers.menuitem(this.byTestId(`${this.scope}.time:${key}--menuitem`), {
-                testId: `${this.scope}.time:${key}--menuitem`,
-                role: 'menuitem',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
-            }),
-        );
+    get timeMenu(): TimeMenu {
+        return new TimeMenu(this.page, `${this.scope}.time_menu`);
     }
 }
 
@@ -4900,6 +4906,78 @@ export class TokenExpiryPicker extends Scope {
         if (values.expiryDate !== undefined) {
             await this.expiryDateTextbox.fill(values.expiryDate);
         }
+    }
+}
+
+/** Rendered at `login.password`, `signup.card.password`: one class, constructed with the scope it is mounted at. */
+export class Password extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `login.password.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !magicLinkSuccessful and enableBaseLogin and !enableGuestMagicLink || requiresPassword.
+     */
+    get field() {
+        return drivers.container(this.byTestId(`${this.scope}.field`), {
+            testId: `${this.scope}.field`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `login.password.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !magicLinkSuccessful and enableBaseLogin and !enableGuestMagicLink || requiresPassword.
+     */
+    get messageAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
+            testId: `${this.scope}.message--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `login.password.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !magicLinkSuccessful and enableBaseLogin and !enableGuestMagicLink || requiresPassword.
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+
+    /**
+     * `login.password.toggle--button` — PasswordInput (channels/src/components/widgets/inputs/password_input/password_input.tsx)
+     * Renders only when !magicLinkSuccessful and enableBaseLogin and !enableGuestMagicLink || requiresPassword.
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
     }
 }
 
@@ -5153,5 +5231,45 @@ export class TeamSelectorMenu extends Scope {
                 source: 'channels/src/components/new_search/select_team.tsx#SelectTeam',
             }),
         );
+    }
+}
+
+/** Rendered at `signup.alternate`, `login.alternate`: one class, constructed with the scope it is mounted at. */
+export class Alternate extends Scope {
+    /**
+     * `signup.alternate.action--link` — AlternateLink (channels/src/components/header_footer_route/content_layouts/alternate_link.tsx)
+     * Renders only when !(!alternateMessage && !alternateLinkPath && !alternateLinkLabel) and alternateLinkPath && alternateLinkLabel.
+     * Goes to { pathname: alternateLinkPath, search: location.search, }.
+     */
+    get actionLink() {
+        return drivers.link(this.byTestId(`${this.scope}.action--link`), {
+            testId: `${this.scope}.action--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink',
+        });
+    }
+
+    async clickActionLink(): Promise<void> {
+        await this.actionLink.click();
+    }
+
+    /**
+     * `signup.alternate.message--text` — AlternateLink (channels/src/components/header_footer_route/content_layouts/alternate_link.tsx)
+     * Renders only when !(!alternateMessage && !alternateLinkPath && !alternateLinkLabel) and alternateMessage.
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
     }
 }

@@ -25,7 +25,8 @@ export default class ResetPasswordPage {
         this.emailInput = page.locator('#passwordResetEmailInput');
         this.resetButton = page.locator('#passwordResetButton');
 
-        this.header = new components.MainHeader(page.getByTestId('signup-header'));
+        // the back button's wrapper has no testid of its own when the page passes one (password_reset.back)
+        this.header = new components.MainHeader(page.locator('.signup-header'), 'password_reset.back--link');
         this.footer = new components.Footer(page.locator('#footer_section'));
     }
 

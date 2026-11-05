@@ -3,50 +3,60 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {DOMAIN_NOT_ALLOWED, expectOnSelectTeam, openSignup, signUp} from './support';
+
 const ALLOWED_DOMAINS = 'mattermost.com, test.com';
 
 /**
  * @objective Verify signup succeeds when the email belongs to an allowed domain.
  */
-test('MM-T1756 allows signup when the email domain is on the allow list', {tag: '@authentication'}, async ({pw}) => {
-    const {adminClient} = await pw.initSetup();
+test(
+    'MM-T1756 allows signup when the email domain is on the allow list',
+    {tag: '@authentication'},
+    async ({pw, page}) => {
+        const {adminClient} = await pw.initSetup();
 
-    await adminClient.patchConfig({TeamSettings: {RestrictCreationToDomains: ALLOWED_DOMAINS}});
+        await adminClient.patchConfig({TeamSettings: {RestrictCreationToDomains: ALLOWED_DOMAINS}});
 
-    const username = `test${pw.random.id()}`;
-    await pw.hasSeenLandingPage();
-    await pw.signupPage.goto();
-    await pw.signupPage.toBeVisible();
+        const username = `test${pw.random.id()}`;
 
-    // # Create an account with an allowed-domain email
-    await pw.signupPage.create({
-        email: `${username}@mattermost.com`,
-        username,
-        password: pw.newTestPassword(),
-    });
+        const app = await openSignup(pw, page);
 
-    // * Verify the account is created and the team-join page is shown
-    await pw.selectTeamPage.toBeVisible();
-});
+        // # Create an account with an allowed-domain email
+        await signUp(app, {
+            email: `${username}@mattermost.com`,
+            username,
+            password: pw.newTestPassword(),
+        });
+
+        // * Verify the account is created and the team-join page is shown
+        await expectOnSelectTeam(page);
+    },
+);
 
 /**
  * @objective Verify changing a profile email to a disallowed domain is rejected.
  */
 test('MM-T1757 rejects a profile email change to a disallowed domain', {tag: '@authentication'}, async ({pw}) => {
-    const {adminClient, user} = await pw.initSetup();
+    const {adminClient, user, team} = await pw.initSetup();
 
     await adminClient.patchConfig({TeamSettings: {RestrictCreationToDomains: ALLOWED_DOMAINS}});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Try to change the profile email to a disallowed domain
-    const profileModal = await channelsPage.openProfileModal();
-    await profileModal.changeEmail(`user-${pw.random.id()}@example.com`, user.password);
+    await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
+    const email = app.settings.section('email');
+    await email.clickEditButton();
+    const newEmail = `user-${pw.random.id()}@example.com`;
+    await email.fillNewEmailTextbox(newEmail);
+    await email.fillConfirmEmailTextbox(newEmail);
+    await email.fillCurrentPasswordTextbox(user.password);
+    await email.clickSaveButton();
 
     // * Verify the domain restriction error is shown
-    await expect(profileModal.domainRestrictionError).toBeVisible();
+    await expect(email.serverErrorText.locator).toHaveText(DOMAIN_NOT_ALLOWED);
 });
 
 /**
@@ -55,27 +65,23 @@ test('MM-T1757 rejects a profile email change to a disallowed domain', {tag: '@a
 test(
     'MM-T1758 rejects team-invite signup when the email domain is not allowed',
     {tag: '@authentication'},
-    async ({pw}) => {
+    async ({pw, page}) => {
         const {adminClient, team} = await pw.initSetup();
 
         await adminClient.patchConfig({TeamSettings: {RestrictCreationToDomains: ALLOWED_DOMAINS}});
 
         const username = `test${pw.random.id()}`;
-        await pw.hasSeenLandingPage();
-        await pw.signupPage.goto(`/signup_user_complete/?id=${team.invite_id}`);
-        await pw.signupPage.toBeVisible();
+
+        const app = await openSignup(pw, page, `?id=${team.invite_id}`);
 
         // # Attempt signup with a disallowed-domain email
-        await pw.signupPage.create(
-            {
-                email: `${username}@example.com`,
-                username,
-                password: pw.newTestPassword(),
-            },
-            false,
-        );
+        await signUp(app, {
+            email: `${username}@example.com`,
+            username,
+            password: pw.newTestPassword(),
+        });
 
         // * Verify the domain restriction error is shown
-        await expect(pw.signupPage.domainRestrictionError).toBeVisible();
+        await expect(app.signup.banner.locator).toContainText(DOMAIN_NOT_ALLOWED);
     },
 );

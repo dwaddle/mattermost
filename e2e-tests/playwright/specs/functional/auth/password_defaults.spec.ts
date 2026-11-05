@@ -3,6 +3,8 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {openAdminConsole, openSignup} from './support';
+
 /**
  * @objective Verify default password settings in the System Console.
  */
@@ -16,40 +18,41 @@ test('MM-T1770 shows default password length and requirement checkboxes', {tag: 
     expect(config.PasswordSettings.Uppercase).toBe(false);
     expect(config.PasswordSettings.Symbol).toBe(false);
 
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+    const {app} = await pw.testBrowser.login(adminUser);
 
     // # Open Password settings
-    await systemConsolePage.gotoPasswordSettings();
+    await openAdminConsole(app, '/authentication/password');
 
     // * Verify the default minimum length and unchecked requirements
-    await expect(systemConsolePage.passwordSettings.minimumLength).toHaveValue(
+    const password = app.admin.password;
+    await expect(app.admin.setting('passwordMinimumLength').valueTextbox.locator).toHaveValue(
         String(config.PasswordSettings.MinimumLength),
     );
-    await expect(systemConsolePage.passwordSettings.lowercase).not.toBeChecked();
-    await expect(systemConsolePage.passwordSettings.uppercase).not.toBeChecked();
-    await expect(systemConsolePage.passwordSettings.number).not.toBeChecked();
-    await expect(systemConsolePage.passwordSettings.symbol).not.toBeChecked();
-    await expect(systemConsolePage.passwordSettings.maximumLoginAttempts).toHaveValue('10');
+    await expect(password.lowercaseCheckbox.locator).not.toBeChecked();
+    await expect(password.uppercaseCheckbox.locator).not.toBeChecked();
+    await expect(password.numberCheckbox.locator).not.toBeChecked();
+    await expect(password.symbolCheckbox.locator).not.toBeChecked();
+    await expect(app.admin.setting('maximumLoginAttempts').valueTextbox.locator).toHaveValue('10');
 });
 
 /**
  * @objective Verify signup username validation rejects invalid usernames.
  */
-test('MM-T1783 rejects invalid usernames on signup', {tag: '@authentication'}, async ({pw}) => {
-    await pw.hasSeenLandingPage();
-    await pw.signupPage.goto();
-    await pw.signupPage.toBeVisible();
-
-    await pw.signupPage.emailInput.fill(`test-${pw.random.id()}@example.com`);
-    await pw.signupPage.passwordInput.fill(pw.newTestPassword());
-    await pw.signupPage.termsAndPrivacyCheckBox.check();
+test('MM-T1783 rejects invalid usernames on signup', {tag: '@authentication'}, async ({pw, page}) => {
+    const app = await openSignup(pw, page);
+    const card = app.signup.card;
+    await card.fillEmailTextbox(`test-${pw.random.id()}@example.com`);
+    await card.fillPasswordTextbox(pw.newTestPassword());
+    await card.setTermsCheckbox(true);
 
     for (const username of ['1user', 'te', 'user#1', 'user!1']) {
         // # Submit an invalid username
-        await pw.signupPage.usernameInput.fill(username);
-        await pw.signupPage.createAccountButton.click();
+        await card.fillUsernameTextbox(username);
+        await card.clickCreateAccountButton();
 
         // * Verify the username validation error is shown
-        await expect(pw.signupPage.usernameError).toBeVisible();
+        await expect(card.username.messageAlert.locator).toHaveText(
+            'Usernames have to begin with a lowercase letter and be 3-22 characters long. You can use lowercase letters, numbers, periods, dashes, and underscores.',
+        );
     }
 });

@@ -262,9 +262,10 @@ export class ClaimPage {
         return buildPath(ClaimPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves ClaimController to the grammar names one). */
+    /** Navigates here and waits until `signup.header` shows. */
     async goto(): Promise<void> {
         await this.page.goto(ClaimPage.path());
+        await this.page.getByTestId('signup.header').waitFor();
     }
 }
 
@@ -434,9 +435,10 @@ export class ErrorPage {
         return buildPath(ErrorPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves ErrorPage to the grammar names one). */
+    /** Navigates here and waits until `error_view` shows. */
     async goto(): Promise<void> {
         await this.page.goto(ErrorPage.path());
+        await this.page.getByTestId('error_view').waitFor();
     }
 }
 
@@ -566,9 +568,10 @@ export class LinkingLandingPage {
         return buildPath(LinkingLandingPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves LinkingLandingPage to the grammar names one). */
+    /** Navigates here and waits until `linking_landing.open_browser--link` shows. */
     async goto(): Promise<void> {
         await this.page.goto(LinkingLandingPage.path());
+        await this.page.getByTestId('linking_landing.open_browser--link').waitFor();
     }
 }
 
@@ -589,9 +592,10 @@ export class LoginPage {
         return buildPath(LoginPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves Login to the grammar names one). */
+    /** Navigates here and waits until `login.card` shows. */
     async goto(): Promise<void> {
         await this.page.goto(LoginPage.path());
+        await this.page.getByTestId('login.card').waitFor();
     }
 }
 
@@ -612,9 +616,10 @@ export class MFAPage {
         return buildPath(MFAPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves MFAController to the grammar names one). */
+    /** Navigates here and waits until `signup.header` shows. */
     async goto(): Promise<void> {
         await this.page.goto(MFAPage.path());
+        await this.page.getByTestId('signup.header').waitFor();
     }
 }
 
@@ -658,9 +663,10 @@ export class PasswordResetSendLinkPage {
         return buildPath(PasswordResetSendLinkPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves PasswordResetSendLink to the grammar names one). */
+    /** Navigates here and waits until `password_reset.email--textbox` shows. */
     async goto(): Promise<void> {
         await this.page.goto(PasswordResetSendLinkPage.path());
+        await this.page.getByTestId('password_reset.email--textbox').waitFor();
     }
 }
 
@@ -812,9 +818,10 @@ export class SelectTeamPage {
         return buildPath(SelectTeamPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves SelectTeam to the grammar names one). */
+    /** Navigates here and waits until `signup.header` shows. */
     async goto(): Promise<void> {
         await this.page.goto(SelectTeamPage.path());
+        await this.page.getByTestId('signup.header').waitFor();
     }
 }
 
@@ -835,9 +842,10 @@ export class ShouldVerifyEmailPage {
         return buildPath(ShouldVerifyEmailPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves ShouldVerifyEmail to the grammar names one). */
+    /** Navigates here and waits until `should_verify_email.title--text` shows. */
     async goto(): Promise<void> {
         await this.page.goto(ShouldVerifyEmailPage.path());
+        await this.page.getByTestId('should_verify_email.title--text').waitFor();
     }
 }
 
@@ -858,9 +866,14 @@ export class SignupPage {
         return buildPath(SignupPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves Signup to the grammar names one). */
+    /** Navigates here and waits until `signup.card` or `signup.no_methods.title--text` shows. */
     async goto(): Promise<void> {
         await this.page.goto(SignupPage.path());
+        await this.page
+            .getByTestId('signup.card')
+            .or(this.page.getByTestId('signup.no_methods.title--text'))
+            .first()
+            .waitFor();
     }
 }
 
@@ -932,9 +945,10 @@ export class TermsOfServicePage {
         return buildPath(TermsOfServicePage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves TermsOfService to the grammar names one). */
+    /** Navigates here and waits until `terms_of_service.terms` shows. */
     async goto(): Promise<void> {
         await this.page.goto(TermsOfServicePage.path());
+        await this.page.getByTestId('terms_of_service.terms').waitFor();
     }
 }
 

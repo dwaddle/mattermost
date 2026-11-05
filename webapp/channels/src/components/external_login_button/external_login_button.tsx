@@ -4,6 +4,8 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import './external_login_button.scss';
 
 export type ExternalLoginButtonType = {
@@ -14,6 +16,9 @@ export type ExternalLoginButtonType = {
     style?: React.CSSProperties;
     direction?: 'row' | 'column';
     onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+
+    // The link renders `<testId>--link`
+    testId?: TestId;
 };
 
 const ExternalLoginButton = ({
@@ -24,9 +29,11 @@ const ExternalLoginButton = ({
     style,
     direction = 'row',
     onClick,
+    testId,
 }: ExternalLoginButtonType) => (
     <a
         id={id}
+        data-testid={testId ? `${testId}--link` : undefined}
         className={classNames('external-login-button', {'direction-column': direction === 'column'}, id)}
         href={url}
         style={style}

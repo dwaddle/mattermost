@@ -3,33 +3,36 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {openSignup} from './support';
+
 /**
  * @objective Verify all password-complexity requirements are enforced on signup.
  */
 test(
     'MM-T1774 rejects signup passwords that miss a required character class',
     {tag: '@authentication'},
-    async ({pw}) => {
+    async ({pw, page}) => {
         const {adminClient} = await pw.initSetup();
 
         await adminClient.patchConfig({
             PasswordSettings: {Lowercase: true, Number: true, Uppercase: true, Symbol: true},
         });
 
-        await pw.hasSeenLandingPage();
-        await pw.signupPage.goto();
-        await pw.signupPage.toBeVisible();
-        await pw.signupPage.emailInput.fill(`test-${pw.random.id()}@example.com`);
-        await pw.signupPage.usernameInput.fill(`user${pw.random.id()}`);
-        await pw.signupPage.termsAndPrivacyCheckBox.check();
+        const app = await openSignup(pw, page);
+        const card = app.signup.card;
+        await card.fillEmailTextbox(`test-${pw.random.id()}@example.com`);
+        await card.fillUsernameTextbox(`user${pw.random.id()}`);
+        await card.setTermsCheckbox(true);
 
         for (const password of ['NOLOWERCASE12345!', 'nouppercase12345!', 'NoNumberHere!!!', 'NoSymbol1234567']) {
             // # Submit a password missing a required character class
-            await pw.signupPage.passwordInput.fill(password);
-            await pw.signupPage.createAccountButton.click();
+            await card.fillPasswordTextbox(password);
+            await card.clickCreateAccountButton();
 
             // * Verify the complexity error is shown
-            await expect(pw.signupPage.passwordComplexityError).toBeVisible();
+            await expect(card.password.messageAlert.locator).toHaveText(
+                /Your password must be \d+-72 characters long and include both lowercase and uppercase letters, numbers, and special characters\./,
+            );
         }
     },
 );

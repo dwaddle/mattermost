@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 
-import {ChannelsPage, expect, extractEmailLink, getRecentEmail, test} from '@mattermost/playwright-lib';
+import {App, expect, extractEmailLink, getRecentEmail, test} from '@mattermost/playwright-lib';
 
 type LockSetting = 'none' | 'name_and_username' | 'all';
 
@@ -26,36 +26,36 @@ test(
         // # Invite and register a member with administrator-provided profile details.
         const {adminUser, adminClient, team} = await pw.initSetup();
         await setLockConfig(adminClient, 'name_and_username');
-
         const uniqueId = pw.random.id(6);
         const invitedEmail = `new.user@${uniqueId}.example.com`;
         const invitedUsername = `jane.doe.${uniqueId}`;
 
-        const {channelsPage: adminChannelsPage} = await pw.testBrowser.login(adminUser);
-        const inviteModal = await openInviteModal(adminChannelsPage, team);
-        await inviteModal.addEmail(invitedEmail);
-        const profile = inviteModal.getProfileRow(invitedEmail);
-        await profile.firstNameInput.fill('Jane');
-        await profile.lastNameInput.fill('Doe');
-        await profile.usernameInput.fill(invitedUsername);
+        const {app: admin} = await pw.testBrowser.login(adminUser);
+        const invite = await openInvite(admin, team);
+        await addEmail(admin, invitedEmail);
+        const profile = invite.memberProfiles.member(memberKey(invitedEmail));
+        await profile.fillFirstNameTextbox('Jane');
+        await profile.fillLastNameTextbox('Doe');
+        await profile.fillUsernameTextbox(invitedUsername);
         const invitationStarted = new Date(Date.now() - 5_000);
-        await inviteModal.submitInvites();
-        await (await adminChannelsPage.getMembersInvitedModal(team.display_name)).toBeVisible();
+        await invite.clickSendButton();
+        await expect(admin.invitationModal.result.doneButton.locator).toBeVisible();
 
         const invitationEmail = await getRecentEmail(invitedEmail, {receivedAfter: invitationStarted});
         const signupLink = extractEmailLink(invitationEmail, '/signup_user_complete/');
+
         await pw.hasSeenLandingPage();
-        await pw.signupPage.goto(signupLink);
-        await pw.signupPage.toBeVisible();
-
-        await expect(pw.signupPage.usernameInput).toHaveValue(invitedUsername);
-        await expect(pw.signupPage.usernameInput).toBeDisabled();
-        await expect(pw.signupPage.adminChosenUsernameMessage).toBeVisible();
-        await expect(pw.signupPage.presetName).toHaveText("You'll join as Jane Doe.");
-
-        await pw.signupPage.createInvitedUser(pw.newTestPassword());
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.toBeVisible();
+        const app = new App(page);
+        await page.goto(signupLink);
+        const {card} = app.signup;
+        await expect(card.usernameTextbox.locator).toHaveValue(invitedUsername);
+        await expect(card.usernameTextbox.locator).toBeDisabled();
+        await expect(card.username.messageText.locator).toHaveText('Your username was chosen by your admin.');
+        await expect(card.presetNameText.locator).toHaveText("You'll join as Jane Doe.");
+        await card.fillPasswordTextbox(pw.newTestPassword());
+        await card.setTermsCheckbox(true);
+        await card.clickCreateAccountButton();
+        await expect(page).not.toHaveURL(/\/signup_user_complete/);
 
         const createdUser = await adminClient.getUserByEmail(invitedEmail);
         expect(createdUser.username).toBe(invitedUsername);
@@ -73,20 +73,22 @@ test(
             },
         ]);
         await page.reload();
-        await channelsPage.toBeVisible();
+        await expect(app.globalHeader.openAccountMenuButton.locator).toBeVisible();
+        await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
 
-        const profileModal = await channelsPage.openProfileModal();
-        await profileModal.openSection('name');
-        await expect(profileModal.managedByAdminMessage).toBeVisible();
-        await expect(profileModal.firstNameInput).not.toBeVisible();
-        await expect(profileModal.lastNameInput).not.toBeVisible();
-        await expect(profileModal.saveButton).not.toBeVisible();
-        await profileModal.closeSection();
+        const name = app.settings.section('name');
+        await name.clickEditButton();
+        await expect(name.managedByAdminText.locator).toBeVisible();
+        await expect(name.firstNameTextbox.locator).not.toBeVisible();
+        await expect(name.lastNameTextbox.locator).not.toBeVisible();
+        await expect(name.saveButton.locator).not.toBeVisible();
+        await name.clickCancelButton();
 
-        await profileModal.openSection('username');
-        await expect(profileModal.managedByAdminMessage).toBeVisible();
-        await expect(profileModal.usernameInput).not.toBeVisible();
-        await expect(profileModal.saveButton).not.toBeVisible();
+        const username = app.settings.section('username');
+        await username.clickEditButton();
+        await expect(username.managedByAdminText.locator).toBeVisible();
+        await expect(username.usernameTextbox.locator).not.toBeVisible();
+        await expect(username.saveButton.locator).not.toBeVisible();
     },
 );
 
@@ -104,21 +106,19 @@ test(
         const newFirstName = `AdminFirst${pw.random.id(5)}`;
         const newLastName = `AdminLast${pw.random.id(5)}`;
 
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await systemConsolePage.page.goto(`/admin_console/user_management/user/${user.id}`);
-        const {userDetail} = systemConsolePage.users;
-        await userDetail.toBeVisible();
-
-        await expect(userDetail.userCard.firstNameInput).toBeEnabled();
-        await expect(userDetail.userCard.lastNameInput).toBeEnabled();
-        await userDetail.userCard.firstNameInput.fill(newFirstName);
-        await userDetail.userCard.lastNameInput.fill(newLastName);
-        await userDetail.save();
-        await userDetail.saveChangesModal.confirm();
+        const {app, page} = await pw.testBrowser.login(adminUser);
+        await page.goto(`/admin_console/user_management/user/${user.id}`);
+        const userDetail = app.admin.user;
+        await expect(userDetail.firstNameTextbox.locator).toBeEnabled();
+        await expect(userDetail.lastNameTextbox.locator).toBeEnabled();
+        await userDetail.fillFirstNameTextbox(newFirstName);
+        await userDetail.fillLastNameTextbox(newLastName);
+        const confirm = await userDetail.clickSaveButton();
+        await confirm.clickConfirmButton();
 
         // * The administrator's changes persist in the UI and API.
-        await expect(userDetail.userCard.firstNameInput).toHaveValue(newFirstName);
-        await expect(userDetail.userCard.lastNameInput).toHaveValue(newLastName);
+        await expect(userDetail.firstNameTextbox.locator).toHaveValue(newFirstName);
+        await expect(userDetail.lastNameTextbox.locator).toHaveValue(newLastName);
         const updatedUser = await adminClient.getUser(user.id);
         expect(updatedUser.first_name).toBe(newFirstName);
         expect(updatedUser.last_name).toBe(newLastName);
@@ -141,13 +141,26 @@ async function setLockConfig(adminClient: Client4, lockSetting: LockSetting) {
         .toEqual({emailInvitations: true, profileLock: lockSetting});
 }
 
-async function openInviteModal(channelsPage: ChannelsPage, team: Team) {
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
-    await channelsPage.sidebarLeft.teamMenuButton.click();
-    await channelsPage.teamMenu.toBeVisible();
-    await channelsPage.teamMenu.clickInvitePeople();
-    const inviteModal = await channelsPage.getInvitePeopleModal(team.display_name);
-    await inviteModal.toBeVisible();
-    return inviteModal;
+/** An invited email's member-profile row key: the email with every character outside [a-z0-9_] made `_`. */
+function memberKey(email: string) {
+    return email.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+}
+
+/** Opens the team's Invite People dialog from the team menu. */
+async function openInvite(app: App, team: Team) {
+    await app.channelsPage.goto({team, channel: 'town-square'});
+    await (await app.lhs.header.clickOpenTeamMenuButton()).clickInvitePeopleMenuItem();
+    await expect(app.invitationModal.invite.users.inputCombobox.locator).toBeVisible();
+    return app.invitationModal.invite;
+}
+
+/** Adds an email to the invite list, taking the menu's suggestion once its search finishes. */
+async function addEmail(app: App, email: string) {
+    const {users} = app.invitationModal.invite;
+    const input = users.inputCombobox.locator;
+    await input.click();
+    await input.pressSequentially(email, {delay: 50});
+    await expect(users.emailOption.locator).toBeVisible({timeout: 15000});
+    await input.press('Enter');
+    await expect(input).toHaveValue('');
 }

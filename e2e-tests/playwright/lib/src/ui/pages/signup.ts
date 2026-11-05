@@ -45,7 +45,7 @@ export default class SignupPage {
 
         this.title = page.getByRole('heading', {name: 'Let’s get started'});
         this.subtitle = page.getByText('Create your Mattermost account to start collaborating with your team');
-        this.bodyCard = page.getByTestId('signup-body-card');
+        this.bodyCard = page.getByTestId('signup.card');
         this.loginLink = page.getByText('Log in');
         this.emailInput = page.locator('#input_email');
         this.usernameInput = page.locator('#input_name');
@@ -70,17 +70,17 @@ export default class SignupPage {
         this.emailAddressLabel = page.getByText('Email address');
         this.choosePasswordPlaceholder = page.getByPlaceholder('Choose a Password');
         this.adminChosenUsernameMessage = page.getByText('Your username was chosen by your admin.');
-        this.presetName = page.getByTestId('signup-body-card-preset-name');
+        this.presetName = page.getByTestId('signup.card.preset_name--text');
 
-        const signupBodyCard = page.getByTestId('signup-body-card');
+        const signupBodyCard = page.getByTestId('signup.card');
         this.termsAndPrivacyCheckBox = signupBodyCard.getByRole('checkbox', {
             name: 'Terms and privacy policy checkbox',
         });
         this.termsAndPrivacyAcceptableUsePolicyLink = signupBodyCard.getByText('Acceptable Use Policy');
         this.termsAndPrivacyPrivacyPolicyLink = signupBodyCard.getByText('Privacy Policy');
 
-        this.header = new components.MainHeader(page.getByTestId('hfroute-header'));
-        this.footer = new components.Footer(page.getByTestId('hfroute-footer'));
+        this.header = new components.MainHeader(page.getByTestId('public.header'));
+        this.footer = new components.Footer(page.getByTestId('public.footer'));
     }
 
     async toBeVisible() {

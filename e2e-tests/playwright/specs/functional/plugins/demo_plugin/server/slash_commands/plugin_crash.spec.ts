@@ -3,33 +3,31 @@
 
 import {demoPluginId, duration, test, expect} from '@mattermost/playwright-lib';
 
+import {openChannel} from '../../../../channels/burn_on_read/support';
+
+import {postContaining} from './support';
+
 test('should crash plugin via /crash command and verify recovery', async ({pw}) => {
     // # Setup
-    const {adminClient, user} = await pw.initSetup();
+    const {adminClient, user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const app = await openChannel(pw, user, team, 'town-square');
+    const composer = app.center.postCreate;
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    // # Pick /crash from the slash command autocomplete and send it
+    await composer.fillMessageTextbox('/cr');
+    await composer.message.suggestions.item('/crash').select();
+    await composer.clickSendButton();
 
-    // # Use autocomplete to select /crash command and send it
-    await channelsPage.centerView.postCreate.selectSlashCommandFromAutocomplete('/cr', '/crash');
-    await channelsPage.centerView.postCreate.sendMessage();
+    // * The plugin says it's crashing
+    await postContaining(app, 'Crashing plugin', 30_000);
 
-    // * Verify the post contains the crash message
-    await channelsPage.centerView.waitUntilLastPostContains('Crashing plugin');
-
-    // * Verify the plugin recovers (polls every 500ms by default)
+    // * The plugin recovers (polls every 1s, for up to 10s)
     await expect
-        .poll(
-            async () => {
-                return pw.isPluginActive(adminClient, demoPluginId);
-            },
-            {
-                timeout: duration.ten_sec, // Max 10s to recover
-                intervals: [duration.one_sec], // Check every 1s
-            },
-        )
+        .poll(async () => pw.isPluginActive(adminClient, demoPluginId), {
+            timeout: duration.ten_sec,
+            intervals: [duration.one_sec],
+        })
         .toBe(true);
 
     // The crash kills the plugin process mid-request. The server's auto-restart only
@@ -44,6 +42,7 @@ test('should crash plugin via /crash command and verify recovery', async ({pw}) 
     await adminClient.enablePlugin(demoPluginId);
     await expect.poll(() => pw.isPluginActive(adminClient, demoPluginId), {timeout: duration.half_min}).toBe(true);
 
-    // * Verify recovery by using /demo_plugin command
-    await channelsPage.centerView.postCreate.selectSlashCommandFromAutocomplete('/demo', '/demo_plugin');
+    // * Its commands are offered again
+    await composer.fillMessageTextbox('/demo');
+    await expect(composer.message.suggestions.item('/demo_plugin').locator).toBeVisible();
 });

@@ -3,7 +3,7 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-const FAKE_SETTING = '********************************';
+import {FAKE_SETTING, chooseProvider, expectOAuthLogin, logOut, save} from './support';
 
 /**
  * @objective Verify saving Generic OpenID Connect settings in the System Console
@@ -18,19 +18,23 @@ test('MM-T3623 saves Generic OpenID Connect settings and shows the login button'
     await pw.skipIfNoLicense();
 
     const {adminUser, adminClient} = await pw.initSetup();
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-
-    // # Open the OpenID Connect settings page
-    await systemConsolePage.gotoOpenIdConnect();
+    const {app} = await pw.testBrowser.login(adminUser);
 
     // # Select Generic OpenID and fill the provider fields
-    await systemConsolePage.openIdConnect.selectProvider('openid');
-    await systemConsolePage.openIdConnect.buttonName.fill('TestButtonTest');
-    await systemConsolePage.openIdConnect.fillButtonColor('#c02222');
-    await systemConsolePage.openIdConnect.discoveryEndpoint.fill('http://test.com/.well-known/openid-configuration');
-    await systemConsolePage.openIdConnect.clientId.fill('OpenIdId');
-    await systemConsolePage.openIdConnect.clientSecret.fill('OpenIdSecret');
-    await systemConsolePage.openIdConnect.save();
+    await chooseProvider(app, 'openid');
+    await app.admin.setting('OpenIdSettings.ButtonText').fillValueTextbox('TestButtonTest');
+
+    // Select-all before fill: ColorInput keeps the leading '#' selected on focus
+    const color = app.admin.setting('OpenIdSettings.ButtonColor').color.valueTextbox.locator;
+    await color.click({clickCount: 3});
+    await color.fill('#c02222');
+    await color.blur();
+    await app.admin
+        .setting('OpenIdSettings.DiscoveryEndpoint')
+        .fillValueTextbox('http://test.com/.well-known/openid-configuration');
+    await app.admin.setting('OpenIdSettings.Id').fillValueTextbox('OpenIdId');
+    await app.admin.setting('OpenIdSettings.Secret').fillValueTextbox('OpenIdSecret');
+    await save(app);
 
     // * Verify the saved config round-trips with a masked secret
     const config = await adminClient.getConfig();
@@ -40,10 +44,10 @@ test('MM-T3623 saves Generic OpenID Connect settings and shows the login button'
     expect(config.OpenIdSettings.DiscoveryEndpoint).toBe('http://test.com/.well-known/openid-configuration');
 
     // # Log out of the System Console
-    await systemConsolePage.logOut();
+    await logOut(app);
 
     // * Verify the login button label, href, and color
-    await systemConsolePage.loginPage.expectOAuthLogin('TestButtonTest', '/oauth/openid/login', '#c02222');
+    await expectOAuthLogin(app, 'openid', 'TestButtonTest', '/oauth/openid/login', '#c02222');
 });
 
 /**
@@ -59,16 +63,13 @@ test('MM-T3620 saves Google OpenID Connect settings and shows the login button',
     await pw.skipIfNoLicense();
 
     const {adminUser, adminClient} = await pw.initSetup();
-    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-
-    // # Open the OpenID Connect settings page
-    await systemConsolePage.gotoOpenIdConnect();
+    const {app} = await pw.testBrowser.login(adminUser);
 
     // # Select Google and fill the client credentials
-    await systemConsolePage.openIdConnect.selectProvider('google');
-    await systemConsolePage.openIdConnect.clientId.fill('GoogleId');
-    await systemConsolePage.openIdConnect.clientSecret.fill('GoogleSecret');
-    await systemConsolePage.openIdConnect.save();
+    await chooseProvider(app, 'google');
+    await app.admin.setting('GoogleSettings.Id').fillValueTextbox('GoogleId');
+    await app.admin.setting('GoogleSettings.Secret').fillValueTextbox('GoogleSecret');
+    await save(app);
 
     // * Verify the saved config round-trips with a masked secret
     const config = await adminClient.getConfig();
@@ -79,8 +80,8 @@ test('MM-T3620 saves Google OpenID Connect settings and shows the login button',
     );
 
     // # Log out of the System Console
-    await systemConsolePage.logOut();
+    await logOut(app);
 
     // * Verify the Google login button href
-    await systemConsolePage.loginPage.expectOAuthLogin('Google', '/oauth/google/login');
+    await expectOAuthLogin(app, 'google', 'Google', '/oauth/google/login');
 });

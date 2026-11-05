@@ -3,13 +3,23 @@
 
 import React, {memo, type JSX} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 type ErrorLabelProps = {
     errorText?: string | JSX.Element;
+
+    // The error renders `<testId>--text`.
+    testId?: TestId;
 };
 
-const ErrorLabel = ({errorText}: ErrorLabelProps) => (errorText ? (
+const ErrorLabel = ({errorText, testId}: ErrorLabelProps) => (errorText ? (
     <div className='form-group has-error'>
-        <label className='control-label'>{errorText}</label>
+        <label
+            className='control-label'
+            data-testid={testId ? `${testId}--text` : undefined}
+        >
+            {errorText}
+        </label>
     </div>
 ) : null);
 

@@ -10,11 +10,12 @@ export default class MainHeader {
     readonly logo;
     readonly backButton;
 
-    constructor(container: Locator) {
+    /** `backButtonTestId`: the public pages' header renders `public.header.back--link`; other pages pass their own. */
+    constructor(container: Locator, backButtonTestId = 'public.header.back--link') {
         this.container = container;
 
-        this.logo = container.getByTestId('header-logo-link');
-        this.backButton = container.getByTestId('back_button');
+        this.logo = container.getByTestId('public.header.logo--link');
+        this.backButton = container.getByTestId(backButtonTestId);
     }
 
     async toBeVisible() {

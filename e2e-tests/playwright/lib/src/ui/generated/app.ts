@@ -15,6 +15,7 @@ import {AddUsersToRoleModal} from './add_users_to_role_modal';
 import {AddUsersToTeamModal} from './add_users_to_team_modal';
 import {Admin} from './admin';
 import {AppBar} from './app_bar';
+import {AppsForm} from './apps_form';
 import {ArchiveChannelModal} from './archive_channel_modal';
 import {Backstage} from './backstage';
 import {BotTokenDeleteModal} from './bot_token_delete_modal';
@@ -28,6 +29,7 @@ import {ChannelMembersModal} from './channel_members_modal';
 import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {ChannelSelectorModal} from './channel_selector_modal';
 import {ChannelSettingsModal} from './channel_settings_modal';
+import {Claim} from './claim';
 import {ConvertGmToChannelModal} from './convert_gm_to_channel_modal';
 import {CreateUserGroupsModal} from './create_user_groups_modal';
 import {CustomStatusModal} from './custom_status_modal';
@@ -44,6 +46,7 @@ import {Drafts} from './drafts';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {EmojiGifPicker} from './emoji_gif_picker';
 import {EmojiPicker} from './emoji_picker';
+import {ErrorView} from './error_view';
 import {FilePreviewModal} from './file_preview_modal';
 import {ForwardPostModal} from './forward_post_modal';
 import {GifPicker} from './gif_picker';
@@ -54,9 +57,13 @@ import {Latex} from './latex';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {LeaveTeamModal} from './leave_team_modal';
 import {Lhs} from './lhs';
+import {LinkingLanding} from './linking_landing';
+import {Login} from './login';
+import {LoginMfa} from './login_mfa';
 import {ManageRolesModal} from './manage_roles_modal';
 import {ManageTeamsModal} from './manage_teams_modal';
 import {Markdown} from './markdown';
+import {MarketplaceModal} from './marketplace_modal';
 import {MenuModal} from './menu_modal';
 import {MobileHeader} from './mobile_header';
 import {MobileMenu} from './mobile_menu';
@@ -99,12 +106,14 @@ import {
     ThreadPopoutPage,
     ThreadsPage,
 } from './pages';
+import {PasswordReset} from './password_reset';
 import {Plugin} from './plugin';
 import {PolicyTestModal} from './policy_test_modal';
 import {PostDotMenu} from './post_dot_menu';
 import {PostEdit} from './post_edit';
 import {PostPriorityPicker} from './post_priority_picker';
 import {ProfilePopover} from './profile_popover';
+import {Public} from './public';
 import {QuickSwitchModal} from './quick_switch_modal';
 import {RemoveSharingModal} from './remove_sharing_modal';
 import {RenameChannelModal} from './rename_channel_modal';
@@ -116,6 +125,8 @@ import {SearchBox} from './search_box';
 import {SendDraftModal} from './send_draft_modal';
 import {SendPostOptions} from './send_post_options';
 import {Settings} from './settings';
+import {ShouldVerifyEmail} from './should_verify_email';
+import {Signup} from './signup';
 import {TeamMembersModal} from './team_members_modal';
 import {TeamSelectorModal} from './team_selector_modal';
 import {TeamSettingsModal} from './team_settings_modal';
@@ -185,6 +196,15 @@ export class App extends Scope {
      */
     get appBar(): AppBar {
         return new AppBar(this.page, 'app_bar', this.root);
+    }
+
+    /**
+     * `apps_form` — AppsForm (channels/src/components/apps_form/apps_form_component.tsx)
+     * Renders only when !(!form?.submit || !this.props.appContext).
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get appsForm(): AppsForm {
+        return new AppsForm(this.page, 'apps_form', this.root);
     }
 
     /**
@@ -269,6 +289,10 @@ export class App extends Scope {
         return new ChannelSettingsModal(this.page, 'channel_settings_modal', this.root);
     }
 
+    get claim(): Claim {
+        return new Claim(this.page, 'claim', this.root);
+    }
+
     get convertGmToChannelModal(): ConvertGmToChannelModal {
         return new ConvertGmToChannelModal(this.page, 'convert_gm_to_channel_modal', this.root);
     }
@@ -281,7 +305,7 @@ export class App extends Scope {
      * `custom_status_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
     get customStatusModal(): CustomStatusModal {
-        return new CustomStatusModal(this.page, 'custom_status_modal');
+        return new CustomStatusModal(this.page, 'custom_status_modal', this.root);
     }
 
     /**
@@ -365,6 +389,13 @@ export class App extends Scope {
     }
 
     /**
+     * `error_view` — ErrorPage (channels/src/components/error_page/error_page.tsx)
+     */
+    get errorView(): ErrorView {
+        return new ErrorView(this.page, 'error_view', this.root);
+    }
+
+    /**
      * `file_preview_modal` — FilePreviewModal (channels/src/components/file_preview_modal/file_preview_modal.tsx)
      * Renders only when !(this.props.fileInfos.length < 1 || this.props.fileInfos.length - 1 < this.state.imageIndex).
      */
@@ -421,6 +452,18 @@ export class App extends Scope {
         return new Lhs(this.page, 'lhs', this.root);
     }
 
+    get linkingLanding(): LinkingLanding {
+        return new LinkingLanding(this.page, 'linking_landing', this.root);
+    }
+
+    get login(): Login {
+        return new Login(this.page, 'login', this.root);
+    }
+
+    get loginMfa(): LoginMfa {
+        return new LoginMfa(this.page, 'login_mfa', this.root);
+    }
+
     /**
      * `manage_roles_modal` — ManageRolesModal (channels/src/components/admin_console/manage_roles_modal/manage_roles_modal.tsx)
      */
@@ -437,6 +480,13 @@ export class App extends Scope {
 
     get markdown(): Markdown {
         return new Markdown(this.page, 'markdown', this.root);
+    }
+
+    /**
+     * `marketplace_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get marketplaceModal(): MarketplaceModal {
+        return new MarketplaceModal(this.page, 'marketplace_modal', this.root);
     }
 
     /**
@@ -479,6 +529,10 @@ export class App extends Scope {
         return new NotifyConfirmModal(this.page, 'notify_confirm_modal', this.root);
     }
 
+    get passwordReset(): PasswordReset {
+        return new PasswordReset(this.page, 'password_reset', this.root);
+    }
+
     get plugin(): Plugin {
         return new Plugin(this.page, 'plugin', this.root);
     }
@@ -508,6 +562,10 @@ export class App extends Scope {
      */
     get profilePopover(): ProfilePopover {
         return new ProfilePopover(this.page, 'profile_popover', this.root);
+    }
+
+    get public(): Public {
+        return new Public(this.page, 'public', this.root);
     }
 
     /**
@@ -573,6 +631,14 @@ export class App extends Scope {
 
     get settings(): Settings {
         return new Settings(this.page, 'settings', this.root);
+    }
+
+    get shouldVerifyEmail(): ShouldVerifyEmail {
+        return new ShouldVerifyEmail(this.page, 'should_verify_email', this.root);
+    }
+
+    get signup(): Signup {
+        return new Signup(this.page, 'signup', this.root);
     }
 
     /**

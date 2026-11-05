@@ -7,10 +7,13 @@ export const callsPluginId = 'com.mattermost.calls';
 export const npsPluginId = 'com.mattermost.nps';
 export const playbooksPluginId = 'playbooks';
 
-// Not prepackaged — installed from this URL by tests that exercise it.
+// Not prepackaged — installed from this URL by tests that exercise it. Until a release carries the testids its page
+// objects need (plugins/com_mattermost_demo_plugin), PW_DEMO_PLUGIN_URL and PW_DEMO_PLUGIN_VERSION point at such a build.
 export const demoPluginId = 'com.mattermost.demo-plugin';
-export const demoPluginVersion = '0.12.1';
-export const demoPluginUrl = `https://github.com/mattermost/mattermost-plugin-demo/releases/download/v${demoPluginVersion}/mattermost-plugin-demo-v${demoPluginVersion}.tar.gz`;
+export const demoPluginVersion = process.env.PW_DEMO_PLUGIN_VERSION || '0.12.1';
+export const demoPluginUrl =
+    process.env.PW_DEMO_PLUGIN_URL ||
+    `https://github.com/mattermost/mattermost-plugin-demo/releases/download/v${demoPluginVersion}/mattermost-plugin-demo-v${demoPluginVersion}.tar.gz`;
 
 // License SKU short names — mirrored from webapp/channels/src/utils/constants.tsx LicenseSkus
 export const LicenseSkus = {

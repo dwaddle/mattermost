@@ -1,89 +1,52 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {duration, expect, test} from '@mattermost/playwright-lib';
+import {duration, test, type App} from '@mattermost/playwright-lib';
 
-import {assertRootModal, closeRootModal} from '../helpers';
+import {openChannel} from '../../../channels/burn_on_read/support';
+
+import {closeRootModal, DEMO, expectRootModal} from './support';
+
+/** Hovers the post and opens its actions menu (the apps icon, not "..."): plugins add their post actions there. */
+async function openActionsMenu(app: App, postId: string) {
+    const post = app.center.postList.post({id: postId});
+    await post.locator.hover();
+    await post.menu.clickActionsButton();
+    return post.menu.actionsMenu;
+}
 
 test('should open Root Modal from post actions menu and all submenu items', async ({pw}) => {
-    // # Setup
-    const {user, team} = await pw.initSetup();
+    // # Set up the demo plugin, post a message and open Town Square
+    const {adminClient, user, userClient, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
+    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const post = await userClient.createPost({
+        channel_id: townSquare.id,
+        message: 'Test post for Root Modal validation',
+    });
+    const app = await openChannel(pw, user, team, 'town-square');
+    const demo = app.plugins.comMattermostDemoPlugin;
 
-    // # Login and navigate to Town Square
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Click the plugin's top-level action
+    let menu = await openActionsMenu(app, post.id);
+    await menu.plugin(DEMO).locator.click({timeout: duration.ten_sec});
 
-    // # Post a message to use as the target post
-    await channelsPage.centerView.postCreate.input.fill('Test post for Root Modal validation');
-    await channelsPage.centerView.postCreate.sendMessage();
+    // * The Root Modal opens, with no "Element clicked" line for a top-level action
+    await expectRootModal(app);
+    await closeRootModal(app);
 
-    const post = await channelsPage.centerView.getLastPost();
+    // # Each submenu item: hover "Submenu Example", then click the item
+    for (const [item, label] of [
+        [demo.postSubmenu.firstText, 'First Item'],
+        [demo.postSubmenu.secondText, 'Second Item'],
+        [demo.postSubmenu.thirdText, 'Third Item'],
+    ] as const) {
+        menu = await openActionsMenu(app, post.id);
+        await menu.pluginSubmenu(DEMO).locator.hover();
+        await item.locator.click({timeout: duration.ten_sec});
 
-    // Local helper: hover the post and open the actions (bolt icon) menu via the library
-    // NOTE: Plugin actions are in the "actions" (⚡) button, NOT the "..." (more) button
-    async function openActionsMenu() {
-        await post.hover();
-        await post.postMenu.actionsButton.click();
+        // * The Root Modal names the item
+        await expectRootModal(app, label);
+        await closeRootModal(app);
     }
-
-    // Local helper: open the actions menu and click a plugin menu item
-    async function clickPluginMenuItem(click: () => Promise<void>) {
-        await openActionsMenu();
-        await click();
-    }
-
-    // # Click the top-level "Demo Plugin" action
-    await clickPluginMenuItem(() =>
-        channelsPage.page.getByRole('button', {name: 'Demo Plugin'}).click({timeout: duration.ten_sec}),
-    );
-
-    // * Verify Root Modal opens — top-level action does NOT show "Element clicked in the menu"
-    await assertRootModal(channelsPage.page);
-    await expect(channelsPage.page.getByText(/Element clicked in the menu:/)).not.toBeVisible();
-    await closeRootModal(channelsPage.page);
-
-    // # Click Submenu Example → First Item
-    await clickPluginMenuItem(async () => {
-        await channelsPage.page.getByRole('button', {name: /Submenu Example/}).hover();
-        // Submenu items have role="button" but a broken aria-label — filter by text content
-        await channelsPage.page
-            .getByRole('button')
-            .filter({hasText: 'First Item'})
-            .last()
-            .click({timeout: duration.ten_sec});
-    });
-
-    // * Verify Root Modal opens with "First Item" as the clicked element
-    await assertRootModal(channelsPage.page, 'First Item');
-    await closeRootModal(channelsPage.page);
-
-    // # Click Submenu Example → Second Item
-    await clickPluginMenuItem(async () => {
-        await channelsPage.page.getByRole('button', {name: /Submenu Example/}).hover();
-        await channelsPage.page
-            .getByRole('button')
-            .filter({hasText: 'Second Item'})
-            .last()
-            .click({timeout: duration.ten_sec});
-    });
-
-    // * Verify Root Modal opens with "Second Item" as the clicked element
-    await assertRootModal(channelsPage.page, 'Second Item');
-    await closeRootModal(channelsPage.page);
-
-    // # Click Submenu Example → Third Item
-    await clickPluginMenuItem(async () => {
-        await channelsPage.page.getByRole('button', {name: /Submenu Example/}).hover();
-        await channelsPage.page
-            .getByRole('button')
-            .filter({hasText: 'Third Item'})
-            .last()
-            .click({timeout: duration.ten_sec});
-    });
-
-    // * Verify Root Modal opens with "Third Item" as the clicked element
-    await assertRootModal(channelsPage.page, 'Third Item');
-    await closeRootModal(channelsPage.page);
 });

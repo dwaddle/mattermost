@@ -54,6 +54,7 @@ import type {
 } from '@mattermost/types/integrations';
 import type {Job} from '@mattermost/types/jobs';
 import type {ServerLimits} from '@mattermost/types/limits';
+import type {MarketplacePlugin} from '@mattermost/types/marketplace';
 import type {ClientPluginManifest, PluginManifest, PluginsResponse} from '@mattermost/types/plugins';
 import type {PaginatedPostList, Post, PostInfo, PostList, PostSearchResults} from '@mattermost/types/posts';
 import type {PreferenceType} from '@mattermost/types/preferences';
@@ -438,6 +439,11 @@ export const Api = {
     GetLdapGroups: effect<unknown>()({op: 'GetLdapGroups', method: 'GET', path: '/api/v4/ldap/groups'}),
     GetLoginType: effect<unknown>()({op: 'GetLoginType', method: 'POST', path: '/api/v4/users/login/type'}),
     GetLogs: effect<unknown>()({op: 'GetLogs', method: 'GET', path: '/api/v4/logs'}),
+    GetMarketplacePlugins: effect<MarketplacePlugin[]>()({
+        op: 'GetMarketplacePlugins',
+        method: 'GET',
+        path: '/api/v4/plugins/marketplace',
+    }),
     GetPinnedPosts: effect<PostList>()({
         op: 'GetPinnedPosts',
         method: 'GET',
@@ -558,6 +564,11 @@ export const Api = {
         op: 'GetWebappPlugins',
         method: 'GET',
         path: '/api/v4/plugins/webapp',
+    }),
+    InstallMarketplacePlugin: effect<MarketplacePlugin>()({
+        op: 'InstallMarketplacePlugin',
+        method: 'POST',
+        path: '/api/v4/plugins/marketplace',
     }),
     InviteGuestsToTeam: effect<StatusOK>()({
         op: 'InviteGuestsToTeam',

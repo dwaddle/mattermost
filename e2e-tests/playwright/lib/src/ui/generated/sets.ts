@@ -260,6 +260,16 @@ export const EmojiPickerTone = {
 } as const;
 export type EmojiPickerTone = (typeof EmojiPickerTone)[keyof typeof EmojiPickerTone];
 
+/** Keys of LoginExternal (from channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton). */
+export const LoginExternal = {
+    Gitlab: 'gitlab',
+    Google: 'google',
+    Office365: 'office365',
+    Openid: 'openid',
+    Saml: 'saml',
+} as const;
+export type LoginExternal = (typeof LoginExternal)[keyof typeof LoginExternal];
+
 /** Keys of ManageRolesModalRole (from channels/src/components/admin_console/manage_roles_modal/manage_roles_modal.tsx#ManageRolesModal). */
 export const ManageRolesModalRole = {
     SystemCustomGroupAdmin: 'system_custom_group_admin',
@@ -329,6 +339,15 @@ export const PostPriorityPickerPriority = {
     Urgent: 'urgent',
 } as const;
 export type PostPriorityPickerPriority = (typeof PostPriorityPickerPriority)[keyof typeof PostPriorityPickerPriority];
+
+/** Keys of PublicLink (from channels/src/components/header_footer_route/footer.tsx#Footer). */
+export const PublicLink = {
+    About: 'about',
+    Help: 'help',
+    Privacy: 'privacy',
+    Terms: 'terms',
+} as const;
+export type PublicLink = (typeof PublicLink)[keyof typeof PublicLink];
 
 /** Keys of RhsControl (from channels/src/components/advanced_text_editor/formatting_bar/formatting_icon.tsx#FormattingIcon). */
 export const RhsControl = {
@@ -517,6 +536,17 @@ export const SettingsSwitchTo = {
     Saml: 'saml',
 } as const;
 export type SettingsSwitchTo = (typeof SettingsSwitchTo)[keyof typeof SettingsSwitchTo];
+
+/** Keys of SignupExternal (from channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton). */
+export const SignupExternal = {
+    Gitlab: 'gitlab',
+    Google: 'google',
+    Ldap: 'ldap',
+    Office365: 'office365',
+    Openid: 'openid',
+    Saml: 'saml',
+} as const;
+export type SignupExternal = (typeof SignupExternal)[keyof typeof SignupExternal];
 
 /** Keys of TeamSettingsModalTab (from channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar). */
 export const TeamSettingsModalTab = {

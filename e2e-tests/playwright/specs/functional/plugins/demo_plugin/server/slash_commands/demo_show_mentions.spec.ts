@@ -3,42 +3,30 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {openChannel} from '../../../../channels/burn_on_read/support';
+
+import {markdownOf, postContaining, sendCommand} from './support';
+
 test('should parse user and channel mentions from /show_mentions command text', async ({pw}) => {
-    // # Setup
+    // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-
-    // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-
-    // # Navigate to Town Square
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const app = await openChannel(pw, user, team, 'town-square');
 
     // # Send /show_mentions
-    const responsePost = channelsPage.centerView.container
-        .getByRole('listitem')
-        .filter({hasText: 'contains the following different mentions'})
-        .last();
-    await channelsPage.centerView.postCreate.input.fill('/show_mentions @sysadmin ~town-square');
-    await channelsPage.centerView.postCreate.sendMessage();
-    await expect(responsePost).toBeVisible();
+    await sendCommand(app, '/show_mentions @sysadmin ~town-square');
+    const {post: reply} = await postContaining(app, 'contains the following different mentions');
 
-    // * Verify user mentions section
-    await expect(responsePost.getByRole('heading', {name: 'Mentions to users in the team'})).toBeVisible();
-    await expect(responsePost.getByRole('columnheader', {name: 'User name'})).toBeVisible();
-    await expect(responsePost.getByRole('cell', {name: '@sysadmin'})).toBeVisible();
+    // * The reply lists the user mention
+    const body = reply.body.locator;
+    await expect(body).toContainText('Mentions to users in the team');
+    await expect(body).toContainText('User name');
+    await expect(body).toContainText('@sysadmin');
 
-    // * Verify channel mentions section
-    await expect(responsePost.getByRole('heading', {name: 'Mentions to public channels'})).toBeVisible();
-    await expect(responsePost.getByRole('columnheader', {name: 'Channel name'})).toBeVisible();
-    await expect(responsePost.getByRole('cell', {name: '~Town Square'})).toBeVisible();
-
-    // * Verify ~Town Square is a link pointing to the town-square channel
-    await expect(responsePost.getByRole('link', {name: '~Town Square'})).toHaveAttribute(
-        'href',
-        /\/channels\/town-square$/,
-    );
+    // * And the channel mention, linking to the channel
+    await expect(body).toContainText('Mentions to public channels');
+    await expect(body).toContainText('Channel name');
+    const channelLink = markdownOf(app, reply).channelMention('town-square').locator;
+    await expect(channelLink).toHaveText('~Town Square');
+    await expect(channelLink).toHaveAttribute('href', /\/channels\/town-square$/);
 });

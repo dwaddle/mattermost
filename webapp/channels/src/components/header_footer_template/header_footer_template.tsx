@@ -46,6 +46,7 @@ const HeaderFooterNotLoggedIn = (props: Props) => {
                 key='about_link'
                 id='about_link'
                 className='footer-link'
+                data-testid='public.footer.link:about--link'
                 location='header_footer_template'
                 href={config.AboutLink}
             >
@@ -60,6 +61,7 @@ const HeaderFooterNotLoggedIn = (props: Props) => {
                 key='privacy_link'
                 id='privacy_link'
                 className='footer-link'
+                data-testid='public.footer.link:privacy--link'
                 location='header_footer_template'
                 href={config.PrivacyPolicyLink}
             >
@@ -74,6 +76,7 @@ const HeaderFooterNotLoggedIn = (props: Props) => {
                 key='terms_link'
                 id='terms_link'
                 className='footer-link'
+                data-testid='public.footer.link:terms--link'
                 location='header_footer_template'
                 href={config.TermsOfServiceLink}
             >
@@ -88,6 +91,7 @@ const HeaderFooterNotLoggedIn = (props: Props) => {
                 key='help_link'
                 id='help_link'
                 className='footer-link'
+                data-testid='public.footer.link:help--link'
                 location='header_footer_template'
                 href={config.HelpLink}
             >

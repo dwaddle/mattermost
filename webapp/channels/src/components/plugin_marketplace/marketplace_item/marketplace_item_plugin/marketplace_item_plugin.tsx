@@ -205,6 +205,7 @@ export const UpdateConfirmationModal = ({show, name, version, installedVersion, 
 
     return (
         <ConfirmModal
+            testId='marketplace_modal.update_confirm_modal'
             show={show}
             title={
                 <FormattedMessage
@@ -291,6 +292,7 @@ export default class MarketplaceItemPlugin extends React.PureComponent <Marketpl
                     <Link
                         to={'/admin_console/plugins/plugin_' + this.props.id}
                         onClick={this.onConfigure}
+                        data-testid='marketplace_modal.item.configure--link'
                     >
                         <FormattedMessage
                             id='marketplace_modal.list.configure'
@@ -329,6 +331,7 @@ export default class MarketplaceItemPlugin extends React.PureComponent <Marketpl
             <Button
                 onClick={this.onInstall}
                 className='plugin-install'
+                data-testid='marketplace_modal.item.install--button'
                 loading={this.props.installing}
             >
                 {actionLabel}

@@ -104,99 +104,6 @@
       }
     },
     {
-      "template": "CountrySelector",
-      "grammar": false,
-      "scope": [],
-      "name": "CountrySelector",
-      "role": null,
-      "component": {
-        "name": "DropdownInput",
-        "at": "channels/src/components/dropdown_input.tsx#DropdownInput"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/payment_form/country_selector.tsx#CountrySelector",
-            "channels/src/components/start_trial_form_modal/index.tsx#StartTrialFormModal"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "show",
-          "explained": "isModalOpen(state, ModalIdentifiers.START_TRIAL_FORM_MODAL)",
-          "kind": "store selector"
-        }
-      ]
-    },
-    {
-      "template": "CountrySelector.menu",
-      "grammar": false,
-      "scope": [],
-      "name": "CountrySelector.menu",
-      "role": null,
-      "component": {
-        "name": "(anonymous)",
-        "at": "channels/src/components/dropdown_input.tsx#makeMenu"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/payment_form/country_selector.tsx#CountrySelector",
-            "channels/src/components/start_trial_form_modal/index.tsx#StartTrialFormModal"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "show",
-          "explained": "isModalOpen(state, ModalIdentifiers.START_TRIAL_FORM_MODAL)",
-          "kind": "store selector"
-        }
-      ]
-    },
-    {
-      "template": "CountrySelector.menu.option:{key}--option",
-      "grammar": false,
-      "scope": [],
-      "name": "CountrySelector.menu.option:{key}--option",
-      "role": null,
-      "component": {
-        "name": "(anonymous)",
-        "at": "channels/src/components/dropdown_input.tsx#makeOption"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/payment_form/country_selector.tsx#CountrySelector",
-            "channels/src/components/start_trial_form_modal/index.tsx#StartTrialFormModal"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "show",
-          "explained": "isModalOpen(state, ModalIdentifiers.START_TRIAL_FORM_MODAL)",
-          "kind": "store selector"
-        }
-      ]
-    },
-    {
       "template": "FeedbackModalRadioGroup",
       "grammar": false,
       "scope": [],
@@ -333,46 +240,6 @@
         "native": false,
         "state": []
       }
-    },
-    {
-      "template": "Install-Plugins-button",
-      "grammar": false,
-      "scope": [],
-      "name": "Install-Plugins-button",
-      "role": null,
-      "component": {
-        "name": "MarketplaceList",
-        "at": "channels/src/components/plugin_marketplace/marketplace_list/marketplace_list.tsx#MarketplaceList"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": false,
-        "state": []
-      },
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/plugin_marketplace/marketplace_list/marketplace_list.tsx#MarketplaceList"
-        ]
-      },
-      "renderedWhen": [
-        {
-          "expr": "listing.length === 0",
-          "explained": "listing.length === 0",
-          "kind": "prop"
-        },
-        {
-          "expr": "!loading",
-          "explained": "!loading",
-          "kind": "local state"
-        }
-      ]
     },
     {
       "template": "RemoveFlaggedMessageConfirmationModal__comment",
@@ -3541,30 +3408,6 @@
         "scope": "admin.accept_invite_modal",
         "field": "password",
         "valueType": "string"
-      }
-    },
-    {
-      "template": "admin.access_control.policy.edit_policy.policyName",
-      "grammar": false,
-      "scope": [],
-      "name": "admin.access_control.policy.edit_policy.policyName",
-      "role": null,
-      "component": {
-        "name": "Setting",
-        "at": "channels/src/components/widgets/settings/setting.tsx#Setting"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
-            "channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
       }
     },
     {
@@ -13605,37 +13448,6 @@
         "field": "uppercase",
         "valueType": "boolean"
       }
-    },
-    {
-      "template": "admin.permission_policies.edit.policyName",
-      "grammar": false,
-      "scope": [],
-      "name": "admin.permission_policies.edit.policyName",
-      "role": null,
-      "component": {
-        "name": "Setting",
-        "at": "channels/src/components/widgets/settings/setting.tsx#Setting"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
-            "channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "pageLoaded && !loadFailed",
-          "explained": "pageLoaded && !loadFailed",
-          "kind": "local state"
-        }
-      ]
     },
     {
       "template": "admin.permission_policies.edit.policyNamehelp-text",
@@ -34642,40 +34454,6 @@
       ]
     },
     {
-      "template": "alternate-link",
-      "grammar": false,
-      "scope": [],
-      "name": "alternate-link",
-      "role": null,
-      "component": {
-        "name": "AlternateLink",
-        "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
-          "explained": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
-          "kind": "prop"
-        },
-        {
-          "expr": "showSignup",
-          "explained": "showSignup",
-          "kind": "license/config/flag",
-          "viaLocal": true
-        }
-      ]
-    },
-    {
       "template": "app_bar",
       "grammar": true,
       "scope": [],
@@ -34840,6 +34618,1179 @@
           "expr": "loadState === 'ready' && template",
           "explained": "loadState === 'ready' && template",
           "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "apps_form",
+      "grammar": true,
+      "scope": [],
+      "name": "apps_form",
+      "role": null,
+      "component": {
+        "name": "AppsForm",
+        "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "form",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "GetChannel",
+          "GetChannelMemberMe",
+          "GetEmojisByNames",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "UpdatePreferences",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded",
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!form?.submit || !this.props.appContext)",
+          "explained": "!(!form?.submit || !this.props.appContext)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.cancel--button",
+      "grammar": true,
+      "scope": [
+        "apps_form"
+      ],
+      "name": "cancel",
+      "role": "button",
+      "component": {
+        "name": "AppsForm",
+        "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!form?.submit || !this.props.appContext)",
+          "explained": "!(!form?.submit || !this.props.appContext)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.error--text",
+      "grammar": true,
+      "scope": [
+        "apps_form"
+      ],
+      "name": "error",
+      "role": "text",
+      "component": {
+        "name": "AppsForm",
+        "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.state.formError",
+          "explained": "this.state.formError",
+          "kind": "local state"
+        },
+        {
+          "expr": "!(!form?.submit || !this.props.appContext)",
+          "explained": "!(!form?.submit || !this.props.appContext)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.calendar",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "calendar",
+      "role": null,
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_date_field/apps_form_date_field.tsx#AppsFormDateField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "isPopperOpen",
+          "explained": "isPopperOpen",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.calendar.day:{key}--text",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field",
+        "calendar"
+      ],
+      "name": "day",
+      "role": "text",
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_date_field/apps_form_date_field.tsx#AppsFormDateField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "apps_form.field.calendar.next_month",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field",
+        "calendar"
+      ],
+      "name": "next_month",
+      "role": null,
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_date_field/apps_form_date_field.tsx#AppsFormDateField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "apps_form.field.calendar.previous_month",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field",
+        "calendar"
+      ],
+      "name": "previous_month",
+      "role": null,
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_date_field/apps_form_date_field.tsx#AppsFormDateField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "apps_form.field.cell:{key}_{key}--checkbox",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "cell",
+      "role": "checkbox",
+      "component": {
+        "name": "CheckboxMatrixSetting",
+        "at": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "checkbox",
+        "native": true,
+        "state": [
+          "checked",
+          "disabled",
+          "value"
+        ]
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "AppSelectOption",
+        "field": "value",
+        "module": "@mattermost/types/apps",
+        "type": "Pick<AppSelectOption, 'value'>"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rowSelection === 'single')",
+          "explained": "!(rowSelection === 'single')",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.choice:{key}--checkbox",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "choice",
+      "role": "checkbox",
+      "component": {
+        "name": "CheckboxGroupSetting",
+        "at": "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "checkbox",
+        "native": false,
+        "state": [
+          "checked",
+          "disabled",
+          "value"
+        ]
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      }
+    },
+    {
+      "template": "apps_form.field.clear--button",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "clear",
+      "role": "button",
+      "component": {
+        "name": "RadioSetting",
+        "at": "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showClear",
+          "explained": "showClear",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.date--button",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "date",
+      "role": "button",
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_date_field/apps_form_date_field.tsx#AppsFormDateField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "apps_form.field.help--text",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "help",
+      "role": "text",
+      "component": {
+        "name": "CheckboxMatrixSetting",
+        "at": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "alsoAt": [
+        "channels/src/components/widgets/settings/setting.tsx#Setting"
+      ]
+    },
+    {
+      "template": "apps_form.field.label--text",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "label",
+      "role": "text",
+      "component": {
+        "name": "AppsFormField",
+        "at": "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+      },
+      "instances": [
+        {
+          "via": []
+        },
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "alsoAt": [
+        "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting",
+        "channels/src/components/widgets/settings/setting.tsx#Setting"
+      ]
+    },
+    {
+      "template": "apps_form.field.option:{key}--radio",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "option",
+      "role": "radio",
+      "component": {
+        "name": "RadioSetting",
+        "at": "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "radio",
+        "native": false,
+        "state": [
+          "checked",
+          "disabled",
+          "value"
+        ]
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      }
+    },
+    {
+      "template": "apps_form.field.radio_cell:{key}_{key}--radio",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "radio_cell",
+      "role": "radio",
+      "component": {
+        "name": "CheckboxMatrixSetting",
+        "at": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "radio",
+        "native": true,
+        "state": [
+          "checked",
+          "disabled",
+          "value"
+        ]
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "AppSelectOption",
+        "field": "value",
+        "module": "@mattermost/types/apps",
+        "type": "Pick<AppSelectOption, 'value'>"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "rowSelection === 'single'",
+          "explained": "rowSelection === 'single'",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.select_label--text",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "select_label",
+      "role": "text",
+      "component": {
+        "name": "AppsFormSelectField",
+        "at": "channels/src/components/apps_form/apps_form_field/apps_form_select_field.tsx#AppsFormSelectField"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "label",
+          "explained": "label",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.time--button",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "time",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "expiryTimeMenu",
+          "at": "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+          "scope": "apps_form.field.time_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!manualTimeEntry",
+          "explained": "!manualTimeEntry",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.time_menu.time:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field",
+        "time_menu"
+      ],
+      "name": "time",
+      "role": "menuitem",
+      "component": {
+        "name": "DateTimeInputContainer",
+        "at": "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!manualTimeEntry",
+          "explained": "!manualTimeEntry",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.field.value--checkbox",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "value",
+      "role": "checkbox",
+      "component": {
+        "name": "BoolSetting",
+        "at": "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "checkbox",
+        "native": true,
+        "state": [
+          "checked",
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "form": {
+        "scope": "apps_form.field",
+        "field": "value_checkbox",
+        "valueType": "boolean"
+      }
+    },
+    {
+      "template": "apps_form.field.value--combobox",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "value",
+      "role": "combobox",
+      "component": {
+        "name": "SelectInput",
+        "at": "channels/src/components/apps_form/apps_form_field/apps_form_select_field.tsx#SelectInput"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "combobox",
+        "native": false,
+        "state": []
+      },
+      "form": {
+        "scope": "apps_form.field",
+        "field": "value_combobox",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "apps_form.field.value--spinbutton",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "value",
+      "role": "spinbutton",
+      "component": {
+        "name": "TextSetting",
+        "at": "channels/src/components/widgets/settings/text_setting.tsx#TextSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "spinbutton",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(type === 'textarea')",
+          "explained": "!(type === 'textarea')",
+          "kind": "prop"
+        },
+        {
+          "expr": "inputType === 'number'",
+          "explained": "inputType === 'number'",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "form": {
+        "scope": "apps_form.field",
+        "field": "value_spinbutton",
+        "valueType": "number"
+      }
+    },
+    {
+      "template": "apps_form.field.value--textbox",
+      "grammar": true,
+      "scope": [
+        "apps_form",
+        "field"
+      ],
+      "name": "value",
+      "role": "textbox",
+      "component": {
+        "name": "TextSetting",
+        "at": "channels/src/components/widgets/settings/text_setting.tsx#TextSetting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled",
+          "value"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "form": {
+        "scope": "apps_form.field",
+        "field": "value_textbox",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "apps_form.field:{key}",
+      "grammar": true,
+      "scope": [
+        "apps_form"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "AppsFormField",
+        "at": "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
+            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
+            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
+            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
+            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
+            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
+            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "alsoAt": [
+        "channels/src/components/apps_form/apps_form_field/apps_form_select_field.tsx#AppsFormSelectField",
+        "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting",
+        "channels/src/components/widgets/settings/setting.tsx#Setting"
+      ],
+      "key": {
+        "kind": "entity",
+        "entity": "AppField",
+        "field": "name",
+        "module": "@mattermost/types/apps",
+        "type": "Pick<AppField, 'name'>"
+      }
+    },
+    {
+      "template": "apps_form.submit--button",
+      "grammar": true,
+      "scope": [
+        "apps_form"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "AppsForm",
+        "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!form?.submit || !this.props.appContext)",
+          "explained": "!(!form?.submit || !this.props.appContext)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.submit:{key}--button",
+      "grammar": true,
+      "scope": [
+        "apps_form"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "AppsForm",
+        "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "AppSelectOption",
+        "field": "value",
+        "module": "@mattermost/types/apps",
+        "type": "Pick<AppSelectOption, 'value'>"
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "GetChannel",
+          "GetChannelMemberMe",
+          "GetEmojisByNames",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "UpdatePreferences",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded",
+          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.form.submit_buttons",
+          "explained": "this.props.form.submit_buttons",
+          "kind": "prop"
+        },
+        {
+          "expr": "!(!form?.submit || !this.props.appContext)",
+          "explained": "!(!form?.submit || !this.props.appContext)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "apps_form.title--text",
+      "grammar": true,
+      "scope": [
+        "apps_form"
+      ],
+      "name": "title",
+      "role": "text",
+      "component": {
+        "name": "AppsForm",
+        "at": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!form?.submit || !this.props.appContext)",
+          "explained": "!(!form?.submit || !this.props.appContext)",
+          "kind": "other"
         }
       ]
     },
@@ -39343,34 +40294,6 @@
       }
     },
     {
-      "template": "back_button",
-      "grammar": false,
-      "scope": [],
-      "name": "back_button",
-      "role": null,
-      "component": {
-        "name": "BackButton",
-        "at": "channels/src/components/common/back_button.tsx#BackButton"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "link",
-        "native": false,
-        "state": []
-      },
-      "opens": [
-        {
-          "kind": "page",
-          "target": "url",
-          "at": "channels/src/components/common/back_button.tsx#BackButton"
-        }
-      ]
-    },
-    {
       "template": "backstage.navbar",
       "grammar": true,
       "scope": [
@@ -41088,11 +42011,6 @@
         },
         {
           "via": [
-            "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#UpdateConfirmationModal"
-          ]
-        },
-        {
-          "via": [
             "channels/src/components/recaps/recap_item.tsx#RecapItem"
           ]
         },
@@ -41377,7 +42295,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -42541,7 +43460,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -42726,7 +43646,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -43438,7 +44359,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -43746,7 +44668,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -47114,7 +48037,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/components/actions_menu/actions_menu.tsx#ActionMenuClass"
+          "at": "channels/src/components/actions_menu/actions_menu.tsx#ActionMenuClass",
+          "scope": "marketplace_modal"
         }
       ],
       "renderedWhen": [
@@ -61278,6 +62202,688 @@
       ]
     },
     {
+      "template": "claim.email_to_ldap.ldap_id--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "ldap_id",
+      "role": "textbox",
+      "component": {
+        "name": "EmailToLDAP",
+        "at": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.email_to_ldap",
+        "field": "ldap_id",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.email_to_ldap.ldap_id_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "ldap_id_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.email_to_ldap.ldap_password--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "ldap_password",
+      "role": "textbox",
+      "component": {
+        "name": "EmailToLDAP",
+        "at": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.email_to_ldap",
+        "field": "ldap_password",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.email_to_ldap.ldap_password_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "ldap_password_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.email_to_ldap.password--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "password",
+      "role": "textbox",
+      "component": {
+        "name": "EmailToLDAP",
+        "at": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.email_to_ldap",
+        "field": "password",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.email_to_ldap.password_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "password_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.email_to_ldap.server_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "server_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.email_to_ldap.submit--button",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_ldap"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "EmailToLDAP",
+        "at": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "claim.email_to_oauth.password--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_oauth"
+      ],
+      "name": "password",
+      "role": "textbox",
+      "component": {
+        "name": "EmailToOAuth",
+        "at": "channels/src/components/claim/components/email_to_oauth.tsx#EmailToOAuth"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "claim.email_to_oauth.server_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_oauth"
+      ],
+      "name": "server_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/email_to_oauth.tsx#EmailToOAuth"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.email_to_oauth.submit--button",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "email_to_oauth"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "EmailToOAuth",
+        "at": "channels/src/components/claim/components/email_to_oauth.tsx#EmailToOAuth"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "claim.ldap_to_email.confirm--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "confirm",
+      "role": "textbox",
+      "component": {
+        "name": "LDAPToEmail",
+        "at": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.ldap_to_email",
+        "field": "confirm",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.ldap_to_email.confirm_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "confirm_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.ldap_to_email.ldap_password--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "ldap_password",
+      "role": "textbox",
+      "component": {
+        "name": "LDAPToEmail",
+        "at": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.ldap_to_email",
+        "field": "ldap_password",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.ldap_to_email.ldap_password_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "ldap_password_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.ldap_to_email.password--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "password",
+      "role": "textbox",
+      "component": {
+        "name": "LDAPToEmail",
+        "at": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.ldap_to_email",
+        "field": "password",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.ldap_to_email.password_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "password_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.ldap_to_email.server_error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "server_error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.ldap_to_email.submit--button",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "ldap_to_email"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "LDAPToEmail",
+        "at": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "claim.oauth_to_email.confirm--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "oauth_to_email"
+      ],
+      "name": "confirm",
+      "role": "textbox",
+      "component": {
+        "name": "OAuthToEmail",
+        "at": "channels/src/components/claim/components/oauth_to_email.tsx#OAuthToEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.oauth_to_email",
+        "field": "confirm",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.oauth_to_email.error--text",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "oauth_to_email"
+      ],
+      "name": "error",
+      "role": "text",
+      "component": {
+        "name": "ErrorLabel",
+        "at": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/components/oauth_to_email.tsx#OAuthToEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "errorText",
+          "explained": "errorText",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "claim.oauth_to_email.password--textbox",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "oauth_to_email"
+      ],
+      "name": "password",
+      "role": "textbox",
+      "component": {
+        "name": "OAuthToEmail",
+        "at": "channels/src/components/claim/components/oauth_to_email.tsx#OAuthToEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "form": {
+        "scope": "claim.oauth_to_email",
+        "field": "password",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "claim.oauth_to_email.submit--button",
+      "grammar": true,
+      "scope": [
+        "claim",
+        "oauth_to_email"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "OAuthToEmail",
+        "at": "channels/src/components/claim/components/oauth_to_email.tsx#OAuthToEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "classificationAttribute",
       "grammar": false,
       "scope": [],
@@ -64807,19 +66413,8 @@
       "instances": [
         {
           "via": [
-            "channels/src/components/apps_form/apps_form_date_field/apps_form_date_field.tsx#AppsFormDateField"
-          ]
-        },
-        {
-          "via": [
             "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
             "channels/src/components/admin_console/server_logs/custom_range_modal.tsx#CustomRangeModal"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
-            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField"
           ]
         }
       ],
@@ -64967,7 +66562,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -69529,6 +71125,12 @@
         },
         {
           "via": [
+            "channels/src/components/payment_form/country_selector.tsx#CountrySelector",
+            "channels/src/components/start_trial_form_modal/index.tsx#StartTrialFormModal"
+          ]
+        },
+        {
+          "via": [
             "channels/src/components/payment_form/state_selector.tsx#StateSelector"
           ]
         },
@@ -70320,11 +71922,92 @@
       }
     },
     {
-      "template": "errorMessageTitle",
-      "grammar": false,
+      "template": "error_view",
+      "grammar": true,
       "scope": [],
-      "name": "errorMessageTitle",
+      "name": "error_view",
       "role": null,
+      "component": {
+        "name": "ErrorPage",
+        "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "error_view.back--link",
+      "grammar": true,
+      "scope": [
+        "error_view"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "ErrorPage",
+        "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/'",
+          "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+        },
+        {
+          "kind": "page",
+          "target": "returnTo",
+          "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+        }
+      ]
+    },
+    {
+      "template": "error_view.message--text",
+      "grammar": true,
+      "scope": [
+        "error_view"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "ErrorPage",
+        "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "error_view.title--text",
+      "grammar": true,
+      "scope": [
+        "error_view"
+      ],
+      "name": "title",
+      "role": "text",
       "component": {
         "name": "ErrorPage",
         "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
@@ -70862,34 +72545,6 @@
           "expr": "requestError",
           "explained": "requestError",
           "kind": "local state"
-        }
-      ]
-    },
-    {
-      "template": "footer-copyright",
-      "grammar": false,
-      "scope": [],
-      "name": "footer-copyright",
-      "role": null,
-      "component": {
-        "name": "Footer",
-        "at": "channels/src/components/header_footer_route/footer.tsx#Footer"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "!document.cookie.includes('MMEMBED=1')",
-          "explained": "!document.cookie.includes('MMEMBED=1')",
-          "kind": "other"
         }
       ]
     },
@@ -75073,7 +76728,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/components/global_header/left_controls/switch_product_menu/switch_product_marketplace_menuitem.tsx#ProductSwitcherMarketplaceMenuItem"
+          "at": "channels/src/components/global_header/left_controls/switch_product_menu/switch_product_marketplace_menuitem.tsx#ProductSwitcherMarketplaceMenuItem",
+          "scope": "marketplace_modal"
         }
       ],
       "renderedWhen": [
@@ -75579,83 +77235,6 @@
       "component": {
         "name": "(anonymous)",
         "at": "channels/src/components/team_groups_manage_modal/team_groups_manage_modal.tsx#TeamGroupsManageModal"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      }
-    },
-    {
-      "template": "header-logo-link",
-      "grammar": false,
-      "scope": [],
-      "name": "header-logo-link",
-      "role": null,
-      "component": {
-        "name": "Header",
-        "at": "channels/src/components/header_footer_route/header.tsx#Header"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "link",
-        "native": false,
-        "state": []
-      },
-      "opens": [
-        {
-          "kind": "page",
-          "target": "'/'",
-          "at": "channels/src/components/header_footer_route/header.tsx#Header"
-        }
-      ]
-    },
-    {
-      "template": "hfroute-footer",
-      "grammar": false,
-      "scope": [],
-      "name": "hfroute-footer",
-      "role": null,
-      "component": {
-        "name": "Footer",
-        "at": "channels/src/components/header_footer_route/footer.tsx#Footer"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "!document.cookie.includes('MMEMBED=1')",
-          "explained": "!document.cookie.includes('MMEMBED=1')",
-          "kind": "other"
-        }
-      ]
-    },
-    {
-      "template": "hfroute-header",
-      "grammar": false,
-      "scope": [],
-      "name": "hfroute-header",
-      "role": null,
-      "component": {
-        "name": "Header",
-        "at": "channels/src/components/header_footer_route/header.tsx#Header"
       },
       "instances": [
         {
@@ -83650,6 +85229,77 @@
       ]
     },
     {
+      "template": "linking_landing.open_app--link",
+      "grammar": true,
+      "scope": [
+        "linking_landing"
+      ],
+      "name": "open_app",
+      "role": "link",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "linking_landing.open_browser--link",
+      "grammar": true,
+      "scope": [
+        "linking_landing"
+      ],
+      "name": "open_browser",
+      "role": "link",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "linking_landing.remember_preference--checkbox",
+      "grammar": true,
+      "scope": [
+        "linking_landing"
+      ],
+      "name": "remember_preference",
+      "role": "checkbox",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "checkbox",
+        "native": true,
+        "state": [
+          "checked"
+        ]
+      }
+    },
+    {
       "template": "list-modal",
       "grammar": false,
       "scope": [],
@@ -84878,31 +86528,101 @@
       }
     },
     {
-      "template": "login-body-card",
-      "grammar": false,
-      "scope": [],
-      "name": "login-body-card",
+      "template": "login.alternate",
+      "grammar": true,
+      "scope": [
+        "login"
+      ],
+      "name": "alternate",
       "role": null,
       "component": {
-        "name": "getContent",
-        "at": "channels/src/components/login/login.tsx#Login"
+        "name": "AlternateLink",
+        "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
       },
       "instances": [
         {
-          "via": []
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
         }
       ],
       "aria": {
         "role": null,
         "native": false,
         "state": []
-      }
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "explained": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "kind": "prop"
+        },
+        {
+          "expr": "showSignup",
+          "explained": "showSignup",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
     },
     {
-      "template": "login-body-card-banner",
-      "grammar": false,
-      "scope": [],
-      "name": "login-body-card-banner",
+      "template": "login.alternate.action--link",
+      "grammar": true,
+      "scope": [
+        "login",
+        "alternate"
+      ],
+      "name": "action",
+      "role": "link",
+      "component": {
+        "name": "AlternateLink",
+        "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "{ pathname: alternateLinkPath, search: location.search, }",
+          "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "explained": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "kind": "prop"
+        },
+        {
+          "expr": "alternateLinkPath && alternateLinkLabel",
+          "explained": "alternateLinkPath && alternateLinkLabel",
+          "kind": "prop"
+        },
+        {
+          "expr": "showSignup",
+          "explained": "showSignup",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "login.banner",
+      "grammar": true,
+      "scope": [
+        "login"
+      ],
+      "name": "banner",
       "role": null,
       "component": {
         "name": "AlertBanner",
@@ -84929,11 +86649,295 @@
       ]
     },
     {
-      "template": "login-id-input",
-      "grammar": false,
-      "scope": [],
-      "name": "login-id-input",
+      "template": "login.banner.close--button",
+      "grammar": true,
+      "scope": [
+        "login",
+        "banner"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "AlertBanner",
+        "at": "channels/src/components/alert_banner/index.tsx#AlertBanner"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "login.card",
+      "grammar": true,
+      "scope": [
+        "login"
+      ],
+      "name": "card",
       "role": null,
+      "component": {
+        "name": "getContent",
+        "at": "channels/src/components/login/login.tsx#Login"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "login.card.log_in--button",
+      "grammar": true,
+      "scope": [
+        "login",
+        "card"
+      ],
+      "name": "log_in",
+      "role": "button",
+      "component": {
+        "name": "SaveButton",
+        "at": "channels/src/components/save_button.tsx#SaveButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/'",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "'/should_verify_email?&email=' + encodeURIComponent(loginId)",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true,
+          "page": "ShouldVerifyEmailPage"
+        },
+        {
+          "kind": "page",
+          "target": "`${pathname}${newQuery}${hash}`",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "`/${ExperimentalPrimaryTeam}`",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "`/${team.name}`",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "path",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "{ pathname: path, search: queryParams.toString(), }",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "popover",
+          "target": "GuestMagicLinkCard",
+          "at": "channels/src/components/login/login.tsx#Login"
+        }
+      ],
+      "effects": {
+        "ops": [
+          "AddTeamMemberFromInvite",
+          "GetChannelByNameForTeamName",
+          "GetChannelMembersForUserMe",
+          "GetChannelsForTeamForUserMe",
+          "GetClientConfig",
+          "GetClientLicense",
+          "GetLoginType",
+          "GetPreferencesMe",
+          "GetRolesByNames",
+          "GetServerLimits",
+          "GetTeam",
+          "GetTeamMembersForUserMe",
+          "GetTeamsForUserMe",
+          "GetTeamsUnreadForUserMe",
+          "GetUserMe",
+          "GetUserScheduledPosts",
+          "GetWebappPlugins",
+          "Login",
+          "LoginWithDesktopToken",
+          "PostLog"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/admin_actions.ts#unregisterAdminConsolePlugin",
+          "channels/src/plugins/index.ts#loadPlugin"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "login.external:{key}--link",
+      "grammar": true,
+      "scope": [
+        "login"
+      ],
+      "name": "external",
+      "role": "link",
+      "component": {
+        "name": "ExternalLoginButton",
+        "at": "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ],
+          "keySet": [
+            "gitlab",
+            "google",
+            "office365",
+            "openid",
+            "saml"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"gitlab\" | \"google\" | \"office365\" | \"openid\" | \"saml\"",
+        "values": [
+          "gitlab",
+          "google",
+          "office365",
+          "openid",
+          "saml"
+        ],
+        "set": "LoginExternal"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableExternalSignup",
+          "explained": "enableExternalSignup",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "login.forgot_password--link",
+      "grammar": true,
+      "scope": [
+        "login"
+      ],
+      "name": "forgot_password",
+      "role": "link",
+      "component": {
+        "name": "getResetPasswordLink",
+        "at": "channels/src/components/login/login.tsx#Login"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/reset_password'",
+          "at": "channels/src/components/login/login.tsx#Login",
+          "page": "PasswordResetSendLinkPage"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "!(!PasswordEnableForgotLink || PasswordEnableForgotLink === 'false' || onlyLdapEnabled)",
+          "explained": "!(!PasswordEnableForgotLink || PasswordEnableForgotLink === 'false' || onlyLdapEnabled)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "login.login_id--textbox",
+      "grammar": true,
+      "scope": [
+        "login"
+      ],
+      "name": "login_id",
+      "role": "textbox",
       "component": {
         "name": "generateInput",
         "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
@@ -84971,7 +86975,462 @@
           "kind": "license/config/flag",
           "viaLocal": true
         }
+      ],
+      "form": {
+        "scope": "login",
+        "field": "login_id",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "login.password--textbox",
+      "grammar": true,
+      "scope": [
+        "login"
+      ],
+      "name": "password",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        },
+        {
+          "expr": "!enableGuestMagicLink || requiresPassword",
+          "explained": "!enableGuestMagicLink || requiresPassword",
+          "kind": "local state"
+        }
+      ],
+      "form": {
+        "scope": "login",
+        "field": "password",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "login.password.field",
+      "grammar": true,
+      "scope": [
+        "login",
+        "password"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        },
+        {
+          "expr": "!enableGuestMagicLink || requiresPassword",
+          "explained": "!enableGuestMagicLink || requiresPassword",
+          "kind": "local state"
+        }
       ]
+    },
+    {
+      "template": "login.password.message--alert",
+      "grammar": true,
+      "scope": [
+        "login",
+        "password"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        },
+        {
+          "expr": "!enableGuestMagicLink || requiresPassword",
+          "explained": "!enableGuestMagicLink || requiresPassword",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "login.password.message--text",
+      "grammar": true,
+      "scope": [
+        "login",
+        "password"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        },
+        {
+          "expr": "!enableGuestMagicLink || requiresPassword",
+          "explained": "!enableGuestMagicLink || requiresPassword",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "login.password.toggle--button",
+      "grammar": true,
+      "scope": [
+        "login",
+        "password"
+      ],
+      "name": "toggle",
+      "role": "button",
+      "component": {
+        "name": "PasswordInput",
+        "at": "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        },
+        {
+          "expr": "!enableGuestMagicLink || requiresPassword",
+          "explained": "!enableGuestMagicLink || requiresPassword",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "login_mfa.submit--button",
+      "grammar": true,
+      "scope": [
+        "login_mfa"
+      ],
+      "name": "submit",
+      "role": "button",
+      "component": {
+        "name": "SaveButton",
+        "at": "channels/src/components/save_button.tsx#SaveButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login_mfa.tsx#LoginMfa"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/'",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "'/should_verify_email?&email=' + encodeURIComponent(loginId)",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true,
+          "page": "ShouldVerifyEmailPage"
+        },
+        {
+          "kind": "page",
+          "target": "`/${ExperimentalPrimaryTeam}`",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "`/${team.name}`",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "path",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "{ pathname: path, search: queryParams.toString(), }",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "AddTeamMemberFromInvite",
+          "GetChannelByNameForTeamName",
+          "GetChannelMembersForUserMe",
+          "GetChannelsForTeamForUserMe",
+          "GetClientConfig",
+          "GetClientLicense",
+          "GetPreferencesMe",
+          "GetRolesByNames",
+          "GetServerLimits",
+          "GetTeam",
+          "GetTeamMembersForUserMe",
+          "GetTeamsForUserMe",
+          "GetTeamsUnreadForUserMe",
+          "GetUserMe",
+          "GetUserScheduledPosts",
+          "GetWebappPlugins",
+          "Login",
+          "LoginWithDesktopToken",
+          "PostLog",
+          "SwitchAccountType"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/admin_actions.ts#unregisterAdminConsolePlugin",
+          "channels/src/plugins/index.ts#loadPlugin"
+        ]
+      }
+    },
+    {
+      "template": "login_mfa.token--textbox",
+      "grammar": true,
+      "scope": [
+        "login_mfa"
+      ],
+      "name": "token",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login_mfa.tsx#LoginMfa"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      }
+    },
+    {
+      "template": "login_mfa.token.field",
+      "grammar": true,
+      "scope": [
+        "login_mfa",
+        "token"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login_mfa.tsx#LoginMfa"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "login_mfa.token.message--alert",
+      "grammar": true,
+      "scope": [
+        "login_mfa",
+        "token"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login_mfa.tsx#LoginMfa"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "login_mfa.token.message--text",
+      "grammar": true,
+      "scope": [
+        "login_mfa",
+        "token"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login_mfa.tsx#LoginMfa"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
     },
     {
       "template": "manage_roles_modal",
@@ -85962,6 +88421,533 @@
       }
     },
     {
+      "template": "marketplace_modal",
+      "grammar": true,
+      "scope": [],
+      "name": "marketplace_modal",
+      "role": null,
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/plugin_marketplace/marketplace_modal.tsx#MarketplaceModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "none",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+        ]
+      }
+    },
+    {
+      "template": "marketplace_modal.close--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/plugin_marketplace/marketplace_modal.tsx#MarketplaceModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showHeader",
+          "explained": "showHeader",
+          "kind": "prop"
+        },
+        {
+          "expr": "showCloseButton",
+          "explained": "showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.item.configure--link",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "item"
+      ],
+      "name": "configure",
+      "role": "link",
+      "component": {
+        "name": "MarketplaceItemPlugin",
+        "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#MarketplaceItemPlugin"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/admin_console/plugins/plugin_' + this.props.id",
+          "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#MarketplaceItemPlugin"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "this.props.installedVersion !== '' && !this.props.installing && !this.props.error",
+          "explained": "this.props.installedVersion !== '' && !this.props.installing && !this.props.error",
+          "kind": "other"
+        },
+        {
+          "expr": "isPlugin(i)",
+          "explained": "isPlugin(i)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.item.install--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "item"
+      ],
+      "name": "install",
+      "role": "button",
+      "component": {
+        "name": "MarketplaceItemPlugin",
+        "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#MarketplaceItemPlugin"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetMarketplacePlugins",
+          "InstallMarketplacePlugin"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "isPlugin(i)",
+          "explained": "isPlugin(i)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.item.install_app--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "item"
+      ],
+      "name": "install_app",
+      "role": "button",
+      "component": {
+        "name": "MarketplaceItemApp",
+        "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_app/marketplace_item_app.tsx#MarketplaceItemApp"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "AppsFormContainer",
+          "at": "channels/src/actions/apps.ts#openAppsModal"
+        },
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_app/marketplace_item_app.tsx#MarketplaceItemApp",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_app/marketplace_item_app.tsx#MarketplaceItemApp",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "GetChannel",
+          "GetChannelMemberMe",
+          "GetEmojisByNames",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "UpdatePreferences",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlugin(i)",
+          "explained": "!isPlugin(i)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.item.installed_app--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "item"
+      ],
+      "name": "installed_app",
+      "role": "button",
+      "component": {
+        "name": "MarketplaceItemApp",
+        "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_app/marketplace_item_app.tsx#MarketplaceItemApp"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.installed && !this.props.installing && !this.props.error",
+          "explained": "this.props.installed && !this.props.installing && !this.props.error",
+          "kind": "other"
+        },
+        {
+          "expr": "!isPlugin(i)",
+          "explained": "!isPlugin(i)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.item:{key}",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal"
+      ],
+      "name": "item",
+      "role": null,
+      "component": {
+        "name": "MarketplaceItem",
+        "at": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item.tsx#MarketplaceItem"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "marketplace_modal.no_results.action--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "no_results"
+      ],
+      "name": "action",
+      "role": "button",
+      "component": {
+        "name": "MarketplaceList",
+        "at": "channels/src/components/plugin_marketplace/marketplace_list/marketplace_list.tsx#MarketplaceList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/plugin_marketplace/marketplace_list/marketplace_list.tsx#MarketplaceList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "listing.length === 0",
+          "explained": "listing.length === 0",
+          "kind": "prop"
+        },
+        {
+          "expr": "!loading",
+          "explained": "!loading",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.update_confirm_modal",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal"
+      ],
+      "name": "update_confirm_modal",
+      "role": null,
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/confirm_modal.tsx#ConfirmModal",
+            "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#UpdateConfirmationModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "none",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/confirm_modal.tsx#ConfirmModal",
+          "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "installedVersion",
+          "explained": "installedVersion",
+          "kind": "prop"
+        },
+        {
+          "expr": "isUpdate",
+          "explained": "isUpdate",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.update_confirm_modal.cancel--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "update_confirm_modal"
+      ],
+      "name": "cancel",
+      "role": "button",
+      "component": {
+        "name": "ConfirmModal",
+        "at": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#UpdateConfirmationModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!hideCancel",
+          "explained": "!hideCancel",
+          "kind": "prop"
+        },
+        {
+          "expr": "installedVersion",
+          "explained": "installedVersion",
+          "kind": "prop"
+        },
+        {
+          "expr": "isUpdate",
+          "explained": "isUpdate",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.update_confirm_modal.close--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "update_confirm_modal"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/confirm_modal.tsx#ConfirmModal",
+            "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#UpdateConfirmationModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "installedVersion",
+          "explained": "installedVersion",
+          "kind": "prop"
+        },
+        {
+          "expr": "isUpdate",
+          "explained": "isUpdate",
+          "kind": "other"
+        },
+        {
+          "expr": "showHeader",
+          "explained": "showHeader",
+          "kind": "prop"
+        },
+        {
+          "expr": "showCloseButton",
+          "explained": "showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "marketplace_modal.update_confirm_modal.confirm--button",
+      "grammar": true,
+      "scope": [
+        "marketplace_modal",
+        "update_confirm_modal"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "ConfirmModal",
+        "at": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#UpdateConfirmationModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [
+          "GetMarketplacePlugins",
+          "InstallMarketplacePlugin"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!hideConfirm",
+          "explained": "!hideConfirm",
+          "kind": "prop"
+        },
+        {
+          "expr": "installedVersion",
+          "explained": "installedVersion",
+          "kind": "prop"
+        },
+        {
+          "expr": "isUpdate",
+          "explained": "isUpdate",
+          "kind": "other"
+        }
+      ]
+    },
+    {
       "template": "mentionInput",
       "grammar": false,
       "scope": [],
@@ -86557,7 +89543,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -87721,7 +90708,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -87906,7 +90894,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -88618,7 +91607,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -88802,7 +91792,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -90830,7 +93821,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -91251,6 +94243,180 @@
           "viaLocal": true
         }
       ]
+    },
+    {
+      "template": "password_reset.back--link",
+      "grammar": true,
+      "scope": [
+        "password_reset"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/common/back_button.tsx#BackButton"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/back_button.tsx#BackButton"
+        ]
+      }
+    },
+    {
+      "template": "password_reset.email--textbox",
+      "grammar": true,
+      "scope": [
+        "password_reset"
+      ],
+      "name": "email",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      }
+    },
+    {
+      "template": "password_reset.email.field",
+      "grammar": true,
+      "scope": [
+        "password_reset",
+        "email"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "password_reset.email.message--alert",
+      "grammar": true,
+      "scope": [
+        "password_reset",
+        "email"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "password_reset.email.message--text",
+      "grammar": true,
+      "scope": [
+        "password_reset",
+        "email"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "password_reset.send--button",
+      "grammar": true,
+      "scope": [
+        "password_reset"
+      ],
+      "name": "send",
+      "role": "button",
+      "component": {
+        "name": "PasswordResetSendLink",
+        "at": "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      }
     },
     {
       "template": "permissions-or-hint",
@@ -91818,7 +94984,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -92982,7 +96149,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -93167,7 +96335,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -93879,7 +97048,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -94063,7 +97233,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -96179,7 +99350,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -97343,7 +100515,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -97528,7 +100701,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -98240,7 +101414,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -98424,7 +101599,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -99573,6 +102749,243 @@
           "expr": "field.protected",
           "explained": "field.protected",
           "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "public.footer",
+      "grammar": true,
+      "scope": [
+        "public"
+      ],
+      "name": "footer",
+      "role": null,
+      "component": {
+        "name": "Footer",
+        "at": "channels/src/components/header_footer_route/footer.tsx#Footer"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!document.cookie.includes('MMEMBED=1')",
+          "explained": "!document.cookie.includes('MMEMBED=1')",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "public.footer.copyright--text",
+      "grammar": true,
+      "scope": [
+        "public",
+        "footer"
+      ],
+      "name": "copyright",
+      "role": "text",
+      "component": {
+        "name": "Footer",
+        "at": "channels/src/components/header_footer_route/footer.tsx#Footer"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!document.cookie.includes('MMEMBED=1')",
+          "explained": "!document.cookie.includes('MMEMBED=1')",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "public.footer.link:{key}--link",
+      "grammar": true,
+      "scope": [
+        "public",
+        "footer"
+      ],
+      "name": "link",
+      "role": "link",
+      "component": {
+        "name": "Footer",
+        "at": "channels/src/components/header_footer_route/footer.tsx#Footer"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "about",
+            "help",
+            "privacy",
+            "terms"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "alsoAt": [
+        "channels/src/components/header_footer_template/header_footer_template.tsx#HeaderFooterNotLoggedIn"
+      ],
+      "key": {
+        "kind": "set",
+        "type": "\"about\" | \"help\" | \"privacy\" | \"terms\"",
+        "values": [
+          "about",
+          "help",
+          "privacy",
+          "terms"
+        ],
+        "set": "PublicLink"
+      }
+    },
+    {
+      "template": "public.header",
+      "grammar": true,
+      "scope": [
+        "public"
+      ],
+      "name": "header",
+      "role": null,
+      "component": {
+        "name": "Header",
+        "at": "channels/src/components/header_footer_route/header.tsx#Header"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "public.header.back--link",
+      "grammar": true,
+      "scope": [
+        "public",
+        "header"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/header_footer_route/header.tsx#Header"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/common/back_button.tsx#BackButton"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/back_button.tsx#BackButton"
+        ]
+      }
+    },
+    {
+      "template": "public.header.logo--link",
+      "grammar": true,
+      "scope": [
+        "public",
+        "header"
+      ],
+      "name": "logo",
+      "role": "link",
+      "component": {
+        "name": "Header",
+        "at": "channels/src/components/header_footer_route/header.tsx#Header"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/'",
+          "at": "channels/src/components/header_footer_route/header.tsx#Header"
+        }
+      ]
+    },
+    {
+      "template": "public.header.site_name--link",
+      "grammar": true,
+      "scope": [
+        "public",
+        "header"
+      ],
+      "name": "site_name",
+      "role": "link",
+      "component": {
+        "name": "Header",
+        "at": "channels/src/components/header_footer_route/header.tsx#Header"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/'",
+          "at": "channels/src/components/header_footer_route/header.tsx#Header"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "siteName",
+          "explained": "siteName",
+          "kind": "other"
         }
       ]
     },
@@ -106199,7 +109612,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -107363,7 +110777,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -107548,7 +110963,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -108260,7 +111676,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -108568,7 +111985,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -112009,7 +115427,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/components/actions_menu/actions_menu.tsx#ActionMenuClass"
+          "at": "channels/src/components/actions_menu/actions_menu.tsx#ActionMenuClass",
+          "scope": "marketplace_modal"
         }
       ],
       "renderedWhen": [
@@ -116395,26 +119814,6 @@
         },
         {
           "via": [
-            "channels/src/components/login/login.tsx#Login"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/login/login_mfa.tsx#LoginMfa"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/signup/signup.tsx#Signup"
-          ]
-        },
-        {
-          "via": [
             "channels/src/components/update_user_group_modal/update_user_group_modal.tsx#UpdateUserGroupModal"
           ]
         }
@@ -116447,12 +119846,6 @@
         },
         {
           "kind": "page",
-          "target": "'/'",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true
-        },
-        {
-          "kind": "page",
           "target": "'/admin_console/system_attributes/membership_policies'",
           "at": "channels/src/components/save_button.tsx#SaveButton",
           "conditional": true
@@ -116464,112 +119857,32 @@
         },
         {
           "kind": "page",
-          "target": "'/should_verify_email?&email=' + encodeURIComponent(loginId)",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true,
-          "page": "ShouldVerifyEmailPage"
-        },
-        {
-          "kind": "page",
           "target": "LIST_ROUTE",
           "at": "channels/src/components/save_button.tsx#SaveButton",
           "conditional": true
-        },
-        {
-          "kind": "page",
-          "target": "`${pathname}${newQuery}${hash}`",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true
-        },
-        {
-          "kind": "page",
-          "target": "`/${ExperimentalPrimaryTeam}`",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true
-        },
-        {
-          "kind": "page",
-          "target": "`/${team.name}`",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true
-        },
-        {
-          "kind": "page",
-          "target": "path",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true
-        },
-        {
-          "kind": "page",
-          "target": "redirectTo",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true
-        },
-        {
-          "kind": "page",
-          "target": "verifyUrl",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true,
-          "page": "ShouldVerifyEmailPage"
-        },
-        {
-          "kind": "page",
-          "target": "{ pathname: path, search: queryParams.toString(), }",
-          "at": "channels/src/components/save_button.tsx#SaveButton",
-          "conditional": true
-        },
-        {
-          "kind": "popover",
-          "target": "GuestMagicLinkCard",
-          "at": "channels/src/components/login/login.tsx#Login"
         }
       ],
       "effects": {
         "ops": [
-          "AddTeamMemberFromInvite",
           "AssignAccessControlPolicyToChannels",
           "CreateAccessControlPolicy",
           "CreateCPAField",
           "CreatePropertyField",
-          "CreateUser",
           "DeleteCPAField",
           "DeletePropertyField",
-          "GetChannelByNameForTeamName",
-          "GetChannelMembersForUserMe",
-          "GetChannelsForTeamForUserMe",
-          "GetClientConfig",
-          "GetClientLicense",
-          "GetLoginType",
-          "GetPreferencesMe",
           "GetPropertyFields",
-          "GetRolesByNames",
-          "GetServerLimits",
-          "GetTeam",
-          "GetTeamMembersForUserMe",
-          "GetTeamsForUserMe",
-          "GetTeamsUnreadForUserMe",
-          "GetUserMe",
-          "GetUserScheduledPosts",
-          "GetWebappPlugins",
           "ListAllCPAFields",
-          "Login",
-          "LoginWithDesktopToken",
           "PatchCPAField",
           "PatchGroup",
-          "PostLog",
-          "SendVerificationEmail",
-          "SwitchAccountType",
           "UnassignAccessControlPolicyFromChannels",
           "UpdateAccessControlPoliciesActive",
           "UpdatePropertyField",
           "UpdateSystemPropertyValues"
         ],
-        "unknown": true,
+        "unknown": false,
         "delegated": [
-          "channels/src/actions/admin_actions.ts#unregisterAdminConsolePlugin",
           "channels/src/components/admin_console/global_attributes/attribute_details/attribute_remove_applies_to_warning_modal.tsx#useConfirmRemoveAppliesTo",
-          "channels/src/components/update_user_group_modal/update_user_group_modal.tsx#UpdateUserGroupModal",
-          "channels/src/plugins/index.ts#loadPlugin"
+          "channels/src/components/update_user_group_modal/update_user_group_modal.tsx#UpdateUserGroupModal"
         ]
       }
     },
@@ -120518,7 +123831,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/components/actions_menu/actions_menu.tsx#ActionMenuClass"
+          "at": "channels/src/components/actions_menu/actions_menu.tsx#ActionMenuClass",
+          "scope": "marketplace_modal"
         }
       ],
       "renderedWhen": [
@@ -126238,7 +129552,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -126484,7 +129799,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -126657,7 +129973,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -126830,7 +130147,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -127010,7 +130328,8 @@
         {
           "kind": "modal",
           "target": "MarketplaceModal",
-          "at": "channels/src/actions/command.ts#executeCommand"
+          "at": "channels/src/actions/command.ts#executeCommand",
+          "scope": "marketplace_modal"
         },
         {
           "kind": "modal",
@@ -132061,10 +135380,320 @@
       }
     },
     {
-      "template": "signup-body-card",
-      "grammar": false,
-      "scope": [],
-      "name": "signup-body-card",
+      "template": "should_verify_email.message--text",
+      "grammar": true,
+      "scope": [
+        "should_verify_email"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Column",
+        "at": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "should_verify_email.resend--button",
+      "grammar": true,
+      "scope": [
+        "should_verify_email"
+      ],
+      "name": "resend",
+      "role": "button",
+      "component": {
+        "name": "SaveButton",
+        "at": "channels/src/components/save_button.tsx#SaveButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "SendVerificationEmail"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "should_verify_email.return--button",
+      "grammar": true,
+      "scope": [
+        "should_verify_email"
+      ],
+      "name": "return",
+      "role": "button",
+      "component": {
+        "name": "ShouldVerifyEmail",
+        "at": "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/'",
+          "at": "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+        }
+      ]
+    },
+    {
+      "template": "should_verify_email.status--text",
+      "grammar": true,
+      "scope": [
+        "should_verify_email"
+      ],
+      "name": "status",
+      "role": "text",
+      "component": {
+        "name": "ShouldVerifyEmail",
+        "at": "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "should_verify_email.title--text",
+      "grammar": true,
+      "scope": [
+        "should_verify_email"
+      ],
+      "name": "title",
+      "role": "text",
+      "component": {
+        "name": "Column",
+        "at": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "heading",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "signup.alternate",
+      "grammar": true,
+      "scope": [
+        "signup"
+      ],
+      "name": "alternate",
+      "role": null,
+      "component": {
+        "name": "AlternateLink",
+        "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "explained": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "signup.alternate.action--link",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "alternate"
+      ],
+      "name": "action",
+      "role": "link",
+      "component": {
+        "name": "AlternateLink",
+        "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "{ pathname: alternateLinkPath, search: location.search, }",
+          "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "explained": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "kind": "prop"
+        },
+        {
+          "expr": "alternateLinkPath && alternateLinkLabel",
+          "explained": "alternateLinkPath && alternateLinkLabel",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "signup.alternate.message--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "alternate"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AlternateLink",
+        "at": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "explained": "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+          "kind": "prop"
+        },
+        {
+          "expr": "alternateMessage",
+          "explained": "alternateMessage",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "signup.banner",
+      "grammar": true,
+      "scope": [
+        "signup"
+      ],
+      "name": "banner",
+      "role": null,
+      "component": {
+        "name": "AlertBanner",
+        "at": "channels/src/components/alert_banner/index.tsx#AlertBanner"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "signup.banner.close--button",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "banner"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "AlertBanner",
+        "at": "channels/src/components/alert_banner/index.tsx#AlertBanner"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/alert_banner/index.tsx#AlertBanner"
+        ]
+      }
+    },
+    {
+      "template": "signup.card",
+      "grammar": true,
+      "scope": [
+        "signup"
+      ],
+      "name": "card",
       "role": null,
       "component": {
         "name": "getContent",
@@ -132082,24 +135711,25 @@
       }
     },
     {
-      "template": "signup-body-card-form-check-terms-and-privacy",
-      "grammar": false,
-      "scope": [],
-      "name": "signup-body-card-form-check-terms-and-privacy",
-      "role": null,
+      "template": "signup.card.acceptable_use_policy--link",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "acceptable_use_policy",
+      "role": "link",
       "component": {
-        "name": "CheckInput",
-        "at": "channels/src/components/widgets/inputs/check/index.tsx#CheckInput"
+        "name": "termsOfUseLink",
+        "at": "channels/src/components/signup/signup.tsx#Signup"
       },
       "instances": [
         {
-          "via": [
-            "channels/src/components/signup/signup.tsx#Signup"
-          ]
+          "via": []
         }
       ],
       "aria": {
-        "role": "checkbox",
+        "role": "link",
         "native": true,
         "state": []
       },
@@ -132112,11 +135742,445 @@
       ]
     },
     {
-      "template": "signup-body-card-preset-name",
-      "grammar": false,
-      "scope": [],
-      "name": "signup-body-card-preset-name",
+      "template": "signup.card.create_account--button",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "create_account",
+      "role": "button",
+      "component": {
+        "name": "SaveButton",
+        "at": "channels/src/components/save_button.tsx#SaveButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/'",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "path",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "verifyUrl",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true,
+          "page": "ShouldVerifyEmailPage"
+        },
+        {
+          "kind": "page",
+          "target": "{ pathname: path, search: queryParams.toString(), }",
+          "at": "channels/src/components/save_button.tsx#SaveButton",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "CreateUser",
+          "GetChannelByNameForTeamName",
+          "GetChannelMembersForUserMe",
+          "GetChannelsForTeamForUserMe",
+          "GetClientConfig",
+          "GetClientLicense",
+          "GetPreferencesMe",
+          "GetRolesByNames",
+          "GetServerLimits",
+          "GetTeamMembersForUserMe",
+          "GetTeamsForUserMe",
+          "GetTeamsUnreadForUserMe",
+          "GetUserMe",
+          "GetUserScheduledPosts",
+          "GetWebappPlugins",
+          "Login",
+          "LoginWithDesktopToken",
+          "PostLog"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/admin_actions.ts#unregisterAdminConsolePlugin",
+          "channels/src/plugins/index.ts#loadPlugin"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.email--textbox",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "email",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ],
+      "form": {
+        "scope": "signup.card",
+        "field": "email",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "signup.card.email.field",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "email"
+      ],
+      "name": "field",
       "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.email.message--alert",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "email"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.email.message--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "email"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.password--textbox",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "password",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ],
+      "form": {
+        "scope": "signup.card",
+        "field": "password",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "signup.card.password.field",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "password"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.password.message--alert",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "password"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.password.message--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "password"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput",
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.password.toggle--button",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "password"
+      ],
+      "name": "toggle",
+      "role": "button",
+      "component": {
+        "name": "PasswordInput",
+        "at": "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.preset_name--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "preset_name",
+      "role": "text",
       "component": {
         "name": "getContent",
         "at": "channels/src/components/signup/signup.tsx#Signup"
@@ -132140,14 +136204,17 @@
       ]
     },
     {
-      "template": "signup-header",
-      "grammar": false,
-      "scope": [],
-      "name": "signup-header",
-      "role": null,
+      "template": "signup.card.privacy_policy--link",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "privacy_policy",
+      "role": "link",
       "component": {
-        "name": "BackButton",
-        "at": "channels/src/components/common/back_button.tsx#BackButton"
+        "name": "privacyPolicyLink",
+        "at": "channels/src/components/signup/signup.tsx#Signup"
       },
       "instances": [
         {
@@ -132155,10 +136222,449 @@
         }
       ],
       "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.terms--checkbox",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "terms",
+      "role": "checkbox",
+      "component": {
+        "name": "CheckInput",
+        "at": "channels/src/components/widgets/inputs/check/index.tsx#CheckInput"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "checkbox",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ],
+      "form": {
+        "scope": "signup.card",
+        "field": "terms",
+        "valueType": "boolean"
+      }
+    },
+    {
+      "template": "signup.card.title--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "title",
+      "role": "text",
+      "component": {
+        "name": "getContent",
+        "at": "channels/src/components/signup/signup.tsx#Signup"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "heading",
+        "native": true,
+        "state": []
+      }
+    },
+    {
+      "template": "signup.card.username--textbox",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card"
+      ],
+      "name": "username",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ],
+      "form": {
+        "scope": "signup.card",
+        "field": "username",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "signup.card.username.field",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "username"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.username.message--alert",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "username"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.card.username.message--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "card",
+        "username"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableSignUpWithEmail",
+          "explained": "enableSignUpWithEmail",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.external:{key}--link",
+      "grammar": true,
+      "scope": [
+        "signup"
+      ],
+      "name": "external",
+      "role": "link",
+      "component": {
+        "name": "ExternalLoginButton",
+        "at": "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ],
+          "keySet": [
+            "gitlab",
+            "google",
+            "ldap",
+            "office365",
+            "openid",
+            "saml"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"gitlab\" | \"google\" | \"ldap\" | \"office365\" | \"openid\" | \"saml\"",
+        "values": [
+          "gitlab",
+          "google",
+          "ldap",
+          "office365",
+          "openid",
+          "saml"
+        ],
+        "set": "SignupExternal"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "enableExternalSignup",
+          "explained": "enableExternalSignup",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.header",
+      "grammar": true,
+      "scope": [
+        "signup"
+      ],
+      "name": "header",
+      "role": null,
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/claim_controller.tsx#ClaimController"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/create_team/create_team.tsx#CreateTeam"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/select_team/select_team.tsx#SelectTeam"
+          ]
+        }
+      ],
+      "aria": {
         "role": null,
         "native": false,
         "state": []
       }
+    },
+    {
+      "template": "signup.header.back--link",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "header"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/claim_controller.tsx#ClaimController"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/create_team/create_team.tsx#CreateTeam"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
+          ]
+        },
+        {
+          "via": [
+            "channels/src/components/select_team/select_team.tsx#SelectTeam"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/common/back_button.tsx#BackButton"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/back_button.tsx#BackButton"
+        ]
+      }
+    },
+    {
+      "template": "signup.no_methods.message--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "no_methods"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Column",
+        "at": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!enableSignUpWithEmail && !enableExternalSignup",
+          "explained": "!enableSignUpWithEmail && !enableExternalSignup",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "signup.no_methods.title--text",
+      "grammar": true,
+      "scope": [
+        "signup",
+        "no_methods"
+      ],
+      "name": "title",
+      "role": "text",
+      "component": {
+        "name": "Column",
+        "at": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/signup/signup.tsx#Signup"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "heading",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!enableSignUpWithEmail && !enableExternalSignup",
+          "explained": "!enableSignUpWithEmail && !enableExternalSignup",
+          "kind": "other"
+        }
+      ]
     },
     {
       "template": "simulate-access-details-attributes",
@@ -137796,10 +142302,12 @@
       }
     },
     {
-      "template": "termsOfService",
-      "grammar": false,
-      "scope": [],
-      "name": "termsOfService",
+      "template": "terms_of_service.terms",
+      "grammar": true,
+      "scope": [
+        "terms_of_service"
+      ],
+      "name": "terms",
       "role": null,
       "component": {
         "name": "TermsOfService",
@@ -138921,96 +143429,6 @@
           "expr": "!(isLoading || isEmptyList)",
           "explained": "!(isLoading || isEmptyList)",
           "kind": "local state"
-        }
-      ]
-    },
-    {
-      "template": "time_button",
-      "grammar": false,
-      "scope": [],
-      "name": "time_button",
-      "role": null,
-      "component": {
-        "name": "renderMenuButton",
-        "at": "channels/src/components/menu/menu.tsx#Menu"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
-            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": false,
-        "state": []
-      },
-      "opens": [
-        {
-          "kind": "menu",
-          "target": "expiryTimeMenu",
-          "at": "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
-          "scope": "custom_status_modal"
-        },
-        {
-          "kind": "modal",
-          "target": "MenuModal",
-          "at": "channels/src/components/menu/menu.tsx#Menu",
-          "menuForm": true,
-          "scope": "menu_modal"
-        }
-      ],
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/menu/menu.tsx#Menu"
-        ]
-      },
-      "renderedWhen": [
-        {
-          "expr": "!manualTimeEntry",
-          "explained": "!manualTimeEntry",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "time_option_{key}",
-      "grammar": false,
-      "scope": [],
-      "name": "time_option_{key}",
-      "role": null,
-      "component": {
-        "name": "DateTimeInputContainer",
-        "at": "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/apps_form/apps_form_datetime_field/apps_form_datetime_field.tsx#AppsFormDateTimeField"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "menuitem",
-        "native": false,
-        "state": []
-      },
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
-        ]
-      },
-      "renderedWhen": [
-        {
-          "expr": "!manualTimeEntry",
-          "explained": "!manualTimeEntry",
-          "kind": "prop"
         }
       ]
     },
@@ -140868,46 +145286,12 @@
         },
         {
           "via": [
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
             "channels/src/components/post_view/data_spillage_report/data_spillage_report.tsx#DataSpillageReport"
           ]
         },
         {
           "via": [
             "channels/src/components/widgets/menu/menu_items/menu_item.tsx#menuItem"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
           ]
         }
       ],
@@ -140920,13 +145304,10 @@
       },
       "alsoAt": [
         "channels/src/components/alert_banner/index.tsx#AlertBanner",
-        "channels/src/components/apps_form/apps_form_field/apps_form_select_field.tsx#AppsFormSelectField",
         "channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView",
         "channels/src/components/suggestion/switch_channel_provider.tsx#SwitchChannelSuggestion",
         "channels/src/components/widgets/inputs/input/input.tsx#Input",
-        "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl",
-        "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting",
-        "channels/src/components/widgets/settings/setting.tsx#Setting"
+        "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
       ],
       "opens": [
         {
@@ -141140,226 +145521,6 @@
         "unknown": true,
         "delegated": []
       }
-    },
-    {
-      "template": "{key}help-text",
-      "grammar": false,
-      "scope": [],
-      "name": "{key}help-text",
-      "role": null,
-      "component": {
-        "name": "CheckboxMatrixSetting",
-        "at": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "alsoAt": [
-        "channels/src/components/widgets/settings/setting.tsx#Setting"
-      ]
-    },
-    {
-      "template": "{key}input",
-      "grammar": false,
-      "scope": [],
-      "name": "{key}input",
-      "role": null,
-      "component": {
-        "name": "TextSetting",
-        "at": "channels/src/components/widgets/settings/text_setting.tsx#TextSetting"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "textbox",
-        "native": true,
-        "state": [
-          "disabled",
-          "value"
-        ]
-      },
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
-        ]
-      }
-    },
-    {
-      "template": "{key}label",
-      "grammar": false,
-      "scope": [],
-      "name": "{key}label",
-      "role": null,
-      "component": {
-        "name": "CheckboxMatrixSetting",
-        "at": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "alsoAt": [
-        "channels/src/components/widgets/settings/setting.tsx#Setting"
-      ]
-    },
-    {
-      "template": "{key}text",
-      "grammar": false,
-      "scope": [],
-      "name": "{key}text",
-      "role": null,
-      "component": {
-        "name": "TextSetting",
-        "at": "channels/src/components/widgets/settings/text_setting.tsx#TextSetting"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "spinbutton",
-        "native": true,
-        "state": []
-      },
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
-        ]
-      },
-      "renderedWhen": [
-        {
-          "expr": "!(type === 'textarea')",
-          "explained": "!(type === 'textarea')",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "{key}{key}",
-      "grammar": false,
-      "scope": [],
-      "name": "{key}{key}",
-      "role": null,
-      "component": {
-        "name": "TextSetting",
-        "at": "channels/src/components/widgets/settings/text_setting.tsx#TextSetting"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField",
-            "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "spinbutton",
-        "native": true,
-        "state": []
-      },
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/dialog_router/interactive_dialog_adapter.tsx#InteractiveDialogAdapter"
-        ]
-      },
-      "renderedWhen": [
-        {
-          "expr": "!(type === 'textarea')",
-          "explained": "!(type === 'textarea')",
-          "kind": "prop"
-        }
-      ]
     }
   ],
   "sets": [
@@ -141641,6 +145802,17 @@
       "source": "channels/src/components/emoji_picker/components/emoji_picker_skin.tsx#EmojiPickerSkin"
     },
     {
+      "name": "LoginExternal",
+      "values": [
+        "gitlab",
+        "google",
+        "office365",
+        "openid",
+        "saml"
+      ],
+      "source": "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
+    },
+    {
       "name": "ManageRolesModalRole",
       "values": [
         "system_custom_group_admin",
@@ -141715,6 +145887,16 @@
         "urgent"
       ],
       "source": "channels/src/components/post_priority/post_priority_picker.tsx#PostPriorityPicker"
+    },
+    {
+      "name": "PublicLink",
+      "values": [
+        "about",
+        "help",
+        "privacy",
+        "terms"
+      ],
+      "source": "channels/src/components/header_footer_route/footer.tsx#Footer"
     },
     {
       "name": "RhsControl",
@@ -141917,6 +146099,18 @@
         "saml"
       ],
       "source": "channels/src/components/user_settings/security/user_settings_security.tsx#SecurityTab"
+    },
+    {
+      "name": "SignupExternal",
+      "values": [
+        "gitlab",
+        "google",
+        "ldap",
+        "office365",
+        "openid",
+        "saml"
+      ],
+      "source": "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
     },
     {
       "name": "TeamSettingsModalTab",
@@ -142873,6 +147067,16 @@
       "inSpec": true
     },
     {
+      "opId": "GetMarketplacePlugins",
+      "verb": "GET",
+      "path": "/api/v4/plugins/marketplace",
+      "body": "MarketplacePlugin[]",
+      "bodyImports": {
+        "MarketplacePlugin": "@mattermost/types/marketplace"
+      },
+      "inSpec": true
+    },
+    {
       "opId": "GetPinnedPosts",
       "verb": "GET",
       "path": "/api/v4/channels/{channel_id}/pinned",
@@ -143230,6 +147434,16 @@
       "body": "ClientPluginManifest[]",
       "bodyImports": {
         "ClientPluginManifest": "@mattermost/types/plugins"
+      },
+      "inSpec": true
+    },
+    {
+      "opId": "InstallMarketplacePlugin",
+      "verb": "POST",
+      "path": "/api/v4/plugins/marketplace",
+      "body": "MarketplacePlugin",
+      "bodyImports": {
+        "MarketplacePlugin": "@mattermost/types/marketplace"
       },
       "inSpec": true
     },
@@ -145699,12 +149913,23 @@
       "class": "ClaimPage",
       "path": "/claim",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "claim.email_to_ldap",
+        "claim.email_to_oauth",
+        "claim.ldap_to_email",
+        "claim.oauth_to_email",
+        "login_mfa",
+        "login_mfa.token",
+        "login_mfa.token.field",
+        "signup.header"
+      ],
       "component": {
         "name": "ClaimController",
         "at": "channels/src/components/claim/claim_controller.tsx#ClaimController"
       },
-      "noReady": "no ready testid yet: the PR that moves ClaimController to the grammar names one."
+      "ready": [
+        "signup.header"
+      ]
     },
     {
       "class": "ComponentLibraryPage",
@@ -145721,7 +149946,9 @@
       "class": "CreateTeamPage",
       "path": "/create_team",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "signup.header"
+      ],
       "component": {
         "name": "CreateTeam",
         "at": "channels/src/components/create_team/create_team.tsx#CreateTeam"
@@ -145743,12 +149970,16 @@
       "class": "ErrorPage",
       "path": "/error",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "error_view"
+      ],
       "component": {
         "name": "ErrorPage",
         "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
       },
-      "noReady": "no ready testid yet: the PR that moves ErrorPage to the grammar names one."
+      "ready": [
+        "error_view"
+      ]
     },
     {
       "class": "HelpPage",
@@ -145771,23 +150002,39 @@
       "class": "LinkingLandingPage",
       "path": "/landing",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "linking_landing"
+      ],
       "component": {
         "name": "LinkingLandingPage",
         "at": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
       },
-      "noReady": "no ready testid yet: the PR that moves LinkingLandingPage to the grammar names one."
+      "ready": [
+        "linking_landing.open_browser--link"
+      ]
     },
     {
       "class": "LoginPage",
       "path": "/login",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "login",
+        "login.alternate",
+        "login.banner",
+        "login.card",
+        "login.password",
+        "login.password.field",
+        "login_mfa",
+        "login_mfa.token",
+        "login_mfa.token.field"
+      ],
       "component": {
         "name": "Login",
         "at": "channels/src/components/login/login.tsx#Login"
       },
-      "noReady": "no ready testid yet: the PR that moves Login to the grammar names one."
+      "ready": [
+        "login.card"
+      ]
     },
     {
       "class": "DesktopAuthTokenPage",
@@ -145804,12 +150051,16 @@
       "class": "MFAPage",
       "path": "/mfa",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "signup.header"
+      ],
       "component": {
         "name": "MFAController",
         "at": "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
       },
-      "noReady": "no ready testid yet: the PR that moves MFAController to the grammar names one."
+      "ready": [
+        "signup.header"
+      ]
     },
     {
       "class": "AuthorizePage",
@@ -145837,12 +150088,18 @@
       "class": "PasswordResetSendLinkPage",
       "path": "/reset_password",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "password_reset",
+        "password_reset.email",
+        "password_reset.email.field"
+      ],
       "component": {
         "name": "PasswordResetSendLink",
         "at": "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
       },
-      "noReady": "no ready testid yet: the PR that moves PasswordResetSendLink to the grammar names one."
+      "ready": [
+        "password_reset.email--textbox"
+      ]
     },
     {
       "class": "PasswordResetFormPage",
@@ -145859,34 +150116,57 @@
       "class": "SelectTeamPage",
       "path": "/select_team",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "signup.header"
+      ],
       "component": {
         "name": "SelectTeam",
         "at": "channels/src/components/select_team/select_team.tsx#SelectTeam"
       },
-      "noReady": "no ready testid yet: the PR that moves SelectTeam to the grammar names one."
+      "ready": [
+        "signup.header"
+      ]
     },
     {
       "class": "ShouldVerifyEmailPage",
       "path": "/should_verify_email",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "should_verify_email"
+      ],
       "component": {
         "name": "ShouldVerifyEmail",
         "at": "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
       },
-      "noReady": "no ready testid yet: the PR that moves ShouldVerifyEmail to the grammar names one."
+      "ready": [
+        "should_verify_email.title--text"
+      ]
     },
     {
       "class": "SignupPage",
       "path": "/signup_user_complete",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "signup",
+        "signup.alternate",
+        "signup.banner",
+        "signup.card",
+        "signup.card.email",
+        "signup.card.email.field",
+        "signup.card.password",
+        "signup.card.password.field",
+        "signup.card.username",
+        "signup.card.username.field",
+        "signup.no_methods"
+      ],
       "component": {
         "name": "Signup",
         "at": "channels/src/components/signup/signup.tsx#Signup"
       },
-      "noReady": "no ready testid yet: the PR that moves Signup to the grammar names one."
+      "ready": [
+        "signup.card",
+        "signup.no_methods.title--text"
+      ]
     },
     {
       "class": "SignupUserCompleteDesktopPage",
@@ -145903,12 +150183,16 @@
       "class": "TermsOfServicePage",
       "path": "/terms_of_service",
       "params": [],
-      "scopes": [],
+      "scopes": [
+        "terms_of_service.terms"
+      ],
       "component": {
         "name": "TermsOfService",
         "at": "channels/src/components/terms_of_service/terms_of_service.tsx#TermsOfService"
       },
-      "noReady": "no ready testid yet: the PR that moves TermsOfService to the grammar names one."
+      "ready": [
+        "terms_of_service.terms"
+      ]
     }
   ],
   "pluginSlots": [
@@ -146149,7 +150433,12 @@
     {
       "name": "AppsFormContainer",
       "at": "channels/src/components/apps_form/apps_form_container.tsx#AppsFormContainer",
-      "scopes": []
+      "scopes": [
+        "apps_form",
+        "apps_form.field",
+        "apps_form.field.calendar",
+        "apps_form.field.time_menu"
+      ]
     },
     {
       "name": "AttributeGraphGrantConfirmModal",
@@ -146372,6 +150661,8 @@
         "integrations.oauth_connection_form",
         "integrations.oauth_connection_form.save_unvalidated_modal",
         "leave_channel_modal",
+        "marketplace_modal",
+        "marketplace_modal.update_confirm_modal",
         "notify_confirm_modal",
         "remove_sharing_modal",
         "reset_status_modal",
@@ -146768,7 +151059,12 @@
     {
       "name": "MarketplaceModal",
       "at": "channels/src/components/plugin_marketplace/marketplace_modal.tsx#MarketplaceModal",
-      "scopes": []
+      "scopes": [
+        "marketplace_modal",
+        "marketplace_modal.item",
+        "marketplace_modal.no_results",
+        "marketplace_modal.update_confirm_modal"
+      ]
     },
     {
       "name": "MenuModal",

@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router-dom';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import './alternate_link.scss';
 
 type AlternateLinkProps = {
@@ -12,9 +14,12 @@ type AlternateLinkProps = {
     alternateMessage?: string;
     alternateLinkPath?: string;
     alternateLinkLabel?: string;
+
+    /** The page's testid for the link and its message (`login.alternate`): they are `<testId>.message--text` and `<testId>.action--link`. */
+    testId?: TestId;
 };
 
-const AlternateLink = ({className, alternateMessage, alternateLinkPath, alternateLinkLabel}: AlternateLinkProps) => {
+const AlternateLink = ({className, alternateMessage, alternateLinkPath, alternateLinkLabel, testId}: AlternateLinkProps) => {
     if (!alternateMessage && !alternateLinkPath && !alternateLinkLabel) {
         return null;
     }
@@ -22,16 +27,20 @@ const AlternateLink = ({className, alternateMessage, alternateLinkPath, alternat
     return (
         <div
             className={classNames('alternate-link', className)}
-            data-testid='alternate-link'
+            data-testid={testId}
         >
             {alternateMessage && (
-                <span className='alternate-link__message'>
+                <span
+                    className='alternate-link__message'
+                    data-testid={testId ? `${testId}.message--text` : undefined}
+                >
                     {alternateMessage}
                 </span>
             )}
             {alternateLinkPath && alternateLinkLabel && (
                 <Link
                     className='alternate-link__link'
+                    data-testid={testId ? `${testId}.action--link` : undefined}
                     to={{
                         pathname: alternateLinkPath,
                         search: location.search,

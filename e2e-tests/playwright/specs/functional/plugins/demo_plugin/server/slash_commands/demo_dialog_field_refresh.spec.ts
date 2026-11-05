@@ -1,95 +1,85 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App} from '@mattermost/playwright-lib';
 
+import {openChannel} from '../../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../../helpers';
 
-test('should update form fields dynamically when project type changes via /dialog field-refresh', async ({pw}) => {
-    // # Setup
+import {fieldLabelled, fieldLabels, postContaining, sendCommand} from './support';
+
+/**
+ * Picks a project type and checks which fields the dialog then shows (by label start: optional fields add
+ * "(optional)") and which it doesn't.
+ */
+async function chooseProjectType(app: App, type: string, shown: string[], hidden: string[]) {
+    const projectType = await fieldLabelled(app, 'Project Type *');
+    await projectType.valueCombobox.choose(type);
+    await expectFields(app, shown, hidden);
+}
+
+async function expectFields(app: App, shown: string[], hidden: string[]) {
+    const has = (labels: string[], name: string) => labels.some((label) => label.startsWith(name));
+    await expect
+        .poll(async () => {
+            const labels = await fieldLabels(app);
+            return {shown: shown.filter((s) => !has(labels, s)), hidden: hidden.filter((h) => has(labels, h))};
+        })
+        .toEqual({shown: [], hidden: []});
+}
+
+test('should refresh dialog fields when Project Type changes via /dialog field-refresh', async ({pw}) => {
+    // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-
-    // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-
-    // # Navigate to Town Square
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const app = await openChannel(pw, user, team, 'town-square');
 
     // # Send /dialog field-refresh command
-    const dialog = channelsPage.page.getByRole('dialog');
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/dialog field-refresh');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-    await expect(dialog).toBeVisible();
+    const form = app.appsForm;
+    await sendDemoSlashCommand(app.page, () => sendCommand(app, '/dialog field-refresh'));
+    await expect(form.titleText.locator).toBeVisible();
+    await expect(form.titleText.locator).toContainText('Project Configuration');
 
-    // * Verify dialog opens with title "Project Configuration"
-    await expect(dialog.getByRole('heading', {level: 1})).toContainText('Project Configuration');
+    // * At first only Project Type shows, with Cancel and Create Project
+    await expectFields(app, ['Project Type *'], ['Frontend Framework', 'Platform', 'API Type']);
+    await expect(form.cancelButton.locator).toBeVisible();
+    await expect(form.submitButton.locator).toHaveText('Create Project');
 
-    // * Verify initial state — only Project Type dropdown visible
-    await expect(dialog.getByText('Project Type *')).toBeVisible();
-    await expect(dialog.getByRole('button', {name: 'Cancel'})).toBeVisible();
-    await expect(dialog.getByRole('button', {name: 'Create Project'})).toBeVisible();
-    await expect(dialog.getByText('Frontend Framework')).not.toBeVisible();
-    await expect(dialog.getByText('Platform')).not.toBeVisible();
-    await expect(dialog.getByText('API Type')).not.toBeVisible();
+    // * Each project type shows its own fields
+    await chooseProjectType(
+        app,
+        'Web Application',
+        ['Frontend Framework *', 'Enable PWA', 'Project Name *'],
+        ['Platform', 'API Type'],
+    );
+    await chooseProjectType(
+        app,
+        'Mobile Application',
+        ['Platform *', 'Minimum OS Version *', 'Project Name *'],
+        ['Frontend Framework', 'Enable PWA', 'API Type'],
+    );
+    await chooseProjectType(
+        app,
+        'API Service',
+        ['API Type *', 'Database *', 'Project Name *'],
+        ['Platform', 'Minimum OS Version'],
+    );
 
-    // # Select "Web Application"
-    // Click the react-select control (not the hidden input) to open the dropdown
-    await dialog.locator('[class*="Select__control"], [class*="react-select__control"]').first().click();
-    await channelsPage.page.getByRole('option', {name: 'Web Application'}).click();
+    // * API Type offers its three choices
+    const apiType = await fieldLabelled(app, 'API Type *');
+    for (const choice of ['REST API', 'GraphQL API', 'gRPC Service']) {
+        await expect(apiType.locator).toContainText(choice);
+    }
 
-    // * Verify the new fields appear
-    await expect(dialog.getByText('Frontend Framework *')).toBeVisible();
-    await expect(dialog.getByText('Enable PWA')).toBeVisible();
-    await expect(dialog.getByText('Project Name *')).toBeVisible();
-    await expect(dialog.getByText('Platform')).not.toBeVisible();
-    await expect(dialog.getByText('API Type')).not.toBeVisible();
+    // # Fill the required fields and submit
+    await (await fieldLabelled(app, 'Project Name *')).fillValueTextbox('Test Project');
+    const rest = apiType.optionItems.first();
+    await expect(rest).toHaveAccessibleName('REST API');
+    await rest.check();
+    await (await fieldLabelled(app, 'Database *')).valueCombobox.choose('PostgreSQL');
+    await form.clickSubmitButton();
+    await expect(form.titleText.locator).not.toBeVisible();
 
-    // # Change to "Mobile Application"
-    await dialog.locator('[class*="Select__control"], [class*="react-select__control"]').first().click();
-    await channelsPage.page.getByRole('option', {name: 'Mobile Application'}).click();
-
-    // * Verify fields update
-    await expect(dialog.getByText('Platform *')).toBeVisible();
-    await expect(dialog.getByText('Minimum OS Version *')).toBeVisible();
-    await expect(dialog.getByText('Project Name *')).toBeVisible();
-    await expect(dialog.getByText('Frontend Framework')).not.toBeVisible();
-    await expect(dialog.getByText('Enable PWA')).not.toBeVisible();
-    await expect(dialog.getByText('API Type')).not.toBeVisible();
-
-    // # Change to "API Service"
-    await dialog.locator('[class*="Select__control"], [class*="react-select__control"]').first().click();
-    await channelsPage.page.getByRole('option', {name: 'API Service'}).click();
-
-    // * Verify fields update again
-    await expect(dialog.getByText('API Type *')).toBeVisible();
-    await expect(dialog.getByRole('radio', {name: 'REST API'})).toBeVisible();
-    await expect(dialog.getByRole('radio', {name: 'GraphQL API'})).toBeVisible();
-    await expect(dialog.getByRole('radio', {name: 'gRPC Service'})).toBeVisible();
-    await expect(dialog.getByText('Database *')).toBeVisible();
-    await expect(dialog.getByText('Project Name *')).toBeVisible();
-    await expect(dialog.getByText('Platform')).not.toBeVisible();
-    await expect(dialog.getByText('Minimum OS Version')).not.toBeVisible();
-
-    // # Fill required fields and submit
-    await dialog.getByPlaceholder('Enter project name...').fill('Test Project');
-    await dialog.getByRole('radio', {name: 'REST API'}).click();
-
-    // Select PostgreSQL from Database dropdown
-    await dialog.locator('[class*="Select__control"], [class*="react-select__control"]').last().click();
-    await channelsPage.page.getByRole('option', {name: 'PostgreSQL'}).click();
-
-    // # Submit the dialog
-    await dialog.getByRole('button', {name: 'Create Project'}).click();
-
-    // * Verify the dialog closed and the response post appears in the channel
-    await expect(dialog).not.toBeVisible();
-    await expect(
-        channelsPage.centerView.container.locator('p').filter({hasText: 'api project: Test Project'}),
-    ).toBeVisible();
+    // * The plugin posts the new project
+    await postContaining(app, 'api project: Test Project');
 });

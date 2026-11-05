@@ -172,6 +172,8 @@ export default class AppsFormField extends React.PureComponent<Props> {
                 <TextSetting
                     autoFocus={this.props.autoFocus}
                     id={name}
+                    testIdScope='apps_form.field'
+                    testId={`apps_form.field:${name}`}
                     disabled={field.readonly}
                     type={subtype as InputTypes}
                     label={displayNameContent}
@@ -207,6 +209,8 @@ export default class AppsFormField extends React.PureComponent<Props> {
                 <BoolSetting
                     autoFocus={this.props.autoFocus}
                     id={name}
+                    testIdScope='apps_form.field'
+                    testId={`apps_form.field:${name}`}
                     disabled={field.readonly}
                     label={displayNameContent}
                     value={boolValue || false}
@@ -224,6 +228,8 @@ export default class AppsFormField extends React.PureComponent<Props> {
             return (
                 <RadioSetting
                     id={name}
+                    testIdScope='apps_form.field'
+                    testId={`apps_form.field:${name}`}
                     label={displayNameContent}
                     helpText={helpTextContent}
                     options={field.options?.map((o) => ({text: o.label, value: o.value}))}
@@ -240,6 +246,8 @@ export default class AppsFormField extends React.PureComponent<Props> {
             return (
                 <CheckboxGroupSetting
                     id={name}
+                    testIdScope='apps_form.field'
+                    testId={`apps_form.field:${name}`}
                     label={displayNameContent}
                     helpText={helpTextContent}
                     options={field.options?.map((o) => ({text: o.label, value: o.value}))}
@@ -258,6 +266,8 @@ export default class AppsFormField extends React.PureComponent<Props> {
             return (
                 <CheckboxMatrixSetting
                     id={name}
+                    testIdScope='apps_form.field'
+                    testId={`apps_form.field:${name}`}
                     label={displayNameContent}
                     helpText={helpTextContent}
                     matrixConfig={field.matrix_config}
@@ -276,13 +286,20 @@ export default class AppsFormField extends React.PureComponent<Props> {
         }
         case AppFieldTypes.DATE: {
             return (
-                <div className='form-group'>
+                <div
+                    className='form-group'
+                    data-testid={`apps_form.field:${name}`}
+                >
                     {field.label && (
-                        <label className='control-label'>
+                        <label
+                            className='control-label'
+                            data-testid='apps_form.field.label--text'
+                        >
                             {displayNameContent}
                         </label>
                     )}
                     <AppsFormDateField
+                        testIdScope='apps_form.field'
                         field={field}
                         value={value as string | null}
                         onChange={onChange}
@@ -298,13 +315,20 @@ export default class AppsFormField extends React.PureComponent<Props> {
         }
         case AppFieldTypes.DATETIME: {
             return (
-                <div className='form-group'>
+                <div
+                    className='form-group'
+                    data-testid={`apps_form.field:${name}`}
+                >
                     {field.label && (
-                        <label className='control-label'>
+                        <label
+                            className='control-label'
+                            data-testid='apps_form.field.label--text'
+                        >
                             {displayNameContent}
                         </label>
                     )}
                     <AppsFormDateTimeField
+                        testIdScope='apps_form.field'
                         field={field}
                         value={value as string | null}
                         onChange={onChange}

@@ -3,6 +3,8 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+
 /**
  * @objective Verify SAML login succeeds when the SP request-signing algorithm is RSAwithSHA256.
  *
@@ -10,7 +12,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * A Keycloak realm reachable at SamlSettings.IdpURL, with a SAML client matching
  * ServiceProviderIdentifier.
  */
-test('MM-T3281 SAML login succeeds with signature algorithm RSAwithSHA256', {tag: '@saml'}, async ({pw}) => {
+test('MM-T3281 SAML login succeeds with signature algorithm RSAwithSHA256', {tag: '@saml'}, async ({pw, page}) => {
     await pw.ensureLicense();
     await pw.skipIfNoLicense();
     await pw.ensureKeycloak();
@@ -22,14 +24,10 @@ test('MM-T3281 SAML login succeeds with signature algorithm RSAwithSHA256', {tag
     await pw.createKeycloakUser(keycloakUser);
 
     // # Log in through the SAML SSO button
-    await pw.hasSeenLandingPage();
-    await pw.loginPage.goto();
-    await pw.loginPage.toBeVisible();
-    await pw.loginPage.samlLoginButton.click();
-    await pw.keycloakLoginPage.login(keycloakUser.username, keycloakUser.password);
+    await logInWithKeycloak(pw, page, 'saml', keycloakUser);
 
     // * Verify the login succeeded
-    await pw.loginPage.expectNotOnLoginPage();
+    await expectSignedIn(page);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     expect(provisionedUser.auth_service).toBe('saml');
 });
@@ -41,7 +39,7 @@ test('MM-T3281 SAML login succeeds with signature algorithm RSAwithSHA256', {tag
  * A Keycloak realm reachable at SamlSettings.IdpURL, with a SAML client matching
  * ServiceProviderIdentifier.
  */
-test('MM-T3281_2 SAML login succeeds with signature algorithm RSAwithSHA512', {tag: '@saml'}, async ({pw}) => {
+test('MM-T3281_2 SAML login succeeds with signature algorithm RSAwithSHA512', {tag: '@saml'}, async ({pw, page}) => {
     await pw.ensureLicense();
     await pw.skipIfNoLicense();
     await pw.ensureKeycloak();
@@ -53,14 +51,10 @@ test('MM-T3281_2 SAML login succeeds with signature algorithm RSAwithSHA512', {t
     await pw.createKeycloakUser(keycloakUser);
 
     // # Log in through the SAML SSO button
-    await pw.hasSeenLandingPage();
-    await pw.loginPage.goto();
-    await pw.loginPage.toBeVisible();
-    await pw.loginPage.samlLoginButton.click();
-    await pw.keycloakLoginPage.login(keycloakUser.username, keycloakUser.password);
+    await logInWithKeycloak(pw, page, 'saml', keycloakUser);
 
     // * Verify the login succeeded
-    await pw.loginPage.expectNotOnLoginPage();
+    await expectSignedIn(page);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     expect(provisionedUser.auth_service).toBe('saml');
 });

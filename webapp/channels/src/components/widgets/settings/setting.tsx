@@ -14,6 +14,10 @@ type Props = {
     helpText?: React.ReactNode;
     footer?: React.ReactNode;
 
+    /**
+     * The row's parts render under it (`${testIdScope}.label--text`, `.help--text`); without it (the access policy
+     * editors, for now), the legacy ids.
+     */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row: `admin.setting:<key>`). */
@@ -33,7 +37,7 @@ const Setting: React.FC<Props> = ({
 }: Props) => {
     return (
         <div
-            data-testid={testIdScope ? testId ?? testIdScope : inputId}
+            data-testid={testIdScope ? testId ?? testIdScope : undefined}
             className='form-group'
         >
             {label && (

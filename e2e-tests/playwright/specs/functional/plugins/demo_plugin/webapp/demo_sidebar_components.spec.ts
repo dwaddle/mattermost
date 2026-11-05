@@ -3,90 +3,68 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {openChannel} from '../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../helpers';
+import {sendCommand} from '../server/slash_commands/support';
+
+import {DEMO} from './support';
 
 test('should show Demo Plugin enabled/disabled status in left sidebar header', async ({pw}) => {
-    // # Setup
+    // # Set up the demo plugin and open Town Square (its slash command works from any channel)
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
+    const app = await openChannel(pw, user, team, 'town-square');
+    const status = app.plugins.comMattermostDemoPlugin.lhsHeader.statusText;
 
-    // # Login and navigate to Town Square — slash commands work from any channel
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
-
-    // The sidebar indicator: a span containing "Demo Plugin:" with a sibling span for the status
-    const hookStatus = channelsPage.page
-        .locator('span')
-        .filter({hasText: 'Demo Plugin:'})
-        .locator('..')
-        .locator('span')
-        .last();
-
-    // Local helper: send /demo_plugin <enabled> and wait for the indicator to update
+    /** Sends /demo_plugin <enabled> and waits for the sidebar header to follow. */
     async function setHooks(enabled: boolean) {
-        await sendDemoSlashCommand(channelsPage.page, async () => {
-            await channelsPage.centerView.postCreate.input.fill(`/demo_plugin ${enabled}`);
-            await channelsPage.centerView.postCreate.sendMessage();
-        });
-        await expect(hookStatus).toHaveText(enabled ? 'Enabled' : 'Disabled');
+        await sendDemoSlashCommand(app.page, () => sendCommand(app, `/demo_plugin ${enabled}`));
+        await expect(status.locator).toHaveText(enabled ? 'Enabled' : 'Disabled');
     }
 
-    // # Explicitly enable hooks first. A concurrently running instance of this spec
-    // (e.g. via --repeat-each) or another worker's spec toggling the same global
-    // /demo_plugin hooks state could have left it disabled, so the initial "Enabled"
-    // state cannot be assumed as an ambient default.
+    // # Explicitly enable the hooks first. A concurrently running instance of this spec
+    // (e.g. via --repeat-each) or another spec toggling the same global /demo_plugin hooks
+    // state could have left them disabled, so the initial "Enabled" state can't be assumed.
     await setHooks(true);
 
-    // # Disable hooks
+    // # Disable the hooks: the sidebar header follows
     await setHooks(false);
 
-    // # Re-enable hooks
+    // # Re-enable them
     await setHooks(true);
 });
 
 test('should show demo plugin plug icon at the bottom of the team sidebar', async ({pw}) => {
-    // # Setup
-    const {user, team} = await pw.initSetup();
+    // # Set up the demo plugin, put the user on a second team (the team sidebar shows from two teams) and open Town Square
+    const {adminClient, user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
+    const otherTeam = await adminClient.createTeam(await pw.random.team());
+    await adminClient.addToTeam(otherTeam.id, user.id);
+    const app = await openChannel(pw, user, team, 'town-square');
 
-    // # Login and navigate to Town Square
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
-
-    // * Verify the plug icon is visible in the team sidebar
-    // The icon has no accessible name, role, or testid — it is a purely visual,
-    // non-interactive element rendered with the fa-plug CSS class.
-    // CSS selector is the only viable locator here.
-    await expect(channelsPage.page.locator('.fa.fa-plug').first()).toBeVisible();
+    // * The plugin's icon shows at the bottom of the team sidebar
+    await expect(app.plugins.comMattermostDemoPlugin.teamSidebarIcon.locator).toBeVisible();
 });
 
 test('should show Demo Plugin Item in Browse or create channels menu and trigger alert with team ID', async ({pw}) => {
-    // # Setup
+    // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
+    const app = await openChannel(pw, user, team, 'town-square');
 
-    // # Login and navigate to Town Square
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Open the "Browse or create channels" menu
+    const menu = await app.lhs.header.clickOpenBrowseOrAddMenuButton();
 
-    // # Click the "Browse or create channels" button in the channel sidebar header
-    await channelsPage.sidebarLeft.browseOrCreateChannelButton.click();
+    // * The plugin's item shows
+    await expect(menu.plugin(DEMO).locator).toHaveText('Demo Plugin Item');
 
-    // * Verify the menu is open and contains the Demo Plugin Item entry
-    const menu = channelsPage.page.getByRole('menu', {name: 'Browse or create channels'});
-    await expect(menu).toBeVisible();
-    await expect(menu.getByRole('menuitem', {name: 'Demo Plugin Item'})).toBeVisible();
+    // # Click it: the plugin shows an alert naming the team
+    const dialog = app.page.waitForEvent('dialog');
+    await menu.plugin(DEMO).click();
+    const alert = await dialog;
 
-    // # Click "Demo Plugin Item" — triggers a browser alert with the team ID
-    const dialogPromise = channelsPage.page.waitForEvent('dialog');
-    await menu.getByRole('menuitem', {name: 'Demo Plugin Item'}).click();
-    const dialog = await dialogPromise;
-
-    // * Verify alert message contains expected text and dynamic team ID
-    expect(dialog.type()).toBe('alert');
-    expect(dialog.message()).toMatch(/^Demo Plugin: Browse menu item clicked! Team ID: [a-z0-9]{26}$/);
-    await dialog.accept();
+    // * The alert names the current team
+    expect(alert.type()).toBe('alert');
+    expect(alert.message()).toBe(`Demo Plugin: Browse menu item clicked! Team ID: ${team.id}`);
+    await alert.accept();
 });

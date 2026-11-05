@@ -10,6 +10,7 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {LeaveChannelModal} from './leave_channel_modal';
+import {MarketplaceModal} from './marketplace_modal';
 import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `notify_confirm_modal`. */
@@ -102,10 +103,15 @@ export class NotifyConfirmModal extends Scope {
     }
 
     /** Clicks confirmButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
-    async clickConfirmButton(): Promise<{leaveChannelModal: LeaveChannelModal; userSettingsModal: UserSettingsModal}> {
+    async clickConfirmButton(): Promise<{
+        leaveChannelModal: LeaveChannelModal;
+        marketplaceModal: MarketplaceModal;
+        userSettingsModal: UserSettingsModal;
+    }> {
         await this.confirmButton.click();
         return {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
+            marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }

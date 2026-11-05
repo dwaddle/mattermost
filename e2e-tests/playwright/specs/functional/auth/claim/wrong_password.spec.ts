@@ -3,77 +3,70 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {logInToTeam, switchSignInTo} from './support';
+
+const INVALID_PASSWORD = 'Login failed because of invalid password.';
+
 /**
- * @objective Verify switching from email to OpenID is rejected when the current password is wrong.
+ * @objective Verify switching email to OpenID is refused when the current password is wrong.
  *
  * @precondition
- * A licensed server with Keycloak OpenID configured and authentication transfer enabled.
+ * A licensed server with Keycloak (OpenID).
  */
-test('rejects email-to-OpenID when the current password is wrong', {tag: '@authentication'}, async ({pw}) => {
+test('rejects email-to-OpenID when the current password is wrong', {tag: '@authentication'}, async ({pw, page}) => {
     await pw.ensureLicense();
     await pw.skipIfNoLicense();
+
     const {adminClient, user, team} = await pw.initSetup();
     await pw.ensureSiteUrl();
     await pw.ensureKeycloakOpenId();
 
-    // # Log in as the email user and open Switch to OpenID
-    await pw.hasSeenLandingPage();
-    await pw.loginPage.goto();
-    await pw.loginPage.toBeVisible();
-    await pw.loginPage.login(user);
-    await pw.channelsPage.goto(team.name);
-    await pw.channelsPage.toBeVisible();
+    // # Log in and open the switch to OpenID
+    const app = await logInToTeam(pw, page, user.username, user.password, team);
+    await switchSignInTo(app, 'openid');
 
-    const profileModal = await pw.channelsPage.openProfileModal();
-    await profileModal.openSecurityTab();
-    await profileModal.securityTab.clickSwitchToOpenId();
-    await pw.emailToOAuthPage.toBeVisible();
+    // # Submit a wrong current password
+    const claim = app.claim.emailToOauth;
+    await claim.fillPasswordTextbox('WrongPassword1');
+    await claim.clickSubmitButton();
 
-    // # Submit the wrong current password
-    await pw.emailToOAuthPage.submit('WrongPassword1');
-
-    // * Verify the switch is rejected and the auth method is unchanged
-    await expect(pw.emailToOAuthPage.invalidPasswordError).toBeVisible();
-    const unchanged = await adminClient.getUser(user.id);
-    expect(unchanged.auth_service).toBe('');
+    // * Verify the switch is refused and the account is unchanged
+    await expect(claim.serverErrorText.locator).toHaveText(INVALID_PASSWORD);
+    expect((await adminClient.getUser(user.id)).auth_service).toBe('');
 });
 
 /**
- * @objective Verify switching from email to AD/LDAP is rejected when the current password is wrong.
+ * @objective Verify switching email to AD/LDAP is refused when the current password is wrong.
  *
  * @precondition
- * A licensed server with OpenLDAP configured and authentication transfer enabled.
+ * A licensed server with OpenLDAP.
  */
-test('rejects email-to-LDAP when the current password is wrong', {tag: '@authentication'}, async ({pw}) => {
+test('rejects email-to-LDAP when the current password is wrong', {tag: '@authentication'}, async ({pw, page}) => {
     await pw.ensureLicense();
     await pw.skipIfNoLicense();
+
     const {adminClient, user, team} = await pw.initSetup();
     await pw.ensureOpenldap();
+
     const ldapUser = pw.generateLdapUser('claimbad');
 
     try {
         await pw.createLdapUser(ldapUser);
 
-        // # Log in as the email user and open Switch to AD/LDAP
-        await pw.hasSeenLandingPage();
-        await pw.loginPage.goto();
-        await pw.loginPage.toBeVisible();
-        await pw.loginPage.login(user);
-        await pw.channelsPage.goto(team.name);
-        await pw.channelsPage.toBeVisible();
+        // # Log in and open the switch to AD/LDAP
+        const app = await logInToTeam(pw, page, user.username, user.password, team);
+        await switchSignInTo(app, 'ldap');
 
-        const profileModal = await pw.channelsPage.openProfileModal();
-        await profileModal.openSecurityTab();
-        await profileModal.securityTab.clickSwitchToLdap();
-        await pw.emailToLdapPage.toBeVisible();
+        // # Submit a wrong current password with valid LDAP credentials
+        const claim = app.claim.emailToLdap;
+        await claim.fillPasswordTextbox('WrongPassword1');
+        await claim.fillLdapIdTextbox(ldapUser.username);
+        await claim.fillLdapPasswordTextbox(ldapUser.password);
+        await claim.clickSubmitButton();
 
-        // # Submit the wrong email password with valid LDAP credentials
-        await pw.emailToLdapPage.submit('WrongPassword1', ldapUser.username, ldapUser.password);
-
-        // * Verify the switch is rejected and the auth method is unchanged
-        await expect(pw.emailToLdapPage.invalidPasswordError).toBeVisible();
-        const unchanged = await adminClient.getUser(user.id);
-        expect(unchanged.auth_service).toBe('');
+        // * Verify the switch is refused and the account is unchanged
+        await expect(claim.passwordErrorText.locator).toHaveText(INVALID_PASSWORD);
+        expect((await adminClient.getUser(user.id)).auth_service).toBe('');
     } finally {
         await pw.deleteLdapUser(ldapUser.username).catch(() => undefined);
     }

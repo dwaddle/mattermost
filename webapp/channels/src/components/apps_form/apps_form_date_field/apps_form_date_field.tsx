@@ -4,6 +4,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AppField} from '@mattermost/types/apps';
 
 import DatePicker from 'components/date_picker/date_picker';
@@ -15,6 +16,9 @@ type Props = {
     value: string | null;
     onChange: (name: string, value: string | null) => void;
     setIsInteracting?: (isInteracting: boolean) => void;
+
+    // Passed to the picker (`.calendar`, and the time menu for date and time fields).
+    testIdScope?: TestId;
 };
 
 const AppsFormDateField: React.FC<Props> = ({
@@ -22,6 +26,7 @@ const AppsFormDateField: React.FC<Props> = ({
     value,
     onChange,
     setIsInteracting,
+    testIdScope,
 }) => {
     const intl = useIntl();
     const [isPopperOpen, setIsPopperOpen] = useState(false);
@@ -96,6 +101,7 @@ const AppsFormDateField: React.FC<Props> = ({
     return (
         <div>
             <DatePicker
+                testIdScope={testIdScope}
                 isPopperOpen={isPopperOpen}
                 handlePopperOpenState={handlePopperOpenState}
                 locale={intl.locale}

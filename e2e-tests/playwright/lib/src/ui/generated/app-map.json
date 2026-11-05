@@ -530,7 +530,16 @@
             "getter": "claimPage",
             "path": "/claim",
             "params": [],
-            "scopes": []
+            "scopes": [
+                "claim.email_to_ldap",
+                "claim.email_to_oauth",
+                "claim.ldap_to_email",
+                "claim.oauth_to_email",
+                "login_mfa",
+                "login_mfa.token",
+                "login_mfa.token.field",
+                "signup.header"
+            ]
         },
         {
             "class": "ComponentLibraryPage",
@@ -544,7 +553,7 @@
             "getter": "createTeamPage",
             "path": "/create_team",
             "params": [],
-            "scopes": []
+            "scopes": ["signup.header"]
         },
         {
             "class": "DesktopAuthTokenPage",
@@ -589,7 +598,7 @@
             "getter": "errorPage",
             "path": "/error",
             "params": [],
-            "scopes": []
+            "scopes": ["error_view"]
         },
         {
             "class": "HelpPage",
@@ -659,21 +668,31 @@
             "getter": "linkingLandingPage",
             "path": "/landing",
             "params": [],
-            "scopes": []
+            "scopes": ["linking_landing"]
         },
         {
             "class": "LoginPage",
             "getter": "loginPage",
             "path": "/login",
             "params": [],
-            "scopes": []
+            "scopes": [
+                "login",
+                "login.alternate",
+                "login.banner",
+                "login.card",
+                "login.password",
+                "login.password.field",
+                "login_mfa",
+                "login_mfa.token",
+                "login_mfa.token.field"
+            ]
         },
         {
             "class": "MFAPage",
             "getter": "mfaPage",
             "path": "/mfa",
             "params": [],
-            "scopes": []
+            "scopes": ["signup.header"]
         },
         {
             "class": "PasswordResetFormPage",
@@ -687,7 +706,7 @@
             "getter": "passwordResetSendLinkPage",
             "path": "/reset_password",
             "params": [],
-            "scopes": []
+            "scopes": ["password_reset", "password_reset.email", "password_reset.email.field"]
         },
         {
             "class": "PopoutPage",
@@ -744,21 +763,33 @@
             "getter": "selectTeamPage",
             "path": "/select_team",
             "params": [],
-            "scopes": []
+            "scopes": ["signup.header"]
         },
         {
             "class": "ShouldVerifyEmailPage",
             "getter": "shouldVerifyEmailPage",
             "path": "/should_verify_email",
             "params": [],
-            "scopes": []
+            "scopes": ["should_verify_email"]
         },
         {
             "class": "SignupPage",
             "getter": "signupPage",
             "path": "/signup_user_complete",
             "params": [],
-            "scopes": []
+            "scopes": [
+                "signup",
+                "signup.alternate",
+                "signup.banner",
+                "signup.card",
+                "signup.card.email",
+                "signup.card.email.field",
+                "signup.card.password",
+                "signup.card.password.field",
+                "signup.card.username",
+                "signup.card.username.field",
+                "signup.no_methods"
+            ]
         },
         {
             "class": "SignupUserCompleteDesktopPage",
@@ -811,7 +842,7 @@
             "getter": "termsOfServicePage",
             "path": "/terms_of_service",
             "params": [],
-            "scopes": []
+            "scopes": ["terms_of_service.terms"]
         },
         {
             "class": "ThreadPopoutPage",
@@ -7962,6 +7993,209 @@
             ]
         },
         {
+            "scope": "apps_form",
+            "class": "AppsForm",
+            "container": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm",
+            "elements": [
+                {
+                    "testId": "apps_form.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!(!form?.submit || !this.props.appContext)"],
+                    "source": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+                },
+                {
+                    "testId": "apps_form.error--text",
+                    "role": "text",
+                    "renderedWhen": ["this.state.formError", "!(!form?.submit || !this.props.appContext)"],
+                    "source": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+                },
+                {
+                    "testId": "apps_form.submit--button",
+                    "role": "button",
+                    "renderedWhen": ["!(!form?.submit || !this.props.appContext)"],
+                    "source": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+                },
+                {
+                    "testId": "apps_form.submit:{key}--button",
+                    "role": "button",
+                    "key": "Pick<AppSelectOption, 'value'>",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "UpdatePreferences",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["this.props.form.submit_buttons", "!(!form?.submit || !this.props.appContext)"],
+                    "source": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+                },
+                {
+                    "testId": "apps_form.title--text",
+                    "role": "text",
+                    "renderedWhen": ["!(!form?.submit || !this.props.appContext)"],
+                    "source": "channels/src/components/apps_form/apps_form_component.tsx#AppsForm"
+                }
+            ]
+        },
+        {
+            "scope": "apps_form.field",
+            "class": "AppsFormField",
+            "elements": [
+                {
+                    "testId": "apps_form.field.cell:{key}_{key}--checkbox",
+                    "role": "checkbox",
+                    "key": "Pick<AppSelectOption, 'value'>",
+                    "renderedWhen": ["!(rowSelection === 'single')"],
+                    "source": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
+                },
+                {
+                    "testId": "apps_form.field.choice:{key}--checkbox",
+                    "role": "checkbox",
+                    "key": "string",
+                    "source": "channels/src/components/widgets/settings/checkbox_group_setting.tsx#CheckboxGroupSetting"
+                },
+                {
+                    "testId": "apps_form.field.clear--button",
+                    "role": "button",
+                    "renderedWhen": ["showClear"],
+                    "source": "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting"
+                },
+                {
+                    "testId": "apps_form.field.date--button",
+                    "role": "button",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "apps_form.field.help--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
+                },
+                {
+                    "testId": "apps_form.field.label--text",
+                    "role": "text",
+                    "source": "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+                },
+                {
+                    "testId": "apps_form.field.option:{key}--radio",
+                    "role": "radio",
+                    "key": "string",
+                    "source": "channels/src/components/widgets/settings/radio_setting.tsx#RadioSetting"
+                },
+                {
+                    "testId": "apps_form.field.radio_cell:{key}_{key}--radio",
+                    "role": "radio",
+                    "key": "Pick<AppSelectOption, 'value'>",
+                    "renderedWhen": ["rowSelection === 'single'"],
+                    "source": "channels/src/components/widgets/settings/checkbox_matrix_setting.tsx#CheckboxMatrixSetting"
+                },
+                {
+                    "testId": "apps_form.field.select_label--text",
+                    "role": "text",
+                    "renderedWhen": ["label"],
+                    "source": "channels/src/components/apps_form/apps_form_field/apps_form_select_field.tsx#AppsFormSelectField"
+                },
+                {
+                    "testId": "apps_form.field.time--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "expiryTimeMenu",
+                            "scope": "apps_form.field.time_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": ["!manualTimeEntry"],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "apps_form.field.value--checkbox",
+                    "role": "checkbox",
+                    "source": "channels/src/components/widgets/settings/bool_setting.tsx#BoolSetting"
+                },
+                {
+                    "testId": "apps_form.field.value--combobox",
+                    "role": "combobox",
+                    "source": "channels/src/components/apps_form/apps_form_field/apps_form_select_field.tsx#SelectInput"
+                },
+                {
+                    "testId": "apps_form.field.value--spinbutton",
+                    "role": "spinbutton",
+                    "renderedWhen": ["!(type === 'textarea')", "inputType === 'number'"],
+                    "source": "channels/src/components/widgets/settings/text_setting.tsx#TextSetting"
+                },
+                {
+                    "testId": "apps_form.field.value--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/settings/text_setting.tsx#TextSetting"
+                },
+                {
+                    "testId": "apps_form.field:{key}",
+                    "role": null,
+                    "key": "Pick<AppField, 'name'>",
+                    "source": "channels/src/components/apps_form/apps_form_field/apps_form_field.tsx#AppsFormField"
+                }
+            ]
+        },
+        {
+            "scope": "apps_form.field.calendar",
+            "class": "Calendar",
+            "container": "channels/src/components/date_picker/date_picker.tsx#DatePicker",
+            "elements": [
+                {
+                    "testId": "apps_form.field.calendar.day:{key}--text",
+                    "role": "text",
+                    "key": "string",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "apps_form.field.calendar.next_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "apps_form.field.calendar.previous_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                }
+            ]
+        },
+        {
+            "scope": "apps_form.field.time_menu",
+            "class": "TimeMenu",
+            "elements": [
+                {
+                    "testId": "apps_form.field.time_menu.time:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "string",
+                    "renderedWhen": ["!manualTimeEntry"],
+                    "source": "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer"
+                }
+            ]
+        },
+        {
             "scope": "archive_channel_modal",
             "class": "ArchiveChannelModal",
             "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
@@ -8258,7 +8492,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -8412,7 +8647,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -8532,7 +8768,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -8844,7 +9081,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -9893,7 +10131,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         }
                     ],
                     "renderedWhen": [
@@ -12527,6 +12766,160 @@
             ]
         },
         {
+            "scope": "claim",
+            "class": "Claim",
+            "elements": []
+        },
+        {
+            "scope": "claim.email_to_ldap",
+            "class": "ClaimEmailToLdap",
+            "elements": [
+                {
+                    "testId": "claim.email_to_ldap.ldap_id--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+                },
+                {
+                    "testId": "claim.email_to_ldap.ldap_id_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.email_to_ldap.ldap_password--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+                },
+                {
+                    "testId": "claim.email_to_ldap.ldap_password_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.email_to_ldap.password--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+                },
+                {
+                    "testId": "claim.email_to_ldap.password_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.email_to_ldap.server_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.email_to_ldap.submit--button",
+                    "role": "button",
+                    "source": "channels/src/components/claim/components/email_to_ldap.tsx#EmailToLDAP"
+                }
+            ]
+        },
+        {
+            "scope": "claim.email_to_oauth",
+            "class": "ClaimEmailToOauth",
+            "elements": [
+                {
+                    "testId": "claim.email_to_oauth.password--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/email_to_oauth.tsx#EmailToOAuth"
+                },
+                {
+                    "testId": "claim.email_to_oauth.server_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.email_to_oauth.submit--button",
+                    "role": "button",
+                    "source": "channels/src/components/claim/components/email_to_oauth.tsx#EmailToOAuth"
+                }
+            ]
+        },
+        {
+            "scope": "claim.ldap_to_email",
+            "class": "ClaimLdapToEmail",
+            "elements": [
+                {
+                    "testId": "claim.ldap_to_email.confirm--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+                },
+                {
+                    "testId": "claim.ldap_to_email.confirm_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.ldap_to_email.ldap_password--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+                },
+                {
+                    "testId": "claim.ldap_to_email.ldap_password_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.ldap_to_email.password--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+                },
+                {
+                    "testId": "claim.ldap_to_email.password_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.ldap_to_email.server_error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.ldap_to_email.submit--button",
+                    "role": "button",
+                    "source": "channels/src/components/claim/components/ldap_to_email.tsx#LDAPToEmail"
+                }
+            ]
+        },
+        {
+            "scope": "claim.oauth_to_email",
+            "class": "ClaimOauthToEmail",
+            "elements": [
+                {
+                    "testId": "claim.oauth_to_email.confirm--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/oauth_to_email.tsx#OAuthToEmail"
+                },
+                {
+                    "testId": "claim.oauth_to_email.error--text",
+                    "role": "text",
+                    "renderedWhen": ["errorText"],
+                    "source": "channels/src/components/claim/components/error_label.tsx#ErrorLabel"
+                },
+                {
+                    "testId": "claim.oauth_to_email.password--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/claim/components/oauth_to_email.tsx#OAuthToEmail"
+                },
+                {
+                    "testId": "claim.oauth_to_email.submit--button",
+                    "role": "button",
+                    "source": "channels/src/components/claim/components/oauth_to_email.tsx#OAuthToEmail"
+                }
+            ]
+        },
+        {
             "scope": "convert_gm_to_channel_modal",
             "class": "ConvertGmToChannelModal",
             "elements": [
@@ -12824,7 +13217,7 @@
         },
         {
             "scope": "custom_status_modal.expiry.custom.calendar",
-            "class": "CustomStatusModalExpiryCustomCalendar",
+            "class": "Calendar",
             "container": "channels/src/components/date_picker/date_picker.tsx#DatePicker",
             "elements": [
                 {
@@ -12850,7 +13243,7 @@
         },
         {
             "scope": "custom_status_modal.expiry.custom.time_menu",
-            "class": "CustomStatusModalExpiryCustomTimeMenu",
+            "class": "TimeMenu",
             "elements": [
                 {
                     "testId": "custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem",
@@ -12931,7 +13324,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -13062,7 +13456,7 @@
         },
         {
             "scope": "date_time_picker_modal.when.calendar",
-            "class": "CustomStatusModalExpiryCustomCalendar",
+            "class": "Calendar",
             "container": "channels/src/components/date_picker/date_picker.tsx#DatePicker",
             "elements": [
                 {
@@ -13085,7 +13479,7 @@
         },
         {
             "scope": "date_time_picker_modal.when.time_menu",
-            "class": "CustomStatusModalExpiryCustomTimeMenu",
+            "class": "TimeMenu",
             "elements": [
                 {
                     "testId": "date_time_picker_modal.when.time_menu.time:{key}--menuitem",
@@ -14142,6 +14536,38 @@
             ]
         },
         {
+            "scope": "error_view",
+            "class": "ErrorView",
+            "container": "channels/src/components/error_page/error_page.tsx#ErrorPage",
+            "elements": [
+                {
+                    "testId": "error_view.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/'"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "returnTo"
+                        }
+                    ],
+                    "source": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+                },
+                {
+                    "testId": "error_view.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+                },
+                {
+                    "testId": "error_view.title--text",
+                    "role": "text",
+                    "source": "channels/src/components/error_page/error_page.tsx#ErrorPage"
+                }
+            ]
+        },
+        {
             "scope": "file_preview_modal",
             "class": "FilePreviewModal",
             "container": "channels/src/components/file_preview_modal/file_preview_modal.tsx#FilePreviewModal",
@@ -15169,7 +15595,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         }
                     ],
                     "renderedWhen": ["props.isChannelsProductActive", "isAppMarketplaceEnabled"],
@@ -17025,6 +17452,316 @@
             ]
         },
         {
+            "scope": "linking_landing",
+            "class": "LinkingLanding",
+            "elements": [
+                {
+                    "testId": "linking_landing.open_app--link",
+                    "role": "link",
+                    "source": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
+                },
+                {
+                    "testId": "linking_landing.open_browser--link",
+                    "role": "link",
+                    "source": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
+                },
+                {
+                    "testId": "linking_landing.remember_preference--checkbox",
+                    "role": "checkbox",
+                    "source": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
+                }
+            ]
+        },
+        {
+            "scope": "login",
+            "class": "Login",
+            "elements": [
+                {
+                    "testId": "login.external:{key}--link",
+                    "role": "link",
+                    "key": "\"gitlab\" | \"google\" | \"office365\" | \"openid\" | \"saml\"",
+                    "renderedWhen": ["!magicLinkSuccessful", "enableExternalSignup"],
+                    "source": "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
+                },
+                {
+                    "testId": "login.forgot_password--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/reset_password'"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(!PasswordEnableForgotLink || PasswordEnableForgotLink === 'false' || onlyLdapEnabled)"
+                    ],
+                    "source": "channels/src/components/login/login.tsx#Login"
+                },
+                {
+                    "testId": "login.login_id--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["!magicLinkSuccessful", "enableBaseLogin"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login.password--textbox",
+                    "role": "textbox",
+                    "renderedWhen": [
+                        "!magicLinkSuccessful",
+                        "enableBaseLogin",
+                        "!enableGuestMagicLink || requiresPassword"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "login.alternate",
+            "class": "Alternate",
+            "container": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink",
+            "elements": [
+                {
+                    "testId": "login.alternate.action--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "{ pathname: alternateLinkPath, search: location.search, }"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+                        "alternateLinkPath && alternateLinkLabel",
+                        "showSignup"
+                    ],
+                    "source": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+                }
+            ]
+        },
+        {
+            "scope": "login.banner",
+            "class": "AlertBanner",
+            "container": "channels/src/components/alert_banner/index.tsx#AlertBanner",
+            "elements": [
+                {
+                    "testId": "login.banner.close--button",
+                    "role": "button",
+                    "renderedWhen": ["!magicLinkSuccessful"],
+                    "source": "channels/src/components/alert_banner/index.tsx#AlertBanner"
+                }
+            ]
+        },
+        {
+            "scope": "login.card",
+            "class": "LoginCard",
+            "container": "channels/src/components/login/login.tsx#Login",
+            "elements": [
+                {
+                    "testId": "login.card.log_in--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/'"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "'/should_verify_email?&email=' + encodeURIComponent(loginId)"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${pathname}${newQuery}${hash}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/${ExperimentalPrimaryTeam}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/${team.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "path"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "{ pathname: path, search: queryParams.toString(), }"
+                        },
+                        {
+                            "kind": "popover",
+                            "target": "GuestMagicLinkCard"
+                        }
+                    ],
+                    "effects": [
+                        "AddTeamMemberFromInvite",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMembersForUserMe",
+                        "GetChannelsForTeamForUserMe",
+                        "GetClientConfig",
+                        "GetClientLicense",
+                        "GetLoginType",
+                        "GetPreferencesMe",
+                        "GetRolesByNames",
+                        "GetServerLimits",
+                        "GetTeam",
+                        "GetTeamMembersForUserMe",
+                        "GetTeamsForUserMe",
+                        "GetTeamsUnreadForUserMe",
+                        "GetUserMe",
+                        "GetUserScheduledPosts",
+                        "GetWebappPlugins",
+                        "Login",
+                        "LoginWithDesktopToken",
+                        "PostLog"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!magicLinkSuccessful", "enableBaseLogin"],
+                    "source": "channels/src/components/save_button.tsx#SaveButton"
+                }
+            ]
+        },
+        {
+            "scope": "login.password",
+            "class": "Password",
+            "elements": [
+                {
+                    "testId": "login.password.field",
+                    "role": null,
+                    "renderedWhen": [
+                        "!magicLinkSuccessful",
+                        "enableBaseLogin",
+                        "!enableGuestMagicLink || requiresPassword"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login.password.message--alert",
+                    "role": "alert",
+                    "renderedWhen": [
+                        "!magicLinkSuccessful",
+                        "enableBaseLogin",
+                        "!enableGuestMagicLink || requiresPassword"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login.password.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!magicLinkSuccessful",
+                        "enableBaseLogin",
+                        "!enableGuestMagicLink || requiresPassword"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login.password.toggle--button",
+                    "role": "button",
+                    "renderedWhen": [
+                        "!magicLinkSuccessful",
+                        "enableBaseLogin",
+                        "!enableGuestMagicLink || requiresPassword"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput"
+                }
+            ]
+        },
+        {
+            "scope": "login_mfa",
+            "class": "LoginMfa",
+            "elements": [
+                {
+                    "testId": "login_mfa.submit--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/'"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "'/should_verify_email?&email=' + encodeURIComponent(loginId)"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/${ExperimentalPrimaryTeam}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/${team.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "path"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "{ pathname: path, search: queryParams.toString(), }"
+                        }
+                    ],
+                    "effects": [
+                        "AddTeamMemberFromInvite",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMembersForUserMe",
+                        "GetChannelsForTeamForUserMe",
+                        "GetClientConfig",
+                        "GetClientLicense",
+                        "GetPreferencesMe",
+                        "GetRolesByNames",
+                        "GetServerLimits",
+                        "GetTeam",
+                        "GetTeamMembersForUserMe",
+                        "GetTeamsForUserMe",
+                        "GetTeamsUnreadForUserMe",
+                        "GetUserMe",
+                        "GetUserScheduledPosts",
+                        "GetWebappPlugins",
+                        "Login",
+                        "LoginWithDesktopToken",
+                        "PostLog",
+                        "SwitchAccountType"
+                    ],
+                    "unknownEffects": true,
+                    "source": "channels/src/components/save_button.tsx#SaveButton"
+                },
+                {
+                    "testId": "login_mfa.token--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "login_mfa.token",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "login_mfa.token.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login_mfa.token.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login_mfa.token.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "manage_roles_modal",
             "class": "ManageRolesModal",
             "container": "channels/src/components/admin_console/manage_roles_modal/manage_roles_modal.tsx#ManageRolesModal",
@@ -17245,6 +17982,135 @@
             ]
         },
         {
+            "scope": "marketplace_modal",
+            "class": "MarketplaceModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "marketplace_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                }
+            ]
+        },
+        {
+            "scope": "marketplace_modal.item",
+            "class": "MarketplaceModalItem",
+            "elements": [
+                {
+                    "testId": "marketplace_modal.item.configure--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/admin_console/plugins/plugin_' + this.props.id"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "this.props.installedVersion !== '' && !this.props.installing && !this.props.error",
+                        "isPlugin(i)"
+                    ],
+                    "source": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#MarketplaceItemPlugin"
+                },
+                {
+                    "testId": "marketplace_modal.item.install--button",
+                    "role": "button",
+                    "effects": ["GetMarketplacePlugins", "InstallMarketplacePlugin"],
+                    "renderedWhen": ["isPlugin(i)"],
+                    "source": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_plugin/marketplace_item_plugin.tsx#MarketplaceItemPlugin"
+                },
+                {
+                    "testId": "marketplace_modal.item.install_app--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "UpdatePreferences",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!isPlugin(i)"],
+                    "source": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_app/marketplace_item_app.tsx#MarketplaceItemApp"
+                },
+                {
+                    "testId": "marketplace_modal.item.installed_app--button",
+                    "role": "button",
+                    "renderedWhen": [
+                        "this.props.installed && !this.props.installing && !this.props.error",
+                        "!isPlugin(i)"
+                    ],
+                    "source": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item_app/marketplace_item_app.tsx#MarketplaceItemApp"
+                },
+                {
+                    "testId": "marketplace_modal.item:{key}",
+                    "role": null,
+                    "key": "string",
+                    "source": "channels/src/components/plugin_marketplace/marketplace_item/marketplace_item.tsx#MarketplaceItem"
+                }
+            ]
+        },
+        {
+            "scope": "marketplace_modal.no_results",
+            "class": "MarketplaceModalNoResults",
+            "elements": [
+                {
+                    "testId": "marketplace_modal.no_results.action--button",
+                    "role": "button",
+                    "renderedWhen": ["listing.length === 0", "!loading"],
+                    "source": "channels/src/components/plugin_marketplace/marketplace_list/marketplace_list.tsx#MarketplaceList"
+                }
+            ]
+        },
+        {
+            "scope": "marketplace_modal.update_confirm_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "marketplace_modal.update_confirm_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel", "installedVersion", "isUpdate"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "marketplace_modal.update_confirm_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["installedVersion", "isUpdate", "showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "marketplace_modal.update_confirm_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["GetMarketplacePlugins", "InstallMarketplacePlugin"],
+                    "renderedWhen": ["!hideConfirm", "installedVersion", "isUpdate"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
             "scope": "menu_modal",
             "class": "MenuModal",
             "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
@@ -17447,7 +18313,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -17601,7 +18468,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -17721,7 +18589,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -18033,7 +18902,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -18563,7 +19433,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -18643,6 +19514,54 @@
                     "role": "checkbox",
                     "renderedWhen": ["showCheckbox"],
                     "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "password_reset",
+            "class": "PasswordReset",
+            "elements": [
+                {
+                    "testId": "password_reset.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "source": "channels/src/components/common/back_button.tsx#BackButton"
+                },
+                {
+                    "testId": "password_reset.email--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "password_reset.send--button",
+                    "role": "button",
+                    "source": "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
+                }
+            ]
+        },
+        {
+            "scope": "password_reset.email",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "password_reset.email.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "password_reset.email.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "password_reset.email.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         },
@@ -18730,7 +19649,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -18884,7 +19804,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -19004,7 +19925,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -19316,7 +20238,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -19822,7 +20745,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -19976,7 +20900,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -20096,7 +21021,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -20408,7 +21334,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -20734,6 +21661,71 @@
                     "effects": ["CreateDirectChannel", "GetPropertyValues", "GetRolesByNames", "UpdatePreferences"],
                     "renderedWhen": ["getUser(state, userId)", "!(userId !== currentUserId || haveOverrideProp)"],
                     "source": "channels/src/components/profile_popover/profile_popover_self_user_row.tsx#ProfilePopoverSelfUserRow"
+                }
+            ]
+        },
+        {
+            "scope": "public",
+            "class": "Public",
+            "elements": []
+        },
+        {
+            "scope": "public.footer",
+            "class": "PublicFooter",
+            "container": "channels/src/components/header_footer_route/footer.tsx#Footer",
+            "elements": [
+                {
+                    "testId": "public.footer.copyright--text",
+                    "role": "text",
+                    "renderedWhen": ["!document.cookie.includes('MMEMBED=1')"],
+                    "source": "channels/src/components/header_footer_route/footer.tsx#Footer"
+                },
+                {
+                    "testId": "public.footer.link:{key}--link",
+                    "role": "link",
+                    "key": "\"about\" | \"help\" | \"privacy\" | \"terms\"",
+                    "source": "channels/src/components/header_footer_route/footer.tsx#Footer"
+                }
+            ]
+        },
+        {
+            "scope": "public.header",
+            "class": "PublicHeader",
+            "container": "channels/src/components/header_footer_route/header.tsx#Header",
+            "elements": [
+                {
+                    "testId": "public.header.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "source": "channels/src/components/common/back_button.tsx#BackButton"
+                },
+                {
+                    "testId": "public.header.logo--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/'"
+                        }
+                    ],
+                    "source": "channels/src/components/header_footer_route/header.tsx#Header"
+                },
+                {
+                    "testId": "public.header.site_name--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/'"
+                        }
+                    ],
+                    "renderedWhen": ["siteName"],
+                    "source": "channels/src/components/header_footer_route/header.tsx#Header"
                 }
             ]
         },
@@ -22236,7 +23228,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -22390,7 +23383,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -22510,7 +23504,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -22822,7 +23817,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -23888,7 +24884,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         }
                     ],
                     "renderedWhen": [
@@ -25509,7 +26506,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         }
                     ],
                     "renderedWhen": [
@@ -26471,7 +27469,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -26665,7 +27664,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -26784,7 +27784,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -26903,7 +27904,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -27025,7 +28027,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "MarketplaceModal"
+                            "target": "MarketplaceModal",
+                            "scope": "marketplace_modal"
                         },
                         {
                             "kind": "modal",
@@ -28046,6 +29049,317 @@
                     "role": "button",
                     "renderedWhen": ["!adminMode"],
                     "source": "channels/src/components/user_settings/notifications/send_test_notification_notice.tsx#SendTestNotificationNotice"
+                }
+            ]
+        },
+        {
+            "scope": "should_verify_email",
+            "class": "ShouldVerifyEmail",
+            "elements": [
+                {
+                    "testId": "should_verify_email.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+                },
+                {
+                    "testId": "should_verify_email.resend--button",
+                    "role": "button",
+                    "effects": ["SendVerificationEmail"],
+                    "source": "channels/src/components/save_button.tsx#SaveButton"
+                },
+                {
+                    "testId": "should_verify_email.return--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/'"
+                        }
+                    ],
+                    "source": "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+                },
+                {
+                    "testId": "should_verify_email.status--text",
+                    "role": "text",
+                    "source": "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
+                },
+                {
+                    "testId": "should_verify_email.title--text",
+                    "role": "text",
+                    "source": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+                }
+            ]
+        },
+        {
+            "scope": "signup",
+            "class": "Signup",
+            "elements": [
+                {
+                    "testId": "signup.external:{key}--link",
+                    "role": "link",
+                    "key": "\"gitlab\" | \"google\" | \"ldap\" | \"office365\" | \"openid\" | \"saml\"",
+                    "renderedWhen": ["enableExternalSignup"],
+                    "source": "channels/src/components/external_login_button/external_login_button.tsx#ExternalLoginButton"
+                }
+            ]
+        },
+        {
+            "scope": "signup.alternate",
+            "class": "Alternate",
+            "container": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink",
+            "elements": [
+                {
+                    "testId": "signup.alternate.action--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "{ pathname: alternateLinkPath, search: location.search, }"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+                        "alternateLinkPath && alternateLinkLabel"
+                    ],
+                    "source": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+                },
+                {
+                    "testId": "signup.alternate.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!(!alternateMessage && !alternateLinkPath && !alternateLinkLabel)",
+                        "alternateMessage"
+                    ],
+                    "source": "channels/src/components/header_footer_route/content_layouts/alternate_link.tsx#AlternateLink"
+                }
+            ]
+        },
+        {
+            "scope": "signup.banner",
+            "class": "AlertBanner",
+            "container": "channels/src/components/alert_banner/index.tsx#AlertBanner",
+            "elements": [
+                {
+                    "testId": "signup.banner.close--button",
+                    "role": "button",
+                    "source": "channels/src/components/alert_banner/index.tsx#AlertBanner"
+                }
+            ]
+        },
+        {
+            "scope": "signup.card",
+            "class": "SignupCard",
+            "container": "channels/src/components/signup/signup.tsx#Signup",
+            "elements": [
+                {
+                    "testId": "signup.card.acceptable_use_policy--link",
+                    "role": "link",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/signup/signup.tsx#Signup"
+                },
+                {
+                    "testId": "signup.card.create_account--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/'"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "path"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "verifyUrl"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "{ pathname: path, search: queryParams.toString(), }"
+                        }
+                    ],
+                    "effects": [
+                        "CreateUser",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMembersForUserMe",
+                        "GetChannelsForTeamForUserMe",
+                        "GetClientConfig",
+                        "GetClientLicense",
+                        "GetPreferencesMe",
+                        "GetRolesByNames",
+                        "GetServerLimits",
+                        "GetTeamMembersForUserMe",
+                        "GetTeamsForUserMe",
+                        "GetTeamsUnreadForUserMe",
+                        "GetUserMe",
+                        "GetUserScheduledPosts",
+                        "GetWebappPlugins",
+                        "Login",
+                        "LoginWithDesktopToken",
+                        "PostLog"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/save_button.tsx#SaveButton"
+                },
+                {
+                    "testId": "signup.card.email--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.password--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.preset_name--text",
+                    "role": "text",
+                    "renderedWhen": ["parsedFirstName || parsedLastName"],
+                    "source": "channels/src/components/signup/signup.tsx#Signup"
+                },
+                {
+                    "testId": "signup.card.privacy_policy--link",
+                    "role": "link",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/signup/signup.tsx#Signup"
+                },
+                {
+                    "testId": "signup.card.terms--checkbox",
+                    "role": "checkbox",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/check/index.tsx#CheckInput"
+                },
+                {
+                    "testId": "signup.card.title--text",
+                    "role": "text",
+                    "source": "channels/src/components/signup/signup.tsx#Signup"
+                },
+                {
+                    "testId": "signup.card.username--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "signup.card.email",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "signup.card.email.field",
+                    "role": null,
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.email.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.email.message--text",
+                    "role": "text",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "signup.card.password",
+            "class": "Password",
+            "elements": [
+                {
+                    "testId": "signup.card.password.field",
+                    "role": null,
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.password.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.password.message--text",
+                    "role": "text",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.password.toggle--button",
+                    "role": "button",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/password_input/password_input.tsx#PasswordInput"
+                }
+            ]
+        },
+        {
+            "scope": "signup.card.username",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "signup.card.username.field",
+                    "role": null,
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.username.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "signup.card.username.message--text",
+                    "role": "text",
+                    "renderedWhen": ["enableSignUpWithEmail"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "signup.header",
+            "class": "SignupHeader",
+            "container": "channels/src/components/common/back_button.tsx#BackButton",
+            "elements": [
+                {
+                    "testId": "signup.header.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "source": "channels/src/components/common/back_button.tsx#BackButton"
+                }
+            ]
+        },
+        {
+            "scope": "signup.no_methods",
+            "class": "SignupNoMethods",
+            "elements": [
+                {
+                    "testId": "signup.no_methods.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!enableSignUpWithEmail && !enableExternalSignup"],
+                    "source": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+                },
+                {
+                    "testId": "signup.no_methods.title--text",
+                    "role": "text",
+                    "renderedWhen": ["!enableSignUpWithEmail && !enableExternalSignup"],
+                    "source": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
                 }
             ]
         },
@@ -30106,6 +31420,12 @@
             "body": "string[]"
         },
         {
+            "op": "GetMarketplacePlugins",
+            "method": "GET",
+            "path": "/api/v4/plugins/marketplace",
+            "body": "MarketplacePlugin[]"
+        },
+        {
             "op": "GetPinnedPosts",
             "method": "GET",
             "path": "/api/v4/channels/{channel_id}/pinned",
@@ -30326,6 +31646,12 @@
             "method": "GET",
             "path": "/api/v4/plugins/webapp",
             "body": "ClientPluginManifest[]"
+        },
+        {
+            "op": "InstallMarketplacePlugin",
+            "method": "POST",
+            "path": "/api/v4/plugins/marketplace",
+            "body": "MarketplacePlugin"
         },
         {
             "op": "InviteGuestsToTeam",

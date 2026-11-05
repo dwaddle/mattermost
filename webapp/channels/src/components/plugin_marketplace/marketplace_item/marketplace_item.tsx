@@ -51,6 +51,10 @@ export const Label = ({name, description, url}: MarketplaceLabel): JSX.Element =
     return label;
 };
 
+// An item id as a row key (`com.mattermost.calls` -> `com_mattermost_calls`); keys can't hold `.`. Like the
+// System Console's plugin list, not pluginTestKey: that key is for the published plugin slots.
+const itemTestKey = (id: string) => id.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+
 export type MarketplaceItemProps = {
     id: string;
     name: string;
@@ -191,6 +195,7 @@ export default class MarketplaceItem extends React.PureComponent <MarketplaceIte
                     className={classNames('more-modal__row', 'more-modal__row--link', {item_error: this.props.error})}
                     key={this.props.id}
                     id={'marketplace-plugin-' + this.props.id}
+                    data-testid={`marketplace_modal.item:${itemTestKey(this.props.id)}`}
                 >
                     {icon}
                     <div className='more-modal__details'>

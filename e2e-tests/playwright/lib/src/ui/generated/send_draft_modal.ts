@@ -11,6 +11,7 @@ import {Scope, drivers} from '../../aria';
 import {Api} from './api';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
+import {MarketplaceModal} from './marketplace_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
 import {UserSettingsModal} from './user_settings_modal';
 
@@ -108,6 +109,7 @@ export class SendDraftModal extends Scope {
     async clickConfirmButton(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
         leaveChannelModal: LeaveChannelModal;
+        marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
         userSettingsModal: UserSettingsModal;
     }> {
@@ -115,6 +117,7 @@ export class SendDraftModal extends Scope {
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
+            marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };

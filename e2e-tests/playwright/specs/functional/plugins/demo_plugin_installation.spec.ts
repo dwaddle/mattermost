@@ -6,7 +6,7 @@ import {demoPluginId, demoPluginUrl, getPluginStatus, test, expect} from '@matte
 test('should install and enable demo plugin from URL', async ({pw}) => {
     // # Create and navigate to channels page
     const {adminClient, user} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {app, channelsPage} = await pw.testBrowser.login(user);
 
     await channelsPage.goto();
     await channelsPage.toBeVisible();
@@ -55,15 +55,18 @@ test('should install and enable demo plugin from URL', async ({pw}) => {
     expect(demoPlugin).toBeDefined();
 
     // # Dismiss overlay again if it reappeared after plugin activation.
-    // No fixed wait needed — postMessage's fill/click actions auto-wait for the
+    // No fixed wait needed — the composer's fill/click actions auto-wait for the
     // input to become interactable once the overlay clears.
-    await channelsPage.page.keyboard.press('Escape');
+    await app.page.keyboard.press('Escape');
 
     // # Execute slash command
-    await channelsPage.postMessage('/demo_plugin true');
+    const {postCreate, postList} = app.center;
+    const before = (await postList.postKeys()).at(-1);
+    await postCreate.fillMessageTextbox('/demo_plugin true');
+    await postCreate.clickSendButton();
 
     // * Verify the response post
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.toContainText('enabled');
+    await expect.poll(async () => (await postList.postKeys()).at(-1)).not.toBe(before);
+    const post = postList.post({id: (await postList.postKeys()).at(-1)!});
+    await expect(post.locator).toContainText('enabled');
 });

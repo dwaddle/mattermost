@@ -16,7 +16,7 @@ export default class Footer {
     constructor(container: Locator) {
         this.container = container;
 
-        this.copyright = container.getByTestId('footer-copyright');
+        this.copyright = container.getByTestId('public.footer.copyright--text');
         this.aboutLink = container.getByText('About');
         this.privacyPolicyLink = container.getByText('Privacy Policy');
         this.termsLink = container.getByText('Terms');

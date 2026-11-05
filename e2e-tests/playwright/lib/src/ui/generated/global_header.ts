@@ -11,6 +11,7 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {CustomStatusModal} from './custom_status_modal';
+import {MarketplaceModal} from './marketplace_modal';
 import {AdminConsolePage, IntegrationsPage} from './pages';
 import {UserSettingsModal} from './user_settings_modal';
 
@@ -772,7 +773,7 @@ export class GlobalHeaderProductMenu extends Scope {
     /**
      * `global_header.product_menu.marketplace--menuitem` — ProductSwitcherMarketplaceMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_marketplace_menuitem.tsx)
      * Renders only when props.isChannelsProductActive and isAppMarketplaceEnabled.
-     * Opens modal MarketplaceModal.
+     * Opens modal MarketplaceModal (`marketplace_modal`).
      */
     get marketplaceMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.marketplace--menuitem`), {
@@ -784,8 +785,10 @@ export class GlobalHeaderProductMenu extends Scope {
         });
     }
 
-    async clickMarketplaceMenuItem(): Promise<void> {
+    /** Clicks marketplaceMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickMarketplaceMenuItem(): Promise<MarketplaceModal> {
         await this.marketplaceMenuItem.click();
+        return new MarketplaceModal(this.page, 'marketplace_modal');
     }
 
     /**

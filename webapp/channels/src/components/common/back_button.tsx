@@ -6,6 +6,8 @@ import React, {type JSX} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 import {Link} from 'react-router-dom';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 type Props = {
 
     /**
@@ -19,18 +21,21 @@ type Props = {
      * onClick handler when user clicks back button
      */
     onClick?: React.EventHandler<React.MouseEvent>;
+
+    /** The link is `<testId>--link`. Without it, the legacy `signup.header` testids. */
+    testId?: TestId;
 };
 
-const BackButton = ({url = '/', className, onClick}: Props): JSX.Element => {
+const BackButton = ({url = '/', className, onClick, testId}: Props): JSX.Element => {
     const {formatMessage} = useIntl();
 
     return (
         <div
-            data-testid='signup-header'
+            data-testid={testId ? undefined : 'signup.header'}
             className={classNames('signup-header', className)}
         >
             <Link
-                data-testid='back_button'
+                data-testid={testId ? `${testId}--link` : 'signup.header.back--link'}
                 onClick={onClick}
                 to={url}
             >

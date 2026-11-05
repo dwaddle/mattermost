@@ -42,31 +42,35 @@ const Header = ({alternateLink, backButtonURL, onBackButtonClick}: HeaderProps) 
         }
     }
 
+    // home links: the logo (the free edition's banner, or the logo itself for the default site name), and a custom site name
+    const logo = freeBanner ?? (title && typeof title !== 'string' ? title : null);
+    const siteName = typeof title === 'string' && title ? title : null;
+
     return (
         <div
-            data-testid='hfroute-header'
+            data-testid='public.header'
             className={classNames('hfroute-header', {'has-free-banner': freeBanner, 'has-custom-site-name': title})}
         >
             <div className='header-main'>
                 <div>
-                    {freeBanner &&
+                    {logo &&
                         <Link
-                            data-testid='header-logo-link'
+                            data-testid='public.header.logo--link'
                             className='header-logo-link'
                             to='/'
                             aria-label={ariaLabel}
                         >
-                            {freeBanner}
+                            {logo}
                         </Link>
                     }
-                    {title &&
+                    {siteName &&
                         <Link
-                            data-testid='header-logo-link'
+                            data-testid='public.header.site_name--link'
                             className='header-logo-link'
                             to='/'
                             aria-label={ariaLabel}
                         >
-                            {title}
+                            {siteName}
                         </Link>
                     }
                 </div>
@@ -77,6 +81,7 @@ const Header = ({alternateLink, backButtonURL, onBackButtonClick}: HeaderProps) 
                     className='header-back-button'
                     url={backButtonURL}
                     onClick={onBackButtonClick}
+                    testId='public.header.back'
                 />
             )}
         </div>

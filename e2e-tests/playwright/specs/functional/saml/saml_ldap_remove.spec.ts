@@ -3,6 +3,8 @@
 
 import {duration, expect, test} from '@mattermost/playwright-lib';
 
+import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+
 import {runLdapSyncAndWait} from './ldap_sync_wait';
 
 /**
@@ -15,7 +17,7 @@ import {runLdapSyncAndWait} from './ldap_sync_wait';
 test(
     'MM-T3665 removing a synced user from LDAP deactivates their Mattermost account on sync',
     {tag: '@saml'},
-    async ({pw}) => {
+    async ({pw, page}) => {
         await pw.ensureLicense();
         await pw.skipIfNoLicense();
 
@@ -46,12 +48,8 @@ test(
         });
 
         // # Log in once via SAML to provision the account
-        await pw.hasSeenLandingPage();
-        await pw.loginPage.goto();
-        await pw.loginPage.toBeVisible();
-        await pw.loginPage.samlLoginButton.click();
-        await pw.keycloakLoginPage.login(sharedUsername, 'Password1');
-        await pw.loginPage.expectNotOnLoginPage();
+        await logInWithKeycloak(pw, page, 'saml', {username: sharedUsername, password: 'Password1'});
+        await expectSignedIn(page);
 
         const provisionedUser = await adminClient.getUserByUsername(sharedUsername);
         expect(provisionedUser.delete_at).toBe(0);

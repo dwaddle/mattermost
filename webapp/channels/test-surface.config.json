@@ -97,6 +97,7 @@
             "channels/src/components/analytics/",
             "channels/src/components/app_bar/app_bar.tsx",
             "channels/src/components/app_bar/app_bar_plugin_component.tsx",
+            "channels/src/components/apps_form/",
             "channels/src/components/at_mention",
             "channels/src/components/backstage/components/backstage_navbar.tsx",
             "channels/src/components/block_renderer/",
@@ -125,6 +126,8 @@
             "channels/src/components/channel_settings_modal/channel_settings_plugin_tab.tsx",
             "channels/src/components/channel_settings_modal/share_channel_with_workspaces/",
             "channels/src/components/channel_view/channel_view.tsx",
+            "channels/src/components/claim/",
+            "channels/src/components/common/back_button.tsx",
             "channels/src/components/common/comment_icon.tsx",
             "channels/src/components/common/select_text_input/select_text_input.tsx",
             "channels/src/components/common/token_expiry_picker/",
@@ -140,6 +143,7 @@
             "channels/src/components/edit_channel_header_modal/",
             "channels/src/components/edit_scheduled_post/",
             "channels/src/components/emoji_picker/",
+            "channels/src/components/error_page/",
             "channels/src/components/file_attachment/",
             "channels/src/components/file_attachment_list/",
             "channels/src/components/file_preview/file_preview.tsx",
@@ -152,6 +156,9 @@
             "channels/src/components/global_header/center_controls/user_guide_dropdown/",
             "channels/src/components/global_header/left_controls/switch_product_menu/",
             "channels/src/components/global_header/right_controls/",
+            "channels/src/components/header_footer_route/",
+            "channels/src/components/header_footer_route/content_layouts/",
+            "channels/src/components/header_footer_template/",
             "channels/src/components/integrations/bots/add_bot/add_bot.tsx",
             "channels/src/components/integrations/bots/bot.tsx",
             "channels/src/components/integrations/bots/bot_create_warnings_banner.tsx",
@@ -168,6 +175,9 @@
             "channels/src/components/latex_inline/",
             "channels/src/components/leave_channel_modal/",
             "channels/src/components/leave_team_modal/leave_team_modal.tsx",
+            "channels/src/components/linking_landing_page/",
+            "channels/src/components/login/login.tsx",
+            "channels/src/components/login/login_mfa.tsx",
             "channels/src/components/markdown_image/",
             "channels/src/components/member_list_channel/",
             "channels/src/components/member_list_team/",
@@ -181,6 +191,8 @@
             "channels/src/components/new_search/",
             "channels/src/components/no_results_indicator/",
             "channels/src/components/notify_confirm_modal.tsx",
+            "channels/src/components/password_reset_send_link/",
+            "channels/src/components/plugin_marketplace/",
             "channels/src/components/popout_button.tsx",
             "channels/src/components/post/post_component.tsx",
             "channels/src/components/post/post_options.tsx",
@@ -225,6 +237,7 @@
             "channels/src/components/setting_item_max.tsx",
             "channels/src/components/setting_item_min.tsx",
             "channels/src/components/setting_picture.tsx",
+            "channels/src/components/should_verify_email/",
             "channels/src/components/sidebar/channel_filter/",
             "channels/src/components/sidebar/channel_navigator/",
             "channels/src/components/sidebar/sidebar_category/",
@@ -234,6 +247,7 @@
             "channels/src/components/sidebar/sidebar_channel/sidebar_channel_menu/",
             "channels/src/components/sidebar/sidebar_channel/sidebar_group_channel/sidebar_group_channel.tsx",
             "channels/src/components/sidebar/sidebar_header/",
+            "channels/src/components/signup/signup.tsx",
             "channels/src/components/status_icon.tsx",
             "channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx",
             "channels/src/components/suggestion/suggestion_list_contents.tsx",
@@ -260,6 +274,7 @@
             "channels/src/components/widgets/inputs/url_input/",
             "channels/src/components/widgets/inputs/users_emails_input.tsx",
             "channels/src/components/widgets/public-private-selector/",
+            "channels/src/components/widgets/settings/",
             "channels/src/components/widgets/users/avatars/",
             "channels/src/plugins/channel_header_plug/",
             "channels/src/plugins/rhs_plugin/",
@@ -672,6 +687,11 @@
                     "entity": "HealthFinding",
                     "field": "fingerprint",
                     "reason": "a finding's fingerprint is its identity across runs."
+                },
+                {
+                    "entity": "AppSelectOption",
+                    "field": "value",
+                    "reason": "an app select option's value is what the app sends back: unique within its field."
                 }
             ]
         }
@@ -709,10 +729,9 @@
             "center.composer",
             "center.archived_notice"
         ],
-        "ClaimPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves ClaimController to the grammar names one."
-        },
+        "ClaimPage": [
+            "signup.header"
+        ],
         "ComponentLibraryPage": {
             "ready": null,
             "reason": "a development page with no testids."
@@ -736,10 +755,9 @@
             "ready": null,
             "reason": "the custom emoji page renders no testid yet."
         },
-        "ErrorPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves ErrorPage to the grammar names one."
-        },
+        "ErrorPage": [
+            "error_view"
+        ],
         "HelpPage": {
             "ready": null,
             "reason": "the help pages render no testid yet."
@@ -751,26 +769,22 @@
         "IntegrationsPage": [
             "integrations.options.bots--link"
         ],
-        "LinkingLandingPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves LinkingLandingPage to the grammar names one."
-        },
-        "LoginPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves Login to the grammar names one."
-        },
-        "MFAPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves MFAController to the grammar names one."
-        },
+        "LinkingLandingPage": [
+            "linking_landing.open_browser--link"
+        ],
+        "LoginPage": [
+            "login.card"
+        ],
+        "MFAPage": [
+            "signup.header"
+        ],
         "PasswordResetFormPage": {
             "ready": null,
             "reason": "renders no testid yet."
         },
-        "PasswordResetSendLinkPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves PasswordResetSendLink to the grammar names one."
-        },
+        "PasswordResetSendLinkPage": [
+            "password_reset.email--textbox"
+        ],
         "PopoutPage": {
             "ready": null,
             "reason": "only routes to a popout below it (channel, thread, RHS, help)."
@@ -790,18 +804,16 @@
         "ScheduledPostsPage": [
             "drafts.header"
         ],
-        "SelectTeamPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves SelectTeam to the grammar names one."
-        },
-        "ShouldVerifyEmailPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves ShouldVerifyEmail to the grammar names one."
-        },
-        "SignupPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves Signup to the grammar names one."
-        },
+        "SelectTeamPage": [
+            "signup.header"
+        ],
+        "ShouldVerifyEmailPage": [
+            "should_verify_email.title--text"
+        ],
+        "SignupPage": [
+            "signup.card",
+            "signup.no_methods.title--text"
+        ],
         "SignupUserCompleteDesktopPage": {
             "ready": null,
             "reason": "hands the signup over to the desktop app and redirects."
@@ -810,10 +822,9 @@
             "ready": null,
             "reason": "redirects to the team's default channel: open a channel with app.channelsPage.goto()."
         },
-        "TermsOfServicePage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves TermsOfService to the grammar names one."
-        },
+        "TermsOfServicePage": [
+            "terms_of_service.terms"
+        ],
         "ThreadPopoutPage": [
             "rhs.thread.header"
         ],

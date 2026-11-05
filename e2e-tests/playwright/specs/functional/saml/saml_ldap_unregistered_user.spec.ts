@@ -3,6 +3,8 @@
 
 import {expect, test, testConfig} from '@mattermost/playwright-lib';
 
+import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+
 /**
  * @objective Verify a SAML user who is not present in LDAP cannot log in while
  * EnableSyncWithLdap is on, then succeeds after they are added to LDAP.
@@ -10,7 +12,7 @@ import {expect, test, testConfig} from '@mattermost/playwright-lib';
  * @precondition
  * Keycloak and OpenLDAP running.
  */
-test('MM-T3664 SAML login is rejected when the user is not registered in LDAP', {tag: '@saml'}, async ({pw}) => {
+test('MM-T3664 SAML login is rejected when the user is not registered in LDAP', {tag: '@saml'}, async ({pw, page}) => {
     test.skip(
         testConfig.subpathMode,
         'Known product bug: the server signs the error page URL with the subpath but the webapp verifies it without, so the error message is never shown under a subpath.',
@@ -41,15 +43,13 @@ test('MM-T3664 SAML login is rejected when the user is not registered in LDAP', 
 
         // # Attempt SAML login while the user exists only in Keycloak
         await pw.keycloakLoginPage.logout();
-        await pw.hasSeenLandingPage();
-        await pw.loginPage.goto();
-        await pw.loginPage.toBeVisible();
-        await pw.loginPage.samlLoginButton.click();
-        await pw.keycloakLoginPage.login(username, 'Password1');
+        const app = await logInWithKeycloak(pw, page, 'saml', {username, password: 'Password1'});
 
         // * Verify the login is rejected because the user is not in LDAP
-        await pw.errorPage.toBeVisible();
-        await expect(pw.errorPage.userNotRegisteredOnLdap).toBeVisible();
+        await expect(app.errorView.messageText.locator).toHaveText(
+            'No user registered on AD/LDAP server that matches the SAML user.',
+        );
+        await expect(adminClient.getUserByUsername(username)).rejects.toThrow();
 
         // # Create the matching LDAP user and retry SAML login
         await pw.createLdapUser({
@@ -60,13 +60,10 @@ test('MM-T3664 SAML login is rejected when the user is not registered in LDAP', 
             lastname: 'NoLdapLast',
         });
         await pw.keycloakLoginPage.logout();
-        await pw.loginPage.goto();
-        await pw.loginPage.toBeVisible();
-        await pw.loginPage.samlLoginButton.click();
-        await pw.keycloakLoginPage.loginIfFormShown(username, 'Password1');
+        await logInWithKeycloak(pw, page, 'saml', {username, password: 'Password1'}, {ifFormShown: true});
 
         // * Verify the login succeeds once the user exists in LDAP
-        await pw.loginPage.expectNotOnLoginPage();
+        await expectSignedIn(page);
         const provisionedUser = await adminClient.getUserByUsername(username);
         expect(provisionedUser.auth_service).toBe('saml');
     } finally {

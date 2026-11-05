@@ -1,212 +1,112 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
-import {sendDemoSlashCommand} from '../../helpers';
+import {openChannel} from '../../../../channels/burn_on_read/support';
 
-test('should open /dialog and post submit confirmation on submit', async ({pw}) => {
-    // # Setup
+import {fieldContaining, openDialog, postContaining, radioFieldWith} from './support';
+
+/** Sets up the demo plugin, opens Town Square and runs a /dialog command. */
+async function openDemoDialog(pw: PlaywrightExtended, command: string) {
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
+    const app = await openChannel(pw, user, team, 'town-square');
+    const form = await openDialog(app, command);
+    return {app, form};
+}
 
-    // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+test('should open /dialog and post submit confirmation on submit', async ({pw}) => {
+    const {app, form} = await openDemoDialog(pw, '/dialog');
+    await expect(form.titleText.locator).toContainText('Test Title');
 
-    // # Navigate to Demo Plugin channel
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Fill the required fields. Display Name has a default ("default text"): overwrite it
+    await form.field({name: 'realname'}).fillValueTextbox('Test Input');
+    await form.field({name: 'someemail'}).fillValueTextbox('test@example.com');
+    await form.field({name: 'somepassword'}).fillValueTextbox('testpassword123');
+    await form.field({name: 'somenumber'}).fillValueSpinButton('42');
+    await form.field({name: 'someoptionselector'}).valueCombobox.choose('Option1');
 
-    // # Send /dialog command
-    const dialog = channelsPage.page.getByRole('dialog');
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/dialog');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-    await expect(dialog).toBeVisible();
+    // # The two required checkboxes, and the radio choice
+    await (await fieldContaining(app, 'Agree to the terms of service')).setValueCheckbox(true);
+    await (await fieldContaining(app, 'Agree to the annoying terms of service')).setValueCheckbox(true);
+    const option1 = (await radioFieldWith(app, 'Option1')).optionItems.first();
+    await expect(option1).toHaveAccessibleName('Option1');
+    await option1.check();
 
-    // * Verify dialog opens with title "Test Title"
-    await expect(dialog.getByRole('heading', {level: 1})).toContainText('Test Title');
+    // # Submit
+    await form.clickSubmitButton();
+    await expect(form.titleText.locator).not.toBeVisible();
 
-    // # Fill required fields
-    // Display Name already has default "default text" — overwrite
-    await dialog.getByTestId('realnameinput').fill('Test Input');
-
-    // Email and Password are required
-    await dialog.getByTestId('someemailemail').fill('test@example.com');
-    await dialog.getByTestId('somepasswordpassword').fill('testpassword123');
-
-    // Number is required
-    await dialog.getByTestId('somenumbernumber').fill('42');
-
-    // Option Selector — required, no default (3rd combobox: User Selector, Channel Selector, Option Selector)
-    await dialog.getByRole('combobox').nth(2).click();
-    await channelsPage.page.getByRole('option', {name: 'Option1'}).click();
-
-    // Required checkboxes
-    await dialog.getByRole('checkbox', {name: 'Agree to the terms of service'}).check();
-    await dialog.getByRole('checkbox', {name: 'Agree to the annoying terms of service'}).check();
-
-    // Radio Option Selector — required
-    await dialog.getByRole('radio', {name: 'Option1'}).click();
-
-    // # Submit the dialog
-    await dialog.getByRole('button', {name: 'Submit'}).click();
-
-    // * Verify the dialog closed and the submit post appears in the channel
-    // Note: "Interative" is a typo in the demo plugin — not a test error
-    await expect(dialog).not.toBeVisible();
-    await expect(
-        channelsPage.centerView.container.locator('p').filter({hasText: 'submitted an Interative Dialog'}),
-    ).toBeVisible();
+    // * The plugin posts the submission ("Interative" is the demo plugin's typo)
+    await postContaining(app, 'submitted an Interative Dialog');
 });
 
 test('should post cancellation notification when /dialog is cancelled', async ({pw}) => {
-    // # Setup
-    const {user, team} = await pw.initSetup();
-    await pw.ensureDemoPlugin();
+    const {app, form} = await openDemoDialog(pw, '/dialog');
 
-    // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    // * The dialog offers Cancel and Submit
+    await expect(form.titleText.locator).toContainText('Test Title');
+    await expect(form.cancelButton.locator).toBeVisible();
+    await expect(form.submitButton.locator).toHaveText('Submit');
 
-    // # Navigate to Demo Plugin channel
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Cancel
+    await form.clickCancelButton();
+    await expect(form.titleText.locator).not.toBeVisible();
 
-    // # Send /dialog command
-    const dialog = channelsPage.page.getByRole('dialog');
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/dialog');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-    await expect(dialog).toBeVisible();
-
-    // * Verify dialog opens
-    await expect(dialog.getByRole('heading', {level: 1})).toContainText('Test Title');
-    await expect(dialog.getByRole('button', {name: 'Cancel'})).toBeVisible();
-    await expect(dialog.getByRole('button', {name: 'Submit'})).toBeVisible();
-
-    // # Cancel the dialog
-    await dialog.getByRole('button', {name: 'Cancel'}).click();
-
-    // * Verify the dialog closed and the cancellation post appears in the channel
-    // Note: "Interative" is a typo in the demo plugin — not a test error
-    await expect(dialog).not.toBeVisible();
-    await expect(
-        channelsPage.centerView.container.locator('p').filter({hasText: 'canceled an Interative Dialog'}),
-    ).toBeVisible();
+    // * The plugin posts the cancellation ("Interative" is the demo plugin's typo)
+    await postContaining(app, 'canceled an Interative Dialog');
 });
 
 test('should show validation errors when required fields are submitted empty', async ({pw}) => {
-    // # Setup
-    const {user, team} = await pw.initSetup();
-    await pw.ensureDemoPlugin();
+    const {form} = await openDemoDialog(pw, '/dialog');
+    await expect(form.titleText.locator).toContainText('Test Title');
 
-    // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    // # Clear the required Number field and submit
+    const number = form.field({name: 'somenumber'});
+    await number.fillValueSpinButton('');
+    await form.clickSubmitButton();
 
-    // # Navigate to Demo Plugin channel
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
-
-    // # Send /dialog command
-    const dialog = channelsPage.page.getByRole('dialog');
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/dialog');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-    await expect(dialog).toBeVisible();
-
-    // * Verify dialog opens
-    await expect(dialog.getByRole('heading', {level: 1})).toContainText('Test Title');
-
-    // # Clear the Number field and submit
-    await dialog.getByTestId('somenumbernumber').clear();
-    await dialog.getByRole('button', {name: 'Submit'}).click();
-
-    // * Verify dialog stays open with validation errors
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByText('Please fix all field errors', {exact: true})).toBeVisible();
-    await expect(dialog.getByTestId('somenumber').getByText('This field is required.', {exact: true})).toBeVisible();
+    // * The dialog stays open with a form error and the field's own
+    await expect(form.titleText.locator).toBeVisible();
+    await expect(form.errorText.locator).toHaveText('Please fix all field errors');
+    await expect(number.locator).toContainText('This field is required.');
 });
 
 test('should show general error and keep dialog open on /dialog error submit', async ({pw}) => {
-    // # Setup
-    const {user, team} = await pw.initSetup();
-    await pw.ensureDemoPlugin();
+    const {form} = await openDemoDialog(pw, '/dialog error');
 
-    // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    // * The simple dialog offers Cancel and Submit Test
+    await expect(form.titleText.locator).toContainText('Simple Dialog Test');
+    await expect(form.cancelButton.locator).toBeVisible();
+    await expect(form.submitButton.locator).toHaveText('Submit Test');
 
-    // # Navigate to Town Square
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Fill its only field and submit
+    const [name] = await form.fieldKeys();
+    const field = form.field({name});
+    await field.fillValueTextbox('sample test input');
+    await form.clickSubmitButton();
 
-    // # Send /dialog error command
-    const dialog = channelsPage.page.getByRole('dialog');
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/dialog error');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-    await expect(dialog).toBeVisible();
-
-    // * Verify dialog opens with title "Simple Dialog Test"
-    await expect(dialog.getByRole('heading', {level: 1})).toContainText('Simple Dialog Test');
-    await expect(dialog.getByRole('button', {name: 'Cancel'})).toBeVisible();
-    await expect(dialog.getByRole('button', {name: 'Submit Test'})).toBeVisible();
-
-    // # Fill the optional field and submit
-    await dialog.getByPlaceholder('Enter some text (optional)...').fill('sample test input');
-    await dialog.getByRole('button', {name: 'Submit Test'}).click();
-
-    // * Verify general error appears and dialog stays open
-    await expect(dialog.getByText('some error', {exact: true})).toBeVisible();
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByPlaceholder('Enter some text (optional)...')).toHaveValue('sample test input');
+    // * The general error shows, and the dialog stays open with the input kept
+    await expect(form.errorText.locator).toHaveText('some error');
+    await expect(field.valueTextbox.locator).toHaveValue('sample test input');
+    await expect(form.titleText.locator).toBeVisible();
 });
 
 test('should show general error on /dialog error-no-elements confirm', async ({pw}) => {
-    // # Setup
-    const {user, team} = await pw.initSetup();
-    await pw.ensureDemoPlugin();
+    const {form} = await openDemoDialog(pw, '/dialog error-no-elements');
 
-    // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    // * The confirmation offers Cancel and Confirm, and no fields
+    await expect(form.titleText.locator).toContainText('Sample Confirmation Dialog');
+    await expect(form.cancelButton.locator).toBeVisible();
+    await expect(form.submitButton.locator).toHaveText('Confirm');
+    await expect(form.fieldItems).toHaveCount(0);
 
-    // # Navigate to Town Square
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Confirm
+    await form.clickSubmitButton();
 
-    // # Send /dialog error-no-elements command
-    const dialog = channelsPage.page.getByRole('dialog');
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/dialog error-no-elements');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
-    await expect(dialog).toBeVisible();
-
-    // * Verify dialog opens with title "Sample Confirmation Dialog" and no form fields
-    await expect(dialog.getByRole('heading', {level: 1})).toContainText('Sample Confirmation Dialog');
-    await expect(dialog.getByRole('button', {name: 'Cancel'})).toBeVisible();
-    await expect(dialog.getByRole('button', {name: 'Confirm'})).toBeVisible();
-    await expect(dialog.getByRole('textbox')).not.toBeVisible();
-
-    // # Click Confirm
-    await dialog.getByRole('button', {name: 'Confirm'}).click();
-
-    // * Verify general error appears and dialog stays open
-    await expect(dialog.getByText('some error', {exact: true})).toBeVisible();
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole('button', {name: 'Cancel'})).toBeVisible();
-    await expect(dialog.getByRole('button', {name: 'Confirm'})).toBeVisible();
+    // * The general error shows and the dialog stays open
+    await expect(form.errorText.locator).toHaveText('some error');
+    await expect(form.cancelButton.locator).toBeVisible();
+    await expect(form.submitButton.locator).toHaveText('Confirm');
 });
