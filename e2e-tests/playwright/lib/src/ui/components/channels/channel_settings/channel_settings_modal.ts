@@ -5,7 +5,6 @@ import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
 import InfoSettings from './info_settings';
-import ConfigurationSettings from './configuration_settings';
 
 import {ChannelSettingsModal as GeneratedChannelSettingsModal} from '@/ui/generated/channel_settings_modal';
 
@@ -16,10 +15,8 @@ export default class ChannelSettingsModal {
     readonly saveButton;
 
     readonly infoTab;
-    readonly configurationTab;
 
     readonly infoSettings;
-    readonly configurationSettings;
 
     /** Generated from the webapp's testids; this class keeps the flows specs already use. */
     readonly generated: GeneratedChannelSettingsModal;
@@ -36,18 +33,12 @@ export default class ChannelSettingsModal {
         this.saveButton = this.generated.savePanel.saveButton.locator;
 
         this.infoTab = this.generated.tabs.infoTab.locator;
-        this.configurationTab = this.generated.tabs.configurationTab.locator;
 
         this.infoSettings = new InfoSettings(this.generated.info.locator);
-        this.configurationSettings = new ConfigurationSettings(this.generated.configuration.container);
     }
 
     async toBeVisible() {
         await expect(this.container).toBeVisible();
-    }
-
-    getContainerId() {
-        return this.container.getAttribute('id');
     }
 
     async close() {
@@ -76,14 +67,5 @@ export default class ChannelSettingsModal {
         await this.infoSettings.toBeVisible();
 
         return this.infoSettings;
-    }
-
-    async openConfigurationTab(): Promise<ConfigurationSettings> {
-        await expect(this.configurationTab).toBeVisible();
-        await this.configurationTab.click();
-
-        await this.configurationSettings.toBeVisible();
-
-        return this.configurationSettings;
     }
 }

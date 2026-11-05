@@ -747,16 +747,6 @@
                 "testid": "post_textbox_placeholder",
                 "file": "multi_team_and_dm/max_gm_members_spec.js",
                 "reason": "stale on master too: no component renders it (the composer's placeholder is the textbox's placeholder attribute, which a CSS check can't read through ::placeholder). The truncation check needs rewriting with the channels area owner."
-            },
-            {
-                "testid": "systemProperties",
-                "file": "system_attributes/system_properties.ts",
-                "reason": "the dead System Properties page object (Q29: left for an upstream cleanup)."
-            },
-            {
-                "testid": "/^user_properties\\.validation/",
-                "file": "system_attributes/system_properties.ts",
-                "reason": "the dead System Properties page object (Q29: left for an upstream cleanup)."
             }
         ]
     },

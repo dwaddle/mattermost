@@ -4,33 +4,19 @@
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
-import SearchTeamSelector from './search_team_selector';
-
 /**
  * The right-hand-side panel that renders search results, saved messages, and
  * recent mentions. All three share the `#searchContainer` region.
  */
 export default class SearchResultsPanel {
     readonly container: Locator;
-    readonly filesTab: Locator;
-    readonly teamSelector: SearchTeamSelector;
 
     constructor(container: Locator) {
         this.container = container;
-        this.filesTab = container.getByRole('tab', {name: /^Files/});
-        this.teamSelector = new SearchTeamSelector(container.getByTestId('search.team_selector'));
     }
 
     async toBeVisible() {
         await expect(this.container).toBeVisible();
-    }
-
-    async notToBeVisible() {
-        await expect(this.container).not.toBeVisible();
-    }
-
-    async toHaveHeading(name: string) {
-        await expect(this.container.getByRole('heading', {name})).toBeVisible();
     }
 
     /**
@@ -48,13 +34,6 @@ export default class SearchResultsPanel {
     }
 
     /**
-     * All highlighted search terms currently rendered in the panel.
-     */
-    getHighlightedTerms() {
-        return this.container.getByTestId('markdown.search_highlight--text');
-    }
-
-    /**
      * The button that pops the panel out into its own window.
      */
     getPopoutButton() {
@@ -63,24 +42,6 @@ export default class SearchResultsPanel {
 
     async toContainText(text: string) {
         await expect(this.container).toContainText(text);
-    }
-
-    /**
-     * Clicks the reply (comment) arrow on the result item that contains the given text.
-     */
-    async replyToResultWithText(text: string) {
-        const item = this.getResultByText(text).first();
-        await item.hover();
-        await item.getByRole('button', {name: 'reply'}).click();
-    }
-
-    /**
-     * Hovers the result item that contains the given text and opens its "more" (dot) menu.
-     */
-    async openResultDotMenu(text: string) {
-        const item = this.getResultByText(text).first();
-        await item.hover();
-        await item.getByRole('button', {name: 'more'}).click();
     }
 
     /**

@@ -4,43 +4,13 @@
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
-import {getDayPickerDayCell} from '../day_picker';
-
-import SearchTeamSelector from './search_team_selector';
-
 export default class SearchBox {
     readonly container: Locator;
-
-    readonly messagesButton;
-    readonly filesButton;
     readonly searchInput;
-    readonly searchBoxClose;
-    readonly selectedSuggestion;
-    readonly searchHints;
-    readonly clearButton;
-    readonly teamSelector: SearchTeamSelector;
 
     constructor(container: Locator) {
         this.container = container;
-
-        this.messagesButton = container.getByRole('button', {name: 'Messages'});
-        this.filesButton = container.getByRole('button', {name: 'Files'});
         this.searchInput = container.getByLabel('Search messages');
-        this.searchBoxClose = container.getByTestId('search_box.close--button');
-        this.selectedSuggestion = container.getByRole('option', {selected: true}).locator('.suggestion-list__main');
-        this.searchHints = container.locator('#searchHints');
-        this.clearButton = container.getByTestId('search_box.clear--button');
-        this.teamSelector = new SearchTeamSelector(container.getByTestId('search_box.team_selector'));
-    }
-
-    // clearIfPossible clears the search input if the clear button is visible. Returns true if the clear button was clicked.
-    async clearIfPossible() {
-        if (await this.clearButton.isVisible()) {
-            await this.clearButton.click();
-            await expect(this.searchInput).toHaveValue('');
-            return true;
-        }
-        return false;
     }
 
     async toBeVisible() {
@@ -54,23 +24,5 @@ export default class SearchBox {
         await expect(this.searchInput).toBeVisible();
         await this.searchInput.fill(term);
         await this.searchInput.press('Enter');
-    }
-
-    getSelectedSuggestion() {
-        return this.searchHints.getByRole('option', {selected: true});
-    }
-
-    async selectSuggestionMatching(text: string) {
-        const suggestion = this.container.getByText(text, {exact: false}).first();
-        await expect(suggestion).toBeVisible();
-        await suggestion.click();
-    }
-
-    /**
-     * Locates a day in the "on:" date-filter day picker by day-of-month.
-     * @param dayOfMonth
-     */
-    getDayPickerDay(dayOfMonth: number): Locator {
-        return getDayPickerDayCell(this.container, dayOfMonth);
     }
 }

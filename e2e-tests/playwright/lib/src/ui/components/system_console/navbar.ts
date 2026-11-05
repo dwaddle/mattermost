@@ -20,11 +20,4 @@ export default class SystemConsoleNavbar {
         await expect(this.container).toBeVisible();
         await expect(this.backLink).toBeVisible();
     }
-
-    /**
-     * Click the back link to return to the team
-     */
-    async clickBack() {
-        await this.backLink.click();
-    }
 }

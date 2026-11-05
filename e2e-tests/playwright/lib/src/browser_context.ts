@@ -39,11 +39,6 @@ export class TestBrowser {
 
         const channelsPage = new pages.ChannelsPage(page);
         const systemConsolePage = new pages.SystemConsolePage(page);
-        const scheduledPostsPage = new pages.ScheduledPostsPage(page);
-        const draftsPage = new pages.DraftsPage(page);
-        const recapsPage = new pages.RecapsPage(page);
-        const threadsPage = new pages.ThreadsPage(page);
-        const contentReviewPage = new pages.ContentReviewPage(page);
 
         // the generated page objects (from the webapp's testids)
         const app = new App(page);
@@ -55,11 +50,6 @@ export class TestBrowser {
             page,
             channelsPage,
             systemConsolePage,
-            scheduledPostsPage,
-            draftsPage,
-            recapsPage,
-            threadsPage,
-            contentReviewPage,
             app,
         };
     }

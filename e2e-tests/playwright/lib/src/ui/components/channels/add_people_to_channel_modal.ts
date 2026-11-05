@@ -7,14 +7,8 @@ import {expect} from '@playwright/test';
 export default class AddPeopleToChannelModal {
     readonly container: Locator;
 
-    readonly closeButton;
-    readonly alreadyInChannelLabel;
-
     constructor(container: Locator) {
         this.container = container;
-
-        this.closeButton = container.getByRole('button', {name: 'Close'});
-        this.alreadyInChannelLabel = container.getByText('Already in channel');
     }
 
     async toBeVisible() {

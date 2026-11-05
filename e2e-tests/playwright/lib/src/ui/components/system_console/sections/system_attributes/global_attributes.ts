@@ -18,12 +18,12 @@ export type ListingResourceTypeFilter = 'All' | 'Users' | 'Channels' | 'Posts';
 
 // Test ids of the listing's search, filters and empty states.
 export const LISTING_TEST_IDS = {
-    search: 'global-attributes-search',
-    sourceFilter: 'global-attributes-source-filter',
-    resourceTypeFilter: 'global-attributes-resource-type-filter',
-    clearFilters: 'global-attributes-clear-filters',
-    empty: 'global-attributes-empty',
-    emptySearch: 'global-attributes-empty-search',
+    search: 'admin.attributes.search--textbox',
+    sourceFilter: 'admin.attributes.source_filter--button',
+    resourceTypeFilter: 'admin.attributes.resource_type_filter--button',
+    clearFilters: 'admin.attributes.clear_filters--button',
+    empty: 'admin.attributes.empty--text',
+    emptySearch: 'admin.attributes.empty_search--text',
 } as const;
 
 const LISTING_SEARCH_ROUTE = '/api/v4/properties/groups/access_control/attributes/search';
@@ -218,7 +218,7 @@ export default class GlobalAttributes {
      */
     get rows() {
         const page = this.container.page();
-        return page.locator('tr').filter({has: page.getByTestId('global-attribute-name')});
+        return page.locator('tr').filter({has: page.getByTestId('admin.attributes.row.name--text')});
     }
 
     /**
@@ -228,7 +228,7 @@ export default class GlobalAttributes {
     rowByLabel(label: string) {
         const page = this.container.page();
         return page.locator('tr').filter({
-            has: page.getByTestId('global-attribute-name').filter({hasText: label}),
+            has: page.getByTestId('admin.attributes.row.name--text').filter({hasText: label}),
         });
     }
 

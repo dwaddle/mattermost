@@ -16,27 +16,12 @@ export default class ChannelsPostCreate {
     readonly input;
 
     readonly attachmentButton;
-    readonly emojiButton;
     readonly sendMessageButton;
-    readonly scheduleMessageButton;
-    readonly priorityButton;
-    readonly priorityLabel;
-    readonly removeLabelsButton;
-    readonly removeLabelsTooltip;
-    readonly suggestionList;
-    readonly suggestionOptions;
-    readonly selectedSuggestion;
     readonly filePreview;
-    readonly filePreviewItems;
-    readonly messageTooLongWarning;
-    readonly previewButton;
     readonly previewArea;
 
     // Burn-on-Read elements
     readonly burnOnReadButton;
-    readonly burnOnReadLabel;
-    readonly burnOnReadLabelRemoveButton;
-    readonly removeAllLabelsButton;
 
     /** Generated from the webapp's testids; this class keeps the flows specs already use. */
     readonly generated: PostCreate;
@@ -48,33 +33,13 @@ export default class ChannelsPostCreate {
         this.input = this.generated.messageTextbox.locator;
 
         this.attachmentButton = container.locator('#fileUploadButton');
-        this.emojiButton = container.getByLabel('select an emoji');
         this.sendMessageButton = this.generated.sendButton.locator;
-        this.scheduleMessageButton = container.getByLabel('Schedule message');
-        this.priorityButton = container.getByLabel('Message priority');
-        this.priorityLabel = container.getByTestId(/\.priority_labels\.priority$/);
-        this.removeLabelsButton = container.getByRole('button', {name: 'Remove all labels'});
-        // Tooltips render in a portal outside the post create container.
-        this.removeLabelsTooltip = container.page().getByRole('tooltip', {name: 'Remove all labels'});
-        this.suggestionList = container.getByRole('listbox', {name: 'Suggestions'});
-        this.suggestionOptions = this.suggestionList.getByRole('option');
-        this.selectedSuggestion = this.suggestionList.getByRole('option', {selected: true});
         this.filePreview = container.getByTestId(/\.file_previews$/);
-        this.filePreviewItems = this.filePreview.getByTestId(/\.file_previews\.file:/);
-        this.messageTooLongWarning = container.getByText(/Your message is too long\. Character count:/);
-        this.previewButton = container.getByRole('button', {name: 'preview'});
         this.previewArea = container.locator('.textbox-preview-area');
 
         // Burn-on-Read elements
         // Use a flexible locator that matches the aria-label pattern
         this.burnOnReadButton = container.getByRole('button', {name: /Burn-on-read/i});
-        this.burnOnReadLabel = container.getByTestId(/\.burn_on_read_label$/);
-
-        // Two distinct remove controls can sit on the label row: the label's own X and
-        // UnifiedLabelsWrapper's remove-all. Kept separate so a spec can assert which
-        // of them is present rather than counting anonymous buttons.
-        this.burnOnReadLabelRemoveButton = container.getByRole('button', {name: 'Remove burn-on-read'});
-        this.removeAllLabelsButton = container.getByRole('button', {name: 'Remove all labels'});
     }
 
     async toBeVisible() {
@@ -93,21 +58,6 @@ export default class ChannelsPostCreate {
         await expect(this.input).toBeVisible();
 
         await this.input.fill(message);
-    }
-
-    /**
-     * Types the message into the input one keystroke at a time, the way a user does, without sending it.
-     * Prefer this over writeMessage when the behaviour under test depends on the input changing more than
-     * once, such as the autocomplete, which debounces each change before searching the server.
-     * @param message : Message to be typed into the input
-     * @param options.delay : Milliseconds to wait between keystrokes. Use a delay longer than the
-     * autocomplete's debounce when a search per keystroke is wanted.
-     */
-    async typeMessage(message: string, options?: {delay?: number}) {
-        await this.input.waitFor();
-        await expect(this.input).toBeVisible();
-
-        await this.input.pressSequentially(message, options);
     }
 
     /**
@@ -130,15 +80,6 @@ export default class ChannelsPostCreate {
         await expect(this.sendMessageButton).toBeEnabled();
 
         await this.sendMessageButton.click();
-    }
-
-    /**
-     * Opens the message priority menu
-     */
-    async openPriorityMenu() {
-        await expect(this.priorityButton).toBeVisible();
-        await expect(this.priorityButton).toBeEnabled();
-        await this.priorityButton.click();
     }
 
     /**
@@ -177,113 +118,6 @@ export default class ChannelsPostCreate {
         await this.sendMessage();
     }
 
-    /**
-     * Selects a slash command from the autocomplete suggestion list
-     * @param keystrokes - The partial text to type that triggers autocomplete (e.g., "/cr")
-     * @param expectedCommand - The command we expect to see and select (e.g., "/crash")
-     */
-    async selectSlashCommandFromAutocomplete(keystrokes: string, expectedCommand: string) {
-        await this.input.waitFor();
-        await expect(this.input).toBeVisible();
-
-        // Type the keystrokes to trigger autocomplete
-        await this.input.fill(keystrokes);
-
-        // Wait for the suggestion list to appear
-        await expect(this.suggestionList).toBeVisible();
-
-        // Verify the expected command appears in the suggestions
-        const suggestion = this.suggestionList.getByText(expectedCommand);
-        await expect(suggestion).toBeVisible();
-
-        // Click to select the command
-        await suggestion.click();
-    }
-
-    /**
-     * Types the given keystrokes to trigger the autocomplete suggestion list,
-     * optionally moves the highlight down with ArrowDown, then completes the
-     * highlighted suggestion by pressing Tab.
-     * @param keystrokes - Partial text that triggers autocomplete (e.g. "@jo", ":tomato")
-     * @param options.arrowDown - Number of ArrowDown presses before selecting
-     */
-    async selectFromAutocompleteWithTab(keystrokes: string, {arrowDown = 0}: {arrowDown?: number} = {}) {
-        await this.input.waitFor();
-        await expect(this.input).toBeVisible();
-
-        await this.input.fill(keystrokes);
-        await expect(this.suggestionList).toBeVisible();
-
-        for (let i = 0; i < arrowDown; i++) {
-            await this.input.press('ArrowDown');
-        }
-
-        await this.input.press('Tab');
-    }
-
-    async openEmojiPicker() {
-        await expect(this.emojiButton).toBeVisible();
-        await this.emojiButton.click();
-    }
-
-    async selectFiles(files: File | File[]) {
-        const selectedFiles = Array.isArray(files) ? files : [files];
-        const fileChooserPromise = this.container.page().waitForEvent('filechooser');
-        await this.attachmentButton.click();
-        const fileChooser = await fileChooserPromise;
-        const payloads = await Promise.all(
-            selectedFiles.map(async (file) => ({
-                name: file.name,
-                mimeType: file.type,
-                buffer: Buffer.from(await file.arrayBuffer()),
-            })),
-        );
-        await fileChooser.setFiles(payloads);
-        await this.waitUntilFilePreviewContains(selectedFiles.map((file) => file.name));
-    }
-
-    getFilePreviewItem(fileName: string) {
-        return this.filePreviewItems.filter({hasText: fileName});
-    }
-
-    async toHaveFilePreview(fileName: string) {
-        const item = this.getFilePreviewItem(fileName);
-        await expect(item).toBeVisible();
-        await expect(item.getByLabel(/file thumbnail/i)).toBeVisible();
-    }
-
-    async removeFilePreview(fileName: string) {
-        await this.getFilePreviewItem(fileName)
-            .getByTestId(/\.file_previews\.file\.remove--button$/)
-            .click();
-    }
-
-    async toHaveFilePreviewCount(count: number) {
-        await expect(this.filePreviewItems).toHaveCount(count);
-    }
-
-    async toNotHaveMessageTooLongWarning() {
-        await expect(this.messageTooLongWarning).not.toBeVisible();
-    }
-
-    async toHaveMessageTooLongWarning(characterCount: number, maximum: number) {
-        await expect(
-            this.container.getByText(`Your message is too long. Character count: ${characterCount}/${maximum}`, {
-                exact: true,
-            }),
-        ).toBeVisible();
-    }
-
-    async togglePreview() {
-        await expect(this.previewButton).toBeVisible();
-        await this.previewButton.click();
-    }
-
-    async clickMentionInPreview() {
-        await expect(this.previewArea).toBeVisible();
-        await this.previewArea.locator('.mention-link').click();
-    }
-
     async waitUntilFilePreviewContains(files: string[], timeout = duration.ten_sec) {
         await waitUntil(
             async () => {
@@ -309,34 +143,5 @@ export default class ChannelsPostCreate {
         await expect(this.burnOnReadButton).toBeAttached();
         await expect(this.burnOnReadButton).toBeEnabled();
         await this.burnOnReadButton.click();
-    }
-
-    /**
-     * The burn-on-read control is hidden by not being rendered at all, so this asserts
-     * absence from the DOM rather than invisibility — a control rendered disabled would
-     * pass toBeHidden() and should not pass here.
-     */
-    async toHaveBurnOnReadHidden() {
-        await expect(this.burnOnReadButton).not.toBeAttached();
-    }
-
-    async toHaveBurnOnReadVisible() {
-        await expect(this.burnOnReadButton).toBeVisible();
-    }
-
-    async toHaveBurnOnReadLabel() {
-        await expect(this.burnOnReadLabel).toBeVisible();
-    }
-
-    async toHaveNoBurnOnReadLabel() {
-        await expect(this.burnOnReadLabel).not.toBeVisible();
-    }
-
-    /**
-     * Check if burn-on-read is currently enabled
-     * BoR is considered enabled if the label is visible above the input
-     */
-    async isBurnOnReadEnabled(): Promise<boolean> {
-        return this.burnOnReadLabel.isVisible();
     }
 }
