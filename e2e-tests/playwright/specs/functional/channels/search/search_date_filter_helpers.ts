@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, type ChannelsPage, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 const FIRST_DATE_EARLY = Date.UTC(2018, 5, 5, 9, 30);
 const FIRST_DATE_LATER = Date.UTC(2018, 5, 5, 9, 45);
@@ -41,39 +41,49 @@ export async function setupSearchDateFilter(pw: PlaywrightExtended) {
         firstOffTopic: `4th Off topic 1 ${commonText}`,
         secondOffTopic: `2nd Off topic 2 ${commonText}`,
     };
+    const postIds: Record<string, string> = {};
 
-    await userClient.createPost({
-        channel_id: channel.id,
-        message: messages.latest,
-        create_at: LATEST_DATE,
-    });
-    await anotherAdminClient.createPost({
-        channel_id: channel.id,
-        message: messages.first,
-        create_at: FIRST_DATE_EARLY,
-    });
-    await userClient.createPost({
-        channel_id: channel.id,
-        message: messages.second,
-        create_at: SECOND_DATE_EARLY,
-    });
-    await userClient.createPost({
-        channel_id: offTopic.id,
-        message: messages.firstOffTopic,
-        create_at: FIRST_DATE_LATER,
-    });
-    await anotherAdminClient.createPost({
-        channel_id: offTopic.id,
-        message: messages.secondOffTopic,
-        create_at: SECOND_DATE_LATER,
-    });
+    postIds[messages.latest] = (
+        await userClient.createPost({
+            channel_id: channel.id,
+            message: messages.latest,
+            create_at: LATEST_DATE,
+        })
+    ).id;
+    postIds[messages.first] = (
+        await anotherAdminClient.createPost({
+            channel_id: channel.id,
+            message: messages.first,
+            create_at: FIRST_DATE_EARLY,
+        })
+    ).id;
+    postIds[messages.second] = (
+        await userClient.createPost({
+            channel_id: channel.id,
+            message: messages.second,
+            create_at: SECOND_DATE_EARLY,
+        })
+    ).id;
+    postIds[messages.firstOffTopic] = (
+        await userClient.createPost({
+            channel_id: offTopic.id,
+            message: messages.firstOffTopic,
+            create_at: FIRST_DATE_LATER,
+        })
+    ).id;
+    postIds[messages.secondOffTopic] = (
+        await anotherAdminClient.createPost({
+            channel_id: offTopic.id,
+            message: messages.secondOffTopic,
+            create_at: SECOND_DATE_LATER,
+        })
+    ).id;
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
     return {
-        channelsPage,
+        search: {app, postId: (message: string) => postIds[message]} as DateFilterSearch,
         channel,
         anotherAdmin,
         commonText,
@@ -88,20 +98,22 @@ export async function setupSearchDateFilter(pw: PlaywrightExtended) {
     };
 }
 
-export async function searchAndValidate(channelsPage: ChannelsPage, query: string, expectedMessages: string[] = []) {
-    await channelsPage.searchFor(query);
+/** The logged-in app and each fixture post's id by its message. */
+export type DateFilterSearch = {app: App; postId: (message: string) => string};
 
-    const results = channelsPage.searchResultsPanel.getResultItems();
-    await expect(results).toHaveCount(expectedMessages.length);
+/** Searches, then checks the results are exactly the expected posts, in order (by post id). */
+export async function searchAndValidate(search: DateFilterSearch, query: string, expectedMessages: string[] = []) {
+    const {app} = search;
+    const input = app.searchBox.inputSearchbox.locator;
+    await app.globalHeader.search.clickOpenButton();
+    await input.fill(query);
+    await input.press('Enter');
 
     if (expectedMessages.length === 0) {
-        await expect(
-            channelsPage.searchResultsPanel.container.getByText(`No results for “${query}”`, {exact: true}),
-        ).toBeVisible();
+        await expect(app.page.getByText(`No results for “${query}”`, {exact: true})).toBeVisible();
+        await expect(app.search.results.postItems).toHaveCount(0);
         return;
     }
 
-    for (const [index, message] of expectedMessages.entries()) {
-        await expect(results.nth(index).getByText(message, {exact: true})).toBeVisible();
-    }
+    await expect.poll(() => app.search.results.postKeys()).toEqual(expectedMessages.map(search.postId));
 }

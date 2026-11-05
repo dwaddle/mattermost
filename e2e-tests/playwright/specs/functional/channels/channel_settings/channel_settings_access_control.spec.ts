@@ -663,7 +663,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelsPage.sidebarRight.toBeVisible();
 
         // * Admin remains in the RHS members list, and removed member is absent
-        await expect(page.getByTestId(`memberline-${adminUser.id}`)).toBeVisible({timeout: 10000});
-        await expect(page.getByTestId(`memberline-${memberToRemove.id}`)).not.toBeVisible();
+        await expect(page.getByTestId(`rhs.channel_members.member:${adminUser.id}`)).toBeVisible({timeout: 10000});
+        await expect(page.getByTestId(`rhs.channel_members.member:${memberToRemove.id}`)).not.toBeVisible();
     });
 });

@@ -5,47 +5,43 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a long reply draft keeps the expanded reply textbox height after switching threads.
+ *
+ * Written on the generated page objects: the posts are found by id, and the reply box is the thread composer's.
  */
 test('MM-T212 keeps a long draft expanded in the reply input', {tag: '@messaging'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
-    const firstPost = await adminClient.createPost({
-        channel_id: offTopic.id,
-        user_id: user.id,
-        message: 'test post 1',
-    });
-    const secondPost = await adminClient.createPost({
-        channel_id: offTopic.id,
-        user_id: user.id,
-        message: 'test post 2',
-    });
+    const {team, user, userClient} = await pw.initSetup();
+    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const firstPost = await userClient.createPost({channel_id: offTopic.id, message: 'test post 1'});
+    const secondPost = await userClient.createPost({channel_id: offTopic.id, message: 'test post 2'});
+    const draft = `test${'\n'.repeat(8)}test`;
 
-    // # Log in, open the latest post's thread, and record the reply textbox's initial height
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, offTopic.name);
-    await channelsPage.toBeVisible();
-    await (await channelsPage.centerView.getPostById(secondPost.id)).reply();
-    await channelsPage.sidebarRight.toBeVisible();
-    const replyInput = channelsPage.sidebarRight.postCreate.input;
+    // # Log in and open a post's thread
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: offTopic});
+    const openThread = async (post: typeof firstPost) => {
+        const item = app.center.postList.post(post);
+        await item.locator.hover();
+        await item.menu.clickReplyButton();
+        await expect(app.rhs.thread.post(post).locator).toBeVisible();
+    };
+    await openThread(secondPost);
+
+    // * The reply textbox starts at its single-line height
+    const replyInput = app.rhs.postCreate.messageTextbox.locator;
     await expect(replyInput).toHaveCSS('height', '46px');
-    const initialBox = await replyInput.boundingBox();
-    expect(initialBox).not.toBeNull();
+    const initialHeight = (await replyInput.boundingBox())!.height;
 
     // # Enter a reply draft with enough line breaks to expand the textbox
-    await channelsPage.sidebarRight.postCreate.writeMessage(`test${'\n'.repeat(8)}test`);
+    await app.rhs.postCreate.fillMessageTextbox(draft);
 
-    // * Verify the reply textbox grows to more than twice its original height
-    const expandedBox = await replyInput.boundingBox();
-    expect(expandedBox).not.toBeNull();
-    expect(expandedBox!.height).toBeGreaterThan(initialBox!.height * 2);
+    // * The reply textbox grows to more than twice its original height
+    await expect.poll(async () => (await replyInput.boundingBox())!.height).toBeGreaterThan(initialHeight * 2);
 
-    // # Switch to the first post's thread, then return to the latest post's thread
-    await (await channelsPage.centerView.getPostById(firstPost.id)).reply();
-    await (await channelsPage.centerView.getPostById(secondPost.id)).reply();
+    // # Switch to the first post's thread, then back to the latest post's thread
+    await openThread(firstPost);
+    await openThread(secondPost);
 
-    // * Verify the long draft and expanded textbox height are restored
-    await expect(replyInput).toHaveValue(`test${'\n'.repeat(8)}test`);
-    const restoredBox = await replyInput.boundingBox();
-    expect(restoredBox).not.toBeNull();
-    expect(restoredBox!.height).toBeGreaterThan(initialBox!.height * 2);
+    // * The long draft and the expanded height are restored
+    await expect(replyInput).toHaveValue(draft);
+    await expect.poll(async () => (await replyInput.boundingBox())!.height).toBeGreaterThan(initialHeight * 2);
 });

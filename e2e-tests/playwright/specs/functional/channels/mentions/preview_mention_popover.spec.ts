@@ -9,6 +9,9 @@ import {expect, setWysiwygUserPreference, test} from '@mattermost/playwright-lib
  *
  * @precondition Two users on the same team. The markdown composer preview is available
  * (WYSIWYG editor preference is off).
+ *
+ * The composer, its suggestions (by username), its preview toggle, the mention (by user id) and the popover are
+ * the generated page objects.
  */
 test(
     'MM-67123 clicking a user mention in composer preview opens the profile popover',
@@ -23,36 +26,36 @@ test(
         const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
         await adminClient.addToChannel(mentionedUser.id, townSquare.id);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app, channelsPage} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: townSquare});
 
         const unique = `preview-mention-${pw.random.id()}`;
-        const {postCreate} = channelsPage.centerView;
+        const composer = app.center.postCreate;
+        const input = composer.messageTextbox.locator;
+        const {previewArea} = channelsPage.centerView.postCreate;
 
-        // # Type a draft that mentions the other user via autocomplete so the mention resolves
-        await postCreate.writeMessage(`@${mentionedUser.username}`);
-        await expect(postCreate.suggestionList).toBeVisible();
-        await postCreate.suggestionOptions.first().click();
-        await postCreate.input.pressSequentially(` ${unique}`);
-        const draft = await postCreate.getInputValue();
+        // # Type a draft that mentions the other user, picking them from the autocomplete so the mention resolves
+        await input.pressSequentially(`@${mentionedUser.username}`);
+        await composer.message.suggestions.item(`@${mentionedUser.username}`).locator.click();
+        await input.pressSequentially(` ${unique}`);
+        const draft = await input.inputValue();
 
         // # Show the composer markdown preview
-        await postCreate.togglePreview();
-        await expect(postCreate.previewArea).toBeVisible();
-        await expect(postCreate.previewArea).toContainText(`@${mentionedUser.username}`);
-        await expect(postCreate.previewArea).toContainText(unique);
+        await composer.clickPreviewButton();
+        await expect(previewArea).toBeVisible();
+        await expect(previewArea).toContainText(`@${mentionedUser.username}`);
+        await expect(previewArea).toContainText(unique);
 
         // # Click the rendered mention in the preview
-        await postCreate.clickMentionInPreview();
+        await app.markdown.mention(mentionedUser).locator.click();
 
         // * The mentioned user's profile popover opens
-        await expect(channelsPage.userProfilePopover.container).toBeVisible();
-        await expect(channelsPage.userProfilePopover.container).toContainText(`@${mentionedUser.username}`);
+        await expect(app.profilePopover.locator).toBeVisible();
+        await expect(app.profilePopover.locator).toContainText(`@${mentionedUser.username}`);
 
         // * The draft remains in the composer and is not posted
-        await expect(postCreate.input).toHaveValue(draft);
-        await expect(postCreate.previewArea).toContainText(unique);
+        await expect(input).toHaveValue(draft);
+        await expect(previewArea).toContainText(unique);
 
         const lastPost = await channelsPage.getLastPost();
         await expect(lastPost.container).not.toContainText(unique);

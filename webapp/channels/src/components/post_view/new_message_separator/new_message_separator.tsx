@@ -4,6 +4,8 @@
 import React, {memo} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import * as PostList from 'mattermost-redux/utils/post_list';
 
 import NotificationSeparator from 'components/widgets/separator/notification-separator';
@@ -18,6 +20,9 @@ type Props = {
     newMessagesSeparatorActions: NewMessagesSeparatorActionComponent[];
     channelId?: string;
     threadId?: string;
+
+    // The list's "New Messages" line, e.g. `center.post_list.new_messages`.
+    testId: TestId;
 };
 
 const NewMessageSeparator = ({
@@ -26,6 +31,7 @@ const NewMessageSeparator = ({
     threadId,
     wrapperRef,
     separatorId,
+    testId,
 }: Props) => {
     const lastViewedAt = PostList.getTimestampForStartOfNewMessages(separatorId);
 
@@ -55,7 +61,7 @@ const NewMessageSeparator = ({
             ref={wrapperRef}
             className='new-separator'
         >
-            <NotificationSeparator>
+            <NotificationSeparator testId={testId}>
                 <FormattedMessage
                     id='posts_view.newMsg'
                     defaultMessage='New Messages'

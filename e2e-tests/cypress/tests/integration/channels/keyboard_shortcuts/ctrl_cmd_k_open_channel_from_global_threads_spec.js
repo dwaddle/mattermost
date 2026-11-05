@@ -95,7 +95,7 @@ describe('Keyboard Shortcuts', () => {
         cy.url().should('equal', `${Cypress.config('baseUrl')}/${testTeam.name}/threads`);
 
         // * Confirm the offtopic channel is selected in the suggestion list
-        cy.get('#suggestionList').findByTestId('off-topic').should('be.visible').and('have.class', 'suggestion--selected');
+        cy.get('#suggestionList').find('[data-testid^="quick_switch_modal.suggestions.item:"]:contains("Off-Topic")').should('be.visible').and('have.class', 'suggestion--selected');
 
         // # Press up arrow
         cy.wait(TIMEOUTS.HALF_SEC);
@@ -105,7 +105,7 @@ describe('Keyboard Shortcuts', () => {
         cy.url().should('equal', `${Cypress.config('baseUrl')}/${testTeam.name}/threads`);
 
         // * Confirm the townsquare channel is selected in the suggestion list
-        cy.get('#suggestionList').findByTestId('town-square').should('be.visible').and('have.class', 'suggestion--selected');
+        cy.get('#suggestionList').find('[data-testid^="quick_switch_modal.suggestions.item:"]:contains("Town Square")').should('be.visible').and('have.class', 'suggestion--selected');
 
         // # Press down arrow
         cy.wait(TIMEOUTS.HALF_SEC);
@@ -115,7 +115,7 @@ describe('Keyboard Shortcuts', () => {
         cy.url().should('equal', `${Cypress.config('baseUrl')}/${testTeam.name}/threads`);
 
         // * Confirm the offtopic channel is selected in the suggestion list
-        cy.get('#suggestionList').findByTestId('off-topic').should('be.visible').and('have.class', 'suggestion--selected');
+        cy.get('#suggestionList').find('[data-testid^="quick_switch_modal.suggestions.item:"]:contains("Off-Topic")').should('be.visible').and('have.class', 'suggestion--selected');
 
         // # Press ENTER
         cy.get('body').type('{enter}');

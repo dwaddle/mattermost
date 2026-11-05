@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import * as UserAgent from '@mattermost/shared/utils/user_agent';
 
 import QuickInput from 'components/quick_input';
@@ -52,6 +53,11 @@ export type SuggestionBoxProps = {
      * The list component to render, usually SuggestionList
      */
     listComponent?: React.ComponentType<any>;
+
+    /**
+     * The suggestion list's scope (`<host>.suggestions`): its items are `<listTestId>.item:<suggestionTestKey(term)>--option`
+     */
+    listTestId?: TestId;
 
     /**
      * Where the list will be displayed relative to the input box, defaults to 'top'
@@ -788,6 +794,7 @@ export default class SuggestionBox extends React.PureComponent<SuggestionBoxProp
             dateComponent,
             listComponent,
             listPosition,
+            listTestId,
             renderNoResults,
 
             // Don't pass props used by SuggestionBox on to the input
@@ -857,6 +864,7 @@ export default class SuggestionBox extends React.PureComponent<SuggestionBoxProp
                         selection={this.state.selection}
                         inputRef={this.inputRef}
                         onLoseVisibility={this.blur}
+                        testId={listTestId}
                     />
                 )}
                 {showList && this.state.presentationType === 'date' && SuggestionDateComponent && (

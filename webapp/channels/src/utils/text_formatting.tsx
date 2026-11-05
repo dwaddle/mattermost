@@ -497,14 +497,14 @@ export function autolinkChannelMentions(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             href = ((window as any).basename || '') + '/' + teamName + '/channels/' + channelName;
             tokens.set(alias, {
-                value: `<a class="mention-link" href="${href}" data-channel-mention-team="${teamName}" data-channel-mention="${channelName}">~${displayName}</a>`,
+                value: `<a data-testid="markdown.channel_mention:${channelName}--link" class="mention-link" href="${href}" data-channel-mention-team="${teamName}" data-channel-mention="${channelName}">~${displayName}</a>`,
                 originalText: mention,
             });
         } else if (team) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             href = ((window as any).basename || '') + '/' + team.name + '/channels/' + channelName;
             tokens.set(alias, {
-                value: `<a class="mention-link" href="${href}" data-channel-mention="${channelName}">~${displayName}</a>`,
+                value: `<a data-testid="markdown.channel_mention:${channelName}--link" class="mention-link" href="${href}" data-channel-mention="${channelName}">~${displayName}</a>`,
                 originalText: mention,
             });
         }
@@ -632,7 +632,7 @@ export function highlightCurrentMentions(
             const newAlias = `$MM_SELFMENTION${index}$`;
 
             newTokens.set(newAlias, {
-                value: `<span class="mention--highlight">${alias}</span>`,
+                value: mentionHighlightHtml(alias),
                 originalText: token.originalText,
             });
             output = output.replace(alias, newAlias);
@@ -655,7 +655,7 @@ export function highlightCurrentMentions(
         const alias = `$MM_SELFMENTION${index}$`;
 
         tokens.set(alias, {
-            value: `<span class="mention--highlight">${mention}</span>`,
+            value: mentionHighlightHtml(mention),
             originalText: mention,
         });
 
@@ -688,6 +688,15 @@ export function highlightCurrentMentions(
     return output;
 }
 
+/** A hashtag rendered as a link that searches for it. */
+function mentionHighlightHtml(mention: string) {
+    return `<span class="mention--highlight" data-testid="markdown.mention_highlight--text">${mention}</span>`;
+}
+
+function hashtagLinkHtml(hashtag: string) {
+    return `<a data-testid='markdown.hashtag--link' class='mention-link' href='#' data-hashtag='${hashtag}'>${hashtag}</a>`;
+}
+
 export function highlightWithoutNotificationKeywords(
     text: string,
     tokens: Tokens,
@@ -707,7 +716,7 @@ export function highlightWithoutNotificationKeywords(
             const newAlias = `$MM_HIGHLIGHTKEYWORD${newIndex}$`;
 
             newTokens.set(newAlias, {
-                value: `<span class="non-notification-highlight">${alias}</span>`,
+                value: `<span class="non-notification-highlight" data-testid="markdown.keyword_highlight--text">${alias}</span>`,
                 originalText: token.originalText,
             });
             output = output.replace(alias, newAlias);
@@ -731,7 +740,7 @@ export function highlightWithoutNotificationKeywords(
 
         // Set the token map with the replacement value so that it can be replaced back later
         tokens.set(alias, {
-            value: `<span class="non-notification-highlight">${highlightKey}</span>`,
+            value: `<span class="non-notification-highlight" data-testid="markdown.keyword_highlight--text">${highlightKey}</span>`,
             originalText: highlightKey,
         });
 
@@ -777,7 +786,7 @@ function autolinkHashtags(
             const newAlias = `$MM_HASHTAG${index}$`;
 
             newTokens.set(newAlias, {
-                value: `<a class='mention-link' href='#' data-hashtag='${token.originalText}'>${token.originalText}</a>`,
+                value: hashtagLinkHtml(token.originalText),
                 originalText: token.originalText,
                 hashtag: token.originalText.substring(1),
             });
@@ -806,7 +815,7 @@ function autolinkHashtags(
         }
 
         tokens.set(alias, {
-            value: `<a class='mention-link' href='#' data-hashtag='${originalText}'>${originalText}</a>`,
+            value: hashtagLinkHtml(originalText),
             originalText,
             hashtag: originalText.substring(1),
         });
@@ -929,7 +938,7 @@ export function highlightSearchTerms(
         const alias = `$MM_SEARCHTERM${index}$`;
 
         tokens.set(alias, {
-            value: `<span class="search-highlight" data-testid="search-highlight">${word}</span>`,
+            value: `<span class="search-highlight" data-testid="markdown.search_highlight--text">${word}</span>`,
             originalText: word,
         });
 
@@ -963,7 +972,7 @@ export function highlightSearchTerms(
                 const newAlias = `$MM_SEARCHTERM${index}$`;
 
                 newTokens.set(newAlias, {
-                    value: `<span class="search-highlight" data-testid="search-highlight">${alias}</span>`,
+                    value: `<span class="search-highlight" data-testid="markdown.search_highlight--text">${alias}</span>`,
                     originalText: token.originalText,
                 });
 
@@ -1036,7 +1045,7 @@ export function handleUnicodeEmoji(text: string, emojiMap: EmojiMap, searchPatte
         }
 
         // wrap unsupported unicode emoji in span to style as needed
-        return `<span class="emoticon emoticon--unicode" data-testid="channel-banner-unicode-emoji">${emojiMatch}</span>`;
+        return `<span class="emoticon emoticon--unicode" data-testid="markdown.unicode_emoji--text">${emojiMatch}</span>`;
     });
 
     return output;

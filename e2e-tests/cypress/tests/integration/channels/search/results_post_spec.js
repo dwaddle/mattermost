@@ -60,7 +60,7 @@ describe('Search', () => {
 });
 
 function verifySearchResult(results, postId, fullMessage, highlightedTerm) {
-    cy.findAllByTestId('search-item-container').should('have.length', results).within(() => {
+    cy.get('[data-testid^="search.results.post:"]').should('have.length', results).within(() => {
         cy.get(`#rhsPostMessageText_${postId}`).should('have.text', `${fullMessage}`);
         cy.get('.search-highlight').should('be.visible').and('have.text', highlightedTerm);
     });

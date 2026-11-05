@@ -77,7 +77,7 @@ function searchAndVerify(query, expectedMessage) {
 
     // * Verify the amount of results matches the amount of our expected results
     cy.uiGetRHSSearchContainer().
-        findAllByTestId('search-item-container').
+        find('[data-testid^="search.results.post:"]').
         should('have.length', 1).
         then((results) => {
             // * Verify text of each result

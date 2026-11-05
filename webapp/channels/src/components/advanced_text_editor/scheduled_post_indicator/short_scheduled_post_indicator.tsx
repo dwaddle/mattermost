@@ -5,14 +5,17 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import {Link} from 'react-router-dom';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import type {ChannelScheduledPostIndicatorData} from 'mattermost-redux/selectors/entities/scheduled_posts';
 
 type Props = {
     scheduledPostData: ChannelScheduledPostIndicatorData;
     scheduledPostLinkURL: string;
+    testId: TestId;
 };
 
-export function ShortScheduledPostIndicator({scheduledPostData, scheduledPostLinkURL}: Props) {
+export function ShortScheduledPostIndicator({scheduledPostData, scheduledPostLinkURL, testId}: Props) {
     if (scheduledPostData.count === 0) {
         return null;
     }
@@ -20,7 +23,7 @@ export function ShortScheduledPostIndicator({scheduledPostData, scheduledPostLin
     return (
         <div
             className='ScheduledPostIndicator'
-            data-testid='scheduledPostIndicator'
+            data-testid={testId}
         >
             <FormattedMessage
                 id='scheduled_post.channel_indicator.with_other_user_late_time'
@@ -28,7 +31,10 @@ export function ShortScheduledPostIndicator({scheduledPostData, scheduledPostLin
                 values={{
                     count: scheduledPostData.count,
                     a: (chunks) => (
-                        <Link to={scheduledPostLinkURL}>
+                        <Link
+                            to={scheduledPostLinkURL}
+                            data-testid={`${testId}.see_all--link`}
+                        >
                             {chunks}
                         </Link>
                     ),

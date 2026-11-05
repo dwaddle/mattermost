@@ -106,8 +106,8 @@ function CoreMenuOptions({handleOnSelect, channelId}: Props) {
 
     const optionTomorrow = (
         <Menu.Item
-            key={'scheduling_time_tomorrow_9_am'}
-            data-testid='scheduling_time_tomorrow_9_am'
+            key={'send_post_options.menu.tomorrow_9_am--menuitem'}
+            data-testid='send_post_options.menu.tomorrow_9_am--menuitem'
             onClick={tomorrowClickHandler}
             labels={
                 <FormattedMessage
@@ -126,8 +126,8 @@ function CoreMenuOptions({handleOnSelect, channelId}: Props) {
 
     const optionNextMonday = (
         <Menu.Item
-            key={'scheduling_time_next_monday_9_am'}
-            data-testid='scheduling_time_next_monday_9_am'
+            key={'send_post_options.menu.next_monday_9_am--menuitem'}
+            data-testid='send_post_options.menu.next_monday_9_am--menuitem'
             onClick={nextMondayClickHandler}
             labels={
                 <FormattedMessage
@@ -143,8 +143,8 @@ function CoreMenuOptions({handleOnSelect, channelId}: Props) {
 
     const optionMonday = (
         <Menu.Item
-            key={'scheduling_time_monday_9_am'}
-            data-testid='scheduling_time_monday_9_am'
+            key={'send_post_options.menu.monday_9_am--menuitem'}
+            data-testid='send_post_options.menu.monday_9_am--menuitem'
             onClick={nextMondayClickHandler}
             labels={
                 <FormattedMessage

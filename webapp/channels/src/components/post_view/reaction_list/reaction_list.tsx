@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 import type {Post} from '@mattermost/types/posts';
 import type {Reaction as ReactionType} from '@mattermost/types/reactions';
@@ -21,6 +22,9 @@ type Props = {
      * The post to render reactions for
      */
     post: Post;
+
+    /** Testid scope of the list (`center.post_list.post.reactions`): reactions are `<scope>.reaction:<emoji>--button`. */
+    testIdScope?: TestId;
 
     /*
      * The id of the team which belongs the post
@@ -102,6 +106,7 @@ export default class ReactionList extends React.PureComponent<Props, State> {
                         key={emojiName}
                         post={this.props.post}
                         emojiName={emojiName}
+                        testId={this.props.testIdScope ? `${this.props.testIdScope}.reaction:${emojiName}` : undefined}
                         reactions={reactionsByName.get(emojiName) || []}
                     />
                 );
@@ -116,6 +121,7 @@ export default class ReactionList extends React.PureComponent<Props, State> {
                     post={this.props.post}
                     teamId={this.props.teamId}
                     onEmojiClick={this.handleEmojiClick}
+                    testId={this.props.testIdScope ? `${this.props.testIdScope}.add` : undefined}
                 />
             );
         }
@@ -124,6 +130,7 @@ export default class ReactionList extends React.PureComponent<Props, State> {
             <div
                 aria-label={localizeMessage({id: 'reaction.container.ariaLabel', defaultMessage: 'reactions'})}
                 className='post-reaction-list'
+                data-testid={this.props.testIdScope}
             >
                 {reactions}
                 {addReaction}

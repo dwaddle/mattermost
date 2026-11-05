@@ -17,7 +17,7 @@ export default class UserProfilePopover {
 
         this.messageButton = container.getByRole('button', {name: 'Message'});
         this.attributeHeadings = container.getByRole('heading', {level: 3});
-        this.bottomRow = container.getByTestId('user-profile-popover-bottom-row');
+        this.bottomRow = container.getByTestId('profile_popover.actions');
         this.avatarImage = container.locator('#userAvatar');
     }
 

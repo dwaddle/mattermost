@@ -4,6 +4,7 @@
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
 import {Posts} from 'mattermost-redux/constants';
@@ -21,6 +22,12 @@ type Props = {
     isRHS: boolean;
     compactDisplay?: boolean;
     isChannelAutotranslated: boolean;
+
+    /** The message renders `${testId}--text`. */
+    testId?: TestId;
+
+    /** The post's testid scope, for the content around the message (`<scope>.link_preview--link`, `<scope>.edited--button`). */
+    testIdScope?: TestId;
 };
 
 export default function MessageWithAdditionalContent({
@@ -30,6 +37,8 @@ export default function MessageWithAdditionalContent({
     isRHS,
     compactDisplay,
     isChannelAutotranslated,
+    testId,
+    testIdScope,
 }: Props) {
     const hasPlugin = post.type && pluginPostTypes && Object.hasOwn(pluginPostTypes, post.type);
     const {locale} = useIntl();
@@ -41,6 +50,8 @@ export default function MessageWithAdditionalContent({
             compactDisplay={compactDisplay}
             isChannelAutotranslated={isChannelAutotranslated}
             userLanguage={locale}
+            testId={testId}
+            postTestIdScope={testIdScope}
         />
     );
     if (post.state === Posts.POST_DELETED || hasPlugin) {
@@ -50,6 +61,7 @@ export default function MessageWithAdditionalContent({
             <PostBodyAdditionalContent
                 post={post}
                 isEmbedVisible={isEmbedVisible}
+                testIdScope={testIdScope}
             >
                 {messageWrapper}
             </PostBodyAdditionalContent>

@@ -28,13 +28,13 @@ export default class ScheduledPost {
     constructor(container: Locator) {
         this.container = container;
 
-        this.panelHeader = container.getByTestId('draft-panel-header');
-        this.panelBody = container.getByTestId('draft-panel-body');
+        this.panelHeader = container.getByTestId('drafts.scheduled.post.header');
+        this.panelBody = container.getByTestId('drafts.scheduled.post.body');
         this.repeatsWeeklyTag = container.getByText('Repeats weekly', {exact: true});
 
-        this.postBody = container.getByTestId('draft-post-body');
-        this.postHeader = container.getByTestId('draft-post-header');
-        this.postImage = container.getByTestId('draft-post-img');
+        this.postBody = container.getByTestId('drafts.scheduled.post.message');
+        this.postHeader = container.getByTestId('drafts.scheduled.post.post_header');
+        this.postImage = container.getByTestId('drafts.scheduled.post.avatar');
 
         this.deleteButton = container.locator('#draft_icon-trash-can-outline_delete');
         this.editButton = container.locator('#draft_icon-pencil-outline_edit');
@@ -42,7 +42,7 @@ export default class ScheduledPost {
         this.rescheduleButton = container.locator('#draft_icon-clock-send-outline_reschedule');
         this.sendNowButton = container.locator('#draft_icon-send-outline_sendNow');
 
-        this.editTextBox = container.getByTestId('edit_textbox');
+        this.editTextBox = container.getByTestId('drafts.scheduled.post.editor--textbox');
         this.saveButton = container.getByRole('button', {name: 'Save'});
         this.cancelButton = container.getByRole('button', {name: 'Cancel'});
     }

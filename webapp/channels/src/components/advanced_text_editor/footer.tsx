@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import type {ReactNode} from 'react';
 import React from 'react';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {ServerError} from '@mattermost/types/errors';
 import type {Post} from '@mattermost/types/posts';
@@ -22,6 +23,9 @@ interface Props {
     rootId: Post['id'];
     noArgumentHandleSubmit: () => void;
     isInEditMode: boolean;
+
+    // The composer's scope; the post error is `<testIdScope>.error--text`.
+    testIdScope: TestIdScope;
 }
 
 export default function Footer({
@@ -32,6 +36,7 @@ export default function Footer({
     rootId,
     noArgumentHandleSubmit,
     isInEditMode,
+    testIdScope,
 }: Props) {
     return (
         <div
@@ -40,7 +45,10 @@ export default function Footer({
             className='AdvancedTextEditor__footer'
         >
             {postError && (
-                <div className={classNames('post-error', {errorClass})}>
+                <div
+                    className={classNames('post-error', {errorClass})}
+                    data-testid={`${testIdScope}.error--text`}
+                >
                     {postError}
                 </div>
             )}

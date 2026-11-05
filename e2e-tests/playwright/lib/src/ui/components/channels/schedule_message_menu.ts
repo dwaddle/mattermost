@@ -24,12 +24,17 @@ export default class ScheduleMessageMenu {
     constructor(container: Locator) {
         this.container = container;
 
-        this.tomorrowMenuItem = container.getByTestId('scheduling_time_tomorrow_9_am');
-        this.mondayMenuItem = container.getByTestId('scheduling_time_monday_9_am');
-        this.nextMondayMenuItem = container.getByTestId('scheduling_time_next_monday_9_am');
-        this.recentlyUsedCustomTimeMenuItem = container.getByTestId('recently_used_custom_time');
+        this.tomorrowMenuItem = container.getByTestId('send_post_options.menu.tomorrow_9_am--menuitem');
+        this.mondayMenuItem = container.getByTestId('send_post_options.menu.monday_9_am--menuitem');
+        this.nextMondayMenuItem = container.getByTestId('send_post_options.menu.next_monday_9_am--menuitem');
+        this.recentlyUsedCustomTimeMenuItem = container.getByTestId(
+            'send_post_options.menu.recently_used_custom_time--menuitem',
+        );
         this.customTimeMenuItem = container.getByText('Choose a custom time');
-        this.presetTimeMenuItems = container.locator('[data-testid^="scheduling_time_"]');
+        // the preset times (tomorrow, Monday, next Monday at 9 AM)
+        this.presetTimeMenuItems = container.locator(
+            '[data-testid^="send_post_options.menu."][data-testid$="_9_am--menuitem"]',
+        );
 
         this.mobileDialog = container.locator('.modal-dialog.menuModal');
         this.mobileDialogPanel = this.mobileDialog.locator('.modal-content');

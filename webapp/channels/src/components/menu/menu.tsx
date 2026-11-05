@@ -20,8 +20,8 @@ import type {
 } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {GenericModal} from '@mattermost/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
@@ -34,6 +34,8 @@ import Constants, {A11yClassNames} from 'utils/constants';
 import {isKeyPressed} from 'utils/keyboard';
 
 import {MenuContext, useMenuContextValue} from './menu_context';
+import MenuModal from './menu_modal';
+import type {MenuModalProps} from './menu_modal';
 
 import './menu.scss';
 
@@ -53,7 +55,7 @@ export type MenuButtonComponentProps = ButtonHTMLAttributes<HTMLButtonElement> &
     count?: number;
 };
 
-type MenuButtonProps = {
+export type MenuButtonProps = {
     id: string;
     dataTestId?: string;
     'aria-label'?: string;
@@ -84,7 +86,7 @@ type MenuButtonTooltipProps = {
     disabled?: boolean;
 };
 
-type MenuProps = {
+export type MenuProps = {
 
     /**
      * ID is mandatory as it is used in mobileWebview to open modal equivalent to menu
@@ -93,6 +95,9 @@ type MenuProps = {
     'aria-label'?: string;
     className?: string;
     'aria-labelledby'?: string;
+
+    /** The menu's own scope (its list), when its items' testids don't already name it. */
+    testId?: TestIdScope;
 
     /**
      * @warning Make the styling of your components such a way that they don't need this handler
@@ -142,7 +147,7 @@ type MenuProps = {
 const defaultAnchorOrigin = {vertical: 'bottom', horizontal: 'left'} as PopoverOrigin;
 const defaultTransformOrigin = {vertical: 'top', horizontal: 'left'} as PopoverOrigin;
 
-interface Props {
+export interface Props {
     menuButton: MenuButtonProps;
     menuButtonTooltip?: MenuButtonTooltipProps;
     menuHeader?: ReactNode;
@@ -438,6 +443,7 @@ export function Menu(props: Props) {
                         {props.menuHeader}
                         <MuiMenuList
                             id={props.menu.id}
+                            data-testid={props.menu.testId}
                             aria-label={props.menu?.['aria-label']}
                             aria-labelledby={props.menu['aria-labelledby']}
                             className={props.menu.className}
@@ -455,70 +461,6 @@ export function Menu(props: Props) {
                     </MuiPopover>
                 )}
             </MenuContext.Provider>
-        </CompassDesignProvider>
-    );
-}
-
-interface MenuModalProps {
-    menuButtonId: MenuButtonProps['id'];
-    menuId: MenuProps['id'];
-    menuAriaLabel: MenuProps['aria-label'];
-    className: MenuProps['className'];
-    onModalClose: (modalId: MenuProps['id']) => void;
-    children: Props['children'];
-    onKeyDown?: MenuProps['onKeyDown'];
-    menuHeader?: Props['menuHeader'];
-    menuFooter?: Props['menuFooter'];
-}
-
-function MenuModal(props: MenuModalProps) {
-    const theme = useSelector(getTheme);
-
-    function closeMenuModal() {
-        props.onModalClose(props.menuId);
-    }
-
-    function handleModalClickCapture(event: MouseEvent<HTMLDivElement>) {
-        if (event && event.currentTarget.contains(event.target as Node)) {
-            for (const currentElement of event.currentTarget.children) {
-                if (currentElement.contains(event.target as Node) && !currentElement.ariaHasPopup) {
-                    // We check for property ariaHasPopup because we don't want to close the menu
-                    // if the user clicks on a submenu item or menu item which open modal. And let submenu component handle the click.
-                    closeMenuModal();
-                    break;
-                }
-            }
-        }
-    }
-
-    function handleKeydown(event?: React.KeyboardEvent<HTMLDivElement>) {
-        if (event && props.onKeyDown) {
-            props.onKeyDown(event, closeMenuModal);
-        }
-    }
-
-    return (
-        <CompassDesignProvider theme={theme}>
-            <GenericModal
-                id={props.menuId}
-                className='menuModal'
-                backdrop={true}
-                ariaLabel={props.menuAriaLabel}
-                onExited={closeMenuModal}
-                enforceFocus={false}
-                handleKeydown={handleKeydown}
-            >
-                <MuiMenuList // serves as backdrop for modals
-                    component='div'
-                    aria-labelledby={props.menuButtonId}
-                    onClick={handleModalClickCapture}
-                    className={props.className}
-                >
-                    {props.menuHeader}
-                    {props.children}
-                    {props.menuFooter}
-                </MuiMenuList>
-            </GenericModal>
         </CompassDesignProvider>
     );
 }

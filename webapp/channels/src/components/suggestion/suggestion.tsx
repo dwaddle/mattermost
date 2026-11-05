@@ -5,6 +5,10 @@ import classNames from 'classnames';
 import React, {useCallback} from 'react';
 
 export interface SuggestionProps<Item> extends Omit<React.HTMLAttributes<HTMLLIElement>, 'id' | 'onClick' | 'onMouseMove' | 'role'> {
+
+    // Always an option of the list (the list passes it, so its testid's role is visible where it is set).
+    role?: 'option';
+
     id: string;
 
     // eslint-disable-next-line react/no-unused-prop-types
@@ -57,6 +61,7 @@ const SuggestionContainer = React.forwardRef<HTMLLIElement, SuggestionProps<unkn
             ref={ref}
             className={classNames('suggestion-list__item', {'suggestion--selected': isSelection}, className)}
             role='option'
+            aria-selected={isSelection}
             data-testid={isSelection ? 'suggestion-selected' : undefined}
             onClick={handleClick}
             onMouseMove={handleMouseMove}

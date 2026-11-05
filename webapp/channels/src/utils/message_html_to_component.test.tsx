@@ -186,10 +186,10 @@ describe('messageHtmlToComponent', () => {
 
             const {container} = renderWithContext(messageHtmlToComponent(TextFormatting.formatText(input, {}, emptyEmojiMap)));
 
-            expect(screen.getByTestId('postEmoji.:taco:')).toBeInTheDocument();
-            expect(screen.getByTestId('postEmoji.:taco:').getAttribute('style')).toContain('background-image');
-            expect(screen.getByTestId('postEmoji.:astronaut:')).toBeInTheDocument();
-            expect(screen.getByTestId('postEmoji.:astronaut:').getAttribute('style')).toContain('background-image');
+            expect(screen.getByTestId('markdown.emoji:taco')).toBeInTheDocument();
+            expect(screen.getByTestId('markdown.emoji:taco').getAttribute('style')).toContain('background-image');
+            expect(screen.getByTestId('markdown.emoji:astronaut')).toBeInTheDocument();
+            expect(screen.getByTestId('markdown.emoji:astronaut').getAttribute('style')).toContain('background-image');
 
             expect(container).toHaveTextContent('These are emojis: :taco: :astronaut:');
         });
@@ -199,8 +199,8 @@ describe('messageHtmlToComponent', () => {
 
             const {container} = renderWithContext(messageHtmlToComponent(TextFormatting.formatText(input, {}, emptyEmojiMap)));
 
-            expect(screen.queryByTestId('postEmoji.:taco:')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('postEmoji.:astronaut:')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('markdown.emoji:taco')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('markdown.emoji:astronaut')).not.toBeInTheDocument();
 
             expect(container).toHaveTextContent('These are emojis: :fake: :notAnEmoji:');
         });
@@ -210,10 +210,10 @@ describe('messageHtmlToComponent', () => {
 
             const {container} = renderWithContext(messageHtmlToComponent(TextFormatting.formatText(input, {}, emptyEmojiMap)));
 
-            expect(screen.getByTestId('postEmoji.:taco:')).toBeInTheDocument();
-            expect(screen.getByTestId('postEmoji.:taco:').getAttribute('style')).toContain('background-image');
-            expect(screen.getByTestId('postEmoji.:astronaut:')).toBeInTheDocument();
-            expect(screen.getByTestId('postEmoji.:astronaut:').getAttribute('style')).toContain('background-image');
+            expect(screen.getByTestId('markdown.emoji:taco')).toBeInTheDocument();
+            expect(screen.getByTestId('markdown.emoji:taco').getAttribute('style')).toContain('background-image');
+            expect(screen.getByTestId('markdown.emoji:astronaut')).toBeInTheDocument();
+            expect(screen.getByTestId('markdown.emoji:astronaut').getAttribute('style')).toContain('background-image');
 
             expect(container).toHaveTextContent('These are emojis: 🌮 🧑‍🚀');
         });

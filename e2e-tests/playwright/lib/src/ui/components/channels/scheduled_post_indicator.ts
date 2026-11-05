@@ -15,7 +15,7 @@ export default class ScheduledPostIndicator {
     constructor(container: Locator) {
         this.container = container;
 
-        this.icon = container.getByTestId('scheduledPostIcon');
+        this.icon = container.getByTestId(/\.scheduled_post_indicator\.icon$/);
         this.messageText = container.locator('span').first();
         this.seeAllLink = container.getByRole('link', {name: 'See all.'});
         this.scheduledMessageLink = container.getByRole('link', {name: /scheduled messages?/});

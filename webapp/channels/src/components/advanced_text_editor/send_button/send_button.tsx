@@ -10,6 +10,7 @@ import {SendIcon} from '@mattermost/compass-icons/components';
 import {ShortcutKeys} from '@mattermost/shared/components/shortcut_key';
 import type {ShortcutDefinition} from '@mattermost/shared/components/tooltip';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {SchedulingInfo} from '@mattermost/types/schedule_post';
 
 import {isScheduledPostsEnabled} from 'mattermost-redux/selectors/entities/scheduled_posts';
@@ -27,9 +28,12 @@ type SendButtonProps = {
     disabled: boolean;
     channelId: string;
     repeatDisabledReason?: RepeatDisabledReason;
+
+    /** Testid path of the button; renders `<testId>--button`. */
+    testId?: TestId;
 };
 
-const SendButton = ({disabled, handleSubmit, channelId, repeatDisabledReason}: SendButtonProps) => {
+const SendButton = ({disabled, handleSubmit, channelId, repeatDisabledReason, testId}: SendButtonProps) => {
     const {formatMessage} = useIntl();
     const isScheduledPostEnabled = useSelector(isScheduledPostsEnabled);
 
@@ -68,7 +72,7 @@ const SendButton = ({disabled, handleSubmit, channelId, repeatDisabledReason}: S
             >
                 <button
                     className={classNames('SendMessageButton', {disabled}, {singleAction: !isScheduledPostEnabled})}
-                    data-testid='SendMessageButton'
+                    data-testid={testId ? `${testId}--button` : undefined}
                     tabIndex={0}
                     aria-label={formatMessage({
                         id: 'create_post_button.option.send_now',

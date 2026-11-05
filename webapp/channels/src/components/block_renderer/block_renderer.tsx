@@ -12,6 +12,7 @@
 
 import React, {useMemo} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {MmBlock} from '@mattermost/types/mm_blocks';
 import type {PostImage} from '@mattermost/types/posts';
 
@@ -35,9 +36,15 @@ type BlockRendererProps = {
 
     /** Preview/read-only surfaces: show controls but block all action dispatch. */
     interactionsDisabled?: boolean;
+
+    /**
+     * The post's testid scope: the blocks are `<testIdScope>.blocks`, an action button `<testIdScope>.action:<action id>--button`,
+     * a select `<testIdScope>.select:<action id>`, a collapsible `<testIdScope>.collapsible`.
+     */
+    testIdScope?: TestId;
 };
 
-export const BlockRenderer = ({blocks, postId, onAction, imagesMetadata, inlineMarkdownActions, interactionsDisabled = false}: BlockRendererProps) => {
+export const BlockRenderer = ({blocks, postId, onAction, imagesMetadata, inlineMarkdownActions, interactionsDisabled = false, testIdScope}: BlockRendererProps) => {
     const metadataValue = useMemo(() => imagesMetadata, [imagesMetadata]);
     const inlineMarkdownActionsValue = useMemo(
         () => inlineMarkdownActions ?? {},
@@ -50,6 +57,7 @@ export const BlockRenderer = ({blocks, postId, onAction, imagesMetadata, inlineM
                     <div
                         className='mm-blocks'
                         role='group'
+                        data-testid={testIdScope ? `${testIdScope}.blocks` : undefined}
                     >
                         <ContainerBlock
                             block={{
@@ -58,6 +66,7 @@ export const BlockRenderer = ({blocks, postId, onAction, imagesMetadata, inlineM
                             }}
                             postId={postId}
                             onAction={onAction}
+                            testIdScope={testIdScope}
                         />
                     </div>
                 </MmBlocksInteractionsDisabledContext.Provider>

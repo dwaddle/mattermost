@@ -6,54 +6,35 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that users can edit a message that has an attachment,
  * the attachment is preserved after edit, and the edited indicator appears.
+ *
+ * Written on the generated page objects: the post by id, its image by file id, the inline editor and the edited marker.
  */
 test('MM-T2268 Edit Message with Attachment', async ({pw}) => {
-    // # Initialize user and login
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    // # Post a message with an image attachment
+    const {team, user, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const post = await userClient.createTestPost({channel_id: channel.id, message: 'Test'}, ['mattermost.png']);
 
-    // # Navigate to channels page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // # Post a message with an attachment
-    await channelsPage.postMessage('Test', ['mattermost.png']);
+    // * Verify the post shows its message and attachment, and is not marked edited
+    const shown = app.center.postList.post(post);
+    await expect(shown.messageText.locator).toHaveText('Test');
+    const image = shown.attachments.image({id: post.file_ids![0]});
+    await expect(image.locator).toBeVisible();
+    await expect(shown.editedButton.locator).not.toBeVisible();
 
-    // # Get the last post and verify content
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
+    // # Edit the message with the Up arrow shortcut
+    await app.center.postCreate.messageTextbox.locator.press('ArrowUp');
+    const editor = app.postEdit.editor.messageTextbox.locator;
+    await expect(editor).toHaveValue('Test');
+    await editor.fill('Test with some edit');
+    await app.postEdit.editor.clickSaveButton();
 
-    // * Verify the posted message is correct
-    await post.toContainText('Test');
-
-    // * Verify attachment exists (image thumbnail)
-    const attachment = post.container.getByLabel(/file thumbnail/i);
-    await expect(attachment).toBeVisible();
-
-    // * Verify edited indicator does not exist initially
-    const postId = await post.getId();
-    await expect(channelsPage.centerView.editedPostIcon(postId)).not.toBeVisible();
-
-    // # Focus on the post textbox and press Up arrow to open edit dialog
-    await channelsPage.centerView.postCreate.input.focus();
-    await page.keyboard.press('ArrowUp');
-
-    // # Verify edit mode is active and add more text
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.input.fill('Test with some edit');
-    await channelsPage.centerView.postEdit.sendMessage();
-
-    // # Get the updated post
-    const updatedPost = await channelsPage.getLastPost();
-    await updatedPost.toBeVisible();
-
-    // * Verify the new text shows
-    await updatedPost.toContainText('Test with some edit');
-
-    // * Verify attachment still exists (image thumbnail)
-    const updatedAttachment = updatedPost.container.getByLabel(/file thumbnail/i);
-    await expect(updatedAttachment).toBeVisible();
-
-    // * Verify edited indicator now exists
-    await expect(channelsPage.centerView.editedPostIcon(postId)).toBeVisible();
+    // * Verify the edited message keeps its attachment and is marked edited
+    // (the edited marker renders inside the message text)
+    await expect(shown.messageText.locator).toContainText('Test with some edit');
+    await expect(image.locator).toBeVisible();
+    await expect(shown.editedButton.locator).toBeVisible();
 });

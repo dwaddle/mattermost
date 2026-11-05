@@ -152,7 +152,9 @@ test.describe(
                 await expect(modal.container).not.toBeVisible();
 
                 // * The value drives the banner and stays out of the header
-                await expect(channelsPage.page.getByTestId('channel_banner_text')).toContainText('RESTRICTED');
+                await expect(channelsPage.page.getByTestId('center.channel_banner.text--text')).toContainText(
+                    'RESTRICTED',
+                );
                 await expect(channelsPage.centerView.header.attributes.chip('RESTRICTED')).toHaveCount(0);
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
@@ -203,7 +205,7 @@ test.describe(
 
                 // * And is rendered on no display surface
                 await expect(channelsPage.centerView.header.attributes.chip('QUIET')).toHaveCount(0);
-                await expect(channelsPage.page.getByTestId('channel_banner_container')).toHaveCount(0);
+                await expect(channelsPage.page.getByTestId('center.channel_banner')).toHaveCount(0);
 
                 // * Channel Info still lists it: the display locations govern the
                 // header and banner, never whether an admin can reach a value

@@ -9,6 +9,7 @@ import {DockWindowIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {canPopout} from 'utils/popouts/popout_windows';
 
@@ -16,12 +17,16 @@ type Props = {
     onClick: React.MouseEventHandler<HTMLButtonElement>;
     className?: string;
     size?: React.ComponentProps<typeof IconButton>['size'];
+
+    /** Renders `${testId}--button`. */
+    testId?: TestId;
 };
 
 export default function PopoutButton({
     onClick,
     className,
     size = 'small',
+    testId,
 }: Props) {
     const intl = useIntl();
 
@@ -44,6 +49,7 @@ export default function PopoutButton({
                 icon={<Icon glyph={<DockWindowIcon/>}/>}
                 aria-label={intl.formatMessage({id: 'new_window_button.tooltip', defaultMessage: 'Open in new window'})}
                 onClick={onClick}
+                data-testid={testId ? `${testId}--button` : undefined}
             />
         </WithTooltip>
     );

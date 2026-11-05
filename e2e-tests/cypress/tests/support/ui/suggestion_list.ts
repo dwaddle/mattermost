@@ -3,6 +3,7 @@
 
 import type {SimpleUser} from '@/integration/channels/autocomplete/helpers';
 import type {ChainableT} from '@/types';
+import {suggestionItemSelector} from '@/utils/suggestion';
 
 /**
  * Verify user's at-mention in the suggestion list
@@ -19,7 +20,7 @@ function uiVerifyAtMentionInSuggestionList(user: SimpleUser, isSelected = false,
         if (sectionDividerName) {
             // * Verify the section name is as expected
             cy.get('.suggestion-list__divider').findByText(sectionDividerName).should('be.visible');
-            cy.get('.suggestion-list__divider').next().findByTestId(`mentionSuggestion_${user.username}`).should('be.visible');
+            cy.get('.suggestion-list__divider').next().find(suggestionItemSelector(`@${user.username}`)).should('be.visible');
         }
 
         // * Verify that the user is selected
@@ -45,7 +46,7 @@ function uiVerifyAtMentionSuggestion(user: SimpleUser, isSelected = false): Chai
     } = user;
 
     // * Verify that the user is selected
-    cy.findByTestId(`mentionSuggestion_${username}`).as('selectedMentionSuggestion').should('be.visible');
+    cy.get(suggestionItemSelector(`@${username}`)).as('selectedMentionSuggestion').should('be.visible');
     if (isSelected) {
         cy.get('@selectedMentionSuggestion').should('have.class', 'suggestion--selected');
     }
@@ -53,7 +54,7 @@ function uiVerifyAtMentionSuggestion(user: SimpleUser, isSelected = false): Chai
     cy.get('@selectedMentionSuggestion').findByText(`@${username}`).should('be.visible');
     cy.get('@selectedMentionSuggestion').findByText(`${firstName} ${lastName} (${nickname})`).should('be.visible');
 
-    return cy.findByTestId(`mentionSuggestion_${username}`);
+    return cy.get(suggestionItemSelector(`@${username}`));
 }
 
 Cypress.Commands.add('uiVerifyAtMentionSuggestion', uiVerifyAtMentionSuggestion);

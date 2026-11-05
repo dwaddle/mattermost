@@ -1,7 +1,9 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, setWysiwygUserPreference, test, WysiwygEditor} from '@mattermost/playwright-lib';
+import {test} from '@mattermost/playwright-lib';
+
+import {expectDocument, openRichComposer, typeRich} from './support';
 
 const TAGS = {tag: ['@channels', '@wysiwyg_editor']};
 
@@ -10,22 +12,27 @@ test.describe('WYSIWYG editor - formatting bar', TAGS, () => {
         await pw.ensureFeatureFlag('WysiwygEditor', true);
     });
 
+    /**
+     * @objective Verify the bold and italic buttons format the selection.
+     */
     test('bold and italic toolbar buttons wrap the selection', async ({pw}) => {
-        const {user, userClient, team} = await pw.initSetup();
-        await setWysiwygUserPreference(userClient, user.id, true);
+        const app = await openRichComposer(pw, await pw.initSetup());
+        const composer = app.center.postCreate;
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
+        // # Type a word and select it
+        await typeRich(composer, 'formatme');
+        await composer.messageTextbox.press('ControlOrMeta+a');
 
-        const editor = new WysiwygEditor(page.getByTestId('post-create'));
-        await editor.toBeVisible();
-        await editor.type('formatme');
-        await editor.press('ControlOrMeta+a');
+        // # Make it bold
+        await composer.formattingBar.control('bold').setPressed(true);
 
-        await editor.formattingBar.getByRole('button', {name: /bold/i}).click();
-        await expect(editor.input.locator('strong')).toHaveText('formatme');
+        // * Verify it is bold
+        await expectDocument(composer, /<strong>formatme<\/strong>/);
 
-        await editor.formattingBar.getByRole('button', {name: /italic/i}).click();
-        await expect(editor.input.locator('strong em, em strong')).toHaveText('formatme');
+        // # Make it italic too
+        await composer.formattingBar.control('italic').setPressed(true);
+
+        // * Verify it is bold and italic
+        await expectDocument(composer, /<strong><em>formatme<\/em><\/strong>|<em><strong>formatme<\/strong><\/em>/);
     });
 });

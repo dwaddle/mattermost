@@ -5,42 +5,50 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify sending a message in a channel with unread content scrolls to the newly sent message.
+ *
+ * Written on the generated page objects: sidebar rows by channel name, the new-messages separator, and the sent
+ * post found on the server by its text, then by id in the page.
  */
 test('MM-T216 scrolls to the bottom when sending a message', {tag: '@messaging'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, userClient} = await pw.initSetup();
     const [sender] = await adminClient.createUsers(team.id, 1, 'sender');
     const testChannel = await adminClient.createPublicChannel(team.id, 'Channel Users Interactions');
     await adminClient.addToChannel(user.id, testChannel.id);
     await adminClient.addToChannel(sender.id, testChannel.id);
+    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const send = async (message: string) => {
+        await app.center.postCreate.fillMessageTextbox(message);
+        await app.center.postCreate.clickSendButton();
+    };
 
-    // # Log in, visit the test channel once, then move to Off-Topic
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, testChannel.name);
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage('Hello');
-    await channelsPage.sidebarLeft.goToItem('off-topic');
+    // # Log in, post in the test channel once, then move to Off-Topic
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: testChannel});
+    await send('Hello');
+    await app.lhs.channelList.channel(offTopic).clickLink();
 
-    // # Have another user post a tall message in the test channel, then post in Off-Topic
-    await adminClient.createPost({
-        channel_id: testChannel.id,
-        user_id: sender.id,
-        message: `I'm messaging!${'\n2'.repeat(30)}`,
-    });
-    await channelsPage.postMessage('Hello');
-    await (await channelsPage.getLastPost()).toContainText('Hello');
+    // # Another user posts a tall message in the test channel; the user posts in Off-Topic
+    const {client: senderClient} = await pw.makeClient({username: sender.username, password: sender.password});
+    await senderClient.createPost({channel_id: testChannel.id, message: `I'm messaging!${'\n2'.repeat(30)}`});
+    await send('Hello');
 
     // # Return to the test channel
-    await channelsPage.sidebarLeft.goToItem(testChannel.name);
+    await app.lhs.channelList.channel(testChannel).clickLink();
 
-    // * Verify the new-message separator is visible
-    await channelsPage.centerView.toHaveNewMessagesSeparator();
+    // * The new-messages separator is shown
+    await expect(app.center.postList.newMessages.locator).toContainText('New Messages');
 
-    // # Send a message in the current channel
-    await channelsPage.postMessage('message123');
+    // # Send a message in the test channel
+    await send('message123');
 
-    // * Verify the newly sent message is the visible last post
-    const lastPost = await channelsPage.getLastPost();
-    await lastPost.toBeVisible();
-    await expect(lastPost.container).toBeInViewport();
-    await expect(lastPost.messageText).toHaveText('message123');
+    // * The sent message is the visible last post
+    const sentId = async () => {
+        const {order, posts} = await userClient.getPosts(testChannel.id);
+        return order.find((id) => posts[id].message === 'message123');
+    };
+    await expect.poll(sentId).toBeTruthy();
+    const sent = app.center.postList.post({id: (await sentId())!});
+    await expect(sent.messageText.locator).toHaveText('message123');
+    await expect(sent.locator).toBeInViewport();
+    expect((await app.center.postList.postKeys()).at(-1)).toBe(await sentId());
 });

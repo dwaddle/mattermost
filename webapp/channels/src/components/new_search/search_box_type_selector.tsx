@@ -6,6 +6,8 @@ import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 import styled from 'styled-components';
 
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
 import {getPrimarySearchButtons, getSecondarySearchButtons} from 'selectors/plugins';
@@ -71,6 +73,7 @@ const SearchTypeSelector = ({searchType, setSearchType}: Props) => {
                 onClick={() => setSearchType(pluginId)}
                 role='radio'
                 aria-checked={searchType === pluginId}
+                data-testid={`search_box.plugin_type:${pluginTestKey(pluginId)}--radio`}
             >
                 <ErrorBoundary pluginId={pluginId}>
                     <Component/>
@@ -89,6 +92,7 @@ const SearchTypeSelector = ({searchType, setSearchType}: Props) => {
                 onClick={setMessagesSearchType}
                 role='radio'
                 aria-checked={searchType === 'messages'}
+                data-testid='search_box.type:messages--radio'
             >
                 <FormattedMessage
                     id='search_bar.usage.search_type_messages'
@@ -101,6 +105,7 @@ const SearchTypeSelector = ({searchType, setSearchType}: Props) => {
                     onClick={setFilesSearchType}
                     role='radio'
                     aria-checked={searchType === 'files'}
+                    data-testid='search_box.type:files--radio'
                 >
                     <FormattedMessage
                         id='search_bar.usage.search_type_files'

@@ -1,7 +1,24 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {getAsset} from '@/asset';
+import {expect, test, type App} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the channel switcher (results keyed by channel id), the channel header,
+// the composers (center and RHS, with the RHS attach button and file previews), the posts by id with their Reply
+// button, and the RHS thread.
+
+/**
+ * Opens the channel switcher with Ctrl/Cmd+K, searches, and opens the result keyed by one of `keys`. The shortcut is
+ * pressed in the message box, which also waits for the app to be up (a generated `goto` returns on page load).
+ */
+async function switchTo(app: App, search: string, ...keys: string[]) {
+    await app.center.postCreate.messageTextbox.locator.press('ControlOrMeta+K');
+    await app.quickSwitchModal.searchTextbox.fill(search);
+    const {suggestions} = app.quickSwitchModal;
+    const result = keys.map((key) => suggestions.item(key).locator).reduce((a, b) => a.or(b));
+    await result.click();
+}
 
 /**
  * @objective Verify the Ctrl/Cmd+K quick switcher can find and open a direct message, a group message,
@@ -16,43 +33,37 @@ test(
 
         // # Create a direct message, a group message, and a public channel for the user
         const dm = await adminClient.createDirectChannel([user.id, member1.id]);
-        await adminClient.createPost({channel_id: dm.id, user_id: member1.id, message: 'dm hello'});
+        await pw.postAs(member1, {channel_id: dm.id, message: 'dm hello'});
         const gm = await adminClient.createGroupChannel([user.id, member1.id, member2.id]);
-        await adminClient.createPost({channel_id: gm.id, user_id: member2.id, message: 'gm hello'});
+        await pw.postAs(member2, {channel_id: gm.id, message: 'gm hello'});
         const publicChannel = await adminClient.createPublicChannel(team.id, `Switcher ${pw.random.id()}`);
         await adminClient.addToChannel(user.id, publicChannel.id);
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
+        const title = app.channelHeader.openMenuButton.locator;
 
-        const {findChannelsModal} = channelsPage;
-        const options = () => findChannelsModal.container.getByRole('option');
-
-        // # Open the quick switcher and open the direct message with member1 (the option with only member1)
-        await page.keyboard.press('ControlOrMeta+K');
-        await findChannelsModal.input.fill(member1.username);
-        await options().filter({hasText: member1.username, hasNotText: member2.username}).first().click();
+        // # Open the quick switcher and open the direct message with member1 (a direct message's result is keyed by
+        // its channel id once the app has loaded the channel, and by the other user's id before that)
+        await switchTo(app, member1.username, dm.id, member1.id);
 
         // * Verify the direct message with member1 is opened
-        await channelsPage.centerView.header.toHaveTitle(member1.username);
+        await expect(page).toHaveURL(new RegExp(`/messages/@${member1.username}$`));
+        await expect(title).toContainText(member1.username);
 
-        // # Open the quick switcher and open the group message (the option containing both members)
-        await page.keyboard.press('ControlOrMeta+K');
-        await findChannelsModal.input.fill(member2.username);
-        await options().filter({hasText: member1.username}).filter({hasText: member2.username}).first().click();
+        // # Open the quick switcher and open the group message
+        await switchTo(app, member2.username, gm.id);
 
         // * Verify the group message (containing both members) is opened
-        await channelsPage.centerView.header.toHaveTitle(member1.username);
-        await channelsPage.centerView.header.toHaveTitle(member2.username);
+        await expect(page).toHaveURL(new RegExp(`/messages/${gm.name}$`));
+        await expect(title).toContainText(member1.username);
+        await expect(title).toContainText(member2.username);
 
         // # Open the quick switcher and open the public channel
-        await page.keyboard.press('ControlOrMeta+K');
-        await findChannelsModal.input.fill(publicChannel.display_name);
-        await options().filter({hasText: publicChannel.display_name}).first().click();
+        await switchTo(app, publicChannel.display_name, publicChannel.id);
 
         // * Verify the public channel is opened
-        await channelsPage.centerView.header.toHaveTitle(publicChannel.display_name);
+        await expect(title).toContainText(publicChannel.display_name);
     },
 );
 
@@ -70,75 +81,71 @@ test(
 
         test.skip(testInfo.project.name === 'ipad', 'Skipping test on iPad');
 
-        // # Initialize setup with admin and user
-        const {adminUser, user, team} = await pw.initSetup();
+        // # Initialize setup with admin and user, and have the admin post the root message
+        const {adminUser, adminClient, user, team} = await pw.initSetup();
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const root = await adminClient.createPost({channel_id: townSquare.id, message: ROOT_MESSAGE});
 
-        // # Log in as admin in one browser session
-        const {channelsPage: adminChannelsPage} = await pw.testBrowser.login(adminUser);
-        await adminChannelsPage.goto(team.name, 'town-square');
-        await adminChannelsPage.toBeVisible();
+        // # Log in as admin, open the thread and post a series of long replies
+        const {app: adminApp, page: adminPage} = await pw.testBrowser.login(adminUser);
+        await adminApp.channelsPage.goto({team, channel: townSquare});
+        const rootPost = adminApp.center.postList.post(root);
+        await rootPost.locator.hover();
+        await rootPost.menu.clickReplyButton();
+        const rhsComposer = adminApp.rhs.postCreate;
+        await expect(rhsComposer.messageTextbox.locator).toBeVisible();
 
-        // # Have admin post the root message for the thread
-        await adminChannelsPage.centerView.postCreate.postMessage(ROOT_MESSAGE);
-
-        // # Have admin open the thread and post multiple replies with attachments
-        const rootPost = await adminChannelsPage.getLastPost();
-        await rootPost.hover();
-        await rootPost.postMenu.toBeVisible();
-        await rootPost.postMenu.reply();
-
-        // * Verify RHS is visible for admin
-        await adminChannelsPage.sidebarRight.toBeVisible();
-
-        // # Firstly let admin create a series of random replies to the root message
         for (let i = 1; i <= NUMBER_OF_REPLIES; i++) {
-            await adminChannelsPage.sidebarRight.postCreate.postMessage(`Random replies number ${i}`.repeat(40));
+            await rhsComposer.fillMessageTextbox(`Random replies number ${i}`.repeat(40));
+            await rhsComposer.clickSendButton();
+            await expect(rhsComposer.messageTextbox.locator).toHaveValue('');
         }
 
-        // # Secondly let admin create a series of random replies to the root message with attachments
+        // # Then post replies with attachments
         for (const file of ATTACHMENT_FILES) {
-            await adminChannelsPage.sidebarRight.postCreate.postMessage(
-                `Random replies number with attachment: ${file}`,
-                [file],
-            );
+            const fileChooser = adminPage.waitForEvent('filechooser');
+            await rhsComposer.clickAttachButton();
+            await (await fileChooser).setFiles(getAsset(file));
+            await expect(rhsComposer.filePreviews.fileItems).toHaveCount(1);
+            await rhsComposer.fillMessageTextbox(`Random replies number with attachment: ${file}`);
+            await rhsComposer.clickSendButton();
+            await expect(rhsComposer.filePreviews.fileItems).toHaveCount(0);
         }
+        await expect
+            .poll(async () => (await adminApp.rhs.thread.postKeys()).length)
+            .toBe(1 + NUMBER_OF_REPLIES + ATTACHMENT_FILES.length);
 
         // # Admin closes the RHS
-        await adminChannelsPage.sidebarRight.close();
+        await adminApp.rhs.thread.header.clickCloseButton();
 
-        // # Log in as regular user in a separate browser session
-        const {channelsPage: userChannelsPage, page: userPage} = await pw.testBrowser.login(user);
-        await userChannelsPage.goto(team.name, 'town-square');
-        await userChannelsPage.toBeVisible();
-
-        // # Bring focus to the post textbox in center channel
-        await userChannelsPage.centerView.postCreate.input.focus();
+        // # Log in as regular user and bring focus to the post textbox in center channel
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: townSquare});
+        const centerTextbox = app.center.postCreate.messageTextbox.locator;
+        await centerTextbox.focus();
 
         // * Verify the post textbox in center channel is focused
-        await expect(userChannelsPage.centerView.postCreate.input).toBeFocused();
+        await expect(centerTextbox).toBeFocused();
 
         // # Press Shift+Up to open the latest thread in the channel in the RHS
-        await userPage.keyboard.press('Shift+ArrowUp');
-
-        // * Verify RHS is visible
-        await userChannelsPage.sidebarRight.toBeVisible();
+        await page.keyboard.press('Shift+ArrowUp');
 
         // * Verify the correct thread (admin's root message) is shown in RHS
-        await userChannelsPage.sidebarRight.toContainText(ROOT_MESSAGE);
+        await expect(app.rhs.thread.post(root).messageText.locator).toHaveText(ROOT_MESSAGE);
 
-        // * Verify RHS reply textbox is focused only
-        await expect(userChannelsPage.sidebarRight.postCreate.input).toBeFocused();
+        // * Verify RHS reply textbox is focused
+        const rhsTextbox = app.rhs.postCreate.messageTextbox.locator;
+        await expect(rhsTextbox).toBeFocused();
 
         // # Type a message to verify the textbox can receive input immediately
-        await userPage.keyboard.type('Reply typed after Shift+Up');
+        await page.keyboard.type('Reply typed after Shift+Up');
 
         // * Verify the message was typed into the RHS textbox
-        const inputValue = await userChannelsPage.sidebarRight.postCreate.getInputValue();
-        expect(inputValue).toBe('Reply typed after Shift+Up');
+        await expect(rhsTextbox).toHaveValue('Reply typed after Shift+Up');
 
         // # Clear the input and close RHS
-        await userChannelsPage.sidebarRight.postCreate.input.clear();
-        await userChannelsPage.sidebarRight.close();
+        await rhsTextbox.clear();
+        await app.rhs.thread.header.clickCloseButton();
     },
 );
 
@@ -149,28 +156,31 @@ test(
     'MM-T4692 opens and closes the right sidebar with the keyboard shortcut',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team} = await pw.initSetup();
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {user, userClient, team} = await pw.initSetup();
+        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const message = 'this post is from today';
+        const created = await userClient.createPost({channel_id: townSquare.id, message});
 
-        // # Post a message and open its reply thread in the right sidebar
-        await channelsPage.centerView.postCreate.postMessage('this post is from today');
-        const post = await channelsPage.getLastPost();
-        await post.openAThread();
-        await channelsPage.sidebarRight.toBeVisible();
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: townSquare});
+
+        // # Open the post's reply thread in the right sidebar
+        const post = app.center.postList.post(created);
+        await post.locator.hover();
+        await post.menu.clickReplyButton();
+        const rhsRoot = app.rhs.thread.post(created).messageText.locator;
+        await expect(rhsRoot).toHaveText(message);
 
         // # Press the toggle shortcut to close the right sidebar
         await page.keyboard.press('ControlOrMeta+.');
 
         // * Verify the right sidebar is closed
-        await expect(channelsPage.sidebarRight.container).not.toBeVisible();
+        await expect(rhsRoot).not.toBeVisible();
 
         // # Press the toggle shortcut again to reopen the right sidebar
         await page.keyboard.press('ControlOrMeta+.');
 
         // * Verify the right sidebar is shown again with the reply thread
-        await channelsPage.sidebarRight.toBeVisible();
-        await expect(channelsPage.sidebarRight.container.getByText('this post is from today')).toBeVisible();
+        await expect(rhsRoot).toHaveText(message);
     },
 );

@@ -19,7 +19,7 @@ export default class ScheduleMessageModal {
     constructor(container: Locator) {
         this.container = container;
         this.dateButton = container.getByRole('button', {name: /Date/});
-        this.timeButton = container.getByTestId('time_button');
+        this.timeButton = container.getByTestId('date_time_picker_modal.when.time--button');
         this.timeOptionDropdown = container.getByLabel('Choose a time');
         this.repeatWeeklyCheckbox = container.getByRole('checkbox', {name: 'Repeat weekly'});
         this.closeButton = container.getByRole('button', {name: 'Close'});
@@ -51,7 +51,7 @@ export default class ScheduleMessageModal {
         await this.dateLocator(day).click();
 
         // Wait for the date-picker calendar to fully close before returning.
-        const calendarPopper = this.container.getByTestId('date-picker-popper');
+        const calendarPopper = this.container.getByTestId('date_time_picker_modal.when.calendar');
         await calendarPopper.waitFor({state: 'hidden'});
 
         // if day is single digit then prefix with a 0
@@ -64,7 +64,10 @@ export default class ScheduleMessageModal {
 
     async selectTime(optionIndex: number = 0) {
         await this.timeButton.click();
-        const timeOption = this.container.page().getByTestId(`time_option_${optionIndex}`);
+        const timeOption = this.container
+            .page()
+            .getByTestId(/^date_time_picker_modal\.when\.time_menu\.time:\d{4}--menuitem$/)
+            .nth(optionIndex);
         // Use a generous timeout: the time-picker dropdown can be slow to render in CI.
         await expect(timeOption).toBeVisible({timeout: 30000});
         // Capture text BEFORE clicking — clicking closes the dropdown and detaches the

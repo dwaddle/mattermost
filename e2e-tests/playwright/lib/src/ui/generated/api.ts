@@ -13,6 +13,8 @@ import type {
 import type {AnalyticsRow} from '@mattermost/types/admin';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {
+    ChannelJoinRequest,
+    ChannelJoinRequestList,
     ChannelMemberCountsByGroup,
     ChannelMembership,
     ChannelStats,
@@ -27,8 +29,9 @@ import type {Installation} from '@mattermost/types/cloud';
 import type {AdminConfig, AllowedIPRange} from '@mattermost/types/config';
 import type {Draft} from '@mattermost/types/drafts';
 import type {CustomEmoji} from '@mattermost/types/emojis';
-import type {FileSearchResults} from '@mattermost/types/files';
+import type {FileSearchResults, FileUploadResponse} from '@mattermost/types/files';
 import type {Group, UsersWithGroupsAndCount} from '@mattermost/types/groups';
+import type {PostActionResponse} from '@mattermost/types/integration_actions';
 import type {CommandResponse} from '@mattermost/types/integrations';
 import type {PaginatedPostList, Post, PostInfo, PostList, PostSearchResults} from '@mattermost/types/posts';
 import type {Reaction} from '@mattermost/types/reactions';
@@ -65,6 +68,11 @@ export const Api = {
         method: 'GET',
         path: '/api/v4/channels/{channel_id}/members_minus_group_members',
     }),
+    CountPendingChannelJoinRequests: effect<unknown>()({
+        op: 'CountPendingChannelJoinRequests',
+        method: 'GET',
+        path: '/api/v4/channels/{channelId}/join_requests/count',
+    }), // not in the OpenAPI spec
     CreateAccessControlPolicy: effect<AccessControlPolicy>()({
         op: 'CreateAccessControlPolicy',
         method: 'PUT',
@@ -93,6 +101,7 @@ export const Api = {
         method: 'DELETE',
         path: '/api/v4/users/me/channels/{channel_id}/drafts',
     }),
+    DeletePost: effect<StatusOK>()({op: 'DeletePost', method: 'DELETE', path: '/api/v4/posts/{post_id}'}),
     DeletePreferences: effect<StatusOK>()({
         op: 'DeletePreferences',
         method: 'POST',
@@ -117,6 +126,11 @@ export const Api = {
         op: 'DisablePlugin',
         method: 'POST',
         path: '/api/v4/plugins/{plugin_id}/disable',
+    }),
+    DoPostAction: effect<PostActionResponse>()({
+        op: 'DoPostAction',
+        method: 'POST',
+        path: '/api/v4/posts/{post_id}/actions/{action_id}',
     }),
     EnablePlugin: effect<StatusOK>()({op: 'EnablePlugin', method: 'POST', path: '/api/v4/plugins/{plugin_id}/enable'}),
     ExecuteCommand: effect<CommandResponse>()({op: 'ExecuteCommand', method: 'POST', path: '/api/v4/commands/execute'}),
@@ -148,6 +162,11 @@ export const Api = {
         method: 'GET',
         path: '/api/v4/teams/name/{team_name}/channels/name/{channel_name}',
     }),
+    GetChannelJoinRequests: effect<ChannelJoinRequestList>()({
+        op: 'GetChannelJoinRequests',
+        method: 'GET',
+        path: '/api/v4/channels/{channelId}/join_requests',
+    }), // not in the OpenAPI spec
     GetChannelMember: effect<ChannelMembership>()({
         op: 'GetChannelMember',
         method: 'GET',
@@ -167,6 +186,11 @@ export const Api = {
         op: 'GetChannelMembers',
         method: 'GET',
         path: '/api/v4/channels/{channel_id}/members',
+    }),
+    GetChannelMembersByIds: effect<ChannelMembership[]>()({
+        op: 'GetChannelMembersByIds',
+        method: 'POST',
+        path: '/api/v4/channels/{channel_id}/members/ids',
     }),
     GetChannelMembersForUserMe: effect<ChannelMembership[]>()({
         op: 'GetChannelMembersForUserMe',
@@ -207,6 +231,11 @@ export const Api = {
     GetGroups: effect<Group[]>()({op: 'GetGroups', method: 'GET', path: '/api/v4/groups'}),
     GetGroupsByNames: effect<Group[]>()({op: 'GetGroupsByNames', method: 'POST', path: '/api/v4/groups/names'}),
     GetLdapGroups: effect<unknown>()({op: 'GetLdapGroups', method: 'GET', path: '/api/v4/ldap/groups'}),
+    GetPinnedPosts: effect<PostList>()({
+        op: 'GetPinnedPosts',
+        method: 'GET',
+        path: '/api/v4/channels/{channel_id}/pinned',
+    }),
     GetPost: effect<Post>()({op: 'GetPost', method: 'GET', path: '/api/v4/posts/{post_id}'}),
     GetPostInfo: effect<PostInfo>()({op: 'GetPostInfo', method: 'GET', path: '/api/v4/posts/{post_id}/info'}),
     GetPostThread: effect<PaginatedPostList>()({
@@ -293,11 +322,21 @@ export const Api = {
         path: '/api/v4/content_flagging/post/{post_id}/keep',
     }),
     Logout: effect<unknown>()({op: 'Logout', method: 'POST', path: '/api/v4/users/logout'}),
+    MarkChannelsReadForUserMe: effect<ChannelViewResponse>()({
+        op: 'MarkChannelsReadForUserMe',
+        method: 'POST',
+        path: '/api/v4/channels/members/me/mark_read',
+    }),
     PatchChannel: effect<ServerChannel>()({
         op: 'PatchChannel',
         method: 'PUT',
         path: '/api/v4/channels/{channel_id}/patch',
     }),
+    PatchChannelJoinRequest: effect<ChannelJoinRequest>()({
+        op: 'PatchChannelJoinRequest',
+        method: 'PATCH',
+        path: '/api/v4/channels/{channelId}/join_requests/{requestId}',
+    }), // not in the OpenAPI spec
     PatchConfig: effect<AdminConfig>()({op: 'PatchConfig', method: 'PUT', path: '/api/v4/config/patch'}),
     PatchPost: effect<Post>()({op: 'PatchPost', method: 'PUT', path: '/api/v4/posts/{post_id}/patch'}),
     PatchTeam: effect<Team>()({op: 'PatchTeam', method: 'PUT', path: '/api/v4/teams/{team_id}/patch'}),
@@ -328,6 +367,11 @@ export const Api = {
         method: 'DELETE',
         path: '/api/v4/channels/{channel_id}/members/{user_id}',
     }),
+    RestorePostVersion: effect<Post>()({
+        op: 'RestorePostVersion',
+        method: 'POST',
+        path: '/api/v4/posts/{post_id}/restore/{restore_version_id}',
+    }),
     ResumeScheduledRecap: effect<ScheduledRecap>()({
         op: 'ResumeScheduledRecap',
         method: 'POST',
@@ -355,6 +399,11 @@ export const Api = {
         op: 'SetDefaultProfileImage',
         method: 'DELETE',
         path: '/api/v4/users/{user_id}/image',
+    }),
+    SetPostReminder: effect<StatusOK>()({
+        op: 'SetPostReminder',
+        method: 'POST',
+        path: '/api/v4/users/{user_id}/posts/{post_id}/reminder',
     }),
     SetPostUnread: effect<ChannelUnread>()({
         op: 'SetPostUnread',
@@ -399,10 +448,20 @@ export const Api = {
         path: '/api/v4/remotecluster/{remote_id}/channels/{channel_id}/uninvite',
     }),
     UnpinPost: effect<StatusOK>()({op: 'UnpinPost', method: 'POST', path: '/api/v4/posts/{post_id}/unpin'}),
+    UpdateChannelMemberAutotranslationMe: effect<StatusOK>()({
+        op: 'UpdateChannelMemberAutotranslationMe',
+        method: 'PUT',
+        path: '/api/v4/channels/{channel_id}/members/me/autotranslation',
+    }),
     UpdateChannelMemberSchemeRoles: effect<StatusOK>()({
         op: 'UpdateChannelMemberSchemeRoles',
         method: 'PUT',
         path: '/api/v4/channels/{channel_id}/members/{user_id}/schemeRoles',
+    }),
+    UpdateChannelNotifyProps: effect<StatusOK>()({
+        op: 'UpdateChannelNotifyProps',
+        method: 'PUT',
+        path: '/api/v4/channels/{channel_id}/members/{user_id}/notify_props',
     }),
     UpdateChannelPrivacy: effect<ServerChannel>()({
         op: 'UpdateChannelPrivacy',
@@ -429,12 +488,28 @@ export const Api = {
         method: 'PUT',
         path: '/api/v4/users/{user_id}/teams/{team_id}/channels/categories',
     }),
+    UpdateSidebarCategoryForTeamForUser: effect<ChannelCategory>()({
+        op: 'UpdateSidebarCategoryForTeamForUser',
+        method: 'PUT',
+        path: '/api/v4/users/{user_id}/teams/{team_id}/channels/categories/{category_id}',
+    }),
     UpdateTeam: effect<Team>()({op: 'UpdateTeam', method: 'PUT', path: '/api/v4/teams/{team_id}'}),
     UpdateTeamMemberSchemeRoles: effect<StatusOK>()({
         op: 'UpdateTeamMemberSchemeRoles',
         method: 'PUT',
         path: '/api/v4/teams/{team_id}/members/{user_id}/schemeRoles',
     }),
+    UpdateThreadReadForUser: effect<UserThread>()({
+        op: 'UpdateThreadReadForUser',
+        method: 'PUT',
+        path: '/api/v4/users/{user_id}/teams/{team_id}/threads/{thread_id}/read/{timestamp}',
+    }),
+    UpdateThreadsReadForUser: effect<StatusOK>()({
+        op: 'UpdateThreadsReadForUser',
+        method: 'PUT',
+        path: '/api/v4/users/{user_id}/teams/{team_id}/threads/read',
+    }),
+    UploadFile: effect<FileUploadResponse>()({op: 'UploadFile', method: 'POST', path: '/api/v4/files'}),
     UpsertDraft: effect<Draft>()({op: 'UpsertDraft', method: 'POST', path: '/api/v4/drafts'}),
     ValidateExpressionAgainstRequester: effect<unknown>()({
         op: 'ValidateExpressionAgainstRequester',
@@ -446,6 +521,12 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/channels/members/me/view',
     }),
+    WithdrawMyChannelJoinRequest: effect<ChannelJoinRequest>()({
+        op: 'WithdrawMyChannelJoinRequest',
+        method: 'DELETE',
+        path: '/api/v4/channels/{channelId}/join_request',
+    }), // not in the OpenAPI spec
+    getPostsByIds: effect<Post[]>()({op: 'getPostsByIds', method: 'POST', path: '/api/v4/posts/ids'}),
 } as const;
 
 export type ApiOp = keyof typeof Api;

@@ -14,6 +14,7 @@ import {withTimestamp, createEmail} from '../enterprise/elasticsearch_autocomple
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {newTestPassword} from '@/utils';
+import {quickSwitchChannelItem} from '@/utils/suggestion';
 
 describe('Autocomplete without Elasticsearch - Renaming', () => {
     const timestamp = Date.now();
@@ -155,7 +156,7 @@ function searchAndVerifyChannel(channel) {
     cy.get('#suggestionList', {timeout: TIMEOUTS.FIVE_SEC}).should('be.visible');
 
     // * Channel should appear
-    cy.findByTestId(channel.name).
+    quickSwitchChannelItem(channel).
         should('be.visible');
 }
 

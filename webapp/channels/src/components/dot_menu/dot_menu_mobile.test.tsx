@@ -77,6 +77,7 @@ describe('components/dot_menu/DotMenu on mobile view', () => {
 
     test('should render', () => {
         const baseProps = {
+            testId: 'center.post_list.post.menu.dot_menu' as const,
             post: TestHelper.getPostMock({id: 'post_id_1'}),
             isLicensed: false,
             postEditTimeLimit: '-1',
@@ -134,7 +135,7 @@ describe('components/dot_menu/DotMenu on mobile view', () => {
             initialState,
         );
 
-        const button = screen.getByTestId(`PostDotMenu-Button-${baseProps.post.id}`);
+        const button = screen.getByTestId('center.post_list.post.menu.dot_menu--button');
         expect(button).toBeInTheDocument();
         expect(button).toHaveAttribute('aria-label', 'more');
     });

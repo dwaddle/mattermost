@@ -5,6 +5,8 @@ import React, {useCallback} from 'react';
 import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+
 import {getCurrentChannel} from 'mattermost-redux/selectors/entities/channels';
 import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
 
@@ -51,8 +53,12 @@ const RhsPlugin = ({showPluggable, pluggableId, title, pluginId, showPopout = tr
         <div
             id='rhsContainer'
             className='sidebar-right__body'
+            data-testid={pluginId ? `rhs.plugin:${pluginTestKey(pluginId)}` : undefined}
         >
-            <SearchResultsHeader newWindowHandler={showPopout ? newWindowHandler : undefined}>
+            <SearchResultsHeader
+                newWindowHandler={showPopout ? newWindowHandler : undefined}
+                testIdScope='rhs.plugin.header'
+            >
                 {title}
             </SearchResultsHeader>
             {

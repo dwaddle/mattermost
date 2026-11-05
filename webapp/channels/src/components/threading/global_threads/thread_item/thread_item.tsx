@@ -218,6 +218,7 @@ function ThreadItem({
                 )}
                 aria-describedby={`ThreadItem__timestamp_${threadId}`}
                 id={isFirstThreadInList ? 'tutorial-threads-mobile-list' : ''}
+                data-testid={`threads.list.thread:${threadId}--link`}
                 onClick={selectHandler}
                 onKeyDown={selectHandler}
                 ref={ref}
@@ -235,12 +236,18 @@ function ThreadItem({
                             )}
                         </div>
                     )}
-                    <div className='ThreadItem__author'>{postAuthor}</div>
+                    <div
+                        className='ThreadItem__author'
+                        data-testid='threads.list.thread.author--text'
+                    >
+                        {postAuthor}
+                    </div>
                     <div className='ThreadItem__tags'>
                         {channel && postAuthor !== channel?.display_name && (
                             <Tag
                                 onClick={goToInChannelHandler}
                                 text={channel?.display_name}
+                                data-testid='threads.list.thread.channel--button'
                             />
                         )}
                         {isPostPriorityEnabled && (
@@ -269,6 +276,7 @@ function ThreadItem({
                     <ThreadMenu
                         idPrefix='thread-list-menu'
                         threadId={threadId}
+                        testId='threads.list.thread.open_menu'
                         isFollowing={isFollowing ?? false}
                         hasUnreads={Boolean(newReplies)}
                         unreadTimestamp={unreadTimestamp ?? 0}
@@ -280,6 +288,7 @@ function ThreadItem({
                 <div
                     className='preview'
                     dir='auto'
+                    data-testid='threads.list.thread.preview'
                     onClick={handleFormattedTextClick}
                     onKeyDown={handleFormattedTextClick}
                 >
@@ -295,7 +304,10 @@ function ThreadItem({
                         <Attachment post={post}/>
                     )}
                 </div>
-                <div className='activity'>
+                <div
+                    className='activity'
+                    data-testid='threads.list.thread.activity'
+                >
                     {participantIds?.length ? (
                         <Avatars
                             userIds={participantIds}

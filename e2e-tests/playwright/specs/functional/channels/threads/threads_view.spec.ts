@@ -1,0 +1,51 @@
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+import {Api, expect, generated, Msg, settle, test} from '@mattermost/playwright-lib';
+
+/**
+ * @objective Verify a thread the user follows is listed in Threads, opens in the thread pane, and leaves
+ * the list once unfollowed from the pane's thread menu.
+ *
+ * Written on the generated page objects: the threads route, the list item (keyed by the root post's id),
+ * the pane and the thread menu all come from `app`.
+ */
+test(
+    'lists a followed thread, opens it, and drops it from the list when unfollowed from the thread menu',
+    {tag: '@collapsed_reply_threads'},
+    async ({pw}) => {
+        const {adminClient, team, user, userClient} = await pw.initSetup();
+
+        // # Threads need collapsed reply threads (an earlier spec may have turned them off on this server)
+        await adminClient.patchConfig({ServiceSettings: {CollapsedThreads: 'always_on'}} as any);
+        const channel = await userClient.getChannelByName(team.id, 'town-square');
+
+        // # Start a thread: the author follows it
+        const root = await userClient.createPost({channel_id: channel.id, message: 'Thread root'} as any);
+        await userClient.createPost({channel_id: channel.id, root_id: root.id, message: 'First reply'} as any);
+
+        // # Log in and open Threads
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.threadsPage.goto({team});
+
+        // * The thread is listed under its root post, by its author
+        const item = app.threads.list.thread(root.id);
+        await expect(item.locator).toBeVisible();
+        expect(await item.read()).toEqual({author: user.username});
+
+        // # Open it
+        await item.clickLink();
+
+        // * The pane shows the thread, and the URL names it
+        await expect(page).toHaveURL(generated.ThreadsPage.path({team, threadIdentifier: root.id}));
+        await expect(app.threads.pane.followButton).toHaveMessage(Msg.threading.following);
+
+        // # Unfollow it from the pane's thread menu
+        const menu = await app.threads.pane.clickOpenMenuButton();
+        await settle(menu.followThreadMenuItem, (m) => m.click(), {wait: Api.StopFollowingThread});
+
+        // * The thread leaves the followed list, and the pane closes with it
+        await expect(item.locator).toBeHidden();
+        await expect(app.threads.pane.followButton.locator).toBeHidden();
+    },
+);

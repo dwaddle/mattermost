@@ -5,40 +5,47 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify an overlong thread reply shows the character-count warning and is not posted.
+ *
+ * Written on the generated page objects: the thread composer's error line and the thread's posts (by id).
  */
 test('MM-T106 Webapp: Message too long warning text', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, userClient} = await pw.initSetup();
     // MaxPostSize is a computed client-config value, so read it rather than hardcoding.
     const clientConfig = await adminClient.getClientConfig();
     const maxReplyLength = parseInt(clientConfig.MaxPostSize, 10);
     const validReply = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ';
     const tooLongReply = validReply.repeat(maxReplyLength / validReply.length + 1);
+    const tooLongWarning = `Your message is too long. Character count: ${tooLongReply.length}/${maxReplyLength}`;
 
-    // # Log in, open Off-Topic, post a root message, and open its thread
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(`Hello ${pw.random.id()}`);
-    const rootPost = await channelsPage.getLastPost();
-    await rootPost.reply();
-    await channelsPage.sidebarRight.toBeVisible();
+    // # Post a root message in Off-Topic, log in, and open its thread
+    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const root = await userClient.createPost({channel_id: channel.id, message: `Hello ${pw.random.id()}`});
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const rootPost = app.center.postList.post(root);
+    await rootPost.locator.hover();
+    await rootPost.menu.clickReplyButton();
+    const composer = app.rhs.postCreate;
 
     // # Post a valid reply
-    await channelsPage.sidebarRight.postMessage(validReply);
+    await composer.fillMessageTextbox(validReply);
+    await composer.clickSendButton();
 
-    // * Verify no overlong-message warning is shown
-    await channelsPage.sidebarRight.postCreate.toNotHaveMessageTooLongWarning();
+    // * The reply is posted, and no overlong-message warning is shown
+    await expect.poll(async () => (await app.rhs.thread.postKeys()).length).toBe(2);
+    await expect(composer.errorText.locator).toHaveCount(0);
 
     // # Enter an overlong reply and try to send it
-    await channelsPage.sidebarRight.postCreate.input.fill(tooLongReply);
+    await composer.fillMessageTextbox(tooLongReply);
 
-    // * Verify the character-count warning is visible without replacing the reply textbox
-    await channelsPage.sidebarRight.postCreate.toHaveMessageTooLongWarning(tooLongReply.length, maxReplyLength);
-    await expect(channelsPage.sidebarRight.postCreate.input).toBeVisible();
-    await channelsPage.sidebarRight.postCreate.input.press('Enter');
+    // * The character-count warning is shown, without replacing the reply textbox
+    await expect(composer.errorText.locator).toHaveText(tooLongWarning);
+    await expect(composer.messageTextbox.locator).toBeVisible();
+    await composer.messageTextbox.locator.press('Enter');
 
-    // * Verify the warning remains and the last posted reply is still the valid reply
-    await channelsPage.sidebarRight.postCreate.toHaveMessageTooLongWarning(tooLongReply.length, maxReplyLength);
-    const lastReply = await channelsPage.sidebarRight.getLastPost();
-    await lastReply.toContainText(validReply);
+    // * The warning remains, and nothing more was posted
+    await expect(composer.errorText.locator).toHaveText(tooLongWarning);
+    expect((await app.rhs.thread.postKeys()).length).toBe(2);
+    const thread = await userClient.getPostThread(root.id);
+    expect(thread.order).toHaveLength(2);
 });

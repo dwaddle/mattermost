@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import path from 'node:path';
+
 import {expect, test} from '@mattermost/playwright-lib';
 
 /**
@@ -8,20 +10,35 @@ import {expect, test} from '@mattermost/playwright-lib';
  *
  * @precondition
  * The server must have `ServiceSettings.EnableSVGs` set to `true`.
+ *
+ * Written on the generated page objects: the composer's attach button and file previews, and the posted image
+ * found by its file id.
  */
 test('MM-T309 uploads and posts an SVG file when SVG support is enabled', {tag: '@file_attachments'}, async ({pw}) => {
     // # Create and log in as a test user, and enable SVG support
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, userClient} = await pw.initSetup();
     await adminClient.patchConfig({ServiceSettings: {EnableSVGs: true}});
+    const channel = await userClient.getChannelByName(team.id, 'off-topic');
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const composer = app.center.postCreate;
 
-    // # Post a message with an SVG attachment
-    await channelsPage.postMessage(`This is an image ${pw.random.id()}`, ['vector_image.svg']);
+    // # Attach the SVG and post it with a message
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await composer.clickAttachButton();
+    await (await fileChooserPromise).setFiles(path.resolve('asset/vector_image.svg'));
+    await expect(composer.filePreviews.fileItems).toHaveCount(1);
+    const message = `This is an image ${pw.random.id()}`;
+    await composer.fillMessageTextbox(message);
+    await composer.clickSendButton();
 
-    // * Verify the posted message renders the SVG as an image thumbnail
-    const post = await channelsPage.getLastPost();
-    await expect(post.container.getByLabel(/file thumbnail/i)).toBeVisible();
+    // * The server has the post with the file, and the post shows it as an image
+    const sent = async () => {
+        const {order, posts} = await userClient.getPosts(channel.id);
+        return posts[order.find((id) => posts[id].message === message) ?? ''];
+    };
+    await expect.poll(async () => (await sent())?.file_ids?.length).toBe(1);
+    const post = (await sent())!;
+    await expect(app.center.postList.post(post).attachments.image({id: post.file_ids![0]}).locator).toBeVisible();
 });

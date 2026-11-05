@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import type {Dispatch} from 'redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostPreviewMetadata} from '@mattermost/types/posts';
 
 import {General} from 'mattermost-redux/constants';
@@ -29,6 +30,9 @@ export type OwnProps = {
     preventClickAction?: boolean;
     previewFooterMessage?: string;
     usePostAsSource?: boolean;
+
+    /** The preview's testid (`<post>.permalink_preview`), with `.message--text` and `.attachments` inside. */
+    testIdScope?: TestId;
 };
 
 function makeMapStateToProps() {

@@ -274,7 +274,7 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
 
             // * The banner is back. Saving it stores the colour the picker showed, so
             // * only the text is the attribute's.
-            await expect(channelsPage.page.getByTestId('channel_banner_text')).toHaveText('SECRET');
+            await expect(channelsPage.page.getByTestId('center.channel_banner.text--text')).toHaveText('SECRET');
             expect((await adminClient.getChannel(channel.id)).banner_info?.enabled).toBe(true);
         } finally {
             await deleteAttributes(adminClient, created);

@@ -17,6 +17,9 @@ type Props = {
     onWidthChange?: (width: number) => void;
     onInput?: (e: FormEvent<HTMLTextAreaElement>) => void;
     placeholder?: string;
+
+    /** Testid of the textarea; defaults to its id. */
+    'data-testid'?: string;
 } & Intersection<HTMLProps<HTMLTextAreaElement>, HTMLProps<HTMLDivElement>>;
 
 const styles = {
@@ -65,6 +68,7 @@ const AutosizeTextarea = React.forwardRef<HTMLTextAreaElement, Props>(({
     onWidthChange,
     onInput,
     placeholder,
+    'data-testid': dataTestId,
     ...otherProps
 }: Props, ref) => {
     const height = useRef(0);
@@ -153,7 +157,7 @@ const AutosizeTextarea = React.forwardRef<HTMLTextAreaElement, Props>(({
         <div >
             <textarea
                 ref={setTextareaRef}
-                data-testid={id}
+                data-testid={dataTestId ?? id}
                 id={id}
                 {...heightProps}
                 {...otherProps}

@@ -6,6 +6,7 @@ import {useIntl} from 'react-intl';
 
 import {FireIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {useBurnOnReadTimer} from 'hooks/useBurnOnReadTimer';
 import {getAriaAnnouncementInterval, formatAriaAnnouncement} from 'utils/burn_on_read_timer_utils';
@@ -17,9 +18,12 @@ import './burn_on_read_timer_chip.scss';
 interface Props {
     expireAt?: number;
     onClick: () => void;
+
+    // The post's scope; without it, the legacy testid.
+    testIdScope?: TestId;
 }
 
-const BurnOnReadTimerChip = ({expireAt, onClick}: Props) => {
+const BurnOnReadTimerChip = ({expireAt, onClick, testIdScope}: Props) => {
     const {formatMessage} = useIntl();
     const [lastAnnouncement, setLastAnnouncement] = useState<number>(0);
 
@@ -89,7 +93,7 @@ const BurnOnReadTimerChip = ({expireAt, onClick}: Props) => {
                 <button
                     type='button'
                     className={`BurnOnReadTimerChip ${isWarning ? 'BurnOnReadTimerChip--warning' : ''} ${isExpired ? 'BurnOnReadTimerChip--expired' : ''}`}
-                    data-testid='burn-on-read-timer-chip'
+                    data-testid={testIdScope ? `${testIdScope}.burn_on_read_timer--button` : 'burn-on-read-timer-chip'}
                     onClick={handleClick}
                     onKeyDown={handleKeyDown}
                     aria-label={ariaLabel}

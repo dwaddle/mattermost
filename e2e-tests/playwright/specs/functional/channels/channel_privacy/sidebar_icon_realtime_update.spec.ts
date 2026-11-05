@@ -47,22 +47,18 @@ test(
         await adminClient.addToChannel(user.id, channel.id);
 
         // # Log in user and navigate to the channel
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        // * Verify sidebar shows globe icon (public channel)
-        const sidebarItem = page.locator(`#sidebarItem_${channel.name}`);
-        await expect(sidebarItem).toBeVisible();
-        await expect(sidebarItem.locator('.icon-globe')).toBeVisible();
-        await expect(sidebarItem.locator('.icon-lock-outline')).not.toBeVisible();
+        // * Verify the sidebar link is announced as a public channel (the globe icon)
+        const sidebarLink = app.lhs.channelList.channel(channel).link.locator;
+        await expect(sidebarLink).toHaveAccessibleName(/ public channel/);
 
         // # Convert channel to private via admin API (simulates mmctl)
         await adminClient.updateChannelPrivacy(channel.id, 'P');
 
-        // * Verify sidebar icon updates to lock without page refresh
-        await expect(sidebarItem.locator('.icon-lock-outline')).toBeVisible({timeout: 10000});
-        await expect(sidebarItem.locator('.icon-globe')).not.toBeVisible();
+        // * Verify the sidebar link updates to a private channel (the lock icon) without page refresh
+        await expect(sidebarLink).toHaveAccessibleName(/ private channel/, {timeout: 10000});
     },
 );
 
@@ -86,21 +82,17 @@ test(
         await adminClient.addToChannel(user.id, channel.id);
 
         // # Log in user and navigate to the channel
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        // * Verify sidebar shows lock icon (private channel)
-        const sidebarItem = page.locator(`#sidebarItem_${channel.name}`);
-        await expect(sidebarItem).toBeVisible();
-        await expect(sidebarItem.locator('.icon-lock-outline')).toBeVisible();
-        await expect(sidebarItem.locator('.icon-globe')).not.toBeVisible();
+        // * Verify the sidebar link is announced as a private channel (the lock icon)
+        const sidebarLink = app.lhs.channelList.channel(channel).link.locator;
+        await expect(sidebarLink).toHaveAccessibleName(/ private channel/);
 
         // # Convert channel to public via admin API (simulates mmctl)
         await adminClient.updateChannelPrivacy(channel.id, 'O');
 
-        // * Verify sidebar icon updates to globe without page refresh
-        await expect(sidebarItem.locator('.icon-globe')).toBeVisible({timeout: 10000});
-        await expect(sidebarItem.locator('.icon-lock-outline')).not.toBeVisible();
+        // * Verify the sidebar link updates to a public channel (the globe icon) without page refresh
+        await expect(sidebarLink).toHaveAccessibleName(/ public channel/, {timeout: 10000});
     },
 );

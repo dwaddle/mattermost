@@ -5,6 +5,8 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that Find channel search limits results to 50 when there are more channels matching the search query
+ *
+ * The switcher is checked through the generated page objects: its results are keyed by channel id.
  */
 test(
     'MM-T5424 Find channel search returns only 50 results when there are more than 50 channels with similar names',
@@ -28,10 +30,10 @@ test(
             });
             channelsRes.push(adminClient.createChannel(channel));
         }
-        await Promise.all(channelsRes);
+        const created = await Promise.all(channelsRes);
 
         // # Log in a user in new browser context
-        const {channelsPage} = await pw.testBrowser.login(user);
+        const {app, channelsPage} = await pw.testBrowser.login(user);
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -39,23 +41,18 @@ test(
 
         // # Click on "Find channel" and type "test_channel"
         await channelsPage.sidebarLeft.findChannelButton.click();
-
-        await channelsPage.findChannelsModal.toBeVisible();
-        await channelsPage.findChannelsModal.input.fill(commonName);
+        const switcher = app.quickSwitchModal;
+        await switcher.searchTextbox.fill(commonName);
 
         const limitCount = 50;
 
         // * Verify only 50 results for similar name are displayed
-        await expect(channelsPage.findChannelsModal.searchList).toHaveCount(limitCount);
+        await expect(switcher.suggestions.itemItems).toHaveCount(limitCount);
 
-        // * Verify the first 50 channels are visible in the search results
-        for (let i = 0; i < limitCount; i++) {
-            let suffix = i.toString();
-            if (i < 10) {
-                suffix = `0${i}`;
-            }
-
-            await expect(channelsPage.findChannelsModal.container.getByTestId(`${commonName}_${suffix}`)).toBeVisible();
+        // * Verify the first 50 channels (by name) are the results; results are keyed by channel id
+        const first = created.sort((a, b) => a.name.localeCompare(b.name)).slice(0, limitCount);
+        for (const channel of first) {
+            await expect(switcher.suggestions.item(channel.id).locator).toBeVisible();
         }
     },
 );

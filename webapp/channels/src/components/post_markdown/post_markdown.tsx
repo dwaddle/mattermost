@@ -4,6 +4,7 @@
 import memoize from 'memoize-one';
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
 import {Posts} from 'mattermost-redux/constants';
@@ -53,6 +54,9 @@ export type OwnProps = {
 
     /** Permalink previews and similar read-only surfaces. */
     disableInteractions?: boolean;
+
+    /** The post's testid scope: the "Edited" label is `<scope>.edited`, a data spillage report `<scope>.spillage_report`. */
+    postTestIdScope?: TestId;
 };
 
 type Props = PropsFromRedux & OwnProps;
@@ -135,9 +139,7 @@ export default class PostMarkdown extends React.PureComponent<Props> {
 
         const allowInlineActions = !this.props.disableInteractions && (isBot || isWebhook || isPlugin);
         const postProps = this.props.post?.props as Record<string, unknown> | undefined;
-        const mmBlocksActionsCookie = typeof postProps?.mm_blocks_actions === 'string' ?
-            postProps.mm_blocks_actions :
-            undefined;
+        const mmBlocksActionsCookie = typeof postProps?.mm_blocks_actions === 'string' ? postProps.mm_blocks_actions : undefined;
         const integrationFormat = mmBlocksActionsCookie ? 'mm_block' : undefined;
 
         const options = this.getOptions(
@@ -167,6 +169,7 @@ export default class PostMarkdown extends React.PureComponent<Props> {
                         imagesMetadata={this.props.post?.metadata?.images}
                         postId={this.props.post?.id}
                         editedAt={this.props.showPostEditedIndicator ? this.props.post?.edit_at : undefined}
+                        editedTestId={this.props.postTestIdScope ? `${this.props.postTestIdScope}.edited` : undefined}
                         allowInlineActions={allowInlineActions}
                         mmBlocksActionCookie={mmBlocksActionsCookie}
                         integrationFormat={integrationFormat}

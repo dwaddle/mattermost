@@ -13,7 +13,7 @@ export default class ThreadFooter {
     constructor(container: Locator) {
         this.container = container;
 
-        this.replyButton = container.getByTestId('thread-footer-reply-button');
+        this.replyButton = container.getByTestId(/\.thread_footer\.reply--button$/);
         this.avatarImages = container.locator('img.Avatar');
     }
 

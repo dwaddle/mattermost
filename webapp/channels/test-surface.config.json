@@ -40,7 +40,116 @@
     },
     "checks": {
         "strictScopes": [],
-        "strictPaths": [],
+        "strictPaths": [
+            "channels/src/components/actions_menu/",
+            "channels/src/components/advanced_text_editor/",
+            "channels/src/components/advanced_text_editor/send_button/scheduled_post_custom_time_modal/",
+            "channels/src/components/advanced_text_editor/send_button/send_post_options/",
+            "channels/src/components/app_bar/app_bar.tsx",
+            "channels/src/components/app_bar/app_bar_plugin_component.tsx",
+            "channels/src/components/at_mention",
+            "channels/src/components/block_renderer/",
+            "channels/src/components/burn_on_read/",
+            "channels/src/components/burn_on_read_confirmation_modal/",
+            "channels/src/components/channel_banner/",
+            "channels/src/components/channel_header/",
+            "channels/src/components/channel_header/channel_header_text.tsx",
+            "channels/src/components/channel_header/channel_header_text_popover.tsx",
+            "channels/src/components/channel_header_menu/",
+            "channels/src/components/channel_info_rhs/",
+            "channels/src/components/channel_members_rhs/",
+            "channels/src/components/channel_move_to_sub_menu/",
+            "channels/src/components/channel_view/channel_view.tsx",
+            "channels/src/components/common/comment_icon.tsx",
+            "channels/src/components/date_time_picker_modal/",
+            "channels/src/components/delete_post_modal/delete_post_modal.tsx",
+            "channels/src/components/dot_menu/dot_menu.tsx",
+            "channels/src/components/dot_menu/post_reminder_submenu.tsx",
+            "channels/src/components/drafts/",
+            "channels/src/components/dynamic_virtualized_list/index.tsx",
+            "channels/src/components/edit_channel_header_modal/",
+            "channels/src/components/edit_scheduled_post/",
+            "channels/src/components/emoji_picker/",
+            "channels/src/components/file_attachment/",
+            "channels/src/components/file_attachment_list/",
+            "channels/src/components/file_preview/file_preview.tsx",
+            "channels/src/components/file_preview_modal/",
+            "channels/src/components/file_search_results/",
+            "channels/src/components/file_upload/",
+            "channels/src/components/forward_post_modal/",
+            "channels/src/components/gif_picker/",
+            "channels/src/components/global_header/right_controls/",
+            "channels/src/components/latex_block/",
+            "channels/src/components/latex_inline/",
+            "channels/src/components/markdown_image/",
+            "channels/src/components/menu/menu_modal.tsx",
+            "channels/src/components/message_with_additional_content.tsx",
+            "channels/src/components/mobile_channel_header/show_search_button/show_search_button.tsx",
+            "channels/src/components/new_replies_banner/",
+            "channels/src/components/new_search/",
+            "channels/src/components/no_results_indicator/",
+            "channels/src/components/notify_confirm_modal.tsx",
+            "channels/src/components/popout_button.tsx",
+            "channels/src/components/post/post_component.tsx",
+            "channels/src/components/post/post_options.tsx",
+            "channels/src/components/post_edit_history/",
+            "channels/src/components/post_emoji/",
+            "channels/src/components/post_priority/",
+            "channels/src/components/post_view/channel_intro_message/",
+            "channels/src/components/post_view/channel_intro_message/channel_intro_message.tsx",
+            "channels/src/components/post_view/commented_on/",
+            "channels/src/components/post_view/floating_timestamp/",
+            "channels/src/components/post_view/message_attachments/action_button/action_button.tsx",
+            "channels/src/components/post_view/message_attachments/message_attachment/message_attachment.tsx",
+            "channels/src/components/post_view/new_message_separator/",
+            "channels/src/components/post_view/post_attachment_opengraph/",
+            "channels/src/components/post_view/post_body_additional_content/",
+            "channels/src/components/post_view/post_edited_indicator/",
+            "channels/src/components/post_view/post_flag_icon/post_flag_icon.tsx",
+            "channels/src/components/post_view/post_list_row/post_list_row.tsx",
+            "channels/src/components/post_view/post_message_preview/",
+            "channels/src/components/post_view/post_reaction/post_reaction.tsx",
+            "channels/src/components/post_view/post_recent_reactions/",
+            "channels/src/components/post_view/post_time/",
+            "channels/src/components/post_view/post_view.tsx",
+            "channels/src/components/post_view/reaction/reaction.tsx",
+            "channels/src/components/post_view/reaction_list/",
+            "channels/src/components/profile_popover/",
+            "channels/src/components/profile_popover/profile_popover_custom_attributes.tsx",
+            "channels/src/components/profile_popover/profile_popover_email.tsx",
+            "channels/src/components/profile_popover/profile_popover_other_user_row.tsx",
+            "channels/src/components/profile_popover/profile_popover_user_name.tsx",
+            "channels/src/components/quick_switch_modal",
+            "channels/src/components/rhs_header_post/",
+            "channels/src/components/scroll_to_bottom_toast/",
+            "channels/src/components/search/search.tsx",
+            "channels/src/components/search_bar/search_bar.tsx",
+            "channels/src/components/search_results/messages_or_files_selector.tsx",
+            "channels/src/components/search_results/post_search_results_item.tsx",
+            "channels/src/components/search_results_header/",
+            "channels/src/components/sidebar/channel_filter/",
+            "channels/src/components/sidebar/channel_navigator/",
+            "channels/src/components/sidebar/sidebar_category/",
+            "channels/src/components/sidebar/sidebar_category/sidebar_category.tsx",
+            "channels/src/components/sidebar/sidebar_category_header.tsx",
+            "channels/src/components/sidebar/sidebar_channel/",
+            "channels/src/components/sidebar/sidebar_channel/sidebar_channel_menu/",
+            "channels/src/components/sidebar/sidebar_channel/sidebar_group_channel/sidebar_group_channel.tsx",
+            "channels/src/components/sidebar/sidebar_header/",
+            "channels/src/components/status_icon.tsx",
+            "channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx",
+            "channels/src/components/suggestion/suggestion_list_contents.tsx",
+            "channels/src/components/threading/",
+            "channels/src/components/toast/",
+            "channels/src/components/toast_wrapper/",
+            "channels/src/components/toggle_modal_button.tsx",
+            "channels/src/components/widgets/users/avatars/",
+            "channels/src/plugins/channel_header_plug/",
+            "channels/src/plugins/rhs_plugin/",
+            "channels/src/utils/markdown/link_only_renderer.tsx",
+            "channels/src/utils/markdown/renderer.tsx",
+            "channels/src/utils/text_formatting.tsx"
+        ],
         "strictKeys": false,
         "allow": [
             {
@@ -413,7 +522,21 @@
                 "template": "admin.user.card.picture_input",
                 "reason": "the hidden file input is opened by the picture menu's Upload item (admin.user.card.picture_menu.upload--menuitem); tests attach files to it directly."
             }
-        ]
+        ],
+        "keyFields": {
+            "allow": [
+                {
+                    "entity": "CustomEmoji",
+                    "field": "short_name",
+                    "reason": "an emoji's short name is unique and the same in every language."
+                },
+                {
+                    "entity": "Emoji",
+                    "field": "short_name",
+                    "reason": "an emoji's short name is unique and the same in every language."
+                }
+            ]
+        }
     },
     "pageNames": {
         "ChannelIdentifierRouter": "ChannelsPage",
@@ -441,14 +564,14 @@
             "ready": null,
             "reason": "the OAuth authorize screen renders no testid yet."
         },
-        "ChannelPopoutPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves ChannelPopout to the grammar names one."
-        },
-        "ChannelsPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves ChannelIdentifierRouter to the grammar names one."
-        },
+        "ChannelPopoutPage": [
+            "center.composer",
+            "center.archived_notice"
+        ],
+        "ChannelsPage": [
+            "center.composer",
+            "center.archived_notice"
+        ],
         "ClaimPage": {
             "ready": null,
             "reason": "no ready testid yet: the PR that moves ClaimController to the grammar names one."
@@ -469,10 +592,9 @@
             "ready": null,
             "reason": "verifies the link and redirects."
         },
-        "DraftsPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves Drafts to the grammar names one."
-        },
+        "DraftsPage": [
+            "drafts.header"
+        ],
         "EmojiPage": {
             "ready": null,
             "reason": "the custom emoji page renders no testid yet."
@@ -529,10 +651,9 @@
             "ready": null,
             "reason": "renders no testid of its own yet."
         },
-        "ScheduledPostsPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves Drafts to the grammar names one."
-        },
+        "ScheduledPostsPage": [
+            "drafts.header"
+        ],
         "SelectTeamPage": {
             "ready": null,
             "reason": "no ready testid yet: the PR that moves SelectTeam to the grammar names one."
@@ -557,47 +678,13 @@
             "ready": null,
             "reason": "no ready testid yet: the PR that moves TermsOfService to the grammar names one."
         },
-        "ThreadPopoutPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves ThreadPopout to the grammar names one."
-        },
-        "ThreadsPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves GlobalThreads to the grammar names one."
-        }
-    },
-    "pageSections": {
-        "AdminConsolePage": {
-            "from": {
-                "file": "channels/src/components/admin_console/admin_definition.tsx",
-                "property": "url"
-            }
-        },
-        "IntegrationsPage": {
-            "values": [
-                "bots",
-                "bots/add",
-                "bots/edit",
-                "commands",
-                "commands/add",
-                "commands/confirm",
-                "commands/edit",
-                "commands/installed",
-                "confirm",
-                "incoming_webhooks",
-                "incoming_webhooks/add",
-                "incoming_webhooks/edit",
-                "oauth2-apps",
-                "oauth2-apps/add",
-                "oauth2-apps/edit",
-                "outgoing-oauth2-connections",
-                "outgoing-oauth2-connections/add",
-                "outgoing-oauth2-connections/edit",
-                "outgoing_webhooks",
-                "outgoing_webhooks/add",
-                "outgoing_webhooks/edit"
-            ]
-        }
+        "ThreadPopoutPage": [
+            "rhs.thread.header"
+        ],
+        "ThreadsPage": [
+            "threads.list",
+            "no_results"
+        ]
     },
     "pluginSlots": {
         "file": "platform/shared/src/utils/test_id/index.ts",
@@ -638,5 +725,56 @@
     ],
     "generateScopes": [
         "admin"
-    ]
+    ],
+    "pageSections": {
+        "AdminConsolePage": {
+            "from": {
+                "file": "channels/src/components/admin_console/admin_definition.tsx",
+                "property": "url"
+            }
+        },
+        "IntegrationsPage": {
+            "values": [
+                "bots",
+                "bots/add",
+                "bots/edit",
+                "commands",
+                "commands/add",
+                "commands/confirm",
+                "commands/edit",
+                "commands/installed",
+                "confirm",
+                "incoming_webhooks",
+                "incoming_webhooks/add",
+                "incoming_webhooks/edit",
+                "oauth2-apps",
+                "oauth2-apps/add",
+                "oauth2-apps/edit",
+                "outgoing-oauth2-connections",
+                "outgoing-oauth2-connections/add",
+                "outgoing-oauth2-connections/edit",
+                "outgoing_webhooks",
+                "outgoing_webhooks/add",
+                "outgoing_webhooks/edit"
+            ]
+        }
+    },
+    "effects": {
+        "declared": [
+            {
+                "testId": "*.attach--button",
+                "ops": [
+                    "UploadFile"
+                ],
+                "reason": "the file chooser's upload goes through a raw XMLHttpRequest to Client4.getFilesRoute() (actions/file_actions.ts), which the scan can't follow: one request per file."
+            },
+            {
+                "testId": "*.attach_menu.your_computer--link",
+                "ops": [
+                    "UploadFile"
+                ],
+                "reason": "the attach menu's Your computer opens the same file chooser as the attach button: a raw XMLHttpRequest per file."
+            }
+        ]
+    }
 }

@@ -6,48 +6,51 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that while the emoji picker is open over a post, scrolling the center channel with
  * PageUp is disabled (the posts stay in place).
+ *
+ * Written on the generated page objects: the post by id, its Add Reaction button and the emoji picker.
  */
 test('MM-T2365 disables center channel scrolling while the emoji picker is open', {tag: '@messaging'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, userClient} = await pw.initSetup();
     const channel = await adminClient.createPublicChannel(team.id, `Scrolling ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
+    const [other] = await adminClient.createUsers(team.id, 1, 'filler');
+    await adminClient.addToChannel(other.id, channel.id);
 
-    // # Fill the channel with enough posts to make it scrollable
+    // # Fill the channel so it can scroll, then post the message to react to last
     for (let i = 0; i < 40; i++) {
-        await adminClient.createPost({channel_id: channel.id, user_id: user.id, message: `filler ${i}`});
+        await pw.postAs(other, {channel_id: channel.id, message: `filler ${i}`});
     }
+    const target = await userClient.createPost({channel_id: channel.id, message: `react target ${pw.random.id()}`});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // # Post a message and open the emoji (reaction) picker over it
-    const message = `react target ${pw.random.id()}`;
-    await channelsPage.postMessage(message);
-    const post = await channelsPage.getLastPost();
-    await post.openReactionPicker();
-    await expect(channelsPage.reactionEmojiPicker.container).toBeVisible();
+    // # Open the emoji picker from the post's Add Reaction button
+    const post = app.center.postList.post(target);
+    await post.locator.hover();
+    await post.menu.clickAddReactionButton();
+    await expect(app.emojiPicker.searchTextbox.locator).toBeVisible();
 
-    // # Record the target post position, then press PageUp
-    const before = await post.container.boundingBox();
+    // # Press PageUp while the picker is open
+    const before = await post.locator.boundingBox();
     await page.keyboard.press('PageUp');
     await pw.wait(pw.duration.one_sec);
-    const after = await post.container.boundingBox();
+    const after = await post.locator.boundingBox();
 
-    // * Verify the post did not move (the channel did not scroll while the picker was open)
+    // * Verify the posts did not scroll
     if (!before || !after) {
         throw new Error('Expected the post to have a bounding box while the emoji picker is open');
     }
     expect(Math.abs(after.y - before.y)).toBeLessThan(5);
 
-    // # Close the emoji picker and press PageUp again
+    // # Close the picker and press PageUp again
     await page.keyboard.press('Escape');
-    await expect(channelsPage.reactionEmojiPicker.container).not.toBeVisible();
+    await expect(app.emojiPicker.searchTextbox.locator).not.toBeVisible();
     await page.keyboard.press('PageUp');
     await pw.wait(pw.duration.one_sec);
 
-    // * Verify scrolling works again once the picker is closed (control: the post now moves)
-    const afterClose = await post.container.boundingBox();
+    // * Verify the posts scrolled this time
+    const afterClose = await post.locator.boundingBox();
     if (!afterClose) {
         throw new Error('Expected the post to have a bounding box after the emoji picker is closed');
     }

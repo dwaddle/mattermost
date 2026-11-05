@@ -20,13 +20,13 @@ const SUFFIXED_POST_ID_RE = /^([a-z0-9]{26}):\d+$/;
 // Both assert the positive case first: a lone "placeholder is absent" check also passes
 // against a region that has not rendered at all.
 export async function expectFilesVisible(scope: Locator) {
-    await expect(scope.getByTestId('fileAttachmentList')).toBeVisible();
-    await expect(scope.getByTestId('redactedFilesPlaceholder')).toHaveCount(0);
+    await expect(scope.getByTestId(/\.attachments$/)).toBeVisible();
+    await expect(scope.getByTestId(/\.redacted_files$/)).toHaveCount(0);
 }
 
 export async function expectFilesRedacted(scope: Locator) {
-    await expect(scope.getByTestId('redactedFilesPlaceholder')).toBeVisible();
-    await expect(scope.getByTestId('fileAttachmentList')).toHaveCount(0);
+    await expect(scope.getByTestId(/\.redacted_files$/)).toBeVisible();
+    await expect(scope.getByTestId(/\.attachments$/)).toHaveCount(0);
 }
 
 export default class ChannelsPost {
@@ -60,35 +60,34 @@ export default class ChannelsPost {
     constructor(container: Locator) {
         this.container = container;
 
-        this.body = container.getByTestId('post-body');
+        this.body = container.getByTestId(/\.post\.body$/);
 
-        this.profileIcon = container.getByTestId('profile-icon');
+        this.profileIcon = container.getByTestId(/\.post\.avatar$/);
         this.avatarImage = this.profileIcon.locator('img.Avatar, img').first();
-        this.fileAttachmentList = container.getByTestId('fileAttachmentList');
+        this.fileAttachmentList = container.getByTestId(/\.attachments$/);
         this.emoticon = container.locator('.emoticon');
         this.messageText = container.locator('.post-message__text p');
         this.editedIndicator = container.getByText('Edited', {exact: true});
         this.addReactionButton = container.getByRole('button', {name: 'Add a reaction', exact: true});
 
-        this.removePostButton = container.getByTestId('post-remove-button');
+        this.removePostButton = container.getByTestId(/\.post\.remove--button$/);
 
-        this.postMenu = new PostMenu(container.getByTestId(/^post-menu($|-)/));
-        this.threadFooter = new ThreadFooter(container.getByTestId('thread-footer'));
+        this.postMenu = new PostMenu(container.getByTestId(/\.post\.menu$/));
+        this.threadFooter = new ThreadFooter(container.getByTestId(/\.post\.thread_footer$/));
 
         // Burn-on-Read components
-        this.burnOnReadBadge = new BurnOnReadBadge(container.getByTestId(/^burn-on-read-badge-/));
-        this.burnOnReadTimerChip = new BurnOnReadTimerChip(container.getByTestId('burn-on-read-timer-chip'));
-        this.concealedPlaceholder = new BurnOnReadConcealedPlaceholder(
-            container.getByTestId(/^burn-on-read-concealed-/),
-        );
+        this.burnOnReadBadge = new BurnOnReadBadge(container.getByTestId(/\.burn_on_read--button$/));
+        this.burnOnReadTimerChip = new BurnOnReadTimerChip(container.getByTestId(/\.burn_on_read_timer--button$/));
+        this.concealedPlaceholder = new BurnOnReadConcealedPlaceholder(container.getByTestId(/\.reveal--button$/));
 
-        this.fileAttachmentList = container.getByTestId('fileAttachmentList');
-        this.redactedFilesPlaceholder = container.getByTestId('redactedFilesPlaceholder');
+        this.fileAttachmentList = container.getByTestId(/\.attachments$/);
+        this.redactedFilesPlaceholder = container.getByTestId(/\.redacted_files$/);
 
         // The embedded permalink preview carries no test id, so the class name is the
         // only handle available.
         this.postPreview = container.locator('.post-preview');
-        this.priorityLabel = container.getByTestId('post-priority-label');
+        // the post's own label, not one in an embedded permalink preview
+        this.priorityLabel = container.getByTestId(/\.post\.priority_label$/);
     }
 
     async toBeVisible() {
@@ -201,7 +200,7 @@ export default class ChannelsPost {
         await expect(this.getFileAttachmentThumbnail(fileName)).toBeVisible();
 
         const attachment = this.fileAttachmentList
-            .locator('[data-testid="media-gallery-tile"], .post-image__column')
+            .locator('[data-testid*=".attachments.file:"], .post-image__column')
             .filter({hasText: fileName});
         const downloadLink = attachment.getByRole('link', {name: 'download'});
 
@@ -249,7 +248,7 @@ export default class ChannelsPost {
     }
 
     getLinkPreview() {
-        return new LinkPreview(this.body.getByTestId('link-preview'));
+        return new LinkPreview(this.body.getByTestId(/\.link_preview--link$/));
     }
 
     async openAThread() {

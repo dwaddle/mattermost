@@ -10,6 +10,7 @@ import {BellOffOutlineIcon, BellOutlineIcon} from '@mattermost/compass-icons/com
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Button from '../button';
 
@@ -19,11 +20,15 @@ type Props = {
     // Compact header control: Compass bell-outline (following) / bell-off-outline
     // (not following), matching the other RHS icon buttons.
     iconOnly?: boolean;
+
+    /** The icon-only toggle renders `${testId}--togglebutton`, the text button `${testId}--button`. */
+    testId?: TestId;
 };
 
 function FollowButton({
     isFollowing,
     iconOnly = false,
+    testId,
     ...props
 }: Props & Exclude<ComponentProps<typeof Button>, Props>) {
     const {formatMessage} = useIntl();
@@ -49,6 +54,7 @@ function FollowButton({
                     aria-label={label}
                     aria-pressed={following}
                     onClick={onClick}
+                    data-testid={testId ? `${testId}--togglebutton` : undefined}
                 />
             </WithTooltip>
         );
@@ -56,6 +62,7 @@ function FollowButton({
 
     return (
         <Button
+            data-testid={testId ? `${testId}--button` : undefined}
             {...props}
             className={classNames(props.className, 'FollowButton')}
             disabled={Boolean(props.disabled)}

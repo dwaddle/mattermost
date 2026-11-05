@@ -22,12 +22,12 @@ export default class DraftPost {
     constructor(container: Locator) {
         this.container = container;
 
-        this.panelHeader = container.getByTestId('draft-panel-header');
-        this.panelBody = container.getByTestId('draft-panel-body');
+        this.panelHeader = container.getByTestId('drafts.list.draft.header');
+        this.panelBody = container.getByTestId('drafts.list.draft.body');
 
-        this.postBody = container.getByTestId('draft-post-body');
-        this.postHeader = container.getByTestId('draft-post-header');
-        this.postImage = container.getByTestId('draft-post-img');
+        this.postBody = container.getByTestId('drafts.list.draft.message');
+        this.postHeader = container.getByTestId('drafts.list.draft.post_header');
+        this.postImage = container.getByTestId('drafts.list.draft.avatar');
 
         this.deleteButton = container.locator('#draft_icon-trash-can-outline_delete');
         this.editButton = container.locator('#draft_icon-pencil-outline_edit');

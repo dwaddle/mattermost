@@ -13,6 +13,7 @@
 import {createArchivedChannel} from './helpers';
 
 import {getRandomId} from '@/utils';
+import {suggestionItemSelector} from '@/utils/suggestion';
 
 describe('archive channel search tests', () => {
     let testTeam: Cypress.Team;
@@ -114,7 +115,7 @@ describe('archive channel search tests', () => {
         // # Type "in:" and note the list of channels that appear
         cy.uiGetSearchContainer().click();
         cy.uiGetSearchBox().clear().type(`in:${testChannel.name}`);
-        cy.findByTestId(testChannel.name).should('not.exist');
+        cy.get(suggestionItemSelector(testChannel.name)).should('not.exist');
     });
 });
 

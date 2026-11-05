@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @channels @keyboard_shortcuts
 
+import {quickSwitchUserItem} from '@/utils/suggestion';
+
 describe('Keyboard Shortcuts', () => {
     beforeEach(() => {
         cy.apiAdminLogin();
@@ -59,7 +61,7 @@ describe('Keyboard Shortcuts', () => {
         cy.findByRole('combobox', {name: 'quick switch input'}).type(this.otherUser.username);
 
         // # Select other user from the list
-        cy.findByTestId(this.otherUser.username).should('not.exist');
+        quickSwitchUserItem(this.otherUser).should('not.exist');
     });
 
     it('MM-T1228_3 CTRL/CMD+K - Open DM with user belonging to both teams / with ANY', function() {
@@ -107,8 +109,7 @@ function verifyUserIsFoundAndDMOpensOnClick(user) {
     cy.findByRole('combobox', {name: 'quick switch input'}).type(user.username);
 
     // # Select other user from the list
-    cy.findByTestId(user.username).should('be.visible');
-    cy.findByTestId(user.username).click();
+    quickSwitchUserItem(user).should('be.visible').click();
 
     // * Other user name is visible in header
     cy.get('#channelHeaderTitle').should('contain', user.username);

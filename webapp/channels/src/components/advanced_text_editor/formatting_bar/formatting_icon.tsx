@@ -21,6 +21,7 @@ import type IconProps from '@mattermost/compass-icons/components/props';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import KeyboardShortcutSequence, {
     KEYBOARD_SHORTCUTS,
@@ -37,6 +38,9 @@ interface FormattingIconProps {
     className?: string;
     disabled?: boolean;
     isActive?: boolean;
+
+    // The button renders `<testId>--togglebutton` (it reports whether its format is on, in the rich-text editor).
+    testId?: TestId;
 }
 
 const MAP_MARKDOWN_MODE_TO_ICON: Record<FormattingIconProps['mode'], React.FC<IconProps>> = {
@@ -76,7 +80,7 @@ const MAP_MARKDOWN_MODE_TO_KEYBOARD_SHORTCUTS: Record<FormattingIconProps['mode'
 };
 
 const FormattingIcon = forwardRef<HTMLButtonElement, FormattingIconProps>((props, ref) => {
-    const {mode, onClick, isActive, className, ...otherProps} = props;
+    const {mode, onClick, isActive, className, testId, ...otherProps} = props;
     const handleMouseDown = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
     }, []);
@@ -110,6 +114,7 @@ const FormattingIcon = forwardRef<HTMLButtonElement, FormattingIconProps>((props
                 toggled={isActive === true}
                 className={classNames(className)}
                 {...otherProps}
+                data-testid={testId ? `${testId}--togglebutton` : undefined}
             />
         </WithTooltip>
     );

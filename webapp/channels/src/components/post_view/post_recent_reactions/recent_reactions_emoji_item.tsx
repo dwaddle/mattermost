@@ -6,6 +6,7 @@ import React from 'react';
 import {useIntl} from 'react-intl';
 
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 
 import {getEmojiImageUrl, getEmojiName} from 'mattermost-redux/utils/emoji_utils';
@@ -14,8 +15,11 @@ type Props = {
     emoji: Emoji;
     onItemClick: (emoji: Emoji) => void;
     order?: number;
+
+    /** The recent reactions' testid; the item renders `<testIdScope>.emoji:<name>--button`. */
+    testIdScope?: TestId;
 };
-const EmojiItem = ({emoji, onItemClick, order}: Props) => {
+const EmojiItem = ({emoji, onItemClick, order, testIdScope}: Props) => {
     const {formatMessage} = useIntl();
 
     const handleClick = (e: React.MouseEvent) => {
@@ -37,7 +41,7 @@ const EmojiItem = ({emoji, onItemClick, order}: Props) => {
     return (
         <IconButton
             id={`recent_reaction_${order}`}
-            data-testid='post-menu__item_emoji'
+            data-testid={testIdScope ? `${testIdScope}.emoji:${emojiName}--button` : undefined}
             size='small'
             padding='compact'
             className={classNames('post-menu__item', 'post-menu__emoticon')}

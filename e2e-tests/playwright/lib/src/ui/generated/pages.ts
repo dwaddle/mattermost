@@ -190,9 +190,14 @@ export class ChannelPopoutPage {
         });
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves ChannelPopout to the grammar names one). */
+    /** Navigates here and waits until `center.composer` or `center.archived_notice` shows. */
     async goto(params: ChannelPopoutPageParams): Promise<void> {
         await this.page.goto(ChannelPopoutPage.path(params));
+        await this.page
+            .getByTestId('center.composer')
+            .or(this.page.getByTestId('center.archived_notice'))
+            .first()
+            .waitFor();
     }
 }
 
@@ -228,9 +233,14 @@ export class ChannelsPage {
         });
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves ChannelIdentifierRouter to the grammar names one). */
+    /** Navigates here and waits until `center.composer` or `center.archived_notice` shows. */
     async goto(params: ChannelsPageParams): Promise<void> {
         await this.page.goto(ChannelsPage.path(params));
+        await this.page
+            .getByTestId('center.composer')
+            .or(this.page.getByTestId('center.archived_notice'))
+            .first()
+            .waitFor();
     }
 }
 
@@ -371,9 +381,10 @@ export class DraftsPage {
         return buildPath(DraftsPage.route, {team: keyOf(params.team, 'name')});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves Drafts to the grammar names one). */
+    /** Navigates here and waits until `drafts.header` shows. */
     async goto(params: DraftsPageParams): Promise<void> {
         await this.page.goto(DraftsPage.path(params));
+        await this.page.getByTestId('drafts.header').waitFor();
     }
 }
 
@@ -775,9 +786,10 @@ export class ScheduledPostsPage {
         return buildPath(ScheduledPostsPage.route, {team: keyOf(params.team, 'name')});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves Drafts to the grammar names one). */
+    /** Navigates here and waits until `drafts.header` shows. */
     async goto(params: ScheduledPostsPageParams): Promise<void> {
         await this.page.goto(ScheduledPostsPage.path(params));
+        await this.page.getByTestId('drafts.header').waitFor();
     }
 }
 
@@ -947,9 +959,10 @@ export class ThreadPopoutPage {
         return buildPath(ThreadPopoutPage.route, {team: keyOf(params.team, 'name'), postId: params.postId});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves ThreadPopout to the grammar names one). */
+    /** Navigates here and waits until `rhs.thread.header` shows. */
     async goto(params: ThreadPopoutPageParams): Promise<void> {
         await this.page.goto(ThreadPopoutPage.path(params));
+        await this.page.getByTestId('rhs.thread.header').waitFor();
     }
 }
 
@@ -979,8 +992,9 @@ export class ThreadsPage {
         });
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves GlobalThreads to the grammar names one). */
+    /** Navigates here and waits until `threads.list` or `no_results` shows. */
     async goto(params: ThreadsPageParams): Promise<void> {
         await this.page.goto(ThreadsPage.path(params));
+        await this.page.getByTestId('threads.list').or(this.page.getByTestId('no_results')).first().waitFor();
     }
 }

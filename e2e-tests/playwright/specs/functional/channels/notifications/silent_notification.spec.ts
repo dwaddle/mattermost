@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, testConfig} from '@mattermost/playwright-lib';
+import {expect, test, testConfig, type App} from '@mattermost/playwright-lib';
 
 async function postToWebhook(webhookId: string, payload: Record<string, unknown>) {
     const hookUrl = `${testConfig.baseURL}/hooks/${webhookId}`;
@@ -18,6 +18,14 @@ async function postToWebhook(webhookId: string, payload: Record<string, unknown>
 
 function notificationText(n: {title?: string; body?: string}) {
     return `${n.title ?? ''}\n${n.body ?? ''}`;
+}
+
+/** Checks the center channel's most recent post contains `message`. */
+async function expectLastPostContains(app: App, message: string) {
+    const {postList} = app.center;
+    await expect.poll(async () => (await postList.postKeys()).length).toBeGreaterThan(0);
+    const id = (await postList.postKeys()).at(-1)!;
+    await expect(postList.post({id}).locator).toContainText(message);
 }
 
 function channelHasMessage(posts: {posts: Record<string, {message?: string}>}, message: string) {
@@ -59,7 +67,7 @@ test.describe('Silent notification webhook delivery', () => {
                 display_name: 'Silent E2E Hook',
             });
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
+            const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
             // # Mark the webhook channel as read, then view another channel
             await channelsPage.goto(team.name, channel.name);
@@ -69,7 +77,7 @@ test.describe('Silent notification webhook delivery', () => {
 
             await pw.stubNotification(page, 'granted');
 
-            const channelLink = channelsPage.sidebarLeft.container.locator(`#sidebarItem_${channel.name}`);
+            const channelLink = app.lhs.channelList.channel(channel).link.locator;
 
             // # Post a normal webhook message with @mention to verify unread + notification baseline
             const normalMessage = `normal webhook @${user.username} ${Date.now()}`;
@@ -79,9 +87,8 @@ test.describe('Silent notification webhook delivery', () => {
                 .poll(async () => (await page.evaluate(() => window.getNotifications())).length)
                 .toBeGreaterThan(0);
 
-            await channelsPage.sidebarLeft.goToItem(channel.name);
-            const normalPost = await channelsPage.getLastPost();
-            await normalPost.toContainText(normalMessage);
+            await app.lhs.channelList.channel(channel).clickLink();
+            await expectLastPostContains(app, normalMessage);
 
             await channelsPage.goto(team.name, 'off-topic');
             await channelsPage.toBeVisible();
@@ -96,7 +103,7 @@ test.describe('Silent notification webhook delivery', () => {
                 }),
             );
             await adminClient.addToChannel(user.id, syncChannel.id);
-            const syncChannelLink = channelsPage.sidebarLeft.container.locator(`#sidebarItem_${syncChannel.name}`);
+            const syncChannelLink = app.lhs.channelList.channel(syncChannel).link.locator;
 
             await pw.clearCapturedNotifications(page);
 
@@ -118,10 +125,9 @@ test.describe('Silent notification webhook delivery', () => {
             expect(notificationsAfterSilent.some((n) => notificationText(n).includes(silentMessage))).toBe(false);
 
             // * Silent post is still visible; no New Messages separator (final assertions — goToItem marks viewed)
-            await channelsPage.sidebarLeft.goToItem(channel.name);
-            const silentPost = await channelsPage.getLastPost();
-            await silentPost.toContainText(silentMessage);
-            await expect(page.locator('[data-testid="NotificationSeparator"]')).not.toBeVisible();
+            await app.lhs.channelList.channel(channel).clickLink();
+            await expectLastPostContains(app, silentMessage);
+            await expect(app.center.postList.newMessages.locator).not.toBeVisible();
         },
     );
 
@@ -164,13 +170,16 @@ test.describe('Silent notification webhook delivery', () => {
             await posterChannelsPage.goto(team.name, 'off-topic');
             await posterChannelsPage.toBeVisible();
 
-            const {page: mentioneePage, channelsPage: mentioneeChannelsPage} =
-                await pw.testBrowser.login(mentionedUser);
+            const {
+                app: mentionee,
+                page: mentioneePage,
+                channelsPage: mentioneeChannelsPage,
+            } = await pw.testBrowser.login(mentionedUser);
             await mentioneeChannelsPage.goto(team.name, 'off-topic');
             await mentioneeChannelsPage.toBeVisible();
             await pw.stubNotification(mentioneePage, 'granted');
 
-            const channelLink = mentioneeChannelsPage.sidebarLeft.container.locator(`#sidebarItem_${channel.name}`);
+            const channelLink = mentionee.lhs.channelList.channel(channel).link.locator;
 
             // # Baseline: normal @mention webhook should notify the mentioned user and mark channel unread
             const normalMessage = `normal mention @${mentionedUser.username} ${Date.now()}`;
@@ -181,7 +190,7 @@ test.describe('Silent notification webhook delivery', () => {
                 .toBeGreaterThan(0);
 
             // # Mark the channel read by opening it, then return to off-topic for a clean baseline
-            await mentioneeChannelsPage.sidebarLeft.goToItem(channel.name);
+            await mentionee.lhs.channelList.channel(channel).clickLink();
             await mentioneeChannelsPage.toBeVisible();
             await mentioneeChannelsPage.goto(team.name, 'off-topic');
             await mentioneeChannelsPage.toBeVisible();

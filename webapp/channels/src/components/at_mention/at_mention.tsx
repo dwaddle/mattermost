@@ -4,6 +4,8 @@
 import classNames from 'classnames';
 import React, {useRef, useMemo, memo, useEffect} from 'react';
 
+import type {UserProfile} from '@mattermost/types/users';
+
 import {Client4} from 'mattermost-redux/client';
 import {displayUsername} from 'mattermost-redux/utils/user_utils';
 
@@ -53,6 +55,8 @@ const AtMention = (props: Props) => {
     };
 
     if (user) {
+        // keyed by user id (usernames can contain dots); clicking it opens the user's profile popover
+        const mentionedUser: UserProfile = user;
         const userMentionNameSuffix = props.mentionName.substring(user.username.length);
         const userDisplayName = displayUsername(user, props.teammateNameDisplay);
         const highlightMention = !props.disableHighlight && user.id === props.currentUserId;
@@ -70,6 +74,7 @@ const AtMention = (props: Props) => {
                     <span
                         ref={ref}
                         className='mention-link'
+                        data-testid={`markdown.mention:${mentionedUser.id}`}
                     >
                         {'@' + userDisplayName}
                     </span>

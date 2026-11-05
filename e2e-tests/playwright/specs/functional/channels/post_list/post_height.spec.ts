@@ -8,8 +8,10 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Disposable, Locator, Page} from '@playwright/test';
 import type {Post} from '@mattermost/types/posts';
 
-import {expect, setupFileServer, test, testConfig, watchElementSize} from '@mattermost/playwright-lib';
-import type {ChannelsPage, ChannelsPost, PlaywrightClient4} from '@mattermost/playwright-lib';
+import {expect, generated, setupFileServer, test, testConfig, watchElementSize} from '@mattermost/playwright-lib';
+import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
+
+type CenterPost = ReturnType<App['center']['postList']['post']>;
 
 test.describe('Post height', () => {
     let userClient: PlaywrightClient4;
@@ -17,6 +19,7 @@ test.describe('Post height', () => {
     let team: Team;
     let channel: ServerChannel;
 
+    let app: App;
     let channelsPage: ChannelsPage;
     let page: Page;
 
@@ -47,7 +50,7 @@ test.describe('Post height', () => {
         });
 
         // # Log in, but don't navigate to a channel yet
-        ({channelsPage, page} = await pw.testBrowser.login(user));
+        ({app, channelsPage, page} = await pw.testBrowser.login(user));
     });
 
     type PostHeightTestCase = {
@@ -55,7 +58,7 @@ test.describe('Post height', () => {
         /** Returns the post to be measured and does any other prep work needed to set up the post. */
         makePost: (options: {fileServerUrl: string; siteUrl: string}) => Promise<Post>;
         /** Extra assertions to run once the post has loaded. */
-        additionalCheck?: (args: {postComponent: ChannelsPost}) => Promise<void>;
+        additionalCheck?: (args: {post: Post; postComponent: CenterPost}) => Promise<void>;
         /** Playwright project names for which this test case should be skipped. */
         skipProjects?: string[];
     };
@@ -77,8 +80,7 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the thread footer has rendered
-                const image = postComponent.container.locator('.ThreadFooter');
-                await expect(image).toBeVisible();
+                await expect(postComponent.threadFooter.replyButton.locator).toBeVisible();
             },
         },
         {
@@ -90,8 +92,7 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the reactions have rendered
-                const image = postComponent.container.locator('.Reaction');
-                await expect(image).toHaveCount(4);
+                await expect(postComponent.reactions.reactionItems).toHaveCount(3);
             },
         },
         {
@@ -101,10 +102,11 @@ test.describe('Post height', () => {
                     message: 'post with a single image',
                     files: ['mattermost.png'],
                 }),
-            additionalCheck: async ({postComponent}) => {
+            additionalCheck: async ({post, postComponent}) => {
                 // * Verify that the image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    postComponent.attachments.image({id: post.file_ids![0]}).picture.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -114,10 +116,11 @@ test.describe('Post height', () => {
                     message: 'post with a single small image',
                     files: ['small-image.png'],
                 }),
-            additionalCheck: async ({postComponent}) => {
+            additionalCheck: async ({post, postComponent}) => {
                 // * Verify that the image has rendered
-                const image = postComponent.container.locator('.small-image__container');
-                await expect(image).toBeVisible();
+                await expect(
+                    postComponent.attachments.image({id: post.file_ids![0]}).picture.frame.locator,
+                ).toHaveClass(/\bsmall-image__container\b/);
             },
         },
         {
@@ -129,10 +132,11 @@ test.describe('Post height', () => {
                     message: 'post with a single large image',
                     files: ['huge-image.jpg'],
                 }),
-            additionalCheck: async ({postComponent}) => {
+            additionalCheck: async ({post, postComponent}) => {
                 // * Verify that the image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    postComponent.attachments.image({id: post.file_ids![0]}).picture.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -142,10 +146,12 @@ test.describe('Post height', () => {
                     message: 'post with a single wide image',
                     files: ['image-400x40.jpg'],
                 }),
-            additionalCheck: async ({postComponent}) => {
+            additionalCheck: async ({post, postComponent}) => {
                 // * Verify that the image has rendered
-                const image = postComponent.container.locator('.small-image__container img');
-                await expect(image).toBeVisible();
+                await expect(
+                    postComponent.attachments.image({id: post.file_ids![0]}).picture.frame.locator,
+                ).toHaveClass(/\bsmall-image__container\b/);
+                await expect(postComponent.attachments.image({id: post.file_ids![0]}).pictureImg.locator).toBeVisible();
             },
         },
         {
@@ -155,10 +161,12 @@ test.describe('Post height', () => {
                     message: 'post with a single tall image',
                     files: ['image-40x400.jpg'],
                 }),
-            additionalCheck: async ({postComponent}) => {
+            additionalCheck: async ({post, postComponent}) => {
                 // * Verify that the image has rendered
-                const image = postComponent.container.locator('.small-image__container img');
-                await expect(image).toBeVisible();
+                await expect(
+                    postComponent.attachments.image({id: post.file_ids![0]}).picture.frame.locator,
+                ).toHaveClass(/\bsmall-image__container\b/);
+                await expect(postComponent.attachments.image({id: post.file_ids![0]}).pictureImg.locator).toBeVisible();
             },
         },
         {
@@ -170,8 +178,7 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the attachment has rendered
-                const image = postComponent.container.locator('.post-image__columns');
-                await expect(image).toBeVisible();
+                await expect(postComponent.attachments.fileCardItems).toBeVisible();
             },
         },
         {
@@ -183,8 +190,7 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the images have rendered
-                const image = postComponent.container.locator('.MediaGallery__tile img');
-                await expect(image).toHaveCount(3);
+                await expect(postComponent.attachments.fileItems.getByRole('img')).toHaveCount(3);
             },
         },
         {
@@ -228,10 +234,11 @@ test.describe('Post height', () => {
                     message: 'post with a single SVG attachment',
                     files: ['icon.svg'],
                 }),
-            additionalCheck: async ({postComponent}) => {
+            additionalCheck: async ({post, postComponent}) => {
                 // * Verify that the SVG has rendered as an image
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    postComponent.attachments.image({id: post.file_ids![0]}).picture.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -242,8 +249,9 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the Markdown image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    new generated.Markdown(app.page, 'markdown', postComponent.locator).image.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -254,8 +262,9 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the Markdown image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    new generated.Markdown(app.page, 'markdown', postComponent.locator).image.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -268,8 +277,9 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the Markdown image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    new generated.Markdown(app.page, 'markdown', postComponent.locator).image.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -280,8 +290,9 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the Markdown image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    new generated.Markdown(app.page, 'markdown', postComponent.locator).image.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -292,8 +303,9 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the Markdown image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    new generated.Markdown(app.page, 'markdown', postComponent.locator).image.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -306,8 +318,9 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that the Markdown image has rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                await expect(
+                    new generated.Markdown(app.page, 'markdown', postComponent.locator).image.frame.locator,
+                ).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -317,9 +330,8 @@ test.describe('Post height', () => {
                     message: `${fileServerUrl}/mattermost.png`,
                 }),
             additionalCheck: async ({postComponent}) => {
-                // * Verify that the image is rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                // * Verify that the image preview has rendered
+                await expect(postComponent.imagePreview.frame.locator).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -329,9 +341,8 @@ test.describe('Post height', () => {
                     message: `${fileServerUrl}/small-image.png`,
                 }),
             additionalCheck: async ({postComponent}) => {
-                // * Verify that the image is rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                // * Verify that the image preview has rendered
+                await expect(postComponent.imagePreview.frame.locator).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -343,9 +354,8 @@ test.describe('Post height', () => {
                     message: `${fileServerUrl}/huge-image.jpg`,
                 }),
             additionalCheck: async ({postComponent}) => {
-                // * Verify that the image is rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                // * Verify that the image preview has rendered
+                await expect(postComponent.imagePreview.frame.locator).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -355,9 +365,8 @@ test.describe('Post height', () => {
                     message: `${fileServerUrl}/image-400x40.jpg`,
                 }),
             additionalCheck: async ({postComponent}) => {
-                // * Verify that the image is rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                // * Verify that the image preview has rendered
+                await expect(postComponent.imagePreview.frame.locator).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -367,9 +376,8 @@ test.describe('Post height', () => {
                     message: `${fileServerUrl}/image-40x400.jpg`,
                 }),
             additionalCheck: async ({postComponent}) => {
-                // * Verify that the image is rendered
-                const image = postComponent.container.locator('.image-loaded-container');
-                await expect(image).toBeVisible();
+                // * Verify that the image preview has rendered
+                await expect(postComponent.imagePreview.frame.locator).toHaveClass(/\bimage-loaded-container\b/);
             },
         },
         {
@@ -380,14 +388,14 @@ test.describe('Post height', () => {
                 }),
             additionalCheck: async ({postComponent}) => {
                 // * Verify that an OpenGraph preview was rendered
-                const preview = postComponent.container.locator('.PostAttachmentOpenGraph');
-                await expect(preview).toBeVisible();
-                await expect(preview.locator('.sitename')).toHaveText('Mattermost Test');
-                await expect(preview.locator('.title')).toHaveText('OpenGraph Preview Title');
-                await expect(preview.locator('.description')).toHaveText(
+                const preview = postComponent.linkPreview;
+                await expect(postComponent.linkPreviewLink.locator).toBeVisible();
+                await expect(preview.siteNameText.locator).toHaveText('Mattermost Test');
+                await expect(preview.titleText.locator).toHaveText('OpenGraph Preview Title');
+                await expect(preview.descriptionText.locator).toHaveText(
                     'This is a test page to generate an OpenGraph link preview.',
                 );
-                await expect(preview.locator('.PostAttachmentOpenGraph__image img')).toBeVisible();
+                await expect(preview.imageImg.locator).toBeVisible();
             },
         },
         {
@@ -397,12 +405,12 @@ test.describe('Post height', () => {
                     message: `${fileServerUrl}/opengraph-huge.html`,
                 }),
             additionalCheck: async ({postComponent}) => {
-                const preview = postComponent.container.locator('.PostAttachmentOpenGraph');
-                await expect(preview).toBeVisible();
-                await expect(preview.locator('.sitename')).toHaveText('Mattermost Test');
-                await expect(preview.locator('.title')).toHaveText('OpenGraph Preview Title');
-                await expect(preview.locator('.description')).toHaveText('This is a test page with a large image.');
-                await expect(preview.locator('.PostAttachmentOpenGraph__image img')).toBeVisible();
+                const preview = postComponent.linkPreview;
+                await expect(postComponent.linkPreviewLink.locator).toBeVisible();
+                await expect(preview.siteNameText.locator).toHaveText('Mattermost Test');
+                await expect(preview.titleText.locator).toHaveText('OpenGraph Preview Title');
+                await expect(preview.descriptionText.locator).toHaveText('This is a test page with a large image.');
+                await expect(preview.imageImg.locator).toBeVisible();
             },
         },
         {
@@ -432,9 +440,9 @@ test.describe('Post height', () => {
                 // * Verify that the preview is faded out and has the "Show more" link visible
                 // Permalink previews need a second render pass once the linked post's content
                 // arrives; extend past the default 10s to leave headroom under loaded CI.
-                const showMoreButton = postComponent.container.locator('.post-preview-collapse__show-more-button');
+                // (the preview's Show more only renders when its message overflows)
+                const showMoreButton = postComponent.permalinkPreview.message.showMoreButton.locator;
                 await expect(showMoreButton).toBeVisible({timeout: 20000});
-                await expect(postComponent.container.locator('.post-message-preview--overflow')).toBeVisible();
             },
         },
     ];
@@ -457,11 +465,11 @@ test.describe('Post height', () => {
                 const {sizeWatcher, postComponent} = await openChannelAndGetPost(post.id);
 
                 // # Wait for any images to load
-                await waitForImagesLoaded(postComponent.container);
+                await waitForImagesLoaded(postComponent.locator);
 
                 // # Wait for any additional checks to occur
                 if (testCase.additionalCheck) {
-                    await testCase.additionalCheck({postComponent});
+                    await testCase.additionalCheck({post, postComponent});
                 }
 
                 // * Verify no height changes were detected
@@ -482,8 +490,8 @@ test.describe('Post height', () => {
         expect(await sizeWatcher.getObservations()).toHaveLength(1);
 
         // * Verify that the post has no replies
-        await postComponent.toBeVisible();
-        await expect(postComponent.threadFooter.container).not.toBeVisible();
+        await expect(postComponent.locator).toBeVisible();
+        await expect(postComponent.threadFooter.replyButton.locator).not.toBeVisible();
 
         // # Reply to the post from another client
         await userClient.createPost({
@@ -493,8 +501,7 @@ test.describe('Post height', () => {
         });
 
         // * Verify that the post now has the the thread footer
-        await postComponent.threadFooter.toBeVisible();
-        await postComponent.threadFooter.toHaveNReplies(1);
+        await expect(postComponent.threadFooter.replyButton.locator).toContainText('1 reply');
 
         // * Verify that the post height changed size
         expect(await sizeWatcher.getObservations()).toHaveLength(2);
@@ -507,7 +514,7 @@ test.describe('Post height', () => {
         });
 
         // * Verify that the thread footer has been updated
-        await postComponent.threadFooter.toHaveNReplies(2);
+        await expect(postComponent.threadFooter.replyButton.locator).toContainText('2 replies');
 
         // * Verify that the post height changed size
         expect(await sizeWatcher.getObservations()).toHaveLength(2);
@@ -525,7 +532,7 @@ test.describe('Post height', () => {
         expect(await sizeWatcher.getObservations()).toHaveLength(1);
 
         // * Verify the initial post text
-        await postComponent.toContainText('unedited post');
+        await expect(postComponent.locator).toContainText('unedited post');
 
         // # Edit the post from another client
         await userClient.updatePost({
@@ -534,7 +541,7 @@ test.describe('Post height', () => {
         });
 
         // * Verify that the post text has changed
-        await postComponent.toContainText('edited post');
+        await expect(postComponent.locator).toContainText('edited post');
 
         // * Verify that the post height didn't change
         expect(await sizeWatcher.getObservations()).toHaveLength(1);
@@ -546,7 +553,7 @@ test.describe('Post height', () => {
         });
 
         // * Verify that the post text has changed
-        await postComponent.toContainText('edited post\nwith multiple lines');
+        await expect(postComponent.locator).toContainText('edited post\nwith multiple lines');
 
         // * Verify that the post height changed since it now takes up an extra line
         expect(await sizeWatcher.getObservations()).toHaveLength(2);
@@ -570,8 +577,8 @@ test.describe('Post height', () => {
         await channelsPage.toBeVisible();
 
         // # Get and return the post component
-        const postComponent = await channelsPage.centerView.getPostById(postId);
-        await postComponent.toBeVisible();
+        const postComponent = app.center.postList.post({id: postId});
+        await expect(postComponent.locator).toBeVisible();
 
         // * Verify that the post element has been found by the height observer
         expect(await sizeWatcher.isWatchingElement()).toBe(true);
@@ -622,12 +629,11 @@ test.describe('Post height', () => {
 async function waitForImagesLoaded(locator: Locator): Promise<void> {
     await expect
         .poll(async () =>
-            locator
-                .locator('img')
-                .evaluateAll(
-                    (imgs) =>
-                        (imgs as HTMLImageElement[]).filter((img) => !(img.complete && img.naturalWidth > 0)).length,
-                ),
+            locator.evaluate(
+                (el) =>
+                    Array.from(el.getElementsByTagName('img')).filter((img) => !(img.complete && img.naturalWidth > 0))
+                        .length,
+            ),
         )
         .toBe(0);
 }

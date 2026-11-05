@@ -31,9 +31,9 @@ test('MM-T568 Channel Notifications turn off Ignore mentions for @channel, @here
     await adminClient.updateStatus({user_id: user.id, status: 'online'});
     await channelsPage.sidebarLeft.goToItem(channelB.name);
     await channelsPage.centerView.header.toHaveTitle(channelB.display_name);
-    await adminClient.createPost({channel_id: channelA.id, user_id: sender.id, message: '@all test'});
-    await adminClient.createPost({channel_id: channelA.id, user_id: sender.id, message: '@channel test'});
-    await adminClient.createPost({channel_id: channelA.id, user_id: sender.id, message: '@here test'});
+    await pw.postAs(sender, {channel_id: channelA.id, message: '@all test'});
+    await pw.postAs(sender, {channel_id: channelA.id, message: '@channel test'});
+    await pw.postAs(sender, {channel_id: channelA.id, message: '@here test'});
 
     // * Verify the channel is unread and counts all 3 channel-wide mentions exactly
     await channelsPage.sidebarLeft.assertItemUnread(channelA.name);

@@ -9,12 +9,16 @@ import {AppsIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type ActionsMenuButtonProps = {
     buttonId: string;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
     isMenuOpen: boolean;
     popupId: string;
+
+    /** Renders `<testId>--button`. */
+    testId?: TestId;
 };
 
 const ActionsMenuButton = React.forwardRef<HTMLButtonElement, ActionsMenuButtonProps>(({
@@ -22,6 +26,7 @@ const ActionsMenuButton = React.forwardRef<HTMLButtonElement, ActionsMenuButtonP
     onClick,
     isMenuOpen,
     popupId,
+    testId,
 }, ref) => {
     const {formatMessage} = useIntl();
     const ariaLabel = formatMessage({id: 'post_info.actions.tooltip.actions', defaultMessage: 'Actions'}).toLowerCase();
@@ -39,6 +44,7 @@ const ActionsMenuButton = React.forwardRef<HTMLButtonElement, ActionsMenuButtonP
                 key='more-actions-button'
                 ref={ref}
                 id={buttonId}
+                data-testid={testId ? `${testId}--button` : undefined}
                 size='small'
                 padding='compact'
                 type='button'

@@ -7,9 +7,9 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Page} from '@playwright/test';
 
 import {duration, expect, setupFileServer, test, testConfig} from '@mattermost/playwright-lib';
-import type {ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
+import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
 
-import {watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
+import {lastPost, watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
 
 test.describe('Post list initial scroll in read channel', () => {
     let adminClient: PlaywrightClient4;
@@ -20,6 +20,7 @@ test.describe('Post list initial scroll in read channel', () => {
     let team: Team;
     let channel: ServerChannel;
 
+    let app: App;
     let channelsPage: ChannelsPage;
     let page: Page;
 
@@ -40,7 +41,7 @@ test.describe('Post list initial scroll in read channel', () => {
 
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        ({channelsPage, page} = await pw.testBrowser.login(user));
+        ({app, channelsPage, page} = await pw.testBrowser.login(user));
     });
 
     // These tests create a read channel by only having the current user post in the channel.
@@ -172,10 +173,10 @@ test.describe('Post list initial scroll in read channel', () => {
 
                 // # Start in Town Square and wait for its contents to load
                 await channelsPage.goto(team.name, 'town-square');
-                await channelsPage.centerView.getLastPost();
+                await lastPost(app);
 
                 // # Switch to the channel
-                await channelsPage.sidebarLeft.goToItem(channel.name);
+                await app.lhs.channelList.channel(channel).clickLink();
 
                 if (testCase.name === 'with multiple pages of post previews') {
                     await settleAfterPermalinkPreviewsLoad(watcher);
@@ -195,7 +196,7 @@ test.describe('Post list initial scroll in read channel', () => {
     }
 
     async function waitForScrollToSettle(watcher: PostListScrollWatcher) {
-        await channelsPage.centerView.toBeVisible();
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
 
         // # Wait until the post list hasn't scrolled for 500ms before returning results
         return watcher.waitForObservations(500);
@@ -206,8 +207,8 @@ test.describe('Post list initial scroll in read channel', () => {
     // before things truly settle. Wait for that to happen and reset the watcher so it
     // only reports genuinely unexpected scroll changes afterward.
     async function settleAfterPermalinkPreviewsLoad(watcher: PostListScrollWatcher) {
-        const lastPost = await channelsPage.centerView.getLastPost();
-        await lastPost.postPreview.waitFor({timeout: duration.one_min});
+        const post = await lastPost(app);
+        await post.permalinkPreview.locator.waitFor({timeout: duration.one_min});
         await watcher.reset();
     }
 });

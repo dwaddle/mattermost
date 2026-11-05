@@ -1056,7 +1056,7 @@ test.fixme(
 
         // * Find the target post and wait for its translation before opening the menu
         const messagePost = channelsPage.centerView.container
-            .getByTestId('postView')
+            .getByTestId(/^center\.post_list\.post:/)
             .filter({hasText: 'Este mensaje es para probar el menú de acciones'});
         await messagePost.waitFor({state: 'visible', timeout: 15000});
         await expect(messagePost.getByText(/\[translated to en\]/i)).toBeVisible({timeout: 15000});

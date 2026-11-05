@@ -8,7 +8,7 @@ import {expect} from '@playwright/test';
  * The "Select team" dropdown used to scope search to a specific team or "All Teams".
  * The same underlying menu is rendered both in the search composer and in the search
  * results panel header — construct with the container scoped to whichever one you need
- * (they share the `searchTeamsSelectorMenuButton` test id, so an unscoped page-level
+ * (both render the selector's trigger, `<scope>.team_selector.open_menu--button`, so an unscoped page-level
  * locator is ambiguous once both are present in the DOM).
  */
 export default class SearchTeamSelector {
@@ -17,7 +17,7 @@ export default class SearchTeamSelector {
 
     constructor(container: Locator) {
         this.container = container;
-        this.menuButton = container.getByTestId('searchTeamsSelectorMenuButton');
+        this.menuButton = container.getByTestId(/\.team_selector\.open_menu--button$/);
     }
 
     async toBeVisible() {

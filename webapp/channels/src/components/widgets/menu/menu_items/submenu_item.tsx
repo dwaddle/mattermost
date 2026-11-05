@@ -7,6 +7,8 @@ import type {CSSProperties, JSX} from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {showMobileSubMenuModal} from 'actions/global_actions';
 
 import Constants from 'utils/constants';
@@ -60,6 +62,9 @@ export type Props = WrappedComponentProps & {
     rightDecorator?: React.ReactNode;
     isHeader?: boolean;
     tabIndex?: number;
+
+    /** Renders `<testId>--button` on the item that opens the submenu. */
+    testId?: TestId;
 };
 
 type State = {
@@ -114,9 +119,11 @@ export class SubMenuItem extends React.PureComponent<Props, State> {
                 action(postId || '');
             }
         } else {
+            // the click bubbles through every ancestor item: only the clicked item acts (the nearest button is its
+            // own, even when its text has markup of its own, like a plugin's label element)
             const shouldCallAction =
                 (event.type === 'keydown' && event.currentTarget.id === id) ||
-                event.target.parentElement.id === id;
+                (event.target as HTMLElement).closest('[role="button"]')?.id === id;
             if (shouldCallAction && action) {
                 action(postId || '');
             }
@@ -150,7 +157,7 @@ export class SubMenuItem extends React.PureComponent<Props, State> {
     };
 
     public render() {
-        const {id, postId, text, selectedValueText, subMenu, icon, filter, ariaLabel, direction, styleSelectableItem, extraText, renderSelected, rightDecorator, tabIndex, intl} = this.props;
+        const {id, postId, text, selectedValueText, subMenu, icon, filter, ariaLabel, direction, styleSelectableItem, extraText, renderSelected, rightDecorator, tabIndex, intl, testId} = this.props;
         const isMobile = isMobileViewHack();
 
         if (filter && !filter(id || '')) {
@@ -239,6 +246,7 @@ export class SubMenuItem extends React.PureComponent<Props, State> {
                 <div
                     className={classNames([{styleSelectableItemDiv: styleSelectableItem}])}
                     id={id}
+                    data-testid={testId ? `${testId}--button` : undefined}
                     aria-label={ariaLabel}
                     onMouseEnter={this.show}
                     role='button'

@@ -6,6 +6,8 @@ import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {showChannelOrThreadScheduledPostIndicator} from 'mattermost-redux/selectors/entities/scheduled_posts';
 import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
 
@@ -35,6 +37,7 @@ export default function ScheduledPostIndicator({location, channelId, postId, rem
     // Fetch scheduled posts for the thread when opening a thread, and fetch for channel
     // when opening from center channel.
     const isThread = location === Locations.RHS_COMMENT;
+    const testId: TestId = isThread ? 'rhs.post_create.scheduled_post_indicator' : 'center.post_create.scheduled_post_indicator';
     const id = isThread ? postId : channelId;
     const scheduledPostData = useSelector((state: GlobalState) => showChannelOrThreadScheduledPostIndicator(state, id));
 
@@ -48,6 +51,7 @@ export default function ScheduledPostIndicator({location, channelId, postId, rem
     if (remoteUserHourDisplayed) {
         return (
             <ShortScheduledPostIndicator
+                testId={testId}
                 scheduledPostData={scheduledPostData}
                 scheduledPostLinkURL={scheduledPostLinkURL}
             />
@@ -100,14 +104,17 @@ export default function ScheduledPostIndicator({location, channelId, postId, rem
     return (
         <div
             className='ScheduledPostIndicator'
-            data-testid='scheduledPostIndicator'
+            data-testid={testId}
         >
             <i
-                data-testid='scheduledPostIcon'
+                data-testid={`${testId}.icon`}
                 className='icon icon-draft-indicator icon-clock-send-outline'
             />
             {scheduledPostText}
-            <Link to={scheduledPostLinkURL}>
+            <Link
+                to={scheduledPostLinkURL}
+                data-testid={`${testId}.see_all--link`}
+            >
                 <FormattedMessage
                     id='scheduled_post.channel_indicator.link_to_scheduled_posts.text'
                     defaultMessage='See all.'

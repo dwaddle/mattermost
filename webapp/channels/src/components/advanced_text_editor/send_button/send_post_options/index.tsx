@@ -72,6 +72,7 @@ export function SendPostOptions({disabled, onSelect, channelId, repeatDisabledRe
             }}
             menuButton={{
                 id: 'button_send_post_options',
+                dataTestId: 'send_post_options.open_menu--button',
                 class: classNames('button_send_post_options', {disabled}),
                 children: <ChevronDownIcon size={16}/>,
                 disabled,
@@ -110,6 +111,7 @@ export function SendPostOptions({disabled, onSelect, channelId, repeatDisabledRe
             <Menu.Separator/>
 
             <Menu.Item
+                data-testid='send_post_options.menu.custom_time--menuitem'
                 onClick={handleChooseCustomTime}
                 key={'choose_custom_time'}
                 labels={

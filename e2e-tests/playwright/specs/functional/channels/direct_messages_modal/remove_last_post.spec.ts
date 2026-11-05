@@ -1,31 +1,37 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {Api, expect, generated, settle, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify deleting the last post in a direct message keeps the user in that conversation.
+ *
+ * Written on the generated page objects: the route, the post (found by the id the create request
+ * returned), its dot menu and the delete confirmation all come from `app`.
  */
 test('MM-T218 removes the last post without leaving the direct message', {tag: '@direct_messages'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
     const [otherUser] = await adminClient.createUsers(team.id, 1, 'dm-user');
     await adminClient.createDirectChannel([user.id, otherUser.id]);
+    const dm = {team, path: 'messages', channel: `@${otherUser.username}`} as const;
 
     // # Log in and open the direct message with the other user
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, `@${otherUser.username}`);
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto(dm);
 
-    // # Post a message, then delete it from its post menu
-    await channelsPage.postMessage('Test');
-    const post = await channelsPage.getLastPost();
-    await post.hover();
-    await post.postMenu.openDotMenu();
-    await channelsPage.postDotMenu.deleteMenuItem.click();
-    await channelsPage.deletePostModal.toBeVisible();
-    await channelsPage.deletePostModal.confirm();
+    // # Post a message; the create request returns the post
+    const composer = app.center.postCreate;
+    await composer.fillMessageTextbox('Test');
+    const created = await settle(composer.sendButton, (b) => b.click(), {wait: Api.CreatePost});
 
-    // * Verify the post is gone and the direct-message route remains open
-    await expect(post.container).not.toBeVisible();
-    await expect(page).toHavePath(`/${team.name}/messages/@${otherUser.username}`);
+    // # Delete it from its post menu
+    const post = app.center.postList.post(created);
+    await post.locator.hover();
+    const dotMenu = await post.menu.clickDotMenuButton();
+    const {deletePostModal: confirm} = await dotMenu.clickDeleteMenuItem();
+    await settle(confirm.deleteButton, (b) => b.click(), {wait: Api.DeletePost});
+
+    // * The post is gone and the direct-message route is still open
+    await expect(post.locator).not.toBeVisible();
+    await expect(page).toHavePath(generated.ChannelsPage.path(dm));
 });

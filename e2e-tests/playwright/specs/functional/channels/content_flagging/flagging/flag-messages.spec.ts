@@ -215,10 +215,9 @@ test('Verify user cannot flag already flagged message', async ({pw}) => {
     }
 
     const message = `Post by @${user.username}, is flagged once`;
-    const postToBeflagged = await adminClient.createPost({
+    const postToBeflagged = await pw.postAs(user, {
         channel_id: townSquare.id,
         message,
-        user_id: user.id,
     });
     await adminClient.flagPost(postToBeflagged.id, FLAG_REASON_CLASSIFICATION_MISMATCH, FLAG_COMMENT);
 
@@ -298,10 +297,9 @@ test('Verify user cannot flag a message that was previously retained', async ({p
     });
 
     const message = `Post by @${secondUsername}, is flagged once`;
-    const postToBeflagged = await adminClient.createPost({
+    const postToBeflagged = await pw.postAs(secondUser, {
         channel_id: townSquare.id,
         message,
-        user_id: secondUserID,
     });
     await adminClient.flagPost(postToBeflagged.id, FLAG_REASON_CLASSIFICATION_MISMATCH, FLAG_COMMENT);
     await adminClient.keepFlaggedPost(postToBeflagged.id, 'Retaining this post after review');
@@ -504,10 +502,9 @@ test('Verify message is removed from channel if the reviewer removed the message
     }
 
     const message = `Post by @${user.username}, is flagged once`;
-    const postToBeflagged = await adminClient.createPost({
+    const postToBeflagged = await pw.postAs(user, {
         channel_id: townSquare.id,
         message,
-        user_id: user.id,
     });
     await adminClient.flagPost(postToBeflagged.id, FLAG_REASON_CLASSIFICATION_MISMATCH, FLAG_COMMENT);
 

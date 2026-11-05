@@ -10,6 +10,7 @@ import {EmoticonHappyOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji, SystemEmoji} from '@mattermost/types/emojis';
 
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
@@ -24,10 +25,12 @@ import {horizontallyWithin} from 'utils/floating';
 
 import type {GlobalState} from 'types/store';
 
+// testIdScope is the composer's scope: the button is `<testIdScope>.emoji--button`.
 const useEditorEmojiPicker = (
     textboxId: string,
     isDisabled: boolean,
     shouldShowPreview: boolean,
+    testIdScope: TestId,
     insertWysiwygText?: (text: string) => void,
 ) => {
     const intl = useIntl();
@@ -118,6 +121,7 @@ const useEditorEmojiPicker = (
                 >
                     <IconButton
                         id='emojiPickerButton'
+                        data-testid={`${testIdScope}.emoji--button`}
                         ref={setReference}
                         size='small'
                         icon={

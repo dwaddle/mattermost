@@ -5,6 +5,7 @@ import React, {memo} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CloseIcon, FireIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './burn_on_read_label.scss';
 
@@ -18,9 +19,12 @@ type Props = {
 
     // The configured duration in minutes for BoR messages
     durationMinutes: number;
+
+    // The label's testid; without it, the legacy id
+    testId?: TestId;
 };
 
-const BurnOnReadLabel = ({canRemove, onRemove, durationMinutes}: Props) => {
+const BurnOnReadLabel = ({canRemove, onRemove, durationMinutes, testId}: Props) => {
     const {formatMessage} = useIntl();
 
     const formatDuration = () => {
@@ -59,7 +63,7 @@ const BurnOnReadLabel = ({canRemove, onRemove, durationMinutes}: Props) => {
     return (
         <div
             className='BurnOnReadLabel'
-            data-testid='burn-on-read-label'
+            data-testid={testId ?? 'burn-on-read-label'}
         >
             <div className='BurnOnReadLabel__badge'>
                 <FireIcon
@@ -74,6 +78,7 @@ const BurnOnReadLabel = ({canRemove, onRemove, durationMinutes}: Props) => {
                 <button
                     className='BurnOnReadLabel__close'
                     onClick={onRemove}
+                    data-testid={testId ? `${testId}.remove--button` : undefined}
                     aria-label={formatMessage({
                         id: 'burn_on_read.label.remove',
                         defaultMessage: 'Remove burn-on-read',

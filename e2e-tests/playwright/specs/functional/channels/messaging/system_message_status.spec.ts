@@ -1,11 +1,13 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test} from '@mattermost/playwright-lib';
+import {expect, test} from '@mattermost/playwright-lib';
 import type {PlaywrightExtended} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a system message does not show a user availability status in standard message display.
+ *
+ * Written on the generated page objects: the system post (found on the server by type) and its avatar's status.
  */
 test('MM-T427_1 system message has no status in standard view', async ({pw}) => {
     await verifySystemMessageHasNoStatus(pw, 'clean');
@@ -22,7 +24,10 @@ async function verifySystemMessageHasNoStatus(pw: PlaywrightExtended, messageDis
     // # Create a channel header system message and set the user's message display preference
     const {user, team, adminClient, userClient} = await pw.initSetup();
     const channel = await userClient.getChannelByName(team.id, 'town-square');
-    await userClient.createPost({channel_id: channel.id, message: 'Test for no status of a system message'});
+    const userPost = await userClient.createPost({
+        channel_id: channel.id,
+        message: 'Test for no status of a system message',
+    });
     const newHeader = `Updated header ${pw.random.id()}`;
     await adminClient.patchChannel(channel.id, {header: newHeader});
     await userClient.savePreferences(user.id, [
@@ -33,14 +38,23 @@ async function verifySystemMessageHasNoStatus(pw: PlaywrightExtended, messageDis
             value: messageDisplay,
         },
     ]);
+    const {order, posts} = await userClient.getPosts(channel.id);
+    const systemPostId = order.find(
+        (id) => posts[id].type === 'system_header_change' && posts[id].message.includes(newHeader),
+    )!;
 
-    // # Open the channel and locate the resulting system message
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
-    await channelsPage.centerView.waitUntilLastPostContains(newHeader);
-    const systemPost = await channelsPage.getLastPost();
+    // # Open the channel
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const systemPost = app.center.postList.post({id: systemPostId});
 
-    // * Verify the post is styled only as a system message and has no availability status icon
-    await systemPost.toBeSystemMessageContaining(newHeader);
+    // * The post is styled as a system message and shows no availability status
+    await expect(systemPost.locator).toContainText(newHeader);
+    await expect(systemPost.locator).toHaveClass(/post--system/);
+    await expect(systemPost.avatar.status.locator).not.toBeVisible();
+
+    if (messageDisplay === 'clean') {
+        // * A user's post does show the status (so the check above isn't vacuous)
+        await expect(app.center.postList.post(userPost).avatar.status.locator).toBeVisible();
+    }
 }

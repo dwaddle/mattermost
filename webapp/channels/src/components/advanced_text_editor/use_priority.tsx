@@ -4,6 +4,7 @@
 import React, {useCallback, useMemo} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {PostPriorityMetadata} from '@mattermost/types/posts';
 import {PostPriority} from '@mattermost/types/posts';
@@ -31,6 +32,7 @@ const usePriority = (
     focusTextbox: (keepFocus?: boolean) => void,
     shouldShowPreview: boolean,
     showIndividualCloseButton = true,
+    labelsTestIdScope?: TestId,
 ) => {
     const dispatch = useDispatch();
     const rootId = draft.rootId;
@@ -149,9 +151,10 @@ const usePriority = (
                 persistentNotifications={draft!.metadata!.priority?.persistent_notifications}
                 priority={draft!.metadata!.priority?.priority}
                 requestedAck={draft!.metadata!.priority?.requested_ack}
+                testIdScope={labelsTestIdScope}
             />
         ) : undefined
-    ), [hasPrioritySet, rootId, showIndividualCloseButton, shouldShowPreview, isValidPersistentNotifications, specialMentions, handleRemovePriority, draft]);
+    ), [hasPrioritySet, rootId, showIndividualCloseButton, shouldShowPreview, isValidPersistentNotifications, specialMentions, handleRemovePriority, draft, labelsTestIdScope]);
 
     const additionalControl = useMemo(() =>
         !rootId && isPostPriorityEnabled && (

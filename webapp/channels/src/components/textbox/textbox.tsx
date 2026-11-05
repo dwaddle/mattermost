@@ -6,6 +6,7 @@ import React from 'react';
 import type {ChangeEvent, ElementType, FocusEvent, JSX, KeyboardEvent, MouseEvent} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Agent} from '@mattermost/types/agents';
 import type {Channel} from '@mattermost/types/channels';
 import type {Group} from '@mattermost/types/groups';
@@ -31,6 +32,9 @@ import type {TextboxElement} from './index';
 
 export type Props = {
     id: string;
+
+    /** Testid path of the text area; renders `<testId>--textbox`. Without it the text area's testid is its id. */
+    testId?: TestId;
     channelId: string;
     rootId?: string;
     tabIndex?: number;
@@ -316,6 +320,7 @@ export default class Textbox extends React.PureComponent<Props> {
                 <SuggestionBox
                     ref={this.message}
                     id={this.props.id}
+                    data-testid={this.props.testId ? `${this.props.testId}--textbox` : undefined}
                     className={textboxClassName}
                     spellCheck='true'
                     placeholder={this.props.createMessage}
@@ -333,6 +338,7 @@ export default class Textbox extends React.PureComponent<Props> {
                     style={this.getStyle()}
                     inputComponent={this.props.inputComponent}
                     listComponent={this.props.suggestionList}
+                    listTestId={this.props.testId ? `${this.props.testId}.suggestions` : undefined}
                     listPosition={this.props.suggestionListPosition}
                     providers={this.suggestionProviders}
                     value={this.props.value}

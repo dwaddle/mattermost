@@ -6,6 +6,7 @@ import type {ConnectedProps} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import type {Dispatch} from 'redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 import type {Post} from '@mattermost/types/posts';
 
@@ -28,6 +29,9 @@ import FileAttachmentList from './file_attachment_list';
 
 export type OwnProps = {
     post: Post;
+
+    /** The post's attachments scope (`center.post_list.post.attachments`). */
+    testIdScope?: TestId;
     compactDisplay?: boolean;
     isInPermalink?: boolean;
     handleFileDropdownOpened?: (open: boolean) => void;

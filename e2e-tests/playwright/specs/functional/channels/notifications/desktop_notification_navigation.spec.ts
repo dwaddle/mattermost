@@ -46,7 +46,7 @@ test(
 
         // # Post a message from the admin in the second team's channel
         const message = `Click notification from other team ${pw.random.id()}`;
-        await adminClient.createPost({channel_id: otherChannel.id, user_id: adminUser.id, message});
+        await adminClient.createPost({channel_id: otherChannel.id, message});
 
         // * Verify a desktop notification is received for the second team's channel
         const notifications = await pw.waitForNotification(page);
@@ -87,7 +87,7 @@ test(
 
         // # Send a direct message from the admin to the user
         const message = `Click notification from DM ${pw.random.id()}`;
-        await adminClient.createPost({channel_id: dmChannel.id, user_id: adminUser.id, message});
+        await adminClient.createPost({channel_id: dmChannel.id, message});
 
         // * Verify a desktop notification is received for the direct message
         const notifications = await pw.waitForNotification(page);
@@ -128,7 +128,7 @@ test(
 
         // # Send a direct message from the admin while the user is available
         const firstMessage = `DND baseline ${pw.random.id()}`;
-        await adminClient.createPost({channel_id: dmChannel.id, user_id: adminUser.id, message: firstMessage});
+        await adminClient.createPost({channel_id: dmChannel.id, message: firstMessage});
 
         // * Verify the direct message triggers a desktop notification
         const notifications = await pw.waitForNotification(page);
@@ -143,7 +143,7 @@ test(
 
         // # Send another direct message from the admin while the user is in Do Not Disturb
         const secondMessage = `DND suppressed ${pw.random.id()}`;
-        await adminClient.createPost({channel_id: dmChannel.id, user_id: adminUser.id, message: secondMessage});
+        await adminClient.createPost({channel_id: dmChannel.id, message: secondMessage});
 
         // * Verify no second desktop notification is received while in Do Not Disturb
         const suppressed = await pw.waitForNotification(page, 2, pw.duration.two_sec);

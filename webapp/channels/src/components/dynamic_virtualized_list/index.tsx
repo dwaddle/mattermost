@@ -4,7 +4,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import memoizeOne from 'memoize-one';
-import {createElement, PureComponent, type JSX} from 'react';
+import React, {createElement, PureComponent, type JSX} from 'react';
 
 import ListItem from './list_item';
 
@@ -54,6 +54,9 @@ export interface DynamicVirtualizedListProps {
     width: number;
 
     id?: string;
+
+    /** Testid of the scrolling element (a container, e.g. `center.post_list.scroller`). */
+    testId?: string;
     className?: string;
     correctScrollToBottom?: boolean;
     innerListStyle?: React.CSSProperties;
@@ -782,40 +785,38 @@ export class DynamicVirtualizedList extends PureComponent<DynamicVirtualizedList
         const {
             className,
             id,
+            testId,
             style,
             innerListStyle,
         } = this.props;
 
-        const onScroll = this._onScrollVertical;
-
         const items = this._renderItems();
 
-        return createElement(
-            'div',
-            {
-                className,
-                id,
-                onScroll,
-                ref: this._outerRefSetter,
-                style: {
+        return (
+            <div
+                className={className}
+                id={id}
+                data-testid={testId}
+                onScroll={this._onScrollVertical}
+                ref={this._outerRefSetter}
+                style={{
                     WebkitOverflowScrolling: 'touch',
                     overflowY: 'auto',
                     overflowAnchor: 'none',
                     willChange: 'transform',
                     width: '100%',
                     ...style,
-                },
-            },
-            createElement(
-                'div',
-                {
-                    ref: this._innerRefSetter,
-                    role: 'list',
-                    className: 'innerList',
-                    style: innerListStyle,
-                },
-                items,
-            ),
+                }}
+            >
+                <div
+                    ref={this._innerRefSetter}
+                    role='list'
+                    className='innerList'
+                    style={innerListStyle}
+                >
+                    {items}
+                </div>
+            </div>
         );
     }
 }

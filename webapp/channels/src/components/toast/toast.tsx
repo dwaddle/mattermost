@@ -7,6 +7,7 @@ import type {ReactNode, MouseEventHandler} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import CloseIcon from 'components/widgets/icons/close_icon';
 import UnreadAboveIcon from 'components/widgets/icons/unread_above_icon';
@@ -26,6 +27,12 @@ export type Props = {
     width: number;
     extraClasses?: string;
     jumpDirection?: 'up' | 'down';
+
+    /** The toasts' scope (`center.post_list.toast`); the toast renders `<testIdScope>:<testIdKey>`, its controls `<testIdScope>.dismiss--button`. */
+    testIdScope?: TestId;
+
+    /** Which toast this is (`unread`, `history`...). */
+    testIdKey?: string;
 };
 
 export default function Toast({
@@ -38,6 +45,8 @@ export default function Toast({
     width,
     extraClasses = '',
     jumpDirection = 'down',
+    testIdScope,
+    testIdKey,
 }: Props) {
     function handleDismiss() {
         if (typeof onDismiss === 'function') {
@@ -55,10 +64,14 @@ export default function Toast({
     });
 
     return (
-        <div className={toastClass}>
+        <div
+            className={toastClass}
+            data-testid={testIdScope && testIdKey ? `${testIdScope}:${testIdKey}` : undefined}
+        >
             <div
                 className={toastActionClass}
                 onClick={showActions ? onClick : undefined}
+                data-testid={showActions && testIdScope ? `${testIdScope}.jump--button` : undefined}
             >
                 {showActions && (
                     <div className='toast__jump'>
@@ -88,7 +101,7 @@ export default function Toast({
                 <div
                     className='toast__dismiss'
                     onClick={handleDismiss}
-                    data-testid={extraClasses ? `dismissToast-${extraClasses}` : 'dismissToast'}
+                    data-testid={testIdScope ? `${testIdScope}.dismiss--button` : undefined}
                 >
                     <CloseIcon
                         className='close-btn'

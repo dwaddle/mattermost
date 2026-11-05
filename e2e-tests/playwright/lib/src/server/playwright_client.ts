@@ -9,6 +9,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {PartialExcept} from '@mattermost/types/utilities';
 
 import {createRandomChannel} from './channel';
+import {loginOf, rememberLogin} from './credentials';
 import {guardConfigPatch} from './patch_config';
 import type {ConfigPatch, RestoreConfig} from './patch_config';
 import {createNewUserProfile} from './user';
@@ -21,8 +22,63 @@ import {getFileFromAsset} from '@/file';
  * except for test-only compatibility shims needed against older server images.
  */
 export class PlaywrightClient4 extends Client4 {
-    // Captures Client4.patchConfig; must stay above the override.
+    // Captures Client4.patchConfig, login and createPost; must stay above the overrides.
     private readonly patchConfigRequest = (this as Client4).patchConfig;
+    private readonly loginRequest = (this as Client4).login;
+    private readonly createPostRequest = (this as Client4).createPost;
+
+    private ownUserId = '';
+    private readonly clientsByUser = new Map<string, Promise<PlaywrightClient4>>();
+
+    /** Client4.login that remembers who this client is, and the login for clients acting as that user. */
+    login = async (loginId: string, password: string, token = '', ldapOnly = false) => {
+        const profile = await this.loginRequest(loginId, password, token, ldapOnly);
+        this.ownUserId = profile.id;
+        rememberLogin(profile, password);
+        return profile;
+    };
+
+    /**
+     * Client4.createPost, as `user_id` when it names someone else: the server always makes the session's user the
+     * author, so the post goes through that user's own client. That works for users this run created or logged in
+     * as; for anyone else it throws rather than post as the wrong person. A backdated post (create_at) throws too:
+     * only a system admin's create_at is kept.
+     */
+    createPost = async (post: Parameters<Client4['createPost']>[0]): Promise<Post> => {
+        const author = post.user_id;
+        if (!author || author === (await this.userIdOfSession())) {
+            return this.createPostRequest(post);
+        }
+        if (post.create_at) {
+            throw new Error(
+                `createPost({user_id: '${author}', create_at}) can't backdate the post: it goes through that user's ` +
+                    'own client, and the server only keeps create_at from a system admin. Post it as the admin.',
+            );
+        }
+        const login = loginOf(author);
+        if (!login) {
+            throw new Error(
+                `createPost({user_id: '${author}'}) can't post as that user: the server makes the logged-in user the ` +
+                    "author, and this run doesn't know their password. Create them in the test, or post through " +
+                    'their own client (pw.postAs(user, post)).',
+            );
+        }
+        let client = this.clientsByUser.get(author);
+        if (!client) {
+            const other = new PlaywrightClient4();
+            other.setUrl(this.getUrl());
+            client = other.login(login.username, login.password).then(() => other);
+            this.clientsByUser.set(author, client);
+        }
+        return (await client).createPost(post);
+    };
+
+    private async userIdOfSession() {
+        if (!this.ownUserId) {
+            this.ownUserId = (await this.getMe()).id;
+        }
+        return this.ownUserId;
+    }
 
     /** Client4.patchConfig that warns on lockout-capable settings and returns `restore` with the config. */
     patchConfig = async (patch: ConfigPatch): Promise<AdminConfig & {restore: RestoreConfig}> => {

@@ -24,7 +24,7 @@ export function searchAndValidate(query, expectedResults = []) {
 
     // * Verify the amount of results matches the amount of our expected results
     cy.uiGetRHSSearchContainer().
-        findAllByTestId('search-item-container').
+        find('[data-testid^="search.results.post:"]').
         should('have.length', expectedResults.length).
         then((results) => {
             if (expectedResults.length > 0) {

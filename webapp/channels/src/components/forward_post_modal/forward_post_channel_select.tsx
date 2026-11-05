@@ -162,7 +162,7 @@ export const FormattedOption = (props: ChannelOption & {className: string; isSin
         <div
             id={componentId}
             className={props.className}
-            data-testid={details.name}
+            data-testid={props.isSingleValue ? 'forward_post_modal.selected_channel' : `forward_post_modal.channel:${details.id}`}
             aria-label={name}
         >
             {icon}
@@ -304,7 +304,6 @@ function ForwardPostChannelSelect({onSelect, value, currentBodyHeight, validChan
             styles={baseStyles}
             placeholder={formatMessage({id: 'forward_post_modal.channel_select.placeholder', defaultMessage: 'Select channel or people'})}
             className='forward-post__select'
-            data-testid='forward-post-select'
         />
     );
 }

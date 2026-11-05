@@ -8,9 +8,9 @@ import type {Page} from '@playwright/test';
 import type {Post} from '@mattermost/types/posts';
 
 import {expect, setupFileServer, test, testConfig} from '@mattermost/playwright-lib';
-import type {ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
+import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
 
-import {watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
+import {lastPost, linkIn, sendMessage, watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
 
 test.describe('Post list scroll to permalink', () => {
     let adminClient: PlaywrightClient4;
@@ -21,6 +21,7 @@ test.describe('Post list scroll to permalink', () => {
     let team: Team;
     let channel: ServerChannel;
 
+    let app: App;
     let channelsPage: ChannelsPage;
     let page: Page;
 
@@ -41,7 +42,7 @@ test.describe('Post list scroll to permalink', () => {
 
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        ({channelsPage, page} = await pw.testBrowser.login(user));
+        ({app, channelsPage, page} = await pw.testBrowser.login(user));
     });
 
     const testCases = [
@@ -209,9 +210,9 @@ test.describe('Post list scroll to permalink', () => {
                 await page.goto(linkedPostUrl);
 
                 // * Verify that the permalinked post is visible and highlighted
-                const linkedPostComponent = await channelsPage.centerView.getPostById(linkedPost.id);
-                await linkedPostComponent.toBeVisible();
-                await expect(linkedPostComponent.container).toHaveClass(/\bpost--highlight\b/);
+                const linkedPostComponent = app.center.postList.post(linkedPost);
+                await expect(linkedPostComponent.locator).toBeVisible();
+                await expect(linkedPostComponent.locator).toHaveClass(/\bpost--highlight\b/);
 
                 // * Verify that the post list didn't scroll or change height
                 expect(await waitForScrollToSettle(watcher)).toHaveLength(1);
@@ -222,18 +223,18 @@ test.describe('Post list scroll to permalink', () => {
 
                 // # Start in Town Square and wait for its contents to load
                 await channelsPage.goto(team.name, 'town-square');
-                await channelsPage.centerView.getLastPost();
+                await lastPost(app);
 
                 // # Post a permalink pointing to the other channel
-                await channelsPage.centerView.postMessage(linkedPostUrl);
+                const permalinkPost = await sendMessage(app, linkedPostUrl);
 
                 // # Switch to the channel by clicking on that link
-                await page.locator(`a[href="${linkedPostUrl}"]`).click();
+                await (await linkIn(app, permalinkPost, linkedPostUrl)).click();
 
                 // * Verify that the permalinked post is visible and highlighted
-                const linkedPostComponent = await channelsPage.centerView.getPostById(linkedPost.id);
-                await linkedPostComponent.toBeVisible();
-                await expect(linkedPostComponent.container).toHaveClass(/\bpost--highlight\b/);
+                const linkedPostComponent = app.center.postList.post(linkedPost);
+                await expect(linkedPostComponent.locator).toBeVisible();
+                await expect(linkedPostComponent.locator).toHaveClass(/\bpost--highlight\b/);
 
                 // * Verify that the post list didn't scroll or change height
                 expect(await waitForScrollToSettle(watcher)).toHaveLength(1);
@@ -246,18 +247,18 @@ test.describe('Post list scroll to permalink', () => {
                 await channelsPage.goto(team.name, channel.name);
 
                 // # Post a permalink pointing to that post
-                await channelsPage.centerView.postMessage(linkedPostUrl);
+                const permalinkPost = await sendMessage(app, linkedPostUrl);
 
                 // # Clear the observer so that it doesn't include the shifts due to making a post
                 await watcher.reset();
 
                 // # Click on that link
-                await page.locator(`a[href="${linkedPostUrl}"]`).click();
+                await (await linkIn(app, permalinkPost, linkedPostUrl)).click();
 
                 // * Verify that the permalinked post is visible and highlighted
-                const linkedPostComponent = await channelsPage.centerView.getPostById(linkedPost.id);
-                await linkedPostComponent.toBeVisible();
-                await expect(linkedPostComponent.container).toHaveClass(/\bpost--highlight\b/);
+                const linkedPostComponent = app.center.postList.post(linkedPost);
+                await expect(linkedPostComponent.locator).toBeVisible();
+                await expect(linkedPostComponent.locator).toHaveClass(/\bpost--highlight\b/);
 
                 if (testCase.name.includes('less than a screen of posts')) {
                     // * Verify that the post list didn't move because there's not enough posts to scroll
@@ -280,7 +281,7 @@ test.describe('Post list scroll to permalink', () => {
     }
 
     async function waitForScrollToSettle(watcher: PostListScrollWatcher) {
-        await channelsPage.centerView.toBeVisible();
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
 
         // # Wait until the post list hasn't scrolled for 500ms before returning results
         return watcher.waitForObservations(500);

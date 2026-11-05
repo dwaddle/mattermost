@@ -1,75 +1,88 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify selecting an emoji from the picker inserts it at the current caret position.
+ *
+ * Written on the generated page objects: the composer's emoji button, the picker's emoji by name, and the sent
+ * post found on the server by its text, then by id in the page.
  */
 test('MM-T95 Selecting an emoji from emoji picker should insert it at the cursor position', async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'off-topic');
 
     // # Log in and place the caret between "Hello" and "World"
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
-    await channelsPage.centerView.postCreate.writeMessage('HelloWorld!');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const composer = app.center.postCreate;
+    await composer.fillMessageTextbox('HelloWorld!');
     for (let i = 0; i < 'World!'.length; i++) {
-        await channelsPage.centerView.postCreate.input.press('ArrowLeft');
+        await composer.messageTextbox.locator.press('ArrowLeft');
     }
 
     // # Select the grinning emoji from the picker
-    await channelsPage.centerView.postCreate.openEmojiPicker();
-    await channelsPage.emojiGifPickerPopup.toBeVisible();
-    await channelsPage.emojiGifPickerPopup.clickEmoji('grinning');
+    await composer.clickEmojiButton();
+    await app.emojiPicker.emoji('grinning').click();
 
-    // * Verify the emoji was inserted at the caret and can be posted
-    await expect(channelsPage.centerView.postCreate.input).toHaveValue('Hello 😀 World!');
-    await channelsPage.centerView.postCreate.sendMessage();
-    const lastPost = await channelsPage.getLastPost();
-    await lastPost.toContainText('Hello 😀 World!');
+    // * The emoji is inserted at the caret
+    await expect(composer.messageTextbox.locator).toHaveValue('Hello 😀 World!');
+
+    // # Send the message
+    await composer.clickSendButton();
+
+    // * The server has the message as typed, and it's shown in the channel
+    const sentId = async () => {
+        const {order, posts} = await userClient.getPosts(channel.id);
+        return order.find((id) => posts[id].message === 'Hello 😀 World!');
+    };
+    await expect.poll(sentId).toBeTruthy();
+    await expect(app.center.postList.post({id: (await sentId())!}).messageText.locator).toContainText(
+        'Hello 😀 World!',
+    );
 });
 
 /**
  * @objective Verify an emoji followed by punctuation renders as an emoji without separating the punctuation.
  */
 test('MM-T222 Emoji characters followed by punctuation', async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const post = await userClient.createPost({channel_id: channel.id, message: ':)='});
 
-    // # Post an emoticon followed by punctuation
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(':)=');
+    // # Open the channel with an emoticon followed by punctuation
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const item = app.center.postList.post(post);
 
-    // * Verify the emoticon renders and the punctuation remains immediately adjacent, with no stray
-    // whitespace inserted between the rendered emoji and the punctuation
-    const lastPost = await channelsPage.getLastPost();
-    await expect(lastPost.emoticon.first()).toHaveAttribute('aria-label', ':slightly_smiling_face:');
-    await expect(lastPost.messageText.first()).toHaveText(':)=');
+    // * The emoticon renders as an emoji, and the punctuation stays right after it with no stray whitespace
+    const emoji = new generated.Markdown(page, 'markdown', item.locator).emoji('slightly_smiling_face');
+    await expect(emoji.locator).toHaveAttribute('aria-label', ':slightly_smiling_face:');
+    await expect(item.messageText.locator).toHaveText(':)=');
 });
 
 /**
  * @objective Verify that a leading colon is ignored when searching in the emoji picker.
  */
 test('MM-T156 ignores a leading colon when searching the emoji picker', {tag: '@messaging'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const post = await userClient.createPost({
+        channel_id: channel.id,
+        message: `emoji picker search ${pw.random.id()}`,
+    });
 
-    // # Post a message and open the emoji reaction picker on it
-    await channelsPage.postMessage(`emoji picker search ${pw.random.id()}`);
-    const post = await channelsPage.getLastPost();
-    await post.openReactionPicker();
-
-    // * Verify the emoji picker is open
-    await channelsPage.reactionEmojiPicker.toBeVisible();
+    // # Open the channel and the post's reaction picker
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const item = app.center.postList.post(post);
+    await item.locator.hover();
+    await item.menu.clickAddReactionButton();
 
     // # Search using a leading colon
-    await channelsPage.reactionEmojiPicker.searchEmoji(':tax');
+    await app.emojiPicker.fillSearchTextbox(':tax');
 
-    // * Verify the leading colon is ignored and the taxi emoji is returned
-    await expect(channelsPage.reactionEmojiPicker.getEmoji('taxi')).toBeVisible();
+    // * The leading colon is ignored and the taxi emoji is returned
+    await expect(app.emojiPicker.emoji('taxi').locator).toBeVisible();
 });

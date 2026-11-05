@@ -6,6 +6,7 @@ import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
 
 import {getCurrentChannel, getMyCurrentChannelMembership} from 'mattermost-redux/selectors/entities/channels';
 
@@ -60,6 +61,7 @@ const AppBarPluginComponent = ({
     };
 
     const buttonId = `app-bar-icon-${component.pluginId}`;
+    const testId = `app_bar.plugin:${pluginTestKey(component.pluginId)}--button` as const;
     const tooltipText = component.tooltipText || dropdownText || component.pluginId;
 
     let content: React.ReactNode = (
@@ -67,6 +69,7 @@ const AppBarPluginComponent = ({
             role='button'
             tabIndex={0}
             className='app-bar__icon-inner'
+            data-testid={testId}
         >
             <img
                 src={iconUrl}
@@ -84,6 +87,7 @@ const AppBarPluginComponent = ({
             <div
                 role='button'
                 tabIndex={0}
+                data-testid={testId}
                 className={classNames('app-bar__old-icon app-bar__icon-inner app-bar__icon-inner--centered', {'app-bar__old-icon--active': isButtonActive})}
             >
                 {icon}

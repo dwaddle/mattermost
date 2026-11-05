@@ -1,11 +1,27 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {App, expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the search box, Recent mentions and Saved messages, the search panel's
+// header (title, popout and close buttons), tabs and results by post id; the popout window gets its own `App`.
+
+/** Clicks the search panel's popout button and returns the popout window's app, once its document has loaded. */
+async function openPopout(app: App) {
+    const [popoutPage] = await Promise.all([app.page.waitForEvent('popup'), app.search.header.clickPopoutButton()]);
+    await popoutPage.waitForLoadState('domcontentloaded');
+    return new App(popoutPage);
+}
+
+/** Searches for the term from the global header. */
+async function searchFor(app: App, term: string) {
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill(term);
+    await app.searchBox.inputSearchbox.locator.press('Enter');
+}
 
 test('MM-65630-1 Search results should show popout button that opens results in a new window', async ({pw}) => {
     const {adminClient, user, team} = await pw.initSetup();
-
     const channel = await adminClient.createChannel(
         pw.random.channel({
             teamId: team.id,
@@ -14,47 +30,31 @@ test('MM-65630-1 Search results should show popout button that opens results in 
         }),
     );
     await adminClient.addToChannel(user.id, channel.id);
-
     const uniqueText = `popout-search-test-${pw.random.id()}`;
-    await adminClient.createPost({
-        channel_id: channel.id,
-        message: uniqueText,
-    });
+    const post = await adminClient.createPost({channel_id: channel.id, message: uniqueText});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    const page = channelsPage.page;
+    await searchFor(app, uniqueText);
+    await expect(app.search.results.post(post).messageText.locator).toHaveText(uniqueText);
 
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.searchInput.fill(uniqueText);
-    await channelsPage.searchBox.searchInput.press('Enter');
+    await expect(app.search.header.popoutButton.locator).toBeVisible();
+    const popout = await openPopout(app);
 
-    await expect(page.locator('#searchContainer')).toBeVisible();
-    await expect(page.locator('#searchContainer').getByText(uniqueText)).toBeVisible();
-
-    const popoutButton = page.locator('#searchContainer .PopoutButton');
-    await expect(popoutButton).toBeVisible();
-
-    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), popoutButton.click()]);
-
-    await popoutPage.waitForLoadState('domcontentloaded');
-    const popoutUrl = popoutPage.url();
+    const popoutUrl = popout.page.url();
     expect(popoutUrl).toContain('/_popout/rhs/');
     expect(popoutUrl).toContain('/search');
     expect(popoutUrl).toContain(`q=${encodeURIComponent(uniqueText)}`);
     expect(popoutUrl).toContain('mode=search');
 
-    await expect(popoutPage.locator('#searchContainer')).toBeVisible({timeout: 10000});
-    await expect(popoutPage.locator('#searchContainer').getByText(uniqueText)).toBeVisible({timeout: 10000});
+    await expect(popout.search.results.post(post).messageText.locator).toHaveText(uniqueText, {timeout: 10000});
 
-    await popoutPage.close();
+    await popout.page.close();
 });
 
 test('MM-65630-2 Recent mentions popout should open with the right results', async ({pw}) => {
     const {adminClient, user, team} = await pw.initSetup();
-
     const channel = await adminClient.createChannel(
         pw.random.channel({
             teamId: team.id,
@@ -63,45 +63,31 @@ test('MM-65630-2 Recent mentions popout should open with the right results', asy
         }),
     );
     await adminClient.addToChannel(user.id, channel.id);
-
     const mentionText = `hey @${user.username} check this mention-${pw.random.id()}`;
-    await adminClient.createPost({
-        channel_id: channel.id,
-        message: mentionText,
-    });
+    const post = await adminClient.createPost({channel_id: channel.id, message: mentionText});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    const page = channelsPage.page;
+    await app.globalHeader.clickRecentMentionsButton();
+    await expect(app.search.header.locator).toContainText(formatMessage(Msg.search_header.title2));
+    await expect(app.search.results.post(post).messageText.locator).toContainText(mentionText);
 
-    await channelsPage.globalHeader.openRecentMentions();
+    await expect(app.search.header.popoutButton.locator).toBeVisible();
+    const popout = await openPopout(app);
 
-    await expect(page.locator('#searchContainer')).toBeVisible();
-    await expect(page.locator('#searchContainer').getByRole('heading', {name: 'Recent Mentions'})).toBeVisible();
-    await expect(page.locator('#searchContainer').getByText(mentionText)).toBeVisible();
-
-    const popoutButton = page.locator('#searchContainer .PopoutButton');
-    await expect(popoutButton).toBeVisible();
-
-    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), popoutButton.click()]);
-
-    await popoutPage.waitForLoadState('domcontentloaded');
-    const popoutUrl = popoutPage.url();
+    const popoutUrl = popout.page.url();
     expect(popoutUrl).toContain('/_popout/rhs/');
     expect(popoutUrl).toContain('/search');
     expect(popoutUrl).toContain('mode=mention');
 
-    await expect(popoutPage.locator('#searchContainer')).toBeVisible({timeout: 10000});
-    await expect(popoutPage.locator('#searchContainer').getByText(mentionText)).toBeVisible({timeout: 10000});
+    await expect(popout.search.results.post(post).messageText.locator).toContainText(mentionText, {timeout: 10000});
 
-    await popoutPage.close();
+    await popout.page.close();
 });
 
 test('MM-65630-3 Saved messages popout should open with the right results', async ({pw}) => {
     const {adminClient, user, userClient, team} = await pw.initSetup();
-
     const channel = await adminClient.createChannel(
         pw.random.channel({
             teamId: team.id,
@@ -110,13 +96,8 @@ test('MM-65630-3 Saved messages popout should open with the right results', asyn
         }),
     );
     await adminClient.addToChannel(user.id, channel.id);
-
     const savedText = `saved-message-test-${pw.random.id()}`;
-    const post = await adminClient.createPost({
-        channel_id: channel.id,
-        message: savedText,
-    });
-
+    const post = await adminClient.createPost({channel_id: channel.id, message: savedText});
     await userClient.savePreferences(user.id, [
         {
             user_id: user.id,
@@ -126,38 +107,28 @@ test('MM-65630-3 Saved messages popout should open with the right results', asyn
         },
     ]);
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    const page = channelsPage.page;
+    await app.globalHeader.clickSavedMessagesButton();
+    await expect(app.search.header.locator).toContainText(formatMessage(Msg.search_header.title3));
+    await expect(app.search.results.post(post).messageText.locator).toHaveText(savedText);
 
-    await channelsPage.globalHeader.savedMessagesButton.click();
+    await expect(app.search.header.popoutButton.locator).toBeVisible();
+    const popout = await openPopout(app);
 
-    await expect(page.locator('#searchContainer')).toBeVisible();
-    await expect(page.locator('#searchContainer').getByRole('heading', {name: 'Saved messages'})).toBeVisible();
-    await expect(page.locator('#searchContainer').getByText(savedText)).toBeVisible();
-
-    const popoutButton = page.locator('#searchContainer .PopoutButton');
-    await expect(popoutButton).toBeVisible();
-
-    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), popoutButton.click()]);
-
-    await popoutPage.waitForLoadState('domcontentloaded');
-    const popoutUrl = popoutPage.url();
+    const popoutUrl = popout.page.url();
     expect(popoutUrl).toContain('/_popout/rhs/');
     expect(popoutUrl).toContain('/search');
     expect(popoutUrl).toContain('mode=flag');
 
-    await expect(popoutPage.locator('#searchContainer')).toBeVisible({timeout: 10000});
-    await expect(popoutPage.locator('#searchContainer').getByText(savedText)).toBeVisible({timeout: 10000});
+    await expect(popout.search.results.post(post).messageText.locator).toHaveText(savedText, {timeout: 10000});
 
-    await popoutPage.close();
+    await popout.page.close();
 });
 
 test('MM-65630-4 Search popout should not show popout button in the popout window itself', async ({pw}) => {
     const {adminClient, user, team} = await pw.initSetup();
-
     const channel = await adminClient.createChannel(
         pw.random.channel({
             teamId: team.id,
@@ -166,43 +137,28 @@ test('MM-65630-4 Search popout should not show popout button in the popout windo
         }),
     );
     await adminClient.addToChannel(user.id, channel.id);
-
     const uniqueText = `no-button-test-${pw.random.id()}`;
-    await adminClient.createPost({
-        channel_id: channel.id,
-        message: uniqueText,
-    });
+    const post = await adminClient.createPost({channel_id: channel.id, message: uniqueText});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    const page = channelsPage.page;
+    await searchFor(app, uniqueText);
+    await expect(app.search.results.post(post).messageText.locator).toHaveText(uniqueText);
 
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.searchInput.fill(uniqueText);
-    await channelsPage.searchBox.searchInput.press('Enter');
+    // (the main window's panel has both buttons: the checks below can't pass on ids that never render)
+    await expect(app.search.header.closeButton.locator).toBeVisible();
+    const popout = await openPopout(app);
 
-    await expect(page.locator('#searchContainer')).toBeVisible();
+    await expect(popout.search.results.post(post).messageText.locator).toHaveText(uniqueText, {timeout: 10000});
+    await expect(popout.search.header.popoutButton.locator).not.toBeVisible();
+    await expect(popout.search.header.closeButton.locator).not.toBeVisible();
 
-    const [popoutPage] = await Promise.all([
-        page.waitForEvent('popup'),
-        page.locator('#searchContainer .PopoutButton').click(),
-    ]);
-
-    await popoutPage.waitForLoadState('domcontentloaded');
-    await expect(popoutPage.locator('#searchContainer')).toBeVisible({timeout: 10000});
-
-    await expect(popoutPage.locator('.PopoutButton')).not.toBeVisible();
-
-    await expect(popoutPage.locator('#searchResultsCloseButton')).not.toBeVisible();
-
-    await popoutPage.close();
+    await popout.page.close();
 });
 
 test('MM-65630-5 Search popout should preserve search type (files) in the URL', async ({pw}) => {
     const {adminClient, user, team} = await pw.initSetup();
-
     const channel = await adminClient.createChannel(
         pw.random.channel({
             teamId: team.id,
@@ -212,29 +168,16 @@ test('MM-65630-5 Search popout should preserve search type (files) in the URL', 
     );
     await adminClient.addToChannel(user.id, channel.id);
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    const page = channelsPage.page;
+    await searchFor(app, 'test');
+    await app.search.tabs.filesTab.select();
 
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.searchInput.fill('test');
-    await channelsPage.searchBox.searchInput.press('Enter');
+    await expect(app.search.header.popoutButton.locator).toBeVisible();
+    const popout = await openPopout(app);
 
-    await expect(page.locator('#searchContainer')).toBeVisible();
+    expect(popout.page.url()).toContain('type=files');
 
-    const filesTab = page.locator('#searchContainer').getByRole('tab', {name: /Files/});
-    await filesTab.click();
-
-    const popoutButton = page.locator('#searchContainer .PopoutButton');
-    await expect(popoutButton).toBeVisible();
-
-    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), popoutButton.click()]);
-
-    await popoutPage.waitForLoadState('domcontentloaded');
-    const popoutUrl = popoutPage.url();
-    expect(popoutUrl).toContain('type=files');
-
-    await popoutPage.close();
+    await popout.page.close();
 });

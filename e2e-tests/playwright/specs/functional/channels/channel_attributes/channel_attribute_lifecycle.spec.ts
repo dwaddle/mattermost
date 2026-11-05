@@ -239,7 +239,7 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             await channelsPage.toBeVisible();
 
             // No manual text: falls back to the value name.
-            await expect(page.getByTestId('channel_banner_text')).toContainText('RESTRICTED');
+            await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('RESTRICTED');
 
             // A two-attribute template resolves against this channel.
             await adminClient.patchChannel(channel.id, {
@@ -250,14 +250,14 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
                 },
             } as never);
 
-            await expect(page.getByTestId('channel_banner_text')).toContainText('RESTRICTED · AURORA');
+            await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('RESTRICTED · AURORA');
 
             // A literal passes through untouched.
             await adminClient.patchChannel(channel.id, {
                 banner_info: {enabled: true, text: 'Handle with care', background_color: '#c8102e'},
             } as never);
 
-            await expect(page.getByTestId('channel_banner_text')).toContainText('Handle with care');
+            await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('Handle with care');
         } finally {
             await deleteAttributes(adminClient, created);
         }

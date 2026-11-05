@@ -2,8 +2,9 @@
 // See LICENSE.txt for license information.
 
 import type {Locale} from 'date-fns';
-import React, {useCallback, useEffect, useState} from 'react';
-import {DayPicker} from 'react-day-picker';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Button, DayPicker, useDayRender} from 'react-day-picker';
+import type {DayProps} from 'react-day-picker';
 
 import Constants from 'utils/constants';
 import * as Keyboard from 'utils/keyboard';
@@ -32,7 +33,34 @@ const IconRight = () => {
     );
 };
 
-const DAY_PICKER_ICONS = {IconRight, IconLeft};
+/** The day's local date as `YYYY-MM-DD`: its testid key. */
+const dayKey = (date: Date) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+
+/**
+ * react-day-picker's own Day, plus a testid keyed by the day's date (`search_box.date_picker.day:2020-06-15--gridcell`;
+ * the library makes each day button a grid cell).
+ */
+const Day = (props: DayProps) => {
+    const buttonRef = useRef<HTMLButtonElement>(null) as React.RefObject<HTMLButtonElement>;
+    const day = useDayRender(props.date, props.displayMonth, buttonRef);
+    if (day.isHidden) {
+        return <div role='gridcell'/>;
+    }
+    if (!day.isButton) {
+        return <div {...day.divProps}/>;
+    }
+    return (
+        <Button
+            name='day'
+            ref={buttonRef}
+            role='gridcell'
+            {...day.buttonProps}
+            data-testid={`search_box.date_picker.day:${dayKey(props.date)}--gridcell`}
+        />
+    );
+};
+
+const DAY_PICKER_COMPONENTS = {IconRight, IconLeft, Day};
 
 const SearchDateSuggestion = ({
     currentDate,
@@ -75,7 +103,7 @@ const SearchDateSuggestion = ({
             onMonthChange={preventClose}
             id='searchDatePicker'
             selected={currentDate}
-            components={DAY_PICKER_ICONS}
+            components={DAY_PICKER_COMPONENTS}
         />
     );
 };

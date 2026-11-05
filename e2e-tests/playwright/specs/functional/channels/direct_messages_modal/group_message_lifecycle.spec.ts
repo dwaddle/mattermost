@@ -25,7 +25,7 @@ test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
     // `goto` is a full page navigation, so (re-)stub notifications only once settled on the away channel
     await channelsPage.goto(team.name, 'off-topic');
     await pw.stubNotification(page, 'granted');
-    await adminClient.createPost({channel_id: gmChannel.id, user_id: sender.id, message: 'Muted normal GM message'});
+    await pw.postAs(sender, {channel_id: gmChannel.id, message: 'Muted normal GM message'});
 
     // * Verify no notification fires for the normal message while muted. Every GM post implicitly
     // mentions all members server-side (server/channels/app/notification.go), so the mention badge
@@ -35,9 +35,8 @@ test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
     await expect(channelsPage.sidebarLeft.unreadMentionsBadge(sender.username)).toBeVisible();
 
     // # Post a message that mentions the user while away
-    await adminClient.createPost({
+    await pw.postAs(sender, {
         channel_id: gmChannel.id,
-        user_id: sender.id,
         message: `@${user.username} Muted mention GM message`,
     });
 

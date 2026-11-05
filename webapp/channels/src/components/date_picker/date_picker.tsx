@@ -16,6 +16,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {DayPicker} from 'react-day-picker';
 import type {DayPickerProps} from 'react-day-picker';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {getDatePickerLocalesForDateFns} from 'utils/utils';
 
 import 'react-day-picker/dist/style.css';
@@ -30,9 +32,13 @@ type Props = {
     label?: string;
     icon?: React.ReactNode;
     value?: string;
+
+    // The button is `<testIdScope>.date--button` and the calendar popper `<testIdScope>.calendar`; without a scope, the
+    // popper keeps the legacy id.
+    testIdScope?: TestId;
 };
 
-const DatePicker = ({children, datePickerProps, isPopperOpen, handlePopperOpenState, locale, label, icon, value}: Props) => {
+const DatePicker = ({children, datePickerProps, isPopperOpen, handlePopperOpenState, locale, label, icon, value, testIdScope}: Props) => {
     const [loadedLocales, setLoadedLocales] = useState<Record<string, Locale>>({});
     const {x, y, strategy, context, refs: {setReference, setFloating}} = useFloating({
         open: isPopperOpen,
@@ -86,6 +92,7 @@ const DatePicker = ({children, datePickerProps, isPopperOpen, handlePopperOpenSt
                 onClick={handleWrapperClick}
                 className={isPopperOpen ? 'date-time-input date-time-input--open' : 'date-time-input'}
                 role='button'
+                data-testid={testIdScope ? `${testIdScope}.date--button` : undefined}
                 tabIndex={0}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -106,7 +113,7 @@ const DatePicker = ({children, datePickerProps, isPopperOpen, handlePopperOpenSt
                     initialFocus={-1}
                 >
                     <div
-                        data-testid='date-picker-popper'
+                        data-testid={testIdScope ? `${testIdScope}.calendar` : 'date-picker-popper'}
                         ref={setFloating}
                         style={{
                             position: strategy,

@@ -7,6 +7,7 @@ import {useIntl} from 'react-intl';
 import {useDispatch, useSelector, useStore} from 'react-redux';
 
 import {EmoticonPlusOutlineIcon, InformationOutlineIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji, SystemEmoji} from '@mattermost/types/emojis';
 import type {Post} from '@mattermost/types/posts';
 import type {ScheduledPost} from '@mattermost/types/schedule_post';
@@ -88,6 +89,9 @@ export type Props = {
     afterSave?: () => void;
     onCancel?: () => void;
     onDeleteScheduledPost?: () => Promise<{error?: string}>;
+
+    /** The editor's testid; its text area renders `<testId>--textbox`. */
+    testId?: TestId;
 };
 
 export type State = {
@@ -103,7 +107,7 @@ export type State = {
 
 const {KeyCodes} = Constants;
 
-const EditPost = ({editingPost, actions, canEditPost, config, channelId, draft, scheduledPost, afterSave, onCancel, onDeleteScheduledPost, ...rest}: Props): JSX.Element | null => {
+const EditPost = ({editingPost, actions, canEditPost, config, channelId, draft, scheduledPost, afterSave, onCancel, onDeleteScheduledPost, testId, ...rest}: Props): JSX.Element | null => {
     const connectionId = useSelector(getConnectionId);
     const channel = useSelector((state: GlobalState) => getChannel(state, channelId));
 
@@ -698,6 +702,7 @@ const EditPost = ({editingPost, actions, canEditPost, config, channelId, draft, 
                 supportsCommands={false}
                 suggestionListPosition='bottom'
                 id='edit_textbox'
+                testId={testId}
                 ref={textboxRef}
                 characterLimit={rest.maxPostSize}
                 useChannelMentions={rest.useChannelMentions}
@@ -724,6 +729,7 @@ const EditPost = ({editingPost, actions, canEditPost, config, channelId, draft, 
             <EditPostFooter
                 onSave={handleEdit}
                 onCancel={handleCancel}
+                testId={testId}
             />
             {postError && (
                 <div className={classNames('edit-post-footer', {'has-error': postError})}>

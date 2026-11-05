@@ -1,42 +1,45 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, testConfig} from '@mattermost/playwright-lib';
+import {expect, generated, test, testConfig} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that clicking a post timestamp in the RHS or center channel highlights the post in the center channel.
+ *
+ * Written on the generated page objects: the post by id in the center and the thread, each with its time link.
  */
 test('MM-T176 highlights the center post when its timestamp is clicked', {tag: ['@messaging']}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Create a root post with a reply, and log in
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const root = await userClient.createPost({
+        channel_id: channel.id,
+        message: `timestamp highlight ${pw.random.id()}`,
+    });
+    await userClient.createPost({channel_id: channel.id, root_id: root.id, message: 'Reply to test timestamp click'});
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // # Post a message and open its thread, then reply in the RHS
-    await channelsPage.postMessage(`timestamp highlight ${pw.random.id()}`);
-    const rootPost = await channelsPage.getLastPost();
-    const rootId = await rootPost.getId();
-    await rootPost.reply();
-    await channelsPage.sidebarRight.toBeVisible();
-    await channelsPage.sidebarRight.postMessage('Reply to test timestamp click');
+    // # Open the root's thread
+    const centerPost = app.center.postList.post(root);
+    await centerPost.locator.hover();
+    await centerPost.menu.clickReplyButton();
 
-    // # Click the root post timestamp in the RHS
-    await page.locator(`#RHS_ROOT_time_${rootId}`).click();
+    // # Click the root post's timestamp in the thread
+    await app.rhs.thread.post(root).timeLink.locator.click();
 
-    // * Verify the matching post is highlighted in the center channel
-    const centerPost = await channelsPage.centerView.getPostById(rootId);
-    await expect(centerPost.container).toHaveClass(/post--highlight/);
+    // * The matching post is highlighted in the center channel
+    await expect(centerPost.locator).toHaveClass(/post--highlight/);
 
-    // # Close the RHS and wait for the highlight to fade
-    await channelsPage.sidebarRight.close();
-    await expect(centerPost.container).not.toHaveClass(/post--highlight/);
+    // # Close the thread and wait for the highlight to fade
+    await app.rhs.thread.header.clickCloseButton();
+    await expect(centerPost.locator).not.toHaveClass(/post--highlight/);
 
-    // # Click the same post timestamp in the center channel
-    await page.locator(`#CENTER_time_${rootId}`).click();
+    // # Click the same post's timestamp in the center channel
+    await centerPost.timeLink.locator.click();
 
-    // * Verify the post is highlighted again in the center channel
-    await expect(centerPost.container).toHaveClass(/post--highlight/);
+    // * The post is highlighted again
+    await expect(centerPost.locator).toHaveClass(/post--highlight/);
 });
 
 /**
@@ -46,41 +49,35 @@ test('MM-T3308 follows a permalink to the first post without endless loading', {
     const messageCount = 10;
     const base = `permalink-${pw.random.id()}`;
 
-    // # Create and log in as a test user, and create a private channel with several posts
-    const {user, team, adminClient} = await pw.initSetup();
+    // # Create a private channel with several posts
+    const {user, team, adminClient, userClient} = await pw.initSetup();
     const privateChannel = await adminClient.createPrivateChannel(team.id, 'Permalink First');
     await adminClient.addToChannel(user.id, privateChannel.id);
-
-    let firstPostId = '';
+    const created = [];
     for (let i = 1; i <= messageCount; i++) {
-        const created = await adminClient.createPost({channel_id: privateChannel.id, message: `${base}-${i}`});
-        if (i === 1) {
-            firstPostId = created.id;
-        }
+        created.push(await adminClient.createPost({channel_id: privateChannel.id, message: `${base}-${i}`}));
     }
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
-
-    // # Post a permalink to the first (oldest) post into the public channel
-    const permalink = `${testConfig.baseURL}/${team.name}/pl/${firstPostId}`;
-    await channelsPage.postMessage(permalink);
-    await channelsPage.centerView.waitUntilLastPostContains(permalink);
+    // # Log in to Off-Topic and post a permalink to the first (oldest) post there
+    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: offTopic});
+    const permalink = `${testConfig.baseURL}/${team.name}/pl/${created[0].id}`;
+    const linkPost = await userClient.createPost({channel_id: offTopic.id, message: permalink});
 
     // # Click the permalink in the posted message
-    const permalinkPost = await channelsPage.getLastPost();
-    await permalinkPost.body.getByRole('link', {name: permalink}).click();
+    await new generated.Markdown(page, 'markdown', app.center.postList.post(linkPost).locator).linkLink.locator.click();
 
-    // * Verify navigation lands in the target private channel
+    // * Navigation lands in the private channel
     await expect
         .poll(() => page.url(), {timeout: pw.duration.ten_sec})
         .toContain(`/${team.name}/channels/${privateChannel.name}`);
 
-    // * Verify the channel start intro is shown, proving the top loaded without an endless loading indicator
-    await expect(page.getByText(`This is the start of ${privateChannel.display_name}`)).toBeVisible();
+    // * The channel start intro is shown: the top loaded without an endless loading indicator
+    await expect(app.center.postList.channelIntro.locator).toContainText(
+        `This is the start of ${privateChannel.display_name}`,
+    );
 
-    // * Verify the most recent post is the last message that was created
-    const lastPost = await channelsPage.getLastPost();
-    await lastPost.toContainText(`${base}-${messageCount}`);
+    // * The newest post is the last one created
+    await expect.poll(async () => (await app.center.postList.postKeys()).at(-1)).toBe(created[messageCount - 1].id);
 });

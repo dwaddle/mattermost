@@ -11,6 +11,7 @@ import type {IntlShape} from 'react-intl';
 import {useRootClose} from 'react-overlays';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
 import type {AppBinding} from '@mattermost/types/apps';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 
@@ -90,6 +91,7 @@ class CustomToggle extends React.PureComponent<CustomToggleProps> {
         return (
             <button
                 id='pluginChannelHeaderButtonDropdown'
+                data-testid='channel_header.plugin_actions.open_menu--button'
                 className={'channel-header__icon channel-header__icon--wide ' + activeClass}
                 type='button'
                 onClick={this.handleClick}
@@ -215,6 +217,7 @@ class ChannelHeaderPlug extends React.PureComponent<ChannelHeaderPlugProps, Chan
                 tooltip={tooltipText}
                 ariaLabelOverride={ariaLabel}
                 pluginId={plug.pluginId}
+                testId={`channel_header.plugin_actions.action:${pluginTestKey(plug.pluginId)}`}
             >
                 {plug.icon}
             </HeaderIconWrapper>
@@ -301,6 +304,7 @@ class ChannelHeaderPlug extends React.PureComponent<ChannelHeaderPlugProps, Chan
                         href='#'
                         className='d-flex align-items-center'
                         onClick={() => this.fireActionAndClose(plug.action!)}
+                        data-testid={`channel_header.plugin_actions.menu.action:${pluginTestKey(plug.pluginId)}--link`}
                     >
                         <span className='d-flex align-items-center overflow--ellipsis'>{plug.icon}</span>
                         <span>{plug.dropdownText}</span>

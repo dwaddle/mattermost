@@ -208,7 +208,7 @@ test.describe(
             // * The Header location took effect, and there is no banner even though
             // * the channel has a classification
             await expect(channelsPage.centerView.header.attributes.chip(levels[0].name)).toBeVisible();
-            await expect(page.getByTestId('channel_banner_container')).toHaveCount(0);
+            await expect(page.getByTestId('center.channel_banner')).toHaveCount(0);
         });
 
         /**

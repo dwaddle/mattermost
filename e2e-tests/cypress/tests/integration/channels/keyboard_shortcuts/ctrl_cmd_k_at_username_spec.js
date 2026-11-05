@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @channels @keyboard_shortcuts
 
+import {quickSwitchUserItem} from '@/utils/suggestion';
+
 describe('Keyboard Shortcuts', () => {
     let testTeam;
     let testUser;
@@ -36,7 +38,7 @@ describe('Keyboard Shortcuts', () => {
         cy.get('#quickSwitchInput').type('@' + otherUser.username.slice(0, 3));
 
         // # Click on the username in the suggestion list
-        cy.findByTestId(otherUser.username).click();
+        quickSwitchUserItem(otherUser).click();
 
         // * The direct message channel for the user opens
         cy.url().should('include', `/${testTeam.name}/messages/@${otherUser.username}`);

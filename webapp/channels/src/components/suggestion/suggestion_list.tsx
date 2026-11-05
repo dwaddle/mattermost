@@ -4,6 +4,8 @@
 import React from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {Constants} from 'utils/constants';
 
 import SuggestionListContents, {UngroupedSuggestions} from './suggestion_list_contents';
@@ -22,6 +24,9 @@ export interface Props {
     cleared: boolean;
     results: SuggestionResults;
     selection: string;
+
+    // The list's scope (`<host>.suggestions`): items are `<testId>.item:<suggestionTestKey(term)>--option`.
+    testId?: TestId;
 
     // suggestionBoxAlgn is an optional object that can be passed to align the SuggestionList with the keyboard caret
     // as the user is typing.
@@ -197,6 +202,7 @@ export default class SuggestionList extends React.PureComponent<Props> {
                     onItemClick={this.props.onCompleteWord}
                     onItemHover={this.props.onItemHover}
                     onMouseDown={this.props.preventClose}
+                    testId={this.props.testId}
                 />
             );
         } else if (this.props.renderNoResults) {

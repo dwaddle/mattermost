@@ -4,6 +4,7 @@
 import React, {memo, useMemo} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import {isMessageAttachmentArray} from '@mattermost/types/message_attachments';
 
 import {ensureString} from 'mattermost-redux/utils/post_utils';
@@ -21,9 +22,12 @@ type Props = {
     onCommentClick?: React.EventHandler<React.MouseEvent>;
     rootId: string;
     enablePostUsernameOverride?: boolean;
+
+    /** The post's testid scope; renders `<testIdScope>.commented_on`. */
+    testIdScope?: TestId;
 };
 
-function CommentedOn({onCommentClick, rootId, enablePostUsernameOverride}: Props) {
+function CommentedOn({onCommentClick, rootId, enablePostUsernameOverride, testIdScope}: Props) {
     const rootPost = usePost(rootId);
     const rootPostUser = useUser(rootPost?.user_id ?? '');
 
@@ -53,7 +57,10 @@ function CommentedOn({onCommentClick, rootId, enablePostUsernameOverride}: Props
         message = Utils.replaceHtmlEntities(rootPost.message);
     } else if (rootPost.file_ids && rootPost.file_ids.length > 0) {
         message = (
-            <CommentedOnFilesMessage parentPostId={rootPost.id}/>
+            <CommentedOnFilesMessage
+                parentPostId={rootPost.id}
+                testId={testIdScope ? `${testIdScope}.commented_on.files` : undefined}
+            />
         );
     } else if (isMessageAttachmentArray(rootPost.props?.attachments) && rootPost.props.attachments.length > 0) {
         const attachment = rootPost.props.attachments[0];
@@ -70,7 +77,7 @@ function CommentedOn({onCommentClick, rootId, enablePostUsernameOverride}: Props
 
     return (
         <div
-            data-testid='post-link'
+            data-testid={testIdScope ? `${testIdScope}.commented_on` : undefined}
             className='post__link'
         >
             <span>

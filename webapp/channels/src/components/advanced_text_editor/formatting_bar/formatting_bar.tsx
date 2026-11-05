@@ -12,6 +12,7 @@ import {DotsHorizontalIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {MarkdownMode} from 'utils/markdown/apply_markdown';
 
@@ -20,7 +21,7 @@ import {LayoutModes, useFormattingBarControls} from './hooks';
 import LinkPopover from './link_popover';
 import TextStyleDropdown from './text_style_dropdown';
 
-export const Separator = styled.div.attrs({'data-testid': 'formatting-bar-separator'})`
+export const Separator = styled.div.attrs({className: 'formatting-bar-separator'})`
     display: block;
     position: relative;
     width: 1px;
@@ -105,6 +106,9 @@ export interface FormattingBarHandle {
 
 interface FormattingBarProps {
 
+    /** Testid scope of the bar. */
+    testId?: TestId;
+
     /**
      * Apply a formatting toggle for the given markdown mode. The parent decides
      * whether this targets the legacy markdown textbox or the WYSIWYG editor.
@@ -179,6 +183,7 @@ const FormattingBar = forwardRef<FormattingBarHandle, FormattingBarProps>((props
         additionalControls,
         aiActionsMenu,
         getEditor,
+        testId,
     } = props;
     const [showHiddenControls, setShowHiddenControls] = useState(false);
     const [linkPopoverOpen, setLinkPopoverOpen] = useState(false);
@@ -300,6 +305,7 @@ const FormattingBar = forwardRef<FormattingBarHandle, FormattingBarProps>((props
                 onClick={makeFormattingHandler(mode)}
                 disabled={disableControls}
                 isActive={isActive}
+                testId={testId ? `${testId}.control:${mode}` : undefined}
             />
         );
     };
@@ -307,7 +313,7 @@ const FormattingBar = forwardRef<FormattingBarHandle, FormattingBarProps>((props
     return (
         <FormattingBarContainer
             ref={formattingBarRef}
-            data-testid='formattingBarContainer'
+            data-testid={testId}
         >
             {aiActionsMenu}
             {aiActionsMenu && showSeparators && <Separator/>}

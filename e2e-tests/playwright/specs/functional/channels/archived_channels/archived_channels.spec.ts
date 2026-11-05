@@ -40,7 +40,7 @@ test('MM-T1679 opens an archived channel by jumping from search results', {tag: 
     const channel = await adminClient.createPublicChannel(team.id, `Archived ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
     const message = `archived post ${pw.random.id()}`;
-    await adminClient.createPost({channel_id: channel.id, user_id: user.id, message});
+    await pw.postAs(user, {channel_id: channel.id, message});
 
     const {channelsPage} = await pw.testBrowser.login(user);
     await channelsPage.goto(team.name, channel.name);

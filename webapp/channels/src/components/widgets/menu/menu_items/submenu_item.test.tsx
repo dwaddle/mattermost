@@ -56,6 +56,35 @@ describe('components/widgets/menu/menu_items/submenu_item', () => {
         expect(action1).toHaveBeenCalledTimes(1);
     });
 
+    test('a click on markup inside an item\'s text triggers that item\'s action only', async () => {
+        const parentAction = jest.fn();
+        const childAction = jest.fn();
+
+        renderWithContext(
+            <SubMenuItem
+                id={'Z'}
+                text={<span>{'parent'}</span>}
+                subMenu={[
+                    {
+                        id: 'A',
+                        text: <span>{'Child A'}</span>,
+                        action: childAction,
+                        direction: 'left',
+                    },
+                ]}
+                action={parentAction}
+                root={true}
+            />,
+        );
+
+        await userEvent.click(screen.getByText('Child A'));
+        expect(childAction).toHaveBeenCalledTimes(1);
+        expect(parentAction).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByText('parent'));
+        expect(parentAction).toHaveBeenCalledTimes(1);
+    });
+
     test('should show/hide submenu based on keyboard commands', () => {
         const ref = React.createRef<SubMenuItemClass>();
         renderWithContext(

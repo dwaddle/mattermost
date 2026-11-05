@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {MmButtonBlock} from '@mattermost/types/mm_blocks';
 
 import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
@@ -24,9 +25,12 @@ const buttonMarkdownOptions = {
 type ButtonElementProps = {
     element: MmButtonBlock;
     onAction: ActionHandler;
+
+    /** The post's testid scope; the button renders `<testIdScope>.action:<action id>--button`. */
+    testIdScope?: TestId;
 };
 
-export const ButtonElement = ({element, onAction}: ButtonElementProps) => {
+export const ButtonElement = ({element, onAction, testIdScope}: ButtonElementProps) => {
     const theme = useSelector(getTheme);
     const interactionsDisabled = useContext(MmBlocksInteractionsDisabledContext);
     const [isExecuting, setIsExecuting] = useState(false);
@@ -54,6 +58,7 @@ export const ButtonElement = ({element, onAction}: ButtonElementProps) => {
             emphasis={element.style === 'primary' ? 'primary' : 'tertiary'}
             destructive={element.style === 'danger'}
             className={mmBlocksButtonClassName(element.style)}
+            data-testid={testIdScope ? `${testIdScope}.action:${element.action_id}--button` : undefined}
             style={mmBlocksButtonInlineStyle(element.style, theme)}
             onClick={handleClick}
             disabled={interactionsDisabled || element.disabled === true}

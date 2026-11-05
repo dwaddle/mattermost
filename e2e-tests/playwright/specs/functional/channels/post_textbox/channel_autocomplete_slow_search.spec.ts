@@ -3,7 +3,10 @@
 
 import type {Locator, Page} from '@playwright/test';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the composer, and its suggestions grouped by key ("My Channels" is
+// `myChannels`, "Other Channels" `moreChannels`), with items keyed by channel name and the list's loading spinner.
 
 const AUTOCOMPLETE_ROUTE = /\/api\/v4\/teams\/[^/]+\/channels\/autocomplete/;
 
@@ -26,6 +29,17 @@ async function typeMentionAndWaitForRequests(input: Locator, page: Page, message
         await input.pressSequentially(character);
         await request;
     }
+}
+
+/** The composer's suggestions inside one group (the list rooted at the group's element). */
+function suggestionGroup(app: App, key: string) {
+    const {suggestions} = app.center.postCreate.message;
+    return new generated.Suggestions(app.page, suggestions.scope, suggestions.group(key).locator);
+}
+
+/** The keys (channel names) of a group's suggestions, sorted: the order isn't under test here. */
+async function groupKeys(app: App, key: string) {
+    return (await suggestionGroup(app, key).itemKeys()).sort();
 }
 
 /**
@@ -76,7 +90,7 @@ test(
         await adminClient.addToChannel(user.id, privateChannel.id);
 
         // # Create a channel that the user is not a member of, so it can only come from the search
-        await adminClient.createChannel({
+        const remoteChannel = await adminClient.createChannel({
             team_id: team.id,
             name: 'ac-remote-' + Date.now(),
             display_name: 'AC Remote',
@@ -84,27 +98,23 @@ test(
         });
 
         // # Log in as regular user
-        const {channelsPage, page} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
 
         // # Hold the channel search open so the initial local results can be observed independently of the response
         const releaseSearch = await holdChannelSearch(page);
 
         // # Visit town-square channel
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Type a channel mention matching both channels
-        const postCreate = channelsPage.centerView.postCreate;
-        await postCreate.typeMessage('~ac-');
+        await app.center.postCreate.messageTextbox.locator.pressSequentially('~ac-');
 
         // * Verify the channels the user is a member of are shown without waiting for the search
-        const suggestionList = postCreate.suggestionList;
-        const myChannels = suggestionList.getByRole('group', {name: 'My Channels'});
-        await expect(myChannels.getByRole('option')).toContainText(['AC Z Local']);
+        await expect.poll(() => groupKeys(app, 'myChannels')).toEqual([localChannel.name]);
 
         // * Verify the group of channels being searched for shows that it is still loading
-        const otherChannels = suggestionList.getByRole('group', {name: 'Other Channels'});
-        await expect(otherChannels.getByTestId('loadingSpinner')).toBeVisible();
+        const {suggestions} = app.center.postCreate.message;
+        await expect(suggestionGroup(app, 'moreChannels').loading.locator).toBeVisible();
 
         // # Release the response and wait for it to be delivered
         const searchResponse = page.waitForResponse(
@@ -114,15 +124,12 @@ test(
         await searchResponse;
 
         // * Verify the searched channel is shown once the search finishes
-        await expect(otherChannels.getByRole('option')).toContainText(['AC Remote']);
+        await expect.poll(() => groupKeys(app, 'moreChannels')).toEqual([remoteChannel.name]);
 
         // * Verify the member channel added by the response is paired with its own term, rather than mutating the
         // * already-rendered local result. The order the two are rendered in is not part of what's under test.
-        const myChannelOptions = myChannels.getByRole('option');
-        await expect(myChannelOptions).toHaveCount(2);
-        await expect(myChannelOptions.filter({hasText: 'AC A Private'})).toHaveCount(1);
-        await expect(myChannelOptions.filter({hasText: 'AC Z Local'})).toHaveCount(1);
-        await expect(otherChannels.getByTestId('loadingSpinner')).not.toBeVisible();
+        await expect.poll(() => groupKeys(app, 'myChannels')).toEqual([localChannel.name, privateChannel.name].sort());
+        await expect(suggestions.loading.locator).not.toBeVisible();
     },
 );
 
@@ -135,7 +142,7 @@ test('channel mention autocomplete ignores a search that finishes out of order',
     const {team, user, adminClient} = await pw.initSetup();
 
     // # Create channels that the user is not a member of, so they can only come from the search
-    await adminClient.createChannel({
+    const alpha = await adminClient.createChannel({
         team_id: team.id,
         name: 'ac-alpha-' + Date.now(),
         display_name: 'AC Alpha',
@@ -149,7 +156,7 @@ test('channel mention autocomplete ignores a search that finishes out of order',
     });
 
     // # Log in as regular user
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Hold the shortest search while allowing the fully typed search to finish first
     const staleSearchName = 'ac-';
@@ -166,8 +173,7 @@ test('channel mention autocomplete ignores a search that finishes out of order',
     });
 
     // # Visit town-square channel
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Note when the delayed search for the shortest mention finishes
     const staleSearch = page.waitForResponse(
@@ -178,26 +184,23 @@ test('channel mention autocomplete ignores a search that finishes out of order',
     );
 
     // # Type a channel mention, waiting for each request so the stale response can be held deterministically
-    const postCreate = channelsPage.centerView.postCreate;
-    await typeMentionAndWaitForRequests(postCreate.input, page, '~ac-alpha');
+    const input = app.center.postCreate.messageTextbox.locator;
+    await typeMentionAndWaitForRequests(input, page, '~ac-alpha');
 
     // # Ensure the current search response is the one that populated the list before releasing the stale response
     await currentSearch;
 
     // * Verify only the channel matching what was typed is shown
-    const otherChannels = postCreate.suggestionList.getByRole('group', {name: 'Other Channels'});
-    await expect(otherChannels.getByRole('option')).toContainText(['AC Alpha']);
-    await expect(otherChannels.getByRole('option')).toHaveCount(1);
+    await expect.poll(() => groupKeys(app, 'moreChannels')).toEqual([alpha.name]);
 
     // # Release the stale response and wait for it to finish last
     releaseStaleSearch();
     await staleSearch;
 
     // * Verify its results are ignored, since they no longer match what was typed
-    await expect(otherChannels.getByRole('option')).toHaveCount(1);
-    await expect(otherChannels.getByRole('option')).toContainText(['AC Alpha']);
+    await expect.poll(() => groupKeys(app, 'moreChannels')).toEqual([alpha.name]);
 
     // * Verify the mention can still be completed, so the suggestion list is still interactive
-    await otherChannels.getByRole('option').first().click();
-    await expect(postCreate.input).toHaveValue(/~ac-alpha/);
+    await suggestionGroup(app, 'moreChannels').item(alpha.name).select();
+    await expect(input).toHaveValue(/~ac-alpha/);
 });

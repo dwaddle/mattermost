@@ -1,38 +1,36 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-async function emojiHeight(post: {emoticon: {boundingBox: () => Promise<{height: number} | null>}}): Promise<number> {
-    const box = await post.emoticon.boundingBox();
-    if (!box) {
-        throw new Error('Expected the emoji to have a bounding box');
-    }
-    return box.height;
-}
+import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify an emoji-only message renders as a jumbo (large) emoji, and that leading/trailing
  * whitespace around the emoji does not stop it from rendering jumbo.
+ *
+ * Written on the generated page objects: each post by id, and the emoji inside it through `Markdown`
+ * constructed on that post.
  */
 test(
     'MM-T2179 renders emoji-only messages as jumbo even when surrounded by whitespace',
     {tag: '@messaging'},
     async ({pw}) => {
-        const {user, team} = await pw.initSetup();
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
+        const {user, team, userClient} = await pw.initSetup();
+        const channel = await userClient.getChannelByName(team.id, 'off-topic');
 
-        // # Post an emoji inline with text (renders at the normal inline size)
-        await channelsPage.postMessage('jumbo test :taco:');
-        const inlineHeight = await emojiHeight(await channelsPage.getLastPost());
+        // # Post the emoji inline with text, then on its own surrounded by whitespace
+        const inline = await userClient.createPost({channel_id: channel.id, message: 'jumbo test :taco:'});
+        const alone = await userClient.createPost({channel_id: channel.id, message: ' :taco: '});
 
-        // # Post the same emoji on its own surrounded by whitespace
-        await channelsPage.postMessage(' :taco: ');
-        const jumboHeight = await emojiHeight(await channelsPage.getLastPost());
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
+        const tacoIn = (post: typeof inline) =>
+            new generated.Markdown(page, 'markdown', app.center.postList.post(post).locator).emoji('taco').locator;
+        const height = async (post: typeof inline) => {
+            await expect(tacoIn(post)).toBeVisible();
+            return (await tacoIn(post).boundingBox())!.height;
+        };
 
-        // * Verify the whitespace-surrounded emoji-only message renders larger (jumbo) than the inline emoji
-        expect(jumboHeight).toBeGreaterThan(inlineHeight);
+        // * The whitespace-surrounded emoji-only message renders larger (jumbo) than the inline emoji
+        expect(await height(alone)).toBeGreaterThan(await height(inline));
     },
 );

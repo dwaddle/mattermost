@@ -161,6 +161,9 @@ export default function ChannelMembersRHS({
                         return (
                             <AlertTag
                                 key={`${attribute.name}-${value}`}
+
+                                // keyed by field name and value, as a path: one field can show several values
+                                testId={`rhs.channel_members.policy.tag:${attribute.name}/${value}`}
                                 tooltipTitle={attributeLabel}
                                 text={`${attributeLabel}: ${value}`}
                             />
@@ -311,6 +314,7 @@ export default function ChannelMembersRHS({
         <div
             id='rhsContainer'
             className='sidebar-right__body channel-members-rhs'
+            data-testid='rhs.channel_members'
         >
 
             <Header
@@ -321,7 +325,10 @@ export default function ChannelMembersRHS({
             />
             {/* Show banner only for channels whose policy gates membership. */}
             {isMembershipPolicy && (
-                <div className='channel-members-rhs__alert-container policy-enforced'>
+                <div
+                    className='channel-members-rhs__alert-container policy-enforced'
+                    data-testid='rhs.channel_members.policy'
+                >
                     <AlertBanner
                         mode='info'
                         variant='app'

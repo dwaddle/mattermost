@@ -48,16 +48,20 @@ export default class ChannelsSidebarRight {
             'info-header',
         );
 
-        this.scheduledPostIndicator = new ScheduledPostIndicator(container.getByTestId('scheduledPostIndicator'));
-        this.scheduledDraftChannelInfoMessage = container.getByTestId('scheduledPostIndicator').locator('span');
+        this.scheduledPostIndicator = new ScheduledPostIndicator(
+            container.getByTestId('rhs.post_create.scheduled_post_indicator'),
+        );
+        this.scheduledDraftChannelInfoMessage = container
+            .getByTestId('rhs.post_create.scheduled_post_indicator')
+            .locator('span');
         this.scheduledDraftSeeAllLink = container
-            .getByTestId('scheduledPostIndicator')
+            .getByTestId('rhs.post_create.scheduled_post_indicator')
             .getByRole('link', {name: 'See all.'});
         this.scheduledDraftChannelInfoMessageText = container
-            .getByTestId('scheduledPostIndicator')
+            .getByTestId('rhs.post_create.scheduled_post_indicator')
             .getByText(/Message scheduled for/);
-        this.rhsPostBody = container.getByTestId('post-message-text');
-        this.postCreate = new ChannelsPostCreate(container.getByTestId('comment-create'), true);
+        this.rhsPostBody = container.getByTestId(/^rhs\.thread\.post\.message--text$/);
+        this.postCreate = new ChannelsPostCreate(container.getByTestId('rhs.thread.composer'), true);
         this.closeButton = container.getByRole('button', {name: 'Close'});
         this.backButton = container.getByRole('button', {name: 'Back to channel'});
         this.expandButton = container.getByRole('button', {name: 'Expand Sidebar Icon'});
@@ -68,12 +72,12 @@ export default class ChannelsSidebarRight {
         this.addMembersButton = container.getByRole('button', {name: 'Add'});
 
         this.editTextbox = container.locator('#edit_textbox');
-        this.postEdit = new ChannelsPostEdit(container.getByTestId('post-edit-container'));
+        this.postEdit = new ChannelsPostEdit(container.getByTestId('post_edit'));
         this.currentVersionEditedPosttext = (postID: any) => container.locator(`#rhsPostMessageText_${postID} p`);
         this.restorePreviousPostVersionIcon = container.locator(
             'button[aria-label="Select to restore an old message."]',
         );
-        this.channelBanner = container.getByTestId('channel_banner_container');
+        this.channelBanner = container.getByTestId('rhs.thread.channel_banner');
         this.notificationSeparator = container.locator('.NotificationSeparator');
 
         // Search input shown in the RHS when opened from the mobile/narrow-width channel header.
@@ -110,13 +114,13 @@ export default class ChannelsSidebarRight {
      * Return the last post in the RHS
      */
     async getLastPost() {
-        const post = this.container.getByTestId('rhsPostView').last();
+        const post = this.container.getByTestId(/^rhs\.thread\.post:/).last();
         await post.waitFor();
         return new ChannelsPost(post);
     }
 
     async getFirstPost() {
-        const post = this.container.getByTestId('rhsPostView').first();
+        const post = this.container.getByTestId(/^rhs\.thread\.post:/).first();
         await post.waitFor();
         return new ChannelsPost(post);
     }

@@ -109,7 +109,9 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await channelsPage.toBeVisible();
 
             // * Both designated attributes share the one banner, in sort order
-            await expect(channelsPage.page.getByTestId('channel_banner_text')).toHaveText('SECRET · AURORA');
+            await expect(channelsPage.page.getByTestId('center.channel_banner.text--text')).toHaveText(
+                'SECRET · AURORA',
+            );
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -159,7 +161,7 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await channelsPage.toBeVisible();
 
             // * The channel shows a banner, so its settings must not claim it is off
-            await expect(channelsPage.page.getByTestId('channel_banner_text')).toContainText('SECRET');
+            await expect(channelsPage.page.getByTestId('center.channel_banner.text--text')).toContainText('SECRET');
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();

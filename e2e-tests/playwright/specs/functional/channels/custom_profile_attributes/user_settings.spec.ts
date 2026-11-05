@@ -354,10 +354,9 @@ test('MM-T5769 Clearing Custom Profile Attributes @custom_profile_attributes', a
     await channelsPage.goto();
 
     // Prepare the environment by posting a message as other user
-    await adminClient.createPost({
+    await pw.postAs(otherUser, {
         channel_id: testChannel.id,
         message: TEST_MESSAGE_OTHER,
-        user_id: otherUser.id,
     });
 
     // 2. Open profile settings modal
@@ -443,10 +442,9 @@ test('MM-T5771 Editing Phone and URL Type Custom Profile Attributes @custom_prof
     await channelsPage.goto();
 
     // Prepare the environment by posting a message as other user
-    await adminClient.createPost({
+    await pw.postAs(otherUser, {
         channel_id: testChannel.id,
         message: TEST_MESSAGE_OTHER,
-        user_id: otherUser.id,
     });
 
     // 2. Open profile settings modal

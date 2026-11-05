@@ -9,6 +9,8 @@ import {
     testConfig,
 } from '@mattermost/playwright-lib';
 
+import {centerPostContaining, lastCenterPost, openThread, threadPostContaining} from './support';
+
 async function postIncomingWebhook(webhookId: string, payload: Record<string, unknown>) {
     const hookUrl = `${testConfig.baseURL}/hooks/${webhookId}`;
     const resp = await fetch(hookUrl, {
@@ -48,14 +50,13 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            await expect(lastPost.container.locator('.mm-blocks')).toBeVisible();
-            await expect(lastPost.container.getByText(blockText)).toBeVisible();
+            const lastPost = await lastCenterPost(app);
+            await expect(lastPost.blocks.locator).toBeVisible();
+            await expect(lastPost.blocks.locator).toContainText(blockText);
         },
     );
 
@@ -87,14 +88,13 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            await expect(lastPost.container.locator('.mm-blocks')).toBeVisible();
-            await expect(lastPost.container.getByText('Second line after divider.')).toBeVisible();
+            const lastPost = await lastCenterPost(app);
+            await expect(lastPost.blocks.locator).toBeVisible();
+            await expect(lastPost.blocks.locator).toContainText('Second line after divider.');
         },
     );
 
@@ -133,14 +133,13 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
+            const lastPost = await lastCenterPost(app);
 
-            const disabledButton = lastPost.container.getByRole('button', {name: 'Disabled action'});
+            const disabledButton = lastPost.action('pw_mm_blocks_disabled_inert').locator;
             await expect(disabledButton).toBeVisible();
             await expect(disabledButton).toBeDisabled();
         },
@@ -204,22 +203,21 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            await expect(lastPost.container.locator('.mm-blocks')).toBeVisible();
+            const lastPost = await lastCenterPost(app);
+            await expect(lastPost.blocks.locator).toBeVisible();
 
-            await expect(lastPost.container.getByText(goodA)).toBeVisible();
-            await expect(lastPost.container.getByText(goodB)).toBeVisible();
-            await expect(lastPost.container.getByText(goodC)).toBeVisible();
-            await expect(lastPost.container.getByText(goodD)).toBeVisible();
+            await expect(lastPost.blocks.locator).toContainText(goodA);
+            await expect(lastPost.blocks.locator).toContainText(goodB);
+            await expect(lastPost.blocks.locator).toContainText(goodC);
+            await expect(lastPost.blocks.locator).toContainText(goodD);
 
-            await expect(lastPost.container.getByText('nested')).not.toBeVisible();
-            await expect(lastPost.container.getByText('inner')).not.toBeVisible();
-            await expect(lastPost.container.getByRole('button', {name: 'missing action_id'})).not.toBeVisible();
+            await expect(lastPost.blocks.locator).not.toContainText('nested');
+            await expect(lastPost.blocks.locator).not.toContainText('inner');
+            await expect(lastPost.blocks.locator).not.toContainText('missing action_id');
         },
     );
 
@@ -279,27 +277,21 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            await lastPost.container.getByRole('button', {name: 'Ping integration'}).click();
+            const lastPost = await lastCenterPost(app);
+            await lastPost.action('pw_mm_blocks_integration').click();
 
             // With Collapsed Reply Threads (CRT) on, integration ephemerals carry root_id and are not inserted into
             // the main channel post list (postsInChannel), so assert the ephemeral in the thread panel.
             // Do not rely on a "1 reply" summary: it may not get an accessible name for ephemeral-only children;
             // use the post's Reply control (matches the product UI and is locale-stable in en tests).
-            const replyOnRoot = lastPost.container.getByRole('button', {name: 'reply'});
-            await expect(replyOnRoot).toBeVisible();
-            await replyOnRoot.click();
+            await openThread(app, lastPost);
 
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel).toBeVisible();
-
-            await expect(threadPanel.getByText('(Only visible to you)', {exact: true})).toBeVisible();
-            await expect(threadPanel.getByText(/Playwright mm_blocks integration OK \(user:/)).toBeVisible();
+            const integrationEphemeral = await threadPostContaining(app, /Playwright mm_blocks integration OK \(user:/);
+            await expect(integrationEphemeral.onlyVisibleToYouText.locator).toBeVisible();
         },
     );
 
@@ -359,15 +351,14 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            await lastPost.container.getByRole('button', {name: 'Apply update'}).click();
+            const lastPost = await lastCenterPost(app);
+            await lastPost.action('pw_mm_blocks_apply_update').click();
 
-            await expect(lastPost.container.getByText('PLAYWRIGHT_MM_BLOCKS_UPDATED')).toBeVisible();
+            await expect(lastPost.blocks.locator).toContainText('PLAYWRIGHT_MM_BLOCKS_UPDATED');
         },
     );
 
@@ -431,24 +422,19 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
+            const lastPost = await lastCenterPost(app);
 
-            const author = lastPost.container.locator('.post__header .user-popover');
+            const author = lastPost.header.locator;
             await expect(author).toContainText(overrideAuthorName);
 
-            await lastPost.container.getByRole('button', {name: 'Apply update'}).click();
+            await lastPost.action('pw_mm_blocks_apply_update_override').click();
 
-            const updated = channelsPage.centerView.container
-                .getByTestId('postView')
-                .filter({hasText: 'PLAYWRIGHT_MM_BLOCKS_UPDATED'})
-                .last();
-            await expect(updated).toBeVisible();
-            await expect(updated.locator('.post__header .user-popover')).toContainText(overrideAuthorName);
+            const updated = await centerPostContaining(app, 'PLAYWRIGHT_MM_BLOCKS_UPDATED');
+            await expect(updated.header.locator).toContainText(overrideAuthorName);
         },
     );
 
@@ -512,38 +498,33 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            const anchorPost = lastPost.container;
+            const lastPost = await lastCenterPost(app);
+            const anchorPost = lastPost;
 
-            await anchorPost.hover();
-            const replyOnRoot = anchorPost.getByRole('button', {name: 'reply'});
-            await expect(replyOnRoot).toBeVisible();
-            await replyOnRoot.click();
+            await openThread(app, anchorPost);
 
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel).toBeVisible();
+            // CRT: root + mm_blocks live in RHS thread rows (`rhs.thread.post:<id>`), not center ones (`center.post_list.post:<id>`).
+            const rootInThread = await threadPostContaining(app, marker);
+            await expect(rootInThread.locator).toBeVisible();
 
-            // CRT: root + mm_blocks live in RHS thread rows (`rhsPostView`), not center `postView`.
-            const rootInThread = threadPanel.getByTestId('rhsPostView').filter({hasText: marker}).last();
-            await expect(rootInThread).toBeVisible();
-
-            const regionSelect = rootInThread.getByRole('combobox', {name: 'Pick a region'});
+            const regionSelectPicker = rootInThread.select({action_id: 'pw_mm_blocks_static_select'});
+            const regionSelect = regionSelectPicker.valueTextbox.locator;
             await expect(regionSelect).toBeVisible();
             await regionSelect.click();
             await regionSelect.fill('Sou');
 
-            await channelsPage.page.getByRole('option', {name: 'South'}).click();
+            await regionSelectPicker.suggestions.itemItems.filter({hasText: 'South'}).first().click();
 
-            const integrationEphemeral = threadPanel
-                .getByTestId('rhsPostView')
-                .filter({hasText: /Playwright mm_blocks static_select OK \(selected_option: opt_south\)/});
-            await expect(integrationEphemeral).toBeVisible();
-            await expect(integrationEphemeral.getByText('(Only visible to you)', {exact: true})).toBeVisible();
+            const integrationEphemeral = await threadPostContaining(
+                app,
+                /Playwright mm_blocks static_select OK \(selected_option: opt_south\)/,
+            );
+            await expect(integrationEphemeral.locator).toBeVisible();
+            await expect(integrationEphemeral.onlyVisibleToYouText.locator).toBeVisible();
         },
     );
 
@@ -604,40 +585,34 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            const anchorPost = lastPost.container;
+            const lastPost = await lastCenterPost(app);
+            const anchorPost = lastPost;
 
-            await anchorPost.hover();
-            const replyOnRoot = anchorPost.getByRole('button', {name: 'reply'});
-            await expect(replyOnRoot).toBeVisible();
-            await replyOnRoot.click();
+            await openThread(app, anchorPost);
 
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel).toBeVisible();
+            const rootInThread = await threadPostContaining(app, marker);
+            await expect(rootInThread.locator).toBeVisible();
 
-            const rootInThread = threadPanel.getByTestId('rhsPostView').filter({hasText: marker}).last();
-            await expect(rootInThread).toBeVisible();
-
-            const userSelect = rootInThread.getByRole('combobox', {name: 'Pick a user'});
+            const userSelectPicker = rootInThread.select({action_id: 'pw_mm_blocks_ds_users'});
+            const userSelect = userSelectPicker.valueTextbox.locator;
             await expect(userSelect).toBeVisible();
             await userSelect.click();
             await userSelect.fill(user.username);
-            await channelsPage.page
-                .getByRole('option')
+            await userSelectPicker.suggestions.itemItems
                 .filter({hasText: new RegExp(`@${user.username}\\b`)})
                 .first()
                 .click();
 
-            const integrationEphemeral = threadPanel.getByTestId('rhsPostView').filter({
-                hasText: new RegExp(`Playwright mm_blocks static_select OK \\(selected_option: ${user.id}\\)`),
-            });
-            await expect(integrationEphemeral).toBeVisible();
-            await expect(integrationEphemeral.getByText('(Only visible to you)', {exact: true})).toBeVisible();
+            const integrationEphemeral = await threadPostContaining(
+                app,
+                new RegExp(`Playwright mm_blocks static_select OK \\(selected_option: ${user.id}\\)`),
+            );
+            await expect(integrationEphemeral.locator).toBeVisible();
+            await expect(integrationEphemeral.onlyVisibleToYouText.locator).toBeVisible();
         },
     );
 
@@ -698,39 +673,34 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            const anchorPost = lastPost.container;
+            const lastPost = await lastCenterPost(app);
+            const anchorPost = lastPost;
 
-            await anchorPost.hover();
-            const replyOnRoot = anchorPost.getByRole('button', {name: 'reply'});
-            await expect(replyOnRoot).toBeVisible();
-            await replyOnRoot.click();
+            await openThread(app, anchorPost);
 
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel).toBeVisible();
+            const rootInThread = await threadPostContaining(app, marker);
+            await expect(rootInThread.locator).toBeVisible();
 
-            const rootInThread = threadPanel.getByTestId('rhsPostView').filter({hasText: marker}).last();
-            await expect(rootInThread).toBeVisible();
-
-            const channelSelect = rootInThread.getByRole('combobox', {name: 'Pick a channel'});
+            const channelSelectPicker = rootInThread.select({action_id: 'pw_mm_blocks_ds_channels'});
+            const channelSelect = channelSelectPicker.valueTextbox.locator;
             await expect(channelSelect).toBeVisible();
             await channelSelect.click();
             await channelSelect.fill('Town');
-            await channelsPage.page
-                .getByRole('option', {name: /Town Square/})
+            await channelSelectPicker.suggestions.itemItems
+                .filter({hasText: /Town Square/})
                 .first()
                 .click();
 
-            const integrationEphemeral = threadPanel.getByTestId('rhsPostView').filter({
-                hasText: new RegExp(`Playwright mm_blocks static_select OK \\(selected_option: ${townSquare.id}\\)`),
-            });
-            await expect(integrationEphemeral).toBeVisible();
-            await expect(integrationEphemeral.getByText('(Only visible to you)', {exact: true})).toBeVisible();
+            const integrationEphemeral = await threadPostContaining(
+                app,
+                new RegExp(`Playwright mm_blocks static_select OK \\(selected_option: ${townSquare.id}\\)`),
+            );
+            await expect(integrationEphemeral.locator).toBeVisible();
+            await expect(integrationEphemeral.onlyVisibleToYouText.locator).toBeVisible();
         },
     );
 
@@ -795,26 +765,22 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            const anchorPost = lastPost.container;
-            await anchorPost.getByRole('button', {name: 'Verify context'}).click();
+            const lastPost = await lastCenterPost(app);
+            const anchorPost = lastPost;
+            await anchorPost.action('pw_mm_blocks_echo_ctx').click();
 
-            await anchorPost.hover();
-            await anchorPost.getByRole('button', {name: 'reply'}).click();
+            await openThread(app, anchorPost);
 
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel).toBeVisible();
-
-            const integrationEphemeral = threadPanel
-                .getByTestId('rhsPostView')
-                .filter({hasText: `Playwright mm_blocks context OK (test_marker: ${contextMarker})`});
-            await expect(integrationEphemeral).toBeVisible();
-            await expect(integrationEphemeral.getByText('(Only visible to you)', {exact: true})).toBeVisible();
+            const integrationEphemeral = await threadPostContaining(
+                app,
+                `Playwright mm_blocks context OK (test_marker: ${contextMarker})`,
+            );
+            await expect(integrationEphemeral.locator).toBeVisible();
+            await expect(integrationEphemeral.onlyVisibleToYouText.locator).toBeVisible();
         },
     );
 
@@ -861,13 +827,12 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            await lastPost.container.getByRole('button', {name: 'Go to Off-Topic'}).click();
+            const lastPost = await lastCenterPost(app);
+            await lastPost.action('pw_mm_blocks_openurl').click();
 
             await expect(channelsPage.page).toHaveURL(/\/channels\/off-topic/);
             expect(new URL(channelsPage.page.url()).searchParams.get('mm_openurl')).toBe('from_action');
@@ -936,27 +901,21 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            const anchorPost = lastPost.container;
-            await anchorPost.getByRole('button', {name: 'Run query merge'}).click();
+            const lastPost = await lastCenterPost(app);
+            const anchorPost = lastPost;
+            await anchorPost.action('pw_mm_blocks_query_btn').click();
 
-            await anchorPost.hover();
-            const replyOnRoot = anchorPost.getByRole('button', {name: 'reply'});
-            await expect(replyOnRoot).toBeVisible();
-            await replyOnRoot.click();
+            await openThread(app, anchorPost);
 
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel).toBeVisible();
-
-            await expect(
-                threadPanel.getByText('Playwright mm_blocks query OK (cli=from_block&srv=from_action)'),
-            ).toBeVisible();
-            await expect(threadPanel.getByText('(Only visible to you)', {exact: true})).toBeVisible();
+            const integrationEphemeral = await threadPostContaining(
+                app,
+                'Playwright mm_blocks query OK (cli=from_block&srv=from_action)',
+            );
+            await expect(integrationEphemeral.onlyVisibleToYouText.locator).toBeVisible();
         },
     );
 
@@ -1018,20 +977,16 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            const anchorPost = lastPost.container;
-            await anchorPost.getByRole('button', {name: 'Override dup key'}).click();
+            const lastPost = await lastCenterPost(app);
+            const anchorPost = lastPost;
+            await anchorPost.action('pw_mm_blocks_query_override').click();
 
-            await anchorPost.hover();
-            await anchorPost.getByRole('button', {name: 'reply'}).click();
-
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel.getByText('Playwright mm_blocks query OK (dup=from_block)')).toBeVisible();
+            await openThread(app, anchorPost);
+            await threadPostContaining(app, 'Playwright mm_blocks query OK (dup=from_block)');
         },
     );
 
@@ -1097,35 +1052,30 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
-            const anchorPost = lastPost.container;
+            const lastPost = await lastCenterPost(app);
+            const anchorPost = lastPost;
 
-            await anchorPost.hover();
-            const replyOnRoot = anchorPost.getByRole('button', {name: 'reply'});
-            await expect(replyOnRoot).toBeVisible();
-            await replyOnRoot.click();
+            await openThread(app, anchorPost);
 
-            const threadPanel = channelsPage.page.getByRole('region', {name: /Thread/});
-            await expect(threadPanel).toBeVisible();
+            const rootInThread = await threadPostContaining(app, marker);
+            await expect(rootInThread.locator).toBeVisible();
 
-            const rootInThread = threadPanel.getByTestId('rhsPostView').filter({hasText: marker}).last();
-            await expect(rootInThread).toBeVisible();
-
-            const regionSelect = rootInThread.getByRole('combobox', {name: 'Pick a region'});
+            const regionSelectPicker = rootInThread.select({action_id: 'pw_mm_blocks_static_select_query'});
+            const regionSelect = regionSelectPicker.valueTextbox.locator;
             await expect(regionSelect).toBeVisible();
             await regionSelect.click();
             await regionSelect.fill('Nor');
-            await channelsPage.page.getByRole('option', {name: 'North'}).click();
+            await regionSelectPicker.suggestions.itemItems.filter({hasText: 'North'}).first().click();
 
-            await expect(
-                threadPanel.getByText('Playwright mm_blocks query OK (cli=from_block&srv=from_action)'),
-            ).toBeVisible();
-            await expect(threadPanel.getByText('(Only visible to you)', {exact: true})).toBeVisible();
+            const integrationEphemeral = await threadPostContaining(
+                app,
+                'Playwright mm_blocks query OK (cli=from_block&srv=from_action)',
+            );
+            await expect(integrationEphemeral.onlyVisibleToYouText.locator).toBeVisible();
         },
     );
 
@@ -1163,19 +1113,18 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
+            const lastPost = await lastCenterPost(app);
 
-            const collapsible = lastPost.container.locator('.mm-blocks-collapsible');
+            const collapsible = lastPost.collapsible.locator;
             await expect(collapsible).toBeVisible();
 
             // Chevron is the named toggle control; header text lives in a sibling region (layout_blocks.tsx).
-            const toggle = collapsible.locator('.mm-blocks-collapsible-header__toggle');
-            const content = collapsible.locator('.mm-blocks-collapsible-content');
+            const toggle = lastPost.collapsible.toggleButton.locator;
+            const content = lastPost.collapsible.content.locator;
             await expect(toggle).toBeVisible();
             await expect(collapsible.getByText(headerLabel)).toBeVisible();
             await expect(toggle).toHaveAttribute('aria-expanded', 'false');
@@ -1228,16 +1177,15 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {channelsPage} = await pw.testBrowser.login(user);
+            const {app, channelsPage} = await pw.testBrowser.login(user);
             await channelsPage.goto(team.name, 'town-square');
             await channelsPage.toBeVisible();
 
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toBeVisible();
+            const lastPost = await lastCenterPost(app);
 
-            const collapsible = lastPost.container.locator('.mm-blocks-collapsible');
-            const toggle = collapsible.locator('.mm-blocks-collapsible-header__toggle');
-            const content = collapsible.locator('.mm-blocks-collapsible-content');
+            const collapsible = lastPost.collapsible.locator;
+            const toggle = lastPost.collapsible.toggleButton.locator;
+            const content = lastPost.collapsible.content.locator;
 
             await expect(collapsible.getByText(headerLabel)).toBeVisible();
             await expect(toggle).toHaveAttribute('aria-expanded', 'true');

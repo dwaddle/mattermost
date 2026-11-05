@@ -77,8 +77,8 @@ describe('Custom emojis', () => {
         cy.findByPlaceholderText('Search emojis').should('be.visible').type(customEmojiWithColons, {delay: TIMEOUTS.QUARTER_SEC});
 
         // * Get list of emojis based on search text
-        cy.findAllByTestId('emojiItem').children().should('have.length', 1);
-        cy.findAllByTestId('emojiItem').children('img').first().should('have.class', 'emoji-category--custom');
+        cy.get('[data-testid^="emoji_picker.emoji:"]').children().should('have.length', 1);
+        cy.get('[data-testid^="emoji_picker.emoji:"]').children('img').first().should('have.class', 'emoji-category--custom');
 
         // # Post a message with the emoji
         cy.uiGetPostTextBox().clear({force: true}).type(customEmojiWithColons.substring(0, 10));

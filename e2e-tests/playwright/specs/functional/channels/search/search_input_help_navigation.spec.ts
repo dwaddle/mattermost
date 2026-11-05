@@ -1,96 +1,95 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that a wildcard (*) is disregarded when it is not immediately preceded by text.
+ *
+ * Written on the generated page objects: the search box and the results by post id.
  */
 test('MM-T351 disregards a wildcard that is not preceded by text', {tag: '@search'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
-
     // # Post two messages, one with a longer variant of the search term
+    const {user, team, userClient} = await pw.initSetup();
+    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     const token = `qwerty${pw.random.id()}`;
-    await channelsPage.postMessage(`${token}jkl`);
-    await channelsPage.postMessage(token);
+    await userClient.createPost({channel_id: townSquare.id, message: `${token}jkl`});
+    const exact = await userClient.createPost({channel_id: townSquare.id, message: token});
+
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Search using a trailing wildcard separated by a space
-    await channelsPage.searchFor(`${token} *`);
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill(`${token} *`);
+    await app.searchBox.inputSearchbox.locator.press('Enter');
 
     // * Verify the wildcard is disregarded and the exact-term message is returned
-    await channelsPage.searchResultsPanel.toContainText(token);
+    await expect(app.search.results.post(exact).messageText.locator).toContainText(token);
 });
 
 /**
  * @objective Verify that the top navigation buttons remain clickable and open their panels while focus is in the search box.
+ *
+ * Written on the generated page objects: the global header's buttons, the search box and the search panel's header.
  */
 test('MM-T367 clicks top navigation buttons while the search box has focus', {tag: '@search'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
-    // The open search box traps focus and marks the top-right header buttons aria-hidden, so match hidden too.
-    // (The channel-info button lives in the channel header, which the search popup overlays, so it is not
-    // reachable while the search box is open in the current UI and is intentionally not exercised here.)
-    const recentMentionsButton = page.getByRole('button', {name: 'Recent mentions', includeHidden: true});
-    const savedMessagesButton = page.getByRole('button', {name: 'Saved messages', includeHidden: true});
+    // The open search box traps focus and marks the top-right header buttons aria-hidden; the generated buttons are
+    // located by testid, so they are still reached. (The channel-info button lives in the channel header, which the
+    // search popup overlays, so it is not reachable while the search box is open and is not exercised here.)
 
     // # Put focus in the search box and type text, then click Recent mentions
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.toBeVisible();
-    await channelsPage.searchBox.searchInput.fill('some text');
-    await recentMentionsButton.click();
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill('some text');
+    await app.globalHeader.clickRecentMentionsButton();
 
     // * Verify the Recent Mentions panel opens
-    await channelsPage.searchResultsPanel.toHaveHeading('Recent Mentions');
+    await expect(app.search.header.locator).toContainText(formatMessage(Msg.search_header.title2));
 
     // # Focus the search box again and click Saved messages
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.toBeVisible();
-    await channelsPage.searchBox.searchInput.fill('some text');
-    await savedMessagesButton.click();
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill('some text');
+    await app.globalHeader.clickSavedMessagesButton();
 
     // * Verify the Saved messages panel opens
-    await expect(
-        channelsPage.searchResultsPanel.container.getByRole('heading', {name: 'Saved messages'}).first(),
-    ).toBeVisible();
+    await expect(app.search.header.locator).toContainText(formatMessage(Msg.search_header.title3));
 });
 
 /**
  * @objective Verify that the search box shows help text when opened from the channel and again after opening a thread.
+ *
+ * Written on the generated page objects: the search box and its hints, and the post by id and its Reply button.
  */
 test('MM-T370 shows search help text when the search box is opened', {tag: '@search'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    // # Post a message
+    const {user, team, userClient} = await pw.initSetup();
+    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const post = await userClient.createPost({channel_id: townSquare.id, message: `help text ${pw.random.id()}`});
 
-    // # Post a message and open its thread
-    await channelsPage.postMessage(`help text ${pw.random.id()}`);
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the search box
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.toBeVisible();
+    await app.globalHeader.search.clickOpenButton();
 
     // * Verify the search help text is shown
-    await expect(channelsPage.page.getByText('Filter your search with:')).toBeVisible();
+    const hints = app.searchBox.hints.locator;
+    await expect(hints).toContainText(formatMessage(Msg.search_hint.filter));
 
     // # Close the search box, then open a thread
-    await channelsPage.page.keyboard.press('Escape');
-    await expect(channelsPage.searchBox.container).not.toBeVisible();
-    const post = await channelsPage.getLastPost();
-    await post.reply();
-    await channelsPage.sidebarRight.toBeVisible();
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.toBeVisible();
+    await app.searchBox.inputSearchbox.locator.press('Escape');
+    await expect(app.searchBox.inputSearchbox.locator).not.toBeVisible();
+    const centerPost = app.center.postList.post(post);
+    await centerPost.locator.hover();
+    await centerPost.menu.clickReplyButton();
+    await expect(app.rhs.postCreate.messageTextbox.locator).toBeVisible();
+    await app.globalHeader.search.clickOpenButton();
 
     // * Verify the search help text is shown again
-    await expect(channelsPage.page.getByText('Filter your search with:')).toBeVisible();
+    await expect(hints).toContainText(formatMessage(Msg.search_hint.filter));
 });

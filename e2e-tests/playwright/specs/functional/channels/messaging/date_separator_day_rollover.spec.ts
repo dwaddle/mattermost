@@ -12,6 +12,8 @@ test.use({timezoneId: 'UTC'});
 /**
  * @objective Verify the date separators in an open channel relabel themselves when local midnight passes, without a reload.
  * @reference MM-60727
+ *
+ * Written on the generated page objects: the posts by id and the post list's date separators.
  */
 test('MM-60727 relabels date separators when local midnight passes', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -35,22 +37,21 @@ test('MM-60727 relabels date separators when local midnight passes', {tag: '@mes
     });
 
     // # Post a message half an hour before that midnight
-    await adminClient.createPost({
+    // only an admin can backdate a post (create_at), so the admin posts it
+    const eveningPost = await adminClient.createPost({
         channel_id: channel.id,
-        user_id: user.id,
         message: eveningMessage,
         create_at: midnight - 30 * MINUTE,
     });
 
     // # Open the channel with the client's clock set to the same evening
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
     await page.clock.install({time: midnight - 10 * MINUTE});
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
-    await expect(channelsPage.centerView.container.getByText(eveningMessage, {exact: true})).toBeVisible();
+    await app.channelsPage.goto({team, channel});
+    await expect(app.center.postList.post(eveningPost).messageText.locator).toHaveText(eveningMessage);
 
     // * Verify everything so far sits under a single separator reading "Today"
-    const separators = channelsPage.centerView.container.getByTestId('basicSeparator');
+    const separators = app.center.postList.dateSeparator.locator;
     await expect(separators).toHaveText(['Today']);
 
     // # Hold the clock ten seconds short of midnight
@@ -67,13 +68,13 @@ test('MM-60727 relabels date separators when local midnight passes', {tag: '@mes
 
     // # Hand the page a live clock again, then add a post dated just after midnight
     await page.clock.resume();
-    await adminClient.createPost({
+    // only an admin can backdate a post (create_at), so the admin posts it
+    const overnightPost = await adminClient.createPost({
         channel_id: channel.id,
-        user_id: user.id,
         message: overnightMessage,
         create_at: midnight + 10 * 1000,
     });
-    await expect(channelsPage.centerView.container.getByText(overnightMessage, {exact: true})).toBeVisible();
+    await expect(app.center.postList.post(overnightPost).messageText.locator).toHaveText(overnightMessage);
 
     // * Verify the new post gets the only "Today" separator and the older one stays "Yesterday"
     await expect(separators).toHaveText(['Yesterday', 'Today']);

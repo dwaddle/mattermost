@@ -5,6 +5,7 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ServerError} from '@mattermost/types/errors';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -40,6 +41,9 @@ const useUploadFiles = (
     focusTextbox: (forceFocust?: boolean) => void,
     setServerError: (err: (ServerError & {submittedMessage?: string}) | null) => void,
     isPostBeingEdited?: boolean,
+
+    /** The composer's testid scope; the previews are `<scope>.file_previews`. */
+    testIdScope?: TestId,
 ): [React.ReactNode, React.ReactNode] => {
     const intl = useIntl();
     const locale = useSelector(getCurrentLocale);
@@ -172,6 +176,7 @@ const useUploadFiles = (
                 uploadsInProgress={draft.uploadsInProgress}
                 uploadsProgressPercent={uploadsProgressPercent}
                 disabledRemoveTooltip={removeTooltip}
+                testIdScope={testIdScope ? `${testIdScope}.file_previews` : undefined}
             />
         );
     }
@@ -197,6 +202,7 @@ const useUploadFiles = (
             channelId={channelId}
             postType={postType}
             disabledByPolicy={!uploadAllowedByPolicy}
+            testIdScope={testIdScope}
         />
     );
 

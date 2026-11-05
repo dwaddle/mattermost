@@ -29,7 +29,7 @@ test.describe('WYSIWYG editor - quoting selected text', TAGS, () => {
         await channelsPage.goto(team.name, 'town-square');
         await channelsPage.toBeVisible();
 
-        const editor = new WysiwygEditor(page.getByTestId('post-create'));
+        const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
 
         // # Select part of the message and quote it

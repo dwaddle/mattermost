@@ -26,11 +26,11 @@ export default class SearchBox {
         this.messagesButton = container.getByRole('button', {name: 'Messages'});
         this.filesButton = container.getByRole('button', {name: 'Files'});
         this.searchInput = container.getByLabel('Search messages');
-        this.searchBoxClose = container.getByTestId('searchBoxClose');
-        this.selectedSuggestion = container.getByTestId('suggestion-selected').getByTestId('suggestion-list__main');
+        this.searchBoxClose = container.getByTestId('search_box.close--button');
+        this.selectedSuggestion = container.getByRole('option', {selected: true}).getByTestId('suggestion-list__main');
         this.searchHints = container.locator('#searchHints');
-        this.clearButton = container.getByTestId('input-clear');
-        this.teamSelector = new SearchTeamSelector(container.getByTestId('searchTeamSelector'));
+        this.clearButton = container.getByTestId('search_box.clear--button');
+        this.teamSelector = new SearchTeamSelector(container.getByTestId('search_box.team_selector'));
     }
 
     // clearIfPossible clears the search input if the clear button is visible. Returns true if the clear button was clicked.

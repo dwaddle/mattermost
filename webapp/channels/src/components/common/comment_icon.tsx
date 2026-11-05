@@ -9,6 +9,7 @@ import {ReplyOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {Locations} from 'utils/constants';
 
@@ -19,6 +20,9 @@ type Props = {
     commentCount?: number;
     postId?: string;
     extraClass: string;
+
+    /** Renders `${testId}--button`. */
+    testId?: TestId;
 };
 
 const CommentIcon = ({
@@ -28,6 +32,7 @@ const CommentIcon = ({
     extraClass = '',
     handleCommentClick,
     postId,
+    testId,
 }: Props) => {
     const intl = useIntl();
 
@@ -55,6 +60,7 @@ const CommentIcon = ({
                 )}
                 icon={<Icon glyph={<ReplyOutlineIcon/>}/>}
                 count={commentCount > 0 ? commentCount : undefined}
+                data-testid={testId ? `${testId}--button` : undefined}
                 aria-label={replyTitle.toLowerCase()}
                 onClick={handleCommentClick}
             />

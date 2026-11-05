@@ -6,7 +6,8 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 // The LHS Drafts entry itself stays rendered for as long as the /drafts URL matches, so only
 // its count badge can show that the last draft is gone.
-const draftsCountBadge = (channelsPage: ChannelsPage) => channelsPage.sidebarLeft.draftsLink().getByTestId('draftIcon');
+const draftsCountBadge = (channelsPage: ChannelsPage) =>
+    channelsPage.sidebarLeft.draftsLink().getByTestId('lhs.drafts.draft_badge--text');
 
 test.describe('sending a draft from the Drafts panel', () => {
     /**

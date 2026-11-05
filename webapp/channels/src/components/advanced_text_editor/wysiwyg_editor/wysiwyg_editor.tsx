@@ -25,6 +25,8 @@ import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useLayou
 import {flushSync} from 'react-dom';
 import {useDispatch, useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
 import {editLatestPost} from 'actions/views/create_comment';
@@ -182,6 +184,9 @@ type Props = {
     disabled?: boolean;
     readOnly?: boolean;
     id?: string;
+
+    /** Testid path of the editable area; renders `<testId>--textbox`. */
+    testId?: TestId;
     useCtrlSend?: boolean;
     sendCodeBlockOnCtrlEnter?: boolean;
     onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
@@ -226,6 +231,7 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
     disabled = false,
     readOnly = false,
     id,
+    testId,
     useCtrlSend = false,
     sendCodeBlockOnCtrlEnter = false,
     onKeyDown,
@@ -373,6 +379,10 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
         }
     }, []);
 
+    // the scoped testid when the editor has one (`center.post_create.message--textbox`), else its id
+
+    const editorTestId = testId ? `${testId}--textbox` : id;
+
     const editor = useEditor({
         extensions: baseExtensions,
         content: initialContent,
@@ -388,7 +398,8 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
             // A function, not an object: the editor is built once, so a static map
             // would freeze these at their value on mount.
             attributes: () => ({
-                ...(id ? {id, 'data-testid': id} : {}),
+                ...(id ? {id} : {}),
+                ...(editorTestId ? {'data-testid': editorTestId} : {}),
                 ...(readOnlyRef.current ? {} : {
                     role: 'textbox',
                     ...(disabledRef.current ? {'aria-disabled': 'true', 'data-disabled': 'true'} : {'aria-disabled': 'false'}),
@@ -743,6 +754,7 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
                     channelId={channelId}
                     rootId={rootId}
                     onSubmit={submit}
+                    testId={testId ? `${testId}.suggestions` : undefined}
                 />
             )}
         </div>

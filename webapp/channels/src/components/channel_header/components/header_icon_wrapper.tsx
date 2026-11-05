@@ -6,6 +6,7 @@ import React, {useLayoutEffect, useRef} from 'react';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import type {ShortcutDefinition} from '@mattermost/shared/components/tooltip';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import NewChannelWithBoardTourTip from 'components/app_bar/new_channel_with_board_tour_tip';
 
@@ -40,6 +41,9 @@ type Props = {
     isRhsOpen?: boolean;
     pluginId?: string;
     size?: React.ComponentProps<typeof IconButton>['size'];
+
+    /** Renders `${testId}--button`. */
+    testId?: TestId;
 };
 
 const HeaderIconWrapper = (props: Props) => {
@@ -56,6 +60,7 @@ const HeaderIconWrapper = (props: Props) => {
         tooltipShortcut,
         isRhsOpen,
         pluginId,
+        testId,
         size = 'x-small',
     } = props;
 
@@ -84,6 +89,7 @@ const HeaderIconWrapper = (props: Props) => {
                 <IconButton
                     ref={buttonRef}
                     id={buttonId}
+                    data-testid={testId ? `${testId}--button` : undefined}
                     size={size}
                     className={buttonClass || 'channel-header__icon'}
                     icon={children}

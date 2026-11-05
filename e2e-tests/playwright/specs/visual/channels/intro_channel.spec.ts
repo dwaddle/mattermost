@@ -3,6 +3,12 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+declare module '@mattermost/playwright-lib' {
+    interface PluginKeys {
+        playbooks: true;
+    }
+}
+
 /**
  * @objective Capture visual snapshot of the intro channel view for a regular user
  */
@@ -14,14 +20,14 @@ test(
         const {user} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Wait for Playbooks icon to be loaded in App bar
-        await expect(channelsPage.appBar.playbooksIcon).toBeVisible();
+        await expect(app.appBar.plugin('playbooks').locator.getByRole('img')).toBeVisible();
 
         // # Hide dynamic elements of Channels page
         await pw.hideDynamicChannelsContent(page);

@@ -5,6 +5,7 @@ import React, {memo} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -26,6 +27,9 @@ interface Props {
     showFileName: boolean;
     filename: string;
     post?: Post;
+
+    /** The header's or footer's scope: the channel the file was shared in is `<testIdScope>.channel--text`. */
+    testIdScope?: TestId;
 }
 
 const displayNameGetter = makeGetDisplayName();
@@ -55,7 +59,10 @@ const FilePreviewModalInfo: React.FC<Props> = (props: Props) => {
                 </h5>
                 <span className='file-preview-modal__file-details'>
                     <span className='file-preview-modal__file-details-user-name'>{name}</span>
-                    <span className='file-preview-modal__channel'>{channelName}</span>
+                    <span
+                        className='file-preview-modal__channel'
+                        data-testid={props.testIdScope ? `${props.testIdScope}.channel--text` : undefined}
+                    >{channelName}</span>
                 </span>
             </>
         );
@@ -64,7 +71,10 @@ const FilePreviewModalInfo: React.FC<Props> = (props: Props) => {
             <>
                 <h5 className='file-preview-modal__user-name'>{name}
                 </h5>
-                <span className='file-preview-modal__channel'>{channelName}
+                <span
+                    className='file-preview-modal__channel'
+                    data-testid={props.testIdScope ? `${props.testIdScope}.channel--text` : undefined}
+                >{channelName}
                 </span>
             </>
         );

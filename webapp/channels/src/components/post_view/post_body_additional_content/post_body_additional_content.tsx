@@ -5,6 +5,7 @@ import React, {type JSX} from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import {isAppBinding, type AppBinding} from '@mattermost/types/apps';
 import {isMessageAttachmentArray} from '@mattermost/types/message_attachments';
 import type {Post, PostEmbed} from '@mattermost/types/posts';
@@ -38,6 +39,9 @@ export type Props = {
     appsEnabled: boolean;
     mmBlocksEnabled: boolean;
     handleFileDropdownOpened?: (open: boolean) => void;
+
+    /** The post's testid scope; a link preview renders `<testIdScope>.link_preview--link`. */
+    testIdScope?: TestId;
     actions: {
         toggleEmbedVisibility: (id: string) => void;
     };
@@ -90,6 +94,7 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                     imageMetadata={this.props.post.metadata.images[embed.url]}
                     link={embed.url}
                     post={this.props.post}
+                    testId={this.props.testIdScope ? `${this.props.testIdScope}.image_preview` : undefined}
                 />
             );
 
@@ -102,6 +107,7 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                     postId={this.props.post.id}
                     options={this.props.options}
                     imagesMetadata={this.props.post.metadata.images}
+                    testIdScope={this.props.testIdScope}
                 />
             );
         }
@@ -128,6 +134,7 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                     isEmbedVisible={this.props.isEmbedVisible}
                     post={this.props.post}
                     toggleEmbedVisibility={this.toggleEmbedVisibility}
+                    testIdScope={this.props.testIdScope}
                 />
             );
         case 'permalink':
@@ -136,6 +143,7 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                     <PostMessagePreview
                         metadata={embed.data}
                         handleFileDropdownOpened={this.props.handleFileDropdownOpened}
+                        testIdScope={this.props.testIdScope ? `${this.props.testIdScope}.permalink_preview` : undefined}
                     />
                 );
             }
@@ -170,7 +178,10 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                 return (
                     <>
                         {this.props.children}
-                        <InteractiveMessages post={this.props.post}/>
+                        <InteractiveMessages
+                            post={this.props.post}
+                            testIdScope={this.props.testIdScope}
+                        />
                     </>
                 );
             }

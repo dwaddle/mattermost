@@ -1,79 +1,68 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test} from '@mattermost/playwright-lib';
+import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that users can navigate through threads list using keyboard arrow keys
+ *
+ * Written on the generated page objects: the list's threads are keyed by root post id, the open thread is the
+ * URL's thread id, and its replies are found by post id.
  */
 test('Should be able to change threads with arrow keys', {tag: ['@smoke']}, async ({pw}, testInfo) => {
     test.skip(testInfo.project.name === 'ipad');
 
-    const {team, user} = await pw.initSetup();
+    const {team, user, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
 
-    const {channelsPage, page, threadsPage} = await pw.testBrowser.login(user);
+    // # Start three threads, oldest first, and leave a draft reply in the middle one
+    const startThread = async (message: string) => {
+        const root = await userClient.createPost({channel_id: channel.id, message} as any);
+        const reply = await userClient.createPost({
+            channel_id: channel.id,
+            root_id: root.id,
+            message: `${message} reply`,
+        } as any);
+        return {root, reply};
+    };
+    const aaa = await startThread('aaa');
+    const bbb = await startThread('bbb');
+    const ccc = await startThread('ccc');
+    await userClient.upsertDraft(
+        {user_id: user.id, channel_id: channel.id, root_id: bbb.root.id, message: 'bbb second reply'} as any,
+        '',
+    );
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    // # Open the threads list
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.threadsPage.goto({team});
 
-    // # Start some threads, and leave a draft in one of them
-    await channelsPage.centerView.postCreate.postMessage('aaa');
-    await (await channelsPage.getLastPost()).openAThread();
-    await channelsPage.sidebarRight.postMessage('aaa reply');
+    // * The draft is there, the threads are listed newest first, and none is open
+    await expect(app.lhs.draftsLink.locator).toBeVisible();
+    await expect.poll(() => app.threads.list.threadKeys()).toEqual([ccc.root.id, bbb.root.id, aaa.root.id]);
+    await expect(page).toHaveURL(generated.ThreadsPage.path({team}));
 
-    await channelsPage.centerView.postCreate.postMessage('bbb');
-    await (await channelsPage.getLastPost()).openAThread();
-    await channelsPage.sidebarRight.postMessage('bbb reply');
-    await channelsPage.sidebarRight.postCreate.writeMessage('bbb second reply');
+    const toBeOpen = async (thread: typeof aaa) => {
+        await expect(page).toHaveURL(generated.ThreadsPage.path({team, threadIdentifier: thread.root.id}));
+        await expect(app.rhs.thread.post(thread.reply).locator).toBeVisible();
+    };
 
-    await channelsPage.centerView.postCreate.postMessage('ccc');
-    await (await channelsPage.getLastPost()).openAThread();
-    await channelsPage.sidebarRight.postMessage('ccc reply');
-
-    // * Ensure that there's a draft
-    await channelsPage.sidebarLeft.draftsVisible();
-
-    // # Switch to the threads list
-    await threadsPage.goto(team.name);
-    await threadsPage.toBeVisible();
-
-    // * Ensure no thread starts selected
-    await threadsPage.toNotHaveThreadSelected();
-
-    // # Press the down arrow to select a thread
+    // # Press the down arrow: the newest thread opens
     await page.keyboard.press('ArrowDown');
+    await toBeOpen(ccc);
 
-    // * Ensure the latest thread was selected
-    await threadsPage.toHaveThreadSelected();
-    await (await threadsPage.getLastPost()).toContainText('ccc reply');
-
-    // # Press the down arrow again
+    // # Press the down arrow again: the next one opens
     await page.keyboard.press('ArrowDown');
+    await toBeOpen(bbb);
 
-    // * Ensure the latest thread was selected
-    await threadsPage.toHaveThreadSelected();
-    await (await threadsPage.getLastPost()).toContainText('bbb reply');
-
-    await threadsPage.threadsList.focus();
-
-    // # Press the down arrow again
+    // # Focus the list and press the down arrow: the oldest thread opens
+    await app.threads.list.locator.focus();
     await page.keyboard.press('ArrowDown');
+    await toBeOpen(aaa);
 
-    // * Ensure the latest thread was selected
-    await threadsPage.toHaveThreadSelected();
-    await (await threadsPage.getLastPost()).toContainText('aaa reply');
-
-    // # Press the up arrow
+    // # Press the up arrow twice: back up the list
     await page.keyboard.press('ArrowUp');
-
-    // * Ensure the latest thread was selected
-    await threadsPage.toHaveThreadSelected();
-    await (await threadsPage.getLastPost()).toContainText('bbb reply');
-
-    // # Press the up arrow
+    await toBeOpen(bbb);
     await page.keyboard.press('ArrowUp');
-
-    // * Ensure the latest thread was selected
-    await threadsPage.toHaveThreadSelected();
-    await (await threadsPage.getLastPost()).toContainText('ccc reply');
+    await toBeOpen(ccc);
 });

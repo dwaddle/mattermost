@@ -12,6 +12,7 @@
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import * as MESSAGES from '@/fixtures/messages';
+import {quickSwitchUserItem} from '@/utils/suggestion';
 
 describe('System Console > User Management > Deactivation', () => {
     let team1;
@@ -59,7 +60,7 @@ describe('System Console > User Management > Deactivation', () => {
                 cy.uiSearchPosts(message);
 
                 // * Verify GM message is returned in RHS
-                cy.findAllByTestId('search-item-container').
+                cy.get('[data-testid^="search.results.post:"]').
                     should('be.visible').and('have.length', 1).
                     eq(0).should('contain', message);
             });
@@ -85,7 +86,7 @@ describe('System Console > User Management > Deactivation', () => {
             cy.get('#quickSwitchInput').type(other.username).wait(TIMEOUTS.HALF_SEC);
 
             // * Verify user is marked as deactivated
-            cy.get('[data-testid="' + other.username + '"]').contains('Deactivated');
+            quickSwitchUserItem(other).contains('Deactivated');
 
             // # Close Channel Switcher
             cy.uiClose();

@@ -10,6 +10,7 @@ import {PaperclipIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {pluginTestKey, type TestId} from '@mattermost/shared/utils/test_id';
 import type {ServerError} from '@mattermost/types/errors';
 import type {FileInfo, FileUploadResponse} from '@mattermost/types/files';
 
@@ -147,6 +148,10 @@ export type Props = {
      * user needs to know why their experience differs from a colleague's in the same channel.
      */
     disabledByPolicy?: boolean;
+
+    // The composer's scope; the attach button is `<testIdScope>.attach--button`, and the menu it opens when plugins add
+    // upload methods `<testIdScope>.attach_menu`.
+    testIdScope?: TestId;
 
     /**
      * Plugin file upload methods to be added
@@ -673,6 +678,7 @@ export class FileUpload extends PureComponent<Props, State> {
                     <button
                         id='fileUploadButton'
                         type='button'
+                        data-testid={this.props.testIdScope ? `${this.props.testIdScope}.attach--button` : undefined}
                         onClick={onActivate}
                         onTouchEnd={onActivate}
                     />
@@ -713,7 +719,10 @@ export class FileUpload extends PureComponent<Props, State> {
                             this.setState({menuOpen: false});
                         }}
                     >
-                        <a href='#'>
+                        <a
+                            href='#'
+                            data-testid={this.props.testIdScope ? `${this.props.testIdScope}.attach_menu.plugin:${pluginTestKey(item.pluginId)}--link` : undefined}
+                        >
                             <span className='mr-2'>
                                 {item.icon}
                             </span>
@@ -742,10 +751,12 @@ export class FileUpload extends PureComponent<Props, State> {
                             openUp={true}
                             ariaLabel={formatMessage({id: 'file_upload.menuAriaLabel', defaultMessage: 'Upload type selector'})}
                             customStyles={customStyles}
+                            testId={this.props.testIdScope ? `${this.props.testIdScope}.attach_menu` : undefined}
                         >
                             <li>
                                 <a
                                     href='#'
+                                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.attach_menu.your_computer--link` : undefined}
                                     onClick={this.simulateInputClick}
                                     onTouchEnd={this.simulateInputClick}
                                 >

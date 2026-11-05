@@ -6,6 +6,7 @@ import path from 'node:path';
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
+import {PostCreate} from '@/ui/generated/shared';
 import {duration} from '@/util';
 import {assetPath} from '@/file';
 import {waitUntil} from '@/test_action';
@@ -37,29 +38,29 @@ export default class ChannelsPostCreate {
     readonly burnOnReadLabelRemoveButton;
     readonly removeAllLabelsButton;
 
+    /** Generated from the webapp's testids; this class keeps the flows specs already use. */
+    readonly generated: PostCreate;
+
     constructor(container: Locator, isRHS = false) {
         this.container = container;
+        this.generated = new PostCreate(container.page(), isRHS ? 'rhs.post_create' : 'center.post_create', container);
 
-        if (isRHS) {
-            this.input = container.getByTestId('reply_textbox');
-        } else {
-            this.input = container.getByTestId('post_textbox');
-        }
+        this.input = this.generated.messageTextbox.locator;
 
         this.attachmentButton = container.locator('#fileUploadButton');
         this.emojiButton = container.getByLabel('select an emoji');
-        this.sendMessageButton = container.getByTestId('SendMessageButton');
+        this.sendMessageButton = this.generated.sendButton.locator;
         this.scheduleMessageButton = container.getByLabel('Schedule message');
         this.priorityButton = container.getByLabel('Message priority');
-        this.priorityLabel = container.getByTestId('post-priority-label');
+        this.priorityLabel = container.getByTestId(/\.priority_labels\.priority$/);
         this.removeLabelsButton = container.getByRole('button', {name: 'Remove all labels'});
         // Tooltips render in a portal outside the post create container.
         this.removeLabelsTooltip = container.page().getByRole('tooltip', {name: 'Remove all labels'});
         this.suggestionList = container.getByRole('listbox', {name: 'Suggestions'});
         this.suggestionOptions = this.suggestionList.getByRole('option');
-        this.selectedSuggestion = this.suggestionList.getByTestId('suggestion-selected');
-        this.filePreview = container.getByTestId('file-preview-container');
-        this.filePreviewItems = this.filePreview.getByTestId('file-preview-item');
+        this.selectedSuggestion = this.suggestionList.getByRole('option', {selected: true});
+        this.filePreview = container.getByTestId(/\.file_previews$/);
+        this.filePreviewItems = this.filePreview.getByTestId(/\.file_previews\.file:/);
         this.messageTooLongWarning = container.getByText(/Your message is too long\. Character count:/);
         this.previewButton = container.getByRole('button', {name: 'preview'});
         this.previewArea = container.locator('.textbox-preview-area');
@@ -67,7 +68,7 @@ export default class ChannelsPostCreate {
         // Burn-on-Read elements
         // Use a flexible locator that matches the aria-label pattern
         this.burnOnReadButton = container.getByRole('button', {name: /Burn-on-read/i});
-        this.burnOnReadLabel = container.getByTestId('burn-on-read-label');
+        this.burnOnReadLabel = container.getByTestId(/\.burn_on_read_label$/);
 
         // Two distinct remove controls can sit on the label row: the label's own X and
         // UnifiedLabelsWrapper's remove-all. Kept separate so a spec can assert which
@@ -252,7 +253,9 @@ export default class ChannelsPostCreate {
     }
 
     async removeFilePreview(fileName: string) {
-        await this.getFilePreviewItem(fileName).getByTestId('file-preview-remove').click();
+        await this.getFilePreviewItem(fileName)
+            .getByTestId(/\.file_previews\.file\.remove--button$/)
+            .click();
     }
 
     async toHaveFilePreviewCount(count: number) {
@@ -284,8 +287,8 @@ export default class ChannelsPostCreate {
     async waitUntilFilePreviewContains(files: string[], timeout = duration.ten_sec) {
         await waitUntil(
             async () => {
-                const previews = this.filePreview.getByTestId('file-preview-item');
-                const details = this.filePreview.getByTestId('post-image-details');
+                const previews = this.filePreview.getByTestId(/\.file_previews\.file:/);
+                const details = this.filePreview.getByTestId(/\.file_previews\.file\.details$/);
 
                 const [previewsCount, detailsCount] = await Promise.all([previews.count(), details.count()]);
                 if (previewsCount !== files.length || detailsCount !== files.length) {
@@ -335,56 +338,5 @@ export default class ChannelsPostCreate {
      */
     async isBurnOnReadEnabled(): Promise<boolean> {
         return this.burnOnReadLabel.isVisible();
-    }
-
-    /**
-     * Simulates pasting HTML (with a plain-text fallback) into the input, exercising Mattermost's
-     * own paste-formatting logic (e.g. an HTML table auto-converting to a markdown table) rather
-     * than just typing raw text.
-     *
-     * Dispatches a synthetic ClipboardEvent directly on the input: Playwright/CDP can't write
-     * arbitrary HTML to the real OS clipboard and have a genuinely OS-triggered paste read it back
-     * deterministically in CI, so this mirrors the technique this codebase's own unit tests use
-     * (`utils/paste.test.tsx`), just exercised through the real running app instead of a mock.
-     *
-     * When `withoutFormatting` is true, a Ctrl+Shift+V keydown is dispatched first to set the
-     * app's internal `isNonFormattedPaste` flag (see `advanced_text_editor/use_key_handler.tsx`),
-     * which makes the app's paste handler step aside instead of auto-converting the HTML.
-     *
-     * A synthetic (untrusted) paste event never triggers the browser's own default paste, so when
-     * the app steps aside (doesn't call `preventDefault`) the plain-text fallback is inserted here
-     * to mirror what a real, OS-triggered paste would do.
-     */
-    async pasteHtml(html: string, plainText: string, {withoutFormatting = false}: {withoutFormatting?: boolean} = {}) {
-        await expect(this.input).toBeVisible();
-        await this.input.focus();
-
-        await this.input.evaluate(
-            (el, {html, plainText, withoutFormatting}) => {
-                if (withoutFormatting) {
-                    el.dispatchEvent(
-                        new KeyboardEvent('keydown', {
-                            key: 'v',
-                            ctrlKey: true,
-                            shiftKey: true,
-                            bubbles: true,
-                            cancelable: true,
-                        }),
-                    );
-                }
-
-                const dataTransfer = new DataTransfer();
-                dataTransfer.setData('text/html', html);
-                dataTransfer.setData('text/plain', plainText);
-                const notCancelled = el.dispatchEvent(
-                    new ClipboardEvent('paste', {clipboardData: dataTransfer, bubbles: true, cancelable: true}),
-                );
-
-                if (notCancelled) {
-                    document.execCommand('insertText', false, plainText);
-                }
-            },
-            {html, plainText, withoutFormatting},
-        );
     }
 }

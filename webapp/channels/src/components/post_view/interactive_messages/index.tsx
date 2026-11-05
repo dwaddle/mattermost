@@ -11,6 +11,7 @@ import React, {useCallback, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
 import {doPostActionWithCookie} from 'mattermost-redux/actions/posts';
@@ -25,9 +26,12 @@ type Props = {
 
     /** Preview/read-only surfaces: render blocks but do not dispatch actions. */
     interactionsDisabled?: boolean;
+
+    /** The post's testid scope; action buttons render `<testIdScope>.action:<action id>--button`. */
+    testIdScope?: TestId;
 };
 
-const InteractiveMessages = ({post, interactionsDisabled = false}: Props) => {
+const InteractiveMessages = ({post, interactionsDisabled = false, testIdScope}: Props) => {
     const dispatch = useDispatch();
     const intl = useIntl();
     const [actionError, setActionError] = useState<string | null>(null);
@@ -87,6 +91,7 @@ const InteractiveMessages = ({post, interactionsDisabled = false}: Props) => {
                     integrationFormat,
                 }}
                 interactionsDisabled={interactionsDisabled}
+                testIdScope={testIdScope}
             />
             {actionError && (
                 <div className='has-error'>

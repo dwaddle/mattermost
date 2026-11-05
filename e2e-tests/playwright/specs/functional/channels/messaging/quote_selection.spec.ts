@@ -246,5 +246,7 @@ test('quotes text selected in a channel pop-out window', TAGS, async ({pw}) => {
     await popout.getByRole('button', {name: 'Quote selection'}).click();
 
     // * Verify the quote is in the pop-out's message box
-    await expect(popout.getByTestId('post_textbox')).toHaveValue('> Diam sapien pellentesque\n\n');
+    await expect(popout.getByTestId('center.post_create.message--textbox')).toHaveValue(
+        '> Diam sapien pellentesque\n\n',
+    );
 });

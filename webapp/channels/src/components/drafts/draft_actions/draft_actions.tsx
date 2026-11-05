@@ -5,6 +5,7 @@ import React, {memo, useCallback} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {SchedulingInfo} from '@mattermost/types/schedule_post';
 
 import {openModal} from 'actions/views/modals';
@@ -36,6 +37,9 @@ type Props = {
     onSchedule: (schedulingInfo: SchedulingInfo) => Promise<{error?: string}>;
     channelId: string;
     repeatDisabledReason?: RepeatDisabledReason;
+
+    // The row's scope (`drafts.list.draft`): actions are `<scope>.delete--button`, `.edit`, `.reschedule`, `.send`.
+    testIdScope?: TestId;
 };
 
 function DraftActions({
@@ -48,6 +52,7 @@ function DraftActions({
     onSchedule,
     channelId,
     repeatDisabledReason,
+    testIdScope,
 }: Props) {
     const dispatch = useDispatch();
 
@@ -91,6 +96,7 @@ function DraftActions({
                 icon='icon-trash-can-outline'
                 id='delete'
                 name='delete'
+                testId={testIdScope ? `${testIdScope}.delete` : undefined}
                 tooltipText={(
                     <FormattedMessage
                         id='drafts.actions.delete'
@@ -104,6 +110,7 @@ function DraftActions({
                     icon='icon-pencil-outline'
                     id='edit'
                     name='edit'
+                    testId={testIdScope ? `${testIdScope}.edit` : undefined}
                     tooltipText={(
                         <FormattedMessage
                             id='drafts.actions.edit'
@@ -120,6 +127,7 @@ function DraftActions({
                     icon='icon-clock-send-outline'
                     id='reschedule'
                     name='reschedule'
+                    testId={testIdScope ? `${testIdScope}.reschedule` : undefined}
                     tooltipText={scheduledDraft}
                     onClick={handleScheduleDraft}
                 />
@@ -130,6 +138,7 @@ function DraftActions({
                     icon='icon-send-outline'
                     id='send'
                     name='send'
+                    testId={testIdScope ? `${testIdScope}.send` : undefined}
                     tooltipText={(
                         <FormattedMessage
                             id='drafts.actions.send'

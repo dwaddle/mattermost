@@ -6,6 +6,7 @@ import isEqual from 'lodash/isEqual';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {ServerError} from '@mattermost/types/errors';
 import type {Group} from '@mattermost/types/groups';
@@ -48,6 +49,9 @@ interface Props {
     channelId: string;
     rootId?: string;
     onSubmit?: () => void;
+
+    // The list's scope (`<host>.message.suggestions`), as the plain composer's.
+    testId?: TestId;
 }
 
 type AppsModalProvider = {
@@ -130,7 +134,7 @@ function getTypedPretext(textBeforeCursor: string, matchedPretext: string, term:
     return typed && term.toLowerCase().startsWith(typed) ? typed : undefined;
 }
 
-const WysiwygSuggestionList = ({editor, channelId, rootId, onSubmit}: Props) => {
+const WysiwygSuggestionList = ({editor, channelId, rootId, onSubmit, testId}: Props) => {
     const dispatch = useDispatch();
 
     const [results, setResults] = useState<SuggestionResults>(EMPTY_RESULTS);
@@ -394,6 +398,7 @@ const WysiwygSuggestionList = ({editor, channelId, rootId, onSubmit}: Props) => 
             onCompleteWord={handleCompleteWord}
             onItemHover={handleItemHover}
             position='top'
+            testId={testId}
         />
     );
 };

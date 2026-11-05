@@ -5,6 +5,9 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the "in:" search modifier autocompletes a direct-message user and returns matching DM posts.
+ *
+ * Written on the generated page objects: the search box, its suggestions keyed by what they suggest, and the
+ * result by post id.
  */
 test('MM-T358 searches for a message in a direct message channel', {tag: '@search'}, async ({pw}) => {
     // # Create a direct message and a uniquely searchable post
@@ -13,27 +16,26 @@ test('MM-T358 searches for a message in a direct message channel', {tag: '@searc
     const dmChannel = await adminClient.createDirectChannel([user.id, otherUser.id]);
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const message = `Hello${pw.random.id()}`;
-    await adminClient.createPost({channel_id: dmChannel.id, user_id: user.id, message});
-    await adminClient.createPost({channel_id: townSquare.id, user_id: user.id, message});
+    const dmPost = await pw.postAs(user, {channel_id: dmChannel.id, message});
+    const channelPost = await pw.postAs(user, {channel_id: townSquare.id, message});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
+    const input = app.searchBox.inputSearchbox.locator;
 
     // # Type the in: modifier and select the other user from the autocomplete
-    await channelsPage.globalHeader.openSearch();
-    const {searchInput} = channelsPage.searchBox;
-    await searchInput.fill('in:');
-    await channelsPage.searchBox.selectSuggestionMatching(`@${otherUser.username}`);
+    await app.globalHeader.search.clickOpenButton();
+    await input.fill('in:');
+    await app.searchBox.suggestions.item(`@${otherUser.username}`).locator.click();
 
     // * Verify the direct-message user is placed into the query
-    await expect(searchInput).toHaveValue(`in:@${otherUser.username} `);
+    await expect(input).toHaveValue(`in:@${otherUser.username} `);
 
     // # Add the message text and submit the search
-    await searchInput.pressSequentially(message);
-    await searchInput.press('Enter');
-    await channelsPage.searchResultsPanel.toBeVisible();
+    await input.pressSequentially(message);
+    await input.press('Enter');
 
-    // * Verify the matching direct message is returned
-    await expect(channelsPage.searchResultsPanel.getResultByText(message)).toHaveCount(1);
+    // * Verify only the direct message is returned
+    await expect(app.search.results.post(dmPost).locator).toBeVisible();
+    await expect(app.search.results.post(channelPost).locator).toHaveCount(0);
 });

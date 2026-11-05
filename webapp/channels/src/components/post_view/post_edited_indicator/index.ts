@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import type {Dispatch} from 'redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
 import {getChannel} from 'mattermost-redux/selectors/entities/channels';
@@ -28,6 +29,9 @@ import PostEditedIndicator from './post_edited_indicator';
 type OwnProps = {
     postId?: string;
     editedAt?: number;
+
+    /** Renders `${testId}--button` when the label opens the edit history, else `${testId}--text`. */
+    testId?: TestId;
 };
 
 type StateProps = {

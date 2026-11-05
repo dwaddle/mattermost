@@ -1,39 +1,48 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that hashtag search is not case sensitive and returns all case variants of a hashtag.
+ *
+ * Written on the generated page objects: the search box and the results by post id.
  */
 test('MM-T359 returns all case variants when searching a hashtag', {tag: ['@search']}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
-
     // # Post the same hashtag word in three different letter cases
+    const {user, team, userClient} = await pw.initSetup();
+    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     const suffix = pw.random.id();
-    const upper = `#CASE${suffix}`;
-    const mixed = `#Case${suffix}`;
-    const lower = `#case${suffix}`;
-    await channelsPage.postMessage(upper);
-    await channelsPage.postMessage(mixed);
-    await channelsPage.postMessage(lower);
+    const posts = await Promise.all(
+        [`#CASE${suffix}`, `#Case${suffix}`, `#case${suffix}`].map((message) =>
+            userClient.createPost({channel_id: townSquare.id, message}),
+        ),
+    );
+
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Search for the lowercase hashtag
-    await channelsPage.searchFor(lower);
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill(`#case${suffix}`);
+    await app.searchBox.inputSearchbox.locator.press('Enter');
+
+    // * Verify the header's search bar shows the search type (the badge search_box_clear_button expects to be gone)
+    await expect(app.globalHeader.search.typeBadgeText.locator).toBeVisible();
 
     // * Verify all three case variants are returned (case-sensitive text checks)
-    await expect(channelsPage.searchResultsPanel.getResultItems()).toHaveCount(3);
-    await expect(channelsPage.searchResultsPanel.container).toContainText(upper);
-    await expect(channelsPage.searchResultsPanel.container).toContainText(mixed);
-    await expect(channelsPage.searchResultsPanel.container).toContainText(lower);
+    const results = app.search.results;
+    await expect.poll(async () => (await results.postKeys()).length).toBe(3);
+    for (const post of posts) {
+        await expect(results.post(post).messageText.locator).toHaveText(post.message);
+    }
 });
 
 /**
  * @objective Verify that clicking a hashtag in a Recent Mentions result runs a hashtag search.
+ *
+ * Written on the generated page objects: Recent mentions, the result by post id, its Markdown hashtag link, and the
+ * global header's search button.
  */
 test('MM-T360 searches a hashtag from a recent mention', {tag: '@search'}, async ({pw}) => {
     // # Create the test user plus a second user who will mention them
@@ -45,29 +54,31 @@ test('MM-T360 searches a hashtag from a recent mention', {tag: '@search'}, async
     // # The second user posts a message with a hashtag that mentions the test user
     const hashtag = `#hello${pw.random.id()}`;
     const {client: mentionerClient} = await pw.makeClient(mentioner);
-    await mentionerClient.createPost({channel_id: townSquare.id, message: `${hashtag} @${user.username}`});
+    const post = await mentionerClient.createPost({channel_id: townSquare.id, message: `${hashtag} @${user.username}`});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open Recent Mentions
-    await channelsPage.globalHeader.openRecentMentions();
+    await app.globalHeader.clickRecentMentionsButton();
 
     // * Verify the mention with the hashtag is listed
-    await channelsPage.searchResultsPanel.toBeVisible();
-    await channelsPage.searchResultsPanel.toContainText(hashtag);
+    const result = app.search.results.post(post);
+    await expect(result.messageText.locator).toContainText(hashtag);
 
     // # Click the hashtag in the mention
-    await channelsPage.searchResultsPanel.container.getByRole('link', {name: hashtag}).first().click();
+    await new generated.Markdown(page, 'markdown', result.locator).hashtagLink.click();
 
     // * Verify the view navigated to hashtag search results that include the message
-    await expect(channelsPage.globalHeader.searchBox).toContainText(hashtag);
-    await channelsPage.searchResultsPanel.toContainText(hashtag);
+    await expect(app.globalHeader.search.openButton.locator).toContainText(hashtag);
+    await expect(app.search.results.post(post).messageText.locator).toContainText(hashtag);
 });
 
 /**
  * @objective Verify that clicking a hashtag in a Saved messages result runs a hashtag search.
+ *
+ * Written on the generated page objects: Saved messages, the result by post id, its Markdown hashtag link, and the
+ * global header's search button.
  */
 test('MM-T361 searches a hashtag from a saved message', {tag: '@search'}, async ({pw}) => {
     // # Create and log in as a test user, and post + save a message with a hashtag
@@ -79,21 +90,20 @@ test('MM-T361 searches a hashtag from a saved message', {tag: '@search'}, async 
         {user_id: user.id, category: 'flagged_post', name: post.id, value: 'true'},
     ]);
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open Saved messages
-    await channelsPage.globalHeader.openSavedMessages();
+    await app.globalHeader.clickSavedMessagesButton();
 
     // * Verify the saved message with the hashtag is listed
-    await channelsPage.searchResultsPanel.toBeVisible();
-    await channelsPage.searchResultsPanel.toContainText(hashtag);
+    const result = app.search.results.post(post);
+    await expect(result.messageText.locator).toContainText(hashtag);
 
     // # Click the hashtag in the saved message
-    await channelsPage.searchResultsPanel.container.getByRole('link', {name: hashtag}).first().click();
+    await new generated.Markdown(page, 'markdown', result.locator).hashtagLink.click();
 
     // * Verify the view navigated to hashtag search results that include the message
-    await expect(channelsPage.globalHeader.searchBox).toContainText(hashtag);
-    await channelsPage.searchResultsPanel.toContainText(hashtag);
+    await expect(app.globalHeader.search.openButton.locator).toContainText(hashtag);
+    await expect(app.search.results.post(post).messageText.locator).toContainText(hashtag);
 });

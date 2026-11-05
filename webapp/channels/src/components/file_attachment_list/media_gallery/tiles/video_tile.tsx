@@ -6,6 +6,7 @@ import type {CSSProperties} from 'react';
 import {useIntl} from 'react-intl';
 
 import {PlayIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
 import {getFileUrl} from 'mattermost-redux/utils/file_utils';
@@ -20,6 +21,9 @@ type Props = {
     total: number;
     enablePublicLink: boolean;
     onClick: (index: number) => void;
+
+    /** The gallery's scope (`center.post_list.post.attachments`): the tile is `<scope>.file:<file id>--button`. */
+    testIdScope?: TestId;
 };
 
 const POSTER_SEEK_SECONDS = 0.1;
@@ -154,7 +158,7 @@ function formatDuration(seconds: number): string {
     return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
-const VideoTile = ({fileInfo, index, total, enablePublicLink, onClick}: Props) => {
+const VideoTile = ({fileInfo, index, total, enablePublicLink, onClick, testIdScope}: Props) => {
     const {formatMessage} = useIntl();
     const fileUrl = getFileUrl(fileInfo.id);
     const tileRef = useRef<HTMLDivElement>(null);
@@ -194,7 +198,7 @@ const VideoTile = ({fileInfo, index, total, enablePublicLink, onClick}: Props) =
             role='button'
             tabIndex={0}
             aria-label={label}
-            data-testid='media-gallery-tile'
+            data-testid={testIdScope ? `${testIdScope}.file:${fileInfo.id}--button` : undefined}
             data-file-name={fileInfo.name || ''}
             style={tileSizeVars(fileInfo)}
             onClick={handleActivate}

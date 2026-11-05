@@ -12,6 +12,7 @@ import {useSelector} from 'react-redux';
 
 import {ChevronRightIcon, CreationOutlineIcon, PencilOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -36,6 +37,9 @@ interface AIActionsMenuProps {
     isRHS: boolean;
     rewriteMenuProps?: RewriteMenuProps;
     aiRewriteEnabled?: boolean;
+
+    /** The menu's testid scope (`<composer>.ai_actions`): its button is `<testIdScope>.open--button`. */
+    testIdScope?: TestId;
 }
 
 const AIActionsMenu = ({
@@ -46,6 +50,7 @@ const AIActionsMenu = ({
     isRHS,
     rewriteMenuProps,
     aiRewriteEnabled,
+    testIdScope,
 }: AIActionsMenuProps): JSX.Element => {
     const {formatMessage} = useIntl();
 
@@ -143,6 +148,7 @@ const AIActionsMenu = ({
             <Menu.Container
                 menuButton={{
                     id: 'ai-actions-button',
+                    dataTestId: testIdScope ? `${testIdScope}.open--button` : undefined,
                     as: AIActionsMenuTrigger,
                     class: 'control',
                     'aria-label': formatMessage({
@@ -213,6 +219,7 @@ const AIActionsMenu = ({
                 {aiRewriteEnabled && rewriteMenuProps && (
                     <Menu.Item
                         id='ai-action-rewrite'
+                        data-testid={testIdScope ? `${testIdScope}.menu.rewrite--menuitem` : undefined}
                         role='menuitem'
                         aria-haspopup='menu'
                         aria-expanded={activeSubmenu === '__rewrite__'}
@@ -260,6 +267,7 @@ const AIActionsMenu = ({
                                     onCustomPromptKeyDown={rewriteMenuProps.onCustomPromptKeyDown}
                                     onCancelProcessing={rewriteMenuProps.onCancelProcessing}
                                     customPromptRef={rewriteMenuProps.customPromptRef}
+                                    testIdScope={testIdScope ? `${testIdScope}.rewrite` : undefined}
                                 />
                                 <MuiMenuList
                                     sx={{py: 0}}

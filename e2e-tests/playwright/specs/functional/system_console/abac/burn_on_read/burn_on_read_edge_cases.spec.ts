@@ -187,8 +187,8 @@ test(
             {timeout: pw.duration.one_min},
         );
         const posted = await channelsPage.getLastPost();
-        await expect(posted.container.getByTestId(/^burn-on-read-badge-/)).toHaveCount(0);
-        await expect(posted.container.getByTestId(/^burn-on-read-concealed-/)).toHaveCount(0);
+        await expect(posted.container.getByTestId(/\.burn_on_read--button$/)).toHaveCount(0);
+        await expect(posted.container.getByTestId(/\.reveal--button$/)).toHaveCount(0);
     },
 );
 

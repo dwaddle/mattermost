@@ -18,11 +18,12 @@ import MarkdownListOrdered from 'components/markdown_list_ordered';
 import MarkdownPhoneLink from 'components/markdown_phone_link';
 import PluginLinkTooltip from 'components/plugin_link_tooltip';
 import PostEmoji from 'components/post_emoji';
-import PostEditedIndicator from 'components/post_view/post_edited_indicator';
 
 export type Options = Partial<{
     postId: string;
-    editedAt: number;
+
+    /** The "Edited" label, placed where the formatted text marks the end of an edited post. */
+    editedIndicator: React.ReactNode;
     hasPluginTooltips: boolean;
     mentions: boolean;
     mentionHighlight: boolean;
@@ -101,13 +102,10 @@ export default function messageHtmlToComponent(html: string, options: Options = 
             replaceChildren: false,
             shouldProcessNode: (node: any) => node.type === 'tag' && node.name === 'span' && node.attribs['data-edited-post-id'] && node.attribs['data-edited-post-id'] === options.postId,
             processNode: () => {
-                return options.postId && options.editedAt && options.editedAt > 0 ? (
+                return options.postId && options.editedIndicator ? (
                     <React.Fragment key={`edited-${options.postId}`}>
                         {' '}
-                        <PostEditedIndicator
-                            postId={options.postId}
-                            editedAt={options.editedAt}
-                        />
+                        {options.editedIndicator}
                     </React.Fragment>
                 ) : null;
             },

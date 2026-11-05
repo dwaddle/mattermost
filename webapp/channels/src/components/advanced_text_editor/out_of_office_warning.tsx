@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 import styled from 'styled-components';
 
 import {CancelIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 const Container = styled.div`
     display: flex;
@@ -26,13 +27,16 @@ const Icon = styled(CancelIcon)`
 
 type Props = {
     displayName: string;
+
+    /** Testid path of the warning; renders `<testId>--text`. */
+    testId?: TestId;
 };
 
-const OutOfOfficeWarning = ({displayName}: Props) => {
+const OutOfOfficeWarning = ({displayName, testId}: Props) => {
     return (
         <Container
             className='OutOfOfficeWarning'
-            data-testid='outOfOfficeWarning'
+            data-testid={testId ? `${testId}--text` : undefined}
         >
             <Icon
                 size={14}

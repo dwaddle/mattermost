@@ -5,6 +5,7 @@ import React, {memo} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import {isMac} from '@mattermost/shared/utils/user_agent';
 
 import {Preferences} from 'mattermost-redux/constants';
@@ -15,9 +16,12 @@ import type {GlobalState} from 'types/store';
 type Props = {
     onSave: () => void;
     onCancel: () => void;
+
+    // The editor's testid: the buttons are `<testId>.save--button` and `<testId>.cancel--button`.
+    testId?: TestId;
 };
 
-const EditPostFooter = ({onSave, onCancel}: Props) => {
+const EditPostFooter = ({onSave, onCancel, testId}: Props) => {
     const ctrlSend = useSelector((state: GlobalState) => getBool(state, Preferences.CATEGORY_ADVANCED_SETTINGS, 'send_on_ctrl_enter'));
     const ctrlSendKey = isMac() ? '⌘+' : 'CTRL+';
 
@@ -26,6 +30,7 @@ const EditPostFooter = ({onSave, onCancel}: Props) => {
             <button
                 onClick={onSave}
                 className='save'
+                data-testid={testId ? `${testId}.save--button` : undefined}
             >
                 <FormattedMessage
                     id='edit_post.action_buttons.save'
@@ -35,6 +40,7 @@ const EditPostFooter = ({onSave, onCancel}: Props) => {
             <button
                 onClick={onCancel}
                 className='cancel'
+                data-testid={testId ? `${testId}.cancel--button` : undefined}
             >
                 <FormattedMessage
                     id='edit_post.action_buttons.cancel'

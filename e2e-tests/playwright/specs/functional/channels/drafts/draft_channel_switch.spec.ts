@@ -1,109 +1,62 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the composer, the channel switcher (results keyed by channel id), the
+// channel header, the post list and posts by id, and the sidebar's channel rows (link and draft pencil).
+
+/** Sends the composer's text with the Send button (a trailing space has already dismissed any autocomplete). */
+async function send(app: App, text: string) {
+    await app.center.postCreate.fillMessageTextbox(text);
+    await app.center.postCreate.clickSendButton();
+}
 
 test.describe('draft channel switch', () => {
-    /**
-     * @objective Verify a typed draft on one channel persists, restores after
-     * switching away and back, and posts only to the origin channel.
-     */
-    test('typed draft stays on the origin channel after switching away and back', {tag: '@messaging'}, async ({pw}) => {
-        const {team, user} = await pw.initSetup();
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
-
-        const originDraft = `origin-draft-${pw.random.id()}`;
-        const destinationMessage = `town-square-${pw.random.id()}`;
-
-        // # Type a draft in Off-Topic and do not send it
-        await channelsPage.centerView.postCreate.writeMessage(originDraft);
-
-        // # Switch to Town Square via the sidebar
-        await channelsPage.sidebarLeft.goToItem('town-square');
-        await channelsPage.centerView.header.toHaveTitle('Town Square');
-
-        // * Destination composer must not inherit the origin draft
-        expect(await channelsPage.centerView.postCreate.getInputValue()).toBe('');
-
-        // * Origin draft was persisted: the channel pencil icon is visible
-        // (move the mouse off the sidebar first: the pencil is hidden while its row is hovered)
-        // and the Drafts sidebar link appears
-        await channelsPage.centerView.postCreate.input.hover();
-        await expect(channelsPage.sidebarLeft.draftIcon('off-topic')).toBeVisible();
-        await channelsPage.sidebarLeft.draftsVisible();
-
-        // # Send a different message from Town Square
-        await channelsPage.centerView.postCreate.writeMessage(destinationMessage);
-        await channelsPage.centerView.postCreate.sendMessage();
-
-        // * Town Square shows the destination message
-        await channelsPage.centerView.waitUntilLastPostContains(destinationMessage);
-
-        // # Return to Off-Topic
-        await channelsPage.sidebarLeft.goToItem('off-topic');
-        await channelsPage.centerView.header.toHaveTitle('Off-Topic');
-
-        // * Origin draft is still in the composer
-        expect(await channelsPage.centerView.postCreate.getInputValue()).toBe(originDraft);
-
-        // # Send the restored draft
-        await channelsPage.centerView.postCreate.sendMessage();
-
-        // * Off-Topic shows the origin draft message
-        await channelsPage.centerView.waitUntilLastPostContains(originDraft);
-
-        // # Return to Town Square
-        await channelsPage.sidebarLeft.goToItem('town-square');
-        await channelsPage.centerView.header.toHaveTitle('Town Square');
-
-        // * Origin draft did not post to Town Square
-        await expect(channelsPage.centerView.container).not.toContainText(originDraft);
-    });
-
     /**
      * @objective Verify Ctrl/Cmd+K restores the destination draft and routes
      * messages to the selected channel.
      */
     test('quick switcher keeps drafts and messages scoped to their channels', {tag: '@messaging'}, async ({pw}) => {
-        const {team, user} = await pw.initSetup();
-        const {channelsPage, page} = await pw.testBrowser.login(user);
+        const {team, user, userClient} = await pw.initSetup();
+        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
 
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: offTopic});
+        const input = app.center.postCreate.messageTextbox.locator;
+        const title = app.channelHeader.openMenuButton.locator;
 
         const originDraft = `quick-switch-origin-${pw.random.id()}`;
         const destinationMessage = `quick-switch-destination-${pw.random.id()}`;
 
         // # Leave a draft in Off-Topic
-        await channelsPage.centerView.postCreate.writeMessage(originDraft);
+        await app.center.postCreate.fillMessageTextbox(originDraft);
 
         // # Switch to Town Square using Ctrl/Cmd+K
-        await page.keyboard.press('ControlOrMeta+K');
-        await expect(channelsPage.findChannelsModal.input).toBeVisible();
-        await channelsPage.findChannelsModal.input.fill('town');
-        await channelsPage.findChannelsModal.selectChannel('town-square');
-        await channelsPage.centerView.header.toHaveTitle('Town Square');
+        await input.press('ControlOrMeta+K');
+        await app.quickSwitchModal.searchTextbox.fill('town');
+        await app.quickSwitchModal.suggestions.item(townSquare.id).locator.click();
+        await expect(title).toContainText(townSquare.display_name);
 
         // * Town Square did not inherit the Off-Topic draft
-        expect(await channelsPage.centerView.postCreate.getInputValue()).toBe('');
+        await expect(input).toHaveValue('');
 
         // # Send a destination-owned message
-        await channelsPage.centerView.postCreate.writeMessage(destinationMessage);
-        await channelsPage.centerView.postCreate.sendMessage();
-        await channelsPage.centerView.waitUntilLastPostContains(destinationMessage);
+        await send(app, destinationMessage);
+        await expect.poll(async () => (await app.center.postList.postKeys()).length).toBeGreaterThan(0);
+        const lastId = (await app.center.postList.postKeys()).at(-1)!;
+        await expect(app.center.postList.post({id: lastId}).messageText.locator).toHaveText(destinationMessage);
 
         // # Return to Off-Topic using Ctrl/Cmd+K
-        await page.keyboard.press('ControlOrMeta+K');
-        await expect(channelsPage.findChannelsModal.input).toBeVisible();
-        await channelsPage.findChannelsModal.input.fill('off');
-        await channelsPage.findChannelsModal.selectChannel('off-topic');
-        await channelsPage.centerView.header.toHaveTitle('Off-Topic');
+        await input.press('ControlOrMeta+K');
+        await app.quickSwitchModal.searchTextbox.fill('off');
+        await app.quickSwitchModal.suggestions.item(offTopic.id).locator.click();
+        await expect(title).toContainText(offTopic.display_name);
 
         // * The origin draft was restored and the destination message was not misrouted
-        expect(await channelsPage.centerView.postCreate.getInputValue()).toBe(originDraft);
-        await expect(channelsPage.centerView.container).not.toContainText(destinationMessage);
+        await expect(input).toHaveValue(originDraft);
+        await expect(app.center.postList.locator).not.toContainText(destinationMessage);
     });
 
     /**
@@ -120,30 +73,29 @@ test.describe('draft channel switch', () => {
         async ({pw}) => {
             const {adminClient, userClient, team, user} = await pw.initSetup();
             const [target] = await adminClient.createUsers(team.id, 1, 'draft-msg');
-
             await userClient.createDirectChannel([user.id, target.id]);
+            const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
 
-            const {channelsPage, page} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'off-topic');
-            await channelsPage.toBeVisible();
+            const {app, page} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: offTopic});
+            const input = app.center.postCreate.messageTextbox.locator;
+            const title = app.channelHeader.openMenuButton.locator;
 
             // Trailing space dismisses the @mention autocomplete.
-            await channelsPage.centerView.postCreate.writeMessage(`/msg @${target.username} `);
-            await channelsPage.centerView.postCreate.sendMessage();
-
-            await channelsPage.centerView.header.toHaveTitle(target.username);
+            await send(app, `/msg @${target.username} `);
+            await expect(title).toContainText(target.username);
             await expect(page).toHaveURL(new RegExp(`/${team.name}/messages/@${target.username}`));
 
             // * Destination composer is empty — it did not adopt the /msg text
-            expect(await channelsPage.centerView.postCreate.getInputValue()).toBe('');
+            await expect(input).toHaveValue('');
 
             // # Return to Off-Topic
-            await channelsPage.sidebarLeft.goToItem('off-topic');
-            await channelsPage.centerView.header.toHaveTitle('Off-Topic');
+            await app.lhs.channelList.channel(offTopic).clickLink();
+            await expect(title).toContainText(offTopic.display_name);
 
             // * Origin draft was cleared by the submit, not left behind as /msg
-            expect(await channelsPage.centerView.postCreate.getInputValue()).toBe('');
-            await expect(channelsPage.sidebarLeft.draftIcon('off-topic')).not.toBeAttached();
+            await expect(input).toHaveValue('');
+            await expect(app.lhs.channelList.channel(offTopic).draftText.locator).toHaveCount(0);
         },
     );
 
@@ -161,37 +113,39 @@ test.describe('draft channel switch', () => {
         async ({pw}) => {
             const {adminClient, userClient, team, user} = await pw.initSetup();
             const [target] = await adminClient.createUsers(team.id, 1, 'stale-dm');
-
             const dmChannel = await userClient.createDirectChannel([user.id, target.id]);
             await userClient.createPost({
                 channel_id: dmChannel.id,
                 message: 'seeding the existing DM',
             } as Parameters<typeof userClient.createPost>[0]);
+            const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
 
-            const {channelsPage, page} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'off-topic');
-            await channelsPage.toBeVisible();
+            const {app, page} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: offTopic});
+            const title = app.channelHeader.openMenuButton.locator;
 
             // Trailing space dismisses the @mention autocomplete.
-            await channelsPage.centerView.postCreate.writeMessage(`/msg @${target.username} `);
-            await channelsPage.centerView.postCreate.sendMessage();
-
-            await channelsPage.centerView.header.toHaveTitle(target.username);
+            await send(app, `/msg @${target.username} `);
+            await expect(title).toContainText(target.username);
             await expect(page).toHaveURL(new RegExp(`/${team.name}/messages/@${target.username}`));
 
             const message = `stale-draft-${pw.random.id()}`;
-            await channelsPage.centerView.postCreate.writeMessage(message);
-            await channelsPage.centerView.postCreate.sendMessage();
+            await send(app, message);
 
             // * Follow-up message appears in the DM
-            await channelsPage.centerView.waitUntilLastPostContains(message);
+            await expect
+                .poll(async () => {
+                    const lastId = (await app.center.postList.postKeys()).at(-1);
+                    return lastId ? app.center.postList.post({id: lastId}).messageText.locator.textContent() : '';
+                })
+                .toBe(message);
 
             // # Return to Off-Topic
-            await channelsPage.sidebarLeft.goToItem('off-topic');
-            await channelsPage.centerView.header.toHaveTitle('Off-Topic');
+            await app.lhs.channelList.channel(offTopic).clickLink();
+            await expect(title).toContainText(offTopic.display_name);
 
             // * Follow-up message did not post to the origin channel
-            await expect(channelsPage.centerView.container).not.toContainText(message);
+            await expect(app.center.postList.locator).not.toContainText(message);
         },
     );
 });

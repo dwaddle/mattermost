@@ -119,7 +119,7 @@ describe('CallButton', () => {
             </Provider>,
         );
 
-        expect(screen.queryByTestId('startCallButton')).not.toBeInTheDocument();
+        expect(screen.queryByLabelText('Start Call')).not.toBeInTheDocument();
     });
 
     test('should render for admin even in test mode', () => {

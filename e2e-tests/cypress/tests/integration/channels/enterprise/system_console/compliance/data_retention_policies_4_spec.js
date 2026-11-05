@@ -99,8 +99,8 @@ describe('Data Retention - Global and Custom Policy', () => {
 
             // * Verify 7 days older post in testChannel was not deleted
             cy.visit(`/${testTeam.name}/channels/${testChannel.name}`);
-            cy.findAllByTestId('postView').should('have.length', 2);
-            cy.findAllByTestId('postView').should('contain', postText);
+            cy.get('[data-testid^="center.post_list.post:"]').should('have.length', 2);
+            cy.get('[data-testid^="center.post_list.post:"]').should('contain', postText);
         });
     });
 });

@@ -687,6 +687,7 @@ export default class FilePreviewModal extends React.PureComponent<Props, State> 
                 onHide={this.handleModalClose}
                 onExited={this.props.onExited}
                 className='modal-image file-preview-modal'
+                data-testid='file_preview_modal'
                 dialogClassName={dialogClassName}
                 animation={true}
                 backdrop={false}

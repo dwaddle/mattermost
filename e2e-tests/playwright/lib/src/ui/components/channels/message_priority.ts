@@ -6,6 +6,8 @@ import {expect} from '@playwright/test';
 
 export type PriorityOption = 'Standard' | 'Important' | 'Urgent';
 
+// a post's label (`<post>.priority_label`) or a composer's or draft's (`<scope>.priority_labels.priority`)
+const PRIORITY_LABEL = /\.priority_label$|\.priority_labels\.priority$/;
 export default class MessagePriority {
     readonly container: Locator;
     readonly priorityIcon: Locator;
@@ -112,21 +114,13 @@ export default class MessagePriority {
         await expect(this.priorityMenu).not.toBeVisible();
     }
 
-    async verifyNoPriorityLabel(postText: string) {
-        const post = this.container.getByText(postText);
-        await expect(post).toBeVisible();
-
-        const priorityLabel = post.locator('[data-testid="post-priority-label"]');
-        await expect(priorityLabel).toHaveCount(0);
-    }
-
     async verifyPriorityLabel(scope: Locator, priority: Exclude<PriorityOption, 'Standard'>) {
-        const label = scope.getByTestId('post-priority-label');
+        const label = scope.getByTestId(PRIORITY_LABEL);
         await expect(label).toBeVisible();
         await expect(label).toHaveText(new RegExp(priority, 'i'));
     }
 
     async verifyNoPriorityLabelIn(scope: Locator) {
-        await expect(scope.getByTestId('post-priority-label')).toHaveCount(0);
+        await expect(scope.getByTestId(PRIORITY_LABEL)).toHaveCount(0);
     }
 }

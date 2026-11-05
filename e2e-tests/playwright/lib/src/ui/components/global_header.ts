@@ -106,7 +106,7 @@ export default class GlobalHeader {
 
     async closeSearch() {
         await expect(this.searchBox).toBeVisible();
-        await this.searchBox.getByTestId('searchBoxClose').click();
+        await this.searchBox.getByTestId('search_box.close--button').click();
     }
 
     /**

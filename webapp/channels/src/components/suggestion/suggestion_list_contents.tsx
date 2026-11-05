@@ -5,6 +5,8 @@ import React from 'react';
 import type {MessageDescriptor} from 'react-intl';
 import {useIntl} from 'react-intl';
 
+import {suggestionTestKey, type TestId} from '@mattermost/shared/utils/test_id';
+
 import LoadingSpinner from 'components/widgets/loading/loading_spinner';
 
 import {formatAsComponent} from 'utils/i18n';
@@ -24,6 +26,10 @@ export type SuggestionListContentsProps = {
     onItemClick: (term: string, matchedPretext: string) => void;
     onItemHover: (term: string) => void;
     onMouseDown?: () => void;
+
+    // The list's scope: items are `<testId>.item:<suggestionTestKey(term)>--option`, keyed by what they suggest
+    // (the list reorders as you type). Without it, the selected item is `suggestion-selected`.
+    testId?: TestId;
 };
 
 const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListContentsProps>(({
@@ -39,10 +45,16 @@ const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListConte
     onItemClick,
     onItemHover,
     onMouseDown,
+    testId,
 }, ref) => {
     function renderItem(item: unknown, term: string, Component: React.ElementType<any>) {
         if (!isItemLoaded(item)) {
-            return <LoadingSpinner key={term}/>;
+            return (
+                <LoadingSpinner
+                    key={term}
+                    testId={testId ? `${testId}.loading` : undefined}
+                />
+            );
         }
 
         const itemRef = setItemRef ? (ref: HTMLElement) => setItemRef(term, ref) : undefined;
@@ -57,6 +69,8 @@ const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListConte
                 isSelection={selectedTerm === term}
                 onClick={onItemClick}
                 onMouseMove={onItemHover}
+                role='option'
+                {...(testId ? {'data-testid': `${testId}.item:${suggestionTestKey(term)}--option`} : {})}
             />
         );
     }
@@ -78,6 +92,7 @@ const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListConte
                     key={group.key}
                     groupKey={group.key}
                     labelMessage={group.label}
+                    testId={testId}
                 >
                     {items}
                 </GroupedSuggestionsGroup>,
@@ -208,36 +223,34 @@ function GroupedSuggestionsGroup({
     children,
     groupKey,
     labelMessage,
+    testId,
 }: {
     children: React.ReactNode;
     groupKey: string | undefined;
     labelMessage?: MessageDescriptor | string;
+
+    // the list's scope: the group is `<testId>.group:<groupKey>`
+    testId?: TestId;
 }) {
+    const groupTestId = testId && groupKey ? `${testId}.group:${groupKey}` : undefined;
     const labelId = `suggestionListGroup-${groupKey}`;
 
-    // If no label is provided, render the group without a header
-    if (!labelMessage) {
-        return (
-            <ul
-                role='group'
-            >
-                {children}
-            </ul>
-        );
-    }
-
+    // Without a label, the group renders without a header
     return (
         <ul
             role='group'
-            aria-labelledby={labelId}
+            aria-labelledby={labelMessage ? labelId : undefined}
+            data-testid={groupTestId}
         >
-            <li
-                id={labelId}
-                className='suggestion-list__divider'
-                role='presentation'
-            >
-                {formatAsComponent(labelMessage)}
-            </li>
+            {labelMessage && (
+                <li
+                    id={labelId}
+                    className='suggestion-list__divider'
+                    role='presentation'
+                >
+                    {formatAsComponent(labelMessage)}
+                </li>
+            )}
             {children}
         </ul>
     );

@@ -29,6 +29,7 @@ import {
     TrashCanOutlineIcon,
 } from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserThread} from '@mattermost/types/threads';
 
@@ -95,6 +96,9 @@ type Props = {
     handleAddReactionClick?: (showEmojiPicker: boolean) => void;
     isMenuOpen?: boolean;
     isReadOnly?: boolean;
+
+    /** The trigger renders `${testId}--button`; the menu's items are `post_dot_menu.<item>--menuitem`. */
+    testId?: TestId;
     isLicensed?: boolean; // TechDebt: Made non-mandatory while converting to typescript
     postEditTimeLimit?: string; // TechDebt: Made non-mandatory while converting to typescript
     enableEmojiPicker?: boolean; // TechDebt: Made non-mandatory while converting to typescript
@@ -666,7 +670,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
             <Menu.Container
                 menuButton={{
                     id: `${this.props.location}_button_${this.props.post.id}`,
-                    dataTestId: `PostDotMenu-Button-${this.props.post.id}`,
+                    dataTestId: this.props.testId ? `${this.props.testId}--button` : undefined,
                     as: PostDotMenuTrigger,
                     class: classNames('post-menu__item', {
                         'post-menu__item--active': this.props.isMenuOpen,
@@ -676,6 +680,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 }}
                 menu={{
                     id: `${this.props.location}_dropdown_${this.props.post.id}`,
+                    testId: 'post_dot_menu',
                     'aria-label': formatMessage({id: 'post_info.menuAriaLabel', defaultMessage: 'Post extra options'}),
                     onKeyDown: this.handleMenuKeydown,
                     width: '264px',
@@ -689,7 +694,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showReply &&
                     <Menu.Item
                         id={`reply_to_post_${this.props.post.id}`}
-                        data-testid={`reply_to_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.reply--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_info.reply'
@@ -704,7 +709,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showQuote &&
                     <Menu.Item
                         id={`quote_post_${this.props.post.id}`}
-                        data-testid={`quote_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.quote--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_info.quote'
@@ -719,7 +724,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showForward &&
                     <Menu.Item
                         id={`forward_post_${this.props.post.id}`}
-                        data-testid={`forward_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.forward--menuitem'
                         labels={forwardPostItemText}
                         isLabelsRowLayout={true}
                         leadingElement={<ArrowRightBoldOutlineIcon size={18}/>}
@@ -735,7 +740,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                     >
                         <Menu.Item
                             id={`post_reaction_${this.props.post.id}`}
-                            data-testid={`post_reaction_${this.props.post.id}`}
+                            data-testid='post_dot_menu.add_reaction--menuitem'
                             labels={
                                 <FormattedMessage
                                     id='rhs_root.mobile.add_reaction'
@@ -750,7 +755,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showFollowPost &&
                     <Menu.Item
                         id={`follow_post_thread_${this.props.post.id}`}
-                        data-testid={`follow_post_thread_${this.props.post.id}`}
+                        data-testid='post_dot_menu.follow_thread--menuitem'
                         trailingElements={<ShortcutKey shortcutKey='F'/>}
                         labels={followPostLabel()}
                         leadingElement={
@@ -766,7 +771,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showMarkAsUnread &&
                     <Menu.Item
                         id={`unread_post_${this.props.post.id}`}
-                        data-testid={`unread_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.mark_as_unread--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_info.unread'
@@ -781,7 +786,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showSave &&
                     <Menu.Item
                         id={`save_post_${this.props.post.id}`}
-                        data-testid={`save_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.save--menuitem'
                         labels={this.props.isFlagged ? removeFlag : saveFlag}
                         leadingElement={this.props.isFlagged ? <BookmarkIcon size={18}/> : <BookmarkOutlineIcon size={18}/>}
                         trailingElements={<ShortcutKey shortcutKey='S'/>}
@@ -799,7 +804,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showPin &&
                     <Menu.Item
                         id={`${this.props.post.is_pinned ? 'unpin' : 'pin'}_post_${this.props.post.id}`}
-                        data-testid={`pin_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.pin--menuitem'
                         labels={this.props.post.is_pinned ? unPinPost : pinPost}
                         leadingElement={this.props.post.is_pinned ? <PinIcon size={18}/> : <PinOutlineIcon size={18}/>}
                         trailingElements={<ShortcutKey shortcutKey='P'/>}
@@ -809,6 +814,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showMove &&
                     <Menu.Item
                         id={`move_thread_${this.props.post.id}`}
+                        data-testid='post_dot_menu.move_thread--menuitem'
                         labels={
                             <FormattedMessage
                                 id={'post_info.move_thread'}
@@ -823,7 +829,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showPostAttributes && (
                     <Menu.Item
                         id={`post_attributes_${this.props.post.id}`}
-                        data-testid={`post_attributes_${this.props.post.id}`}
+                        data-testid='post_dot_menu.post_attributes--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_attributes.dot_menu.attributes'
@@ -838,7 +844,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showShowTranslation && (
                     <Menu.Item
                         id={`show_translation_${this.props.post.id}`}
-                        data-testid={`show_translation_${this.props.post.id}`}
+                        data-testid='post_dot_menu.show_translation--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_info.show_translation'
@@ -852,7 +858,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showCopyText &&
                     <Menu.Item
                         id={`copy_${this.props.post.id}`}
-                        data-testid={`copy_${this.props.post.id}`}
+                        data-testid='post_dot_menu.copy_text--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_info.copy'
@@ -866,7 +872,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showCopyLink &&
                     <Menu.Item
                         id={`permalink_${this.props.post.id}`}
-                        data-testid={`permalink_${this.props.post.id}`}
+                        data-testid='post_dot_menu.copy_link--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_info.permalink'
@@ -881,7 +887,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showEdit &&
                     <Menu.Item
                         id={`edit_post_${this.props.post.id}`}
-                        data-testid={`edit_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.edit--menuitem'
                         labels={
                             <FormattedMessage
                                 id='post_info.edit'
@@ -897,7 +903,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                     <Menu.Item
                         id={`flag_post_${this.props.post.id}`}
                         className='flag_post_menu_item'
-                        data-testid={`flag_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.flag--menuitem'
                         leadingElement={<AlertOutlineIcon size={18}/>}
                         labels={
                             <FormattedMessage
@@ -912,7 +918,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
                 {showDelete &&
                     <Menu.Item
                         id={`delete_post_${this.props.post.id}`}
-                        data-testid={`delete_post_${this.props.post.id}`}
+                        data-testid='post_dot_menu.delete--menuitem'
                         leadingElement={<TrashCanOutlineIcon size={18}/>}
                         trailingElements={<span>{'delete'}</span>}
                         labels={

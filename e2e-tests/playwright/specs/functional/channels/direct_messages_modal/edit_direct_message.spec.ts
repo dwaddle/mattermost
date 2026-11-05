@@ -5,6 +5,8 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a direct message can be edited and the recipient sees the updated body and edited marker without a mention badge.
+ *
+ * Posts are found by id, and the inline editor, edited marker and sidebar badge are the generated page objects.
  */
 test('MM-T449 edits a direct message body', {tag: '@direct_messages'}, async ({pw}) => {
     const originalMessage = 'Hello';
@@ -21,38 +23,40 @@ test('MM-T449 edits a direct message body', {tag: '@direct_messages'}, async ({p
     });
 
     // # Open the direct message as the recipient
-    const {channelsPage: recipientChannelsPage, page: recipientPage} = await pw.testBrowser.login(recipient);
+    const {
+        app: recipientApp,
+        channelsPage: recipientChannelsPage,
+        page: recipientPage,
+    } = await pw.testBrowser.login(recipient);
     await recipientChannelsPage.goto(team.name, `@${sender.username}`);
     await recipientChannelsPage.toBeVisible();
 
-    // * Verify the original message is sent and is not pending
-    const recipientPost = await recipientChannelsPage.centerView.getPostById(post.id);
-    await recipientPost.toContainText(originalMessage);
-    await recipientPost.toHaveId(post.id);
+    // * Verify the original message is shown, under the post's id (sent, not pending)
+    const recipientPost = recipientApp.center.postList.post(post);
+    await expect(recipientPost.messageText.locator).toContainText(originalMessage);
 
     // # Open the direct message as the sender and edit the post with the Up arrow shortcut
-    const {channelsPage: senderChannelsPage, page: senderPage} = await pw.testBrowser.login(sender);
+    const {app: senderApp, channelsPage: senderChannelsPage} = await pw.testBrowser.login(sender);
     await senderChannelsPage.goto(team.name, `@${recipient.username}`);
     await senderChannelsPage.toBeVisible();
-    await senderChannelsPage.centerView.postCreate.input.focus();
-    await senderPage.keyboard.press('ArrowUp');
-    await senderChannelsPage.centerView.postEdit.toBeVisible();
-    await expect(senderChannelsPage.centerView.postEdit.input).toHaveValue(originalMessage);
-    await senderChannelsPage.centerView.postEdit.writeMessage(editedMessage);
-    await senderChannelsPage.centerView.postEdit.sendMessage();
+    await senderApp.center.postCreate.messageTextbox.locator.press('ArrowUp');
+    const editor = senderApp.postEdit.editor.messageTextbox.locator;
+    await expect(editor).toHaveValue(originalMessage);
+    await editor.fill(editedMessage);
+    await senderApp.postEdit.editor.clickSaveButton();
 
     // * Verify the sender sees the edited body and marker
-    const senderPost = await senderChannelsPage.centerView.getPostById(post.id);
-    await senderPost.toContainText(editedMessage);
-    await senderPost.toBeEdited();
+    const senderPost = senderApp.center.postList.post(post);
+    await expect(senderPost.messageText.locator).toContainText(editedMessage);
+    await expect(senderPost.editedButton.locator).toBeVisible();
 
     // # Reload the recipient's direct message
     await recipientPage.reload();
     await recipientChannelsPage.toBeVisible();
 
     // * Verify the recipient sees the edit without an unread mention indicator
-    const updatedRecipientPost = await recipientChannelsPage.centerView.getPostById(post.id);
-    await updatedRecipientPost.toContainText(editedMessage);
-    await updatedRecipientPost.toBeEdited();
-    await expect(recipientChannelsPage.sidebarLeft.unreadMentionsBadge(sender.username)).not.toBeVisible();
+    await expect(recipientPost.messageText.locator).toContainText(editedMessage);
+    // (only the author's marker is a button, opening the edit history; others see text)
+    await expect(recipientPost.editedText.locator).toBeVisible();
+    await expect(recipientApp.lhs.channelList.channel(dmChannel).mentionBadgeText.locator).not.toBeVisible();
 });

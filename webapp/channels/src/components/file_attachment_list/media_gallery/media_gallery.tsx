@@ -7,6 +7,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import {DownloadOutlineIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
 import {getChannel} from 'mattermost-redux/selectors/entities/channels';
@@ -34,6 +35,9 @@ type Props = {
     isEmbedVisible?: boolean;
     onItemClick: (index: number) => void;
     onToggleCollapse?: (postId: string) => void;
+
+    /** The attachments' scope (`center.post_list.post.attachments`): the gallery renders it, each tile `.file:<id>--button`. */
+    testIdScope?: TestId;
 };
 
 function tileKindFor(fileInfo: FileInfo): TileKind | null {
@@ -47,7 +51,7 @@ function tileKindFor(fileInfo: FileInfo): TileKind | null {
     return null;
 }
 
-const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true, onItemClick, onToggleCollapse}: Props) => {
+const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true, onItemClick, onToggleCollapse, testIdScope}: Props) => {
     const {formatMessage} = useIntl();
     const enablePublicLink = useSelector((state: GlobalState) => getConfig(state).EnablePublicLink === 'true');
     const channelDisplayName = useSelector((state: GlobalState) => getChannel(state, fileInfos[0]?.channel_id)?.display_name);
@@ -164,7 +168,7 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
                 'MediaGallery--single': isSingle,
                 'MediaGallery--collapsed': !isEmbedVisible,
             })}
-            data-testid='fileAttachmentList'
+            data-testid={testIdScope}
             data-post-id={postId}
         >
             {showHeader && (
@@ -235,6 +239,7 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
                         return (
                             <Tile
                                 key={tile.file.id}
+                                testIdScope={testIdScope}
                                 fileInfo={tile.file}
                                 index={idx}
                                 total={tiles.length}

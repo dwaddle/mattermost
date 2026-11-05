@@ -6,6 +6,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import type {JSX, ReactNode} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 import type {Post} from '@mattermost/types/posts';
 
@@ -28,6 +29,9 @@ import type {PostActionComponent} from 'types/store/plugins';
 type Props = {
     post: Post;
     teamId: string;
+
+    /** Testid scope of the post (`center.post_list.post`): the menu renders `<scope>.menu`, its buttons `<scope>.menu.reply--button`. */
+    testIdScope?: TestId;
     isFlagged: boolean;
     removePost: (post: Post) => void;
     enableEmojiPicker?: boolean;
@@ -141,6 +145,7 @@ const PostOptions = (props: Props): JSX.Element => {
                 <CommentIcon
                     handleCommentClick={props.handleCommentClick}
                     postId={post.id}
+                    testId={props.testIdScope ? `${props.testIdScope}.menu.reply` : undefined}
                     extraClass={commentIconExtraClass}
                     commentCount={props.collapsedThreadsEnabled ? 0 : props.replyCount}
                 />
@@ -164,6 +169,7 @@ const PostOptions = (props: Props): JSX.Element => {
                 teamId={props.teamId}
                 emojis={props.recentEmojis}
                 size={showMoreReactions ? 3 : 1}
+                testIdScope={props.testIdScope ? `${props.testIdScope}.menu.recent_reactions` : undefined}
             />
         );
     }
@@ -181,6 +187,7 @@ const PostOptions = (props: Props): JSX.Element => {
                     teamId={props.teamId}
                     showEmojiPicker={showEmojiPicker}
                     setShowEmojiPicker={toggleEmojiPicker}
+                    testId={props.testIdScope ? `${props.testIdScope}.menu.add_reaction` : undefined}
                 />
             </li>
         );
@@ -195,6 +202,7 @@ const PostOptions = (props: Props): JSX.Element => {
                     location={props.location}
                     postId={post.id}
                     isFlagged={props.isFlagged}
+                    testId={props.testIdScope ? `${props.testIdScope}.menu.save` : undefined}
                 />
             </li>
         );
@@ -207,6 +215,7 @@ const PostOptions = (props: Props): JSX.Element => {
             <ActionsMenu
                 post={post}
                 location={props.location}
+                testIdScope={props.testIdScope ? `${props.testIdScope}.menu` : undefined}
                 handleDropdownOpened={handleActionsMenuOpened}
                 isMenuOpen={showActionsMenu}
             />
@@ -250,6 +259,7 @@ const PostOptions = (props: Props): JSX.Element => {
                 isMenuOpen={showDotMenu}
                 enableEmojiPicker={props.enableEmojiPicker}
                 isChannelAutotranslated={props.isChannelAutotranslated}
+                testId={props.testIdScope ? `${props.testIdScope}.menu.dot_menu` : undefined}
             />
         </li>
     );
@@ -261,7 +271,7 @@ const PostOptions = (props: Props): JSX.Element => {
             <div className='col col__remove'>
                 <button
                     className='post__remove theme color--link style--none'
-                    data-testid='post-remove-button'
+                    data-testid={props.testIdScope ? `${props.testIdScope}.remove--button` : undefined}
                     onClick={removePost}
                 >
                     {'×'}
@@ -275,7 +285,7 @@ const PostOptions = (props: Props): JSX.Element => {
         options = (
             <ul
                 className='col__controls post-menu'
-                data-testid={`post-menu-${props.post.id}`}
+                data-testid={props.testIdScope ? `${props.testIdScope}.menu` : undefined}
             >
                 {dotMenu}
                 {flagIcon}
@@ -286,6 +296,7 @@ const PostOptions = (props: Props): JSX.Element => {
                         handleCommentClick={props.handleCommentClick}
                         commentCount={props.replyCount}
                         postId={post.id}
+                        testId={props.testIdScope ? `${props.testIdScope}.menu.reply` : undefined}
                         searchStyle={'search-item__comment'}
                         extraClass={props.replyCount ? 'icon--visible' : ''}
                     />
@@ -296,6 +307,7 @@ const PostOptions = (props: Props): JSX.Element => {
                         href='#'
                         onClick={props.handleJumpClick}
                         className='search-item__jump'
+                        data-testid={props.testIdScope ? `${props.testIdScope}.menu.jump--link` : undefined}
                     >
                         <FormattedMessage
                             id='search_item.jump'
@@ -308,7 +320,7 @@ const PostOptions = (props: Props): JSX.Element => {
     } else if (!props.isPostBeingEdited) {
         options = (
             <ul
-                data-testid={`post-menu-${props.post.id}`}
+                data-testid={props.testIdScope ? `${props.testIdScope}.menu` : undefined}
                 className={classnames('col post-menu', {'post-menu--position': !hoverLocal && showCommentIcon})}
             >
                 {!collapsedThreadsEnabled && !showRecentlyUsedReactions && dotMenu}

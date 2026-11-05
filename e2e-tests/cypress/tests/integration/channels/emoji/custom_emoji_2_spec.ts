@@ -84,8 +84,8 @@ describe('Custom emojis', () => {
         cy.findByPlaceholderText('Search emojis').should('be.visible').clear().type(emojiNameForSearch2, {delay: TIMEOUTS.QUARTER_SEC});
 
         // * Get list of emojis based on search text
-        cy.findAllByTestId('emojiItem').children().should('have.length', 1);
-        cy.findAllByTestId('emojiItem').children('img').first().should('have.class', 'emoji-category--custom');
+        cy.get('[data-testid^="emoji_picker.emoji:"]').children().should('have.length', 1);
+        cy.get('[data-testid^="emoji_picker.emoji:"]').children('img').first().should('have.class', 'emoji-category--custom');
     });
 
     it('MM-T4436 Emoji picker should show all custom emojis without overlaps', () => {

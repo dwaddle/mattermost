@@ -5,37 +5,40 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that the autocomplete highlight follows the mouse hover and the arrow keys.
+ *
+ * Written on the generated page objects: the composer and its suggestion list, whose items are keyed by what they
+ * suggest.
  */
 test('MM-T71 moves the autocomplete highlight with hover and arrow keys', {tag: '@messaging'}, async ({pw}) => {
     // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
     // # Type a partial emoji name to open the autocomplete with multiple suggestions
-    const {postCreate} = channelsPage.centerView;
-    await postCreate.writeMessage(':sm');
-    await expect(postCreate.suggestionList).toBeVisible();
-
-    const options = postCreate.suggestionOptions;
-    await expect.poll(() => options.count()).toBeGreaterThanOrEqual(3);
+    const composer = app.center.postCreate;
+    const {suggestions} = composer.message;
+    const input = composer.messageTextbox.locator;
+    await input.pressSequentially(':sm');
+    await expect.poll(async () => (await suggestions.itemKeys()).length).toBeGreaterThanOrEqual(3);
+    const [, second, third] = await suggestions.itemKeys();
 
     // # Hover over the second suggestion
-    await options.nth(1).hover();
+    await suggestions.item(second).locator.hover();
 
     // * Verify the hovered suggestion becomes highlighted
-    await expect(options.nth(1)).toHaveAttribute('data-testid', 'suggestion-selected');
+    await expect(suggestions.item(second).locator).toHaveAttribute('aria-selected', 'true');
 
     // # Press ArrowDown
-    await postCreate.input.press('ArrowDown');
+    await input.press('ArrowDown');
 
     // * Verify the highlight follows the arrow down key to the next suggestion
-    await expect(options.nth(2)).toHaveAttribute('data-testid', 'suggestion-selected');
+    await expect(suggestions.item(third).locator).toHaveAttribute('aria-selected', 'true');
 
     // # Press ArrowUp
-    await postCreate.input.press('ArrowUp');
+    await input.press('ArrowUp');
 
     // * Verify the highlight follows the arrow up key to the previous suggestion
-    await expect(options.nth(1)).toHaveAttribute('data-testid', 'suggestion-selected');
+    await expect(suggestions.item(second).locator).toHaveAttribute('aria-selected', 'true');
 });

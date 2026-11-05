@@ -18,9 +18,8 @@ test('MM-T469 Create a group message and post a mention for another user', async
     await channelsPage.goto(team.name, 'off-topic');
     await channelsPage.toBeVisible();
     await pw.stubNotification(page, 'granted');
-    await adminClient.createPost({
+    await pw.postAs(sender, {
         channel_id: gmChannel.id,
-        user_id: sender.id,
         message: `@${user.username} Hello from GM`,
     });
 

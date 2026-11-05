@@ -6,6 +6,7 @@ import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {ChannelBanner} from '@mattermost/types/channels';
 
 import {selectShowChannelBanner} from 'mattermost-redux/selectors/entities/channel_banner';
@@ -33,9 +34,12 @@ const markdownRenderingOptions: Partial<TextFormattingOptions> = {
 
 type Props = {
     channelId: string;
+
+    // The banner is `<testIdScope>`, its text `<testIdScope>.text--text`.
+    testIdScope: TestIdScope;
 };
 
-export default function ChannelBanner({channelId}: Props) {
+export default function ChannelBanner({channelId, testIdScope}: Props) {
     const channelBannerInfo = useSelector((state: GlobalState) => getChannelBanner(state, channelId));
     const license = useSelector(getLicense);
     const licenseEnabled = isMinimumEnterpriseAdvancedLicense(license);
@@ -47,9 +51,7 @@ export default function ChannelBanner({channelId}: Props) {
     const classificationBanner = useChannelClassificationBanner(channelId);
 
     // Classification property value takes priority over native banner_info
-    const effectiveBanner: ChannelBanner | undefined = classificationBanner.hasClassification ?
-        classificationBanner.classificationBanner :
-        channelBannerInfo;
+    const effectiveBanner: ChannelBanner | undefined = classificationBanner.hasClassification ? classificationBanner.classificationBanner : channelBannerInfo;
 
     const showBanner = classificationBanner.hasClassification || showNativeBanner;
 
@@ -128,11 +130,11 @@ export default function ChannelBanner({channelId}: Props) {
         >
             <div
                 className='channel_banner'
-                data-testid='channel_banner_container'
+                data-testid={testIdScope}
                 style={channelBannerStyle}
             >
                 <span
-                    data-testid='channel_banner_text'
+                    data-testid={`${testIdScope}.text--text`}
                     className='channel_banner_text'
                     aria-label={channelBannerTextAriaLabel}
                     style={channelBannerTextStyle}

@@ -18,6 +18,7 @@ import {
 } from '@mattermost/compass-icons/components';
 import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Agent} from '@mattermost/types/agents';
 
 import {getDefaultAgent} from 'mattermost-redux/selectors/entities/agents';
@@ -308,6 +309,9 @@ export interface RewriteSubMenuHeaderProps {
     onCustomPromptKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     onCancelProcessing: () => void;
     customPromptRef: React.RefObject<HTMLInputElement | null>;
+
+    /** The submenu's testid scope: the custom prompt is `<testIdScope>.prompt--textbox`. */
+    testIdScope?: TestId;
 }
 
 export function RewriteSubMenuHeader({
@@ -322,6 +326,7 @@ export function RewriteSubMenuHeader({
     onCustomPromptKeyDown,
     onCancelProcessing,
     customPromptRef,
+    testIdScope,
 }: RewriteSubMenuHeaderProps) {
     const {formatMessage} = useIntl();
     const defaultAgent = useSelector(getDefaultAgent);
@@ -392,6 +397,7 @@ export function RewriteSubMenuHeader({
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyDown={onCustomPromptKeyDown}
+                    testId={testIdScope ? `${testIdScope}.prompt` : undefined}
                 />
             }
         </div>

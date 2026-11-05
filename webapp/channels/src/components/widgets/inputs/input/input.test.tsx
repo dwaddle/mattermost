@@ -127,6 +127,7 @@ describe('components/widgets/inputs/Input', () => {
         test('should show error styling when input is empty with minLength set', async () => {
             renderWithContext(
                 <Input
+                    testId='x.input'
                     value={''}
                     minLength={2}
                 />,
@@ -140,7 +141,7 @@ describe('components/widgets/inputs/Input', () => {
             });
 
             // Check for error styling
-            const fieldset = screen.getByTestId('input-wrapper');
+            const fieldset = screen.getByTestId('x.input.field');
             expect(fieldset).toHaveClass('Input_fieldset___error');
 
             // Check for error message
@@ -151,6 +152,7 @@ describe('components/widgets/inputs/Input', () => {
         test('should show error styling and message when input length < minLength', async () => {
             renderWithContext(
                 <Input
+                    testId='x.input'
                     value={'a'}
                     minLength={2}
                 />,
@@ -166,7 +168,7 @@ describe('components/widgets/inputs/Input', () => {
             act(() => inputElement.blur());
 
             // Check for error styling
-            const fieldset = screen.getByTestId('input-wrapper');
+            const fieldset = screen.getByTestId('x.input.field');
             expect(fieldset).toHaveClass('Input_fieldset___error');
 
             // Check for error message
@@ -203,6 +205,7 @@ describe('components/widgets/inputs/Input', () => {
             // Render with a value that exceeds the limit
             renderWithContext(
                 <Input
+                    testId='x.input'
                     value={'abcdef'}
                     limit={5}
                     onChange={onChange}
@@ -217,7 +220,7 @@ describe('components/widgets/inputs/Input', () => {
             });
 
             // Check for error styling
-            const fieldset = screen.getByTestId('input-wrapper');
+            const fieldset = screen.getByTestId('x.input.field');
             expect(fieldset).toHaveClass('Input_fieldset___error');
         });
 
@@ -241,6 +244,7 @@ describe('components/widgets/inputs/Input', () => {
         test('should not show error on empty required input until blur', async () => {
             renderWithContext(
                 <Input
+                    testId='x.input'
                     value={''}
                     required={true}
                 />,
@@ -263,7 +267,7 @@ describe('components/widgets/inputs/Input', () => {
             expect(errorMessage).toBeInTheDocument();
 
             // Check for error styling
-            const fieldset = screen.getByTestId('input-wrapper');
+            const fieldset = screen.getByTestId('x.input.field');
             expect(fieldset).toHaveClass('Input_fieldset___error');
         });
 

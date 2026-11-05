@@ -11,6 +11,7 @@
 // Group: @channels @messaging @keyboard_shortcuts
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {quickSwitchUserItem} from '@/utils/suggestion';
 
 describe('Messaging', () => {
     let firstUser;
@@ -46,7 +47,7 @@ describe('Messaging', () => {
         // # Verify that the list of users and channels suggestions is present
         cy.get('#suggestionList').should('be.visible').within(() => {
             // * Newly created username should be there in the search list; click it
-            cy.findByTestId(secondUser.username).scrollIntoView().should('exist').click().wait(TIMEOUTS.HALF_SEC);
+            quickSwitchUserItem(secondUser).scrollIntoView().should('exist').click().wait(TIMEOUTS.HALF_SEC);
         });
 
         // # Verify that we are in a DM channel

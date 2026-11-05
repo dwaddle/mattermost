@@ -9,6 +9,7 @@ import {EmoticonHappyOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 
 import Permissions from 'mattermost-redux/constants/permissions';
@@ -26,6 +27,9 @@ export type Props = {
     location?: keyof typeof Locations;
     setShowEmojiPicker: (showEmojiPicker: boolean) => void;
     showEmojiPicker: boolean;
+
+    /** Renders `${testId}--button`. */
+    testId?: TestId;
     actions: {
         toggleReaction: (postId: string, emojiName: string) => void;
     };
@@ -38,6 +42,7 @@ export default function PostReaction({
     teamId,
     showEmojiPicker,
     setShowEmojiPicker,
+    testId,
     actions: {
         toggleReaction,
     },
@@ -73,7 +78,7 @@ export default function PostReaction({
             <WithTooltip title={ariaLabel}>
                 <IconButton
                     ref={setReference}
-                    data-testid='post-reaction-emoji-icon'
+                    data-testid={testId ? `${testId}--button` : undefined}
                     id={`${location}_reaction_${postId}`}
                     size='small'
                     padding='compact'

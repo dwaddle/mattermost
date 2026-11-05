@@ -12,6 +12,7 @@
 
 import * as messages from '@/fixtures/messages';
 import timeouts, * as TIMEOUTS from '@/fixtures/timeouts';
+import {quickSwitchChannelItem} from '@/utils/suggestion';
 
 describe('Keyboard Shortcuts', () => {
     let testTeam;
@@ -55,7 +56,7 @@ describe('Keyboard Shortcuts', () => {
             // # Verify that the list of users and channels suggestions is present
             cy.get('#suggestionList').should('be.visible').within(() => {
                 // * The channel the current user is not a member of should be there in the search list; click it
-                cy.findByTestId(testChannel.name).scrollIntoView().should('exist').click().wait(TIMEOUTS.HALF_SEC);
+                quickSwitchChannelItem(testChannel).scrollIntoView().should('exist').click().wait(TIMEOUTS.HALF_SEC);
             });
 
             // # Verify that we are in the test channel
@@ -377,7 +378,7 @@ describe('Keyboard Shortcuts', () => {
         cy.get('body').cmdOrCtrlShortcut('{shift}L');
         cy.uiGetPostTextBox().should('be.focused');
 
-        cy.get('[data-testid="searchBoxClose"]').click();
+        cy.get('[data-testid="search_box.close--button"]').click();
         // # Post a message and open RHS
         const message = `hello${Date.now()}`;
         cy.postMessage(message);

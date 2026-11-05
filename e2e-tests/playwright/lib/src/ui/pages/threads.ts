@@ -24,7 +24,7 @@ export default class ThreadsPage {
 
         this.threadsList = page.locator('#threads-list');
 
-        this.noThreadSelected = page.getByTestId('no-results-title').filter({
+        this.noThreadSelected = page.getByTestId('no_results.title--text').filter({
             hasText: /Looks like you’re all caught up|Catch up on your threads/,
         });
 
@@ -61,7 +61,7 @@ export default class ThreadsPage {
     }
 
     async getLastPost() {
-        const lastPost = this.page.getByTestId('rhsPostView').last();
+        const lastPost = this.page.getByTestId(/^rhs\.thread\.post:/).last();
         await lastPost.waitFor();
         return new ChannelsPost(lastPost);
     }

@@ -6,6 +6,9 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify the "in:" search autocomplete shows a renamed channel by both its new display name and
  * its original handle, so it stays findable after a display-name change.
+ *
+ * The search half is written on the generated page objects: the search box and its suggestions, keyed by the
+ * channel's handle.
  */
 test(
     'MM-T1449 shows the channel display name and handle in the in: search autocomplete',
@@ -20,7 +23,7 @@ test(
         const channel = await adminClient.createPublicChannel(team.id, `Original ${id}`, handle);
         await adminClient.addToChannel(user.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
+        const {app, channelsPage} = await pw.testBrowser.login(user);
         await channelsPage.goto(team.name, channel.name);
         await channelsPage.toBeVisible();
 
@@ -33,14 +36,14 @@ test(
         await channelsPage.centerView.header.toHaveTitle(updatedName);
 
         // # Open search and type an "in:" filter matching the channel's original handle
-        await channelsPage.globalHeader.openSearch();
-        await channelsPage.searchBox.toBeVisible();
-        await channelsPage.searchBox.searchInput.fill('in:');
-        await channelsPage.searchBox.searchInput.pressSequentially(handle);
+        const input = app.searchBox.inputSearchbox.locator;
+        await app.globalHeader.search.clickOpenButton();
+        await input.fill('in:');
+        await input.pressSequentially(handle);
 
-        // * Verify the autocomplete shows the channel by its new display name and its original handle
-        const suggestion = channelsPage.searchBox.container.getByRole('option').filter({hasText: updatedName});
-        await expect(suggestion).toBeVisible();
+        // * Verify the autocomplete offers the channel by its handle (the client adds a suffix to the one asked
+        // for), showing its new display name and the handle
+        const suggestion = app.searchBox.suggestions.item(channel.name).locator;
         await expect(suggestion).toContainText(updatedName);
         await expect(suggestion).toContainText(`~${handle}`);
     },

@@ -6,6 +6,7 @@ import React from 'react';
 import type {CSSProperties, JSX, KeyboardEvent, MouseEvent} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostActionOption} from '@mattermost/types/integration_actions';
 import type {
     MessageAttachment as MessageAttachmentType,
@@ -55,6 +56,9 @@ type Props = {
      * images object for dimensions
      */
     imagesMetadata?: Record<string, PostImage>;
+
+    /** The post's testid scope; action buttons render `<testIdScope>.action:<action id>--button`. */
+    testIdScope?: TestId;
 
     actions: {
         doPostActionWithCookie: (postId: string, actionId: string, actionCookie: string, selectedOption?: string) => Promise<ActionResult>;
@@ -167,6 +171,7 @@ export default class MessageAttachment extends React.PureComponent<Props, State>
                 content.push(
                     <ActionButton
                         key={action.id}
+                        testId={this.props.testIdScope ? `${this.props.testIdScope}.action:${action.id}` : undefined}
                         action={action}
                         disabled={action.disabled}
                         handleAction={this.handleAction}

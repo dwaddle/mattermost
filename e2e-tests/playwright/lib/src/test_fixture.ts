@@ -71,6 +71,7 @@ import {
     listMattermostDataFiles,
     listMinioObjectKeys,
     makeClient,
+    postAs,
     openidServerConfig,
     opensearchServerConfig,
     recapCompletion,
@@ -286,6 +287,7 @@ export class PlaywrightExtended {
     readonly createNewTeam;
     readonly isOutsideRemoteUserHour;
     readonly makeClient;
+    readonly postAs;
     readonly setDefaultOnboardingPreferences;
 
     // ./visual
@@ -436,6 +438,7 @@ export class PlaywrightExtended {
         this.createNewUserProfile = createNewUserProfile;
         this.createNewTeam = createNewTeam;
         this.makeClient = makeClient;
+        this.postAs = postAs;
         this.setDefaultOnboardingPreferences = setDefaultOnboardingPreferences;
 
         // ./visual

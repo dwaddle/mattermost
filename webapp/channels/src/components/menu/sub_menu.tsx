@@ -17,6 +17,7 @@ import type {
 import {useDispatch, useSelector} from 'react-redux';
 
 import {GenericModal} from '@mattermost/components';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
@@ -49,8 +50,16 @@ interface Props extends FirstMenuItemProps {
     menuAriaDescribedBy?: string;
     forceOpenOnLeft?: boolean; // Most of the times this is not needed, since submenu position is calculated and placed
 
+    // The submenu's own scope (its list); its scrolling paper is `<menuTestId>.paper`
+    menuTestId?: TestIdScope;
+
     subMenuHeader?: ReactNode;
     children: ReactNode;
+}
+
+// A data attribute on the popover's paper (the element that scrolls); spread in so it passes the paper's prop types.
+function paperTestIdProps(menuTestId?: TestIdScope): Record<string, string> {
+    return menuTestId ? {'data-testid': `${menuTestId}.paper`} : {};
 }
 
 export function SubMenu(props: Props) {
@@ -67,6 +76,7 @@ export function SubMenu(props: Props) {
         forceOpenOnLeft,
         children,
         subMenuHeader,
+        menuTestId,
         ...rest
     } = props;
 
@@ -178,10 +188,12 @@ export function SubMenu(props: Props) {
                     anchorOrigin={originOfAnchorAndTransform.anchorOrigin}
                     transformOrigin={originOfAnchorAndTransform.transformOrigin}
                     className='menu_menuStyled AsSubMenu'
+                    slotProps={{paper: paperTestIdProps(menuTestId)}}
                 >
                     {subMenuHeader}
                     <MuiMenuList
                         id={menuId}
+                        data-testid={menuTestId}
                         aria-label={menuAriaLabel}
                         aria-describedby={menuAriaDescribedBy}
                         className={A11yClassNames.POPUP}

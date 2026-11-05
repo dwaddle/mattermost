@@ -42,9 +42,10 @@ export async function typeTests() {
     // @ts-expect-error unknown effects and no `wait`
     await settle(unknown, (b) => b.click());
 
-    // generated elements carry their effects: a password-rule checkbox fires no request, so there is nothing to settle
-    // @ts-expect-error no effects
-    await settle(app.admin.password.lowercase, (c) => c.locator.click());
+    // generated elements carry their effects: the composer's send button fires several requests
+    const sent: Post = await settle(app.center.postCreate.sendButton, (b) => b.click(), {wait: Api.CreatePost});
+    // @ts-expect-error the send button fires several requests: name the one to wait for
+    await settle(app.center.postCreate.sendButton, (b) => b.click());
 
-    return {post, channel};
+    return {post, channel, sent};
 }

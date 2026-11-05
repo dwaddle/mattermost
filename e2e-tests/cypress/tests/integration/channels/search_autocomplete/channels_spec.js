@@ -16,6 +16,7 @@ import {
 } from '../enterprise/elasticsearch_autocomplete/helpers';
 
 import {getAdminAccount} from '@/support/env';
+import {quickSwitchChannelItem} from '@/utils/suggestion';
 
 describe('Autocomplete without Elasticsearch - Channel', () => {
     const admin = getAdminAccount();
@@ -54,7 +55,7 @@ describe('Autocomplete without Elasticsearch - Channel', () => {
             searchForChannel(channel.name);
 
             // * And it should not appear
-            cy.findByTestId(channel.name).
+            quickSwitchChannelItem(channel).
                 should('not.exist');
         });
     });
@@ -72,7 +73,7 @@ describe('Autocomplete without Elasticsearch - Channel', () => {
             cy.get('#suggestionList').should('be.visible');
 
             // * Channel should appear in the list
-            cy.findByTestId(channel.name).
+            quickSwitchChannelItem(channel).
                 should('be.visible');
         });
     });
@@ -104,7 +105,7 @@ describe('Autocomplete without Elasticsearch - Channel', () => {
                 searchForChannel(channel.name);
 
                 // * Channel should not appear in the search results
-                cy.findByTestId(channel.name).
+                quickSwitchChannelItem(channel).
                     should('not.exist');
             });
         });

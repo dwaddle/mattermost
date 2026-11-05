@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostActionIntegrationFormat} from '@mattermost/types/integration_actions';
 import type {PostImage, PostType} from '@mattermost/types/posts';
 
@@ -40,6 +41,9 @@ export type OwnProps = {
      * When the post is edited this is the timestamp it happened at
      */
     editedAt?: number;
+
+    /** The "Edited" label's testid (see PostEditedIndicator). */
+    editedTestId?: TestId;
 
     /*
      * The text to be rendered
@@ -93,6 +97,7 @@ function Markdown({
     imagesMetadata = {},
     postId = '', // Needed to avoid proptypes console errors for cases like channel header, which doesn't have a proper value
     editedAt = 0,
+    editedTestId,
     message = '',
     channelNamesMap,
     mentionKeys,
@@ -111,14 +116,19 @@ function Markdown({
     minimumHashtagLength,
     managedResourcePaths,
 }: Props) {
+    const editedIndicator = (
+        <PostEditedIndicator
+            postId={postId}
+            editedAt={editedAt}
+            testId={editedTestId}
+        />
+    );
+
     if (message === '' || !enableFormatting) {
         return (
             <span>
                 {message}
-                <PostEditedIndicator
-                    postId={postId}
-                    editedAt={editedAt}
-                />
+                {editedIndicator}
             </span>
         );
     }
@@ -147,7 +157,7 @@ function Markdown({
         postType,
         mentionHighlight: options?.mentionHighlight,
         disableGroupHighlight: options?.disableGroupHighlight,
-        editedAt,
+        editedIndicator: postId && editedAt > 0 ? editedIndicator : undefined,
         allowInlineActions,
         mmBlocksActionCookie,
         integrationFormat,

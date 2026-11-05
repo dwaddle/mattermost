@@ -21,11 +21,11 @@ export default class DraftsPage {
     constructor(page: Page) {
         this.page = page;
 
-        this.draftsHeader = page.getByTestId('drafts-header');
+        this.draftsHeader = page.getByTestId('drafts.header');
         this.tab = page.getByRole('tab', {name: 'Drafts'});
-        this.badge = this.tab.getByTestId('drafts-tab-counter-badge');
+        this.badge = this.tab.getByTestId('drafts.tabs.drafts_count--text');
 
-        this.noDrafts = page.getByTestId('no-results-wrapper');
+        this.noDrafts = page.getByTestId('no_results');
 
         this.scheduleMessageModal = new components.ScheduleMessageModal(
             page.getByRole('dialog', {name: 'Schedule message'}),
@@ -47,19 +47,19 @@ export default class DraftsPage {
 
     async getBadgeCountOnTab() {
         await expect(this.tab).toBeVisible();
-        const badge = this.tab.getByTestId('drafts-tab-counter-badge');
+        const badge = this.tab.getByTestId('drafts.tabs.drafts_count--text');
         await expect(badge).toBeVisible();
         return badge.textContent();
     }
 
     async getLastPost() {
-        const lastPost = this.page.getByTestId('draftView').last();
+        const lastPost = this.page.getByTestId(/^drafts\.list\.draft:/).last();
         await lastPost.waitFor();
         return new components.DraftPost(lastPost);
     }
 
     draftViews() {
-        return this.page.getByTestId('draftView');
+        return this.page.getByTestId(/^drafts\.list\.draft:/);
     }
 
     async expectDraftCount(count: number) {

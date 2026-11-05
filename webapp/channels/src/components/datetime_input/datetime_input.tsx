@@ -8,6 +8,8 @@ import type {DayModifiers, DayPickerProps} from 'react-day-picker';
 import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {getCurrentLocale} from 'selectors/i18n';
 import {isUseMilitaryTime} from 'selectors/preferences';
 
@@ -253,6 +255,9 @@ type Props = {
     onTimeInputError?: (hasError: boolean) => void;
     minDateTime?: Moment;
     maxDateTime?: Moment;
+
+    // The input's path: `.calendar`, `.time--button`, `.time_menu.time:<HHmm>--menuitem`; without it, the legacy ids.
+    testIdScope?: TestId;
 };
 
 const DateTimeInputContainer: React.FC<Props> = ({
@@ -267,6 +272,7 @@ const DateTimeInputContainer: React.FC<Props> = ({
     onTimeInputError,
     minDateTime,
     maxDateTime,
+    testIdScope,
 }: Props) => {
     const currentTime = getCurrentMomentForTimezone(timezone);
     const displayTime = time; // No automatic default - field stays null until user selects
@@ -480,6 +486,7 @@ const DateTimeInputContainer: React.FC<Props> = ({
         <div className='dateTime'>
             <div className='dateTime__date'>
                 <DatePicker
+                    testIdScope={testIdScope}
                     isPopperOpen={isPopperOpen}
                     handlePopperOpenState={handlePopperOpenState}
                     locale={locale}
@@ -518,7 +525,7 @@ const DateTimeInputContainer: React.FC<Props> = ({
                     <Menu.Container
                         menuButton={{
                             id: 'time_button',
-                            dataTestId: 'time_button',
+                            dataTestId: testIdScope ? `${testIdScope}.time--button` : 'time_button',
                             'aria-label': formatMessage({
                                 id: 'datetime.time',
                                 defaultMessage: 'Time',
@@ -555,7 +562,7 @@ const DateTimeInputContainer: React.FC<Props> = ({
                             <Menu.Item
                                 key={index}
                                 id={`time_option_${index}`}
-                                data-testid={`time_option_${index}`}
+                                data-testid={testIdScope ? `${testIdScope}.time_menu.time:${option.format('HHmm')}--menuitem` : `time_option_${index}`}
                                 labels={
                                     <span>{option.format(isMilitaryTime ? 'HH:mm' : 'LT')}</span>
                                 }

@@ -4,6 +4,7 @@
 import React from 'react';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 
 import Permissions from 'mattermost-redux/constants/permissions';
@@ -21,6 +22,9 @@ type Props = {
     emojis: Emoji[];
     size: number;
     defaultEmojis: Emoji[];
+
+    /** The recent reactions' testid (`<post>.menu.recent_reactions`); items render `.emoji:<name>--button`. */
+    testIdScope?: TestId;
     actions: {
         toggleReaction: (postId: string, emojiName: string) => void;
     };
@@ -91,6 +95,7 @@ export default class PostRecentReactions extends React.PureComponent<Props> {
                             emoji={emoji}
                             onItemClick={this.handleToggleEmoji}
                             order={n}
+                            testIdScope={this.props.testIdScope}
                         />
                     </WithTooltip>
                 </li>

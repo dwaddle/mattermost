@@ -72,6 +72,7 @@ const PostMessagePreview = (props: Props) => {
     if (props.permissionPoliciesEnabled && redactedFileCount > 0) {
         fileAttachmentPreview = (
             <RedactedFilesPlaceholder
+                testIdScope={props.testIdScope}
                 count={redactedFileCount}
                 compactDisplay={compactDisplay}
             />
@@ -86,6 +87,7 @@ const PostMessagePreview = (props: Props) => {
                 usePostAsSource={props.usePostAsSource}
                 overrideGenerateFileDownloadUrl={overrideGenerateFileDownloadUrl}
                 disableActions={disableActions}
+                testIdScope={props.testIdScope ? `${props.testIdScope}.attachments` : undefined}
             />
         );
     }
@@ -148,7 +150,10 @@ const PostMessagePreview = (props: Props) => {
             link={`${teamUrl}/pl/${metadata.post_id}`}
             preventClickAction={preventClickAction}
         >
-            <div className='post-preview'>
+            <div
+                className='post-preview'
+                data-testid={props.testIdScope}
+            >
                 <div className='post-preview__header'>
                     <div className='col col__name'>
                         <div className='post__img'>
@@ -187,7 +192,10 @@ const PostMessagePreview = (props: Props) => {
                         />
                         {previewPost.metadata?.priority && isPostPriorityEnabled && (
                             <span className='d-flex mr-2 ml-1'>
-                                <PriorityLabel priority={previewPost.metadata.priority.priority}/>
+                                <PriorityLabel
+                                    priority={previewPost.metadata.priority.priority}
+                                    testId={props.testIdScope ? `${props.testIdScope}.priority_label` : undefined}
+                                />
                             </span>
                         )}
                         {PostUtils.hasAiGeneratedMetadata(previewPost) && (
@@ -202,6 +210,7 @@ const PostMessagePreview = (props: Props) => {
                                 postId={previewPost.id}
                                 translationState={translation?.state}
                                 postType={previewPost.type}
+                                testIdScope={props.testIdScope}
                             />
                         )}
                     </div>
@@ -214,6 +223,7 @@ const PostMessagePreview = (props: Props) => {
                     isChannelAutotranslated={isChannelAutotranslated}
                     disableInteractions={true}
                     messageBodyFooter={interactiveMessagesPreview}
+                    testId={props.testIdScope ? `${props.testIdScope}.message` : undefined}
                 />
                 {urlPreview}
                 {fileAttachmentPreview}

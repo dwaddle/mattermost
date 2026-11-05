@@ -109,7 +109,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             // * Normal messages are still visible
             await expect(
                 channelsPage.centerView.container
-                    .getByTestId('postContent')
+                    .getByTestId('center.post_list.post.content')
                     .getByText('This is a regular message that should remain visible'),
             ).toBeVisible();
         },

@@ -7,6 +7,7 @@ import {
     displayNameCases,
     ensureSenderProfileLoaded,
     expectSingleNotification,
+    openChannel,
     runDisplayNameCase,
     setDesktopNotificationLevel,
 } from './desktop_notification_support';
@@ -29,11 +30,10 @@ test(
 
         const channel = await adminClient.getChannelByName(team.id, 'off-topic');
         const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-        const {page, channelsPage} = await pw.testBrowser.login(receiver);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {page, app} = await pw.testBrowser.login(receiver);
+        await openChannel(app, team, townSquare);
         await pw.stubNotification(page, 'granted');
-        await ensureSenderProfileLoaded(senderClient, channelsPage, townSquare.id, pw, page);
+        await ensureSenderProfileLoaded(senderClient, app, townSquare.id, pw, page);
 
         const message =
             "*I'm* [hungry](http://example.com) :taco: ![Mattermost](https://mattermost.com/wp-content/uploads/2022/02/logoHorizontal.png)";

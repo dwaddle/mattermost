@@ -180,7 +180,7 @@ test.describe('Channel Classification - New channel creation', () => {
         await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 30000});
 
         // Channel banner should be visible (allow extra time for property value fetch)
-        const banner = channelsPage.page.getByTestId('channel_banner_container');
+        const banner = channelsPage.page.getByTestId('center.channel_banner');
         await expect(banner).toBeVisible({timeout: 30000});
 
         // Verify the banner has the correct background color
@@ -385,7 +385,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         await channelSettingsModal.close();
 
         // The channel banner should now show the custom text with the classification color
-        const banner = channelsPage.page.getByTestId('channel_banner_container');
+        const banner = channelsPage.page.getByTestId('center.channel_banner');
         await expect(banner).toBeVisible({timeout: 30000});
         await expect(banner).toContainText(customBannerText);
 

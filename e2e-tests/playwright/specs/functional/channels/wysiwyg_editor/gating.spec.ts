@@ -30,7 +30,7 @@ test('MM-69305 WYSIWYG editor mounts when the user preference is enabled', TAGS,
     await channelsPage.goto(team.name, 'off-topic');
     await channelsPage.toBeVisible();
 
-    const editor = new WysiwygEditor(page.getByTestId('post-create'));
+    const editor = new WysiwygEditor(page.getByTestId('center.composer'));
     await editor.toBeVisible();
     await expect(page.locator('.WysiwygEditor .ProseMirror')).toHaveCount(1);
 });

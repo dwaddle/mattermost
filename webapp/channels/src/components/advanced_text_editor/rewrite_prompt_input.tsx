@@ -4,6 +4,7 @@
 import React, {forwardRef, useCallback, useEffect, useRef} from 'react';
 
 import {CreationOutlineIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Input from 'components/widgets/inputs/input/input';
 
@@ -12,6 +13,9 @@ type Props = {
     placeholder: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+
+    /** The input is `<testId>--textbox`. */
+    testId?: TestId;
 };
 
 // A fully controlled input re-asserts its value into the DOM on every render, which discards
@@ -23,7 +27,7 @@ type Props = {
 // The value prop can also lag behind what was typed (the formatting bar re-renders this input
 // from a deferred render), so a value the input already reported through onChange is an echo of
 // older input and is never written back; only other values are external changes to apply.
-const RewritePromptInput = forwardRef<HTMLInputElement, Props>(({value, placeholder, onChange, onKeyDown}, ref) => {
+const RewritePromptInput = forwardRef<HTMLInputElement, Props>(({value, placeholder, onChange, onKeyDown, testId}, ref) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const isComposingRef = useRef(false);
     const reportedValuesRef = useRef<string[]>([]);
@@ -79,6 +83,7 @@ const RewritePromptInput = forwardRef<HTMLInputElement, Props>(({value, placehol
             onKeyDown={onKeyDown}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
+            testId={testId}
         />
     );
 });

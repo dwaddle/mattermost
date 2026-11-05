@@ -10,39 +10,44 @@ import {
     typeHangulWithIme,
 } from '@mattermost/playwright-lib';
 
+/**
+ * Written on the generated page objects: the sidebar's Find Channels button returns the channel switcher, whose
+ * results are keyed by channel id.
+ */
 test('Find Channels modal handles Korean IME input correctly', async ({pw, browserName}) => {
     test.skip(browserName !== 'chromium', 'The API used to test this is only available in Chrome');
 
     const {adminClient, user, team} = await pw.initSetup();
 
     // # Create a channel named after the test phrase
-    const fullMatchChannel = pw.random.channel({
-        teamId: team.id,
-        name: 'full-match-channel',
-        displayName: koreanTestPhrase,
-    });
-    await adminClient.createChannel(fullMatchChannel);
+    const fullMatchChannel = await adminClient.createChannel(
+        pw.random.channel({
+            teamId: team.id,
+            name: 'full-match-channel',
+            displayName: koreanTestPhrase,
+        }),
+    );
 
     // # And create a channel matching part of the test phrase
-    const partialMatchChannel = pw.random.channel({
-        teamId: team.id,
-        name: 'partial-match-channel',
-        displayName: koreanTestPhrase.substring(0, 10),
-    });
-    await adminClient.createChannel(partialMatchChannel);
+    const partialMatchChannel = await adminClient.createChannel(
+        pw.random.channel({
+            teamId: team.id,
+            name: 'partial-match-channel',
+            displayName: koreanTestPhrase.substring(0, 10),
+        }),
+    );
 
     // # Log in and go to Channels
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const {app, page} = await pw.testBrowser.login(user);
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the channel switcher
-    await channelsPage.sidebarLeft.findChannelButton.click();
-    await channelsPage.findChannelsModal.toBeVisible();
+    const switcher = await app.lhs.header.clickFindChannelsButton();
 
     // # Focus the input
-    const input = channelsPage.findChannelsModal.input;
+    const input = switcher.searchTextbox.locator;
     await input.focus();
 
     const firstHalf = koreanTestPhrase.substring(0, 5);
@@ -55,8 +60,8 @@ test('Find Channels modal handles Korean IME input correctly', async ({pw, brows
     await expect(input).toHaveValue(firstHalf);
 
     // * Verify that both channels are visible
-    await expect(page.getByRole('option', {name: fullMatchChannel.display_name, exact: true})).toBeVisible();
-    await expect(page.getByRole('option', {name: partialMatchChannel.display_name, exact: true})).toBeVisible();
+    await expect(switcher.suggestions.item(fullMatchChannel.id).locator).toBeVisible();
+    await expect(switcher.suggestions.item(partialMatchChannel.id).locator).toBeVisible();
 
     // # Type the second half of the test phrase
     await typeHangulWithIme(page, secondHalf);
@@ -65,10 +70,14 @@ test('Find Channels modal handles Korean IME input correctly', async ({pw, brows
     await expect(input).toHaveValue(koreanTestPhrase);
 
     // * Verify that the first channel is still visible but that the second is not
-    await expect(page.getByRole('option', {name: fullMatchChannel.display_name, exact: true})).toBeVisible();
-    await expect(page.getByRole('option', {name: partialMatchChannel.display_name, exact: true})).not.toBeAttached();
+    await expect(switcher.suggestions.item(fullMatchChannel.id).locator).toBeVisible();
+    await expect(switcher.suggestions.item(partialMatchChannel.id).locator).not.toBeAttached();
 });
 
+/**
+ * Written on the generated page objects: the sidebar's Find Channels button returns the channel switcher, whose
+ * results are keyed by channel id.
+ */
 test('Find Channels autocomplete lists channel after each incomplete Korean character', async ({pw, browserName}) => {
     test.skip(browserName !== 'chromium', 'The API used to test this is only available in Chrome');
 
@@ -81,24 +90,24 @@ test('Find Channels autocomplete lists channel after each incomplete Korean char
     const randomPrefix = await pw.random.id(8);
 
     // # Create a channel named after the test phrase
-    const channel = pw.random.channel({
-        teamId: team.id,
-        name: 'korean-autocomplete-channel',
-        displayName: randomPrefix + koreanTestPhrase,
-    });
-    await adminClient.createChannel(channel);
+    const channel = await adminClient.createChannel(
+        pw.random.channel({
+            teamId: team.id,
+            name: 'korean-autocomplete-channel',
+            displayName: randomPrefix + koreanTestPhrase,
+        }),
+    );
 
     // # Log in and go to Channels
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the Find Channels modal
-    await channelsPage.sidebarLeft.findChannelButton.click();
-    await channelsPage.findChannelsModal.toBeVisible();
+    const switcher = await app.lhs.header.clickFindChannelsButton();
 
     // # Focus the input
-    const input = channelsPage.findChannelsModal.input;
+    const input = switcher.searchTextbox.locator;
     await input.focus();
 
     await input.fill(randomPrefix);
@@ -115,7 +124,7 @@ test('Find Channels autocomplete lists channel after each incomplete Korean char
         await expect(input).toHaveValue(randomPrefix + koreanTestPhrase.substring(0, i + 1));
 
         // * Verify that the channel appears in the autocomplete results
-        await expect(page.getByRole('option', {name: channel.display_name, exact: true})).toBeVisible();
+        await expect(switcher.suggestions.item(channel.id).locator).toBeVisible();
     }
 
     await client.detach();

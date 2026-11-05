@@ -21,11 +21,11 @@ export default class ScheduledPostsPage {
     constructor(page: Page) {
         this.page = page;
 
-        this.draftsHeader = page.getByTestId('drafts-header');
+        this.draftsHeader = page.getByTestId('drafts.header');
         this.tab = page.getByRole('tab', {name: 'Scheduled'});
-        this.badge = this.tab.getByTestId('scheduled-posts-tab-counter-badge');
+        this.badge = this.tab.getByTestId('drafts.tabs.scheduled_count--text');
 
-        this.noScheduledDrafts = page.getByTestId('no-results-wrapper');
+        this.noScheduledDrafts = page.getByTestId('no_results');
 
         this.scheduleMessageModal = new components.ScheduleMessageModal(
             page.getByRole('dialog', {name: 'Schedule message'}),
@@ -46,23 +46,26 @@ export default class ScheduledPostsPage {
 
     async getBadgeCountOnTab() {
         await expect(this.tab).toBeVisible();
-        const badge = this.tab.getByTestId('scheduled-posts-tab-counter-badge');
+        const badge = this.tab.getByTestId('drafts.tabs.scheduled_count--text');
         await expect(badge).toBeVisible();
         return badge.textContent();
     }
 
     async getLastPost() {
-        const lastPost = this.page.getByTestId('scheduledPostView').last();
+        const lastPost = this.page.getByTestId(/^drafts\.scheduled\.post:/).last();
         await lastPost.waitFor();
         return new components.ScheduledPost(lastPost);
     }
 
     async getLastPostID() {
-        return this.page.getByTestId('scheduledPostView').last().getAttribute('data-postid');
+        return this.page
+            .getByTestId(/^drafts\.scheduled\.post:/)
+            .last()
+            .getAttribute('data-postid');
     }
 
     async getNthPost(index: number) {
-        const nthPost = this.page.getByTestId('scheduledPostView').nth(index);
+        const nthPost = this.page.getByTestId(/^drafts\.scheduled\.post:/).nth(index);
         await nthPost.waitFor();
         return new components.ScheduledPost(nthPost);
     }

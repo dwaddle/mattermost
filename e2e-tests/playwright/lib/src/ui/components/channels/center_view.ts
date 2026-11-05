@@ -36,19 +36,21 @@ export default class ChannelsCenterView {
         this.page = page;
 
         this.header = new ChannelsHeader(this.container.locator('#channel-header'));
-        this.postCreate = new ChannelsPostCreate(container.getByTestId('post-create'));
+        this.postCreate = new ChannelsPostCreate(container.getByTestId('center.composer'));
         this.scheduledDraftOptions = new ChannelsPostCreate(container.locator('#dropdown_send_post_options'));
-        this.postEdit = new ChannelsPostEdit(container.getByTestId('post-edit-container'));
-        this.scheduledPostIndicator = new ScheduledPostIndicator(container.getByTestId('scheduledPostIndicator'));
+        this.postEdit = new ChannelsPostEdit(container.getByTestId('post_edit'));
+        this.scheduledPostIndicator = new ScheduledPostIndicator(
+            container.getByTestId('center.post_create.scheduled_post_indicator'),
+        );
         this.editedPostIcon = (postID: string) => container.locator(`#postEdited_${postID}`);
-        this.channelBanner = container.getByTestId('channel_banner_container');
-        this.autotranslationBadge = container.getByTestId('autotranslation-badge');
+        this.channelBanner = container.getByTestId('center.channel_banner');
+        this.autotranslationBadge = container.getByTestId('channel_header.autotranslation_badge--text');
         this.flagPostConfirmationDialog = new FlagPostConfirmationDialog(
             page.getByRole('dialog', {name: 'Quarantine for Review'}),
             page,
         );
         this.notificationSeparator = container.locator('.NotificationSeparator');
-        this.postViews = container.getByTestId('postView');
+        this.postViews = container.getByTestId(/^center\.post_list\.post:/);
         this.channelIntro = container.locator('#channelIntro');
     }
 
@@ -65,7 +67,7 @@ export default class ChannelsCenterView {
      * Return the first post in the Center
      */
     async getFirstPost() {
-        const firstPost = this.container.getByTestId('postView').first();
+        const firstPost = this.container.getByTestId(/^center\.post_list\.post:/).first();
         await firstPost.waitFor();
         return new ChannelsPost(firstPost);
     }
@@ -74,7 +76,7 @@ export default class ChannelsCenterView {
      * Return the last post in the Center
      */
     async getLastPost() {
-        const lastPost = this.container.getByTestId('postView').last();
+        const lastPost = this.container.getByTestId(/^center\.post_list\.post:/).last();
         await lastPost.waitFor();
         return new ChannelsPost(lastPost);
     }
@@ -83,7 +85,10 @@ export default class ChannelsCenterView {
      * Return the Center post whose body contains the given text.
      */
     async getPostByText(text: string) {
-        const post = this.container.getByTestId('postView').filter({hasText: text}).last();
+        const post = this.container
+            .getByTestId(/^center\.post_list\.post:/)
+            .filter({hasText: text})
+            .last();
         await expect(post).toBeVisible();
         return new ChannelsPost(post);
     }
@@ -92,10 +97,13 @@ export default class ChannelsCenterView {
      * Return the concealed BoR post, pinned by post id so the locator survives reveal.
      */
     async getConcealedBorPost() {
-        const placeholder = this.container.getByTestId(/^burn-on-read-concealed-/).last();
-        await expect(placeholder).toBeVisible();
-        const testId = await placeholder.getAttribute('data-testid');
-        return this.getPostById((testId || '').replace('burn-on-read-concealed-', ''));
+        const post = this.container
+            .getByTestId(/\.post:[a-z0-9]+$/)
+            .filter({has: this.container.page().getByTestId(/\.post\.reveal--button$/)})
+            .last();
+        await expect(post).toBeVisible();
+        const testId = (await post.getAttribute('data-testid')) || '';
+        return this.getPostById(testId.slice(testId.lastIndexOf(':') + 1));
     }
 
     /**
@@ -112,7 +120,7 @@ export default class ChannelsCenterView {
      * @returns
      */
     async getNthPost(index: number) {
-        const nthPost = this.container.getByTestId('postView').nth(index);
+        const nthPost = this.container.getByTestId(/^center\.post_list\.post:/).nth(index);
         await nthPost.waitFor();
         return new ChannelsPost(nthPost);
     }
@@ -181,7 +189,7 @@ export default class ChannelsCenterView {
     }
 
     async assertChannelBannerTextNotClipped() {
-        const bannerText = this.channelBanner.getByTestId('channel_banner_text');
+        const bannerText = this.channelBanner.getByTestId('center.channel_banner.text--text');
         await expect(bannerText).toBeVisible();
         await this.assertElementContainedInBanner(bannerText);
     }
@@ -211,7 +219,7 @@ export default class ChannelsCenterView {
     }
 
     async assertChannelBannerHasEmoticon() {
-        const emoji = this.channelBanner.getByTestId(/^postEmoji\./).first();
+        const emoji = this.channelBanner.getByTestId(/^markdown\.emoji:/).first();
         await expect(emoji).toBeVisible();
 
         const backgroundImage = await emoji.evaluate((el) => {
@@ -222,7 +230,7 @@ export default class ChannelsCenterView {
     }
 
     async assertChannelBannerImageEmojiSize(expectedSizePx: number) {
-        const emoji = this.channelBanner.getByTestId(/^postEmoji\./).first();
+        const emoji = this.channelBanner.getByTestId(/^markdown\.emoji:/).first();
         await expect(emoji).toBeVisible();
 
         const {width, height} = await emoji.evaluate((el) => {
@@ -240,7 +248,7 @@ export default class ChannelsCenterView {
     }
 
     async assertChannelBannerUnicodeEmojiSize(expectedSizePx: number) {
-        const emoji = this.channelBanner.getByTestId('channel-banner-unicode-emoji').first();
+        const emoji = this.channelBanner.getByTestId('markdown.unicode_emoji--text').first();
         await expect(emoji).toBeVisible();
 
         const fontSize = await emoji.evaluate((el) => {

@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import ExternalLink from 'components/external_link';
 
 import menuItem from './menu_item';
@@ -12,11 +14,15 @@ type Props = {
     text: React.ReactNode;
     onClick?: (event: React.MouseEvent<HTMLElement>) => void;
     iconClassName?: string;
+
+    /** Renders `<testId>--link`. */
+    testId?: TestId;
 };
-export const MenuItemExternalLinkImpl: React.FC<Props> = ({url, text, iconClassName, onClick}: Props) => (
+export const MenuItemExternalLinkImpl: React.FC<Props> = ({url, text, iconClassName, onClick, testId}: Props) => (
     <ExternalLink
         href={url}
         onClick={onClick}
+        data-testid={testId ? `${testId}--link` : undefined}
         location='menu_item_external_link'
     >
         {iconClassName && <i className={`icon ${iconClassName}`}/>}

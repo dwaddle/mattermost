@@ -217,7 +217,7 @@ class ChannelHeader extends React.PureComponent<Props> {
                 >
                     <div
                         className='autotranslation-header'
-                        data-testid='autotranslation-badge'
+                        data-testid='channel_header.autotranslation_badge--text'
                     >
                         <Tag
                             text={this.props.intl.formatMessage({id: 'channel_header.autotranslationMessage', defaultMessage: 'Auto-translated'})}
@@ -298,6 +298,7 @@ class ChannelHeader extends React.PureComponent<Props> {
                 active={rhsState === RHSStates.PIN}
                 buttonClass='channel-header__icon channel-header__icon--wide'
                 buttonId={'channelHeaderPinButton'}
+                testId='channel_header.pinned_messages'
                 count={this.props.pinnedPostsCount}
                 countId='channelPinnedPostCountText'
                 onClick={this.showPinnedPosts}
@@ -318,7 +319,7 @@ class ChannelHeader extends React.PureComponent<Props> {
                         <span
                             className='channel-header__join-request-badge'
                             aria-hidden='true'
-                            data-testid='channelHeaderJoinRequestBadge'
+                            data-testid='channel_header.join_request_badge--text'
                         />
                     )}
                 </span>
@@ -332,6 +333,7 @@ class ChannelHeader extends React.PureComponent<Props> {
                     )}
                     buttonClass='member-rhs__trigger channel-header__icon channel-header__icon--wide'
                     buttonId={'member_rhs'}
+                    testId='channel_header.members'
                     count={this.props.memberCount}
                     countId='channelMemberCountText'
                     onClick={this.toggleChannelMembersRHS}
@@ -400,6 +402,7 @@ class ChannelHeader extends React.PureComponent<Props> {
                                             active={rhsState === RHSStates.CHANNEL_FILES}
                                             buttonClass='channel-header__icon'
                                             buttonId={'channelHeaderFilesButton'}
+                                            testId='channel_header.files'
                                             onClick={this.showChannelFiles}
                                             tooltip={this.props.intl.formatMessage(messages.files[channelKind])}
                                         >
@@ -443,6 +446,7 @@ class ChannelHeader extends React.PureComponent<Props> {
                         <PopoutButton
                             className='channel-header__icon channel-header__icon--small'
                             onClick={this.popoutChannelView}
+                            testId='channel_header.popout'
                         />
                     )}
                     <ChannelInfoButton channel={channel}/>

@@ -11,6 +11,7 @@
 // Group: @channels @keyboard_shortcuts
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
+import {quickSwitchChannelItem} from '@/utils/suggestion';
 
 describe('Keyboard Shortcuts', () => {
     let teamName;
@@ -48,13 +49,13 @@ describe('Keyboard Shortcuts', () => {
         cy.wait(TIMEOUTS.HALF_SEC);
 
         // * Confirm the first matching public channel is selected
-        cy.get('#suggestionList').findByTestId(firstChannel.name).should('be.visible').and('have.class', 'suggestion--selected');
+        quickSwitchChannelItem(firstChannel).should('be.visible').and('have.class', 'suggestion--selected');
 
         // # Press down arrow
         cy.get('body').type('{downarrow}');
 
         // * Confirm the second matching public channel is selected
-        cy.get('#suggestionList').findByTestId(secondChannel.name).should('be.visible').and('have.class', 'suggestion--selected');
+        quickSwitchChannelItem(secondChannel).should('be.visible').and('have.class', 'suggestion--selected');
 
         // # Press ENTER
         cy.get('body').type('{enter}');

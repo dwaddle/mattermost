@@ -4,6 +4,8 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import menuItem from './menu_item';
 
 type Props = {
@@ -17,6 +19,9 @@ type Props = {
     disabled?: boolean;
     sibling?: React.ReactNode;
     iconClassName?: string;
+
+    /** Renders `<testId>--button`; without it the button's testid is its id. */
+    testId?: TestId;
 };
 export const MenuItemActionImpl = ({
     onClick,
@@ -29,10 +34,11 @@ export const MenuItemActionImpl = ({
     disabled,
     sibling,
     iconClassName,
+    testId,
 }: Props) => (
     <>
         <button
-            data-testid={id}
+            data-testid={testId ? `${testId}--button` : id}
             id={id}
             className={classNames('style--none', buttonClass, {
                 'MenuItem__with-help': extraText,

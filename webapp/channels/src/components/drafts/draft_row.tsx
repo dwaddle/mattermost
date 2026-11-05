@@ -7,6 +7,7 @@ import {useIntl} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ServerError} from '@mattermost/types/errors';
 import type {FileInfo} from '@mattermost/types/files';
 import {isRecurringScheduledPost} from '@mattermost/types/schedule_post';
@@ -251,6 +252,7 @@ function DraftRow({
                 onSend={handleOnSend}
                 canEdit={canEdit}
                 canSend={canSend}
+                testIdScope='drafts.list.draft'
                 onSchedule={onScheduleDraft}
                 repeatDisabledReason={getDraftRepeatDisabledReason(item)}
             />
@@ -325,6 +327,7 @@ function DraftRow({
                 onSend={handleScheduledPostOnSend}
                 onEdit={handleSchedulePostEdit}
                 onCopyText={handleCopyText}
+                testIdScope='drafts.scheduled.post'
             />
         );
     }, [
@@ -387,9 +390,13 @@ function DraftRow({
 
     const kind = isScheduledPost ? 'scheduledPost' : 'draft';
 
+    // an item of its list: a draft keyed by its thread or channel, a scheduled post by its id
+    const testIdScope: TestId = isScheduledPost ? 'drafts.scheduled.post' : 'drafts.list.draft';
+    const testId: TestId = isScheduledPost ? `drafts.scheduled.post:${(item as ScheduledPost).id}` : `drafts.list.draft:${rootId || channelId}`;
+
     return (
         <Panel
-            dataTestId={`${kind}View`}
+            testId={testId}
             dataPostId={(item as ScheduledPost).id}
             onClick={goToMessage}
             hasError={Boolean(postError)}
@@ -409,6 +416,7 @@ function DraftRow({
         >
             <Header
                 kind={kind}
+                testIdScope={testIdScope}
                 actions={actions}
                 title={title}
                 timestamp={timestamp}
@@ -422,10 +430,12 @@ function DraftRow({
                     onCancel={handleCancelEdit}
                     afterSave={handleCancelEdit}
                     onDeleteScheduledPost={handleSchedulePostOnDelete}
+                    testId='drafts.scheduled.post.editor'
                 />
             )}
             {!isEditing && (
                 <PanelBody
+                    testIdScope={testIdScope}
                     channelId={channel?.id}
                     displayName={displayName}
                     fileInfos={fileInfos}

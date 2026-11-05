@@ -1,6 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {Post} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {PlaywrightClient4} from './playwright_client';
@@ -68,3 +69,12 @@ type ClientCache = {
     client: PlaywrightClient4;
     user: UserProfile | null;
 };
+
+/**
+ * Creates a post as `user`, through that user's own (cached) client. `adminClient.createPost({user_id})` does the
+ * same for users this run created or logged in as (the server always makes the session's user the author).
+ */
+export async function postAs(user: UserRequest, post: Parameters<PlaywrightClient4['createPost']>[0]): Promise<Post> {
+    const {client} = await makeClient(user);
+    return client.createPost(post);
+}

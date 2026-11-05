@@ -8,6 +8,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import tinycolor from 'tinycolor2';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {getMissingProfilesByIds} from 'mattermost-redux/actions/users';
@@ -28,6 +29,7 @@ type Props = {
     totalUsers?: number;
     size?: ComponentProps<typeof Avatar>['size'];
     fetchMissingUsers?: boolean;
+    testIdScope?: TestId;
 };
 
 const OTHERS_DISPLAY_LIMIT = 99;
@@ -87,6 +89,7 @@ function Avatars({
     userIds,
     totalUsers,
     fetchMissingUsers = true,
+    testIdScope,
 }: Props) {
     const {formatMessage} = useIntl();
     const dispatch = useDispatch();
@@ -133,6 +136,7 @@ function Avatars({
     return (
         <div
             className={`Avatars Avatars___${size}`}
+            data-testid={testIdScope}
         >
             {displayUserIds.map((id) => (
                 <UserAvatar
@@ -140,6 +144,7 @@ function Avatars({
                     key={id}
                     userId={id}
                     size={size}
+                    data-testid={testIdScope ? `${testIdScope}.avatar:${id}--img` : undefined}
                 />
             ))}
             {Boolean(nonDisplayCount) && (
@@ -150,6 +155,7 @@ function Avatars({
                         style={avatarStyle}
                         size={size}
                         tabIndex={0}
+                        data-testid={testIdScope ? `${testIdScope}.others--text` : undefined}
                         text={nonDisplayCount > OTHERS_DISPLAY_LIMIT ? `${OTHERS_DISPLAY_LIMIT}+` : `+${nonDisplayCount}`}
                     />
                 </WithTooltip>

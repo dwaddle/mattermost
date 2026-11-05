@@ -6,6 +6,7 @@ import React, {memo, useCallback, useEffect} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import {isRecurringScheduledPost} from '@mattermost/types/schedule_post';
 import type {ScheduledPost, SchedulingInfo} from '@mattermost/types/schedule_post';
@@ -76,9 +77,13 @@ type Props = {
     onSend: (scheduledPostId: string) => void;
     onEdit: () => void;
     onCopyText: () => void;
+
+    // The row's scope (`drafts.scheduled.post`): actions are `<scope>.delete--button`, `.edit`, `.copy_text`,
+    // `.reschedule`, `.send_now`.
+    testIdScope?: TestId;
 };
 
-function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, onSend, onEdit, onCopyText}: Props) {
+function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, onSend, onEdit, onCopyText, testIdScope}: Props) {
     const dispatch = useDispatch();
     const userTimezone = useSelector(getCurrentTimezone);
     const myChannelsMemberships = useSelector((state: GlobalState) => getMyChannelMemberships(state));
@@ -166,6 +171,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                 icon='icon-trash-can-outline'
                 id='delete'
                 name='delete'
+                testId={testIdScope ? `${testIdScope}.delete` : undefined}
                 tooltipText={deleteTooltipText}
                 onClick={handleDelete}
             />
@@ -176,6 +182,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                     icon='icon-pencil-outline'
                     id='edit'
                     name='edit'
+                    testId={testIdScope ? `${testIdScope}.edit` : undefined}
                     tooltipText={editTooltipText}
                     onClick={onEdit}
 
@@ -186,6 +193,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                 icon='icon-content-copy'
                 id='copy_text'
                 name='copy_text'
+                testId={testIdScope ? `${testIdScope}.copy_text` : undefined}
                 tooltipText={copyTextTooltipText}
                 onClick={onCopyText}
             />
@@ -196,6 +204,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                     icon='icon-clock-send-outline'
                     id='reschedule'
                     name='reschedule'
+                    testId={testIdScope ? `${testIdScope}.reschedule` : undefined}
                     tooltipText={rescheduleTooltipText}
                     onClick={handleReschedulePost}
                 />
@@ -207,6 +216,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                     icon='icon-send-outline'
                     id='sendNow'
                     name='sendNow'
+                    testId={testIdScope ? `${testIdScope}.send_now` : undefined}
                     tooltipText={sendNowTooltipText}
                     onClick={handleSend}
                 />

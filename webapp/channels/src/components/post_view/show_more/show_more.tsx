@@ -4,6 +4,8 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 export type AttachmentTextOverflowType = 'ellipsis';
 
 const MAX_POST_HEIGHT = 600;
@@ -19,6 +21,9 @@ type Props = {
     compactDisplay: boolean;
     overflowType?: AttachmentTextOverflowType;
     maxHeight?: number;
+
+    // The Show more / Show less button is `<testId>.show_more--button`.
+    testId?: TestId;
 };
 
 type State = {
@@ -156,6 +161,7 @@ export default class ShowMore extends React.PureComponent<Props, State> {
                     <button
                         id='showMoreButton'
                         className='post-preview-collapse__show-more-button color--link'
+                        data-testid={this.props.testId ? `${this.props.testId}.show_more--button` : undefined}
                         onClick={this.toggleCollapse}
                     >
                         {showText}
@@ -172,6 +178,7 @@ export default class ShowMore extends React.PureComponent<Props, State> {
                             <button
                                 id='showMoreButton'
                                 className='post-collapse__show-more-button'
+                                data-testid={this.props.testId ? `${this.props.testId}.show_more--button` : undefined}
                                 onClick={this.toggleCollapse}
                             >
                                 <span className={showIcon}/>

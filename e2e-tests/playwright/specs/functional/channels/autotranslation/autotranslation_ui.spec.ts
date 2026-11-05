@@ -293,7 +293,7 @@ test(
         // The mock appends "[translated to en]" to the original Spanish text, confirming
         // translation.state==='ready' so that "Show translation" will be in the dot menu.
         const messagePost = channelsPage.centerView.container
-            .getByTestId('postView')
+            .getByTestId(/^center\.post_list\.post:/)
             .filter({hasText: 'Este mensaje es para probar el menú de acciones'});
         await expect(messagePost.getByText(/\[translated to en\]/i)).toBeVisible({timeout: 15000});
 

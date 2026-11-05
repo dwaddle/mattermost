@@ -31,19 +31,20 @@ test('AI Rewrite custom prompt handles Korean IME input correctly', {tag: '@ai_r
     });
 
     // # Log in and go to the default channel.
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const {app, channelsPage, page} = await pw.testBrowser.login(user);
     await channelsPage.goto(team.name);
     await channelsPage.toBeVisible();
 
     // # Write a draft message so the Rewrite options become available.
-    await channelsPage.centerView.postCreate.writeMessage('Draft message to rewrite');
+    const composer = app.center.postCreate;
+    await composer.fillMessageTextbox('Draft message to rewrite');
 
     // # Open the AI Actions menu and reveal the Rewrite submenu with the custom prompt.
-    await page.getByRole('button', {name: 'AI Actions'}).click();
-    await page.getByRole('menuitem', {name: 'Rewrite'}).hover();
+    const menu = await composer.aiActions.clickOpenButton();
+    await menu.rewriteMenuItem.locator.hover();
 
     // # Focus the custom prompt input inside the Rewrite submenu.
-    const promptInput = page.getByRole('textbox', {name: 'Ask AI to edit message...'});
+    const promptInput = composer.aiActions.rewrite.promptTextbox.locator;
     await expect(promptInput).toBeVisible();
     await promptInput.focus();
     await expect(promptInput).toBeFocused();

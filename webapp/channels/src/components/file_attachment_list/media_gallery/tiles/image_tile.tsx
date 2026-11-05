@@ -5,6 +5,7 @@ import React, {useCallback} from 'react';
 import type {CSSProperties} from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
 import {getFilePreviewUrl, getFileThumbnailUrl, getFileUrl} from 'mattermost-redux/utils/file_utils';
@@ -21,9 +22,12 @@ type Props = {
     total: number;
     enablePublicLink: boolean;
     onClick: (index: number) => void;
+
+    /** The gallery's scope (`center.post_list.post.attachments`): the tile is `<scope>.file:<file id>--button`. */
+    testIdScope?: TestId;
 };
 
-const ImageTile = ({fileInfo, index, total, enablePublicLink, onClick}: Props) => {
+const ImageTile = ({fileInfo, index, total, enablePublicLink, onClick, testIdScope}: Props) => {
     const {formatMessage} = useIntl();
 
     const handleActivate = useCallback(() => {
@@ -64,7 +68,7 @@ const ImageTile = ({fileInfo, index, total, enablePublicLink, onClick}: Props) =
             role='button'
             tabIndex={0}
             aria-label={label}
-            data-testid='media-gallery-tile'
+            data-testid={testIdScope ? `${testIdScope}.file:${fileInfo.id}--button` : undefined}
             data-file-name={fileInfo.name || ''}
             style={tileSizeVars(fileInfo)}
             onKeyDown={handleKeyDown}

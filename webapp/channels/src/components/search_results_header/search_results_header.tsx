@@ -13,6 +13,7 @@ import {
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import KeyboardShortcutSequence, {KEYBOARD_SHORTCUTS} from 'components/keyboard_shortcuts/keyboard_shortcuts_sequence';
 import PopoutButton from 'components/popout_button';
@@ -25,10 +26,14 @@ import type {PropsFromRedux} from './index';
 export interface Props extends PropsFromRedux {
     children: React.ReactNode;
     newWindowHandler?: () => void;
+
+    /** Default `search.header`; a plugin's panel passes its own. */
+    testIdScope?: TestId;
 }
 
 function SearchResultsHeader(props: Props) {
     const {formatMessage} = useIntl();
+    const testIdScope = props.testIdScope ?? 'search.header';
 
     const showExpand = props.previousRhsState !== RHSStates.CHANNEL_INFO;
 
@@ -65,6 +70,7 @@ function SearchResultsHeader(props: Props) {
             <span
                 className='sidebar--right__title'
                 id='rhsPanelTitle'
+                data-testid={testIdScope}
             >
                 {props.canGoBack && (
                     <WithTooltip title={formatMessage({id: 'rhs_header.back.icon', defaultMessage: 'Back Icon'})}>
@@ -73,6 +79,7 @@ function SearchResultsHeader(props: Props) {
                             className='sidebar--right__back'
                             icon={<Icon glyph={<ArrowBackIosIcon/>}/>}
                             onClick={props.actions.goBack}
+                            data-testid={`${testIdScope}.back--button`}
                             aria-label={formatMessage({id: 'rhs_header.back.icon', defaultMessage: 'Back Icon'})}
                         />
                     </WithTooltip>
@@ -87,12 +94,16 @@ function SearchResultsHeader(props: Props) {
                             className='sidebar--right__expand'
                             icon={<Icon glyph={props.isExpanded ? <ArrowCollapseIcon/> : <ArrowExpandIcon/>}/>}
                             onClick={props.actions.toggleRhsExpanded}
+                            data-testid={`${testIdScope}.expand--button`}
                             aria-label={expandOrCollapseSidebarButtonAriaLabel}
                         />
                     </WithTooltip>
                 )}
                 {props.newWindowHandler && (
-                    <PopoutButton onClick={props.newWindowHandler}/>
+                    <PopoutButton
+                        onClick={props.newWindowHandler}
+                        testId={`${testIdScope}.popout`}
+                    />
                 )}
                 {(!isPopoutWindow() || isChannelPopoutWindow()) &&
                     <WithTooltip
@@ -105,6 +116,7 @@ function SearchResultsHeader(props: Props) {
                     >
                         <IconButton
                             id='searchResultsCloseButton'
+                            data-testid={`${testIdScope}.close--button`}
                             size='small'
                             className='sidebar--right__close'
                             icon={<Icon glyph={<CloseIcon/>}/>}

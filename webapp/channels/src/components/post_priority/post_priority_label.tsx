@@ -4,6 +4,7 @@
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import {PostPriority} from '@mattermost/types/posts';
 
 import Tag from 'components/widgets/tag/tag';
@@ -13,10 +14,14 @@ type Props = {
     priority?: PostPriority | '';
     size?: TagSize;
     uppercase?: boolean;
+
+    /** The label's testid; without it the label is `post-priority-label`. */
+    testId?: TestId;
 };
 
 export default function PriorityLabel({
     priority,
+    testId,
     ...rest
 }: Props) {
     const {formatMessage} = useIntl();
@@ -29,7 +34,7 @@ export default function PriorityLabel({
                 icon={'alert-outline'}
                 text={formatMessage({id: 'post_priority.priority.urgent', defaultMessage: 'Urgent'})}
                 uppercase={true}
-                data-testid='post-priority-label'
+                data-testid={testId}
             />
         );
     }
@@ -42,7 +47,7 @@ export default function PriorityLabel({
                 icon={'alert-circle-outline'}
                 text={formatMessage({id: 'post_priority.priority.important', defaultMessage: 'Important'})}
                 uppercase={true}
-                data-testid='post-priority-label'
+                data-testid={testId}
             />
         );
     }

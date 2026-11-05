@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 
 import * as TIMEOUTS from '@/fixtures/timeouts';
 import {getAdminAccount} from '@/support/env';
+import {quickSwitchUserItem, suggestionItemSelector} from '@/utils/suggestion';
 
 describe('Verify Guest User Identification in different screens', () => {
     const admin = getAdminAccount();
@@ -61,7 +62,7 @@ describe('Verify Guest User Identification in different screens', () => {
         // # Open Channel Members RHS
         cy.get('#channelHeaderTitle').click();
         cy.get('#channelMembers').click().wait(TIMEOUTS.HALF_SEC);
-        cy.uiGetRHS().findByTestId(`memberline-${guestUser.id}`).within(($el) => {
+        cy.uiGetRHS().findByTestId(`rhs.channel_members.member:${guestUser.id}`).within(($el) => {
             cy.wrap($el).get('.Tag').should('be.visible').should('have.text', 'GUEST');
         });
     });
@@ -137,7 +138,7 @@ describe('Verify Guest User Identification in different screens', () => {
 
         // * Verify if Guest badge is displayed for the guest user in the Switch Channel Dialog
         cy.get('#suggestionList').should('be.visible');
-        cy.findByTestId(guestUser.username).within(($el) => {
+        quickSwitchUserItem(guestUser).within(($el) => {
             cy.wrap($el).find('.Tag').should('be.visible').and('have.text', 'GUEST');
         });
 
@@ -207,7 +208,7 @@ describe('Verify Guest User Identification in different screens', () => {
 
         // * Verify Guest Badge is displayed at mention auto-complete
         cy.get('#suggestionList').should('be.visible');
-        cy.findByTestId(`mentionSuggestion_${guestUser.username}`).within(($el) => {
+        cy.get(suggestionItemSelector(`@${guestUser.username}`)).within(($el) => {
             cy.wrap($el).find('.Tag').should('be.visible').and('have.text', 'GUEST');
         });
     });
@@ -223,6 +224,6 @@ describe('Verify Guest User Identification in different screens', () => {
         });
 
         // # Close and Clear the Search Autocomplete
-        cy.findByTestId('searchBoxClose').click({force: true});
+        cy.findByTestId('search_box.close--button').click({force: true});
     });
 });

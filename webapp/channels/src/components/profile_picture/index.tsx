@@ -4,6 +4,8 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import ProfilePopover from 'components/profile_popover';
 import StatusIcon from 'components/status_icon';
 import StatusIconNew from 'components/status_icon_new';
@@ -27,6 +29,9 @@ type Props = {
     overwriteName?: string;
     newStatusIcon?: boolean;
     statusClass?: string;
+
+    // The avatar's wrapper; without it, no testid.
+    testId?: TestId;
 };
 
 function ProfilePicture(props: Props) {
@@ -60,7 +65,7 @@ function ProfilePicture(props: Props) {
                 <>
                     <span
                         className={profileIconClass}
-                        data-testid='profile-icon'
+                        data-testid={props.testId}
                     >
                         <Avatar
                             username={props.username}
@@ -68,7 +73,10 @@ function ProfilePicture(props: Props) {
                             url={props.src}
                         />
                     </span>
-                    <StatusIcon status={props.status}/>
+                    <StatusIcon
+                        status={props.status}
+                        testId={props.testId ? `${props.testId}.status` : undefined}
+                    />
                 </>
             </ProfilePopover>
         );
@@ -80,7 +88,7 @@ function ProfilePicture(props: Props) {
         >
             <span
                 className={profileIconClass}
-                data-testid='profile-icon'
+                data-testid={props.testId}
             >
                 <Avatar
                     size={props?.size ?? 'md'}
@@ -93,7 +101,10 @@ function ProfilePicture(props: Props) {
                     status={props.status}
                 />
             ) : (
-                <StatusIcon status={props.status}/>
+                <StatusIcon
+                    status={props.status}
+                    testId={props.testId ? `${props.testId}.status` : undefined}
+                />
             )}
         </span>
     );

@@ -38,6 +38,9 @@ type Props = {
     theme: Theme;
     actionExecuting?: boolean;
     actionExecutingMessage?: string;
+
+    /** Testid path; the button renders `<testId>--button`. */
+    testId?: string;
 };
 
 const ActionButton = ({
@@ -47,6 +50,7 @@ const ActionButton = ({
     theme,
     actionExecuting = false,
     actionExecutingMessage,
+    testId,
 }: Props) => {
     const handleActionClick = useCallback((e: React.MouseEvent) => handleAction(e, action.options), [action.options, handleAction]);
     let hexColor: string | null | undefined;
@@ -84,6 +88,7 @@ const ActionButton = ({
         <Button
             data-action-id={action.id}
             data-action-cookie={action.cookie}
+            data-testid={testId ? `${testId}--button` : undefined}
             disabled={disabled || actionExecuting}
             onClick={handleActionClick}
             size='small'

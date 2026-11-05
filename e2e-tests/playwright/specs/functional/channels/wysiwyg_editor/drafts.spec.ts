@@ -22,7 +22,7 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         await channelsPage.goto(team.name, 'off-topic');
         await channelsPage.toBeVisible();
 
-        const editor = new WysiwygEditor(page.getByTestId('post-create'));
+        const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
 
         const offTopicDraft = `off-topic-draft-${pw.random.id()}`;
@@ -57,7 +57,7 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         await channelsPage.goto(team.name, 'off-topic');
         await channelsPage.toBeVisible();
 
-        const editor = new WysiwygEditor(page.getByTestId('post-create'));
+        const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
 
         const msg = `wysiwyg quick send ${pw.random.id()}`;
@@ -83,7 +83,7 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         await channelsPage.goto(team.name, 'off-topic');
         await channelsPage.toBeVisible();
 
-        const editor = new WysiwygEditor(page.getByTestId('post-create'));
+        const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
 
         const draft = `restored-draft-${pw.random.id()}`;
@@ -115,14 +115,14 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         await channelsPage.goto(team.name, 'off-topic');
         await channelsPage.toBeVisible();
 
-        const editor = new WysiwygEditor(page.getByTestId('post-create'));
+        const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         const msg = `edit-me ${pw.random.id()}`;
         await editor.postMessage(msg);
         await (await channelsPage.getLastPost()).toContainText(msg);
 
         // # Open the last post for editing and type without moving the cursor
         await editor.press('ArrowUp');
-        const editInput = page.getByTestId('post-edit-container').getByTestId('edit_textbox');
+        const editInput = page.getByTestId('post_edit.editor.message--textbox');
         await expect(editInput).toHaveText(msg);
         await expect(editInput).toBeFocused();
         await page.keyboard.type(' edited');
@@ -132,7 +132,7 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         await editInput.press('Enter');
 
         // * The post shows the appended text
-        await expect(page.getByTestId('post-edit-container')).toHaveCount(0);
+        await expect(page.getByTestId('post_edit.editor')).toHaveCount(0);
         await (await channelsPage.getLastPost()).toContainText(`${msg} edited`);
     });
 });

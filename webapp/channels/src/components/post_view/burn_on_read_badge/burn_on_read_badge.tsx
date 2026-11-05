@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 
 import {FireIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
 import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
@@ -27,6 +28,9 @@ type Props = {
     maxExpireAt?: number | null;
     onReveal?: (postId: string) => void;
     onSenderDelete?: () => void;
+
+    // The post's scope; without it, the legacy testid.
+    testIdScope?: TestId;
 };
 
 function BurnOnReadBadge({
@@ -37,6 +41,7 @@ function BurnOnReadBadge({
     maxExpireAt,
     onReveal,
     onSenderDelete,
+    testIdScope,
 }: Props) {
     const {formatMessage} = useIntl();
 
@@ -220,7 +225,7 @@ function BurnOnReadBadge({
                     <button
                         type='button'
                         className='BurnOnReadBadge'
-                        data-testid={`burn-on-read-badge-${post.id}`}
+                        data-testid={testIdScope ? `${testIdScope}.burn_on_read--button` : `burn-on-read-badge-${post.id}`}
                         aria-label={getAriaLabel()}
                         onClick={isInteractive ? handleClick : undefined}
                         disabled={!isInteractive}

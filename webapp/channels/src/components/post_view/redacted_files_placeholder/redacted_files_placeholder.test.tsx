@@ -10,20 +10,26 @@ import RedactedFilesPlaceholder from './index';
 describe('RedactedFilesPlaceholder', () => {
     it('should render title "Files not available"', () => {
         renderWithContext(
-            <RedactedFilesPlaceholder count={1}/>,
+            <RedactedFilesPlaceholder
+                count={1}
+                testIdScope='x.post'
+            />,
         );
 
-        const placeholder = screen.getByTestId('redactedFilesPlaceholder');
+        const placeholder = screen.getByTestId('x.post.redacted_files');
         expect(placeholder).toBeInTheDocument();
         expect(placeholder).toHaveTextContent(/Files not available/);
     });
 
     it('should render subtitle about attribute restriction', () => {
         renderWithContext(
-            <RedactedFilesPlaceholder count={1}/>,
+            <RedactedFilesPlaceholder
+                count={1}
+                testIdScope='x.post'
+            />,
         );
 
-        expect(screen.getByTestId('redactedFilesPlaceholder')).toHaveTextContent(
+        expect(screen.getByTestId('x.post.redacted_files')).toHaveTextContent(
             /Access to files is restricted based on attributes/,
         );
     });
@@ -52,7 +58,10 @@ describe('RedactedFilesPlaceholder', () => {
 
     it('should render file icon', () => {
         const {container} = renderWithContext(
-            <RedactedFilesPlaceholder count={1}/>,
+            <RedactedFilesPlaceholder
+                count={1}
+                testIdScope='x.post'
+            />,
         );
 
         expect(container.querySelector('svg')).toBeInTheDocument();

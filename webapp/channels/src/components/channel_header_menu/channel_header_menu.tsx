@@ -8,6 +8,7 @@ import {defineMessage, useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import ChevronDownIcon from '@mattermost/compass-icons/components/chevron-down';
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {
@@ -114,6 +115,7 @@ export default function ChannelHeaderMenu({dmUser, gmMembers, isMobile, archived
             <Menu.Item
                 id={item.id + '_pluginmenuitem'}
                 key={item.id + '_pluginmenuitem'}
+                data-testid={`channel_header.menu.plugin:${pluginTestKey(item.pluginId)}--menuitem`}
                 onClick={handlePluginItemClick}
                 labels={<span>{item.text}</span>}
             />
@@ -127,6 +129,7 @@ export default function ChannelHeaderMenu({dmUser, gmMembers, isMobile, archived
             }}
             menuButton={{
                 id: 'channelHeaderDropdownButton',
+                dataTestId: isMobile ? 'mobile_header.open_menu--button' : 'channel_header.open_menu--button',
                 class: classNames('channel-header__trigger style--none'),
                 children: (
                     <>
@@ -157,7 +160,10 @@ export default function ChannelHeaderMenu({dmUser, gmMembers, isMobile, archived
             }}
         >
             {canPopout() && !isChannelPopoutWindow() && (
-                <MenuItemOpenInNewWindow channel={channel}/>
+                <MenuItemOpenInNewWindow
+                    channel={channel}
+                    data-testid='channel_header.menu.open_in_new_window--menuitem'
+                />
             )}
             {isDirect && (
                 <ChannelDirectMenu

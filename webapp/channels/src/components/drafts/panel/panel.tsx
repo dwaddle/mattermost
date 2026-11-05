@@ -4,6 +4,8 @@
 import classNames from 'classnames';
 import React, {memo} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {makeIsEligibleForClick} from 'utils/utils';
 
 import './panel.scss';
@@ -16,7 +18,9 @@ type Props = {
     isHighlighted?: boolean;
     style?: React.CSSProperties;
     className?: string;
-    dataTestId?: string;
+
+    /** The item's testid (`drafts.list.draft:<channel or thread id>`); the panel renders `<testId>--link`. */
+    testId?: TestId;
     dataPostId?: string;
     ariaLabel?: string;
 };
@@ -31,7 +35,7 @@ function Panel({
     isHighlighted,
     style,
     className,
-    dataTestId,
+    testId,
     dataPostId,
     ariaLabel,
 }: Props) {
@@ -49,7 +53,7 @@ function Panel({
 
     return (
         <div
-            data-testid={dataTestId}
+            data-testid={testId ? `${testId}--link` : undefined}
             data-postid={dataPostId}
             className={classNames(
                 'Panel',

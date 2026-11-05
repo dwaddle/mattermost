@@ -4,8 +4,9 @@
 import type {Client4} from '@mattermost/client';
 import type {Page} from '@playwright/test';
 import type {UserProfile} from '@mattermost/types/users';
+import type {Channel} from '@mattermost/types/channels';
 
-import {duration, expect, type ChannelsPage, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {duration, expect, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 type DesktopNotificationLevel = 'all' | 'mention' | 'none';
 type NameFormat = 'username' | 'nickname_full_name' | 'full_name';
@@ -110,15 +111,28 @@ export async function expectNoNotification(pw: PlaywrightExtended, page: Page) {
  */
 export async function ensureSenderProfileLoaded(
     senderClient: Client4,
-    channelsPage: ChannelsPage,
+    app: App,
     viewedChannelId: string,
     pw: PlaywrightExtended,
     page: Page,
 ) {
     const marker = `notification-profile-sync ${Date.now()}`;
-    await senderClient.createPost({channel_id: viewedChannelId, message: marker});
-    await channelsPage.centerView.waitUntilLastPostContains(marker);
+    const post = await senderClient.createPost({channel_id: viewedChannelId, message: marker});
+    await expect(app.center.postList.post(post).messageText.locator).toHaveText(marker);
     await pw.clearCapturedNotifications(page);
+}
+
+/**
+ * Opens a channel and waits for the app to be up (the generated `goto` waits only for the document), so
+ * notifications for posts made next are not missed.
+ */
+export async function openChannel(app: App, team: {name: string}, channel: Channel) {
+    await app.channelsPage.goto({team, channel});
+}
+
+/** The channel's sidebar link reads as unread: "… unread", or "… N mention(s)" when it has mentions. */
+export async function expectUnread(app: App, channel: Channel) {
+    await expect(app.lhs.channelList.channel(channel).link.locator).toHaveAccessibleName(/ (unread|\d+ mentions?)$/);
 }
 
 export async function runDisplayNameCase(pw: PlaywrightExtended, testCase: DisplayNameCase) {
@@ -135,11 +149,10 @@ export async function runDisplayNameCase(pw: PlaywrightExtended, testCase: Displ
 
     const channel = await adminClient.getChannelByName(team.id, 'off-topic');
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-    const {page, channelsPage} = await pw.testBrowser.login(receiver);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {page, app} = await pw.testBrowser.login(receiver);
+    await openChannel(app, team, townSquare);
     await pw.stubNotification(page, 'granted');
-    await ensureSenderProfileLoaded(senderClient, channelsPage, townSquare.id, pw, page);
+    await ensureSenderProfileLoaded(senderClient, app, townSquare.id, pw, page);
 
     const message = `@${receiver.username} ${testCase.messageSuffix}`;
     await senderClient.createPost({channel_id: channel.id, message});
@@ -150,19 +163,14 @@ export async function runDisplayNameCase(pw: PlaywrightExtended, testCase: Displ
     });
 }
 
-async function waitForDirectMessageProcessing(
-    senderClient: Client4,
-    channelsPage: ChannelsPage,
-    syncChannelId: string,
-    syncChannelName: string,
-) {
+async function waitForDirectMessageProcessing(senderClient: Client4, app: App, syncChannel: Channel) {
     // Posting to a second channel after the DM forces the sender's websocket events to land in
     // order before we assert DM notification behavior.
     await senderClient.createPost({
-        channel_id: syncChannelId,
+        channel_id: syncChannel.id,
         message: `notification sync ${Date.now()}`,
     });
-    await channelsPage.sidebarLeft.assertItemUnread(syncChannelName);
+    await expectUnread(app, syncChannel);
 }
 
 export async function runNotificationSettingCase(pw: PlaywrightExtended, testCase: NotificationSettingCase) {
@@ -184,11 +192,10 @@ export async function runNotificationSettingCase(pw: PlaywrightExtended, testCas
     await adminClient.addToChannel(sender.id, syncChannel.id);
 
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-    const {page, channelsPage} = await pw.testBrowser.login(receiver);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {page, app} = await pw.testBrowser.login(receiver);
+    await openChannel(app, team, townSquare);
     await pw.stubNotification(page, 'granted');
-    await ensureSenderProfileLoaded(senderClient, channelsPage, townSquare.id, pw, page);
+    await ensureSenderProfileLoaded(senderClient, app, townSquare.id, pw, page);
 
     for (const channelMessage of testCase.channelMessages) {
         const message = channelMessage.message(receiver);
@@ -200,7 +207,7 @@ export async function runNotificationSettingCase(pw: PlaywrightExtended, testCas
                 body: `@${sender.username}: ${message}`,
             });
         } else {
-            await channelsPage.sidebarLeft.assertItemUnread(channel.name);
+            await expectUnread(app, channel);
             await expectNoNotification(pw, page);
         }
 
@@ -209,7 +216,7 @@ export async function runNotificationSettingCase(pw: PlaywrightExtended, testCas
 
     const directChannel = await adminClient.createDirectChannel([receiver.id, sender.id]);
     await senderClient.createPost({channel_id: directChannel.id, message: 'hi'});
-    await waitForDirectMessageProcessing(senderClient, channelsPage, syncChannel.id, syncChannel.name);
+    await waitForDirectMessageProcessing(senderClient, app, syncChannel);
 
     if (testCase.directMessageShouldNotify) {
         const notifications = await pw.waitForNotification(page);

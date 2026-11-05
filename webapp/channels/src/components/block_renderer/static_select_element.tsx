@@ -4,6 +4,7 @@
 import React, {useCallback, useContext, useMemo, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserAutocomplete} from '@mattermost/types/autocomplete';
 import type {Channel} from '@mattermost/types/channels';
 import type {ServerError} from '@mattermost/types/errors';
@@ -35,6 +36,9 @@ type StaticSelectElementProps = {
     element: MmStaticSelectBlock;
     postId: string;
     onAction: ActionHandler;
+
+    /** The post's testid scope; the select is `<testIdScope>.select:<action id>`. */
+    testIdScope?: TestId;
 };
 
 function staticSelectDisplayValue(
@@ -52,7 +56,7 @@ function staticSelectDisplayValue(
     return '';
 }
 
-export const StaticSelectElement = ({element, postId, onAction}: StaticSelectElementProps) => {
+export const StaticSelectElement = ({element, postId, onAction, testIdScope}: StaticSelectElementProps) => {
     const dispatch = useDispatch();
     const interactionsDisabled = useContext(MmBlocksInteractionsDisabledContext);
     const [isExecuting, setIsExecuting] = useState(false);
@@ -150,6 +154,8 @@ export const StaticSelectElement = ({element, postId, onAction}: StaticSelectEle
                     onSelected={handleSelected}
                     placeholder={element.placeholder}
                     inputClassName='mm-blocks-select'
+                    testIdScope={testIdScope ? `${testIdScope}.select` : undefined}
+                    testIdKey={element.action_id}
                     value={value}
                     toggleFocus={handlePopupOpened}
                     listPosition='auto'

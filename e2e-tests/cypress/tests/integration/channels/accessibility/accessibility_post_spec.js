@@ -303,18 +303,18 @@ function performActionsToLastPost() {
     cy.getLastPostId().then((postId) => {
         // # Add grinning reaction
         cy.clickPostReactionIcon(postId);
-        cy.findAllByTestId('grinning').first().trigger('mouseover', {force: true});
+        cy.findAllByTestId('emoji_picker.emoji:grinning--button').first().trigger('mouseover', {force: true});
         cy.get('.sprite-preview').should('be.visible');
         cy.get('.emoji-picker__preview').should('be.visible').and('have.text', ':grinning:');
-        cy.findAllByTestId('grinning').first().click({force: true});
+        cy.findAllByTestId('emoji_picker.emoji:grinning--button').first().click({force: true});
         cy.get(`#postReaction-${postId}-grinning`).should('be.visible');
 
         // # Add smile reaction
         cy.clickPostReactionIcon(postId);
-        cy.findAllByTestId('smile').first().trigger('mouseover', {force: true});
+        cy.findAllByTestId('emoji_picker.emoji:smile--button').first().trigger('mouseover', {force: true});
         cy.get('.sprite-preview').should('be.visible');
         cy.get('.emoji-picker__preview').should('be.visible').and('have.text', ':smile:');
-        cy.findAllByTestId('smile').first().click({force: true});
+        cy.findAllByTestId('emoji_picker.emoji:smile--button').first().click({force: true});
         cy.get(`#postReaction-${postId}-smile`).should('be.visible');
 
         // # Save the post

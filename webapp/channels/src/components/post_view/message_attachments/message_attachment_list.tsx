@@ -3,6 +3,7 @@
 
 import React, {memo} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {MessageAttachment as MessageAttachmentType} from '@mattermost/types/message_attachments';
 import type {PostImage} from '@mattermost/types/posts';
 
@@ -31,6 +32,9 @@ type Props = {
      * Images object used for creating placeholders to prevent scroll popup
      */
     imagesMetadata?: Record<string, PostImage>;
+
+    /** The post's testid scope; action buttons render `<testIdScope>.action:<action id>--button`. */
+    testIdScope?: TestId;
 };
 
 const EMPTY_METADATA: Record<string, PostImage> = {};
@@ -40,6 +44,7 @@ const MessageAttachmentList = ({
     attachments,
     postId,
     options,
+    testIdScope,
 }: Props) => (
     <div
         id={`messageAttachmentList_${postId}`}
@@ -52,6 +57,7 @@ const MessageAttachmentList = ({
                 key={'att_' + i}
                 options={options}
                 imagesMetadata={imagesMetadata}
+                testIdScope={testIdScope}
             />
         ))}
     </div>

@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -25,6 +26,9 @@ type Props = {
     user: UserProfile;
     isBot?: boolean;
     overwriteIcon?: string;
+
+    // Passed to the ProfilePicture wrapper.
+    testId?: TestId;
 };
 
 export default class PostProfilePicture extends React.PureComponent<Props> {
@@ -113,6 +117,7 @@ export default class PostProfilePicture extends React.PureComponent<Props> {
                 isBot={user?.is_bot}
                 fromAutoResponder={fromAutoResponder}
                 fromWebhook={fromWebhook}
+                testId={this.props.testId}
             />
         );
     }

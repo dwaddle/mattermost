@@ -9,6 +9,31 @@ import type {Page} from '@playwright/test';
 import {Scope, pluginSurfaces} from '../../aria';
 
 import {Admin} from './admin';
+import {AppBar} from './app_bar';
+import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
+import {Center} from './center';
+import {ChannelHeader} from './channel_header';
+import {DateTimePickerModal} from './date_time_picker_modal';
+import {DeleteDraftModal} from './delete_draft_modal';
+import {DeletePostModal} from './delete_post_modal';
+import {DeleteScheduledPostModal} from './delete_scheduled_post_modal';
+import {DenyJoinRequestModal} from './deny_join_request_modal';
+import {Drafts} from './drafts';
+import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {EmojiGifPicker} from './emoji_gif_picker';
+import {EmojiPicker} from './emoji_picker';
+import {FilePreviewModal} from './file_preview_modal';
+import {ForwardPostModal} from './forward_post_modal';
+import {GifPicker} from './gif_picker';
+import {GlobalHeader} from './global_header';
+import {Latex} from './latex';
+import {Lhs} from './lhs';
+import {Markdown} from './markdown';
+import {MenuModal} from './menu_modal';
+import {MobileHeader} from './mobile_header';
+import {Modal} from './modal';
+import {NoResults} from './no_results';
+import {NotifyConfirmModal} from './notify_confirm_modal';
 import {
     AdminConsolePage,
     AuthorizePage,
@@ -44,6 +69,20 @@ import {
     ThreadPopoutPage,
     ThreadsPage,
 } from './pages';
+import {Plugin} from './plugin';
+import {PostDotMenu} from './post_dot_menu';
+import {PostEdit} from './post_edit';
+import {PostPriorityPicker} from './post_priority_picker';
+import {ProfilePopover} from './profile_popover';
+import {QuickSwitchModal} from './quick_switch_modal';
+import {RestorePostModal} from './restore_post_modal';
+import {Rhs} from './rhs';
+import {Search} from './search';
+import {SearchBox} from './search_box';
+import {SendDraftModal} from './send_draft_modal';
+import {SendPostOptions} from './send_post_options';
+import {ThreadMenu} from './thread_menu';
+import {Threads} from './threads';
 
 /**
  * Plugin test packages add their page objects here by declaration merging (types only):
@@ -65,6 +104,223 @@ export class App extends Scope {
 
     get admin(): Admin {
         return new Admin(this.page, 'admin', this.root);
+    }
+
+    /**
+     * `app_bar` — AppBar (channels/src/components/app_bar/app_bar.tsx)
+     * Renders only when !(!enabled || (currentProduct && !currentProduct.showAppBar)).
+     */
+    get appBar(): AppBar {
+        return new AppBar(this.page, 'app_bar', this.root);
+    }
+
+    /**
+     * `burn_on_read_confirmation_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get burnOnReadConfirmationModal(): BurnOnReadConfirmationModal {
+        return new BurnOnReadConfirmationModal(this.page, 'burn_on_read_confirmation_modal', this.root);
+    }
+
+    get center(): Center {
+        return new Center(this.page, 'center', this.root);
+    }
+
+    get channelHeader(): ChannelHeader {
+        return new ChannelHeader(this.page, 'channel_header', this.root);
+    }
+
+    /**
+     * `date_time_picker_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get dateTimePickerModal(): DateTimePickerModal {
+        return new DateTimePickerModal(this.page, 'date_time_picker_modal', this.root);
+    }
+
+    /**
+     * `delete_draft_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get deleteDraftModal(): DeleteDraftModal {
+        return new DeleteDraftModal(this.page, 'delete_draft_modal', this.root);
+    }
+
+    /**
+     * `delete_post_modal` — DeletePostModal (channels/src/components/delete_post_modal/delete_post_modal.tsx)
+     */
+    get deletePostModal(): DeletePostModal {
+        return new DeletePostModal(this.page, 'delete_post_modal', this.root);
+    }
+
+    /**
+     * `delete_scheduled_post_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get deleteScheduledPostModal(): DeleteScheduledPostModal {
+        return new DeleteScheduledPostModal(this.page, 'delete_scheduled_post_modal', this.root);
+    }
+
+    /**
+     * `deny_join_request_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get denyJoinRequestModal(): DenyJoinRequestModal {
+        return new DenyJoinRequestModal(this.page, 'deny_join_request_modal', this.root);
+    }
+
+    get drafts(): Drafts {
+        return new Drafts(this.page, 'drafts', this.root);
+    }
+
+    /**
+     * `edit_channel_header_modal` — EditChannelHeaderModal (channels/src/components/edit_channel_header_modal/edit_channel_header_modal.tsx)
+     */
+    get editChannelHeaderModal(): EditChannelHeaderModal {
+        return new EditChannelHeaderModal(this.page, 'edit_channel_header_modal', this.root);
+    }
+
+    get emojiGifPicker(): EmojiGifPicker {
+        return new EmojiGifPicker(this.page, 'emoji_gif_picker', this.root);
+    }
+
+    get emojiPicker(): EmojiPicker {
+        return new EmojiPicker(this.page, 'emoji_picker', this.root);
+    }
+
+    /**
+     * `file_preview_modal` — FilePreviewModal (channels/src/components/file_preview_modal/file_preview_modal.tsx)
+     * Renders only when !(this.props.fileInfos.length < 1 || this.props.fileInfos.length - 1 < this.state.imageIndex).
+     */
+    get filePreviewModal(): FilePreviewModal {
+        return new FilePreviewModal(this.page, 'file_preview_modal', this.root);
+    }
+
+    /**
+     * `forward_post_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get forwardPostModal(): ForwardPostModal {
+        return new ForwardPostModal(this.page, 'forward_post_modal', this.root);
+    }
+
+    get gifPicker(): GifPicker {
+        return new GifPicker(this.page, 'gif_picker', this.root);
+    }
+
+    get globalHeader(): GlobalHeader {
+        return new GlobalHeader(this.page, 'global_header', this.root);
+    }
+
+    get latex(): Latex {
+        return new Latex(this.page, 'latex', this.root);
+    }
+
+    get lhs(): Lhs {
+        return new Lhs(this.page, 'lhs', this.root);
+    }
+
+    get markdown(): Markdown {
+        return new Markdown(this.page, 'markdown', this.root);
+    }
+
+    /**
+     * `menu_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get menuModal(): MenuModal {
+        return new MenuModal(this.page, 'menu_modal', this.root);
+    }
+
+    get mobileHeader(): MobileHeader {
+        return new MobileHeader(this.page, 'mobile_header', this.root);
+    }
+
+    get modal(): Modal {
+        return new Modal(this.page, 'modal', this.root);
+    }
+
+    /**
+     * `no_results` — NoResultsIndicator (channels/src/components/no_results_indicator/no_results_indicator.tsx)
+     */
+    get noResults(): NoResults {
+        return new NoResults(this.page, 'no_results', this.root);
+    }
+
+    /**
+     * `notify_confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get notifyConfirmModal(): NotifyConfirmModal {
+        return new NotifyConfirmModal(this.page, 'notify_confirm_modal', this.root);
+    }
+
+    get plugin(): Plugin {
+        return new Plugin(this.page, 'plugin', this.root);
+    }
+
+    /**
+     * `post_dot_menu` — Menu (channels/src/components/menu/menu.tsx)
+     */
+    get postDotMenu(): PostDotMenu {
+        return new PostDotMenu(this.page, 'post_dot_menu');
+    }
+
+    get postEdit(): PostEdit {
+        return new PostEdit(this.page, 'post_edit', this.root);
+    }
+
+    get postPriorityPicker(): PostPriorityPicker {
+        return new PostPriorityPicker(this.page, 'post_priority_picker', this.root);
+    }
+
+    /**
+     * `profile_popover` — ProfilePopoverController (channels/src/components/profile_popover/profile_popover_controller.tsx)
+     * Renders only when isMounted.
+     */
+    get profilePopover(): ProfilePopover {
+        return new ProfilePopover(this.page, 'profile_popover', this.root);
+    }
+
+    /**
+     * `quick_switch_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get quickSwitchModal(): QuickSwitchModal {
+        return new QuickSwitchModal(this.page, 'quick_switch_modal', this.root);
+    }
+
+    /**
+     * `restore_post_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get restorePostModal(): RestorePostModal {
+        return new RestorePostModal(this.page, 'restore_post_modal', this.root);
+    }
+
+    get rhs(): Rhs {
+        return new Rhs(this.page, 'rhs', this.root);
+    }
+
+    get search(): Search {
+        return new Search(this.page, 'search', this.root);
+    }
+
+    /**
+     * `search_box` — SearchBox (channels/src/components/new_search/search_box.tsx)
+     * Renders only when focused.
+     */
+    get searchBox(): SearchBox {
+        return new SearchBox(this.page, 'search_box', this.root);
+    }
+
+    /**
+     * `send_draft_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get sendDraftModal(): SendDraftModal {
+        return new SendDraftModal(this.page, 'send_draft_modal', this.root);
+    }
+
+    get sendPostOptions(): SendPostOptions {
+        return new SendPostOptions(this.page, 'send_post_options', this.root);
+    }
+
+    get threadMenu(): ThreadMenu {
+        return new ThreadMenu(this.page, 'thread_menu');
+    }
+
+    get threads(): Threads {
+        return new Threads(this.page, 'threads', this.root);
     }
 
     /** `/admin_console` */

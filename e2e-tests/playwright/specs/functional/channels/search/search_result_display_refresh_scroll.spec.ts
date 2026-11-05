@@ -1,11 +1,16 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {duration, expect, test, type ChannelsPage} from '@mattermost/playwright-lib';
+import type {Post} from '@mattermost/types/posts';
+
+import {duration, expect, generated, test, type App} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify message search displays matching results in the right-hand side, rendering markdown
  * content correctly, and that jumping to the conversation and clearing the query keep results intact.
+ *
+ * Written on the generated page objects: the search box, the result by post id with its Jump link and its Markdown
+ * hashtag; the heading and code block are read by their ARIA roles.
  */
 test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -22,88 +27,92 @@ test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
     ].join('\n');
 
     // # Create and search for a message with markdown content: a heading, a code block, and a hashtag
-    await adminClient.createPost({channel_id: channel.id, user_id: user.id, message});
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const post = await pw.postAs(user, {channel_id: channel.id, message});
+
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+
     const query = `hello ${identifier}`;
-    await submitSearch(channelsPage, query);
+    await submitSearch(app, query);
 
     // * Verify the matching result appears in the RHS with each markdown element rendered distinctly
-    await expectSearchResult(channelsPage, 'Hello world', query);
-    const result = channelsPage.getSearchResultItem('Hello world');
-    await expect(result.locator('h5.markdown__heading')).toContainText('Hello');
-    await expect(result.locator('.post-code.post-code--wrap code')).toContainText('Hello');
-    await expect(result).toContainText('#hello');
+    await expectSearchResult(app, post, query);
+    const result = app.search.results.post(post);
+    await expect(result.messageText.locator.getByRole('heading', {level: 5})).toContainText('Hello');
+    await expect(result.messageText.locator.getByRole('code')).toContainText('Hello');
+    await expect(new generated.Markdown(page, 'markdown', result.locator).hashtagLink.locator).toHaveText('#hello');
 
     // # Jump to the conversation from the search result
-    await result.getByRole('link', {name: 'Jump'}).click();
+    await result.locator.hover();
+    await result.menu.clickJumpLink();
 
     // # Reopen search and clear the query text
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.clearIfPossible();
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill('');
 
     // * Verify the search results remain visible after clearing the query text
-    await expect(channelsPage.searchResultsContainer).toBeVisible();
+    await expect(result.locator).toBeVisible();
 });
 
 /**
  * @objective Verify that a new search replaces the previous results instead of combining them.
+ *
+ * Written on the generated page objects: the search box and the results by post id.
  */
 test('MM-T355 replaces old search results with new results', {tag: '@search'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
+    // # Create a message in Town Square and one in Off-Topic
+    const {user, team, userClient} = await pw.initSetup();
+    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
     const helloToken = `hello${pw.random.id()}`;
     const writingToken = `writing${pw.random.id()}`;
+    const hello = await userClient.createPost({channel_id: townSquare.id, message: `${helloToken} there everyone`});
+    const writing = await userClient.createPost({channel_id: offTopic.id, message: `${writingToken} to you here`});
 
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
-    // # Post a message in Town Square and search for it
-    await channelsPage.postMessage(`${helloToken} there everyone`);
-    await channelsPage.searchFor(helloToken);
+    // # Search for the first message
+    await submitSearch(app, helloToken);
 
     // * Verify the first message is shown in the results
-    await channelsPage.searchResultsPanel.toContainText(helloToken);
+    await expect.poll(() => app.search.results.postKeys()).toEqual([hello.id]);
 
-    // # Post a different message in another channel and run a new search for it
-    await channelsPage.sidebarLeft.goToItem('off-topic');
-    await channelsPage.postMessage(`${writingToken} to you here`);
-    await channelsPage.searchFor(writingToken);
+    // # Run a new search for the second message from another channel
+    await app.lhs.channelList.channel(offTopic).clickLink();
+    await submitSearch(app, writingToken);
 
     // * Verify the new results are shown and the old results are gone
-    await channelsPage.searchResultsPanel.toContainText(writingToken);
-    await expect(channelsPage.searchResultsPanel.getResultByText(helloToken)).toHaveCount(0);
+    await expect.poll(() => app.search.results.postKeys()).toEqual([writing.id]);
 });
 
 /**
  * @objective Verify that scrolling the center channel while the search results panel is open does not change the results.
+ *
+ * Written on the generated page objects: the search box, the results' keys, and the center post list's scrolling
+ * element.
  */
 test('MM-T382 keeps search results unchanged while scrolling the center channel', {tag: '@search'}, async ({pw}) => {
     // # Create and log in as a test user, and open a channel with many matching posts
     const {user, team, adminClient} = await pw.initSetup();
     const channel = await adminClient.createPublicChannel(team.id, 'Search Scroll', 'search-scroll');
     await adminClient.addToChannel(user.id, channel.id);
-
     const token = `searchfun${pw.random.id()}`;
     const messageCount = 30;
     for (let i = 0; i < messageCount; i++) {
         await adminClient.createPost({channel_id: channel.id, message: `${token} ${i}`});
     }
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
     // # Search for the matching posts
-    await channelsPage.searchFor(token);
-    await channelsPage.searchResultsPanel.toBeVisible();
-    const resultCountBefore = await channelsPage.searchResultsPanel.getResultItems().count();
-    expect(resultCountBefore).toBeGreaterThan(0);
+    await submitSearch(app, token);
+    await expect.poll(async () => (await app.search.results.postKeys()).length).toBeGreaterThan(0);
+    const resultsBefore = await app.search.results.postKeys();
 
     // # Scroll the center channel up to load older messages
-    const box = await channelsPage.centerView.container.boundingBox();
+    const box = await app.center.postList.scroller.locator.boundingBox();
     expect(box).not.toBeNull();
     await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
     for (let i = 0; i < 6; i++) {
@@ -112,37 +121,24 @@ test('MM-T382 keeps search results unchanged while scrolling the center channel'
     }
 
     // * Verify the search results panel is still open and its results are unchanged
-    await channelsPage.searchResultsPanel.toBeVisible();
-    await channelsPage.searchResultsPanel.toContainText(token);
-    expect(await channelsPage.searchResultsPanel.getResultItems().count()).toBe(resultCountBefore);
+    expect(await app.search.results.postKeys()).toEqual(resultsBefore);
+    await expect(app.search.results.post({id: resultsBefore[0]}).messageText.locator).toContainText(token);
 });
 
-async function submitSearch(channelsPage: ChannelsPage, query: string) {
-    await channelsPage.globalHeader.openSearch();
-    await channelsPage.searchBox.clearIfPossible();
-    await channelsPage.searchBox.searchInput.fill(query);
-    await channelsPage.searchBox.searchInput.press('Enter');
-    await expect(channelsPage.searchResultsContainer).toBeVisible();
+async function submitSearch(app: App, query: string) {
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill(query);
+    await app.searchBox.inputSearchbox.locator.press('Enter');
 }
 
-async function expectSearchResult(
-    channelsPage: ChannelsPage,
-    text: string,
-    query?: string,
-    timeout = duration.half_min,
-) {
-    const result = channelsPage.getSearchResultItem(text);
-
+/** The post shows in the results; the search is retried while the server indexes it. */
+async function expectSearchResult(app: App, post: Post, query: string, timeout = duration.half_min) {
+    const result = app.search.results.post(post).locator;
     await expect(async () => {
         if (await result.isVisible({timeout: duration.one_sec}).catch(() => false)) {
             return;
         }
-
-        if (query) {
-            await submitSearch(channelsPage, query);
-        } else {
-            await channelsPage.searchBox.searchInput.press('Enter');
-        }
+        await submitSearch(app, query);
         await expect(result).toBeVisible({timeout: duration.one_sec * 5});
     }).toPass({timeout});
 }

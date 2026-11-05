@@ -20,7 +20,7 @@ export default class SearchResultsPanel {
     constructor(container: Locator) {
         this.container = container;
         this.filesTab = container.getByRole('tab', {name: /^Files/});
-        this.teamSelector = new SearchTeamSelector(container.getByTestId('searchResultsTeamSelector'));
+        this.teamSelector = new SearchTeamSelector(container.getByTestId('search.team_selector'));
         this.mentionFilters = new MentionFilters(container);
     }
 
@@ -40,7 +40,7 @@ export default class SearchResultsPanel {
      * All result items currently shown in the panel.
      */
     getResultItems() {
-        return this.container.getByTestId('search-item-container');
+        return this.container.getByTestId(/^search\.results\.(post|file):/);
     }
 
     /**
@@ -54,7 +54,7 @@ export default class SearchResultsPanel {
      * All highlighted search terms currently rendered in the panel.
      */
     getHighlightedTerms() {
-        return this.container.getByTestId('search-highlight');
+        return this.container.getByTestId('markdown.search_highlight--text');
     }
 
     /**

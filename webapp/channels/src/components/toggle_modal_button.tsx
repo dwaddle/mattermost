@@ -5,6 +5,7 @@ import React, {type ComponentType, type MouseEvent, type ReactNode} from 'react'
 import {useDispatch} from 'react-redux';
 
 import {Button, type ButtonAppearance, type ButtonEmphasis, type ButtonSize} from '@mattermost/compass-ui/components/button';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {openModal} from 'actions/views/modals';
 
@@ -29,6 +30,9 @@ type Props = {
     size?: ButtonSize;
     destructive?: boolean;
     appearance?: ButtonAppearance;
+
+    /** Renders `${testId}--button`. */
+    testId?: TestId;
 };
 
 const ToggleModalButton = ({
@@ -47,6 +51,7 @@ const ToggleModalButton = ({
     size,
     destructive,
     appearance,
+    testId,
 }: Props) => {
     const dispatch = useDispatch();
 
@@ -85,6 +90,7 @@ const ToggleModalButton = ({
                 id={id}
                 disabled={disabled}
                 role={role}
+                data-testid={testId ? `${testId}--button` : undefined}
             >
                 {children}
                 {badge}
@@ -100,6 +106,7 @@ const ToggleModalButton = ({
             id={id}
             disabled={disabled}
             role={role}
+            data-testid={testId ? `${testId}--button` : undefined}
         >
             {children}
             {badge}

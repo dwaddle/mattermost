@@ -8,6 +8,7 @@ import {FireIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type Props = {
 
@@ -22,9 +23,12 @@ type Props = {
 
     // The configured duration in minutes for BoR messages
     durationMinutes: number;
+
+    // The composer's scope: the button is `<testIdScope>.burn_on_read--button`
+    testIdScope?: TestId;
 };
 
-const BurnOnReadButton = ({enabled, onToggle, disabled, durationMinutes}: Props) => {
+const BurnOnReadButton = ({enabled, onToggle, disabled, durationMinutes, testIdScope}: Props) => {
     const {formatMessage} = useIntl();
 
     const handleClick = () => {
@@ -55,6 +59,7 @@ const BurnOnReadButton = ({enabled, onToggle, disabled, durationMinutes}: Props)
         >
             <IconButton
                 id='burnOnReadButton'
+                data-testid={testIdScope ? `${testIdScope}.burn_on_read--button` : undefined}
                 className='control'
                 size='small'
                 disabled={disabled}

@@ -1,369 +1,271 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Page} from '@playwright/test';
+import type {Locator} from '@playwright/test';
 
-import {test} from '@mattermost/playwright-lib';
+import {getAsset} from '@/asset';
+import {expect, test, type App, type generated, type PlaywrightExtended} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the composers (center and RHS) and the inline post editor (message box,
+// attach button, file previews keyed by file with their names and remove buttons, Save), the posts by id with
+// their dot menu and Edited indicator, the delete and restore dialogs, and the RHS thread and edit history.
+
+const ORIGINAL_MESSAGE = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+
+type Composer = generated.PostCreate;
+type Post = ReturnType<App['center']['postList']['post']>;
+
+/** Attaches files through a composer's attach button and waits for their previews. */
+async function attach(app: App, composer: Composer, files: string[]) {
+    const before = (await composer.filePreviews.fileKeys()).length;
+    const chooser = app.page.waitForEvent('filechooser');
+    await composer.clickAttachButton();
+    await (await chooser).setFiles(files.map((file) => getAsset(file)));
+    await expect(composer.filePreviews.fileItems).toHaveCount(before + files.length);
+}
+
+/** Opens the user's town square. */
+async function open(pw: PlaywrightExtended) {
+    const {user, team} = await pw.initSetup();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
+    return app;
+}
+
+/** Posts a message (with files) from the center composer and returns the new post. */
+async function postMessage(app: App, message: string, files: string[] = []): Promise<{id: string; post: Post}> {
+    const {postCreate, postList} = app.center;
+    const before = (await postList.postKeys()).at(-1);
+    if (files.length) {
+        await attach(app, postCreate, files);
+    }
+    await postCreate.fillMessageTextbox(message);
+    await postCreate.clickSendButton();
+    await expect.poll(async () => (await postList.postKeys()).at(-1)).not.toBe(before);
+    const id = (await postList.postKeys()).at(-1)!;
+    const post = postList.post({id});
+    await expect(post.messageText.locator).toContainText(message);
+    return {id, post};
+}
+
+/** Opens a post's dot menu. */
+async function openDotMenu(app: App, post: {locator: Locator; menu: Post['menu']}) {
+    await post.locator.hover();
+    const menu = await post.menu.clickDotMenuButton();
+
+    // park the cursor so it doesn't open a submenu (e.g. "Remind") under it, which hides the menu from roles
+    await app.page.mouse.move(0, 0);
+    return menu;
+}
+
+/** Opens the inline editor on a post from its dot menu. */
+async function openEditor(app: App, post: {locator: Locator; menu: Post['menu']}) {
+    await (await openDotMenu(app, post)).clickEditMenuItem();
+    const editor = app.postEdit.editor;
+    await expect(editor.messageTextbox.locator).toBeVisible();
+    return editor;
+}
+
+/** Removes a file from the editor by its name. */
+async function removeFile(editor: Composer, name: string) {
+    for (const key of await editor.filePreviews.fileKeys()) {
+        const file = editor.filePreviews.file({id: key});
+        if ((await file.details.locator.textContent())?.includes(name)) {
+            await file.clickRemoveButton();
+            await expect(file.locator).toHaveCount(0);
+            return;
+        }
+    }
+    throw new Error(`No file named ${name} in the editor`);
+}
+
+/** Saves the editor and waits for it to close. */
+async function save(editor: Composer) {
+    await editor.clickSaveButton();
+    await expect(editor.messageTextbox.locator).not.toBeVisible();
+}
 
 /**
  * @objective Verify that users can edit a post and modify its content
  */
 test('MM-T5654_1 should be able to add attachments while editing a post', {tag: ['@smoke']}, async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    // # Initialize user, login and post a message
+    const app = await open(pw);
+    const {post} = await postMessage(app, ORIGINAL_MESSAGE);
 
-    // # Initialize user and login
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-
-    // # Navigate to channels page and post a message
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage);
-
-    // # Hover over the last post to reveal the post menu
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.hover();
-    await post.postMenu.toBeVisible();
-
-    // # Open the dot menu and click edit
-    await post.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-
-    // # Edit the message and send
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.writeMessage('Edited message');
-    await channelsPage.centerView.postEdit.sendMessage();
+    // # Edit the message and save
+    const editor = await openEditor(app, post);
+    await editor.fillMessageTextbox('Edited message');
+    await save(editor);
 
     // * Verify the post was updated with the edited message
-    const updatedPost = await channelsPage.getLastPost();
-    await updatedPost.toBeVisible();
-    await updatedPost.toContainText('Edited message');
+    await expect(post.messageText.locator).toContainText('Edited message');
 });
 
 test('MM-T5654_2 should be able to add attachments while editing a threaded post', async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    const app = await open(pw);
+    const {post} = await postMessage(app, ORIGINAL_MESSAGE);
 
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    // # Reply to the post in the RHS
+    await (await openDotMenu(app, post)).clickReplyMenuItem();
+    const {postCreate, thread} = app.rhs;
+    await expect(postCreate.messageTextbox.locator).toBeVisible();
+    await postCreate.fillMessageTextbox('Replying to the post');
+    await postCreate.clickSendButton();
+    await expect.poll(async () => (await thread.postKeys()).length).toBe(2);
+    const reply = thread.post({id: (await thread.postKeys()).at(-1)!});
+    await expect(reply.messageText.locator).toContainText('Replying to the post');
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage);
+    // # Edit the reply
+    let editor = await openEditor(app, reply);
+    await editor.fillMessageTextbox('Edited reply message');
+    await save(editor);
+    await expect(reply.messageText.locator).toContainText('Edited reply message');
 
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.hover();
-    await post.postMenu.toBeVisible();
+    // # Edit the reply again and add files to it
+    editor = await openEditor(app, reply);
+    await editor.fillMessageTextbox('Edited reply message with files');
+    await attach(app, editor, ['sample_text_file.txt', 'mattermost.png']);
+    await save(editor);
+    await expect(reply.locator).toContainText('Edited reply message with files');
+    await expect(reply.locator).toContainText('sample_text_file.txt');
+    await expect(reply.locator).toContainText('mattermost.png');
 
-    // open the dot menu
-    await post.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.replyMenuItem.click();
-    await channelsPage.sidebarRight.toBeVisible();
-    await channelsPage.sidebarRight.postCreate.toBeVisible();
-    await channelsPage.sidebarRight.postMessage('Replying to the post');
-    await channelsPage.sidebarRight.toContainText('Replying to the post');
+    // # Remove the files
+    editor = await openEditor(app, reply);
+    await removeFile(editor, 'sample_text_file.txt');
+    await removeFile(editor, 'mattermost.png');
+    await save(editor);
 
-    const replyPost = await channelsPage.sidebarRight.getLastPost();
-    await replyPost.toBeVisible();
-    await replyPost.hover();
-    await replyPost.postMenu.toBeVisible();
-    await replyPost.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.sidebarRight.postEdit.toBeVisible();
-    await channelsPage.sidebarRight.postEdit.writeMessage('Edited reply message');
-    await channelsPage.sidebarRight.postEdit.sendMessage();
-
-    let updatedReplyPost = await channelsPage.sidebarRight.getLastPost();
-    await updatedReplyPost.toBeVisible();
-    await updatedReplyPost.toContainText('Edited reply message');
-
-    // now we'll edit the reply post and files to it
-    await updatedReplyPost.hover();
-    await updatedReplyPost.postMenu.toBeVisible();
-    await updatedReplyPost.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.sidebarRight.postEdit.toBeVisible();
-    await channelsPage.sidebarRight.postEdit.writeMessage('Edited reply message with files');
-    await channelsPage.sidebarRight.postEdit.addFiles(['sample_text_file.txt', 'mattermost.png']);
-    await pw.wait(pw.duration.half_sec);
-    await channelsPage.sidebarRight.postEdit.sendMessage();
-    await pw.wait(pw.duration.half_sec);
-    await channelsPage.sidebarRight.postEdit.toNotBeVisible();
-    await updatedReplyPost.toBeVisible();
-    await updatedReplyPost.toContainText('Edited reply message with files');
-    await updatedReplyPost.toContainText('sample_text_file.txt');
-    await updatedReplyPost.toContainText('mattermost.png');
-
-    // now we'll remove the files
-    await updatedReplyPost.hover();
-    await updatedReplyPost.postMenu.toBeVisible();
-    await updatedReplyPost.postMenu.clickOnDotMenu();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.sidebarRight.postEdit.toBeVisible();
-    await channelsPage.sidebarRight.postEdit.removeFile('sample_text_file.txt');
-    await pw.wait(pw.duration.half_sec);
-    await channelsPage.sidebarRight.postEdit.removeFile('mattermost.png');
-    await pw.wait(pw.duration.half_sec);
-    await channelsPage.sidebarRight.postEdit.sendMessage();
-
-    updatedReplyPost = await channelsPage.sidebarRight.getLastPost();
-    await updatedReplyPost.toBeVisible();
-    await updatedReplyPost.toContainText('Edited reply message with files');
-    await updatedReplyPost.toNotContainText('sample_text_file.txt');
-    await updatedReplyPost.toNotContainText('mattermost.png');
+    await expect(reply.locator).toContainText('Edited reply message with files');
+    await expect(reply.locator).not.toContainText('sample_text_file.txt');
+    await expect(reply.locator).not.toContainText('mattermost.png');
 });
 
 test('MM-T5654_3 should be able to edit post message originally containing files', async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    const app = await open(pw);
+    const {post} = await postMessage(app, ORIGINAL_MESSAGE, ['sample_text_file.txt']);
 
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const editor = await openEditor(app, post);
+    await editor.fillMessageTextbox('Edited message');
+    await save(editor);
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage, ['sample_text_file.txt']);
-
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.hover();
-    await post.postMenu.toBeVisible();
-
-    // open the dot menu
-    await post.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.writeMessage('Edited message');
-    await channelsPage.centerView.postEdit.sendMessage();
-
-    const updatedPost = await channelsPage.getLastPost();
-    await updatedPost.toBeVisible();
-    await updatedPost.toContainText('Edited message');
+    await expect(post.messageText.locator).toContainText('Edited message');
+    await expect(post.locator).toContainText('sample_text_file.txt');
 });
 
 test('MM-T5654_4 should be able to add files when editing a post', async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    const app = await open(pw);
+    const {post} = await postMessage(app, ORIGINAL_MESSAGE);
 
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    let editor = await openEditor(app, post);
+    await editor.fillMessageTextbox('Edited message');
+    await attach(app, editor, ['sample_text_file.txt']);
+    await save(editor);
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage);
+    await expect(post.messageText.locator).toContainText('Edited message');
+    await expect(post.locator).toContainText('sample_text_file.txt');
 
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.hover();
-    await post.postMenu.toBeVisible();
+    // # Add multiple files
+    editor = await openEditor(app, post);
+    await attach(app, editor, ['mattermost.png', 'archive.zip']);
+    await save(editor);
 
-    // open the dot menu
-    await post.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.writeMessage('Edited message');
-    await channelsPage.centerView.postEdit.addFiles(['sample_text_file.txt']);
-    await channelsPage.centerView.postEdit.sendMessage();
-
-    const updatedPost = await channelsPage.getLastPost();
-    await updatedPost.toBeVisible();
-    await updatedPost.toContainText('Edited message');
-    await updatedPost.toContainText('sample_text_file.txt');
-
-    // now we'll add multiple files
-    await post.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.addFiles(['mattermost.png', 'archive.zip']);
-    await channelsPage.centerView.postEdit.sendMessage();
-
-    const secondUpdatedPost = await channelsPage.getLastPost();
-    await secondUpdatedPost.toBeVisible();
-    await secondUpdatedPost.toContainText('Edited message');
-    await secondUpdatedPost.toContainText('sample_text_file.txt');
-    await secondUpdatedPost.toContainText('mattermost.png');
-    await secondUpdatedPost.toContainText('archive.zip');
+    await expect(post.messageText.locator).toContainText('Edited message');
+    await expect(post.locator).toContainText('sample_text_file.txt');
+    await expect(post.locator).toContainText('mattermost.png');
+    await expect(post.locator).toContainText('archive.zip');
 });
 
 test('MM-5654_5 should be able to remove attachments while editing a post', async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    const app = await open(pw);
+    const {post} = await postMessage(app, ORIGINAL_MESSAGE, ['sample_text_file.txt', 'mattermost.png', 'archive.zip']);
+    await expect(post.locator).toContainText('sample_text_file.txt');
+    await expect(post.locator).toContainText('mattermost.png');
+    await expect(post.locator).toContainText('archive.zip');
 
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const editor = await openEditor(app, post);
+    await removeFile(editor, 'sample_text_file.txt');
+    await save(editor);
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage, ['sample_text_file.txt', 'mattermost.png', 'archive.zip']);
-
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.toContainText(originalMessage);
-    await post.toContainText('sample_text_file.txt');
-    await post.toContainText('mattermost.png');
-    await post.toContainText('archive.zip');
-
-    await post.hover();
-    await post.postMenu.toBeVisible();
-    await post.postMenu.clickOnDotMenu();
-    await moveMouseAway(page);
-
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.removeFile('sample_text_file.txt');
-    await channelsPage.centerView.postEdit.sendMessage();
-
-    const updatedPost = await channelsPage.getLastPost();
-    await updatedPost.toBeVisible();
-    await updatedPost.toContainText(originalMessage);
-    await updatedPost.toContainText('mattermost.png');
-    await updatedPost.toContainText('archive.zip');
-    await updatedPost.toNotContainText('sample_text_file.txt');
+    await expect(post.messageText.locator).toContainText(ORIGINAL_MESSAGE);
+    await expect(post.locator).toContainText('mattermost.png');
+    await expect(post.locator).toContainText('archive.zip');
+    await expect(post.locator).not.toContainText('sample_text_file.txt');
 });
 
 test('MM-T5655_1 removing message content and files should delete the post', async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    const app = await open(pw);
+    const {post} = await postMessage(app, ORIGINAL_MESSAGE, ['sample_text_file.txt']);
+    await expect(post.locator).toContainText('sample_text_file.txt');
 
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    // # Remove the file and the message, then save
+    const editor = await openEditor(app, post);
+    await removeFile(editor, 'sample_text_file.txt');
+    await editor.messageTextbox.locator.clear();
+    await editor.clickSaveButton();
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage, ['sample_text_file.txt']);
+    // # Confirm the deletion it asks for
+    await expect(app.deletePostModal.locator).toBeVisible();
+    await app.deletePostModal.clickDeleteButton();
+    await expect(app.deletePostModal.locator).not.toBeVisible();
 
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.toContainText(originalMessage);
-    await post.toContainText('sample_text_file.txt');
-
-    await post.hover();
-    await post.postMenu.toBeVisible();
-    await post.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
-
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.removeFile('sample_text_file.txt');
-    await channelsPage.centerView.postEdit.writeMessage('');
-    await channelsPage.centerView.postEdit.sendMessage();
-
-    await channelsPage.centerView.postEdit.deleteConfirmationDialog.toBeVisible();
-    await channelsPage.centerView.postEdit.deleteConfirmationDialog.confirmDeletion();
-    await channelsPage.centerView.postEdit.deleteConfirmationDialog.notToBeVisible();
-
-    await channelsPage.toNotContainText(originalMessage);
-    await channelsPage.toNotContainText('sample_text_file.txt');
+    // * The post is gone
+    await expect(post.locator).toHaveCount(0);
+    await expect(app.center.postList.locator).not.toContainText(ORIGINAL_MESSAGE);
 });
 
 test('MM-T5655_2 should be able to remove all files when editing a post', async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    const app = await open(pw);
+    const {post} = await postMessage(app, ORIGINAL_MESSAGE, ['sample_text_file.txt', 'mattermost.png', 'archive.zip']);
+    await expect(post.locator).toContainText('archive.zip');
 
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const editor = await openEditor(app, post);
+    await removeFile(editor, 'sample_text_file.txt');
+    await removeFile(editor, 'mattermost.png');
+    await removeFile(editor, 'archive.zip');
+    await save(editor);
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage, ['sample_text_file.txt', 'mattermost.png', 'archive.zip']);
-
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.toContainText(originalMessage);
-    await post.toContainText('sample_text_file.txt');
-    await post.toContainText('mattermost.png');
-    await post.toContainText('archive.zip');
-
-    await post.hover();
-    await post.postMenu.toBeVisible();
-    await post.postMenu.clickOnDotMenu();
-    await moveMouseAway(page);
-
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.removeFile('sample_text_file.txt');
-    await channelsPage.centerView.postEdit.removeFile('mattermost.png');
-    await channelsPage.centerView.postEdit.removeFile('archive.zip');
-    await channelsPage.centerView.postEdit.sendMessage();
-
-    const updatedPost = await channelsPage.getLastPost();
-    await updatedPost.toBeVisible();
-    await updatedPost.toContainText(originalMessage);
-    await updatedPost.toNotContainText('archive.zip');
-    await updatedPost.toNotContainText('mattermost.png');
-    await updatedPost.toNotContainText('sample_text_file.txt');
+    await expect(post.messageText.locator).toContainText(ORIGINAL_MESSAGE);
+    await expect(post.locator).not.toContainText('archive.zip');
+    await expect(post.locator).not.toContainText('mattermost.png');
+    await expect(post.locator).not.toContainText('sample_text_file.txt');
 });
 
 test('MM-T5656_1 should be able to restore previously edited post version that contains attachments', async ({pw}) => {
-    const originalMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
     const newMessage = 'New Message';
+    const app = await open(pw);
+    const {id: postId, post} = await postMessage(app, ORIGINAL_MESSAGE, ['sample_text_file.txt']);
+    await expect(post.locator).toContainText('sample_text_file.txt');
 
-    const {user} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    // # Edit: remove the file and change the message
+    const editor = await openEditor(app, post);
+    await removeFile(editor, 'sample_text_file.txt');
+    await editor.fillMessageTextbox(newMessage);
+    await save(editor);
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(originalMessage, ['sample_text_file.txt']);
+    await expect(post.messageText.locator).toContainText(newMessage);
+    await expect(post.locator).not.toContainText('sample_text_file.txt');
 
-    const post = await channelsPage.getLastPost();
-    await post.toBeVisible();
-    await post.toContainText(originalMessage);
-    await post.toContainText('sample_text_file.txt');
+    // # Open the edit history from the post's Edited indicator
+    await post.clickEditedButton();
+    const history = app.rhs.editHistory;
 
-    await post.hover();
-    await post.postMenu.toBeVisible();
-    await post.postMenu.dotMenuButton.click();
-    await moveMouseAway(page);
+    // * The current version (keyed by the post's id) shows the new message
+    const current = history.version({id: postId});
+    await expect(current.current.locator).toBeVisible();
+    await expect(current.messageText.locator).toContainText(newMessage);
 
-    await channelsPage.postDotMenu.toBeVisible();
-    await channelsPage.postDotMenu.editMenuItem.click();
-    await channelsPage.centerView.postEdit.toBeVisible();
-    await channelsPage.centerView.postEdit.removeFile('sample_text_file.txt');
-    await channelsPage.centerView.postEdit.writeMessage(newMessage);
-    await channelsPage.centerView.postEdit.sendMessage();
+    // # Restore the previous version (the other one in the history), and confirm
+    await expect.poll(async () => (await history.versionKeys()).length).toBe(2);
+    const previousId = (await history.versionKeys()).find((key) => key !== postId)!;
+    const previous = history.version({id: previousId});
+    await previous.locator.hover();
+    await previous.clickRestoreButton();
+    await expect(app.restorePostModal.locator).toBeVisible();
+    await app.restorePostModal.clickConfirmButton();
+    await expect(app.restorePostModal.locator).not.toBeVisible();
 
-    const updatedPost = await channelsPage.getLastPost();
-    await updatedPost.toBeVisible();
-    await updatedPost.toContainText(newMessage);
-    await updatedPost.toNotContainText('sample_text_file.txt');
-
-    const postID = await channelsPage.centerView.getLastPostID();
-    await channelsPage.centerView.clickOnLastEditedPost(postID);
-
-    await channelsPage.sidebarRight.toBeVisible();
-    await channelsPage.sidebarRight.verifyCurrentVersionPostMessage(postID, newMessage);
-
-    await channelsPage.sidebarRight.restorePreviousPostVersion();
-
-    await channelsPage.centerView.postEdit.restorePostConfirmationDialog.toBeVisible();
-    await channelsPage.centerView.postEdit.restorePostConfirmationDialog.confirmRestore();
-    await channelsPage.centerView.postEdit.restorePostConfirmationDialog.notToBeVisible();
-
-    const restoredPost = await channelsPage.getLastPost();
-    await restoredPost.toBeVisible();
-    await restoredPost.toContainText('sample_text_file.txt');
+    // * The restored post has its file again
+    await expect(post.locator).toContainText('sample_text_file.txt');
 });
-
-/**
- * Parks the cursor away from the post so it does not hover whatever menu item happens to render
- * under it. A hovered submenu item (e.g. "Remind") opens a nested MUI popover, which marks the
- * parent menu aria-hidden and makes getByRole('menu') unresolvable.
- */
-async function moveMouseAway(page: Page) {
-    await page.mouse.move(0, 0);
-}

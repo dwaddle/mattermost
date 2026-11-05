@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Page} from '@playwright/test';
+import type {Locator, Page} from '@playwright/test';
 import type {Channel} from '@mattermost/types/channels';
 import {CollapsedThreads} from '@mattermost/types/config';
 import type {Team} from '@mattermost/types/teams';
@@ -11,10 +11,13 @@ import {
     duration,
     expect,
     test,
-    type ChannelsPage,
+    type App,
     type PlaywrightClient4,
     type PlaywrightExtended,
 } from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the composer, the posts by id (center and RHS thread, with their Reply
+// button), the RHS composer and the sidebar's channel rows (link and mention badge).
 
 test.describe('Reply notifications', () => {
     let adminClient: PlaywrightClient4;
@@ -24,7 +27,7 @@ test.describe('Reply notifications', () => {
     let receiver: UserProfile;
     let sender: UserProfile;
     let receiverPage: Page;
-    let channelsPage: ChannelsPage;
+    let app: App;
     let playwright: PlaywrightExtended;
 
     test.beforeEach(async ({pw}, testInfo) => {
@@ -54,9 +57,8 @@ test.describe('Reply notifications', () => {
         // # Log in as the receiver, open the test channel, and capture desktop notifications
         const browserSession = await pw.testBrowser.login(receiver);
         receiverPage = browserSession.page;
-        channelsPage = browserSession.channelsPage;
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        app = browserSession.app;
+        await app.channelsPage.goto({team, channel});
         await pw.stubNotification(receiverPage, 'granted');
     });
 
@@ -67,8 +69,14 @@ test.describe('Reply notifications', () => {
                 response.request().method() === 'POST' &&
                 response.ok(),
         );
-        await channelsPage.sidebarLeft.goToItem('Town Square');
+        await app.lhs.channelList.channel({name: 'town-square'}).clickLink();
         await channelViewResponse;
+    }
+
+    /** Verifies the reply shows the exact text with the reply-mention highlight. */
+    async function expectReplyNotification(post: {locator: Locator; messageText: {locator: Locator}}, message: string) {
+        await expect(post.messageText.locator).toHaveText(message);
+        await expect(post.locator).toHaveClass(/mention-comment/);
     }
 
     async function verifyStartedThreadNotification(message: string) {
@@ -79,7 +87,8 @@ test.describe('Reply notifications', () => {
                 response.request().method() === 'POST' &&
                 response.status() === 201,
         );
-        await channelsPage.postMessage('Hi there, this is another root message');
+        await app.center.postCreate.fillMessageTextbox('Hi there, this is another root message');
+        await app.center.postCreate.clickSendButton();
         const rootPost = (await (await rootPostResponse).json()) as {id: string};
 
         // # Move to Town Square and post a reply as the sender
@@ -93,14 +102,16 @@ test.describe('Reply notifications', () => {
         // * Verify the reply triggers a desktop notification and unread-mention badge
         const notifications = await playwright.waitForNotification(receiverPage, 1, duration.ten_sec);
         expect(notifications.length).toBeGreaterThanOrEqual(1);
-        await expect(channelsPage.sidebarLeft.unreadMentionsBadge(channel.name)).toBeVisible();
+        const sidebarItem = app.lhs.channelList.channel(channel);
+        await expect(sidebarItem.mentionBadgeText.locator).toBeVisible();
 
         // # Return to the test channel
-        await channelsPage.sidebarLeft.goToItem(channel.name);
+        await sidebarItem.clickLink();
 
         // * Verify the exact reply text and reply-notification highlight
-        const replyPost = await channelsPage.getLastPost();
-        await replyPost.toBeReplyNotification(message);
+        await expect.poll(async () => (await app.center.postList.postKeys()).at(-1)).not.toBe(rootPost.id);
+        const replyId = (await app.center.postList.postKeys()).at(-1)!;
+        await expectReplyNotification(app.center.postList.post({id: replyId}), message);
     }
 
     /**
@@ -141,21 +152,24 @@ test.describe('Reply notifications', () => {
             });
 
             // # Open the thread and post a reply as the receiver to participate in it
-            const receiverRootPost = await channelsPage.centerView.getPostById(rootPost.id);
-            await receiverRootPost.reply();
-            await channelsPage.sidebarRight.toBeVisible();
+            const receiverRootPost = app.center.postList.post(rootPost);
+            await receiverRootPost.locator.hover();
+            await receiverRootPost.menu.clickReplyButton();
+            await expect(app.rhs.postCreate.messageTextbox.locator).toBeVisible();
             const receiverReplyResponse = receiverPage.waitForResponse(
                 (response) =>
                     response.url().endsWith('/api/v4/posts') &&
                     response.request().method() === 'POST' &&
                     response.status() === 201,
             );
-            await channelsPage.sidebarRight.postMessage('this is a reply from the receiver');
-            await receiverReplyResponse;
+            await app.rhs.postCreate.fillMessageTextbox('this is a reply from the receiver');
+            await app.rhs.postCreate.clickSendButton();
+            const receiverReply = (await (await receiverReplyResponse).json()) as {id: string};
 
             // * Verify the receiver's reply appears in the thread
-            const receiverReply = await channelsPage.sidebarRight.getLastPost();
-            await receiverReply.toContainText('this is a reply from the receiver');
+            await expect(app.rhs.thread.post(receiverReply).messageText.locator).toContainText(
+                'this is a reply from the receiver',
+            );
 
             // # Move to Town Square, clear captured notifications, and post another reply as the sender
             await goToTownSquare();
@@ -170,14 +184,14 @@ test.describe('Reply notifications', () => {
             // * Verify the reply triggers a desktop notification and unread-mention badge
             const notifications = await pw.waitForNotification(receiverPage, 1, duration.ten_sec);
             expect(notifications.length).toBeGreaterThanOrEqual(1);
-            await expect(channelsPage.sidebarLeft.unreadMentionsBadge(channel.name)).toBeVisible();
+            const sidebarItem = app.lhs.channelList.channel(channel);
+            await expect(sidebarItem.mentionBadgeText.locator).toBeVisible();
 
             // # Return to the test channel
-            await channelsPage.sidebarLeft.goToItem(channel.name);
+            await sidebarItem.clickLink();
 
             // * Verify the exact reply text and reply-notification highlight in the thread
-            const replyPost = await channelsPage.sidebarRight.getPostById(senderReply.id);
-            await replyPost.toBeReplyNotification(message);
+            await expectReplyNotification(app.rhs.thread.post(senderReply), message);
         },
     );
 });

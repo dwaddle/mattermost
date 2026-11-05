@@ -3,7 +3,7 @@
 
 import type {Locator} from '@playwright/test';
 
-import {expect, setupFileServer, test} from '@mattermost/playwright-lib';
+import {Api, expect, generated, settle, setupFileServer, test} from '@mattermost/playwright-lib';
 
 let fileServerUrl: string;
 setupFileServer().then((serverUrl) => {
@@ -39,79 +39,90 @@ async function textNodeBox(scope: Locator, needle: string): Promise<Box | null> 
 
 /**
  * @objective Verify an inline Markdown image opens in the image preview.
+ *
+ * Written on the generated page objects: the post by id, and its Markdown image and link through `Markdown`
+ * constructed on that post.
  */
 test('MM-T187 Inline markdown images open preview window', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, team, userClient} = await pw.initSetup();
     const imageUrl =
         'https://raw.githubusercontent.com/mattermost/mattermost/master/e2e-tests/cypress/tests/fixtures/image-small-height.png';
+    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const post = await userClient.createPost({channel_id: channel.id, message: `Hello ![test image](${imageUrl})`});
 
-    // # Log in and post an inline Markdown image
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(`Hello ![test image](${imageUrl})`);
+    // # Log in and open the channel
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const markdown = new generated.Markdown(page, 'markdown', app.center.postList.post(post).locator);
 
-    // * Verify the inline image is visible
-    const imagePost = await channelsPage.getLastPost();
-    await expect(imagePost.getInlineImage('test image')).toBeVisible();
+    // * The inline image is visible
+    await expect(markdown.imageImg.locator).toBeVisible();
+    await expect(markdown.imageImg.locator).toHaveAttribute('alt', 'test image');
 
     // # Click the inline image
-    await imagePost.openInlineImagePreview('test image');
+    await markdown.imageImg.locator.click();
 
-    // * Verify the image opens in the preview
-    await channelsPage.imagePreviewModal.toBeVisible();
+    // * The image opens in the preview
+    await expect(app.filePreviewModal.locator).toBeVisible();
 });
 
 /**
  * @objective Verify an inline Markdown image nested in a link renders correctly and points to the external destination.
  */
 test('MM-T188 Inline markdown image that is a link, opens the link', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, team, userClient} = await pw.initSetup();
     const linkUrl = 'https://www.google.com';
     const imageUrl =
         'https://raw.githubusercontent.com/mattermost/mattermost/master/e2e-tests/cypress/tests/fixtures/mattermost-icon_128x128.png';
     const label = 'Build Status';
+    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const post = await userClient.createPost({
+        channel_id: channel.id,
+        message: `[![${label}](${imageUrl})](${linkUrl})`,
+    });
 
-    // # Log in and post a linked inline Markdown image
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(`[![${label}](${imageUrl})](${linkUrl})`);
+    // # Log in and open the channel
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const markdown = new generated.Markdown(page, 'markdown', app.center.postList.post(post).locator);
 
-    // * Verify the image link has the correct destination and opens in a new tab
-    const imagePost = await channelsPage.getLastPost();
-    const imageLink = imagePost.getInlineImageLink(label);
-    await expect(imageLink).toHaveAttribute('href', linkUrl);
-    await expect(imageLink).toHaveAttribute('target', '_blank');
+    // * The image's link has the right destination and opens in a new tab
+    await expect(markdown.linkLink.locator).toHaveAttribute('href', linkUrl);
+    await expect(markdown.linkLink.locator).toHaveAttribute('target', '_blank');
 
-    // * Verify the linked image is visible with the expected source and alt text
-    const linkedImage = imagePost.getInlineImage(label);
-    await expect(linkedImage).toBeVisible();
-    await expect(linkedImage).toHaveAttribute('src', imageUrl);
+    // * The linked image is visible with the expected source and alt text
+    await expect(markdown.imageImg.locator).toBeVisible();
+    await expect(markdown.imageImg.locator).toHaveAttribute('src', imageUrl);
+    await expect(markdown.imageImg.locator).toHaveAttribute('alt', label);
 });
 
 /**
  * @objective Verify inline Markdown images stay in the text flow instead of each starting a new line.
  */
 test('inline markdown images share a line with the surrounding text', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'off-topic');
 
     // Stay under EXPANDABLE_INLINE_IMAGE_MIN_HEIGHT so the images aren't wrapped in the
     // block-level collapse control, which legitimately takes a line of its own.
     const imageUrl = `${fileServerUrl}/small-image.png`;
 
     // # Log in and post two inline Markdown images surrounded by text
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
-    await channelsPage.postMessage(`foo bar ![first](${imageUrl}) ![second](${imageUrl}) hello world`);
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const composer = app.center.postCreate;
+    await composer.fillMessageTextbox(`foo bar ![first](${imageUrl}) ![second](${imageUrl}) hello world`);
+    const created = await settle(composer.sendButton, (b) => b.click(), {wait: Api.CreatePost});
+    const imagePost = app.center.postList.post(created);
+    const markdown = new generated.Markdown(page, 'markdown', imagePost.locator);
 
-    // * Verify both images are visible
-    const imagePost = await channelsPage.getLastPost();
-    const firstImage = imagePost.getInlineImage('first');
-    const secondImage = imagePost.getInlineImage('second');
+    // * Verify both images are visible, in message order
+    const firstImage = markdown.imageImg.locator.nth(0);
+    const secondImage = markdown.imageImg.locator.nth(1);
     await expect(firstImage).toBeVisible();
+    await expect(firstImage).toHaveAttribute('alt', 'first');
     await expect(secondImage).toBeVisible();
+    await expect(secondImage).toHaveAttribute('alt', 'second');
 
     // * Verify the two images sit next to each other on the same line
     const firstBox = (await firstImage.boundingBox())!;
@@ -121,7 +132,7 @@ test('inline markdown images share a line with the surrounding text', {tag: '@me
 
     // * Verify "hello world" shares a row with both images. The 24x24 fixture is
     // short enough that a wrapped text line can still sit under firstBox.height * 2.
-    const helloBox = await textNodeBox(imagePost.body, 'hello world');
+    const helloBox = await textNodeBox(imagePost.body.locator, 'hello world');
     expect(helloBox).not.toBeNull();
     expect(helloBox!.y).toBeLessThan(firstBox.y + firstBox.height);
     expect(helloBox!.y + helloBox!.height).toBeGreaterThan(firstBox.y);
@@ -130,6 +141,6 @@ test('inline markdown images share a line with the surrounding text', {tag: '@me
     expect(helloBox!.x).toBeGreaterThan(secondBox.x + secondBox.width);
 
     // * Verify the message still occupies a single line, so the text wasn't pushed around the images
-    const messageBox = (await imagePost.body.boundingBox())!;
+    const messageBox = (await imagePost.body.locator.boundingBox())!;
     expect(messageBox.height).toBeLessThan(firstBox.height * 2);
 });

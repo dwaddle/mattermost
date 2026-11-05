@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
 type Props = {
@@ -12,10 +13,14 @@ type Props = {
      * An array of file metadata for the parent post
      */
     fileInfos?: FileInfo[];
+
+    /* The text renders `<testId>--text`; without it, the legacy id. */
+    testId?: TestId;
 };
 
 const CommentedOnFilesMessage = ({
     fileInfos,
+    testId,
 }: Props) => {
     if (!fileInfos?.length) {
         return null;
@@ -35,7 +40,7 @@ const CommentedOnFilesMessage = ({
     }
 
     return (
-        <span data-testid='fileInfo'>
+        <span data-testid={testId ? `${testId}--text` : 'fileInfo'}>
             {fileInfos[0].name}
             {plusMore}
         </span>

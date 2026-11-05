@@ -6,6 +6,7 @@ import React from 'react';
 import type {ReactNode} from 'react';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 import type {Post} from '@mattermost/types/posts';
 
@@ -35,6 +36,9 @@ type Props = {
     uploadsInProgress?: string[];
     uploadsProgressPercent?: {[clientID: string]: FilePreviewInfo};
     compactMode?: boolean;
+
+    /** The previews' scope (`center.post_create.file_previews`): each file is `<scope>.file:<file id>` with `.details` and `.remove--button`. */
+    testIdScope?: TestId;
     disabledRemoveTooltip?: string;
     actions: {
         openModal: <P>(modalData: ModalData<P>) => void;
@@ -158,12 +162,12 @@ export default class FilePreview extends React.PureComponent<Props> {
                 <div
                     key={info.id}
                     className={className}
-                    data-testid='file-preview-item'
+                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.file:${info.id}` : undefined}
                 >
                     {thumbnailWrap}
                     <div
                         className='post-image__details'
-                        data-testid='post-image-details'
+                        data-testid={this.props.testIdScope ? `${this.props.testIdScope}.file.details` : undefined}
                     >
                         <div className='post-image__detail_wrapper'>
                             <div
@@ -190,7 +194,7 @@ export default class FilePreview extends React.PureComponent<Props> {
                             {this.props.onRemove && (
                                 <a
                                     className={classNames('file-preview__remove', {compact: this.props.compactMode})}
-                                    data-testid='file-preview-remove'
+                                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.file.remove--button` : undefined}
                                     onClick={this.handleRemove.bind(this, info.id)}
                                 >
                                     <i className='icon icon-close'/>
@@ -235,7 +239,7 @@ export default class FilePreview extends React.PureComponent<Props> {
         return (
             <div
                 className={classNames('file-preview__container', {compact: this.props.compactMode})}
-                data-testid='file-preview-container'
+                data-testid={this.props.testIdScope}
             >
                 {previews}
             </div>

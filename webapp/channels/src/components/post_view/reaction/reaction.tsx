@@ -5,6 +5,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {Reaction as ReactionType} from '@mattermost/types/reactions';
 
@@ -18,6 +19,9 @@ type State = {
 };
 
 type Props = WrappedComponentProps & {
+
+    /** Renders `${testId}--button`. */
+    testId?: TestId;
 
     /*
      * The post to render the reaction for
@@ -315,6 +319,7 @@ export class Reaction extends React.PureComponent<Props, State> {
             >
                 <button
                     id={`postReaction-${this.props.post.id}-${this.props.emojiName}`}
+                    data-testid={this.props.testId ? `${this.props.testId}--button` : undefined}
                     aria-label={ariaLabelEmoji}
                     className={`Reaction ${this.state.reactedClass} ${readOnlyClass}`}
                     onClick={this.handleClick}

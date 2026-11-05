@@ -1,7 +1,23 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, Msg, test, type App} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the composer (a slash command is sent with the Send button, since Enter
+// picks the highlighted autocomplete suggestion), the post list's last post and its "(Only visible to you)" marker.
+
+/** Sends a slash command from the composer. */
+async function runCommand(app: App, command: string) {
+    await app.center.postCreate.fillMessageTextbox(command);
+    await app.center.postCreate.clickSendButton();
+}
+
+/** Waits for the last post in the center channel to contain `text`, and returns it. */
+async function lastPostContaining(app: App, text: string, timeout?: number) {
+    const last = async () => app.center.postList.post({id: (await app.center.postList.postKeys()).at(-1) ?? ''});
+    await expect.poll(async () => (await last()).locator.textContent(), {timeout}).toContain(text);
+    return last();
+}
 
 /**
  * Helper to find the attach_app_logs preference for a given user.
@@ -31,19 +47,17 @@ test.describe('/mobile-logs slash command', () => {
             const {team, user, userClient} = await pw.initSetup();
 
             // # Log in as the user and navigate to town-square
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // # Execute /mobile-logs on
-            await channelsPage.postMessage('/mobile-logs on');
+            await runCommand(app, '/mobile-logs on');
 
             // * Verify ephemeral response confirms logs enabled
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toContainText('Mobile app log attachment is now enabled for you');
+            const lastPost = await lastPostContaining(app, 'Mobile app log attachment is now enabled for you');
 
             // * Verify the response is ephemeral (only visible to the user)
-            await expect(lastPost.container.locator('.post__visibility')).toContainText('(Only visible to you)');
+            await expect(lastPost.onlyVisibleToYouText).toHaveMessage(Msg.post_info.message.visible._);
 
             // * Verify the preference was actually set via API
             const logPref = await getAttachLogsPreference(userClient, user.id);
@@ -66,16 +80,14 @@ test.describe('/mobile-logs slash command', () => {
         ]);
 
         // # Log in as the user and navigate to town-square
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Execute /mobile-logs off
-        await channelsPage.postMessage('/mobile-logs off');
+        await runCommand(app, '/mobile-logs off');
 
         // * Verify ephemeral response confirms logs disabled
-        const lastPost = await channelsPage.getLastPost();
-        await lastPost.toContainText('Mobile app log attachment is now disabled for you');
+        await lastPostContaining(app, 'Mobile app log attachment is now disabled for you');
 
         // * Verify the preference was set to false via API
         const logPref = await getAttachLogsPreference(userClient, user.id);
@@ -94,16 +106,14 @@ test.describe('/mobile-logs slash command', () => {
             const {team, user} = await pw.initSetup();
 
             // # Log in as the user and navigate to town-square
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // # Execute /mobile-logs status
-            await channelsPage.postMessage('/mobile-logs status');
+            await runCommand(app, '/mobile-logs status');
 
             // * Verify ephemeral response shows disabled
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toContainText('Mobile app log attachment is currently disabled for you');
+            await lastPostContaining(app, 'Mobile app log attachment is currently disabled for you');
         },
     );
 
@@ -124,16 +134,14 @@ test.describe('/mobile-logs slash command', () => {
             ]);
 
             // # Log in as the user and navigate to town-square
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // # Execute /mobile-logs status
-            await channelsPage.postMessage('/mobile-logs status');
+            await runCommand(app, '/mobile-logs status');
 
             // * Verify ephemeral response shows enabled
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toContainText('Mobile app log attachment is currently enabled for you');
+            await lastPostContaining(app, 'Mobile app log attachment is currently enabled for you');
         },
     );
 
@@ -146,16 +154,14 @@ test.describe('/mobile-logs slash command', () => {
         const {team, user} = await pw.initSetup();
 
         // # Log in as the user and navigate to town-square
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Execute /mobile-logs with an invalid action
-        await channelsPage.postMessage('/mobile-logs invalid');
+        await runCommand(app, '/mobile-logs invalid');
 
         // * Verify usage message is shown
-        const lastPost = await channelsPage.getLastPost();
-        await lastPost.toContainText('Usage: /mobile-logs [on|off|status] [@username]');
+        await lastPostContaining(app, 'Usage: /mobile-logs [on|off|status] [@username]');
     });
 
     /**
@@ -170,16 +176,14 @@ test.describe('/mobile-logs slash command', () => {
             const {team, adminUser, user, userClient} = await pw.initSetup();
 
             // # Log in as admin and navigate to town-square
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // # Execute /mobile-logs on for the regular user
-            await channelsPage.postMessage(`/mobile-logs on @${user.username}`);
+            await runCommand(app, `/mobile-logs on @${user.username}`);
 
             // * Verify ephemeral response confirms logs enabled for the target user
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toContainText(`Mobile app log attachment is now enabled for @${user.username}`);
+            await lastPostContaining(app, `Mobile app log attachment is now enabled for @${user.username}`);
 
             // * Verify the preference was set on the target user via API
             const logPref = await getAttachLogsPreference(userClient, user.id);
@@ -206,16 +210,14 @@ test.describe('/mobile-logs slash command', () => {
             ]);
 
             // # Log in as admin and navigate to town-square
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // # Disable for the regular user
-            await channelsPage.postMessage(`/mobile-logs off @${user.username}`);
+            await runCommand(app, `/mobile-logs off @${user.username}`);
 
             // * Verify ephemeral response confirms logs disabled
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toContainText(`Mobile app log attachment is now disabled for @${user.username}`);
+            await lastPostContaining(app, `Mobile app log attachment is now disabled for @${user.username}`);
 
             // * Verify the preference was set to false on the target user
             const logPref = await getAttachLogsPreference(userClient, user.id);
@@ -240,16 +242,14 @@ test.describe('/mobile-logs slash command', () => {
             await adminClient.addToTeam(team.id, otherUserId);
 
             // # Log in as the first regular user
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // # Try to enable mobile logs for the other user
-            await channelsPage.postMessage(`/mobile-logs on @${otherUser.username}`);
+            await runCommand(app, `/mobile-logs on @${otherUser.username}`);
 
             // * Verify permission denied message
-            const lastPost = await channelsPage.getLastPost();
-            await lastPost.toContainText('Unable to change mobile log settings for that user.');
+            await lastPostContaining(app, 'Unable to change mobile log settings for that user.');
         },
     );
 
@@ -263,16 +263,14 @@ test.describe('/mobile-logs slash command', () => {
         async ({pw}) => {
             const {team, user} = await pw.initSetup();
 
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // # Post the mobile-logs command
-            await channelsPage.postMessage('/mobile-logs on @nonexistentuser12345');
+            await runCommand(app, '/mobile-logs on @nonexistentuser12345');
 
-            const lastPost = await channelsPage.getLastPost();
             // * Expect permission denial message
-            await lastPost.toContainText('Unable to change mobile log settings for that user.');
+            await lastPostContaining(app, 'Unable to change mobile log settings for that user.');
         },
     );
 
@@ -285,16 +283,14 @@ test.describe('/mobile-logs slash command', () => {
         const {team, adminUser, user} = await pw.initSetup();
 
         // # Log in as admin and navigate to town-square
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Check status (default off)
-        await channelsPage.postMessage(`/mobile-logs status @${user.username}`);
+        await runCommand(app, `/mobile-logs status @${user.username}`);
 
         // * Verify status shows disabled
-        const statusOffPost = await channelsPage.getLastPost();
-        await statusOffPost.toContainText(`Mobile app log attachment is currently disabled for @${user.username}`);
+        await lastPostContaining(app, `Mobile app log attachment is currently disabled for @${user.username}`);
     });
 
     /**
@@ -306,16 +302,13 @@ test.describe('/mobile-logs slash command', () => {
         const {team, adminUser} = await pw.initSetup();
 
         // # Log in as admin
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Try to enable for a nonexistent user
-        await channelsPage.postMessage('/mobile-logs on @nonexistentuser12345');
+        await runCommand(app, '/mobile-logs on @nonexistentuser12345');
 
         // * Verify user not found message — wait up to 30 s for the slash command response post
-        await expect(channelsPage.centerView.container).toContainText('Could not find user "nonexistentuser12345"', {
-            timeout: 30000,
-        });
+        await lastPostContaining(app, 'Could not find user "nonexistentuser12345"', 30000);
     });
 });

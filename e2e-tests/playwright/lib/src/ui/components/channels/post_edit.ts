@@ -26,7 +26,7 @@ export default class ChannelsPostEdit {
     constructor(container: Locator) {
         this.container = container;
 
-        this.input = container.getByTestId('edit_textbox');
+        this.input = container.getByTestId('post_edit.editor.message--textbox');
 
         this.attachmentButton = container.locator('#fileUploadButton');
         this.emojiButton = container.getByLabel('select an emoji');
@@ -68,12 +68,12 @@ export default class ChannelsPostEdit {
     }
 
     async removeFile(fileName: string) {
-        const files = await this.container.getByTestId('file-preview-item').all();
+        const files = await this.container.getByTestId(/\.file_previews\.file:/).all();
 
         for (let i = 0; i < files.length; i++) {
             const textContent = await files[i].textContent();
             if (textContent?.includes(fileName)) {
-                const removeButton = files[i].getByTestId('file-preview-remove');
+                const removeButton = files[i].getByTestId(/\.file_previews\.file\.remove--button$/);
                 await removeButton.click();
                 break;
             }

@@ -116,7 +116,7 @@ describe('FormattingBar', () => {
             />,
         );
 
-        expect(container.querySelectorAll('[data-testid="formatting-bar-separator"]')).toHaveLength(2);
+        expect(container.querySelectorAll('.formatting-bar-separator')).toHaveLength(2);
 
         rerender(
             <FormattingBar
@@ -125,6 +125,6 @@ describe('FormattingBar', () => {
             />,
         );
 
-        expect(container.querySelectorAll('[data-testid="formatting-bar-separator"]')).toHaveLength(1);
+        expect(container.querySelectorAll('.formatting-bar-separator')).toHaveLength(1);
     });
 });

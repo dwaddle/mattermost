@@ -20,8 +20,8 @@ export default class ChannelsSidebarLeft {
         this.teamMenuButton = container.locator('#sidebarTeamMenuButton');
         this.browseOrCreateChannelButton = container.locator('#browseOrAddChannelMenuButton');
         this.findChannelButton = container.getByRole('button', {name: 'Find Channels'});
-        this.scheduledPostBadge = container.getByTestId('scheduled-post-badge');
-        this.unreadChannelFilter = container.getByTestId('sidebar-unread-filter-button');
+        this.scheduledPostBadge = container.getByTestId('lhs.drafts.scheduled_post_badge--text');
+        this.unreadChannelFilter = container.getByTestId('lhs.header.unreads_filter--togglebutton');
         this.openDirectMessageButton = container.getByRole('button', {name: 'Write a direct message'});
     }
 
@@ -116,14 +116,14 @@ export default class ChannelsSidebarLeft {
      * @param name
      */
     draftIcon(name: string): Locator {
-        return this.item(name).getByTestId('draftIcon');
+        return this.item(name).getByTestId('lhs.channel_list.channel.draft--text');
     }
 
     /**
      * Locates the global Drafts sidebar link.
      */
     draftsLink(): Locator {
-        return this.container.locator('#sidebarItem_drafts');
+        return this.container.getByTestId('lhs.drafts--link');
     }
 
     /**
@@ -176,6 +176,6 @@ export default class ChannelsSidebarLeft {
      * Gets all unread channel items in the sidebar.
      */
     getUnreadChannels(): Locator {
-        return this.container.getByTestId('sidebar-unread-channel');
+        return this.container.locator('[data-testid^="lhs.channel_list.channel:"].unread-title');
     }
 }

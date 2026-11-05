@@ -5,33 +5,39 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify clearing a completed search displays search options without removing the existing results.
+ *
+ * Written on the generated page objects: the search box, its hints and clear and close buttons, and the result
+ * by post id.
  */
 test('MM-T353 displays search options after clearing the query', {tag: '@search'}, async ({pw}) => {
     // # Create a user with a searchable post and open the channel
-    const {user, team, adminClient} = await pw.initSetup();
-    const channel = await adminClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
     const searchWord = `Hello${pw.random.id()}`;
-    await adminClient.createPost({channel_id: channel.id, user_id: user.id, message: searchWord});
+    const post = await userClient.createPost({channel_id: channel.id, message: searchWord});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const input = app.searchBox.inputSearchbox.locator;
 
     // # Search for the post, reopen search, and clear the query
-    await channelsPage.searchFor(searchWord);
-    await channelsPage.globalHeader.openSearch();
-    await expect(channelsPage.searchBox.searchInput).toHaveValue(searchWord);
-    await channelsPage.searchBox.clearIfPossible();
-    await expect(channelsPage.searchBox.searchInput).toHaveValue('');
+    await app.globalHeader.search.clickOpenButton();
+    await input.fill(searchWord);
+    await input.press('Enter');
+    await expect(app.search.results.post(post).locator).toBeVisible();
+    await app.globalHeader.search.clickOpenButton();
+    await expect(input).toHaveValue(searchWord);
+    await app.searchBox.clickClearButton();
+    await expect(input).toHaveValue('');
 
-    // * Verify search options appear and the existing results remain visible
-    await expect(channelsPage.searchBox.searchHints).toBeVisible();
-    await expect(channelsPage.searchResultsPanel.getResultByText(searchWord)).toBeVisible();
+    // * The search options appear, and the existing result stays
+    await expect(app.searchBox.hints.locator).toBeVisible();
+    await expect(app.search.results.post(post).locator).toBeVisible();
 
     // # Close and reopen the search box
-    await channelsPage.searchBox.searchBoxClose.click();
-    await channelsPage.globalHeader.openSearch();
+    await app.searchBox.clickCloseButton();
+    await app.globalHeader.search.clickOpenButton();
 
-    // * Verify search options are still displayed
-    await expect(channelsPage.searchBox.searchHints).toBeVisible();
+    // * The search options are still shown
+    await expect(app.searchBox.hints.locator).toBeVisible();
 });

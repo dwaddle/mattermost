@@ -131,8 +131,27 @@ export function pluginSlotPath<S extends PluginSlot>(slot: S, pluginId: string, 
  * renders a plugin-keyed testid that isn't listed.
  */
 export const PLUGIN_SLOT_TEST_IDS = {
+    app_bar_button: 'app_bar.plugin:{plugin}--button',
+    channel_header_button: 'channel_header.plugin_actions.action:{plugin}--button',
+    channel_header_dropdown_item: 'channel_header.plugin_actions.menu.action:{plugin}--link',
+    channel_header_menu_item: 'channel_header.menu.plugin:{plugin}--menuitem',
 
-    // each area's PR lists the slots it renders, once it renders them: e.g. `app_bar_button: 'app_bar.plugin:{plugin}--button'`
+    // a file's "..." menu wherever an attachment renders (a post, a thread, a preview…): `*.` is any scope
+    file_menu_item: '*.attachments.file_card.menu.plugin:{plugin}--button',
+
+    // the composer's attachment menu, in the center and the thread panel
+    file_upload_method: '*.attach_menu.plugin:{plugin}--link',
+    lhs_browse_or_add_menu_item: 'lhs.browse_or_add_menu.plugin:{plugin}--menuitem',
+    lhs_team_menu_item: 'lhs.team_menu.plugin:{plugin}--menuitem',
+
+    // a post's actions menu wherever a post renders (the center, a thread, search results…)
+    post_menu_item: '*.actions_menu.plugin:{plugin}--button',
+    post_submenu: '*.actions_menu.plugin_submenu:{plugin}--button',
+    rhs_panel: 'rhs.plugin:{plugin}',
+    search_file_menu_item: 'search.results.file.menu.plugin:{plugin}--button',
+    search_type: 'search_box.plugin_type:{plugin}--radio',
+
+    // each area's PR lists the slots it renders, once it renders them
 } as const;
 
 export type PluginSlot = keyof typeof PLUGIN_SLOT_TEST_IDS;
@@ -142,4 +161,18 @@ export type PluginSlot = keyof typeof PLUGIN_SLOT_TEST_IDS;
  * scan reads its own registry calls through this to list the slots it uses, and checks that each host
  * version it supports still renders them.
  */
-export const PLUGIN_SLOT_REGISTRY_METHODS: Record<PluginSlot, readonly string[]> = {};
+export const PLUGIN_SLOT_REGISTRY_METHODS: Record<PluginSlot, readonly string[]> = {
+    app_bar_button: ['registerAppBarComponent', 'registerChannelHeaderButtonAction'],
+    channel_header_button: ['registerChannelHeaderButtonAction'],
+    channel_header_dropdown_item: ['registerChannelHeaderButtonAction'],
+    channel_header_menu_item: ['registerChannelHeaderMenuAction'],
+    file_menu_item: ['registerFileDropdownMenuAction'],
+    file_upload_method: ['registerFileUploadMethod'],
+    lhs_browse_or_add_menu_item: ['registerSidebarBrowseOrAddChannelMenuAction'],
+    lhs_team_menu_item: ['registerMainMenuAction'],
+    post_menu_item: ['registerPostDropdownMenuAction'],
+    post_submenu: ['registerPostDropdownSubMenuAction'],
+    rhs_panel: ['registerRightHandSidebarComponent'],
+    search_file_menu_item: ['registerFileDropdownMenuAction'],
+    search_type: ['registerSearchComponents'],
+};

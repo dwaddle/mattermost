@@ -4,6 +4,8 @@
 import React, {memo} from 'react';
 import type {FC} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import Timestamp, {RelativeRanges} from 'components/timestamp';
 import BasicSeparator from 'components/widgets/separator/basic-separator';
 
@@ -14,11 +16,14 @@ const DATE_RANGES = [
 
 type Props = {
     date: number | Date;
+
+    // The list's date line, e.g. `center.post_list.date_separator`.
+    testId: TestId;
 };
 
-const DateSeparator: FC<Props> = ({date}) => {
+const DateSeparator: FC<Props> = ({date, testId}) => {
     return (
-        <BasicSeparator>
+        <BasicSeparator testId={testId}>
             <Timestamp
                 value={date}
                 useTime={false}

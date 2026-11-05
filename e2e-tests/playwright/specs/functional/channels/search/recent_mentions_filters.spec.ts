@@ -277,7 +277,6 @@ async function setupMentionsOnTwoTeams(pw: PlaywrightExtended) {
  */
 test('the date filter narrows mentions by when they arrived', {tag: '@search'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
-    const [mentioningUser] = await adminClient.createUsers(team.id, 1, 'mentioner');
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
 
     const day = 24 * 60 * 60 * 1000;
@@ -285,7 +284,7 @@ test('the date filter narrows mentions by when they arrived', {tag: '@search'}, 
     const threeDaysMention = `@${user.username} threedays${pw.random.id()}`;
     const tenDaysMention = `@${user.username} tendays${pw.random.id()}`;
 
-    // # Backdate two of the mentions. Only an admin session may set create_at on a post.
+    // # Backdate two of the mentions. Only an admin session may set create_at on a post, so the admin writes them.
     for (const [message, createAt] of [
         [todayMention, 0],
         [threeDaysMention, Date.now() - 3 * day],
@@ -293,7 +292,6 @@ test('the date filter narrows mentions by when they arrived', {tag: '@search'}, 
     ] as const) {
         await adminClient.createPost({
             channel_id: townSquare.id,
-            user_id: mentioningUser.id,
             message,
             ...(createAt ? {create_at: createAt} : {}),
         });

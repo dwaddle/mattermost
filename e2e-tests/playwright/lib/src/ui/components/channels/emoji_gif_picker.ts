@@ -17,7 +17,7 @@ export default class EmojiGifPicker {
 
         this.gifTab = container.getByText('GIFs');
         this.gifSearchInput = container.getByPlaceholder('Search GIPHY');
-        this.gifPickerItems = container.getByTestId('gif-picker-items');
+        this.gifPickerItems = container.getByTestId('gif_picker.items');
         this.emojiSearchInput = container.getByPlaceholder('Search emojis');
     }
 

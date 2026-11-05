@@ -92,7 +92,7 @@ export default class ChannelsPage {
         this.centerView = new ChannelsCenterView(page.getByTestId('channel_view'), page);
         this.sidebarLeft = new ChannelsSidebarLeft(page.locator('#SidebarContainer'));
         this.sidebarRight = new components.ChannelsSidebarRight(page.locator('#sidebar-right'));
-        this.appBar = new components.ChannelsAppBar(page.getByTestId('app-bar'));
+        this.appBar = new components.ChannelsAppBar(page.getByTestId('app_bar'));
         this.messagePriority = new components.MessagePriority(page.locator('body'));
         this.userAccountMenuButton = page.getByRole('button', {name: "User's account menu"});
 
@@ -148,15 +148,15 @@ export default class ChannelsPage {
         this.scheduleMessageModal = new components.ScheduleMessageModal(
             page.getByRole('dialog', {name: 'Schedule message'}),
         );
-        this.userProfilePopover = new components.UserProfilePopover(page.getByTestId('user-profile-popover'));
+        this.userProfilePopover = new components.UserProfilePopover(page.getByTestId('profile_popover'));
 
         // Posts
-        this.postContainer = page.getByTestId('post-message-text');
+        this.postContainer = page.getByTestId(/(\.post\.message--text|^post-message-text)$/);
         this.archivedChannelMessage = page.locator('#channelArchivedMessage');
 
         // Search results
         this.searchResultsContainer = page.locator('#search-items-container');
-        this.searchResultItems = page.getByTestId('search-item-container');
+        this.searchResultItems = page.getByTestId(/^search\.results\.(post|file):/);
     }
 
     /**
@@ -164,7 +164,7 @@ export default class ChannelsPage {
      * @param text
      */
     getSearchResultItem(text: string) {
-        return this.page.getByTestId('search-item-container').filter({hasText: text});
+        return this.page.getByTestId(/^search\.results\.(post|file):/).filter({hasText: text});
     }
 
     async toBeVisible() {

@@ -14,14 +14,17 @@ import {expect, test} from '@mattermost/playwright-lib';
  * This test catches that by reloading the page and asserting:
  *  - no static asset request returns 4xx/5xx
  *  - no <img> in the DOM has naturalWidth === 0 (failed to decode)
+ *
+ * Written on the generated page objects: the channels page and its message box (which shows the app has loaded).
  */
 
 test('app loads without any broken image assets on the main channel view', {tag: '@image_assets'}, async ({pw}) => {
-    const {user} = await pw.initSetup();
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {user, team} = await pw.initSetup();
+    const {app, page} = await pw.testBrowser.login(user);
+    const messageBox = app.center.postCreate.messageTextbox.locator;
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.channelsPage.goto({team, channel: 'town-square'});
+    await expect(messageBox).toBeVisible();
 
     // # Collect image/font load errors on reload so the response listener is
     // active before any requests fire.
@@ -35,7 +38,7 @@ test('app loads without any broken image assets on the main channel view', {tag:
     });
 
     await page.reload();
-    await channelsPage.toBeVisible();
+    await expect(messageBox).toBeVisible();
 
     // * No image/font requests should return 4xx or 5xx
     expect(failedImageUrls, `Failed asset requests:\n${failedImageUrls.join('\n')}`).toHaveLength(0);

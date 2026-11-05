@@ -11,6 +11,7 @@ import type {WrappedComponentProps} from 'react-intl';
 
 import {DownloadOutlineIcon, LinkVariantIcon, CheckIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 import type {PostImage} from '@mattermost/types/posts';
 
@@ -104,6 +105,9 @@ export type Props = WrappedComponentProps & {
     * Indicates whether the file has been rejected and should not show preview
     */
     isFileRejected?: boolean;
+
+    /** Renders `<testId>--img` on the image, and `<testId>.frame` on its container once it has loaded. */
+    testId?: TestId;
 };
 
 type State = {
@@ -221,6 +225,7 @@ export class SizeAwareImage extends React.PureComponent<Props, State> {
             enablePublicLink,
             intl,
             renderPlaceholderOnly,
+            testId,
             ...props
         } = this.props;
         Reflect.deleteProperty(props, 'showLoader');
@@ -264,6 +269,7 @@ export class SizeAwareImage extends React.PureComponent<Props, State> {
             <img
                 {...props}
                 aria-label={ariaLabelImage}
+                data-testid={testId ? `${testId}--img` : undefined}
                 tabIndex={0}
                 onClick={this.handleImageClick}
                 onKeyDown={this.onEnterKeyDown}
@@ -475,6 +481,7 @@ export class SizeAwareImage extends React.PureComponent<Props, State> {
                 <figure
                     className={containerClass}
                     style={containerStyle}
+                    data-testid={this.props.testId ? `${this.props.testId}.frame` : undefined}
                 >
                     {children}
                 </figure>

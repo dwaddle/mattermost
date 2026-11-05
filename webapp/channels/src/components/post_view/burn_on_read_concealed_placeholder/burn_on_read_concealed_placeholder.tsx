@@ -5,6 +5,7 @@ import React, {memo, useCallback, useEffect, useState} from 'react';
 import {useIntl} from 'react-intl';
 
 import {EyeOutlineIcon, AlertCircleOutlineIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import LoadingSpinner from 'components/widgets/loading/loading_spinner';
 
@@ -19,6 +20,9 @@ type Props = {
     onReveal: (postId: string) => void;
     loading?: boolean;
     error?: string | null;
+
+    // The post's scope; without it, the legacy testid.
+    testIdScope?: TestId;
 };
 
 const ERROR_STATE_DURATION_MS = 3000;
@@ -29,6 +33,7 @@ function BurnOnReadConcealedPlaceholder({
     onReveal,
     loading = false,
     error = null,
+    testIdScope,
 }: Props) {
     const {formatMessage} = useIntl();
     const [showError, setShowError] = useState(false);
@@ -94,7 +99,7 @@ function BurnOnReadConcealedPlaceholder({
                     disabled={loading}
                     aria-label={ariaLabel}
                     tabIndex={0}
-                    data-testid={`burn-on-read-concealed-${postId}`}
+                    data-testid={testIdScope ? `${testIdScope}.reveal--button` : `burn-on-read-concealed-${postId}`}
                 >
                     {loading ? (
                         <LoadingSpinner legacy={true}/>

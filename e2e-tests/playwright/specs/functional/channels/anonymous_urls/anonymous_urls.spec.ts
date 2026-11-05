@@ -869,7 +869,7 @@ test.describe('Anonymous URLs', () => {
         await channelsPage.searchBox.searchInput.fill(message);
         await channelsPage.searchBox.searchInput.press('Enter');
 
-        const searchItem = channelsPage.page.getByTestId('search-item-container').first();
+        const searchItem = channelsPage.page.getByTestId(/^search\.results\.(post|file):/).first();
 
         // * Verify the post appears in results
         await expect(searchItem).toContainText(message, {timeout: 15000});

@@ -9,6 +9,8 @@
 
 // Group: @channels @custom_status
 
+import {quickSwitchUserItem} from '@/utils/suggestion';
+
 describe('Custom Status - Verifying Where Custom Status Appears', () => {
     const customStatus = {
         emoji: 'grinning',
@@ -35,7 +37,7 @@ describe('Custom Status - Verifying Where Custom Status Appears', () => {
         // # Select an emoji from the emoji picker and set the status
         cy.get('#custom_status_modal .StatusModal__emoji-button').click();
         cy.get('#emojiPicker').should('be.visible').find('.emoji-picker__items').should('be.visible');
-        cy.findByTestId(customStatus.emoji).trigger('mouseover', {force: true}).click({force: true});
+        cy.findByTestId(`emoji_picker.emoji:${customStatus.emoji}--button`).trigger('mouseover', {force: true}).click({force: true});
         cy.get('#custom_status_modal .GenericModal__button.confirm').should('be.visible').click();
 
         // * Custom status modal should be closed
@@ -164,7 +166,7 @@ describe('Custom Status - Verifying Where Custom Status Appears', () => {
 
         // * Custom status is shown next to username in the channel switcher
         cy.get('#suggestionList').should('be.visible');
-        cy.findByTestId(currentUser.username).should('be.visible').
+        quickSwitchUserItem(currentUser).should('be.visible').
             find('.emoticon').should('have.attr', 'data-emoticon', 'grinning');
     });
 });

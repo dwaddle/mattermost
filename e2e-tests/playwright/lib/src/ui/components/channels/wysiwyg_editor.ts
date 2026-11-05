@@ -10,11 +10,15 @@ export default class WysiwygEditor {
     readonly formattingBar: Locator;
     readonly page: Page;
 
+    readonly sendButton: Locator;
+
     constructor(container: Locator, isRHS = false) {
         this.container = container;
         this.page = container.page();
-        this.input = container.locator(isRHS ? '[data-testid="reply_textbox"]' : '[data-testid="post_textbox"]');
-        this.formattingBar = container.getByTestId('formattingBarContainer');
+        const scope = isRHS ? 'rhs.post_create' : 'center.post_create';
+        this.input = container.getByTestId(`${scope}.message--textbox`);
+        this.formattingBar = container.getByTestId(`${scope}.formatting_bar`);
+        this.sendButton = container.getByTestId(`${scope}.send--button`);
     }
 
     async toBeVisible() {
@@ -54,7 +58,7 @@ export default class WysiwygEditor {
 
     async sendByEnter() {
         // Check for enabled SendMessageButton to ensure draft is ready to send
-        const btn = this.container.getByTestId('SendMessageButton');
+        const btn = this.sendButton;
         await expect(btn).toBeEnabled();
         await this.input.press('Enter');
     }
@@ -64,7 +68,7 @@ export default class WysiwygEditor {
     }
 
     async sendByButton() {
-        const btn = this.container.getByTestId('SendMessageButton');
+        const btn = this.sendButton;
         await expect(btn).toBeEnabled();
         await btn.click();
     }

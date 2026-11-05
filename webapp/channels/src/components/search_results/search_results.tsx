@@ -370,6 +370,7 @@ const SearchResults: React.FC<Props> = (props: Props): JSX.Element => {
                         <DateSeparator
                             key={date}
                             date={date}
+                            testId='search.results.date_separator'
                         />
                     );
                 }

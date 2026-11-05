@@ -28,7 +28,7 @@ export default class ContentReviewPage {
     constructor(page: Page) {
         this.page = page;
         this.cards = page.getByTestId('property-card-view');
-        this.rhsCard = page.getByTestId('rhsPostView').getByTestId('property-card-view');
+        this.rhsCard = page.getByTestId(/^rhs\.thread\.post:/).getByTestId('property-card-view');
         this.keepMessageButton = this.rhsCard.getByTestId('data-spillage-action-keep-message');
         this.removeMessageButton = this.rhsCard.getByTestId('data-spillage-action-remove-message');
         this.postActionConformationModal = page.getByTestId('keep-remove-flagged-message-confirmation-modal');

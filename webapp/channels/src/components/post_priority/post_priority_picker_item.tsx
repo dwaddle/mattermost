@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import {CheckIcon, AlertOutlineIcon, AlertCircleOutlineIcon, MessageTextOutlineIcon, CheckCircleOutlineIcon, BellRingOutlineIcon} from '@mattermost/compass-icons/components';
 import {Switch} from '@mattermost/compass-ui/components/switch';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {MenuItem} from 'components/menu/menu_item';
 
@@ -18,6 +19,9 @@ type ToggleProps = {
     onClick: () => void;
     text: React.ReactNode;
     toggled: boolean;
+
+    // Path for the item: `<testId>--menuitemcheckbox`.
+    testId?: TestId;
 };
 
 const Wrapper = styled(MenuItem)`
@@ -107,6 +111,7 @@ function ToggleItem({
     onClick,
     text,
     toggled,
+    testId,
 }: ToggleProps) {
     // Compass Switch fires onChange on its own click; without stopping
     // propagation the MenuItem onClick also runs and the toggle nets out.
@@ -121,6 +126,7 @@ function ToggleItem({
             leadingElement={icon}
             tabIndex={-1}
             role='menuitemcheckbox'
+            data-testid={testId ? `${testId}--menuitemcheckbox` : undefined}
             aria-checked={toggled}
             aria-label={ariaLabel}
             trailingElements={

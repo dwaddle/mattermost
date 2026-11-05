@@ -4,6 +4,8 @@
 import React, {useCallback, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import {PostTypes} from 'mattermost-redux/constants/posts';
 import {getChannel} from 'mattermost-redux/selectors/entities/channels';
 import {getCurrentUser, getUser} from 'mattermost-redux/selectors/entities/users';
@@ -42,6 +44,7 @@ const useBurnOnRead = (
     focusTextbox: (keepFocus?: boolean) => void,
     shouldShowPreview: boolean,
     showIndividualCloseButton = true,
+    testIdScope?: TestId,
 ) => {
     const rootId = draft.rootId;
     const channelId = draft.channelId;
@@ -111,12 +114,13 @@ const useBurnOnRead = (
     const labels = useMemo(() => (
         (hasBurnOnReadSet && !rootId) ? (
             <BurnOnReadLabel
+                testId={testIdScope ? `${testIdScope}.burn_on_read_label` : undefined}
                 canRemove={showIndividualCloseButton && !shouldShowPreview}
                 onRemove={handleRemoveBurnOnRead}
                 durationMinutes={durationMinutes}
             />
         ) : undefined
-    ), [hasBurnOnReadSet, rootId, showIndividualCloseButton, shouldShowPreview, handleRemoveBurnOnRead, durationMinutes]);
+    ), [hasBurnOnReadSet, rootId, showIndividualCloseButton, shouldShowPreview, handleRemoveBurnOnRead, durationMinutes, testIdScope]);
 
     // Button component with tour tip wrapper (in formatting bar)
     const additionalControl = useMemo(() =>
@@ -131,13 +135,14 @@ const useBurnOnRead = (
                     onToggle={handleBurnOnReadApply}
                     disabled={shouldShowPreview}
                     durationMinutes={durationMinutes}
+                    testIdScope={testIdScope}
                 />
                 <BurnOnReadTourTip
                     key='burn-on-read-tour-tip-key'
                     onTryItOut={() => handleBurnOnReadApply(true)}
                 />
             </div>
-        ) : undefined), [rootId, isEnabled, allowedByPolicy, isAllowedInChannel, hasBurnOnReadSet, handleBurnOnReadApply, shouldShowPreview, durationMinutes]);
+        ) : undefined), [rootId, isEnabled, allowedByPolicy, isAllowedInChannel, hasBurnOnReadSet, handleBurnOnReadApply, shouldShowPreview, durationMinutes, testIdScope]);
 
     return {
         labels,
