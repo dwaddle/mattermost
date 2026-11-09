@@ -3,14 +3,10 @@
 
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
+import {pluginTestKey} from '@mattermost/types/test_id';
 
 import {settingTestKey} from '@/aria';
 import {duration} from '@/util';
-
-/** A plugin id as the list's row key (`com.mattermost.calls` -> `com_mattermost_calls`), as the webapp builds it. */
-export function pluginRowKey(pluginId: string): string {
-    return pluginId.toLowerCase().replace(/[^a-z0-9_]/g, '_');
-}
 
 /**
  * System Console -> Plugins -> Plugin Management
@@ -59,7 +55,7 @@ export default class PluginManagement {
      * Locates an installed plugin's row by its manifest id.
      */
     pluginRow(pluginId: string): Locator {
-        return this.container.getByTestId(`admin.plugins.plugin:${pluginRowKey(pluginId)}`);
+        return this.container.getByTestId(`admin.plugins.plugin:${pluginTestKey(pluginId)}`);
     }
 
     async notToHavePlugin(pluginId: string) {
