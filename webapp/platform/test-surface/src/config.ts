@@ -4,6 +4,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import {pluginTestKey} from '@mattermost/types/test_id';
+
 /**
  * Everything the scanner needs to know about a project. The webapp's config lives in
  * `webapp/channels/test-surface.config.json`; a plugin repo writes its own.
@@ -165,11 +167,6 @@ export type PluginConfig = {
     hosts: Array<{name: string; appMap: string}>;
 };
 
-/** A plugin id as a testid key: the webapp's `pluginTestKey()`. */
-export function pluginKeyOf(pluginId: string): string {
-    return pluginId.toLowerCase().replace(/[^a-z0-9_]/g, '_');
-}
-
 export const DEFAULT_EXCLUDE = [
     '\\.test\\.',
     '__mocks__',
@@ -235,7 +232,7 @@ function resolvePlugin(raw: NonNullable<ConfigFile['plugin']>, root: string): Pl
     }
     return {
         id: manifest.id,
-        key: pluginKeyOf(manifest.id),
+        key: pluginTestKey(manifest.id),
         hosts: (raw.hosts ?? []).map((h) => ({name: h.name, appMap: path.resolve(root, h.appMap)})),
     };
 }

@@ -23,6 +23,7 @@
     "test:golden": "TEST_SURFACE_GOLDEN=1 node --max-old-space-size=8192 --test test/golden.test.ts"
   },
   "dependencies": {
+    "@mattermost/types": "*",
     "js-yaml": "4.1.1",
     "typescript": "5.6.3"
   },

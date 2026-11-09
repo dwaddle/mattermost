@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {formatTestId, isGrammarError, normalizeKey, parseTestId, toWord} from '../src/grammar.ts';
+import {formatTestId, isGrammarError, parseTestId, toWord} from '../src/grammar.ts';
 
 test('grammar: parses scope, name, key and role', () => {
     assert.deepEqual(parseTestId('lhs.channel_list.channel:{key}--link'), {scope: ['lhs', 'channel_list'], name: 'channel', hasKey: true, key: null, role: 'link'});
@@ -37,5 +37,4 @@ test('grammar: round trip and helpers', () => {
     assert.equal(formatTestId(p), 'a.b.c:{key}--button');
     assert.equal(toWord('SendMessageButton'), 'send_message_button');
     assert.equal(toWord('post-priority-label'), 'post_priority_label');
-    assert.equal(normalizeKey('com.mattermost.calls'), 'com_mattermost_calls');
 });

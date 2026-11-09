@@ -131,7 +131,7 @@ The manifest is the contract: the scanner writes it from the webapp's source, th
 | Piece | Where | Reviewed as part of |
 |---|---|---|
 | Scanner, checks, CLI, watch | `src/*.ts` | the webapp: it runs on the webapp's TypeScript program and its rules are the webapp's |
-| Grammar | `src/grammar.ts`; lint rules `testid-grammar`, `testid-no-unscoped-data` in `@mattermost/eslint-plugin`; `TestId` types and key helpers in `@mattermost/shared/utils/test_id` | the webapp |
+| Grammar | defined once in `@mattermost/types/test_id` (roles, words, the parser, the key helpers); the scanner (`src/grammar.ts`), the lint rules in `@mattermost/eslint-plugin` and the Playwright runtime import it, each wording its own messages; components import it through `@mattermost/shared/utils/test_id` | the webapp |
 | Manifest | `webapp/channels/test-surface.json` (committed, CI-checked) | the change that moved the testids |
 | Generator | `src/generate` (imports only the manifest types, the grammar and `src/compare.ts` from the rest of the package) | the e2e tests: its output is the API specs are written against |
 | Generated page objects | `e2e-tests/playwright/lib/src/ui/generated` (committed, never edited) | the e2e tests |
