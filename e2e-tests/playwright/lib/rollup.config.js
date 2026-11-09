@@ -66,6 +66,7 @@ export default {
         '@playwright/test',
         '@mattermost/client',
         '@mattermost/types/config',
+        '@mattermost/types/test_id',
         '@axe-core/playwright',
         '@azure/storage-blob',
         '@percy/playwright',
