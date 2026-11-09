@@ -1,11 +1,11 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {HEADER} from './emit.ts';
+import type {Output} from './emit.ts';
 import {propKey} from './names.ts';
 
+import {cmp} from '../compare.ts';
 import type {Diagnostic, Manifest, Page, PageParam} from '../manifest_types.ts';
-import {cmp} from '../scan.ts';
 
 function paramType(p: PageParam): string {
     if (p.entity) {
@@ -74,7 +74,7 @@ export function usablePages(manifest: Manifest, diagnostics: Diagnostic[]): Page
 }
 
 /** `pages.ts`: one class per route with typed params, `path(params)` and `goto(params)`. */
-export function emitPages(pages: Page[]): string {
+export function emitPages(pages: Page[], out: Output): string {
     const types = new Map<string, Set<string>>();
     const classes: string[] = [];
     for (const page of pages) {
@@ -117,11 +117,11 @@ export class ${page.class} {
     }
     const typeImports = [...types.entries()].sort((a, b) => cmp(a[0], b[0])).map(([m, names]) => `import type {${[...names].sort().join(', ')}} from '${m}';`);
     const usesKey = pages.some((p) => p.params.some((q) => q.entity));
-    return `${HEADER}
+    return `${out.header}
 import type {Page} from '@playwright/test';
 ${typeImports.join('\n')}
 
-import {${['buildPath', ...(usesKey ? ['keyOf'] : [])].join(', ')}} from '../../aria';
+import {${['buildPath', ...(usesKey ? ['keyOf'] : [])].join(', ')}} from '${out.runtime}';
 
 ${classes.join('\n')}`;
 }

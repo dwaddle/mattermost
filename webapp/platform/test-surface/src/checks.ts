@@ -3,10 +3,11 @@
 
 import ts from 'typescript';
 
+import {cmp} from './compare.ts';
 import type {AllowEntry, PluginConfig} from './config.ts';
 import {isGrammarError, toWord} from './grammar.ts';
 import type {Diagnostic, Element, Loc, Manifest} from './manifest_types.ts';
-import {cmp, isUnscoped, readHostSlots, type Emission, type ScanResult, type Site} from './scan.ts';
+import {isUnscoped, readHostSlots, type Emission, type ScanResult, type Site} from './scan.ts';
 
 export type CheckOptions = {
 

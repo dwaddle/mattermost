@@ -8,6 +8,7 @@ import yaml from 'js-yaml';
 import ts from 'typescript';
 
 import {exprName, strip, typeText} from './ast.ts';
+import {cmp} from './compare.ts';
 import type {ProgramIndex} from './program_index.ts';
 
 export type ClientRoute = {verb: string; path: string};
@@ -341,7 +342,7 @@ export function opMatcher(ops: OpenApiOp[]): (verb: string, p: string) => OpenAp
         }
         const cs = normPath(p).split('/');
         const cands = segs.filter(({o, s}) => o.verb === verb && s.length === cs.length && s.every((x, i) => x === cs[i] || x === '{}'));
-        cands.sort((a, b) => b.s.filter((x) => x !== '{}').length - a.s.filter((x) => x !== '{}').length || a.o.opId.localeCompare(b.o.opId));
+        cands.sort((a, b) => b.s.filter((x) => x !== '{}').length - a.s.filter((x) => x !== '{}').length || cmp(a.o.opId, b.o.opId));
         return cands.length ? cands[0].o : null;
     };
 }

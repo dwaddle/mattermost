@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import {cmp} from './compare.ts';
 import type {Diagnostic, Manifest} from './manifest_types.ts';
 import type {ScanResult, ScanStats} from './scan.ts';
 
@@ -107,7 +108,7 @@ export function unrenderedTestIds(manifest: Manifest, files: Array<{path: string
             }
         }
     }
-    return [...found.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([testId, fs2]) => ({testId, files: [...fs2].sort()}));
+    return [...found.entries()].sort((a, b) => cmp(a[0], b[0])).map(([testId, fs2]) => ({testId, files: [...fs2].sort()}));
 }
 
 function escapeRegExp(s: string): string {

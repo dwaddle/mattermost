@@ -7,13 +7,13 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
 import {appMap, emitApi, emitMsg, emitSets} from './data.ts';
-import {emitApp, emitClass, HEADER, Imports, modalVariants} from './emit.ts';
+import {emitApp, emitClass, Imports, modalVariants, type Output} from './emit.ts';
 import {buildModel, generated} from './model.ts';
 import {emitPages, usablePages} from './pages.ts';
 
-import type {Config} from '../config.ts';
+import {cmp} from '../compare.ts';
+import {relativeToRoot, type Config} from '../config.ts';
 import type {Diagnostic, Manifest} from '../manifest_types.ts';
-import {cmp} from '../scan.ts';
 
 export type GenerateResult = {files: string[]; changed: number; diagnostics: Diagnostic[]};
 
@@ -44,6 +44,8 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     }
     const diagnostics: Diagnostic[] = [];
     const plugin = config.plugin;
+    const runtime = runtimeImport(config.output.runtime, outDir);
+    const out: Output = {header: header(config), runtime};
 
     // a plugin generates its own subtree, `plugins.<key>`, named from the key on (`ComMattermostCalls…`)
     const pluginScope = plugin ? `plugins.${plugin.key}` : null;
@@ -51,7 +53,6 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     const model = buildModel(elements, {dropWords: plugin ? 1 : 0, reservedNames: manifest.sets.map((x) => x.name)});
     const sources = new Map<string, string>();
     const variants = modalVariants(manifest, model);
-    const header = plugin ? pluginHeader(config) : HEADER;
 
     // classes, one file per top-level scope (shared classes in shared.ts)
     const byFile = new Map<string, typeof model.classes>();
@@ -59,29 +60,29 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
         byFile.set(cls.file, [...(byFile.get(cls.file) ?? []), cls]);
     }
     for (const [file, classes] of [...byFile.entries()].sort((a, b) => cmp(a[0], b[0]))) {
-        const imports = new Imports(plugin ? plugin.runtime : undefined);
+        const imports = new Imports(runtime);
         const ctx = {model, manifest, diagnostics, file, imports, variants};
         const parts = classes.sort((a, b) => cmp(a.node.path.join('.'), b.node.path.join('.'))).map((c) => emitClass(ctx, c));
         const types = parts.flatMap((p) => p.types);
-        sources.set(`${file}.ts`, `${header}\n${imports.render()}\n${[...types, ...parts.map((p) => p.code)].join('\n')}`);
+        sources.set(`${file}.ts`, `${out.header}\n${imports.render()}\n${[...types, ...parts.map((p) => p.code)].join('\n')}`);
     }
     const pages = plugin ? [] : usablePages(manifest, diagnostics);
     if (!plugin) {
-        sources.set('pages.ts', emitPages(pages));
-        const appImports = new Imports();
+        sources.set('pages.ts', emitPages(pages, out));
+        const appImports = new Imports(runtime);
         const app = emitApp({model, manifest, diagnostics, file: 'app', imports: appImports, variants}, model, pages);
-        sources.set('app.ts', `${HEADER}\n${appImports.render()}\n${app}`);
+        sources.set('app.ts', `${out.header}\n${appImports.render()}\n${app}`);
     }
 
     // a plugin package carries only what it has (its classes import `Api` / sets only when they use them)
     if (!plugin || manifest.operations.length) {
-        sources.set('api.ts', withRuntime(emitApi(manifest), plugin?.runtime));
+        sources.set('api.ts', emitApi(manifest, out));
     }
     if (!plugin || manifest.sets.length) {
-        sources.set('sets.ts', emitSets(manifest));
+        sources.set('sets.ts', emitSets(manifest, out));
     }
     if (config.i18n && fs.existsSync(config.i18n)) {
-        sources.set('msg.ts', withRuntime(emitMsg(config.i18n), plugin?.runtime));
+        sources.set('msg.ts', emitMsg(config.i18n, out));
     }
     const modules = [...sources.keys()].map((f) => f.replace(/\.ts$/, '')).sort();
     const reexports = modules.map((m) => `export * from './${m}';`).join('\n');
@@ -89,7 +90,7 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     if (plugin && !root) {
         diagnostics.push({rule: 'generate', severity: 'error', at: 'test-surface.config.json', message: `No testids under "${pluginScope}": nothing to generate for ${plugin.id}.`, fix: `Give the plugin's UI testids under "${pluginScope}."`});
     }
-    sources.set('index.ts', plugin && root ? `${header}\n${pluginIndex(plugin, root.name, root.file, reexports)}` : `${header}\n${reexports}\n`);
+    sources.set('index.ts', plugin && root ? `${out.header}\n${pluginIndex(plugin, runtime, root.name, root.file, reexports)}` : `${out.header}\n${reexports}\n`);
 
     const prettier = await loadPrettier(outDir);
     if (!prettier) {
@@ -137,9 +138,9 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     return {files, changed, diagnostics};
 }
 
-/** The header of a plugin package's files: where it comes from and how to regenerate it. */
-function pluginHeader(config: Config): string {
-    const manifest = path.relative(config.root, config.output.manifest).split(path.sep).join('/');
+/** Every generated file's header: the manifest it comes from (relative to the config's root) and how to regenerate it. */
+function header(config: Config): string {
+    const manifest = relativeToRoot(config, config.output.manifest);
     return `// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
@@ -148,18 +149,22 @@ function pluginHeader(config: Config): string {
 `;
 }
 
-/** Data modules import the runtime from the lib's source; a plugin package imports the published lib. */
-function withRuntime(code: string, runtime: string | undefined): string {
-    return runtime ? code.replace(/from '\.\.\/\.\.\/aria'/g, `from '${runtime}'`) : code;
+/** How a file in `outDir` imports the runtime: a package by its name, the runtime's source by a relative path. */
+export function runtimeImport(runtime: string, outDir: string): string {
+    if (!path.isAbsolute(runtime)) {
+        return runtime;
+    }
+    const rel = path.relative(outDir, runtime).split(path.sep).join('/');
+    return rel.startsWith('.') ? rel : `./${rel}`;
 }
 
 /**
  * A plugin package's entry: registers the plugin's root class with the host's `app.plugins` and adds its
  * types there by declaration merging, with the plugin's key for host slots (`PluginKeys`).
  */
-function pluginIndex(plugin: NonNullable<Config['plugin']>, rootClass: string, rootFile: string, reexports: string): string {
+function pluginIndex(plugin: NonNullable<Config['plugin']>, runtime: string, rootClass: string, rootFile: string, reexports: string): string {
     const name = rootClass.charAt(0).toLowerCase() + rootClass.slice(1);
-    return `import {registerPluginSurface} from '${plugin.runtime}';
+    return `import {registerPluginSurface} from '${runtime}';
 
 import {${rootClass}} from './${rootFile}';
 
@@ -168,7 +173,7 @@ ${reexports}
 /** \`app.plugins.${name}\`: ${plugin.id}'s UI. */
 registerPluginSurface('${name}', (page) => new ${rootClass}(page));
 
-declare module '${plugin.runtime}' {
+declare module '${runtime}' {
     interface Plugins {
         ${name}: ${rootClass};
     }

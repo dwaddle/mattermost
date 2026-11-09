@@ -7,6 +7,7 @@ import path from 'node:path';
 import ts from 'typescript';
 
 import {attrValue, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, strip, typeText, type JsxTag} from './ast.ts';
+import {cmp} from './compare.ts';
 import type {Config} from './config.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId} from './grammar.ts';
 import type {Diagnostic, Loc, TestPart, TestParts} from './manifest_types.ts';
@@ -15,8 +16,6 @@ import type {Roles} from './roles.ts';
 import type {Resolver} from './values.ts';
 
 type Part = Omit<TestPart, 'at'> & {at: Loc};
-
-const cmp = (a: string, b: string) => (a < b ? -1 : Number(a > b));
 
 /**
  * Library mode: reads a component library (compass-ui) and publishes, per exported component, the testids

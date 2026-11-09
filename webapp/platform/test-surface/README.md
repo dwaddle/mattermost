@@ -6,7 +6,7 @@ It is the OpenAPI → generated-client pattern applied to UI: the components are
 
 ## Commands
 
-Run from `webapp/channels` (or pass `--config`):
+Each is `test-surface <command>` (the package's bin) run from `webapp/channels`; elsewhere pass `--config` or run from the config's directory:
 
 ```sh
 npm run test-surface                # scan + checks, writes test-surface.json
@@ -25,7 +25,7 @@ test-surface parts --config packages/compass-ui/test-surface.config.json   # wri
 
 CI (`check-test-surface` in `.github/workflows/webapp-ci.yml`) runs the tool's tests, `check`, regenerates, fails if the committed manifest or generated page objects differ, and runs the golden-numbers check.
 
-The tool runs from TypeScript source on Node 24 (native type stripping), so it has no build step. Every command needs `--max-old-space-size=8192` on the whole webapp (the npm scripts set it).
+The tool runs from TypeScript source on Node 24 (native type stripping), so it has no build step. A whole-webapp program needs a bigger heap than Node's default: the bin reruns itself with `--max-old-space-size=8192` unless you set a size.
 
 ## The testid grammar
 
@@ -101,6 +101,8 @@ Reads only the manifest (and `en.json` for `Msg`); only elements from migrated a
 
 The runtime it targets is hand-written once in `@mattermost/playwright-lib`: `src/aria` (drivers, `Scope`, matchers, `Msg` formatting) and `src/settle.ts`.
 
+Generated files import that runtime from `output.runtime` in the config: `@mattermost/playwright-lib` by default (a plugin's package), or a path to the runtime's source when the output is part of the lib itself, as the webapp's is (`"runtime": "../../e2e-tests/playwright/lib/src/aria"`, written as `'../../aria'`). The generator knows the runtime only by the names it imports.
+
 ### Plugins (plugin mode)
 
 A plugin repo runs the same CLI with a `plugin` section in its config:
@@ -122,7 +124,20 @@ A plugin repo runs the same CLI with a `plugin` section in its config:
 - Its registry calls say which host slots it uses: each host's `app-map.json` lists its plugin slots with the registry methods that fill them (`PLUGIN_SLOT_REGISTRY_METHODS` in `@mattermost/shared/utils/test_id`), so `registerChannelHeaderMenuAction()` uses `channel_header_menu_item`. Rule `plugin-compat` fails when a host version in `hosts` doesn't render a slot the plugin uses. List one entry per supported server version (the `app-map.json` its `@mattermost/playwright-lib` ships).
 - `generate` writes a package rooted at the plugin's class (`ComMattermostCalls`, its subtree named from the key on) that imports the runtime from `@mattermost/playwright-lib`, registers itself (`registerPluginSurface`) and adds itself to `Plugins` and its key to `PluginKeys` by declaration merging. Importing the package is enough: `app.plugins.comMattermostCalls.widget.clickLeaveButton()`, and host slots accept the key (`app.channelHeader.menu.plugin('com_mattermost_calls')`).
 
-Design and plan: `TESTID_POM_GENERATOR_HANDOFF.md` (from the design thread). Implementation status and decisions: [`NOTES.md`](NOTES.md).
+## Where things live
+
+The manifest is the contract: the scanner writes it from the webapp's source, the generator reads nothing else (besides `en.json`), and each side changes without the other as long as the manifest's shape holds (`src/manifest_types.ts`).
+
+| Piece | Where | Reviewed as part of |
+|---|---|---|
+| Scanner, checks, CLI, watch | `src/*.ts` | the webapp: it runs on the webapp's TypeScript program and its rules are the webapp's |
+| Grammar | `src/grammar.ts`; lint rules `testid-grammar`, `testid-no-unscoped-data` in `@mattermost/eslint-plugin`; `TestId` types and key helpers in `@mattermost/shared/utils/test_id` | the webapp |
+| Manifest | `webapp/channels/test-surface.json` (committed, CI-checked) | the change that moved the testids |
+| Generator | `src/generate` (imports only the manifest types, the grammar and `src/compare.ts` from the rest of the package) | the e2e tests: its output is the API specs are written against |
+| Generated page objects | `e2e-tests/playwright/lib/src/ui/generated` (committed, never edited) | the e2e tests |
+| Runtime | `e2e-tests/playwright/lib/src/aria` | the e2e tests |
+
+Scanner and generator ship as one package so a plugin repo runs one CLI (`scan`, then `generate`) against its own source, and `watch` rescans and regenerates in one process. A change to `src/generate` or to the runtime changes every spec's API: have someone who maintains the Playwright lib review it.
 
 ## Testing the tool
 

@@ -24,6 +24,7 @@ Commands:
   generate   Generate the typed Playwright page objects from test-surface.json (reads only the manifest).
   watch      Keep the program warm and rescan + regenerate when files change.
   parts      Library mode: write test-parts.json (the testids each component derives from testId).
+  install-hooks  Opt-in git hooks for this config: pre-commit lints, scans and regenerates; pre-push re-checks.
 
 Options:
   --config <path>   test-surface.config.json (default: nearest at or above cwd, or channels/)
@@ -96,7 +97,7 @@ export async function main(argv: string[]): Promise<number> {
         if (cmd === 'check') {
             const current = fs.existsSync(config.output.manifest) ? fs.readFileSync(config.output.manifest, 'utf8') : '';
             if (current !== text) {
-                console.log(`✗ ${relativeToRoot(config, config.output.manifest)} is stale. Run \`npm run test-surface\` and commit the result.`);
+                console.log(`✗ ${relativeToRoot(config, config.output.manifest)} is stale. Run \`test-surface scan\` and commit the result.`);
                 return 1;
             }
         }
@@ -118,6 +119,11 @@ export async function main(argv: string[]): Promise<number> {
         printDiagnostics(out.diagnostics);
         log(`${out.changed ? 'wrote' : 'unchanged'} ${relativeToRoot(config, config.output.parts!)}: ${out.components} components, ${out.parts} parts`);
         return out.diagnostics.some((d) => d.severity === 'error') ? 1 : 0;
+    }
+    case 'install-hooks': {
+        const {installHooks} = await import('./hooks.ts');
+        installHooks(config.configPath, log);
+        return 0;
     }
     case 'watch': {
         const {watch} = await import('./watch.ts');

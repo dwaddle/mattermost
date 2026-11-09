@@ -3,8 +3,8 @@
 
 import {pascal} from './names.ts';
 
+import {cmp} from '../compare.ts';
 import type {Element, Manifest} from '../manifest_types.ts';
-import {cmp} from '../scan.ts';
 
 /**
  * When a platform component (GenericModal) writes the scope's testid at every mount, but each mount reaches it through
@@ -159,7 +159,7 @@ function parts(n: ScopeNode): Set<string> {
 function mainOwner(n: ScopeNode): string | undefined {
     const counts = new Map<string, number>();
     n.members.filter((e) => !e.component.at.startsWith('platform/')).forEach((e) => counts.set(e.component.name, (counts.get(e.component.name) ?? 0) + 1));
-    return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0];
+    return [...counts].sort((a, b) => b[1] - a[1] || cmp(a[0], b[0]))[0]?.[0];
 }
 
 function assignClasses(root: ScopeNode, reserved: Set<string>, dropWords: number): ClassModel[] {

@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import ts from 'typescript';
 
 import {attrValue, exprName, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, propName, returnsOf, shortText, strip, tagName, type FunctionLike, type JsxTag} from './ast.ts';
+import {cmp} from './compare.ts';
 import {Conditions} from './conditions.ts';
 import {relativeToRoot, type Config} from './config.ts';
 import {componentName, emptyEffects, mergeEffects, Tracer, withDialogOps, type Effects} from './effects.ts';
@@ -1503,13 +1504,6 @@ export const isUnscoped = (v: Value) => v.k === 'pat' && v.parts.length === 1 &&
 
 /** `channels/src/a.tsx:12` -> `channels/src/a.tsx`. */
 const fileOf = (at: Loc) => at.replace(/:\d+$/, '');
-
-export function cmp(a: string, b: string): number {
-    if (a < b) {
-        return -1;
-    }
-    return a > b ? 1 : 0;
-}
 
 function usageAnchor(u: Usage): ts.Node {
     return isCallUsage(u) ? u.call : elementOf(u);

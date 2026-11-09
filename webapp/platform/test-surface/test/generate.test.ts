@@ -31,6 +31,22 @@ test('generate: one file per top-level scope, plus api, sets, app, index and the
     assert.deepEqual(result.diagnostics.filter((d) => d.severity === 'error'), []);
 });
 
+test('generate: the runtime is imported from @mattermost/playwright-lib, or by a relative path from its source', async () => {
+    const {read} = await generateFixture('ui');
+    assert.match(read('header.ts'), /import \{Scope, drivers\} from '@mattermost\/playwright-lib';/);
+
+    const config = loadConfig(path.join(FIXTURES, 'ui', 'test-surface.config.json'));
+    const lib = fs.mkdtempSync(path.join(os.tmpdir(), 'test-surface-lib-'));
+    config.output.generated = path.join(lib, 'src', 'ui', 'generated');
+    config.output.runtime = path.join(lib, 'src', 'aria');
+    config.i18n = null;
+    await generate(scanFixture('ui').manifest, config);
+    const read2 = (f: string) => fs.readFileSync(path.join(config.output.generated!, f), 'utf8');
+    assert.match(read2('header.ts'), /import \{Scope, drivers\} from '\.\.\/\.\.\/aria';/);
+    assert.match(read2('api.ts'), /import \{effect\} from '\.\.\/\.\.\/aria';/);
+    assert.match(read2('pages.ts'), /import \{buildPath(, keyOf)?\} from '\.\.\/\.\.\/aria';/);
+});
+
 test('generate: a click that shows a store-gated panel returns its page object', async () => {
     const {read} = await generateFixture('ui');
     assert.match(read('toolbar.ts'), /async clickInfoButton\(\): Promise<SideInfo> \{\n\s+await this\.infoButton\.click\(\);\n\s+return new SideInfo\(this\.page, 'side\.info'\);/);

@@ -45,6 +45,13 @@ export type ConfigFile = {
     output: {
         manifest: string;
         generated?: string | null;
+
+        /**
+         * Where the generated page objects import the runtime from (`Scope`, the drivers, `effect`, `msg`): a package,
+         * by default `@mattermost/playwright-lib`, or a path to the runtime's source (starting with `.`) when the
+         * generated code is part of the runtime's own package, as the webapp's is.
+         */
+        runtime?: string;
         reports?: string | null;
 
         /** Library mode: where `test-surface parts` writes `test-parts.json`. */
@@ -107,7 +114,7 @@ export type ConfigFile = {
      * Its testids live under `plugins.<plugin key>`, its registry calls say which host slots it uses, and
      * `generate` writes a test package that adds the plugin to `app.plugins`.
      */
-    plugin?: {manifest: string; hosts?: Array<{name: string; appMap: string}>; runtime?: string};
+    plugin?: {manifest: string; hosts?: Array<{name: string; appMap: string}>};
 };
 
 export type AllowEntry = {rule: string; template: string; reason: string};
@@ -128,7 +135,15 @@ export type Config = {
     openapiDir: string | null;
     i18n: string | null;
     errorCalls: RegExp;
-    output: {manifest: string; generated: string | null; reports: string | null; parts: string | null};
+    output: {
+        manifest: string;
+        generated: string | null;
+
+        /** A package name, or the absolute path of the runtime's source. */
+        runtime: string;
+        reports: string | null;
+        parts: string | null;
+    };
     library: {entry: string; helper: string; testIdProp: string} | null;
     libraries: LibraryRef[];
     generateScopes: string[] | null;
@@ -148,9 +163,6 @@ export type PluginConfig = {
     /** The plugin's id normalized for a testid key (`com_mattermost_calls`); its testids live under `plugins.<key>`. */
     key: string;
     hosts: Array<{name: string; appMap: string}>;
-
-    /** Module the generated package imports the runtime from. */
-    runtime: string;
 };
 
 /** A plugin id as a testid key: the webapp's `pluginTestKey()`. */
@@ -193,6 +205,7 @@ export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.jo
         output: {
             manifest: fromDir(raw.output.manifest),
             generated: raw.output.generated ? fromDir(raw.output.generated) : null,
+            runtime: raw.output.runtime?.startsWith('.') ? fromDir(raw.output.runtime) : raw.output.runtime ?? '@mattermost/playwright-lib',
             reports: raw.output.reports ? fromDir(raw.output.reports) : null,
             parts: raw.output.parts ? fromDir(raw.output.parts) : null,
         },
@@ -224,7 +237,6 @@ function resolvePlugin(raw: NonNullable<ConfigFile['plugin']>, root: string): Pl
         id: manifest.id,
         key: pluginKeyOf(manifest.id),
         hosts: (raw.hosts ?? []).map((h) => ({name: h.name, appMap: path.resolve(root, h.appMap)})),
-        runtime: raw.runtime ?? '@mattermost/playwright-lib',
     };
 }
 

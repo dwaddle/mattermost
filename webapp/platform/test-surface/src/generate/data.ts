@@ -3,15 +3,15 @@
 
 import fs from 'node:fs';
 
-import {HEADER} from './emit.ts';
+import type {Output} from './emit.ts';
 import type {Model, ScopeNode} from './model.ts';
 import {isIdentifier, pageGetter, pascal, propKey} from './names.ts';
 
+import {cmp} from '../compare.ts';
 import type {Manifest, Page} from '../manifest_types.ts';
-import {cmp} from '../scan.ts';
 
 /** `Api`: every operation an element can fire, branded with its response body type. */
-export function emitApi(manifest: Manifest): string {
+export function emitApi(manifest: Manifest, out: Output): string {
     const imports = new Map<string, Set<string>>();
     const lines: string[] = [];
     for (const op of [...manifest.operations].sort((a, b) => cmp(a.opId, b.opId))) {
@@ -25,8 +25,8 @@ export function emitApi(manifest: Manifest): string {
         lines.push(`    ${op.opId}: effect<${body}>()({op: '${op.opId}', method: '${op.verb}', path: '${op.path}'}),${note}`);
     }
     const typeImports = [...imports.entries()].sort((a, b) => cmp(a[0], b[0])).map(([m, names]) => `import type {${[...names].sort().join(', ')}} from '${m}';`);
-    return `${HEADER}
-${typeImports.join('\n')}${typeImports.length ? '\n\n' : ''}import {effect} from '../../aria';
+    return `${out.header}
+${typeImports.join('\n')}${typeImports.length ? '\n\n' : ''}import {effect} from '${out.runtime}';
 
 /** API operations the webapp's actions can fire, from its handlers' call graph. \`settle\` waits for them. */
 export const Api = {
@@ -38,7 +38,7 @@ export type ApiOp = keyof typeof Api;
 }
 
 /** Fixed key sets (`ChannelSettingsModalTab`) as const objects with derived types. */
-export function emitSets(manifest: Manifest): string {
+export function emitSets(manifest: Manifest, out: Output): string {
     const blocks = [...manifest.sets].sort((a, b) => cmp(a.name, b.name)).map((s) => {
         const used = new Set<string>();
         const entries = s.values.map((v) => {
@@ -55,7 +55,7 @@ ${entries.join('\n')}
 } as const;
 export type ${s.name} = (typeof ${s.name})[keyof typeof ${s.name}];`;
     });
-    return `${HEADER}\n${blocks.length ? blocks.join('\n\n') : 'export {};'}\n`;
+    return `${out.header}\n${blocks.length ? blocks.join('\n\n') : 'export {};'}\n`;
 }
 
 type MsgNode = {leaf?: {id: string; text: string}; children: Map<string, MsgNode>};
@@ -113,7 +113,7 @@ export function messageParams(text: string): Map<string, string> {
 }
 
 /** `Msg`: the i18n catalog as a nested object (`Msg.api.channel.join_channel.post_and_forget`). */
-export function emitMsg(catalogPath: string): string {
+export function emitMsg(catalogPath: string, out: Output): string {
     const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8')) as Record<string, string | {defaultMessage: string}>;
     const root: MsgNode = {children: new Map()};
     for (const id of Object.keys(catalog).sort()) {
@@ -147,10 +147,10 @@ export function emitMsg(catalogPath: string): string {
         const p = params.size ? `<{${[...params.entries()].map(([k, t]) => `${k}: ${t}`).join('; ')}}>` : '';
         return `msg${p}(${JSON.stringify(l.id)}, ${JSON.stringify(l.text)})`;
     };
-    return `${HEADER}
+    return `${out.header}
 /* eslint-disable max-lines */
 
-import {msg} from '../../aria';
+import {msg} from '${out.runtime}';
 
 /**
  * The webapp's i18n catalog (en.json). Tests format what the UI renders instead of retyping English:
