@@ -196,12 +196,12 @@
     "i18n-extract:check": "npm run i18n-extract -- --throws --out-file .i18n-check.tmp.json && diff src/i18n/en.json .i18n-check.tmp.json && rm -f .i18n-check.tmp.json || (rm -f .i18n-check.tmp.json && echo '\nen.json is out of sync with code. \nTo update: npm run i18n-extract' && exit 1)",
     "i18n-verify-translations": "node scripts/check_icu.mjs src/i18n",
     "check-types": "tsc -b",
-    "test-surface": "node --max-old-space-size=8192 ../platform/test-surface/bin/test-surface.mjs scan",
-    "test-surface:check": "node --max-old-space-size=8192 ../platform/test-surface/bin/test-surface.mjs check",
-    "test-surface:report": "node --max-old-space-size=8192 ../platform/test-surface/bin/test-surface.mjs report",
-    "test-surface:watch": "node --max-old-space-size=8192 ../platform/test-surface/bin/test-surface.mjs watch",
-    "test-surface:generate": "node ../platform/test-surface/bin/test-surface.mjs generate",
-    "test-surface:install-hooks": "node ../platform/test-surface/hooks/install.mjs",
+    "test-surface": "test-surface scan",
+    "test-surface:check": "test-surface check",
+    "test-surface:report": "test-surface report",
+    "test-surface:watch": "test-surface watch",
+    "test-surface:generate": "test-surface generate",
+    "test-surface:install-hooks": "test-surface install-hooks",
     "make-emojis": "node --experimental-json-modules build/emoji/make_emojis.mjs"
   }
 }

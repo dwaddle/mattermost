@@ -3,7 +3,7 @@
 
 /* eslint-disable no-template-curly-in-string -- messages and cases quote template-literal syntax */
 
-// The testid grammar (see webapp/platform/test-surface/README.md):
+// The testid grammar is defined once, in @mattermost/types/test_id:
 //
 //     testid  := path [ ":" KEY ] [ "--" ROLE ]
 //     path    := WORD ( "." WORD )*        leading WORDs = scope, last WORD = name
@@ -12,76 +12,32 @@
 // In a template literal, runtime data may fill the key (`a.b.item:${id}--button`) or, in a component
 // that composes its parts from a testId prop, the whole leading path (`${testId}.close--button`).
 
-export const ROLES = [
-    'button', 'link', 'textbox', 'searchbox', 'checkbox', 'switch', 'radio', 'radiogroup', 'combobox',
-    'listbox', 'option', 'tab', 'tablist', 'tabpanel', 'menu', 'menuitem', 'menuitemcheckbox', 'menuitemradio',
-    'dialog', 'alertdialog', 'slider', 'spinbutton', 'togglebutton', 'text', 'img', 'list', 'listitem', 'row',
-    'grid', 'gridcell', 'status', 'alert', 'tooltip', 'region', 'separator',
-];
+import {isTestIdProblem, parseTestId, TEST_ID_ROLES} from '@mattermost/types/test_id';
 
-const WORD = /^[a-z][a-z0-9_]*$/;
 const KEY = '\u0000';
 const PREFIX = '\u0001';
+
+const MESSAGES = {
+    dashes_before_role: () => '"--" may only precede the role',
+    empty_key: () => 'empty key after ":"',
+    key_characters: () => 'a key may not contain "." or ":"',
+    data_outside_key: () => 'runtime data may only fill the key of the last word (`scope.name:${value}`)',
+    composed_without_dot: () => 'a composed testid continues its prefix with "." (`${testId}.part--role`)',
+    unknown_role: (p) => `unknown role "--${p.role}"; use one of ${TEST_ID_ROLES.join(', ')}`,
+    word: (p) => `"${p.word}" is not a lower_snake_case word`,
+    unscoped: () => 'a testid needs a scope (`area.name--role`)',
+};
 
 /**
  * Checks a testid written as literal text, where KEY marks runtime data after ":" and PREFIX marks a
  * leading composed path. Returns an error message, or null when it follows the grammar.
  */
 export function grammarError(text, {withRole = true} = {}) {
-    let rest = text;
-    const dash = rest.lastIndexOf('--');
-    if (dash >= 0) {
-        const role = rest.slice(dash + 2);
-        if (!withRole) {
-            return 'a testId prop is the path only; the component appends "--<role>"';
-        }
-        if (!ROLES.includes(role)) {
-            return `unknown role "--${role}"; use one of ${ROLES.join(', ')}`;
-        }
-        rest = rest.slice(0, dash);
+    if (!withRole && text.includes('--')) {
+        return 'a testId prop is the path only; the component appends "--<role>"';
     }
-    if (rest.includes('--')) {
-        return '"--" may only precede the role';
-    }
-    const colon = rest.indexOf(':');
-    if (colon >= 0) {
-        const key = rest.slice(colon + 1);
-        rest = rest.slice(0, colon);
-        if (!key.length) {
-            return 'empty key after ":"';
-        }
-        if (key !== KEY && (/[.:]/).test(key.replaceAll(KEY, ''))) {
-            return 'a key may not contain "." or ":"';
-        }
-    }
-    if (rest.includes(KEY)) {
-        return 'runtime data may only fill the key of the last word (`scope.name:${value}`)';
-    }
-    const composed = rest.startsWith(PREFIX);
-    if (composed) {
-        rest = rest.slice(1);
-        if (rest === '') {
-            return null;
-        }
-        if (!rest.startsWith('.')) {
-            return 'a composed testid continues its prefix with "." (`${testId}.part--role`)';
-        }
-        rest = rest.slice(1);
-    }
-    if (rest.includes(PREFIX)) {
-        return 'runtime data may only fill the key of the last word (`scope.name:${value}`)';
-    }
-    const words = rest.split('.');
-    const bad = words.find((w) => !WORD.test(w));
-    if (bad !== undefined) {
-        return `"${bad}" is not a lower_snake_case word`;
-    }
-
-    // a bare word is only allowed as a scope root container (no key, no role): `channel_settings_modal`
-    if (!composed && words.length < 2 && (dash >= 0 || colon >= 0)) {
-        return 'a testid needs a scope (`area.name--role`)';
-    }
-    return null;
+    const p = parseTestId(text, {key: KEY, prefix: PREFIX});
+    return isTestIdProblem(p) ? MESSAGES[p.problem](p) : null;
 }
 
 /** Literal text of a testid expression with runtime parts marked, or null when it isn't literal/template. */

@@ -1,6 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {TEST_ID_ROLES, pluginTestKey, settingTestKey, suggestionTestKey} from '@mattermost/types/test_id';
+import type {PluginTestKey, SettingTestKey, SuggestionTestKey, TestIdRole} from '@mattermost/types/test_id';
+
+// the grammar is defined once in @mattermost/types; imported then exported, since parcel's type bundler can't follow `export ... from` into another package
+export {TEST_ID_ROLES, pluginTestKey, settingTestKey, suggestionTestKey, type PluginTestKey, type SettingTestKey, type SuggestionTestKey, type TestIdRole};
+
 /**
  * A testid path without its role: lowercase words joined by dots, scope first and name last
  * (`channel_header.menu.leave_channel`), optionally keyed on the last word
@@ -18,50 +24,9 @@ export type TestId = `${Lowercase<string>}.${string}`;
  */
 export type TestIdScope = TestId | Lowercase<string>;
 
-/** ARIA role suffixes a testid can end with (`--button`). `text` marks read-only content. */
-export type TestIdRole =
-    | 'button' | 'link' | 'textbox' | 'searchbox' | 'checkbox' | 'switch' | 'radio' | 'radiogroup' |
-    'combobox' | 'listbox' | 'option' | 'tab' | 'tablist' | 'tabpanel' | 'menu' | 'menuitem' |
-    'menuitemcheckbox' | 'menuitemradio' | 'dialog' | 'alertdialog' | 'slider' | 'spinbutton' |
-    'togglebutton' | 'text' | 'img' | 'list' | 'listitem' | 'row' | 'grid' | 'gridcell' |
-    'status' | 'alert' | 'tooltip' | 'region' | 'separator';
-
 /** `withRole('a.b', 'button')` -> `a.b--button`; undefined stays undefined so no testid renders. */
 export function withRole(testId: TestId | undefined, role: TestIdRole): string | undefined {
     return testId ? `${testId}--${role}` : undefined;
-}
-
-/**
- * A plugin id as a testid key: `com.mattermost.calls` -> `com_mattermost_calls` (keys can't contain
- * `.`, `:` or `--`). The scanner types keys of this type as the plugin keys of installed test packages.
- */
-export type PluginTestKey = string & {readonly __pluginTestKey: true};
-
-export function pluginTestKey(pluginId: string): PluginTestKey {
-    return pluginId.toLowerCase().replace(/[^a-z0-9_]/g, '_') as PluginTestKey;
-}
-
-/**
- * A config setting's path as a testid key: `ServiceSettings.SiteURL` -> `ServiceSettings_SiteURL` (keys can't
- * contain `.`, `:` or `--`). The admin console's settings are `admin.setting:<settingTestKey(path)>`; the scanner
- * types keys of this type as config paths, and the generated page objects take the path.
- */
-export type SettingTestKey = string & {readonly __settingTestKey: true};
-
-export function settingTestKey(path: string): SettingTestKey {
-    return path.replace(/[.:]/g, '_').replace(/-{2,}/g, '-') as SettingTestKey;
-}
-
-/**
- * An autocomplete suggestion's term as a testid key: `@john.doe` -> `john_doe`, `~town-square` -> `town-square`,
- * `:smile:` -> `smile` (the sigil goes; keys can't contain `.`, `:` or `--`). Suggestion lists reorder as you type,
- * so items are keyed by what they suggest, not by position. The scanner types keys of this type as terms, and the
- * generated page objects take the term (a username, a channel name).
- */
-export type SuggestionTestKey = string & {readonly __suggestionTestKey: true};
-
-export function suggestionTestKey(term: string): SuggestionTestKey {
-    return term.trim().replace(/^[@~/:]/, '').replace(/:$/, '').replace(/[.:]/g, '_').replace(/-{2,}/g, '-') as SuggestionTestKey;
 }
 
 /**
