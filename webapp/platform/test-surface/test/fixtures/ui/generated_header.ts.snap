@@ -165,8 +165,7 @@ export class Header extends Scope {
 
     /**
      * `header.help--link` — Header (src/header.tsx)
-     * Renders only when channelId.
-     * Renders only when !isMobile.
+     * Renders only when channelId and !isMobile.
      * Goes to '/help' (HelpPage).
      */
     get helpLink() {
@@ -196,8 +195,7 @@ export class Header extends Scope {
 
     /**
      * `header.info--button` — Header (src/header.tsx)
-     * Renders only when channelId.
-     * Renders only when isMobile.
+     * Renders only when channelId and isMobile.
      * Opens popover InfoPopover (`info_popover`).
      */
     get infoButton() {
@@ -471,8 +469,7 @@ export class HeaderMenu extends Scope {
 
     /**
      * `header.menu.settings--menuitem` — Header (src/header.tsx)
-     * Renders only when channelId.
-     * Renders only when canManage(state, channelId).
+     * Renders only when channelId and canManage(state, channelId).
      * Opens modal SettingsModal (`settings_modal`).
      */
     get settingsMenuItem() {

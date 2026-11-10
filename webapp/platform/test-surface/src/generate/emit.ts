@@ -202,22 +202,18 @@ export function sourceText(ref: string): string {
     return name ? `${name} (${file})` : file;
 }
 
-function doc(e: Element, extra: string[] = [], node?: ScopeNode): string {
+/**
+ * An element's doc comment: where it comes from, when it renders (up to three conditions, on one line), what it opens,
+ * and, when its handler calls through data, that `settle` needs a `wait`. What it fires is the `effects` list itself.
+ */
+function doc(e: Element, extra: string[] = []): string {
     const lines = [`\`${e.template}\` — ${sourceText(e.component.at)}`];
-    const seen = new Set<string>();
-    for (const c of e.renderedWhen ?? []) {
-        const text = c.explained.length > 110 ? c.explained.slice(0, 109) + '…' : c.explained;
-        if (seen.has(text) || seen.size >= 3) {
-            continue;
-        }
-        seen.add(text);
-        lines.push(`Renders only when ${text.replace(/\*\//g, '*\\/')}.`);
+    const conditions = [...new Set((e.renderedWhen ?? []).map((c) => (c.explained.length > 110 ? c.explained.slice(0, 109) + '…' : c.explained)))].slice(0, 3);
+    if (conditions.length) {
+        lines.push(`Renders only when ${conditions.join(' and ').replace(/\*\//g, '*\\/')}.`);
     }
     lines.push(...extra);
-    const ops = node ? opsOf(node, e) : e.effects?.ops ?? [];
-    if (ops.length) {
-        lines.push(`Fires ${ops.join(', ')}${e.effects?.unknown ? ' (and calls through data: pass `wait` to settle)' : ''}.`);
-    } else if (e.effects?.unknown) {
+    if (e.effects?.unknown) {
         lines.push('Calls through data (registries, plugin hooks): pass `wait` to settle.');
     }
     return `/**\n${lines.map((l) => ` * ${l}`).join('\n')}\n */`;
@@ -458,7 +454,7 @@ function element(ctx: Ctx, node: ScopeNode, e: Element, m: Members, mt: {ops?: s
         const kp = shared?.kp ?? keyParam(ctx, e.key, e.name);
         const id = testIdExpr(node, e.template, kp.expr(fn));
         ctx.imports.locator = true;
-        m.add(fn, e.component.at, `${doc(e, opensDoc, node)}\n${fn}(${kp.decl}) {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, mt)});\n}`);
+        m.add(fn, e.component.at, `${doc(e, opensDoc)}\n${fn}(${kp.decl}) {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, mt)});\n}`);
         addItemsLocator(node, e, m);
         const values = shared?.values ?? ((e.key.kind === 'set' || e.key.kind === 'string') && e.key.set ? e.key.values : undefined);
         if (values) {
@@ -470,7 +466,7 @@ function element(ctx: Ctx, node: ScopeNode, e: Element, m: Members, mt: {ops?: s
         return;
     }
     const id = testIdExpr(node, e.template);
-    m.add(getter, e.component.at, `${doc(e, opensDoc, node)}\nget ${getter}() {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, mt)});\n}`);
+    m.add(getter, e.component.at, `${doc(e, opensDoc)}\nget ${getter}() {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, mt)});\n}`);
     verbs(ctx, node, e, getter, m);
 }
 
@@ -546,7 +542,7 @@ function childScope(ctx: Ctx, node: ScopeNode, word: string, child: ScopeNode, m
         const id = testIdExpr(node, e.template, kp.expr(fn));
         ctx.imports.locator = true;
         const opensDoc = (e.opens ?? []).map((o) => `Opens ${o.kind} ${shortTarget(o.target)}.`).slice(0, 3);
-        m.add(fn, e.component.at, `${doc(e, opensDoc, node)}\n${fn}(${kp.decl}): ${cls.name} {\n    return new ${cls.name}(this.page, ${scopeExpr}, this.byTestId(${id}${popupArg(node, e)}));\n}`);
+        m.add(fn, e.component.at, `${doc(e, opensDoc)}\n${fn}(${kp.decl}): ${cls.name} {\n    return new ${cls.name}(this.page, ${scopeExpr}, this.byTestId(${id}${popupArg(node, e)}));\n}`);
         addItemsLocator(node, e, m);
         return;
     }
@@ -564,7 +560,7 @@ function itemSelf(ctx: Ctx, node: ScopeNode, m: Members) {
     const factory = driverFor(e.role);
     ctx.imports.aria.add('drivers');
     const getter = memberName(camel(roleWord(e.role) || 'element'));
-    m.add(getter, e.component.at, `${doc(e, [], node)}\nget ${getter}() {\n    return drivers.${factory}(this.root, ${meta(ctx, node, e, `'${e.template}'`)});\n}`);
+    m.add(getter, e.component.at, `${doc(e)}\nget ${getter}() {\n    return drivers.${factory}(this.root, ${meta(ctx, node, e, `'${e.template}'`)});\n}`);
     verbs(ctx, node, {...e, name: ''}, getter, m);
     ctx.imports.locator = true;
     m.add('locator', e.component.at, '/** The item\'s element (matchers take the item: `expect(item).toContainMessage(…)`). */\noverride get locator(): Locator {\n    return this.root;\n}');

@@ -66,7 +66,8 @@ test('generate: classes per scope, drivers per role, verbs, and return types for
 
     // the menu as a modal in mobile view is the menu's other form: the menu stays the return, and the doc names it
     assert.match(header, /In mobile view the menu opens as MenuModal \(`menu_modal`\)\. \*\/\n {4}async clickOpenMenuButton\(\): Promise<HeaderMenu>/);
-    assert.match(header, /Renders only when canManage\(state, channelId\)\./);
+    assert.match(header, /Renders only when channelId and canManage\(state, channelId\)\./);
+    assert.doesNotMatch(header, /Fires /, 'what an element fires is its effects list, not prose');
 
     // a click that can open either of two dialogs returns a page object for each; the test takes its case's
     assert.match(header, /async clickEitherButton\(\): Promise<\{leaveModal: LeaveModal; settingsModal: SettingsModal\}>/);

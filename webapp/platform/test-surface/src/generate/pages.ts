@@ -90,9 +90,8 @@ export function emitPages(pages: Page[], out: Output): string {
         const required = params.some((p) => !optional(p));
         const arg = params.length ? `params: ${Params}${required ? '' : ' = {}'}` : '';
         const values = params.length ? `{${params.map((p) => `${propKey(p.name)}: ${paramValue(p)}`).join(', ')}}` : '{}';
-        const scopes = page.scopes.length ? `\n *\n * Renders ${page.scopes.map((s) => `\`${s}\``).join(', ')}.` : '';
         classes.push(`${params.length ? `export type ${Params} = {\n${fields}\n};\n\n` : ''}/**
- * \`${page.path}\`, rendered by \`${page.component.name}\` (${page.component.at.split('#')[0]}).${scopes}
+ * \`${page.path}\`, rendered by \`${page.component.name}\` (${page.component.at.split('#')[0]}). Its scopes are listed in app-map.json.
  */
 export class ${page.class} {
     static readonly route = ${JSON.stringify(page.path).replace(/^"|"$/g, "'")};
