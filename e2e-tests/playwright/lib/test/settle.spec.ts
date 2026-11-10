@@ -7,11 +7,24 @@ import type {AddressInfo} from 'node:net';
 import {expect, test} from '@playwright/test';
 
 import {drivers} from '../src/aria/drivers';
-import {pathPattern} from '../src/aria/effects';
+import {effect, hasMeForm, pathPattern} from '../src/aria/effects';
 import {settle, settleAll, SettleError} from '../src/aria/settle';
 import {testConfig} from '../src/test_config';
 
-import {button, CreatePost, GetChannel, GetUser, json, metaOf, page, serve, sleep, UploadFile} from './serve';
+import {
+    button,
+    CreatePost,
+    GetChannel,
+    GetMe,
+    GetUser,
+    json,
+    metaOf,
+    page,
+    serve,
+    sleep,
+    UploadFile,
+    type Body,
+} from './serve';
 
 test.describe('settle', () => {
     test('returns the body of the request the action fires', async ({page: p}) => {
@@ -108,11 +121,16 @@ test.describe('settle', () => {
         expect(await settle(button(p, [CreatePost]), (b) => b.click(), {status: 403})).toEqual({id: 'no'});
     });
 
-    test('a {user_id} placeholder does not match /users/me', async ({page: p}) => {
-        expect(pathPattern('/api/v4/users/{user_id}').test('/api/v4/users/me')).toBe(false);
-        expect(pathPattern('/api/v4/users/{user_id}/teams').test('/api/v4/users/me/teams')).toBe(false);
-        expect(pathPattern('/api/v4/users/{user_id}').test('/api/v4/users/meadow')).toBe(true);
+    test('a {user_id} placeholder skips /users/me when the element declares the /me form', async ({page: p}) => {
+        expect(pathPattern('/api/v4/users/{user_id}', {}, {notMe: true}).test('/api/v4/users/me')).toBe(false);
+        expect(pathPattern('/api/v4/users/{user_id}/teams', {}, {notMe: true}).test('/api/v4/users/me/teams')).toBe(
+            false,
+        );
+        expect(pathPattern('/api/v4/users/{user_id}', {}, {notMe: true}).test('/api/v4/users/meadow')).toBe(true);
         expect(pathPattern('/api/v4/users/me').test('/api/v4/users/me')).toBe(true);
+        expect(hasMeForm(GetUser, [GetUser, GetMe])).toBe(true);
+        expect(hasMeForm(GetUser, [GetUser])).toBe(false);
+        expect(hasMeForm(GetChannel, [GetMe])).toBe(false);
 
         await serve(
             p,
@@ -121,8 +139,22 @@ test.describe('settle', () => {
             ),
             (route, path) => json(route, {id: path.split('/').pop()}),
         );
-        const el = drivers.button(p.getByTestId('x.save--button'), metaOf('x.save--button', 'button', [GetUser]));
-        expect(await settle(el, (b) => b.click())).toEqual({id: 'u1'});
+        const el = drivers.button(
+            p.getByTestId('x.save--button'),
+            metaOf('x.save--button', 'button', [GetMe, GetUser]),
+        );
+        expect(await settle(el, (b) => b.click(), {wait: GetUser})).toEqual({id: 'u1'});
+        expect(await settle(el, (b) => b.click(), {wait: GetMe})).toEqual({id: 'me'});
+    });
+
+    test('a placeholder still matches me while the element declares only the template', async ({page: p}) => {
+        // the generator doesn't emit the /me form yet: an element whose handler calls /users/me declares GetUser
+        await serve(p, page("fetch('/api/v4/users/me', {method: 'PUT'})"), (route, path) =>
+            json(route, {id: path.split('/').pop()}),
+        );
+        const UpdateUser = effect<Body>()({op: 'UpdateUser', method: 'PUT', path: '/api/v4/users/{user_id}'});
+        const el = drivers.button(p.getByTestId('x.save--button'), metaOf('x.save--button', 'button', [UpdateUser]));
+        expect(await settle(el, (b) => b.click())).toEqual({id: 'me'});
     });
 
     test('params bind placeholders to one entity', async ({page: p}) => {

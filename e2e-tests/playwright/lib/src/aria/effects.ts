@@ -55,11 +55,16 @@ export type Meta<E extends readonly Effect[] = readonly Effect[], U extends bool
 
 /**
  * `'/api/v4/channels/{channel_id}/patch'` -> a regular expression for request paths (app paths, without a subpath).
- * A placeholder matches one segment, but not `me`: the client calls `/users/me` for the current user, which is its own
- * operation (`GET /api/v4/users/{user_id}` is another user). `params` binds placeholders to values, so the pattern
- * matches only the request for that entity.
+ * A placeholder matches one segment. `params` binds placeholders to values, so the pattern matches only the request for
+ * that entity. With `notMe`, a placeholder doesn't match `me`: the client calls `/users/me` for the current user, and
+ * when that is declared as its own effect (`GET /api/v4/users/me`), waiting for `GET /api/v4/users/{user_id}` means
+ * another user (see `hasMeForm`).
  */
-export function pathPattern(path: string, params: Record<string, string | undefined> = {}): RegExp {
+export function pathPattern(
+    path: string,
+    params: Record<string, string | undefined> = {},
+    {notMe = false}: {notMe?: boolean} = {},
+): RegExp {
     const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const source = path
         .split(/(\{[^}]+\})/)
@@ -69,8 +74,34 @@ export function pathPattern(path: string, params: Record<string, string | undefi
                 return escape(part);
             }
             const value = params[name];
-            return value === undefined ? '(?!me(?:/|$))[^/]+' : escape(encodeURIComponent(value));
+            if (value !== undefined) {
+                return escape(encodeURIComponent(value));
+            }
+            return notMe ? '(?!me(?:/|$))[^/]+' : '[^/]+';
         })
         .join('');
     return new RegExp(`^${source}/?$`);
+}
+
+/**
+ * Whether `effects` also declares `op`'s `/me` form: the same method and path with `me` for a placeholder
+ * (`GET /api/v4/users/me` beside `GET /api/v4/users/{user_id}`). The generator emits that form as its own effect where
+ * the client calls `/users/me`; then `op`'s placeholder must not match `me`. Until it does, a placeholder matches `me`
+ * too, as before.
+ */
+export function hasMeForm(
+    op: Pick<Effect, 'method' | 'path'>,
+    effects: ReadonlyArray<Pick<Effect, 'method' | 'path'>>,
+) {
+    const segments = op.path.split('/');
+    const isPlaceholder = (s: string) => /^\{[^}]+\}$/.test(s);
+    return effects.some((e) => {
+        const other = e.path.split('/');
+        return (
+            e.method.toUpperCase() === op.method.toUpperCase() &&
+            other.length === segments.length &&
+            segments.some((s, i) => isPlaceholder(s) && other[i] === 'me') &&
+            segments.every((s, i) => s === other[i] || (isPlaceholder(s) && other[i] === 'me'))
+        );
+    });
 }

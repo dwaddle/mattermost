@@ -5,7 +5,7 @@ import type {Page, Request, Response} from '@playwright/test';
 
 import {testConfig} from '../test_config';
 
-import {type BodyOf, type Effect, type Meta, type PathParamsOf, pathPattern} from './effects';
+import {type BodyOf, type Effect, type Meta, type PathParamsOf, hasMeForm, pathPattern} from './effects';
 
 type AnyEffect = Effect<unknown, string, string>;
 type WithMeta<M> = {readonly locator: {page(): Page}; readonly meta: M};
@@ -199,10 +199,12 @@ async function settleCore(el: Element, act: (el: any) => Promise<unknown>, opts:
             `settle: ${describeElement(el.meta)} fires no known request; assert with a matcher instead, or name the request with {wait, unlisted: true}.`,
         );
     }
+    // a placeholder skips `me` when the element also declares the operation's `/me` form (see hasMeForm)
+    const declared = [...el.meta.effects, ...expected];
     const patterns = expected.map((op) => ({
         op,
         method: op.method.toUpperCase(),
-        re: pathPattern(op.path, opts.params),
+        re: pathPattern(op.path, opts.params, {notMe: hasMeForm(op, declared)}),
     }));
     const wanted = patterns.map((p) => `${p.method} ${p.op.path} (${p.op.op})`).join(' or ');
     const timeout = opts.timeout ?? 30_000;

@@ -56,6 +56,7 @@ export function sleep(ms: number) {
 export type Body = {id: string};
 export const CreatePost = effect<Body>()({op: 'CreatePost', method: 'POST', path: '/api/v4/posts'});
 export const GetUser = effect<Body>()({op: 'GetUser', method: 'GET', path: '/api/v4/users/{user_id}'});
+export const GetMe = effect<Body>()({op: 'GetMe', method: 'GET', path: '/api/v4/users/me'});
 export const GetChannel = effect<Body>()({op: 'GetChannel', method: 'GET', path: '/api/v4/channels/{channel_id}'});
 export const UploadFile = effect<Body>()({op: 'UploadFile', method: 'POST', path: '/api/v4/files'});
 
