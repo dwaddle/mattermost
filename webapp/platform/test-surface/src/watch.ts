@@ -6,12 +6,15 @@ import path from 'node:path';
 
 import {runChecks} from './checks.ts';
 import {relativeToRoot, type Config} from './config.ts';
-import {WatchedProgram} from './program.ts';
+import {compilerSetup, WatchedProgram} from './program.ts';
 import type {ProgramIndex} from './program_index.ts';
 import {formatDiagnostic, manifestText, writeIfChanged} from './report.ts';
 import {Scanner} from './scan.ts';
 
 const SOURCE = /\.(tsx?|jsx?)$/;
+
+/** How long a burst of file events settles before one rescan (an editor's save writes several). */
+const DEBOUNCE_MS = 150;
 
 /**
  * Keeps a language service warm: each change costs an incremental program update and a rescan
@@ -22,7 +25,10 @@ export async function watch(config: Config, log: (s: string) => void, opts: {onc
     let previous: ProgramIndex | undefined;
     const run = async (changed: string[]) => {
         const t0 = Date.now();
-        program.touch(changed);
+
+        // a file added or removed changes the program's root files, which only the tsconfig's globs know
+        const added = changed.some((f) => !program.hasRoot(f) || !fs.existsSync(f));
+        program.touch(changed, added ? compilerSetup(config).rootNames : undefined);
         const loaded = program.current();
         const tProgram = Date.now() - t0;
         const t1 = Date.now();
@@ -60,7 +66,7 @@ export async function watch(config: Config, log: (s: string) => void, opts: {onc
 
     let pending = new Set<string>();
     let timer: NodeJS.Timeout | null = null;
-    let running: Promise<number> | null = null;
+    let running: Promise<unknown> | null = null;
     const flush = async () => {
         timer = null;
         if (running) {
@@ -69,7 +75,8 @@ export async function watch(config: Config, log: (s: string) => void, opts: {onc
         const batch = [...pending];
         pending = new Set();
         if (batch.length) {
-            running = run(batch);
+            // one scan that throws (a file saved half-written) is reported, and the next change scans again
+            running = run(batch).catch((e: Error) => log(`scan failed: ${e.stack ?? e.message}`));
             await running;
             running = null;
         }
@@ -83,7 +90,7 @@ export async function watch(config: Config, log: (s: string) => void, opts: {onc
         if (timer) {
             clearTimeout(timer);
         }
-        timer = setTimeout(flush, 150);
+        timer = setTimeout(flush, DEBOUNCE_MS);
     }));
     log(`watching ${config.include.map((d) => relativeToRoot(config, d)).join(', ')} (ctrl-c to stop)`);
     await new Promise<void>((resolve) => {

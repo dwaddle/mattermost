@@ -83,10 +83,18 @@ export class WatchedProgram {
         this.service = ts.createLanguageService(host, ts.createDocumentRegistry());
     }
 
-    /** Marks files as changed (or added/removed) on disk. */
+    /** Whether a file is one of the program's root files (from the tsconfig's `include`). */
+    hasRoot(file: string): boolean {
+        this.roots ??= new Set(this.rootNames.map((f) => path.resolve(f)));
+        return this.roots.has(path.resolve(file));
+    }
+    private roots: Set<string> | null = null;
+
+    /** Marks files as changed (or added/removed) on disk; `rootNames` replaces the root files when one was added or removed. */
     touch(files: string[], rootNames?: string[]) {
         if (rootNames) {
             this.rootNames = rootNames;
+            this.roots = null;
         }
         for (const f of files) {
             this.versions.set(f, (this.versions.get(f) ?? 0) + 1);
