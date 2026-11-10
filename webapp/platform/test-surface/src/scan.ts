@@ -14,9 +14,9 @@ import {pascal} from './generate/names.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId, type GrammarError, type ParsedTestId} from './grammar.ts';
 import {readVersioned} from './input.ts';
 import {MAX_CONDITION_USAGES, MAX_LANDING_HOPS, MAX_SCOPE_DEPTH, MAX_SCOPE_PATH, MAX_TEMPLATE_VALUES} from './limits.ts';
-import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type PluginInfo, type PluginSlot, type RenderCondition, type RuleName, type TestPart} from './manifest_types.ts';
+import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type Page, type PluginInfo, type PluginSlot, type RenderCondition, type RuleName, type TestPart} from './manifest_types.ts';
 import {pageOf} from './navigation.ts';
-import {buildPages, discoverRoutes} from './pages.ts';
+import {buildPages, discoverRoutes, parseRoute} from './pages.ts';
 import {installedVersion, loadPublishedParts, packageDir, publishedComponent, type PublishedParts} from './parts.ts';
 import type {LoadedProgram} from './program.ts';
 import {fileOfLoc, isCallUsage, ProgramIndex, usageNode, type CodeNode, type Usage} from './program_index.ts';
@@ -1083,6 +1083,47 @@ export class Scanner {
     }
 
     /**
+     * `pageSections`: a page's sub-routes as one optional, typed param. Values `from` a file are the literal values of
+     * every property of that name in it; a route param in one (`:user_id(…)`) becomes `${string}`.
+     */
+    private addPageSections(pages: Page[]) {
+        const at = relativeToRoot(this.config, this.config.configPath);
+        for (const [cls, sec] of Object.entries(this.config.pageSections)) {
+            const page = pages.find((p) => p.class === cls);
+            if (!page) {
+                this.diag('pages', 'error', at, `pageSections names ${cls}, which isn't a page.`);
+                continue;
+            }
+            const raw = [...(sec.values ?? [])];
+            if (sec.from) {
+                const sf = this.ix.program.getSourceFile(sec.from.file);
+                if (!sf) {
+                    this.diag('input', 'error', at, `pageSections for ${cls} reads ${relativeToRoot(this.config, sec.from.file)}, which isn't part of the program.`);
+                    continue;
+                }
+                const visit = (n: ts.Node) => {
+                    if (ts.isPropertyAssignment(n) && n.name.getText() === sec.from!.property) {
+                        for (const v of this.R.resolve(n.initializer)) {
+                            if (v.k === 'lit') {
+                                raw.push(v.s);
+                            }
+                        }
+                    }
+                    ts.forEachChild(n, visit);
+                };
+                visit(sf);
+            }
+            const values = [...new Set(raw.map(sectionType).filter(Boolean))].sort(cmp);
+            if (!values.length) {
+                this.diag('pages', 'error', at, `pageSections for ${cls} has no values.`);
+                continue;
+            }
+            const name = sec.param ?? 'section';
+            page.params.push({name, as: name, optional: true, values, section: true});
+        }
+    }
+
+    /**
      * A container's or keyed item's `renders`: the top-level scopes (one word) rendered inside its element, at any of
      * its emissions, other than its own and those something opens (a portal renders those outside it).
      */
@@ -1411,6 +1452,7 @@ export class Scanner {
             }
             page.ready = ready;
         }
+        this.addPageSections(pages);
         for (const [o, expr] of navigations) {
             const vals = this.R.resolve(expr);
             const cut = vals.find((v) => v.k === 'unres' && v.why === TOO_MANY_VALUES);
@@ -1614,6 +1656,12 @@ function usageAnchor(u: Usage): ts.Node {
 }
 
 /** The JSX element (opening + children) for a tag. */
+/** A sub-route as its type writes it: `user/:user_id([a-z0-9]{26})` -> `user/${string}`, without leading or trailing slashes. */
+function sectionType(route: string): string {
+    // eslint-disable-next-line no-template-curly-in-string -- the type is written as a template literal
+    return parseRoute(route.replace(/^\/+|\/+$/g, '')).segments.map((s) => (typeof s === 'string' ? s : '${string}')).join('');
+}
+
 function elementOf(tag: JsxTag): ts.Node {
     return ts.isJsxOpeningElement(tag) ? tag.parent : tag;
 }

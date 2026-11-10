@@ -2795,6 +2795,17 @@
           "name": "page",
           "as": "page",
           "optional": true
+        },
+        {
+          "name": "section",
+          "as": "section",
+          "optional": true,
+          "values": [
+            "faq",
+            "mobile",
+            "user/${string}"
+          ],
+          "section": true
         }
       ],
       "scopes": [

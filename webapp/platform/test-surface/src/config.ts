@@ -113,6 +113,14 @@ export type ConfigFile = {
     pageReady?: Record<string, PageReady>;
 
     /**
+     * Sub-routes a page renders below its own path, as one typed param (`AdminConsolePage.path({section:
+     * 'user_management/system_roles'})`): `values`, or `from` the string values of a property in a file (relative to
+     * root; `{"file": "channels/src/components/admin_console/admin_definition.tsx", "property": "url"}`). A route param
+     * in a value (`user/:user_id`) takes any string there.
+     */
+    pageSections?: Record<string, PageSections>;
+
+    /**
      * The published plugin slot contract: a `const` object of slot name -> testid template with `{plugin}`
      * (`{"file": "platform/shared/src/utils/test_id/index.ts", "export": "PLUGIN_SLOT_TEST_IDS"}`, file relative to root),
      * and optionally the object of slot name -> registry methods that fill it (`"registryExport": "PLUGIN_SLOT_REGISTRY_METHODS"`).
@@ -157,6 +165,8 @@ export type LibraryRef = string | {package: string; parts: string};
 
 export type PageParamConfig = {as?: string; entity: string; field: string; module: string};
 
+export type PageSections = {param?: string; values?: string[]; from?: {file: string; property: string}};
+
 /** A page's ready testids, or `{ready: null, reason}` for a page with nothing to wait for. */
 export type PageReady = string[] | {ready: null; reason: string};
 
@@ -191,6 +201,7 @@ export type Config = {
     pageNames: Record<string, string>;
     pageParams: Record<string, PageParamConfig>;
     pageReady: Record<string, PageReady>;
+    pageSections: Record<string, PageSections>;
     pluginSlots: {file: string; export: string; registryExport?: string} | null;
     plugin: PluginConfig | null;
 };
@@ -267,6 +278,7 @@ export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.jo
         pageNames: raw.pageNames ?? {},
         pageParams: raw.pageParams ?? {},
         pageReady: raw.pageReady ?? {},
+        pageSections: Object.fromEntries(Object.entries(raw.pageSections ?? {}).map(([k, v]) => [k, v.from ? {...v, from: {...v.from, file: path.resolve(root, v.from.file)}} : v])),
         pluginSlots: raw.pluginSlots ? {...raw.pluginSlots, file: path.resolve(root, raw.pluginSlots.file)} : null,
         plugin: raw.plugin ? resolvePlugin(raw.plugin, root) : null,
     };

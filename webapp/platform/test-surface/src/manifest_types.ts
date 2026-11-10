@@ -146,7 +146,19 @@ export type ManifestOperation = {
  * A route param. `name` is the router's, `as` what tests pass (`identifier` -> `channel`); `values` the
  * fixed set its pattern allows (the first is the default); `entity` an entity whose `field` is the value.
  */
-export type PageParam = {name: string; as: string; optional: boolean; values?: string[]; entity?: {type: string; field: string; module: string}};
+export type PageParam = {
+    name: string;
+    as: string;
+    optional: boolean;
+    values?: string[];
+    entity?: {type: string; field: string; module: string};
+
+    /**
+     * A sub-route below the page's own path (config `pageSections`), appended as written: it may hold slashes, and
+     * `${string}` stands for a route param in it (`user_management/user/${string}`).
+     */
+    section?: true;
+};
 
 /**
  * A route: its path as written (`/:team/:path(channels|messages)/:identifier/:postid?`), params, and the scopes it

@@ -387,3 +387,12 @@ test('generate: a page with no pageReady entry is an error, so every goto() eith
     const {diagnostics} = await generate({...manifest, pages}, config);
     assert.ok(diagnostics.some((d) => d.rule === 'pages' && d.severity === 'error' && d.message.includes('HelpPage')));
 });
+
+test('generate: a page\'s sub-routes (pageSections) are one typed param below its path', async () => {
+    const {read} = await generateFixture('ui');
+    const pages = read('pages.ts');
+
+    // read from the `url`s in a file: deduplicated, slashes trimmed, a route param taking any string
+    assert.match(pages, /section\?: 'faq' \| 'mobile' \| `user\/\$\{string\}`;/);
+    assert.match(pages, /return buildPath\(HelpPage\.route, \{page: params\.page\}\) \+ \(params\.section \? `\/\$\{params\.section\}` : ''\);/);
+});

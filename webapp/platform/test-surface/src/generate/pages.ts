@@ -12,7 +12,7 @@ function paramType(p: PageParam): string {
         return `Pick<${p.entity.type}, '${p.entity.field}'> | string`;
     }
     if (p.values) {
-        return p.values.map((v) => `'${v}'`).join(' | ');
+        return p.values.map((v) => (v.includes('${') ? `\`${v}\`` : `'${v}'`)).join(' | ');
     }
     return 'string';
 }
@@ -30,7 +30,9 @@ function paramValue(p: PageParam): string {
 
 function paramDoc(p: PageParam): string {
     const parts: string[] = [];
-    if (p.entity) {
+    if (p.section) {
+        parts.push('a sub-route below the page\'s path');
+    } else if (p.entity) {
         parts.push(`a ${p.entity.type} or its ${p.entity.field}`);
     } else if (p.values) {
         parts.push(`default \`${p.values[0]}\``);
@@ -95,7 +97,11 @@ export function emitPages(pages: Page[], out: Output): string {
         const fields = params.map((p) => `${paramDoc(p)}    ${propKey(p.as)}${optional(p) ? '?' : ''}: ${paramType(p)};`).join('\n');
         const required = params.some((p) => !optional(p));
         const arg = params.length ? `params: ${Params}${required ? '' : ' = {}'}` : '';
-        const values = params.length ? `{${params.map((p) => `${propKey(p.name)}: ${paramValue(p)}`).join(', ')}}` : '{}';
+        const routeParams = params.filter((p) => !p.section);
+        const values = routeParams.length ? `{${routeParams.map((p) => `${propKey(p.name)}: ${paramValue(p)}`).join(', ')}}` : '{}';
+
+        // a sub-route goes below the page's path as written (it may hold slashes)
+        const sections = params.filter((p) => p.section).map((p) => ` + (params.${p.as} ? \`/\${params.${p.as}}\` : '')`).join('');
         classes.push(`${params.length ? `export type ${Params} = {\n${fields}\n};\n\n` : ''}/**
  * \`${page.path}\`, rendered by \`${page.component.name}\` (${page.component.at.split('#')[0]}). Its scopes are listed in app-map.json.
  */
@@ -110,7 +116,7 @@ export class ${page.class} {
 
     /** The URL path for these params. */
     static path(${arg}): string {
-        return buildPath(${page.class}.route, ${values});
+        return buildPath(${page.class}.route, ${values})${sections};
     }
 
     ${gotoDoc(page)}

@@ -126,7 +126,17 @@ test('ui: pages from the route table, through a route wrapper, constants and ren
             ],
             scopes: ['banner', 'header', 'header.menu', 'info_popover', 'leave_modal'],
         },
-        {class: 'HelpPage', path: '/help/:page?', params: [{name: 'page', as: 'page', optional: true}], scopes: ['footer']},
+        {
+            class: 'HelpPage',
+            path: '/help/:page?',
+            params: [
+                {name: 'page', as: 'page', optional: true},
+
+                // eslint-disable-next-line no-template-curly-in-string -- the type of a route param in a sub-route
+                {name: 'section', as: 'section', optional: true, values: ['faq', 'mobile', 'user/${string}'], section: true},
+            ],
+            scopes: ['footer'],
+        },
     ]);
 });
 
