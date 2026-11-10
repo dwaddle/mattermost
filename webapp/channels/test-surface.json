@@ -150113,9 +150113,7 @@
         "name": "MFAController",
         "at": "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
       },
-      "ready": [
-        "signup.header"
-      ]
+      "noReady": "its header is Log out when MFA is required and Back otherwise, and the setup steps have no testid of their own yet."
     },
     {
       "class": "AuthorizePage",
@@ -150178,9 +150176,7 @@
         "name": "SelectTeam",
         "at": "channels/src/components/select_team/select_team.tsx#SelectTeam"
       },
-      "ready": [
-        "signup.header"
-      ]
+      "noReady": "its header is Back for a team member and Log out otherwise, and its list is keyed: wait for the team with app.selectTeam.team(team)."
     },
     {
       "class": "ShouldVerifyEmailPage",

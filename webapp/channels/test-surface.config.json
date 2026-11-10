@@ -825,9 +825,10 @@
         "LoginPage": [
             "login.card"
         ],
-        "MFAPage": [
-            "signup.header"
-        ],
+        "MFAPage": {
+            "ready": null,
+            "reason": "its header is Log out when MFA is required and Back otherwise, and the setup steps have no testid of their own yet."
+        },
         "PasswordResetFormPage": {
             "ready": null,
             "reason": "renders no testid yet."
@@ -854,9 +855,10 @@
         "ScheduledPostsPage": [
             "drafts.header"
         ],
-        "SelectTeamPage": [
-            "signup.header"
-        ],
+        "SelectTeamPage": {
+            "ready": null,
+            "reason": "its header is Back for a team member and Log out otherwise, and its list is keyed: wait for the team with app.selectTeam.team(team)."
+        },
         "ShouldVerifyEmailPage": [
             "should_verify_email.title--text"
         ],

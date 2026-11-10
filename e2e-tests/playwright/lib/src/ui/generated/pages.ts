@@ -616,10 +616,9 @@ export class MFAPage {
         return buildPath(MFAPage.route, {});
     }
 
-    /** Navigates here and waits until `signup.header` shows. */
+    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (its header is Log out when MFA is required and Back otherwise, and the setup steps have no testid of their own yet). */
     async goto(): Promise<void> {
         await this.page.goto(MFAPage.path());
-        await this.page.getByTestId('signup.header').waitFor();
     }
 }
 
@@ -818,10 +817,9 @@ export class SelectTeamPage {
         return buildPath(SelectTeamPage.route, {});
     }
 
-    /** Navigates here and waits until `signup.header` shows. */
+    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (its header is Back for a team member and Log out otherwise, and its list is keyed: wait for the team with app.selectTeam.team(team)). */
     async goto(): Promise<void> {
         await this.page.goto(SelectTeamPage.path());
-        await this.page.getByTestId('signup.header').waitFor();
     }
 }
 
