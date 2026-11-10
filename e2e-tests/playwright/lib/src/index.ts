@@ -87,6 +87,7 @@ export {pasteHtml} from './paste';
 export {getDayPickerDayCell, goToDisplayedMonth} from './ui/components/day_picker';
 export {duration, getRandomId, wait, newTestPassword} from './util';
 export {
+    DefaultChannel,
     LicenseSkus,
     aiPluginId,
     appsPluginId,
