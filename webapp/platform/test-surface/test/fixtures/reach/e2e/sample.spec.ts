@@ -8,3 +8,9 @@ page.getByTestId(/^lazy\.label--text$/);
 page.getByTestId('computed-at-runtime');
 const scope = 'lazy';
 page.getByTestId(`${scope}.chip:0`);
+
+// Cypress (with Testing Library's commands): its queries are checked too
+declare const cy: {findByTestId: (id: string) => unknown; findAllByTestId: (id: string) => unknown; get: (s: string) => unknown};
+cy.findByTestId('live.row');
+cy.findAllByTestId('cypress.renamed_row');
+cy.get('[data-testid="live.row"]');

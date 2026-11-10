@@ -28,5 +28,6 @@ test('stale references: e2e queries that match no testid are warnings; prefixes,
     const ds = staleReferences(out().manifest, config);
     assert.deepEqual(ds.map((d) => [d.rule, d.severity, d.at, d.message.split(' ')[0]]), [
         ['stale-reference', 'warning', 'e2e/sample.spec.ts:5', '"live.renamed_row"'],
+        ['stale-reference', 'warning', 'e2e/sample.spec.ts:15', '"cypress.renamed_row"'],
     ]);
 });

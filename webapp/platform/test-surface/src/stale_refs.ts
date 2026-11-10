@@ -34,7 +34,8 @@ function codeFiles(roots: string[]): string[] {
 }
 
 /**
- * Testids that e2e code queries (`getByTestId('…')`, `getByTestId(/…/)`, `[data-testid…="…"]`) and that no
+ * Testids that e2e code queries (Playwright's `getByTestId('…')` and `getByTestId(/…/)`, Cypress's and Testing
+ * Library's `findByTestId` / `queryAllByTestId` and the like, `[data-testid…="…"]`) and that no
  * element in the manifest can render: usually a test left behind by a rename. Warnings, not stored in the
  * manifest (they depend on the tests, not the app). Keyed templates that are mostly runtime data
  * (`{key}`, `{key}--text`) would match anything, so they only count when their literal part is long enough.
@@ -55,7 +56,7 @@ export function staleReferences(manifest: Manifest, config: Config): Diagnostic[
     const matchesSome = (probe: RegExp, lit?: string) => (lit !== undefined && patterns.some((t) => t.test(lit))) || concrete.some((c) => probe.test(c));
 
     const out: Diagnostic[] = [];
-    const query = /getByTestId\(\s*(?:(['"`])((?:(?!\1).)*)\1|\/((?:\\.|[^/\n])+)\/[a-z]*)|\[data-testid([\^$*]?)=["'`]?((?:[^"'`\]])*)/g;
+    const query = /\b(?:get|query|find)(?:All)?ByTestId\(\s*(?:(['"`])((?:(?!\1).)*)\1|\/((?:\\.|[^/\n])+)\/[a-z]*)|\[data-testid([\^$*]?)=["'`]?((?:[^"'`\]])*)/g;
     for (const file of codeFiles(sr.roots)) {
         const rel = relativeToRoot(config, file);
         const src = fs.readFileSync(file, 'utf8');
