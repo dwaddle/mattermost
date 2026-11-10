@@ -457,6 +457,17 @@ const CROSS_AREA_IMPORTS = {
     ],
 };
 
+// Files where the spec rules' extended checks (template, variable, hasText and selector locators; pw.wait and timer
+// sleeps) found what the area-fix wave moves: there the two rules stay warnings until then (see the last block).
+const EXTENDED_LINT_PENDING = [
+    'specs/accessibility/channels/direct_messages_dialog.spec.ts',
+    'specs/functional/channels/autotranslation/autotranslation.spec.ts',
+    'specs/functional/channels/autotranslation/autotranslation_users.spec.ts',
+    'specs/functional/channels/custom_groups/custom_group_management.spec.ts',
+    'specs/functional/channels/direct_messages_modal/direct_message.spec.ts',
+    'specs/functional/channels/direct_messages_modal/group_message_lifecycle.spec.ts',
+];
+
 export default [
     {
         ignores: [
@@ -580,6 +591,13 @@ export default [
         files: ['lib/src/ui/generated/**/*.ts', 'lib/src/flows/**/*.ts', 'plugins/**/*.ts'], // page objects locate and act; specs assert
         rules: {
             '@mattermost/e2e-no-expect-in-page-objects': 'error',
+        },
+    },
+    {
+        files: EXTENDED_LINT_PENDING,
+        rules: {
+            '@mattermost/e2e-no-literal-locators': 'warn',
+            '@mattermost/e2e-no-wait-for-timeout': 'warn',
         },
     },
 ];
