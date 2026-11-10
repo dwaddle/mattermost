@@ -313,3 +313,22 @@ test('generate: every testid role gets its driver and verb from the one role tab
     assert.match(code, /await this\.radiogroupRadioGroup\.choose\(values\.radiogroup\);/);
     assert.match(code, /await this\.spinbuttonSpinButton\.fill\(values\.spinbutton\);/);
 });
+
+test('generate: unformatted output (no prettier next to it) is an error in CI, a warning elsewhere', async () => {
+    const severity = async () => (await generateFixture('ui')).result.diagnostics.find((d) => d.message.startsWith('prettier is not installed'))?.severity;
+    /* eslint-disable no-process-env */
+    const ci = process.env.CI;
+    try {
+        delete process.env.CI;
+        assert.equal(await severity(), 'warning');
+        process.env.CI = 'true';
+        assert.equal(await severity(), 'error');
+    } finally {
+        if (ci === undefined) {
+            delete process.env.CI;
+        } else {
+            process.env.CI = ci;
+        }
+    }
+    /* eslint-enable no-process-env */
+});

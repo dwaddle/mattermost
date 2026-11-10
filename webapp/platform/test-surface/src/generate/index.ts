@@ -92,9 +92,12 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     }
     sources.set('index.ts', plugin && root ? `${out.header}\n${pluginIndex(plugin, runtime, root.name, root.file, reexports)}` : `${out.header}\n${reexports}\n`);
 
+    // unformatted output differs from what CI committed: an error there, a warning on a machine without the install
     const prettier = await loadPrettier(outDir);
     if (!prettier) {
-        diagnostics.push({rule: 'generate', severity: 'warning', at: path.basename(outDir), message: 'prettier is not installed next to the output; generated code is unformatted.', fix: 'Install the output project\'s dependencies (npm ci in e2e-tests/playwright, or the plugin\'s e2e project).'});
+        // eslint-disable-next-line no-process-env
+        const ci = Boolean(process.env.CI);
+        diagnostics.push({rule: 'generate', severity: ci ? 'error' : 'warning', at: path.basename(outDir), message: 'prettier is not installed next to the output; generated code is unformatted.', fix: 'Install the output project\'s dependencies (npm ci in e2e-tests/playwright, or the plugin\'s e2e project).'});
     }
     const files: string[] = [];
     let changed = 0;

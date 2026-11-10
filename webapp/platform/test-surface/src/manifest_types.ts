@@ -217,7 +217,16 @@ export const APP_MAP_VERSION = 1;
 
 export type Manifest = {
     version: typeof MANIFEST_VERSION;
-    generatedFrom: {tsconfig: string; scope: string[]};
+    generatedFrom: {
+        tsconfig: string;
+        scope: string[];
+
+        /**
+         * The component libraries the scan read (config `libraries`): the installed version, and whether it published
+         * `test-parts.json`. A different install shows up here as a one-line change instead of as different roles.
+         */
+        libraries?: Array<{package: string; version: string; parts: boolean}>;
+    };
     elements: Element[];
     sets: FixedSet[];
     operations: ManifestOperation[];

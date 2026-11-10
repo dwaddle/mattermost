@@ -41,3 +41,7 @@ test('library: a part takes only the callbacks its click calls; the root takes n
 test('library: no diagnostics for well-formed part usages', () => {
     assert.deepEqual(out().diagnostics.filter((d) => d.severity === 'error'), []);
 });
+
+test('library: the manifest records the libraries the scan read, with their version and whether they published parts', () => {
+    assert.deepEqual(out().manifest.generatedFrom.libraries, [{package: 'compass', version: 'lib/compass/test-parts.json', parts: true}]);
+});

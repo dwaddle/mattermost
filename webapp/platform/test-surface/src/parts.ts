@@ -429,7 +429,7 @@ export function installedVersion(dir: string): string {
     }
 }
 
-function packageDir(from: string, pkg: string): string | null {
+export function packageDir(from: string, pkg: string): string | null {
     for (let d = path.resolve(from); ; d = path.dirname(d)) {
         const candidate = path.join(d, 'node_modules', pkg);
         if (fs.existsSync(path.join(candidate, 'package.json'))) {

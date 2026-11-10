@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import path from 'node:path';
+
 import ts from 'typescript';
 
 import {attrValue, exprName, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, oneLine, propName, returnsOf, strip, tagName, type FunctionLike, type JsxTag} from './ast.ts';
@@ -15,7 +17,7 @@ import {MAX_CONDITION_USAGES, MAX_LANDING_HOPS, MAX_SCOPE_DEPTH, MAX_SCOPE_PATH,
 import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type PluginInfo, type PluginSlot, type RenderCondition, type RuleName, type TestPart} from './manifest_types.ts';
 import {pageOf} from './navigation.ts';
 import {buildPages, discoverRoutes} from './pages.ts';
-import {loadPublishedParts, publishedComponent, type PublishedParts} from './parts.ts';
+import {installedVersion, loadPublishedParts, packageDir, publishedComponent, type PublishedParts} from './parts.ts';
 import type {LoadedProgram} from './program.ts';
 import {fileOfLoc, isCallUsage, ProgramIndex, usageNode, type CodeNode, type Usage} from './program_index.ts';
 import {publish} from './publish.ts';
@@ -1379,6 +1381,7 @@ export class Scanner {
             generatedFrom: {
                 tsconfig: relativeToRoot(this.config, this.config.tsconfig),
                 scope: this.config.include.map((d) => relativeToRoot(this.config, d)),
+                ...(this.config.libraries.length ? {libraries: this.libraries()} : {}),
             },
             elements,
             sets,
@@ -1394,6 +1397,18 @@ export class Scanner {
         };
         const published = publish(manifest, (loc) => this.ix.refOf(loc));
         return {manifest, published, stats: this.stats(sites, emissions, elements), sites, emissions, unknownEffects, specGaps, usageNodeAt, urlVersion: this.config.client?.urlVersion ?? null, diagnostics: this.diagnostics};
+    }
+
+    /** The configured component libraries as installed: version, and whether their parts were read. */
+    private libraries(): NonNullable<Manifest['generatedFrom']['libraries']> {
+        return this.config.libraries.map((lib) => {
+            if (typeof lib !== 'string') {
+                // parts from a file the config names: the file stands for the version
+                return {package: lib.package, version: relativeToRoot(this.config, path.resolve(this.config.root, lib.parts)), parts: this.published.some((p) => p.package === lib.package)};
+            }
+            const dir = packageDir(this.config.root, lib);
+            return {package: lib, version: dir ? installedVersion(dir) : 'not installed', parts: this.published.some((p) => p.package === lib)};
+        });
     }
 
     /** The published slot contract: `export const X = {slot: 'template with {plugin}', …} as const`, and the registry methods that fill each slot. */
