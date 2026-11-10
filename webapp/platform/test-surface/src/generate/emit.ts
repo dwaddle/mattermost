@@ -402,7 +402,7 @@ function verbs(ctx: Ctx, node: ScopeNode, e: Element, getter: string, m: Members
     }
     switch (role) {
     case 'togglebutton':
-        m.add(`set${Name}`, src, `async set${Name}(on: boolean): Promise<void> {\n    await this.${getter}.press(on);\n}`);
+        m.add(`set${Name}`, src, `async set${Name}(on: boolean): Promise<void> {\n    await this.${getter}.setPressed(on);\n}`);
         return;
     case 'switch':
     case 'checkbox':

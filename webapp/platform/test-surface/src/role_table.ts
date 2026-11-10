@@ -13,7 +13,7 @@ export type DriverName = 'container' | 'button' | 'link' | 'menuitem' | 'menuite
     'checkbox' | 'radio' | 'radiogroup' | 'textbox' | 'searchbox' | 'tab' | 'combobox' | 'listbox' | 'option' | 'text';
 
 /** The method each driver sets a form field's value with. */
-type FillVerbs = {togglebutton: 'press'; switch: 'set'; checkbox: 'set'; textbox: 'fill'; searchbox: 'fill'; combobox: 'choose'; radiogroup: 'choose'};
+type FillVerbs = {togglebutton: 'setPressed'; switch: 'set'; checkbox: 'set'; textbox: 'fill'; searchbox: 'fill'; combobox: 'choose'; radiogroup: 'choose'};
 
 /** The method each driver reads a form field's value with. */
 type ReadVerbs = {togglebutton: 'isPressed'; switch: 'isOn'; checkbox: 'isChecked'; textbox: 'value'; searchbox: 'value'};
@@ -65,7 +65,7 @@ export const ROLE_TABLE: {readonly [R in TestIdRole]: AnyRow} = {
     // a slider has a number value but no driver to set it yet: its form field isn't filled
     slider: {driver: 'text', word: 'Slider', value: 'number', interactive: true},
     spinbutton: {driver: 'textbox', word: 'SpinButton', value: 'number', fill: 'fill', interactive: true},
-    togglebutton: {driver: 'togglebutton', word: 'ToggleButton', value: 'boolean', fill: 'press', read: 'isPressed', interactive: true},
+    togglebutton: {driver: 'togglebutton', word: 'ToggleButton', value: 'boolean', fill: 'setPressed', read: 'isPressed', interactive: true},
     text: {driver: 'text', word: 'Text'},
     img: {driver: 'text', word: 'Img'},
     list: {driver: 'text', word: 'List'},

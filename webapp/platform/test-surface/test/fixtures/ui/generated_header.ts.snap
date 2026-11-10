@@ -144,7 +144,7 @@ export class Header extends Scope {
     }
 
     async setFollowIconToggleButton(on: boolean): Promise<void> {
-        await this.followIconToggleButton.press(on);
+        await this.followIconToggleButton.setPressed(on);
     }
 
     /**
@@ -406,7 +406,7 @@ export class Header extends Scope {
     /** Fills the given fields; others are left as they are. */
     async fill(values: Partial<HeaderFormValues>): Promise<void> {
         if (values.followIcon !== undefined) {
-            await this.followIconToggleButton.press(values.followIcon);
+            await this.followIconToggleButton.setPressed(values.followIcon);
         }
         if (values.search !== undefined) {
             await this.searchTextbox.fill(values.search);

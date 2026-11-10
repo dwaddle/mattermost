@@ -75,7 +75,7 @@ test('generate: classes per scope, drivers per role, verbs, and return types for
     // an option can be selected (react-select and listbox options), not just read
     assert.match(header, /get currentChannelOption\(\) \{\n {8}return drivers\.option\(/);
     const banner = read('banner.ts');
-    assert.match(banner, /async setLeaveToggleButton\(on: boolean\): Promise<void>/);
+    assert.match(banner, /async setLeaveToggleButton\(on: boolean\): Promise<void> \{\n\s+await this\.leaveToggleButton\.setPressed\(on\);/);
 });
 
 test('generate: a shared class returns the menu it opens under its own scope, at every mount', async () => {
