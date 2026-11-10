@@ -10,7 +10,10 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {LeaveChannelModal} from './leave_channel_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
+import {CustomStatusModalExpiryCustom} from './shared';
+import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `date_time_picker_modal`. */
 export class DateTimePickerModal extends Scope {
@@ -124,12 +127,16 @@ export class DateTimePickerModal extends Scope {
     /** Clicks confirmButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickConfirmButton(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.confirmButton.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 
@@ -150,8 +157,8 @@ export class DateTimePickerModal extends Scope {
         await this.repeatWeeklyCheckbox.set(on);
     }
 
-    get when(): DateTimePickerModalWhen {
-        return new DateTimePickerModalWhen(this.page, `${this.scope}.when`, this.root);
+    get when(): CustomStatusModalExpiryCustom {
+        return new CustomStatusModalExpiryCustom(this.page, `${this.scope}.when`, this.root);
     }
 }
 
@@ -213,186 +220,5 @@ export class DateTimePickerModalForUpdateScheduledPost extends DateTimePickerMod
             unknownEffects: true,
             source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
         });
-    }
-}
-
-/** Scope `date_time_picker_modal.when`. */
-export class DateTimePickerModalWhen extends Scope {
-    constructor(page: Page, scope = 'date_time_picker_modal.when', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `date_time_picker_modal.when.date--button` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     */
-    get dateButton() {
-        return drivers.button(this.byTestId(`${this.scope}.date--button`), {
-            testId: `${this.scope}.date--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    async clickDateButton(): Promise<void> {
-        await this.dateButton.click();
-    }
-
-    /**
-     * `date_time_picker_modal.when.time--button` — Menu (channels/src/components/menu/menu.tsx)
-     * Renders only when !manualTimeEntry.
-     * Opens menu expiryTimeMenu (`date_time_picker_modal.when.time_menu`).
-     * Opens modal MenuModal (`menu_modal`).
-     */
-    get timeButton() {
-        return drivers.button(this.byTestId(`${this.scope}.time--button`), {
-            testId: `${this.scope}.time--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/menu/menu.tsx#Menu',
-        });
-    }
-
-    /** Clicks timeButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
-    async clickTimeButton(): Promise<DateTimePickerModalWhenTimeMenu> {
-        await this.timeButton.click();
-        return new DateTimePickerModalWhenTimeMenu(this.page, `${this.scope}.time_menu`);
-    }
-
-    /**
-     * `date_time_picker_modal.when.calendar` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     * Renders only when isPopperOpen.
-     */
-    get calendar(): DateTimePickerModalWhenCalendar {
-        return new DateTimePickerModalWhenCalendar(this.page, `${this.scope}.calendar`, this.root);
-    }
-
-    get timeMenu(): DateTimePickerModalWhenTimeMenu {
-        return new DateTimePickerModalWhenTimeMenu(this.page, `${this.scope}.time_menu`);
-    }
-}
-
-/** Scope `date_time_picker_modal.when.calendar`. */
-export class DateTimePickerModalWhenCalendar extends Scope {
-    constructor(page: Page, scope = 'date_time_picker_modal.when.calendar', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /**
-     * `date_time_picker_modal.when.calendar.day:{key}--text` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     */
-    day(day: string) {
-        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
-            testId: `${this.scope}.day:${day}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /** Every `date_time_picker_modal.when.calendar.day:{key}--text` in the scope. */
-    get dayItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
-    }
-
-    /** The keys of every `date_time_picker_modal.when.calendar.day:{key}--text` in the scope, in document order. */
-    dayKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.day:`, '--text');
-    }
-
-    /**
-     * `date_time_picker_modal.when.calendar.next_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     */
-    get nextMonth() {
-        return drivers.container(this.byTestId(`${this.scope}.next_month`), {
-            testId: `${this.scope}.next_month`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /**
-     * `date_time_picker_modal.when.calendar.previous_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     */
-    get previousMonth() {
-        return drivers.container(this.byTestId(`${this.scope}.previous_month`), {
-            testId: `${this.scope}.previous_month`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /** Every `date_time_picker_modal.when.calendar.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
-    get dayList() {
-        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
-                testId: `${this.scope}.day:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-            }),
-        );
-    }
-}
-
-/** Scope `date_time_picker_modal.when.time_menu`. */
-export class DateTimePickerModalWhenTimeMenu extends Scope {
-    constructor(page: Page, scope = 'date_time_picker_modal.when.time_menu', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `date_time_picker_modal.when.time_menu.time:{key}--menuitem` — DateTimeInputContainer (channels/src/components/datetime_input/datetime_input.tsx)
-     * Renders only when !manualTimeEntry.
-     */
-    time(time: string) {
-        return drivers.menuitem(this.byTestId(`${this.scope}.time:${time}--menuitem`), {
-            testId: `${this.scope}.time:${time}--menuitem`,
-            role: 'menuitem',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
-        });
-    }
-
-    /** Every `date_time_picker_modal.when.time_menu.time:{key}--menuitem` in the scope. */
-    get timeItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.time:`, '--menuitem');
-    }
-
-    /** The keys of every `date_time_picker_modal.when.time_menu.time:{key}--menuitem` in the scope, in document order. */
-    timeKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.time:`, '--menuitem');
-    }
-
-    /** Every `date_time_picker_modal.when.time_menu.time:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.timeList).toHaveKeys([…])`. */
-    get timeList() {
-        return this.keyedList(`${this.scope}.time:`, '--menuitem', (key: string) =>
-            drivers.menuitem(this.byTestId(`${this.scope}.time:${key}--menuitem`), {
-                testId: `${this.scope}.time:${key}--menuitem`,
-                role: 'menuitem',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
-            }),
-        );
     }
 }

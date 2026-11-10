@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import Markdown from 'components/markdown';
 
 import RadioOption from './radio_option';
@@ -17,6 +19,9 @@ type Props = {
 
     /** Called with the new value whenever the selection changes. */
     onChange: (value: string) => void;
+
+    /** The group renders `<testIdScope>.setting:<name>`, each option `<testIdScope>.setting.option:<value>--radio`. */
+    testIdScope?: TestId;
 };
 
 const markdownOptions = {mentionHighlight: false};
@@ -25,11 +30,13 @@ const Radio = ({
     setting,
     value,
     onChange,
+    testIdScope,
 }: Props) => {
     return (
         <fieldset
             key={setting.name}
             className='radio-option-list'
+            data-testid={testIdScope ? `${testIdScope}.setting:${setting.name}` : undefined}
         >
             <legend className='form-legend hidden-label'>
                 {setting.title || setting.name}
@@ -42,6 +49,7 @@ const Radio = ({
                         option={option}
                         selectedValue={value}
                         onSelected={onChange}
+                        testIdScope={testIdScope ? `${testIdScope}.setting` : undefined}
                     />
                 ))}
             </div>

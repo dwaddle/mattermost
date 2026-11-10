@@ -178,6 +178,7 @@ const ConvertGmToChannelModal = (props: Props) => {
                     }
 
                     <ChannelNameFormField
+                        testIdScope='convert_gm_to_channel_modal'
                         value={channelName}
                         name='convert-gm-to-channel-modal-channel-name'
                         placeholder={formatMessage({id: 'sidebar_left.sidebar_channel_modal.channel_name_placeholder', defaultMessage: 'Enter a name for the channel'})}
@@ -218,6 +219,7 @@ const ConvertGmToChannelModal = (props: Props) => {
     return (
         <GenericModal
             id='convert-gm-to-channel-modal'
+            testId='convert_gm_to_channel_modal'
             className='convert-gm-to-channel-modal'
             modalHeaderText={formatMessage({id: 'sidebar_left.sidebar_channel_modal.header', defaultMessage: 'Convert to Private Channel'})}
             compassDesign={true}

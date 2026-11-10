@@ -27,6 +27,37 @@ export const CenterToast = {
 } as const;
 export type CenterToast = (typeof CenterToast)[keyof typeof CenterToast];
 
+/** Keys of ChannelNotificationsModalReset (from channels/src/components/channel_notifications_modal/reset_to_default_button/index.tsx#ResetToDefaultButton). */
+export const ChannelNotificationsModalReset = {
+    Desktop: 'desktop',
+    Mobile: 'mobile',
+} as const;
+export type ChannelNotificationsModalReset =
+    (typeof ChannelNotificationsModalReset)[keyof typeof ChannelNotificationsModalReset];
+
+/** Keys of ChannelSettingsModalTab (from channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar). */
+export const ChannelSettingsModalTab = {
+    AccessRules: 'access_rules',
+    Archive: 'archive',
+    Configuration: 'configuration',
+    Info: 'info',
+    PermissionsPolicy: 'permissions_policy',
+} as const;
+export type ChannelSettingsModalTab = (typeof ChannelSettingsModalTab)[keyof typeof ChannelSettingsModalTab];
+
+/** Keys of CustomStatusModalDuration (from channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl). */
+export const CustomStatusModalDuration = {
+    CustomDateTime: 'custom_date_time',
+    DateAndTime: 'date_and_time',
+    DontClear: 'dont_clear',
+    FourHours: 'four_hours',
+    OneHour: 'one_hour',
+    ThirtyMinutes: 'thirty_minutes',
+    ThisWeek: 'this_week',
+    Today: 'today',
+} as const;
+export type CustomStatusModalDuration = (typeof CustomStatusModalDuration)[keyof typeof CustomStatusModalDuration];
+
 /** Keys of EmojiGifPickerTab (from channels/src/components/emoji_picker/emoji_picker_tabs.tsx#EmojiPickerTabs). */
 export const EmojiGifPickerTab = {
     Emojis: 'emojis',
@@ -172,3 +203,160 @@ export const SearchMentionType = {
     Keyword: 'keyword',
 } as const;
 export type SearchMentionType = (typeof SearchMentionType)[keyof typeof SearchMentionType];
+
+/** Keys of SettingsKeyword (from channels/src/components/user_settings/notifications/user_settings_notifications.tsx#NotificationsTab). */
+export const SettingsKeyword = {
+    ChannelWide: 'channel_wide',
+    Custom: 'custom',
+    FirstName: 'first_name',
+    Username: 'username',
+} as const;
+export type SettingsKeyword = (typeof SettingsKeyword)[keyof typeof SettingsKeyword];
+
+/** Keys of SettingsOption (from channels/src/components/user_settings/advanced/join_leave_section/join_leave_section.tsx#JoinLeaveSection). */
+export const SettingsOption = {
+    All: 'all',
+    Any: 'any',
+    Centered: 'centered',
+    Clean: 'clean',
+    CodeBlocks: 'code_blocks',
+    Compact: 'compact',
+    Custom: 'custom',
+    False: 'false',
+    FifteenMinutes: 'fifteen_minutes',
+    Full: 'full',
+    FullName: 'full_name',
+    Hour: 'hour',
+    Immediately: 'immediately',
+    Mention: 'mention',
+    Never: 'never',
+    NicknameFullName: 'nickname_full_name',
+    None: 'none',
+    Off: 'off',
+    On: 'on',
+    Premade: 'premade',
+    Root: 'root',
+    StartFromLeftOff: 'start_from_left_off',
+    StartFromNewest: 'start_from_newest',
+    True: 'true',
+    Username: 'username',
+} as const;
+export type SettingsOption = (typeof SettingsOption)[keyof typeof SettingsOption];
+
+/** Keys of SettingsPanel (from channels/src/components/user_settings/advanced/user_settings_advanced.tsx#AdvancedSettingsDisplay). */
+export const SettingsPanel = {
+    Advanced: 'advanced',
+    Display: 'display',
+    Notifications: 'notifications',
+    Profile: 'profile',
+    Security: 'security',
+    Sidebar: 'sidebar',
+} as const;
+export type SettingsPanel = (typeof SettingsPanel)[keyof typeof SettingsPanel];
+
+/** Keys of SettingsPremadeTheme (from channels/src/components/user_settings/display/user_settings_theme/premade_theme_chooser/premade_theme_chooser.tsx#PremadeThemeChooser). */
+export const SettingsPremadeTheme = {
+    Denim: 'denim',
+    Indigo: 'indigo',
+    Onyx: 'onyx',
+    Quartz: 'quartz',
+    Sapphire: 'sapphire',
+} as const;
+export type SettingsPremadeTheme = (typeof SettingsPremadeTheme)[keyof typeof SettingsPremadeTheme];
+
+/** Keys of SettingsSection (from channels/src/components/setting_item_max.tsx#SettingItemMax). */
+export const SettingsSection = {
+    AdvancedCtrlSend: 'advancedCtrlSend',
+    Apps: 'apps',
+    AutoResponder: 'autoResponder',
+    AvailabilityStatus: 'availabilityStatus',
+    ChannelMentionAutoFollow: 'channelMentionAutoFollow',
+    ChannelDisplayMode: 'channel_display_mode',
+    ClickToReply: 'click_to_reply',
+    Clock: 'clock',
+    Collapse: 'collapse',
+    CollapseCategoryWithUnreads: 'collapse_category_with_unreads',
+    CollapsedReplyThreads: 'collapsed_reply_threads',
+    DeactivateAccount: 'deactivateAccount',
+    DesktopAndMobile: 'desktopAndMobile',
+    DesktopNotificationSound: 'desktopNotificationSound',
+    Email: 'email',
+    Formatting: 'formatting',
+    JoinLeave: 'joinLeave',
+    KeywordsAndHighlight: 'keywordsAndHighlight',
+    KeywordsAndMentions: 'keywordsAndMentions',
+    Languages: 'languages',
+    Lastactive: 'lastactive',
+    LimitVisibleGMsDMs: 'limitVisibleGMsDMs',
+    Linkpreview: 'linkpreview',
+    MessageDisplay: 'message_display',
+    Mfa: 'mfa',
+    Name: 'name',
+    NameFormat: 'name_format',
+    Nickname: 'nickname',
+    OneClickReactionsEnabled: 'one_click_reactions_enabled',
+    Password: 'password',
+    PerformanceDebugging: 'performanceDebugging',
+    Picture: 'picture',
+    Position: 'position',
+    RenderEmoticonsAsEmoji: 'renderEmoticonsAsEmoji',
+    ReplyNotifications: 'replyNotifications',
+    ShowUnreadsCategory: 'showUnreadsCategory',
+    Signin: 'signin',
+    SyncDrafts: 'syncDrafts',
+    Theme: 'theme',
+    Timezone: 'timezone',
+    Tokens: 'tokens',
+    UnreadScrollPosition: 'unread_scroll_position',
+    Username: 'username',
+    WysiwygEditor: 'wysiwygEditor',
+} as const;
+export type SettingsSection = (typeof SettingsSection)[keyof typeof SettingsSection];
+
+/** Keys of SettingsStylePanel (from channels/src/components/user_settings/display/user_settings_theme/custom_theme_chooser/custom_theme_chooser.tsx#CustomThemeChooser). */
+export const SettingsStylePanel = {
+    CenterChannel: 'center_channel',
+    LinkAndButtons: 'link_and_buttons',
+    Sidebar: 'sidebar',
+} as const;
+export type SettingsStylePanel = (typeof SettingsStylePanel)[keyof typeof SettingsStylePanel];
+
+/** Keys of SettingsStyleToggle (from channels/src/components/user_settings/display/user_settings_theme/custom_theme_chooser/custom_theme_chooser.tsx#CustomThemeChooser). */
+export const SettingsStyleToggle = {
+    CenterChannel: 'center_channel',
+    LinkAndButtons: 'link_and_buttons',
+    Sidebar: 'sidebar',
+} as const;
+export type SettingsStyleToggle = (typeof SettingsStyleToggle)[keyof typeof SettingsStyleToggle];
+
+/** Keys of SettingsSwitchTo (from channels/src/components/user_settings/security/user_settings_security.tsx#SecurityTab). */
+export const SettingsSwitchTo = {
+    Email: 'email',
+    Gitlab: 'gitlab',
+    Google: 'google',
+    Ldap: 'ldap',
+    Office365: 'office365',
+    Openid: 'openid',
+    Saml: 'saml',
+} as const;
+export type SettingsSwitchTo = (typeof SettingsSwitchTo)[keyof typeof SettingsSwitchTo];
+
+/** Keys of TeamSettingsModalTab (from channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar). */
+export const TeamSettingsModalTab = {
+    Access: 'access',
+    AccessPolicies: 'access_policies',
+    Info: 'info',
+    TeamMembership: 'team_membership',
+} as const;
+export type TeamSettingsModalTab = (typeof TeamSettingsModalTab)[keyof typeof TeamSettingsModalTab];
+
+/** Keys of UserSettingsModalTab (from channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar). */
+export const UserSettingsModalTab = {
+    Advanced: 'advanced',
+    Display: 'display',
+    Notifications: 'notifications',
+    Profile: 'profile',
+    Security: 'security',
+    Sidebar: 'sidebar',
+} as const;
+export type UserSettingsModalTab = (typeof UserSettingsModalTab)[keyof typeof UserSettingsModalTab];

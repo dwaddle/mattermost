@@ -4,6 +4,7 @@
 import React, {useCallback} from 'react';
 
 import {Radio} from '@mattermost/compass-ui/components/radio';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Markdown from 'components/markdown';
 
@@ -14,6 +15,9 @@ type Props = {
     option: RadioSettingOption;
     selectedValue: string;
     onSelected: (value: string) => void;
+
+    /** Renders `<testIdScope>.option:<value>--radio`. */
+    testIdScope?: TestId;
 };
 
 const markdownOptions = {mentionHighlight: false};
@@ -23,6 +27,7 @@ const RadioOption = ({
     option,
     selectedValue,
     onSelected,
+    testIdScope,
 }: Props) => {
     const onChange = useCallback(() => onSelected(option.value), [onSelected, option.value]);
 
@@ -33,6 +38,7 @@ const RadioOption = ({
                 value={option.value}
                 checked={selectedValue === option.value}
                 onChange={onChange}
+                data-testid={testIdScope ? `${testIdScope}.option:${option.value}--radio` : undefined}
             >
                 {option.text}
             </Radio>

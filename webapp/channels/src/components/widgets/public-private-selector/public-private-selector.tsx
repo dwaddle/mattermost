@@ -6,6 +6,8 @@ import React, {useCallback, type JSX} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelType} from '@mattermost/types/channels';
 
 import CheckCircleIcon from 'components/widgets/icons/check_circle_icon';
@@ -19,6 +21,9 @@ import './public-private-selector.scss';
 
 export type PluginOptionButtonProps = {
     id: string;
+
+    /** The plugin that registered the option: its button's testid is keyed by plugin. */
+    pluginId?: string;
     label: React.ReactNode;
     description: React.ReactNode;
     icon: React.ReactNode;
@@ -37,6 +42,9 @@ type BigButtonSelectorProps = {
     disabled?: boolean;
     locked?: boolean;
     onClick: (id: string) => void;
+
+    /** Renders `${testId}--button`. */
+    testId?: string;
 };
 
 const BigButtonSelector = ({
@@ -52,6 +60,7 @@ const BigButtonSelector = ({
     disabled,
     locked,
     onClick,
+    testId,
 }: BigButtonSelectorProps) => {
     const handleOnClick = useCallback(
         (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -64,6 +73,7 @@ const BigButtonSelector = ({
     const button = (
         <button
             id={`public-private-selector-button-${id}`}
+            data-testid={testId ? `${testId}--button` : undefined}
             className={classNames('public-private-selector-button', {selected, disabled, locked})}
             onClick={handleOnClick}
         >
@@ -116,6 +126,15 @@ type PublicPrivateSelectorProps = {
     /** Shows only `pluginOptions`, for a modal opened for one plugin's channel types. */
     hideBuiltInOptions?: boolean;
     onChange: (selected: string) => void;
+
+    /** Testid scope (`new_channel_modal.type`): `<scope>.public--button`, `<scope>.private--button`. */
+    testIdScope?: TestId;
+
+    /**
+     * Where plugin types are a published slot (`new_channel_modal.type`): `<scope>.plugin_type:<plugin>--button`. Separate
+     * from `testIdScope` so a selector that never offers plugin types (Team Settings) doesn't declare a slot.
+     */
+    pluginTypesTestIdScope?: TestId;
 };
 
 const PublicPrivateSelector = ({
@@ -144,6 +163,8 @@ const PublicPrivateSelector = ({
     pluginOptions,
     hideBuiltInOptions = false,
     onChange,
+    testIdScope,
+    pluginTypesTestIdScope,
 }: PublicPrivateSelectorProps) => {
     const {formatMessage} = useIntl();
 
@@ -182,6 +203,7 @@ const PublicPrivateSelector = ({
                         disabled={disabledPublic}
                         locked={lockedPublic}
                         onClick={handleOnClick}
+                        testId={testIdScope ? `${testIdScope}.public` : undefined}
                     />
                     <BigButtonSelector
                         id={Constants.PRIVATE_CHANNEL as ChannelType}
@@ -196,6 +218,7 @@ const PublicPrivateSelector = ({
                         disabled={disabledPrivate}
                         locked={lockedPrivate}
                         onClick={handleOnClick}
+                        testId={testIdScope ? `${testIdScope}.private` : undefined}
                     />
                 </>
             )}
@@ -210,6 +233,7 @@ const PublicPrivateSelector = ({
                     disabled={false}
                     locked={false}
                     onClick={handleOnClick}
+                    testId={pluginTypesTestIdScope && option.pluginId ? `${pluginTypesTestIdScope}.plugin_type:${pluginTestKey(option.pluginId)}` : undefined}
                 />
             ))}
         </div>

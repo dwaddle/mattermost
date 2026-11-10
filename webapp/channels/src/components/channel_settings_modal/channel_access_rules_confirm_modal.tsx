@@ -285,6 +285,7 @@ function ChannelAccessRulesConfirmModal({
                                 focusOnMount={false}
                                 nextPage={() => {}}
                                 search={handleSearch}
+                                testIdScope='channel_access_rules_confirm_modal.users'
                             />
                         ) : (
                             <div className='ChannelAccessRulesConfirmModal__noResults'>

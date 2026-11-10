@@ -7,12 +7,11 @@ test('Theme settings should be keyboard accessible', async ({axe, pw}) => {
     const {user} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
     // # Initialize Axe
     const ab = axe.builder(page).disableRules([
         'color-contrast',
-
         // Known issue: These fail due to the way we've grouped plugin setting tabs together in the LHS
         'aria-required-children',
         'aria-required-parent',
@@ -23,21 +22,23 @@ test('Theme settings should be keyboard accessible', async ({axe, pw}) => {
     await channelsPage.toBeVisible();
 
     // # Open settings modal
-    const settingsModal = await channelsPage.globalHeader.openSettings();
+    await app.globalHeader.clickSettingsButton();
+    const {tabs} = app.userSettingsModal;
+    await expect(tabs.tab('notifications').locator).toBeVisible();
 
     // * The settings modal should have no accessibility violations
     let accessibilityScanResults = await ab.analyze();
     expect(accessibilityScanResults.violations).toHaveLength(0);
 
     // # Open display tab
-    await settingsModal.container.focus();
+    await app.userSettingsModal.locator.focus();
     await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
     await page.keyboard.press('ArrowDown');
 
     // * The display tab should be open
-    const {displaySettings} = settingsModal;
-    await displaySettings.toBeVisible();
+    const theme = app.settings.section('theme');
+    await expect(theme.locator).toBeVisible();
 
     // * The display tab should have no accessibility violations
     accessibilityScanResults = await ab.analyze();
@@ -48,52 +49,46 @@ test('Theme settings should be keyboard accessible', async ({axe, pw}) => {
     await page.keyboard.press('Space');
 
     // * The theme section should be open
-    await displaySettings.verifySectionIsExpanded('theme');
+    await expect(theme.saveButton.locator).toBeVisible();
 
     // * The Premade Themes option should be focused
-    await expect(page.getByLabel('Premade Themes')).toBeFocused();
+    const premade = theme.option('premade').locator;
+    await expect(premade).toBeFocused();
 
     // * The theme section for premade themes should have no accessibility violations
     accessibilityScanResults = await ab.analyze();
     expect(accessibilityScanResults.violations).toHaveLength(0);
 
     // * Should be able to tab through the options
-    await page.keyboard.press('Tab');
-    await expect(page.getByRole('button', {name: 'Denim'})).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(page.getByRole('button', {name: 'Sapphire'})).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(page.getByRole('button', {name: 'Quartz'})).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(page.getByRole('button', {name: 'Indigo'})).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(page.getByRole('button', {name: 'Onyx'})).toBeFocused();
+    for (const premadeTheme of ['denim', 'sapphire', 'quartz', 'indigo', 'onyx'] as const) {
+        await page.keyboard.press('Tab');
+        await expect(theme.premadeTheme(premadeTheme).locator).toBeFocused();
+    }
     await page.keyboard.press('Tab');
 
     // Note: There's no "Apply to all your teams" option because this user is only on one team
-    await expect(page.getByRole('link', {name: 'See other themes'})).toBeFocused();
+    await expect(theme.otherThemesLink.locator).toBeFocused();
     await page.keyboard.press('Tab');
-    await expect(page.getByRole('button', {name: 'Save'})).toBeFocused();
+    await expect(theme.saveButton.locator).toBeFocused();
 
     // # Go back to the premade/custom option
-    await page.getByLabel('Premade Themes').focus();
+    await premade.focus();
 
     // # Switch to the custom theme section
     await page.keyboard.press('ArrowDown');
 
     // * The Custom Theme option should be focused
-    await expect(page.getByLabel('Custom Theme')).toBeFocused();
+    await expect(theme.option('custom').locator).toBeFocused();
 
     // * Check the ARIA of the Sidebar Styles section
     await page.keyboard.press('Tab');
-    const sidebarStyles = page.getByRole('button', {name: 'Sidebar Styles'});
+    const sidebarStyles = theme.styleToggle('sidebar').locator;
     await expect(sidebarStyles).toBeFocused();
     await expect(sidebarStyles).toHaveAttribute('aria-expanded', 'false');
 
     // * Check that we can tab over the collapsed section to the next section and then back again
     await page.keyboard.press('Tab');
-    await expect(page.getByRole('button', {name: 'Center Channel Styles'})).toBeFocused();
-
+    await expect(theme.styleToggle('center_channel').locator).toBeFocused();
     await page.keyboard.press('Shift+Tab');
     await expect(sidebarStyles).toBeFocused();
 
@@ -102,15 +97,13 @@ test('Theme settings should be keyboard accessible', async ({axe, pw}) => {
     await expect(sidebarStyles).toHaveAttribute('aria-expanded', 'true');
 
     // # Wait for the expanding animation to be open
-    await expect(page.getByLabel('Sidebar Styles')).toHaveCSS('overflow-y', 'visible');
+    await expect(theme.stylePanel('sidebar').locator).toHaveCSS('overflow-y', 'visible');
 
     // * Check that we can tab through color pickers
-    await page.keyboard.press('Tab');
-    await expect(page.getByLabel('Sidebar BG', {exact: true})).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(page.getByLabel('Sidebar Text', {exact: true})).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(page.getByLabel('Sidebar Header BG')).toBeFocused();
+    for (const color of ['sidebarBg', 'sidebarText', 'sidebarHeaderBg']) {
+        await page.keyboard.press('Tab');
+        await expect(theme.color(color).valueTextbox.locator).toBeFocused();
+    }
 
     // * The theme section for custom themes should have no accessibility violations
     accessibilityScanResults = await ab.analyze();

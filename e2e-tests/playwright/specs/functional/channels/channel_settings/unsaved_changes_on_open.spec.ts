@@ -8,6 +8,8 @@ import {expect, test} from '@mattermost/playwright-lib';
  * validation error, and closes on a single click, for a channel whose stored purpose and header carry
  * leading or trailing whitespace. The server keeps that whitespace verbatim, so channels populated
  * outside this form reach it untidy.
+ *
+ * Written on the generated page objects: the info tab reads all its fields at once.
  */
 test(
     'opens Channel Settings cleanly for a channel whose stored text has surrounding whitespace',
@@ -22,30 +24,30 @@ test(
         await adminClient.patchChannel(channel.id, {purpose: paddedPurpose, header: paddedHeader});
         await adminClient.addToChannel(user.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
+        await expect(app.center.postList.locator).toBeVisible();
 
         // # Open Channel Settings without touching any field
-        const channelSettings = await channelsPage.openChannelSettings();
-        const infoSettings = await channelSettings.openInfoTab();
+        const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+        await settings.tabs.infoTab.select();
 
-        // * Verify the stored text is shown as-is and the form does not report unsaved changes
-        await expect(infoSettings.purposeInput).toHaveValue(paddedPurpose);
-        await expect(infoSettings.headerInput).toHaveValue(paddedHeader);
-        await expect(infoSettings.saveChangesPanel).not.toBeVisible();
+        // * The stored text is shown as-is, and the form reports no unsaved changes
+        expect(await settings.info.read()).toMatchObject({
+            name: channel.display_name,
+            purpose: paddedPurpose,
+            header: paddedHeader,
+        });
+        await expect(settings.savePanel.locator).not.toBeVisible();
 
-        // * Verify no channel name validation error is shown for the populated name field
-        await expect(infoSettings.nameInput).toHaveValue(channel.display_name);
-        await expect(
-            channelSettings.container.getByText('Channel names must have at least 1 character.'),
-        ).not.toBeVisible();
+        // * No channel name validation error is shown for the populated name field
+        await expect(settings.info.name.messageAlert.locator).toHaveCount(0);
 
         // # Close the modal with a single click
-        await channelSettings.closeButton.click();
+        await settings.clickCloseButton();
 
-        // * Verify the modal closes without the second click that unsaved changes would demand
-        await expect(channelSettings.container).not.toBeVisible();
+        // * The modal closes without the second click that unsaved changes would demand
+        await expect(settings.locator).not.toBeVisible();
     },
 );
 
@@ -65,33 +67,33 @@ test(
         await adminClient.patchChannel(channel.id, {purpose: '  padded purpose  ', header: paddedHeader});
         await adminClient.addToChannel(user.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
+        await expect(app.center.postList.locator).toBeVisible();
 
         // # Open Channel Settings and edit the purpose
-        const channelSettings = await channelsPage.openChannelSettings();
-        const infoSettings = await channelSettings.openInfoTab();
-        await infoSettings.updatePurpose('A brand new purpose');
+        let settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+        await settings.tabs.infoTab.select();
+        await settings.info.fillPurposeTextbox('A brand new purpose');
 
-        // * Verify the edit is recognised as an unsaved change
-        await expect(channelSettings.container.getByText('You have unsaved changes')).toBeVisible();
+        // * The edit is recognised as an unsaved change
+        await expect(settings.savePanel.locator).toBeVisible();
 
         // # Save the edit
-        await channelSettings.save();
+        await settings.savePanel.clickSaveButton();
 
-        // * Verify the save completes and the panel leaves the unsaved state
-        await expect(channelSettings.saveButton).not.toBeVisible();
+        // * The save completes and the panel leaves the unsaved state; the server has the new purpose
+        await expect(settings.savePanel.saveButton.locator).not.toBeVisible();
+        await expect.poll(async () => (await adminClient.getChannel(channel.id)).purpose).toBe('A brand new purpose');
 
         // # Close and reopen Channel Settings
-        await channelSettings.close();
-        const reopenedSettings = await channelsPage.openChannelSettings();
-        const reopenedInfo = await reopenedSettings.openInfoTab();
+        await settings.clickCloseButton();
+        settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+        await settings.tabs.infoTab.select();
 
-        // * Verify the saved purpose persisted, the untouched header was left exactly as stored, and the
-        // * reopened form is clean
-        await expect(reopenedInfo.purposeInput).toHaveValue('A brand new purpose');
-        await expect(reopenedInfo.headerInput).toHaveValue(paddedHeader);
-        await expect(reopenedInfo.saveChangesPanel).not.toBeVisible();
+        // * The saved purpose persisted, the untouched header was left exactly as stored, and the reopened form
+        // * is clean
+        expect(await settings.info.read()).toMatchObject({purpose: 'A brand new purpose', header: paddedHeader});
+        await expect(settings.savePanel.locator).not.toBeVisible();
     },
 );

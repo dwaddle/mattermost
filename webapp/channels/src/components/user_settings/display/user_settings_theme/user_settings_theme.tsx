@@ -193,6 +193,7 @@ export default class ThemeSetting extends React.PureComponent<Props, State> {
                     >
                         <Radio
                             id='standardThemes'
+                            data-testid='settings.section.option:premade--radio'
                             name='theme'
                             value='premade'
                             checked={!displayCustom}
@@ -205,6 +206,7 @@ export default class ThemeSetting extends React.PureComponent<Props, State> {
                         </Radio>
                         <Radio
                             id='customThemes'
+                            data-testid='settings.section.option:custom--radio'
                             name='theme'
                             value='custom'
                             checked={displayCustom}
@@ -225,6 +227,7 @@ export default class ThemeSetting extends React.PureComponent<Props, State> {
                         <br/>
                         <ExternalLink
                             id='otherThemes'
+                            data-testid='settings.section.other_themes--link'
                             href='http://docs.mattermost.com/help/settings/theme-colors.html#custom-theme-examples'
                             location='user_settings_theme'
                         >
@@ -285,6 +288,7 @@ export default class ThemeSetting extends React.PureComponent<Props, State> {
                     serverError={serverError}
                     isFullWidth={true}
                     updateSection={this.handleUpdateSection}
+                    testIdSection='theme'
                 />
             );
         } else {

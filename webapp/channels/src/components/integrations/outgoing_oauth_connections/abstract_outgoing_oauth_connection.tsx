@@ -510,6 +510,7 @@ export default function AbstractOutgoingOAuthConnection(props: Props) {
                 />
             </div>
             <ConfirmModal
+                testId='integrations.oauth_connection_form.save_unvalidated_modal'
                 show={isValidationModalOpen}
                 message={intl.formatMessage({
                     id: 'add_outgoing_oauth_connection.save_without_validation_warning',

@@ -160,6 +160,7 @@ export default class EditOutgoingWebhook extends React.PureComponent<Props, Stat
 
         return (
             <ConfirmModal
+                testId='integrations.edit_outgoing_webhook.confirm_modal'
                 title={confirmTitle}
                 message={confirmMessage}
                 confirmButtonText={confirmButton}

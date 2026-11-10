@@ -5,6 +5,7 @@ import React, {useCallback} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {SectionNotice} from '@mattermost/compass-ui/components/section-notice';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {openModal as openModalAction} from 'actions/views/modals';
 
@@ -20,6 +21,9 @@ type Props = {
     modalTitle?: React.ReactNode;
     onDelete: () => void;
     openModal: typeof openModalAction;
+
+    /** The link's testid: renders `<testId>--button`; its confirmation is `delete_integration_modal`. */
+    testId?: TestId;
 };
 
 export default function DeleteIntegrationLink(props: Props) {
@@ -73,6 +77,7 @@ export default function DeleteIntegrationLink(props: Props) {
                 ),
                 onConfirm: onDelete,
                 title: modalTitle,
+                testId: 'delete_integration_modal',
             },
             dialogType: ConfirmModalRedux,
         });
@@ -82,6 +87,7 @@ export default function DeleteIntegrationLink(props: Props) {
         <button
             className='color--link style--none'
             onClick={onClick}
+            data-testid={props.testId ? `${props.testId}--button` : undefined}
         >
             {linkText}
         </button>

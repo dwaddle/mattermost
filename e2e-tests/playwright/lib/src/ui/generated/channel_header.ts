@@ -10,9 +10,14 @@ import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {ChannelNotificationsModal} from './channel_notifications_modal';
+import {ChannelSettingsModal} from './channel_settings_modal';
+import {ConvertGmToChannelModal} from './convert_gm_to_channel_modal';
+import {DeleteChannelModal} from './delete_channel_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {LeaveChannelModal} from './leave_channel_modal';
 import {RhsChannelInfo, RhsChannelMembers} from './rhs';
-import {MoveToMenu} from './shared';
+import {AddGroupsToChannelModalGroups, MoveToMenu} from './shared';
 
 /** Scope `channel_header`. */
 export class ChannelHeader extends Scope {
@@ -371,7 +376,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.add_groups--menuitem` — Groups (channels/src/components/channel_header_menu/menu_items/groups.tsx)
      * Renders only when !isArchived && !isDefault and isGroupConstrained && isLicensedForLDAPGroups.
-     * Opens modal AddGroupsToChannelModal.
+     * Opens modal AddGroupsToChannelModal (`add_groups_to_channel_modal.groups`).
      */
     get addGroupsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.add_groups--menuitem`), {
@@ -383,14 +388,16 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickAddGroupsMenuItem(): Promise<void> {
+    /** Clicks addGroupsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAddGroupsMenuItem(): Promise<AddGroupsToChannelModalGroups> {
         await this.addGroupsMenuItem.click();
+        return new AddGroupsToChannelModalGroups(this.page, 'add_groups_to_channel_modal.groups');
     }
 
     /**
      * `channel_header.menu.archive_channel--menuitem` — ArchiveChannel (channels/src/components/channel_header_menu/menu_items/archive_channel.tsx)
      * Renders only when !isArchived && !isDefault.
-     * Opens modal DeleteChannelModal.
+     * Opens modal DeleteChannelModal (`delete_channel_modal`).
      */
     get archiveChannelMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.archive_channel--menuitem`), {
@@ -402,8 +409,10 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickArchiveChannelMenuItem(): Promise<void> {
+    /** Clicks archiveChannelMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickArchiveChannelMenuItem(): Promise<DeleteChannelModal> {
         await this.archiveChannelMenuItem.click();
+        return new DeleteChannelModal(this.page, 'delete_channel_modal');
     }
 
     /**
@@ -446,7 +455,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.channel_settings--menuitem` — ChannelSettingsMenu (channels/src/components/channel_header_menu/menu_items/channel_settings_menu.tsx)
      * Renders only when canAccessChannelSettings(state, channel.id) and !isArchived.
-     * Opens modal ChannelSettingsModal.
+     * Opens modal ChannelSettingsModal (`channel_settings_modal`).
      */
     get channelSettingsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.channel_settings--menuitem`), {
@@ -458,8 +467,10 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickChannelSettingsMenuItem(): Promise<void> {
+    /** Clicks channelSettingsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickChannelSettingsMenuItem(): Promise<ChannelSettingsModal> {
         await this.channelSettingsMenuItem.click();
+        return new ChannelSettingsModal(this.page, 'channel_settings_modal');
     }
 
     /**
@@ -504,7 +515,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.convert_to_channel--menuitem` — ConvertGMtoPrivate (channels/src/components/channel_header_menu/menu_items/convert_gm_to_private.tsx)
      * Renders only when !isArchived and !canAccessChannelSettings(state, channel.id) and canAccessChannelSettings(state, channel.id).
-     * Opens modal ConvertGmToChannelModal.
+     * Opens modal ConvertGmToChannelModal (`convert_gm_to_channel_modal`).
      */
     get convertToChannelMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.convert_to_channel--menuitem`), {
@@ -516,8 +527,10 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickConvertToChannelMenuItem(): Promise<void> {
+    /** Clicks convertToChannelMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickConvertToChannelMenuItem(): Promise<ConvertGmToChannelModal> {
         await this.convertToChannelMenuItem.click();
+        return new ConvertGmToChannelModal(this.page, 'convert_gm_to_channel_modal');
     }
 
     /**
@@ -544,7 +557,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.leave_channel--menuitem` — LeaveChannel (channels/src/components/channel_header_menu/menu_items/leave_channel.tsx)
      * Renders only when !isDefault && !isGuest(user.roles).
-     * Opens modal LeaveChannelModal.
+     * Opens modal LeaveChannelModal (`leave_channel_modal`).
      * Goes to '/'.
      * Goes to teamUrl.
      */
@@ -558,8 +571,10 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickLeaveChannelMenuItem(): Promise<void> {
+    /** Clicks leaveChannelMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickLeaveChannelMenuItem(): Promise<LeaveChannelModal> {
         await this.leaveChannelMenuItem.click();
+        return new LeaveChannelModal(this.page, 'leave_channel_modal');
     }
 
     /**
@@ -640,7 +655,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.notification_preferences--menuitem` — Notification (channels/src/components/channel_header_menu/menu_items/notification.tsx)
      * Renders only when !isArchived.
-     * Opens modal ChannelNotificationsModal.
+     * Opens modal ChannelNotificationsModal (`channel_notifications_modal`).
      */
     get notificationPreferencesMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.notification_preferences--menuitem`), {
@@ -652,8 +667,10 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickNotificationPreferencesMenuItem(): Promise<void> {
+    /** Clicks notificationPreferencesMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickNotificationPreferencesMenuItem(): Promise<ChannelNotificationsModal> {
         await this.notificationPreferencesMenuItem.click();
+        return new ChannelNotificationsModal(this.page, 'channel_notifications_modal');
     }
 
     /**

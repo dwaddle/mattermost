@@ -47,5 +47,15 @@ export async function typeTests() {
     // @ts-expect-error the send button fires several requests: name the one to wait for
     await settle(app.center.postCreate.sendButton, (b) => b.click());
 
+    // generated return types: opening a menu item returns the page object it opens
+    const menu = await app.channelHeader.clickOpenMenuButton();
+    const settings = await menu.clickChannelSettingsMenuItem();
+    await settings.tabs.configurationTab.select();
+    await settings.configuration.fill({joinLeaveMessages: false});
+    // @ts-expect-error no such field in the configuration form
+    await settings.configuration.fill({joinLeave: false});
+    // @ts-expect-error tab keys are typed (a built-in tab or a plugin tab name), not numbers
+    settings.tabs.tab(3);
+
     return {post, channel, sent};
 }

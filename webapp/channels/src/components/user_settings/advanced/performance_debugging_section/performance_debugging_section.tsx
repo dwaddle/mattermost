@@ -147,6 +147,7 @@ function PerformanceDebuggingSectionExpanded(props: Props) {
 
     return (
         <SettingItemMax
+            testIdSection={AdvancedSections.PERFORMANCE_DEBUGGING}
             title={
                 <FormattedMessage
                     id='user.settings.advance.performance.title'

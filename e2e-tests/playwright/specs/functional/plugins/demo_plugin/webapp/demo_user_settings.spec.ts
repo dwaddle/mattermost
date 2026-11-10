@@ -45,7 +45,7 @@ test('should show demo plugin settings sections and save changes with alert conf
 
     await editButtons.first().click();
     await settingsModal.container.getByRole('radio', {name: 'Option 2'}).first().click();
-    await channelsPage.page.getByTestId('saveSetting').click();
+    await channelsPage.page.getByTestId('settings.section.save--button').click();
 
     // * Verify the save alert fired with the expected message
     expect(alerts[0]).toBe('saving {setting1}: 2');
@@ -53,7 +53,7 @@ test('should show demo plugin settings sections and save changes with alert conf
     // # Expand Section 2, select Option 1, save
     await editButtons.nth(1).click();
     await settingsModal.container.getByRole('radio', {name: 'Option 1'}).first().click();
-    await channelsPage.page.getByTestId('saveSetting').click();
+    await channelsPage.page.getByTestId('settings.section.save--button').click();
 
     // * Verify the save alert fired with the expected message
     expect(alerts[1]).toBe('saving {setting3}: 1');

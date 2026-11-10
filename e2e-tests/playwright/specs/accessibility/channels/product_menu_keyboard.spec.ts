@@ -3,8 +3,7 @@
 
 import type {Page} from '@playwright/test';
 
-import type {ChannelsPage} from '@mattermost/playwright-lib';
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App} from '@mattermost/playwright-lib';
 
 test('MM-55271 should be able to navigate the product menu with the keyboard after opening it with the mouse', async ({
     pw,
@@ -13,16 +12,16 @@ test('MM-55271 should be able to navigate the product menu with the keyboard aft
     const {user} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
     // # Click on the product menu button
-    await channelsPage.globalHeader.switchProductMenuButton.click();
+    await app.globalHeader.productMenuButton.locator.click();
 
-    await testProductMenuWithKeyboard(page, channelsPage);
+    await testProductMenuWithKeyboard(app, page);
 });
 
 test('MM-55271 should be able to navigate the product menu with the keyboard after opening it with the keyboard', async ({
@@ -32,18 +31,18 @@ test('MM-55271 should be able to navigate the product menu with the keyboard aft
     const {user} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
     // # Focus the product menu button and open it with the keyboard
-    await channelsPage.globalHeader.switchProductMenuButton.focus();
-    await expect(channelsPage.globalHeader.switchProductMenuButton).toBeFocused();
+    await app.globalHeader.productMenuButton.locator.focus();
+    await expect(app.globalHeader.productMenuButton.locator).toBeFocused();
     await page.keyboard.press('Space');
 
-    await testProductMenuWithKeyboard(page, channelsPage);
+    await testProductMenuWithKeyboard(app, page);
 });
 
 test('MM-55271 should be able to select a product menu item with the keyboard', async ({pw}) => {
@@ -51,19 +50,19 @@ test('MM-55271 should be able to select a product menu item with the keyboard', 
     const {user} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
     // # Open the product menu with the keyboard
-    await channelsPage.globalHeader.switchProductMenuButton.focus();
+    await app.globalHeader.productMenuButton.locator.focus();
     await page.keyboard.press('Enter');
-    await channelsPage.switchProductMenu.toBeVisible();
+    await expect(app.globalHeader.productMenu.channelsMenuItem.locator).toBeVisible();
 
     // * Should start focused on Channels, the first item
-    await expect(channelsPage.switchProductMenu.channelsMenuItem).toBeFocused();
+    await expect(app.globalHeader.productMenu.channelsMenuItem.locator).toBeFocused();
 
     // # Select the focused item with the keyboard
     await page.keyboard.press('Enter');
@@ -73,13 +72,13 @@ test('MM-55271 should be able to select a product menu item with the keyboard', 
     await channelsPage.toBeVisible();
 });
 
-async function testProductMenuWithKeyboard(page: Page, channelsPage: ChannelsPage) {
-    await channelsPage.switchProductMenu.toBeVisible();
+async function testProductMenuWithKeyboard(app: App, page: Page) {
+    await expect(app.globalHeader.productMenu.channelsMenuItem.locator).toBeVisible();
 
     const menuItems = page.getByRole('menuitem');
 
     // * Should start focused on Channels, which is always the first item
-    await expect(channelsPage.switchProductMenu.channelsMenuItem).toBeFocused();
+    await expect(app.globalHeader.productMenu.channelsMenuItem.locator).toBeFocused();
     await expect(menuItems.first()).toBeFocused();
 
     // The items after Channels depend on the licence, permissions and installed
@@ -112,5 +111,5 @@ async function testProductMenuWithKeyboard(page: Page, channelsPage: ChannelsPag
     await expect(page.getByRole('menuitem')).toHaveCount(0);
 
     // * Should be focused back on the menu button
-    await expect(channelsPage.globalHeader.switchProductMenuButton).toBeFocused();
+    await expect(app.globalHeader.productMenuButton.locator).toBeFocused();
 }

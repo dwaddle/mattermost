@@ -4,9 +4,12 @@
 /**
  * @objective Team Members modal shows membership requirements banner and attribute chips for governed teams
  * @reference MM-69100
+ *
+ * Written on the generated page objects: the team menu's Members item (View or Manage members, one item) and the
+ * Team Members modal's policy banner.
  */
 
-import {ChannelsPage, expect, newTestPassword, test} from '@mattermost/playwright-lib';
+import {expect, Msg, newTestPassword, test, type App} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -17,6 +20,13 @@ import {
     setUserAttribute,
     waitForAttributeViewToInclude,
 } from './helpers';
+
+/** Opens the Team Members modal from the team menu and waits for it. */
+async function openTeamMembers(app: App) {
+    const modal = await (await app.lhs.header.clickOpenTeamMenuButton()).clickMembersMenuItem();
+    await expect(modal.locator).toBeVisible();
+    return modal;
+}
 
 test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '@team_membership']}, () => {
     const createdTeamIds: string[] = [];
@@ -43,26 +53,16 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
 
         await createTeamMembershipPolicy(adminClient, team.id, 'user.attributes.Department == "Engineering"', false);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(teamAdmin);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        // # Open Team Members modal via sidebar menu
-        await channelsPage.sidebarLeft.teamMenuButton.click();
-        await channelsPage.teamMenu.toBeVisible();
-        await channelsPage.teamMenu.clickManageMembers();
-
-        const modal = page.locator('#teamMembersModal');
-        await expect(modal).toBeVisible({timeout: 10000});
+        // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
+        const modal = await openTeamMembers(app);
+        const banner = modal.policyBanner.locator;
 
         // * Banner present with correct title and description
-        const banner = modal.locator('.teamMembersModal__policyBanner');
-        await expect(banner).toBeVisible({timeout: 10000});
-        await expect(banner.getByText('Team access is restricted by user attributes')).toBeVisible();
-        await expect(
-            banner.getByText('Only people who meet the membership requirements can be members of this team.'),
-        ).toBeVisible();
+        await expect(banner).toContainMessage(Msg.team_member_modal.policy_enforced.title);
+        await expect(banner).toContainMessage(Msg.team_member_modal.policy_enforced.description);
     });
 
     test('MM-69100_35 attribute holder sees attribute chips inside the policy banner', async ({pw}) => {
@@ -79,24 +79,18 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
 
         await createTeamMembershipPolicy(adminClient, team.id, 'user.attributes.Department == "Engineering"', false);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(teamAdmin);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        // # Open Team Members modal
-        await channelsPage.sidebarLeft.teamMenuButton.click();
-        await channelsPage.teamMenu.toBeVisible();
-        await channelsPage.teamMenu.clickManageMembers();
-
-        const modal = page.locator('#teamMembersModal');
-        await expect(modal).toBeVisible({timeout: 10000});
+        // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
+        const modal = await openTeamMembers(app);
+        const banner = modal.policyBanner.locator;
 
         // * Banner visible
-        await expect(modal.locator('.teamMembersModal__policyBanner')).toBeVisible({timeout: 10000});
+        await expect(banner).toBeVisible();
 
         // * Attribute chip "Department: Engineering" visible (async — chip text loads after banner)
-        await expect(modal.getByText(/Department: Engineering/i)).toBeVisible({timeout: 15000});
+        await expect(banner).toContainText(/Department: Engineering/i, {timeout: 15000});
     });
 
     test('MM-69100_36 non-admin team member sees the policy banner in the Team Members modal', async ({pw}) => {
@@ -142,25 +136,17 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
 
         await createTeamMembershipPolicy(adminClient, team.id, 'user.attributes.Department == "Engineering"', false);
 
-        const {page} = await pw.testBrowser.login(regularUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(regularUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        // # Open Team Members modal (regular user sees "View members")
-        await channelsPage.sidebarLeft.teamMenuButton.click();
-        await channelsPage.teamMenu.toBeVisible();
-        await channelsPage.teamMenu.container.getByRole('menuitem', {name: /View members|Manage members/i}).click();
-
-        const modal = page.locator('#teamMembersModal');
-        await expect(modal).toBeVisible({timeout: 10000});
+        // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
+        const modal = await openTeamMembers(app);
+        const banner = modal.policyBanner.locator;
 
         // * Banner present with softened advisory copy (public team)
-        const banner = modal.locator('.teamMembersModal__policyBanner');
-        await expect(banner).toBeVisible({timeout: 10000});
-        await expect(banner.getByText('This team has membership requirements')).toBeVisible();
-        await expect(banner.getByText(/can still join, but will not be automatically added/i)).toBeVisible();
-        await expect(banner.getByText('Team access is restricted by user attributes')).toHaveCount(0);
+        await expect(banner).toContainMessage(Msg.team_member_modal.policy_advisory.title);
+        await expect(banner).toContainMessage(Msg.team_member_modal.policy_advisory.description);
+        await expect(banner).not.toContainMessage(Msg.team_member_modal.policy_enforced.title);
     });
 
     test('MM-69100_37 ungoverned team does not show the policy banner in Team Members modal', async ({pw}) => {
@@ -171,20 +157,15 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
         createdUserIds.push(teamAdmin.id);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(teamAdmin);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        // # Open Team Members modal
-        await channelsPage.sidebarLeft.teamMenuButton.click();
-        await channelsPage.teamMenu.toBeVisible();
-        await channelsPage.teamMenu.clickManageMembers();
+        // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
+        const modal = await openTeamMembers(app);
+        const banner = modal.policyBanner.locator;
 
-        const modal = page.locator('#teamMembersModal');
-        await expect(modal).toBeVisible({timeout: 10000});
-
-        // * No policy banner for ungoverned team
-        await expect(modal.locator('.teamMembersModal__policyBanner')).not.toBeVisible({timeout: 5000});
+        // * No policy banner for ungoverned team (the governed tests above see it), while the member list loads
+        await expect(modal.members.searchTextbox.locator).toBeVisible();
+        await expect(banner).not.toBeVisible();
     });
 });

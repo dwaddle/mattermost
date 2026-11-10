@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 import type {RelationOneToOne} from '@mattermost/types/utilities';
 
@@ -25,6 +26,9 @@ type Props = {
     onMouseMove: (user: UserProfileValue) => void;
     userStatuses: RelationOneToOne<UserProfile, string>;
     isSelected: boolean;
+
+    // The row is `<testIdScope>.user:<id>`.
+    testIdScope: TestIdScope;
 };
 
 const MultiSelectOption = React.forwardRef(({
@@ -33,10 +37,12 @@ const MultiSelectOption = React.forwardRef(({
     onMouseMove,
     userStatuses,
     isSelected,
+    testIdScope,
 }: Props, ref?: React.Ref<HTMLDivElement>) => {
     return (
         <div
             key={option.id}
+            data-testid={`${testIdScope}.user:${option.id}`}
             className={classNames('more-modal__row clickable', {'more-modal__row--selected': isSelected})}
             onClick={() => onAdd(option)}
             ref={ref}

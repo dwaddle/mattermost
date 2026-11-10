@@ -110,6 +110,7 @@ const PluginSetting = ({
         return (
             <SettingItemMax
                 title={section.title}
+                testIdSection={section.title}
                 inputs={inputs}
                 submit={updateSetting}
                 updateSection={updateSection}

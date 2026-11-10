@@ -79,6 +79,48 @@ npm run test:ci
 
 #### 3. Inspect test results at `/results/output` folder when something fails unexpectedly.
 
+## Generated page objects
+
+Page objects for migrated parts of the webapp are generated from the webapp's testids into `lib/src/ui/generated` (by `@mattermost/test-surface`; see `webapp/platform/test-surface/README.md`). They are never edited by hand: change the webapp's testids and regenerate.
+
+```ts
+import {Api, expect, Msg, settle, test} from '@mattermost/playwright-lib';
+
+test('disabling join/leave messages hides join posts', async ({pw}) => {
+    const {adminUser, team, channel, secondUser} = await setup(pw); // API setup, as usual
+    const {app} = await pw.testBrowser.login(adminUser);
+    await app.channelsPage.goto({team, channel}); // typed route params: an entity or its name
+
+    const menu = await app.channelHeader.clickOpenMenuButton(); // returns the menu's page object
+    const settings = await menu.clickChannelSettingsMenuItem(); // returns ChannelSettingsModal
+    await settings.tabs.configurationTab.select();
+    await settings.configuration.setJoinLeaveMessagesSwitch(false);
+    await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
+    await settings.clickCloseButton();
+
+    await expect(app.center.postList).not.toContainMessage(Msg.combined_system_message.joined_channel.one, {
+        firstUser: `@${secondUser.username}`,
+    });
+});
+```
+
+- `app` (from `login()`) is the root: one property per top-level testid scope (`channelHeader`, `center`, `lhs`…) and one per route (`app.channelsPage.goto({team, channel})`, `app.threadsPage`…), generated from the webapp's router. Element getters return a driver for the element's ARIA role (`click()`, `press(on)`, `fill(v)`, `select()`…); each class also has verb methods (`clickSaveButton()`, `fillMessageTextbox(v)`).
+- Actions that open something return its page object; they don't wait. Waiting is the framework's job: `settle(element, action, {wait})` waits for the API request the element fires and returns the typed response body. It doesn't compile for an element with no requests, and it requires `wait` (one of the element's operations) when the element can fire several.
+- Assert state with the retrying matchers: `toBePressed()`, `toBeOn()`, `toBeSelected()`, `toBeExpanded()`, `toContainMessage(Msg…, values)`, and `toHaveMessage(Msg…, values)` when the whole text must be the message (one message's text can contain another's: "Follow" / "Following"). `Msg` is the webapp's i18n catalog, so tests don't retype English.
+- Each getter's doc comment has the source line of the element, when it renders, and what it fires. `lib/src/ui/generated/app-map.json` has the same for agents.
+- Plugin slots the webapp renders take the plugin's key (its id with `.`/`-` as `_`): `app.channelHeader.pluginActions.action('com_mattermost_calls')`, `app.channelHeader.menu.plugin(…)`, `settings.tabs.plugin(…)`. Keys are typed `PluginKey`, which a plugin's generated test package extends; a spec using a plugin without one declares its key:
+
+    ```ts
+    declare module '@mattermost/playwright-lib' {
+        interface PluginKeys {
+            com_mattermost_demo_plugin: true;
+        }
+    }
+    ```
+
+- Literal locators (`getByTestId('…')`, `locator('…')`, `getByRole(…, {name: '…'})`) and `waitForTimeout` are lint warnings in every spec: the list of what's left to move. Specs written on the generated API are listed in `GENERATED_API_SPECS` (`eslint.config.mjs`), where they are errors; add a spec when it moves. Generated page objects may not contain `expect`.
+- Strings in tests are either text a user types or values from generated types (`Api`, `Msg`, key sets like `ChannelSettingsModalTab`).
+
 ## Run tests in UI mode
 
 Check out https://playwright.dev/docs/test-ui-mode for detailed guide on UI Mode to learn more about its features.

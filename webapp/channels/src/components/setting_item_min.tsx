@@ -78,6 +78,7 @@ export default class SettingItemMin extends React.PureComponent<Props> {
                     ref={this.getEdit}
                     id={this.props.section + 'Edit'}
                     className='color--link style--none section-min__edit'
+                    data-testid='settings.section.edit--button'
                     onClick={this.handleClick}
                     aria-labelledby={this.props.section + 'Title ' + this.props.section + 'Edit'}
                     aria-expanded={false}
@@ -94,7 +95,7 @@ export default class SettingItemMin extends React.PureComponent<Props> {
         return (
             <div
                 className={classNames('section-min', {isDisabled: this.props.isDisabled})}
-                data-testid='section-min'
+                data-testid={`settings.section:${this.props.section}`}
                 onClick={this.handleClick}
             >
                 <div
@@ -102,6 +103,7 @@ export default class SettingItemMin extends React.PureComponent<Props> {
                 >
                     <h4
                         id={this.props.section + 'Title'}
+                        data-testid='settings.section.title'
                         className={classNames('section-min__title', {isDisabled: this.props.isDisabled})}
                     >
                         {this.props.title}
@@ -110,6 +112,7 @@ export default class SettingItemMin extends React.PureComponent<Props> {
                 </div>
                 <div
                     id={this.props.section + 'Desc'}
+                    data-testid='settings.section.describe'
                     className={classNames('section-min__describe', {isDisabled: this.props.isDisabled})}
                 >
                     {this.props.describe}

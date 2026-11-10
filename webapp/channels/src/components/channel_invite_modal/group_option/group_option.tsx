@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 
 import {AccountMultipleOutlineIcon, ChevronRightIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Group} from '@mattermost/types/groups';
 import type {GlobalState} from '@mattermost/types/store';
 import type {UserProfile} from '@mattermost/types/users';
@@ -27,6 +28,9 @@ export type Props = {
     selectedItemRef: React.RefObject<HTMLDivElement | null>;
     onMouseMove: (group: GroupValue) => void;
     addUserProfile: (profile: UserProfileValue) => void;
+
+    // The row is `<testIdScope>:<group id>`.
+    testIdScope: TestIdScope;
 };
 
 const displayNameGetter = makeDisplayNameGetter();
@@ -39,6 +43,7 @@ const GroupOption = (props: Props) => {
         selectedItemRef,
         onMouseMove,
         addUserProfile,
+        testIdScope,
     } = props;
 
     const getProfilesByIdsAndUsernames = useMemo(() => makeGetProfilesByIdsAndUsernames(), []);
@@ -78,6 +83,7 @@ const GroupOption = (props: Props) => {
             key={group.id}
             ref={isSelected ? selectedItemRef : undefined}
             className={'more-modal__row clickable ' + rowSelected}
+            data-testid={`${testIdScope}:${group.id}`}
             onClick={onAdd}
             onMouseMove={() => onMouseMove(group)}
         >
@@ -104,6 +110,7 @@ const GroupOption = (props: Props) => {
                     >
                         <span
                             className='add-group-members'
+                            data-testid={`${testIdScope}.add_members--text`}
                         >
                             <FormattedMessage
                                 id='multiselect.addGroupMembers'

@@ -49,7 +49,7 @@ export default class ProfileModal {
         // display name contains "Cancel" gives its own Edit button an accessible name like "Cancel
         // X Edit" (title + button text via aria-labelledby), which getByRole's substring name match
         // would also pick up alongside the real Cancel button.
-        this.cancelButton = container.getByTestId('cancelButton');
+        this.cancelButton = container.getByTestId('settings.section.cancel--button');
         this.managedByAdminMessage = container.getByText(
             'This field is managed by your System Admin. Contact them to request a change.',
         );
@@ -57,11 +57,15 @@ export default class ProfileModal {
         this.firstNameInput = container.getByRole('textbox', {name: 'First Name'});
         this.lastNameInput = container.getByRole('textbox', {name: 'Last Name'});
         this.usernameInput = container.getByRole('textbox', {name: 'Username'});
-        this.sectionHeadings = this.profileSettingsTab.container.getByTestId('section-min').getByRole('heading');
+        // collapsed sections: the ones showing their Edit button
+        this.sectionHeadings = this.profileSettingsTab.container
+            .getByTestId(/^settings\.section:/)
+            .filter({has: container.page().getByTestId('settings.section.edit--button')})
+            .getByRole('heading');
 
-        this.pictureFileInput = container.getByTestId('uploadPicture');
-        this.pictureSaveButton = container.getByTestId('saveSettingPicture');
-        this.pictureRemoveButton = container.getByTestId('removeSettingPicture');
+        this.pictureFileInput = container.getByTestId('settings.section.picture.file_input');
+        this.pictureSaveButton = container.getByTestId('settings.section.picture.save--button');
+        this.pictureRemoveButton = container.getByTestId('settings.section.picture.remove--button');
 
         this.primaryEmailInput = container.locator('#primaryEmail');
         this.confirmEmailInput = container.locator('#confirmEmail');
@@ -114,7 +118,10 @@ export default class ProfileModal {
     }
 
     getAttributeSection(label: string) {
-        return this.profileSettingsTab.container.getByTestId('section-min').filter({hasText: label});
+        return this.profileSettingsTab.container
+            .getByTestId(/^settings\.section:/)
+            .filter({has: this.profileSettingsTab.container.page().getByTestId('settings.section.edit--button')})
+            .filter({hasText: label});
     }
 
     getAttributeValue(label: string, value: string) {

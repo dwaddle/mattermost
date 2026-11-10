@@ -28,6 +28,7 @@ describe('GroupOption', () => {
         selectedItemRef: React.createRef(),
         onMouseMove: jest.fn(),
         addUserProfile: jest.fn(),
+        testIdScope: 'channel_invite_modal.users.results.group',
     };
 
     it('should cleanup keydown event listener on unmount', () => {
@@ -40,6 +41,7 @@ describe('GroupOption', () => {
                 selectedItemRef={React.createRef()}
                 onMouseMove={() => {}}
                 addUserProfile={addUserProfileMock}
+                testIdScope='channel_invite_modal.users.results.group'
             />,
         );
         wrapper.unmount();

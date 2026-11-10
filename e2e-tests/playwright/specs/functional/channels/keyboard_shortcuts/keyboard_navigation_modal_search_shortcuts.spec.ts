@@ -6,56 +6,65 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify the keyboard shortcuts for moving to the previous and next channel in the sidebar
  * switch between channels.
+ *
+ * Written on the generated page objects: the composer and the channel header.
  */
 test(
     'MM-T1259 moves to the previous and next channel with the keyboard',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team} = await pw.initSetup();
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
-        await channelsPage.centerView.header.toHaveTitle('Off-Topic');
+        const {user, team, userClient} = await pw.initSetup();
+        const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: offTopic});
+        const title = app.channelHeader.openMenuButton.locator;
+        const input = app.center.postCreate.messageTextbox.locator;
+        await expect(title).toContainText(offTopic.display_name);
 
         // # Move to the next channel with the keyboard
-        await channelsPage.centerView.postCreate.input.focus();
-        await page.keyboard.press('Alt+ArrowDown');
+        await input.focus();
+        await input.press('Alt+ArrowDown');
 
         // * Verify the next channel in the sidebar is shown
-        await channelsPage.centerView.header.toHaveTitle('Town Square');
+        await expect(title).toContainText(townSquare.display_name);
 
         // # Move to the previous channel with the keyboard
-        await page.keyboard.press('Alt+ArrowUp');
+        await input.press('Alt+ArrowUp');
 
         // * Verify the original channel is shown again
-        await channelsPage.centerView.header.toHaveTitle('Off-Topic');
+        await expect(title).toContainText(offTopic.display_name);
     },
 );
 
 /**
  * @objective Verify Ctrl/Cmd+Shift+K opens the Direct Messages modal, and Escape closes it.
+ *
+ * Written on the generated page objects: the composer and the Direct Messages modal.
  */
 test(
     'MM-T1276 opens the Direct Messages modal with the keyboard shortcut',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team} = await pw.initSetup();
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {user, team, userClient} = await pw.initSetup();
+        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Focus the message box and press the Direct Messages shortcut
-        await channelsPage.centerView.postCreate.input.focus();
-        await page.keyboard.press('ControlOrMeta+Shift+K');
+        const input = app.center.postCreate.messageTextbox.locator;
+        await input.focus();
+        await input.press('ControlOrMeta+Shift+K');
 
         // * Verify the Direct Messages modal opens
-        await channelsPage.directChannelsModal.toBeVisible();
+        const search = app.directMessagesModal.list.searchCombobox.locator;
+        await expect(search).toBeVisible();
 
         // # Close the modal with Escape
-        await page.keyboard.press('Escape');
+        await search.press('Escape');
 
         // * Verify the Direct Messages modal closes
-        await expect(channelsPage.directChannelsModal.container).not.toBeVisible();
+        await expect(search).not.toBeVisible();
     },
 );
 
@@ -63,22 +72,24 @@ test(
  * @objective Verify Ctrl/Cmd+Shift+F opens the search box prefilled with the current channel filter.
  *
  * MM-T4872 covers the same behavior as MM-T1435 and is covered by this test.
+ *
+ * Written on the generated page objects: the composer and the search box.
  */
 test(
     'MM-T1435 MM-T4872 prefills the search box with the channel filter using the keyboard shortcut',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team} = await pw.initSetup();
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
+        const {user, team, userClient} = await pw.initSetup();
+        const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: offTopic});
 
         // # Focus the message box and press the in-channel search shortcut
-        await channelsPage.centerView.postCreate.input.focus();
-        await page.keyboard.press('ControlOrMeta+Shift+F');
+        const input = app.center.postCreate.messageTextbox.locator;
+        await input.focus();
+        await input.press('ControlOrMeta+Shift+F');
 
         // * Verify the search box opens prefilled with the current channel filter
-        await channelsPage.searchBox.toBeVisible();
-        await expect(channelsPage.searchBox.searchInput).toHaveValue('in:off-topic ');
+        await expect(app.searchBox.inputSearchbox.locator).toHaveValue(`in:${offTopic.name} `);
     },
 );

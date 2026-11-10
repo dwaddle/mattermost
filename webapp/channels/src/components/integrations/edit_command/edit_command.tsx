@@ -164,6 +164,7 @@ export default class EditCommand extends React.PureComponent<Props, State> {
 
         return (
             <ConfirmModal
+                testId='integrations.edit_command.confirm_modal'
                 title={confirmTitle}
                 message={confirmMessage}
                 confirmButtonText={confirmButton}

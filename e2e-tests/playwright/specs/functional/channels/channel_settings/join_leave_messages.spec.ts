@@ -6,14 +6,23 @@
  * the Configuration tab toggle in Channel Settings.
  *
  * The toggle controls `DisableJoinLeaveMessages` on the channel:
- *   - Toggle ON  (aria-checked=true)  → messages shown (DisableJoinLeaveMessages = false)
- *   - Toggle OFF (aria-checked=false) → messages hidden (DisableJoinLeaveMessages = true)
+ *   - Toggle ON  (checked)   → messages shown (DisableJoinLeaveMessages = false)
+ *   - Toggle OFF (unchecked) → messages hidden (DisableJoinLeaveMessages = true)
  *
  * Join system posts are generated server-side when a user is added to a
- * channel, so tests use `adminClient.addToChannel()` to produce them.
+ * channel, so tests use `adminClient.addToChannel()` to produce them; the post reads
+ * "@user added to the channel by you." for the admin and "You were added to the channel by
+ * @admin." for the added user.
+ *
+ * This spec is the reference for the generated page objects: navigation and every element
+ * come from `app` (generated from the webapp's routes and testids), saving waits on the request the save
+ * button fires (`settle`), and messages come from the i18n catalog (`Msg`).
  */
 
-import {ChannelsPage, expect, test, DefaultChannel} from '@mattermost/playwright-lib';
+import {Api, expect, formatMessage, Msg, settle, test} from '@mattermost/playwright-lib';
+
+/** The actor in a combined system message when it is the viewer ("… added to the channel by you."). */
+const you = formatMessage(Msg.combined_system_message.you).toLowerCase();
 
 test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
     /**
@@ -33,22 +42,20 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
         } as any);
 
         // # Login as admin and navigate to the channel
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel});
+        await expect(app.center.postList.locator).toBeVisible();
 
         // # Open Channel Settings and navigate to Configuration tab
-        const channelSettings = await channelsPage.openChannelSettings();
-        const configSettings = await channelSettings.openConfigurationTab();
+        const menu = await app.channelHeader.clickOpenMenuButton();
+        const settings = await menu.clickChannelSettingsMenuItem();
+        await settings.tabs.configurationTab.select();
 
-        // * Toggle is visible
-        await expect(configSettings.joinLeaveMessagesToggle).toBeVisible();
+        // * Toggle is visible and defaults to ON (messages shown)
+        await expect(settings.configuration.joinLeaveMessagesSwitch.locator).toBeVisible();
+        await expect(settings.configuration.joinLeaveMessagesSwitch.locator).toBeChecked();
 
-        // * Toggle defaults to ON (messages shown)
-        await expect(configSettings.joinLeaveMessagesToggle).toBeChecked();
-
-        await channelSettings.close();
+        await settings.clickCloseButton();
     });
 
     /**
@@ -75,43 +82,46 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             await adminClient.addToTeam(team.id, secondUser.id);
 
             // # Post a normal message to verify it stays visible when system posts are hidden
-            await adminClient.createPost({
-                channel_id: channel.id,
-                message: 'This is a regular message that should remain visible',
-            } as any);
+            const regularMessage = 'This is a regular message that should remain visible';
+            const regular = await adminClient.createPost({channel_id: channel.id, message: regularMessage} as any);
 
             // # Add the second user to the channel — this triggers a server-side join system post
             await adminClient.addToChannel(secondUser.id, channel.id);
 
             // # Login as admin and navigate to the channel
-            const {page} = await pw.testBrowser.login(adminUser);
-            const channelsPage = new ChannelsPage(page);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel});
+            await expect(app.center.postList.locator).toBeVisible();
+            const added = {firstUser: `@${secondUser.username}`, actor: you};
 
             // * The join system post is visible in the timeline before disabling
-            await expect(
-                channelsPage.centerView.container.getByText('joined the channel'), // EN locale
-            ).toBeVisible({timeout: pw.duration.ten_sec});
+            await expect(app.center.postList).toContainMessage(
+                Msg.combined_system_message.added_to_channel.one._,
+                added,
+                {
+                    timeout: pw.duration.ten_sec,
+                },
+            );
 
-            // # Open Channel Settings → Configuration tab and disable join/leave messages
-            const channelSettings = await channelsPage.openChannelSettings();
-            const configSettings = await channelSettings.openConfigurationTab();
-            await configSettings.disableJoinLeaveMessages();
-            await configSettings.save();
-            await channelSettings.close();
+            // # Open Channel Settings → Configuration tab, turn join/leave messages off and save
+            const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+            await settings.tabs.configurationTab.select();
+            await settings.configuration.setJoinLeaveMessagesSwitch(false);
+            const saved = await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
+            await settings.clickCloseButton();
 
-            // * The join system post is no longer visible — wait for post-list re-fetch after ETag bust
-            await expect(
-                channelsPage.centerView.container.getByText('joined the channel'), // EN locale
-            ).not.toBeVisible({timeout: pw.duration.ten_sec});
+            // * The server stored the setting
+            expect(saved.disable_join_leave_messages).toBe(true);
 
-            // * Normal messages are still visible
-            await expect(
-                channelsPage.centerView.container
-                    .getByTestId('center.post_list.post.content')
-                    .getByText('This is a regular message that should remain visible'),
-            ).toBeVisible();
+            // * The join system post is no longer visible — the post list re-fetches after the ETag bust
+            await expect(app.center.postList).not.toContainMessage(
+                Msg.combined_system_message.added_to_channel.one._,
+                added,
+                {timeout: pw.duration.ten_sec},
+            );
+
+            // * Normal messages are still visible (text the user typed)
+            await expect(app.center.postList.post(regular).messageText.locator).toHaveText(regularMessage);
         },
     );
 
@@ -125,7 +135,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
         {tag: '@channel_settings'},
         async ({pw}) => {
             // # Initialize test setup
-            const {adminClient, team} = await pw.initSetup();
+            const {adminUser, adminClient, team} = await pw.initSetup();
 
             // # Create a public channel and immediately disable join/leave messages
             const channel = await adminClient.createChannel({
@@ -142,26 +152,25 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
 
             // # Login as secondUser and navigate to a channel so the app fully loads and
             // WS connection is established before the add-to-channel event fires
-            const {page: secondPage} = await pw.testBrowser.login(secondUser);
-            const secondChannelsPage = new ChannelsPage(secondPage);
-            await secondChannelsPage.goto(team.name, DefaultChannel.TownSquare);
-            await secondChannelsPage.toBeVisible();
+            const {app: secondApp} = await pw.testBrowser.login(secondUser);
+            await secondApp.channelsPage.goto({team, channel: 'town-square'});
+            await expect(secondApp.center.postList.locator).toBeVisible();
 
-            // # Admin adds secondUser to the channel — this triggers a suppressed add-to-channel
-            // system post; the server sends a targeted posted WS event only to secondUser so
-            // they receive a desktop notification and sidebar badge without the post appearing
-            // in the channel timeline for any member.
+            // # Admin adds secondUser to the channel — a suppressed add-to-channel system post; the
+            // server sends a targeted posted WS event only to secondUser for the notification and badge
             await adminClient.addToChannel(secondUser.id, channel.id);
 
-            // * secondUser's sidebar should show the new channel with a mention count badge
-            const badge = secondChannelsPage.sidebarLeft.unreadMentionsBadge(channel.name);
-            await expect(badge).toBeVisible({timeout: pw.duration.ten_sec});
+            // * secondUser's sidebar shows the new channel with a mention count badge
+            const row = secondApp.lhs.channelList.channel(channel);
+            await expect(row.mentionBadgeText.locator).toBeVisible({timeout: pw.duration.ten_sec});
 
-            // * The channel timeline should NOT contain an add-to-channel system post
-            await secondChannelsPage.sidebarLeft.goToItem(channel.name);
-            await expect(secondChannelsPage.centerView.container.getByText('added to the channel')).not.toBeVisible({
-                timeout: pw.duration.ten_sec,
-            });
+            // * The channel timeline does not contain an add-to-channel system post
+            await row.clickLink();
+            await expect(secondApp.center.postList).not.toContainMessage(
+                Msg.combined_system_message.added_to_channel.one_you._,
+                {actor: `@${adminUser.username}`},
+                {timeout: pw.duration.ten_sec},
+            );
         },
     );
 
@@ -191,32 +200,34 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             await adminClient.addToChannel(secondUser.id, channel.id);
 
             // # Login as secondUser and navigate to the channel
-            const {page: secondPage} = await pw.testBrowser.login(secondUser);
-            const secondChannelsPage = new ChannelsPage(secondPage);
-            await secondChannelsPage.goto(team.name, channel.name);
-            await secondChannelsPage.toBeVisible();
+            const {app: secondApp} = await pw.testBrowser.login(secondUser);
+            await secondApp.channelsPage.goto({team, channel});
+            await expect(secondApp.center.postList.locator).toBeVisible();
 
             // * secondUser sees the join system post in the channel
-            await expect(secondChannelsPage.centerView.container.getByText('joined the channel')).toBeVisible({
-                timeout: pw.duration.ten_sec,
-            });
+            await expect(secondApp.center.postList).toContainMessage(
+                Msg.combined_system_message.added_to_channel.one_you._,
+                {actor: `@${adminUser.username}`},
+                {timeout: pw.duration.ten_sec},
+            );
 
             // # Admin logs in and disables join/leave messages from their browser
-            const {page: adminPage} = await pw.testBrowser.login(adminUser);
-            const adminChannelsPage = new ChannelsPage(adminPage);
-            await adminChannelsPage.goto(team.name, channel.name);
-            await adminChannelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel});
+            await expect(app.center.postList.locator).toBeVisible();
 
-            const channelSettings = await adminChannelsPage.openChannelSettings();
-            const configSettings = await channelSettings.openConfigurationTab();
-            await configSettings.disableJoinLeaveMessages();
-            await configSettings.save();
-            await channelSettings.close();
+            const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+            await settings.tabs.configurationTab.select();
+            await settings.configuration.fill({joinLeaveMessages: false});
+            await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
+            await settings.clickCloseButton();
 
-            // * secondUser's view updates in real time — join post disappears without a page reload
-            await expect(secondChannelsPage.centerView.container.getByText('joined the channel')).not.toBeVisible({
-                timeout: pw.duration.ten_sec,
-            });
+            // * secondUser's view updates in real time — the join post disappears without a page reload
+            await expect(secondApp.center.postList).not.toContainMessage(
+                Msg.combined_system_message.added_to_channel.one_you._,
+                {actor: `@${adminUser.username}`},
+                {timeout: pw.duration.ten_sec},
+            );
         },
     );
 
@@ -243,36 +254,42 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             const secondUser = await pw.createNewUserProfile(adminClient, {prefix: 'jl3'});
             await adminClient.addToTeam(team.id, secondUser.id);
             await adminClient.addToChannel(secondUser.id, channel.id);
+            const added = {firstUser: `@${secondUser.username}`, actor: you};
 
             // # Login as admin and navigate to the channel
-            const {page} = await pw.testBrowser.login(adminUser);
-            const channelsPage = new ChannelsPage(page);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel});
+            await expect(app.center.postList.locator).toBeVisible();
 
             // # Disable join/leave messages and save
-            let channelSettings = await channelsPage.openChannelSettings();
-            let configSettings = await channelSettings.openConfigurationTab();
-            await configSettings.disableJoinLeaveMessages();
-            await configSettings.save();
-            await channelSettings.close();
+            let settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+            await settings.tabs.configurationTab.select();
+            await settings.configuration.setJoinLeaveMessagesSwitch(false);
+            await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
+            await settings.clickCloseButton();
 
             // * Join system post is hidden after disabling — wait for post-list re-fetch
-            await expect(
-                channelsPage.centerView.container.getByText('joined the channel'), // EN locale
-            ).not.toBeVisible({timeout: pw.duration.ten_sec});
+            await expect(app.center.postList).not.toContainMessage(
+                Msg.combined_system_message.added_to_channel.one._,
+                added,
+                {timeout: pw.duration.ten_sec},
+            );
 
             // # Re-open Channel Settings → Configuration tab and re-enable join/leave messages
-            channelSettings = await channelsPage.openChannelSettings();
-            configSettings = await channelSettings.openConfigurationTab();
-            await configSettings.enableJoinLeaveMessages();
-            await configSettings.save();
-            await channelSettings.close();
+            settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+            await settings.tabs.configurationTab.select();
+            await settings.configuration.setJoinLeaveMessagesSwitch(true);
+            await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
+            await settings.clickCloseButton();
 
             // * Join system post is visible again after re-enabling
-            await expect(
-                channelsPage.centerView.container.getByText('joined the channel'), // EN locale
-            ).toBeVisible({timeout: pw.duration.ten_sec});
+            await expect(app.center.postList).toContainMessage(
+                Msg.combined_system_message.added_to_channel.one._,
+                added,
+                {
+                    timeout: pw.duration.ten_sec,
+                },
+            );
         },
     );
 });

@@ -29,12 +29,12 @@ export default class TeamSettingsModal {
 
         this.closeButton = container.getByRole('button', {name: 'Close'});
 
-        this.infoTab = container.getByTestId('info-tab-button');
-        this.accessTab = container.getByTestId('access-tab-button');
-        this.accessPoliciesTab = container.getByTestId('access_policies-tab-button');
+        this.infoTab = container.getByTestId('team_settings_modal.tabs.tab:info--tab');
+        this.accessTab = container.getByTestId('team_settings_modal.tabs.tab:access--tab');
+        this.accessPoliciesTab = container.getByTestId('team_settings_modal.tabs.tab:access_policies--tab');
 
-        this.saveButton = container.getByTestId('SaveChangesPanel__save-btn');
-        this.undoButton = container.getByTestId('SaveChangesPanel__cancel-btn');
+        this.saveButton = container.getByTestId('team_settings_modal.save_panel.save--button');
+        this.undoButton = container.getByTestId('team_settings_modal.save_panel.cancel--button');
 
         // Exact link match: the policy editor's delete subtitle also starts with "Remove".
         this.policyChannelRemoveLink = container.getByRole('link', {name: 'Remove', exact: true});

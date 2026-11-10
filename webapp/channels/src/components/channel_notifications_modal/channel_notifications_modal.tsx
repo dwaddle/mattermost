@@ -256,6 +256,7 @@ export default function ChannelNotificationsModal(props: Props) {
                 })}
                 inputFieldValue={settings.desktop || ''}
                 inputFieldData={utils.desktopNotificationInputFieldData(props.currentUser.notify_props.desktop)}
+                testIdScope='channel_notifications_modal.desktop'
                 handleChange={(e) => handleChange({desktop: e.target.value})}
             />
             {props.collapsedReplyThreads && settings.desktop === 'mention' &&
@@ -319,18 +320,19 @@ export default function ChannelNotificationsModal(props: Props) {
             {desktopAndMobileSettingsDifferent && (
                 <>
                     <RadioSettingItem
-                        dataTestId='mobile-notify-me-radio-section'
+                        dataTestId='channel_notifications_modal.mobile_notify'
                         title={formatMessage({
                             id: 'channel_notifications.NotifyMeTitle',
                             defaultMessage: 'Notify me about…',
                         })}
                         inputFieldValue={settings.push || ''}
                         inputFieldData={utils.mobileNotificationInputFieldData(props.currentUser.notify_props.push)}
+                        testIdScope='channel_notifications_modal.mobile'
                         handleChange={(e) => handleChange({push: e.target.value})}
                     />
                     {props.collapsedReplyThreads && settings.push === 'mention' &&
                         <CheckboxSettingItem
-                            dataTestId='mobile-reply-threads-checkbox-section'
+                            dataTestId='channel_notifications_modal.mobile_reply_threads'
                             title={formatMessage({
                                 id: 'channel_notifications.ThreadsReplyTitle',
                                 defaultMessage: 'Thread reply notifications',
@@ -405,6 +407,7 @@ export default function ChannelNotificationsModal(props: Props) {
     ) : (
         <AlertBanner
             id='channelNotificationsMutedBanner'
+            testId='channel_notifications_modal.muted_banner'
             mode='info'
             variant='app'
             customIcon={
@@ -432,6 +435,7 @@ export default function ChannelNotificationsModal(props: Props) {
                 emphasis='tertiary'
                 size='medium'
                 onClick={handleHide}
+                data-testid='channel_notifications_modal.cancel--button'
             >
                 <FormattedMessage
                     id='generic_btn.cancel'
@@ -442,6 +446,7 @@ export default function ChannelNotificationsModal(props: Props) {
                 emphasis='primary'
                 size='medium'
                 onClick={handleSave}
+                data-testid='channel_notifications_modal.save--button'
             >
                 <FormattedMessage
                     id='generic_btn.save'
@@ -465,6 +470,7 @@ export default function ChannelNotificationsModal(props: Props) {
     return (
         <GenericModal
             id='channelNotificationModal'
+            testId='channel_notifications_modal'
             className='a11y__modal ChannelNotificationModal modal--overflow'
             show={show}
             onHide={handleHide}

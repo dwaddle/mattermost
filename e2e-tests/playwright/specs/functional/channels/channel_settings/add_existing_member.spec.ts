@@ -6,34 +6,73 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that a user already in a channel is shown as "Already in channel" (not addable) in the
  * add-people modal.
+ *
+ * Written on the generated page objects: the modal's result rows are keyed by user id.
  */
 test(
     'MM-T1809 marks an existing channel member as already in channel in the add people modal',
     {tag: '@channel_settings'},
     async ({pw}) => {
         const {adminClient, team, user} = await pw.initSetup();
-        const [member] = await adminClient.createUsers(team.id, 1, 'existing');
+        const [member, outsider] = await adminClient.createUsers(team.id, 2, 'existing');
         const channel = await adminClient.createPublicChannel(team.id, `Members ${pw.random.id()}`);
         await adminClient.addToChannel(user.id, channel.id);
         await adminClient.addToChannel(member.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
+        await expect(app.center.postList.locator).toBeVisible();
 
-        // # Open the channel members list and the add-people modal
-        const channelMenu = await channelsPage.openChannelMenu();
-        await channelMenu.members.click();
-        await channelsPage.sidebarRight.toBeVisible();
-        await channelsPage.sidebarRight.addMembersButton.click();
+        // # Open the channel members panel and its add-people modal
+        const menu = await app.channelHeader.clickOpenMenuButton();
+        await menu.clickMembersMenuItem();
+        await app.rhs.channelMembers.clickAddButton();
+        const people = app.channelInviteModal.users;
 
-        const addModal = channelsPage.getAddPeopleToChannelModal();
-        await addModal.toBeVisible();
+        // # Search for the member who is already in the channel (the search box is focused on open)
+        await people.searchCombobox.locator.fill(member.username);
 
-        // # Search for the member who is already in the channel (the react-select input is auto-focused)
-        await addModal.search(member.username);
+        // * The member's row says they are already in the channel
+        await expect(people.results.user(member).membershipText.locator).toHaveText('Already in channel');
 
-        // * Verify the member is marked as already in the channel
-        await expect(addModal.alreadyInChannelLabel).toBeVisible();
+        // # Search for a team member who isn't in the channel
+        await people.searchCombobox.locator.fill(outsider.username);
+
+        // * Their row carries no membership note
+        await expect(people.results.user(outsider).locator).toBeVisible();
+        await expect(people.results.user(outsider).membershipText.locator).toHaveText('');
     },
 );
+
+/**
+ * @objective Verify that a team member picked in the add-people modal is added to the channel on saving.
+ */
+test('adds a team member to the channel from the add people modal', {tag: '@channel_settings'}, async ({pw}) => {
+    const {adminClient, team, user} = await pw.initSetup();
+    const [newcomer] = await adminClient.createUsers(team.id, 1, 'newcomer');
+    const channel = await adminClient.createPublicChannel(team.id, `Members ${pw.random.id()}`);
+    await adminClient.addToChannel(user.id, channel.id);
+
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    await expect(app.center.postList.locator).toBeVisible();
+
+    // # Open the add-people modal from the channel's sidebar menu, then pick the newcomer
+    const row = app.lhs.channelList.channel(channel);
+    await row.locator.hover();
+    const invite = await (await row.clickOpenMenuButton()).clickAddMembersMenuItem();
+    await invite.users.searchCombobox.locator.fill(newcomer.username);
+    await invite.users.results.user(newcomer).locator.click();
+
+    // * The newcomer is selected, with a chip to remove them again
+    expect(await invite.users.removeKeys()).toEqual([newcomer.id]);
+
+    // # Add them
+    await invite.users.clickSaveButton();
+
+    // * The modal closes and the server lists the newcomer as a channel member
+    await expect(invite.locator).not.toBeVisible();
+    await expect
+        .poll(async () => (await adminClient.getChannelMembers(channel.id)).map((m) => m.user_id))
+        .toContain(newcomer.id);
+});

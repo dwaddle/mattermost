@@ -5,6 +5,7 @@ import React, {type JSX} from 'react';
 import type {IntlShape, MessageDescriptor} from 'react-intl';
 import {defineMessage, injectIntl} from 'react-intl';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 import type {RelationOneToOne} from '@mattermost/types/utilities';
 
@@ -53,6 +54,9 @@ export type Props = {
     buttonSubmitLoadingText?: string | MessageDescriptor;
     backButtonClick?: () => void;
     backButtonText?: string | MessageDescriptor;
+
+    // Passed to the MultiSelect; the rows are `<testIdScope>.results.user:<id>`.
+    testIdScope: TestIdScope;
 
     actions: {
         getProfiles: (page?: number, perPage?: number) => Promise<ActionResult>;
@@ -187,6 +191,7 @@ export class AddUserToGroupMultiSelect extends React.PureComponent<Props, State>
                 isSelected={isSelected}
                 onMouseMove={onMouseMove}
                 userStatuses={this.props.userStatuses}
+                testIdScope={`${this.props.testIdScope}.results`}
                 ref={isSelected ? this.selectedItemRef : undefined}
                 key={option.id}
             />
@@ -217,6 +222,7 @@ export class AddUserToGroupMultiSelect extends React.PureComponent<Props, State>
 
         return (
             <MultiSelect
+                testIdScope={this.props.testIdScope}
                 key={this.props.multilSelectKey}
                 options={users}
                 optionRenderer={this.renderOption}

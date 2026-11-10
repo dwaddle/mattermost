@@ -13,6 +13,7 @@ describe('SaveChangesPanel', () => {
         handleCancel: jest.fn(),
         handleClose: jest.fn(),
         state: 'saved' as const,
+        testId: 'test.save_panel' as const,
     };
 
     test('should show default saved message when no customSavedMessage', () => {

@@ -9,6 +9,7 @@ import {HelpCircleOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
 
 import KeyboardShortcutsModal from 'components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal';
 import Menu from 'components/widgets/menu/menu';
@@ -76,6 +77,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
             return (
                 <Menu.ItemAction
                     id={item.id + '_pluginmenuitem'}
+                    testId={`global_header.help_menu.plugin:${pluginTestKey(item.pluginId)}`}
                     iconClassName='icon-thumbs-up-down'
                     key={item.id + '_pluginmenuitem'}
                     onClick={item.action}
@@ -88,6 +90,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
             <Menu.Group>
                 <Menu.ItemExternalLink
                     id='mattermostUserGuideLink'
+                    testId='global_header.help_menu.user_guide'
                     iconClassName='icon-file-text-outline'
                     url={getMattermostDocumentationURL(this.props.siteURL)}
                     text={intl.formatMessage({id: 'userGuideHelp.mattermostUserGuide', defaultMessage: 'Mattermost documentation'})}
@@ -95,6 +98,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
                 {this.props.helpLink && (
                     <Menu.ItemExternalLink
                         id='trainingResourcesLink'
+                        testId='global_header.help_menu.training'
                         iconClassName='icon-lightbulb-outline'
                         url={trainingResourcesLink}
                         text={intl.formatMessage({id: 'userGuideHelp.trainingResources', defaultMessage: 'Training resources'})}
@@ -103,6 +107,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
                 {this.props.enableAskCommunityLink === 'true' && (
                     <Menu.ItemExternalLink
                         id='askTheCommunityLink'
+                        testId='global_header.help_menu.community'
                         iconClassName='icon-help'
                         url={askTheCommunityUrl}
                         text={intl.formatMessage({id: 'userGuideHelp.askTheCommunity', defaultMessage: 'Ask the community'})}
@@ -111,6 +116,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
                 {this.props.reportAProblemLink && (
                     <Menu.ItemExternalLink
                         id='reportAProblemLink'
+                        testId='global_header.help_menu.report_problem'
                         iconClassName='icon-alert-outline'
                         url={this.props.reportAProblemLink}
                         text={intl.formatMessage({id: 'userGuideHelp.reportAProblem', defaultMessage: 'Report a problem'})}
@@ -118,6 +124,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
                 )}
                 <Menu.ItemAction
                     id='keyboardShortcuts'
+                    testId='global_header.help_menu.keyboard_shortcuts'
                     iconClassName='icon-keyboard-return'
                     onClick={this.openKeyboardShortcutsModal}
                     text={intl.formatMessage({id: 'userGuideHelp.keyboardShortcuts', defaultMessage: 'Keyboard shortcuts'})}
@@ -146,6 +153,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
                         padding='compact'
                         icon={<Icon glyph={<HelpCircleOutlineIcon/>}/>}
                         aria-controls='userHelpGuide'
+                        data-testid='global_header.help--button'
                         aria-label={intl.formatMessage({id: 'channel_header.userHelpGuide', defaultMessage: 'Help'})}
                         active={this.state.buttonActive}
                         aria-expanded={this.state.buttonActive}

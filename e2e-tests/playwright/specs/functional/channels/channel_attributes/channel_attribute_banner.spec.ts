@@ -121,7 +121,9 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await expect(configuration.bannerTokenChipRemove(programme.name)).toBeVisible();
 
             // * Seeding those chips is not an edit, so the tab opens clean
-            await expect(configuration.container.getByTestId('SaveChangesPanel__save-btn')).toHaveCount(0);
+            await expect(
+                configuration.container.getByTestId('channel_settings_modal.save_panel.save--button'),
+            ).toHaveCount(0);
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -161,11 +163,15 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
 
-            await expect(configuration.container.getByTestId('channelBannerToggle-button')).toBeChecked();
+            await expect(
+                configuration.container.getByTestId('channel_settings_modal.configuration.banner--switch'),
+            ).toBeChecked();
             await expect(configuration.bannerTextEditor).toBeVisible();
 
             // * Opening the tab changes nothing, so it must not offer to save
-            await expect(configuration.container.getByTestId('SaveChangesPanel__save-btn')).toHaveCount(0);
+            await expect(
+                configuration.container.getByTestId('channel_settings_modal.save_panel.save--button'),
+            ).toHaveCount(0);
 
             // * The preview still shows what members see, from the value alone
             await expect(configuration.bannerTokenPreview).toContainText('SECRET');
@@ -418,7 +424,7 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
 
             // * The dedicated classification controls are gone
             await expect(page.locator('#channelClassificationToggle')).toHaveCount(0);
-            await expect(page.getByTestId('channelClassificationLevel')).toHaveCount(0);
+            await expect(page.getByTestId('channel_settings_modal.configuration.classification_level')).toHaveCount(0);
 
             // * The same marking is offered as an ordinary banner token instead
             await configuration.enableChannelBanner();
@@ -468,7 +474,9 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             ).toBeEnabled();
 
             // * Toggle is also not locked
-            await expect(configuration.container.getByTestId('channelBannerToggle-button')).not.toBeDisabled();
+            await expect(
+                configuration.container.getByTestId('channel_settings_modal.configuration.banner--switch'),
+            ).not.toBeDisabled();
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -511,7 +519,9 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             const configuration = await settings.openConfigurationTab();
 
             // * Toggle is locked — a required attribute mandates the banner
-            await expect(configuration.container.getByTestId('channelBannerToggle-button')).toBeDisabled();
+            await expect(
+                configuration.container.getByTestId('channel_settings_modal.configuration.banner--switch'),
+            ).toBeDisabled();
         } finally {
             await deleteAttributes(adminClient, created);
         }

@@ -4,10 +4,18 @@
 /**
  * @objective E2E tests for Team Settings Modal - Info Tab
  * @reference MM-67920
+ *
+ * Written on the generated page objects: the team menu, the Team Settings tabs, the Info tab's name and description
+ * textboxes and team icon (file input, initials, Remove button), the save panel and the modal's close button.
  */
 
 import {getAsset} from '@/asset';
-import {ChannelsPage, expect, test} from '@mattermost/playwright-lib';
+import {expect, Msg, test, type App} from '@mattermost/playwright-lib';
+
+/** Opens Team Settings from the team menu (it opens on the Info tab). */
+async function openTeamSettings(app: App) {
+    return (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
+}
 
 test.describe('Team Settings Modal - Info Tab', () => {
     /**
@@ -16,25 +24,22 @@ test.describe('Team Settings Modal - Info Tab', () => {
      */
     test('MM-67920 Open and close Team Settings Modal', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser} = await pw.initSetup();
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
+        const {adminUser, adminClient, team} = await pw.initSetup();
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: townSquare});
 
-        // # Navigate to a team
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
-
-        // # Open Team Settings Modal
-        const teamSettings = await channelsPage.openTeamSettings();
+        // # Open Team Settings
+        const settings = await openTeamSettings(app);
 
         // * Verify Info tab is selected by default
-        await expect(teamSettings.infoTab).toHaveAttribute('aria-selected', 'true');
+        await expect(settings.tabs.tab('info')).toBeSelected();
 
         // # Close modal
-        await teamSettings.close();
+        await settings.clickCloseButton();
 
         // * Verify modal closes
-        await expect(teamSettings.container).not.toBeVisible();
+        await expect(settings.locator).not.toBeVisible();
     });
 
     /**
@@ -44,38 +49,33 @@ test.describe('Team Settings Modal - Info Tab', () => {
     test('MM-67920 Edit team name and save changes', async ({pw}) => {
         // # Set up admin user and login
         const {adminUser, adminClient, team} = await pw.initSetup();
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: townSquare});
 
-        // # Navigate to team
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
-
-        // # Open Team Settings Modal
-        const teamSettings = await channelsPage.openTeamSettings();
+        // # Open Team Settings
+        const settings = await openTeamSettings(app);
 
         // * Verify current team name is displayed
-        await expect(teamSettings.infoSettings.nameInput).toHaveValue(team.display_name);
+        await expect(settings.info.nameTextbox.locator).toHaveValue(team.display_name);
 
-        // # Edit team name
+        // # Edit team name and save
         const newTeamName = `Updated Team ${pw.random.id()}`;
-        await teamSettings.infoSettings.updateName(newTeamName);
-
-        // # Save changes
-        await teamSettings.save();
+        await settings.info.fillNameTextbox(newTeamName);
+        await settings.savePanel.clickSaveButton();
 
         // * Wait for "Settings saved" message
-        await teamSettings.verifySavedMessage();
+        await expect(settings.savePanel.messageText).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Verify team name updated via API
         const updatedTeam = await adminClient.getTeam(team.id);
         expect(updatedTeam.display_name).toBe(newTeamName);
 
         // # Close modal
-        await teamSettings.close();
+        await settings.clickCloseButton();
 
         // * Verify modal closes without warning
-        await expect(teamSettings.container).not.toBeVisible();
+        await expect(settings.locator).not.toBeVisible();
     });
 
     /**
@@ -85,35 +85,30 @@ test.describe('Team Settings Modal - Info Tab', () => {
     test('MM-67920 Edit team description and save changes', async ({pw}) => {
         // # Set up admin user and login
         const {adminUser, adminClient, team} = await pw.initSetup();
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: townSquare});
 
-        // # Navigate to team
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        // # Open Team Settings
+        const settings = await openTeamSettings(app);
 
-        // # Open Team Settings Modal
-        const teamSettings = await channelsPage.openTeamSettings();
-
-        // # Edit team description
+        // # Edit team description and save
         const newDescription = `Test description ${pw.random.id()}`;
-        await teamSettings.infoSettings.updateDescription(newDescription);
-
-        // # Save changes
-        await teamSettings.save();
+        await settings.info.fillDescriptionTextbox(newDescription);
+        await settings.savePanel.clickSaveButton();
 
         // * Wait for "Settings saved" message
-        await teamSettings.verifySavedMessage();
+        await expect(settings.savePanel.messageText).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Verify description updated via API
         const updatedTeam = await adminClient.getTeam(team.id);
         expect(updatedTeam.description).toBe(newDescription);
 
         // # Close modal
-        await teamSettings.close();
+        await settings.clickCloseButton();
 
         // * Verify modal closes
-        await expect(teamSettings.container).not.toBeVisible();
+        await expect(settings.locator).not.toBeVisible();
     });
 
     /**
@@ -124,54 +119,53 @@ test.describe('Team Settings Modal - Info Tab', () => {
     test('MM-67920 Upload and Remove team icon', async ({pw}) => {
         // # Set up admin user and login
         const {adminUser, adminClient, team} = await pw.initSetup();
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: townSquare});
 
-        // # Navigate to team
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        // # Open Team Settings
+        const settings = await openTeamSettings(app);
+        const {picture} = settings.info;
 
-        // # Open Team Settings Modal
-        const teamSettings = await channelsPage.openTeamSettings();
-        const infoSettings = teamSettings.infoSettings;
+        // * Verify the team shows its initials and no Remove button before an upload
+        await expect(picture.initials.locator).toBeVisible();
+        await expect(picture.removeButton.locator).toHaveCount(0);
 
         // # Upload team icon using asset file
-        await infoSettings.uploadIcon(getAsset('mattermost-icon_128x128.png'));
+        await picture.fileInput.locator.setInputFiles(getAsset('mattermost-icon_128x128.png'));
 
-        // * Verify upload preview shows
-        await expect(infoSettings.teamIconImage).toBeVisible();
-
-        // * Verify remove button appears
-        await expect(infoSettings.removeImageButton).toBeVisible();
+        // * Verify the upload preview replaces the initials and the Remove button appears
+        await expect(picture.initials.locator).toHaveCount(0);
+        await expect(picture.removeButton.locator).toBeVisible();
 
         // # Save changes
-        await teamSettings.save();
-        await teamSettings.verifySavedMessage();
+        await settings.savePanel.clickSaveButton();
+        await expect(settings.savePanel.messageText).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Get team data after upload to verify icon exists via API
         const teamWithIcon = await adminClient.getTeam(team.id);
         expect(teamWithIcon.last_team_icon_update).toBeGreaterThan(0);
 
         // # Close and reopen modal to verify persistence
-        await teamSettings.close();
-        await expect(teamSettings.container).not.toBeVisible();
-        const teamSettings2 = await channelsPage.openTeamSettings();
+        await settings.clickCloseButton();
+        await expect(settings.locator).not.toBeVisible();
+        const reopened = await openTeamSettings(app);
+        const reopenedPicture = reopened.info.picture;
 
         // * Verify uploaded icon persists after reopening modal
-        await expect(teamSettings2.infoSettings.teamIconImage).toBeVisible();
-        await expect(teamSettings2.infoSettings.removeImageButton).toBeVisible();
+        await expect(reopenedPicture.removeButton.locator).toBeVisible();
+        await expect(reopenedPicture.initials.locator).toHaveCount(0);
 
         // # Remove the icon
-        await teamSettings2.infoSettings.removeIcon();
+        await reopenedPicture.clickRemoveButton();
 
-        // * Verify icon was removed - check for default icon initials in modal
-        await expect(teamSettings2.infoSettings.teamIconInitial).toBeVisible();
+        // * Verify icon was removed - the initials show again in the modal
+        await expect(reopenedPicture.initials.locator).toBeVisible();
 
         // * Verify icon was removed via API
-        const teamAfterRemove = await adminClient.getTeam(team.id);
-        expect(teamAfterRemove.last_team_icon_update || 0).toBe(0);
+        await expect.poll(async () => (await adminClient.getTeam(team.id)).last_team_icon_update || 0).toBe(0);
 
         // # Close modal
-        await teamSettings2.close();
+        await reopened.clickCloseButton();
     });
 });

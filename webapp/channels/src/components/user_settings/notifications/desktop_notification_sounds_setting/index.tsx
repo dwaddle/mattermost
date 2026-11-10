@@ -226,6 +226,7 @@ function DesktopNotificationSoundsSettings({
     if (active) {
         return (
             <SettingItemMax
+                testIdSection={UserSettingsNotificationSections.DESKTOP_NOTIFICATION_SOUND}
                 title={
                     <FormattedMessage
                         id='user.settings.notifications.desktopNotificationSounds.title'

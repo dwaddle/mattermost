@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import classNames from 'classnames';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import ReactSelect, {components} from 'react-select';
 import type {Props as SelectProps, ActionMeta, StylesConfig} from 'react-select';
@@ -89,7 +89,8 @@ const Control = (props: any) => {
     );
 };
 
-const Option = (props: any) => {
+// An option is `<testId>.menu.option:<value>--option` (none without a testId).
+const makeOption = (testId?: string) => (props: any) => {
     return (
         <div
             className={classNames('DropdownInput__option', {
@@ -97,16 +98,20 @@ const Option = (props: any) => {
                 focused: props.isFocused,
             })}
         >
-            <components.Option {...props}/>
+            <components.Option
+                {...props}
+                innerProps={{...props.innerProps, 'data-testid': testId ? `${testId}.menu.option:${props.data.value}--option` : undefined}}
+            />
         </div>
     );
 };
 
-const Menu = (props: any) => {
+// The menu is `<testId>.menu`; hosts without a testId (other areas, for now) keep the legacy `dropdownMenu`.
+const makeMenu = (testId?: string) => (props: any) => {
     return (
         <components.Menu
             {...props}
-            innerProps={{...props.innerProps, 'data-testid': 'dropdownMenu'}}
+            innerProps={{...props.innerProps, 'data-testid': testId ? `${testId}.menu` : 'dropdownMenu'}}
         />
     );
 };
@@ -115,6 +120,9 @@ const DropdownInput = <T extends ValueType>(props: Props<T>) => {
     const {value, placeholder, className, addon, name, textPrefix, legend, onChange, styles, options, error, testId, required, ...otherProps} = props; // types are not inferred correctly for `props` in react-select version v5.
 
     const [focused, setFocused] = useState(false);
+
+    const Menu = useMemo(() => makeMenu(testId), [testId]);
+    const OptionWithTestId = useMemo(() => makeOption(testId), [testId]);
 
     const onInputFocus = (event: React.FocusEvent<HTMLInputElement>) => {
         const {onFocus} = props;
@@ -160,7 +168,7 @@ const DropdownInput = <T extends ValueType>(props: Props<T>) => {
     return (
         <div
             className='DropdownInput Input_container'
-            data-testid={testId || ''}
+            data-testid={testId}
         >
             <fieldset
                 className={classNames('Input_fieldset', className, {
@@ -183,9 +191,9 @@ const DropdownInput = <T extends ValueType>(props: Props<T>) => {
                         placeholder={focused ? '' : placeholder}
                         components={{
                             IndicatorsContainer,
-                            Option,
                             Control,
                             Menu,
+                            Option: OptionWithTestId,
                         }}
                         className={classNames('Input', className, {Input__focus: showLegend})}
                         classNamePrefix={'DropDown'}

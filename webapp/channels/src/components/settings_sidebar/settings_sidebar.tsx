@@ -5,6 +5,9 @@ import classNames from 'classnames';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
+
 import Constants from 'utils/constants';
 import {isKeyPressed} from 'utils/keyboard';
 import {isValidUrl} from 'utils/url';
@@ -16,6 +19,9 @@ export type Tab = {
     uiName: string;
     newGroup?: boolean;
     display?: boolean; // Controls whether the tab is displayed, defaults to true
+
+    /** A plugin's tab: its testid is keyed by plugin (`<scope>.tabs.plugin:<plugin>--tab`), not by the generated tab name. */
+    pluginId?: string;
 };
 
 export type Props = {
@@ -24,6 +30,9 @@ export type Props = {
     pluginTabs?: Tab[];
     updateTab: (name: string) => void;
     isMobileView: boolean;
+
+    /** Testid scope of the owning modal: tabs render as `<scope>.tabs.tab:<name>--tab`. */
+    testIdScope?: TestIdScope;
 };
 
 export function normalizePluginIcon(icon?: string, basePath = ''): Tab['icon'] {
@@ -117,6 +126,10 @@ export default class SettingsSidebar extends React.PureComponent<Props> {
 
     private renderTab(tab: Tab) {
         const key = `${tab.name}_li`;
+
+        // a plugin's tab (only modals that take plugin tabs have one) is keyed by the plugin, which tests know
+        const tabKey = this.props.pluginTabs && tab.pluginId ? `plugin:${pluginTestKey(tab.pluginId)}` : `tab:${tab.name}`;
+
         const isActive = this.props.activeTab === tab.name;
 
         let icon;
@@ -141,7 +154,7 @@ export default class SettingsSidebar extends React.PureComponent<Props> {
             <React.Fragment key={key}>
                 {tab.newGroup && <hr/>}
                 <button
-                    data-testid={`${tab.name}-tab-button`}
+                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.tabs.${tabKey}--tab` : `${tab.name}-tab-button`}
                     ref={(element: HTMLButtonElement) => {
                         if (element) {
                             this.buttonRefs.set(tab.name, element);

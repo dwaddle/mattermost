@@ -142,6 +142,7 @@ export default class ShowUnreadsCategory extends React.PureComponent<Props, Stat
 
         return (
             <SettingItemMax
+                testIdSection='showUnreadsCategory'
                 title={title}
                 inputs={
                     <fieldset>
@@ -150,7 +151,7 @@ export default class ShowUnreadsCategory extends React.PureComponent<Props, Stat
                         </legend>
                         <div className='settings-radio-group'>
                             <Radio
-                                data-testid='showUnreadsCategoryOn'
+                                data-testid='settings.section.option:on--radio'
                                 name='showUnreadsCategory'
                                 checked={this.state.checked}
                                 onChange={() => this.setState({checked: true})}
@@ -161,7 +162,7 @@ export default class ShowUnreadsCategory extends React.PureComponent<Props, Stat
                                 />
                             </Radio>
                             <Radio
-                                data-testid='showUnreadsCategoryOff'
+                                data-testid='settings.section.option:off--radio'
                                 name='showUnreadsCategory'
                                 checked={!this.state.checked}
                                 onChange={() => this.setState({checked: false})}

@@ -17,6 +17,9 @@ async function postToWebhook(webhookId: string, payload: Record<string, unknown>
 
 /**
  * @objective Verify interactive attachment buttons remain visible across Indigo, Onyx, and Denim themes.
+ *
+ * Written on the generated page objects: the post by id, its attachment's buttons by action id, and the
+ * Display settings' theme section with its premade themes.
  */
 test(
     'MM-T5672 displays attachment buttons correctly across premade themes',
@@ -25,6 +28,11 @@ test(
         // # Post an attachment containing primary, danger, and default buttons
         const {adminClient, team, user} = await pw.initSetup();
         const channel = await adminClient.getChannelByName(team.id, 'town-square');
+        const actions = [
+            {id: 'primary', name: 'Primary action', type: 'button', style: 'primary'},
+            {id: 'danger', name: 'Danger action', type: 'button', style: 'danger'},
+            {id: 'default', name: 'Default action', type: 'button'},
+        ];
         const webhook = await adminClient.createIncomingWebhook({
             channel_id: channel.id,
             display_name: 'Theme buttons',
@@ -33,30 +41,33 @@ test(
             attachments: [
                 {
                     text: 'Theme button test',
-                    actions: [
-                        {id: 'primary', name: 'Primary action', type: 'button', style: 'primary'},
-                        {id: 'danger', name: 'Danger action', type: 'button', style: 'danger'},
-                        {id: 'default', name: 'Default action', type: 'button'},
-                    ],
+                    actions,
                 },
             ],
         });
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        const post = await channelsPage.getLastPost();
+        const {order} = await adminClient.getPosts(channel.id, 0, 1);
 
-        for (const theme of ['Indigo', 'Onyx', 'Denim'] as const) {
-            // # Select and save the premade theme
-            const settingsModal = await channelsPage.openSettings();
-            const displaySettings = await settingsModal.openDisplayTab();
-            await displaySettings.selectPremadeTheme(theme);
-            await settingsModal.close();
+        // # Open the channel
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
+        const post = app.center.postList.post({id: order[0]});
 
-            // * Verify all attachment buttons remain visible
-            await expect(post.container.getByRole('button', {name: 'Primary action'})).toBeVisible();
-            await expect(post.container.getByRole('button', {name: 'Danger action'})).toBeVisible();
-            await expect(post.container.getByRole('button', {name: 'Default action'})).toBeVisible();
+        for (const theme of ['indigo', 'onyx', 'denim'] as const) {
+            // # Switch to the premade theme in Settings > Display > Theme
+            await app.globalHeader.clickSettingsButton();
+            await app.userSettingsModal.tabs.tab('display').select();
+            const section = app.settings.section('theme');
+            await section.clickEditButton();
+            await section.premadeTheme(theme).click();
+            await section.clickSaveButton();
+            await app.userSettingsModal.clickCloseButton();
+
+            // * Verify every attachment button is still shown with its label
+            for (const action of actions) {
+                await expect(post.action(action.id).locator).toBeVisible();
+                await expect(post.action(action.id).locator).toHaveText(action.name);
+            }
         }
     },
 );

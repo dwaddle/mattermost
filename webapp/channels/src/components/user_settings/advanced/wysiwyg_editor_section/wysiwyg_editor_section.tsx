@@ -101,6 +101,7 @@ const WysiwygEditorSection: React.FC<Props> = ({active, areAllSectionsInactive, 
                         <Radio
                             key={option}
                             id={inputId}
+                            data-testid={`settings.section.option:${option}--radio`}
                             name='wysiwygEditor'
                             value={option}
                             checked={value === option}
@@ -135,6 +136,7 @@ const WysiwygEditorSection: React.FC<Props> = ({active, areAllSectionsInactive, 
                 saving={isSaving}
                 updateSection={handleUpdateSection}
                 disableEnterSubmit={true}
+                testIdSection='wysiwygEditor'
             />
         );
     }

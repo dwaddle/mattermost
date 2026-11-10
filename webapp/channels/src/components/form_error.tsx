@@ -3,6 +3,9 @@
 
 import React from 'react';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 export const TYPE_MODAL = 'modal';
 export const TYPE_BACKSTAGE = 'backstage';
 
@@ -14,6 +17,9 @@ type Props = {
     iconClassName?: string;
     margin?: boolean;
     errors?: React.ReactNode[];
+
+    // Path for the message: `<testId>--text`.
+    testId?: TestId;
 };
 
 const EMPTY_ERROR_LIST: React.ReactNode[] = [];
@@ -25,7 +31,10 @@ const FormError: React.FC<Props> = ({
     margin,
     textClassName,
     type,
+    testId,
 }) => {
+    const dataTestId = withRole(testId, 'text');
+
     if (!error && errors.length === 0) {
         return null;
     }
@@ -47,7 +56,10 @@ const FormError: React.FC<Props> = ({
 
     if (type === TYPE_MODAL) {
         return (
-            <div className='form-group'>
+            <div
+                className='form-group'
+                data-testid={dataTestId}
+            >
                 <label className='col-sm-12 has-error'>{message}</label>
             </div>
         );
@@ -55,7 +67,10 @@ const FormError: React.FC<Props> = ({
 
     if (type === TYPE_BACKSTAGE) {
         return (
-            <div className='pull-left has-error'>
+            <div
+                className='pull-left has-error'
+                data-testid={dataTestId}
+            >
                 <label className='control-label'>{message}</label>
             </div>
         );
@@ -63,14 +78,20 @@ const FormError: React.FC<Props> = ({
 
     if (margin) {
         return (
-            <div className='form-group has-error'>
+            <div
+                className='form-group has-error'
+                data-testid={dataTestId}
+            >
                 <label className='control-label'>{message}</label>
             </div>
         );
     }
 
     return (
-        <div className={`col-sm-12 ${textClassName || 'has-error'}`}>
+        <div
+            className={`col-sm-12 ${textClassName || 'has-error'}`}
+            data-testid={dataTestId}
+        >
             <label className='control-label'>
                 <i
                     className={`fa ${iconClassName || 'fa-exclamation-circle'}`}

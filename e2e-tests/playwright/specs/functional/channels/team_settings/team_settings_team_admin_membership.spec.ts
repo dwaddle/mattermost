@@ -27,7 +27,7 @@ import {
 
 async function openTeamMembershipTab(page: Page, channelsPage: ChannelsPage) {
     const teamSettings = await channelsPage.openTeamSettings();
-    await teamSettings.container.getByTestId('team_membership-tab-button').click();
+    await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
     const tab = teamSettings.container.locator('.TeamMembershipTab');
     await expect(tab).toBeVisible({timeout: 10000});
     return {teamSettings, tab};

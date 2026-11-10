@@ -277,6 +277,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                             <div className='settings-radio-group'>
                                 <Radio
                                     id='postFormattingOn'
+                                    data-testid='settings.section.option:true--radio'
                                     name='formatting'
                                     checked={this.state.settings.formatting !== 'false'}
                                     onChange={this.updateSetting.bind(this, 'formatting', 'true')}
@@ -288,6 +289,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                                 </Radio>
                                 <Radio
                                     id='postFormattingOff'
+                                    data-testid='settings.section.option:false--radio'
                                     name='formatting'
                                     checked={this.state.settings.formatting === 'false'}
                                     onChange={this.updateSetting.bind(this, 'formatting', 'false')}
@@ -355,6 +357,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                             <div className='settings-radio-group'>
                                 <Radio
                                     id='unreadPositionStartFromLeftOff'
+                                    data-testid='settings.section.option:start_from_left_off--radio'
                                     name='unreadScrollPosition'
                                     checked={this.state.settings.unread_scroll_position === Preferences.UNREAD_SCROLL_POSITION_START_FROM_LEFT}
                                     onChange={this.updateSetting.bind(this, Preferences.UNREAD_SCROLL_POSITION, Preferences.UNREAD_SCROLL_POSITION_START_FROM_LEFT)}
@@ -366,6 +369,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                                 </Radio>
                                 <Radio
                                     id='unreadPositionStartFromNewest'
+                                    data-testid='settings.section.option:start_from_newest--radio'
                                     name='unreadScrollPosition'
                                     checked={this.state.settings.unread_scroll_position === Preferences.UNREAD_SCROLL_POSITION_START_FROM_NEWEST}
                                     onChange={this.updateSetting.bind(this, Preferences.UNREAD_SCROLL_POSITION, Preferences.UNREAD_SCROLL_POSITION_START_FROM_NEWEST)}
@@ -433,6 +437,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                             <div className='settings-radio-group'>
                                 <Radio
                                     id='syncDraftsOn'
+                                    data-testid='settings.section.option:true--radio'
                                     name='syncDrafts'
                                     checked={this.state.settings.sync_drafts !== 'false'}
                                     onChange={this.updateSetting.bind(this, 'sync_drafts', 'true')}
@@ -444,6 +449,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                                 </Radio>
                                 <Radio
                                     id='syncDraftsOff'
+                                    data-testid='settings.section.option:false--radio'
                                     name='syncDrafts'
                                     checked={this.state.settings.sync_drafts === 'false'}
                                     onChange={this.updateSetting.bind(this, 'sync_drafts', 'false')}
@@ -509,6 +515,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                     <div className='settings-radio-group'>
                         <Radio
                             id='ctrlSendOn'
+                            data-testid='settings.section.option:on--radio'
                             name='sendOnCtrlEnter'
                             checked={ctrlSendActive[0]}
                             onChange={(e) => {
@@ -524,6 +531,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                         </Radio>
                         <Radio
                             id='ctrlSendOnForCode'
+                            data-testid='settings.section.option:code_blocks--radio'
                             name='sendOnCtrlEnter'
                             checked={ctrlSendActive[1]}
                             onChange={(e) => {
@@ -539,6 +547,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
                         </Radio>
                         <Radio
                             id='ctrlSendOff'
+                            data-testid='settings.section.option:off--radio'
                             name='sendOnCtrlEnter'
                             checked={ctrlSendActive[2]}
                             onChange={(e) => {
@@ -663,6 +672,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
 
             makeConfirmationModal = (
                 <ConfirmModal
+                    testId='deactivate_account_modal'
                     show={this.state.showDeactivateAccountModal}
                     title={
                         <FormattedMessage
@@ -702,6 +712,7 @@ export default class AdvancedSettingsDisplay extends React.PureComponent<Props, 
         return (
             <div
                 id='advancedSettings'
+                data-testid='settings.panel:advanced--tabpanel'
                 aria-labelledby='advancedButton'
                 role='tabpanel'
             >

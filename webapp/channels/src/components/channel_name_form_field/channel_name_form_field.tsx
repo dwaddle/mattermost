@@ -6,6 +6,7 @@ import type {IntlShape} from 'react-intl';
 import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Team} from '@mattermost/types/teams';
 
 import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
@@ -39,6 +40,9 @@ export type Props = {
 
     // The server rejects URL changes on the default channel, so it is shown read-only.
     isDefaultChannel?: boolean;
+
+    /** Testid scope of the owning form: the name renders `<scope>.name--textbox`. */
+    testIdScope: TestIdScope;
 };
 
 import './channel_name_form_field.scss';
@@ -209,10 +213,12 @@ const ChannelNameFormField = (props: Props): JSX.Element => {
                 onChange={handleOnDisplayNameChange}
                 onBlur={handleOnDisplayNameBlur}
                 disabled={props.readOnly}
+                testId={`${props.testIdScope}.name`}
             />
             {
                 showURLEditor &&
                 <URLInput
+                    testIdScope={`${props.testIdScope}.url`}
                     className='new-channel-modal__url'
                     base={getSiteURL()}
                     path={`${teamName}/channels`}

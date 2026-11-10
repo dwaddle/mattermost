@@ -20,7 +20,9 @@ export default class AccessSettings {
         this.allowedDomainsInput = container.locator('#allowedDomains input');
         this.publicTeamButton = container.locator('#public-private-selector-button-O');
         this.privateTeamButton = container.locator('#public-private-selector-button-P');
-        this.regenerateButton = container.locator('button[data-testid="regenerateButton"]');
+        this.regenerateButton = container.locator(
+            'button[data-testid="team_settings_modal.access.invite_link.regenerate--button"]',
+        );
     }
 
     async toBeVisible() {

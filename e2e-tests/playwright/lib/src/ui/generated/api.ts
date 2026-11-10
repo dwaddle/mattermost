@@ -8,15 +8,18 @@ import type {
     AccessControlPoliciesResult,
     AccessControlPolicy,
     AccessControlTestResult,
+    CELExpressionError,
     PolicySimulationResponse,
 } from '@mattermost/types/access_control';
 import type {AnalyticsRow} from '@mattermost/types/admin';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {
+    Channel,
     ChannelJoinRequest,
     ChannelJoinRequestList,
     ChannelMemberCountsByGroup,
     ChannelMembership,
+    ChannelModeration,
     ChannelStats,
     ChannelUnread,
     ChannelViewResponse,
@@ -26,22 +29,42 @@ import type {
 } from '@mattermost/types/channels';
 import type {StatusOK} from '@mattermost/types/client4';
 import type {Installation} from '@mattermost/types/cloud';
-import type {AdminConfig, AllowedIPRange} from '@mattermost/types/config';
+import type {AdminConfig, AllowedIPRange, ClientConfig, ClientLicense} from '@mattermost/types/config';
+import type {DataRetentionCustomPolicies} from '@mattermost/types/data_retention';
 import type {Draft} from '@mattermost/types/drafts';
 import type {CustomEmoji} from '@mattermost/types/emojis';
 import type {FileSearchResults, FileUploadResponse} from '@mattermost/types/files';
-import type {Group, UsersWithGroupsAndCount} from '@mattermost/types/groups';
+import type {
+    Group,
+    GroupMember,
+    GroupSyncable,
+    GroupsWithCount,
+    UsersWithGroupsAndCount,
+} from '@mattermost/types/groups';
 import type {PostActionResponse} from '@mattermost/types/integration_actions';
-import type {CommandResponse} from '@mattermost/types/integrations';
+import type {
+    Command,
+    CommandResponse,
+    OAuthApp,
+    OutgoingOAuthConnection,
+    OutgoingWebhook,
+} from '@mattermost/types/integrations';
+import type {Job} from '@mattermost/types/jobs';
+import type {ServerLimits} from '@mattermost/types/limits';
+import type {ClientPluginManifest} from '@mattermost/types/plugins';
 import type {PaginatedPostList, Post, PostInfo, PostList, PostSearchResults} from '@mattermost/types/posts';
+import type {PreferenceType} from '@mattermost/types/preferences';
+import type {PropertyField} from '@mattermost/types/properties';
+import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {Reaction} from '@mattermost/types/reactions';
 import type {ScheduledRecap} from '@mattermost/types/recaps';
 import type {Role} from '@mattermost/types/roles';
 import type {ScheduledPost} from '@mattermost/types/schedule_post';
+import type {Scheme} from '@mattermost/types/schemes';
 import type {RemoteClusterInfo} from '@mattermost/types/shared_channels';
 import type {Team, TeamMembership, TeamStats, TeamUnread, TeamsWithCount} from '@mattermost/types/teams';
 import type {UserThread} from '@mattermost/types/threads';
-import type {UserProfile, UserStatus} from '@mattermost/types/users';
+import type {AuthChangeResponse, UserAccessToken, UserProfile, UserStatus, UsersStats} from '@mattermost/types/users';
 
 import {effect} from '../../aria';
 
@@ -52,21 +75,61 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/channels/{channel_id}/members',
     }),
+    AddChannelsToRetentionPolicy: effect<DataRetentionCustomPolicies>()({
+        op: 'AddChannelsToRetentionPolicy',
+        method: 'POST',
+        path: '/api/v4/data_retention/policies/{policy_id}/channels',
+    }),
+    AddGroupMembers: effect<GroupMember[]>()({
+        op: 'AddGroupMembers',
+        method: 'POST',
+        path: '/api/v4/groups/{group_id}/members',
+    }),
     AddTeamMember: effect<TeamMembership>()({
         op: 'AddTeamMember',
         method: 'POST',
         path: '/api/v4/teams/{team_id}/members',
+    }),
+    AddTeamMemberFromInvite: effect<TeamMembership>()({
+        op: 'AddTeamMemberFromInvite',
+        method: 'POST',
+        path: '/api/v4/teams/members/invite',
     }),
     AddTeamMembers: effect<TeamMembership[]>()({
         op: 'AddTeamMembers',
         method: 'POST',
         path: '/api/v4/teams/{team_id}/members/batch',
     }),
+    AddTeamsToRetentionPolicy: effect<DataRetentionCustomPolicies>()({
+        op: 'AddTeamsToRetentionPolicy',
+        method: 'POST',
+        path: '/api/v4/data_retention/policies/{policy_id}/teams',
+    }),
     ApplyIPFilters: effect<AllowedIPRange[]>()({op: 'ApplyIPFilters', method: 'POST', path: '/api/v4/ip_filtering'}),
+    AssignAccessControlPolicyToChannels: effect<StatusOK>()({
+        op: 'AssignAccessControlPolicyToChannels',
+        method: 'POST',
+        path: '/api/v4/access_control_policies/{policy_id}/assign',
+    }),
+    CanUserDirectMessage: effect<unknown>()({
+        op: 'CanUserDirectMessage',
+        method: 'GET',
+        path: '/api/v4/sharedchannels/users/{user_id}/can_dm/{other_user_id}',
+    }),
     ChannelMembersMinusGroupMembers: effect<UsersWithGroupsAndCount>()({
         op: 'ChannelMembersMinusGroupMembers',
         method: 'GET',
         path: '/api/v4/channels/{channel_id}/members_minus_group_members',
+    }),
+    CheckAccessControlPolicyExpression: effect<CELExpressionError[]>()({
+        op: 'CheckAccessControlPolicyExpression',
+        method: 'POST',
+        path: '/api/v4/access_control_policies/cel/check',
+    }),
+    ConvertGroupMessageToChannel: effect<Channel>()({
+        op: 'ConvertGroupMessageToChannel',
+        method: 'POST',
+        path: '/api/v4/channels/{channel_id}/convert_to_channel',
     }),
     CountPendingChannelJoinRequests: effect<unknown>()({
         op: 'CountPendingChannelJoinRequests',
@@ -78,28 +141,87 @@ export const Api = {
         method: 'PUT',
         path: '/api/v4/access_control_policies',
     }),
+    CreateCPAField: effect<UserPropertyField>()({
+        op: 'CreateCPAField',
+        method: 'POST',
+        path: '/api/v4/custom_profile_attributes/fields',
+    }),
+    CreateChannel: effect<ServerChannel>()({op: 'CreateChannel', method: 'POST', path: '/api/v4/channels'}),
+    CreateDataRetentionPolicy: effect<DataRetentionCustomPolicies>()({
+        op: 'CreateDataRetentionPolicy',
+        method: 'POST',
+        path: '/api/v4/data_retention/policies',
+    }),
     CreateDirectChannel: effect<ServerChannel>()({
         op: 'CreateDirectChannel',
         method: 'POST',
         path: '/api/v4/channels/direct',
     }),
     CreateEmoji: effect<CustomEmoji>()({op: 'CreateEmoji', method: 'POST', path: '/api/v4/emoji'}),
+    CreateGroup: effect<Group>()({op: 'CreateGroup', method: 'POST', path: '/api/v4/groups'}),
+    CreateGroupChannel: effect<ServerChannel>()({
+        op: 'CreateGroupChannel',
+        method: 'POST',
+        path: '/api/v4/channels/group',
+    }),
+    CreateJob: effect<Job>()({op: 'CreateJob', method: 'POST', path: '/api/v4/jobs'}),
+    CreateOutgoingOAuthConnection: effect<OutgoingOAuthConnection>()({
+        op: 'CreateOutgoingOAuthConnection',
+        method: 'POST',
+        path: '/api/v4/oauth/outgoing_connections',
+    }),
     CreatePost: effect<Post>()({op: 'CreatePost', method: 'POST', path: '/api/v4/posts'}),
+    CreatePropertyField: effect<PropertyField>()({
+        op: 'CreatePropertyField',
+        method: 'POST',
+        path: '/api/v4/properties/groups/{group_name}/{object_type}/fields',
+    }),
     CreateScheduledPost: effect<ScheduledPost>()({
         op: 'CreateScheduledPost',
         method: 'POST',
         path: '/api/v4/posts/schedule',
     }),
+    CreateScheme: effect<Scheme>()({op: 'CreateScheme', method: 'POST', path: '/api/v4/schemes'}),
     CreateTeam: effect<Team>()({op: 'CreateTeam', method: 'POST', path: '/api/v4/teams'}),
+    CreateUser: effect<UserProfile>()({op: 'CreateUser', method: 'POST', path: '/api/v4/users'}),
+    CreateUserAccessToken: effect<UserAccessToken>()({
+        op: 'CreateUserAccessToken',
+        method: 'POST',
+        path: '/api/v4/users/{user_id}/tokens',
+    }),
     DeleteAccessControlPolicy: effect<AccessControlPolicy>()({
         op: 'DeleteAccessControlPolicy',
         method: 'DELETE',
         path: '/api/v4/access_control_policies/{policy_id}',
     }),
+    DeleteCPAField: effect<StatusOK>()({
+        op: 'DeleteCPAField',
+        method: 'DELETE',
+        path: '/api/v4/custom_profile_attributes/fields/{field_id}',
+    }),
+    DeleteChannel: effect<StatusOK>()({op: 'DeleteChannel', method: 'DELETE', path: '/api/v4/channels/{channel_id}'}),
+    DeleteCommand: effect<StatusOK>()({op: 'DeleteCommand', method: 'DELETE', path: '/api/v4/commands/{command_id}'}),
     DeleteDraftMe: effect<unknown>()({
         op: 'DeleteDraftMe',
         method: 'DELETE',
         path: '/api/v4/users/me/channels/{channel_id}/drafts',
+    }),
+    DeleteEmoji: effect<StatusOK>()({op: 'DeleteEmoji', method: 'DELETE', path: '/api/v4/emoji/{emoji_id}'}),
+    DeleteIncomingWebhook: effect<StatusOK>()({
+        op: 'DeleteIncomingWebhook',
+        method: 'DELETE',
+        path: '/api/v4/hooks/incoming/{hook_id}',
+    }),
+    DeleteOAuthApp: effect<StatusOK>()({op: 'DeleteOAuthApp', method: 'DELETE', path: '/api/v4/oauth/apps/{app_id}'}),
+    DeleteOutgoingOAuthConnection: effect<StatusOK>()({
+        op: 'DeleteOutgoingOAuthConnection',
+        method: 'DELETE',
+        path: '/api/v4/oauth/outgoing_connections/{outgoing_oauth_connection_id}',
+    }),
+    DeleteOutgoingWebhook: effect<StatusOK>()({
+        op: 'DeleteOutgoingWebhook',
+        method: 'DELETE',
+        path: '/api/v4/hooks/outgoing/{hook_id}',
     }),
     DeletePost: effect<StatusOK>()({op: 'DeletePost', method: 'DELETE', path: '/api/v4/posts/{post_id}'}),
     DeletePreferences: effect<StatusOK>()({
@@ -127,12 +249,22 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/plugins/{plugin_id}/disable',
     }),
+    DisableUserAccessToken: effect<StatusOK>()({
+        op: 'DisableUserAccessToken',
+        method: 'POST',
+        path: '/api/v4/users/tokens/disable',
+    }),
     DoPostAction: effect<PostActionResponse>()({
         op: 'DoPostAction',
         method: 'POST',
         path: '/api/v4/posts/{post_id}/actions/{action_id}',
     }),
     EnablePlugin: effect<StatusOK>()({op: 'EnablePlugin', method: 'POST', path: '/api/v4/plugins/{plugin_id}/enable'}),
+    EnableUserAccessToken: effect<StatusOK>()({
+        op: 'EnableUserAccessToken',
+        method: 'POST',
+        path: '/api/v4/users/tokens/enable',
+    }),
     ExecuteCommand: effect<CommandResponse>()({op: 'ExecuteCommand', method: 'POST', path: '/api/v4/commands/execute'}),
     GenerateCFPostExposureReport: effect<unknown>()({
         op: 'GenerateCFPostExposureReport',
@@ -151,6 +283,11 @@ export const Api = {
     }),
     GetAllTeams: effect<Team[] | TeamsWithCount>()({op: 'GetAllTeams', method: 'GET', path: '/api/v4/teams'}),
     GetAnalyticsOld: effect<AnalyticsRow[]>()({op: 'GetAnalyticsOld', method: 'GET', path: '/api/v4/analytics/old'}),
+    GetAncillaryPermissionsPost: effect<unknown>()({
+        op: 'GetAncillaryPermissionsPost',
+        method: 'POST',
+        path: '/api/v4/permissions/ancillary',
+    }),
     GetChannel: effect<ServerChannel>()({op: 'GetChannel', method: 'GET', path: '/api/v4/channels/{channel_id}'}),
     GetChannelByName: effect<ServerChannel>()({
         op: 'GetChannelByName',
@@ -202,6 +339,11 @@ export const Api = {
         method: 'GET',
         path: '/api/v4/channels/{channel_id}/timezones',
     }),
+    GetChannelModerations: effect<ChannelModeration[]>()({
+        op: 'GetChannelModerations',
+        method: 'GET',
+        path: '/api/v4/channels/{channel_id}/moderations',
+    }),
     GetChannelStats: effect<ChannelStats>()({
         op: 'GetChannelStats',
         method: 'GET',
@@ -217,6 +359,9 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/channels/stats/member_count',
     }),
+    GetClientConfig: effect<ClientConfig>()({op: 'GetClientConfig', method: 'GET', path: '/api/v4/config/client'}),
+    GetClientLicense: effect<ClientLicense>()({op: 'GetClientLicense', method: 'GET', path: '/api/v4/license/client'}),
+    GetEmojiList: effect<CustomEmoji[]>()({op: 'GetEmojiList', method: 'GET', path: '/api/v4/emoji'}),
     GetEmojisByNames: effect<CustomEmoji[]>()({op: 'GetEmojisByNames', method: 'POST', path: '/api/v4/emoji/names'}),
     GetEndpointForInstallationInformation: effect<Installation>()({
         op: 'GetEndpointForInstallationInformation',
@@ -228,9 +373,25 @@ export const Api = {
         method: 'GET',
         path: '/api/v4/users/{user_id}/posts/flagged',
     }),
+    GetGroupSyncables: effect<GroupSyncable[]>()({
+        op: 'GetGroupSyncables',
+        method: 'GET',
+        path: '/api/v4/groups/{groupID}/{syncableType}s',
+    }), // not in the OpenAPI spec
     GetGroups: effect<Group[]>()({op: 'GetGroups', method: 'GET', path: '/api/v4/groups'}),
+    GetGroupsByChannel: effect<GroupsWithCount>()({
+        op: 'GetGroupsByChannel',
+        method: 'GET',
+        path: '/api/v4/channels/{channel_id}/groups',
+    }),
     GetGroupsByNames: effect<Group[]>()({op: 'GetGroupsByNames', method: 'POST', path: '/api/v4/groups/names'}),
+    GetGroupsByTeam: effect<GroupsWithCount>()({
+        op: 'GetGroupsByTeam',
+        method: 'GET',
+        path: '/api/v4/teams/{team_id}/groups',
+    }),
     GetLdapGroups: effect<unknown>()({op: 'GetLdapGroups', method: 'GET', path: '/api/v4/ldap/groups'}),
+    GetLoginType: effect<unknown>()({op: 'GetLoginType', method: 'POST', path: '/api/v4/users/login/type'}),
     GetPinnedPosts: effect<PostList>()({
         op: 'GetPinnedPosts',
         method: 'GET',
@@ -248,19 +409,45 @@ export const Api = {
         method: 'GET',
         path: '/api/v4/channels/{channel_id}/posts',
     }),
+    GetPreferencesMe: effect<PreferenceType>()({
+        op: 'GetPreferencesMe',
+        method: 'GET',
+        path: '/api/v4/users/me/preferences',
+    }),
+    GetPropertyFields: effect<PropertyField[]>()({
+        op: 'GetPropertyFields',
+        method: 'GET',
+        path: '/api/v4/properties/groups/{group_name}/{object_type}/fields',
+    }),
     GetPropertyValues: effect<unknown>()({
         op: 'GetPropertyValues',
         method: 'GET',
         path: '/api/v4/properties/groups/{group_name}/{object_type}/values/{target_id}',
     }),
     GetRolesByNames: effect<Role[]>()({op: 'GetRolesByNames', method: 'POST', path: '/api/v4/roles/names'}),
+    GetServerLimits: effect<ServerLimits>()({op: 'GetServerLimits', method: 'GET', path: '/api/v4/limits/server'}),
     GetSharedChannelRemotes: effect<RemoteClusterInfo[]>()({
         op: 'GetSharedChannelRemotes',
         method: 'GET',
         path: '/api/v4/sharedchannels/{channel_id}/remotes',
     }),
     GetTeam: effect<Team>()({op: 'GetTeam', method: 'GET', path: '/api/v4/teams/{team_id}'}),
+    GetTeamAccessControlPolicy: effect<unknown>()({
+        op: 'GetTeamAccessControlPolicy',
+        method: 'GET',
+        path: '/api/v4/teams/{team_id}/access_control/policy',
+    }),
     GetTeamByName: effect<Team>()({op: 'GetTeamByName', method: 'GET', path: '/api/v4/teams/name/{team_name}'}),
+    GetTeamMember: effect<TeamMembership>()({
+        op: 'GetTeamMember',
+        method: 'GET',
+        path: '/api/v4/teams/{team_id}/members/{user_id}',
+    }),
+    GetTeamMembers: effect<TeamMembership[]>()({
+        op: 'GetTeamMembers',
+        method: 'GET',
+        path: '/api/v4/teams/{team_id}/members',
+    }),
     GetTeamMembersByIds: effect<TeamMembership[]>()({
         op: 'GetTeamMembersByIds',
         method: 'POST',
@@ -271,18 +458,32 @@ export const Api = {
         method: 'GET',
         path: '/api/v4/users/{user_id}/teams/members',
     }),
+    GetTeamMembersForUserMe: effect<TeamMembership[]>()({
+        op: 'GetTeamMembersForUserMe',
+        method: 'GET',
+        path: '/api/v4/users/me/teams/members',
+    }),
     GetTeamStats: effect<TeamStats>()({op: 'GetTeamStats', method: 'GET', path: '/api/v4/teams/{team_id}/stats'}),
     GetTeamsForUser: effect<Team[]>()({op: 'GetTeamsForUser', method: 'GET', path: '/api/v4/users/{user_id}/teams'}),
+    GetTeamsForUserMe: effect<Team[]>()({op: 'GetTeamsForUserMe', method: 'GET', path: '/api/v4/users/me/teams'}),
     GetTeamsUnreadForUserMe: effect<TeamUnread[]>()({
         op: 'GetTeamsUnreadForUserMe',
         method: 'GET',
         path: '/api/v4/users/me/teams/unread',
     }),
+    GetTotalUsersStats: effect<UsersStats>()({op: 'GetTotalUsersStats', method: 'GET', path: '/api/v4/users/stats'}),
     GetUser: effect<UserProfile>()({op: 'GetUser', method: 'GET', path: '/api/v4/users/{user_id}'}),
+    GetUserByEmail: effect<UserProfile>()({op: 'GetUserByEmail', method: 'GET', path: '/api/v4/users/email/{email}'}),
     GetUserByUsername: effect<UserProfile>()({
         op: 'GetUserByUsername',
         method: 'GET',
         path: '/api/v4/users/username/{username}',
+    }),
+    GetUserMe: effect<UserProfile>()({op: 'GetUserMe', method: 'GET', path: '/api/v4/users/me'}),
+    GetUserScheduledPosts: effect<unknown>()({
+        op: 'GetUserScheduledPosts',
+        method: 'GET',
+        path: '/api/v4/posts/scheduled/team/{team_id}',
     }),
     GetUsers: effect<UserProfile[]>()({op: 'GetUsers', method: 'GET', path: '/api/v4/users'}),
     GetUsersByGroupChannelIds: effect<Record<string, UserProfile[]>>()({
@@ -300,6 +501,11 @@ export const Api = {
         op: 'GetUsersStatusesByIds',
         method: 'POST',
         path: '/api/v4/users/status/ids',
+    }),
+    GetWebappPlugins: effect<ClientPluginManifest[]>()({
+        op: 'GetWebappPlugins',
+        method: 'GET',
+        path: '/api/v4/plugins/webapp',
     }),
     InviteGuestsToTeam: effect<StatusOK>()({
         op: 'InviteGuestsToTeam',
@@ -321,11 +527,37 @@ export const Api = {
         method: 'PUT',
         path: '/api/v4/content_flagging/post/{post_id}/keep',
     }),
+    LinkGroupSyncable: effect<GroupSyncable>()({
+        op: 'LinkGroupSyncable',
+        method: 'POST',
+        path: '/api/v4/groups/{groupID}/{syncableType}s/{syncableID}/link',
+    }), // not in the OpenAPI spec
+    ListAllCPAFields: effect<UserPropertyField[]>()({
+        op: 'ListAllCPAFields',
+        method: 'GET',
+        path: '/api/v4/custom_profile_attributes/fields',
+    }),
+    Login: effect<UserProfile>()({op: 'Login', method: 'POST', path: '/api/v4/users/login'}),
+    LoginWithDesktopToken: effect<UserProfile>()({
+        op: 'LoginWithDesktopToken',
+        method: 'POST',
+        path: '/api/v4/users/login/desktop_token',
+    }),
     Logout: effect<unknown>()({op: 'Logout', method: 'POST', path: '/api/v4/users/logout'}),
     MarkChannelsReadForUserMe: effect<ChannelViewResponse>()({
         op: 'MarkChannelsReadForUserMe',
         method: 'POST',
         path: '/api/v4/channels/members/me/mark_read',
+    }),
+    PatchCPAField: effect<UserPropertyField>()({
+        op: 'PatchCPAField',
+        method: 'PATCH',
+        path: '/api/v4/custom_profile_attributes/fields/{field_id}',
+    }),
+    PatchCPAValuesForUser: effect<unknown>()({
+        op: 'PatchCPAValuesForUser',
+        method: 'PATCH',
+        path: '/api/v4/users/{user_id}/custom_profile_attributes',
     }),
     PatchChannel: effect<ServerChannel>()({
         op: 'PatchChannel',
@@ -337,15 +569,56 @@ export const Api = {
         method: 'PATCH',
         path: '/api/v4/channels/{channelId}/join_requests/{requestId}',
     }), // not in the OpenAPI spec
+    PatchChannelModerations: effect<ChannelModeration[]>()({
+        op: 'PatchChannelModerations',
+        method: 'PUT',
+        path: '/api/v4/channels/{channel_id}/moderations/patch',
+    }),
     PatchConfig: effect<AdminConfig>()({op: 'PatchConfig', method: 'PUT', path: '/api/v4/config/patch'}),
+    PatchDataRetentionPolicy: effect<DataRetentionCustomPolicies>()({
+        op: 'PatchDataRetentionPolicy',
+        method: 'PATCH',
+        path: '/api/v4/data_retention/policies/{policy_id}',
+    }),
+    PatchGroup: effect<Group>()({op: 'PatchGroup', method: 'PUT', path: '/api/v4/groups/{group_id}/patch'}),
+    PatchGroupSyncable: effect<GroupSyncable>()({
+        op: 'PatchGroupSyncable',
+        method: 'PUT',
+        path: '/api/v4/groups/{groupID}/{syncableType}s/{syncableID}/patch',
+    }), // not in the OpenAPI spec
     PatchPost: effect<Post>()({op: 'PatchPost', method: 'PUT', path: '/api/v4/posts/{post_id}/patch'}),
+    PatchRole: effect<Role>()({op: 'PatchRole', method: 'PUT', path: '/api/v4/roles/{role_id}/patch'}),
+    PatchScheme: effect<Scheme>()({op: 'PatchScheme', method: 'PUT', path: '/api/v4/schemes/{scheme_id}/patch'}),
     PatchTeam: effect<Team>()({op: 'PatchTeam', method: 'PUT', path: '/api/v4/teams/{team_id}/patch'}),
+    PatchUser: effect<UserProfile>()({op: 'PatchUser', method: 'PUT', path: '/api/v4/users/{user_id}/patch'}),
+    PatchUserMe: effect<UserProfile>()({op: 'PatchUserMe', method: 'PUT', path: '/api/v4/users/me/patch'}),
     PauseScheduledRecap: effect<ScheduledRecap>()({
         op: 'PauseScheduledRecap',
         method: 'POST',
         path: '/api/v4/scheduled_recaps/{scheduled_recap_id}/pause',
     }),
     PinPost: effect<StatusOK>()({op: 'PinPost', method: 'POST', path: '/api/v4/posts/{post_id}/pin'}),
+    PostLog: effect<unknown>()({op: 'PostLog', method: 'POST', path: '/api/v4/logs'}),
+    PostUserRecentCustomStatusDeleteMe: effect<unknown>()({
+        op: 'PostUserRecentCustomStatusDeleteMe',
+        method: 'POST',
+        path: '/api/v4/users/me/status/custom/recent/delete',
+    }),
+    RegenCommandToken: effect<unknown>()({
+        op: 'RegenCommandToken',
+        method: 'PUT',
+        path: '/api/v4/commands/{command_id}/regen_token',
+    }),
+    RegenOutgoingHookToken: effect<OutgoingWebhook>()({
+        op: 'RegenOutgoingHookToken',
+        method: 'POST',
+        path: '/api/v4/hooks/outgoing/{hook_id}/regen_token',
+    }),
+    RegenerateOAuthAppSecret: effect<OAuthApp>()({
+        op: 'RegenerateOAuthAppSecret',
+        method: 'POST',
+        path: '/api/v4/oauth/apps/{app_id}/regen_secret',
+    }),
     RegenerateTeamInviteId: effect<Team>()({
         op: 'RegenerateTeamInviteId',
         method: 'POST',
@@ -356,26 +629,57 @@ export const Api = {
         method: 'PUT',
         path: '/api/v4/content_flagging/post/{post_id}/remove',
     }),
+    RemoveChannelsFromRetentionPolicy: effect<DataRetentionCustomPolicies>()({
+        op: 'RemoveChannelsFromRetentionPolicy',
+        method: 'DELETE',
+        path: '/api/v4/data_retention/policies/{policy_id}/channels',
+    }),
     RemoveTeamIcon: effect<StatusOK>()({op: 'RemoveTeamIcon', method: 'DELETE', path: '/api/v4/teams/{team_id}/image'}),
     RemoveTeamMember: effect<StatusOK>()({
         op: 'RemoveTeamMember',
         method: 'DELETE',
         path: '/api/v4/teams/{team_id}/members/{user_id}',
     }),
+    RemoveTeamsFromRetentionPolicy: effect<DataRetentionCustomPolicies>()({
+        op: 'RemoveTeamsFromRetentionPolicy',
+        method: 'DELETE',
+        path: '/api/v4/data_retention/policies/{policy_id}/teams',
+    }),
     RemoveUserFromChannel: effect<StatusOK>()({
         op: 'RemoveUserFromChannel',
         method: 'DELETE',
         path: '/api/v4/channels/{channel_id}/members/{user_id}',
+    }),
+    RestoreChannel: effect<ServerChannel>()({
+        op: 'RestoreChannel',
+        method: 'POST',
+        path: '/api/v4/channels/{channel_id}/restore',
     }),
     RestorePostVersion: effect<Post>()({
         op: 'RestorePostVersion',
         method: 'POST',
         path: '/api/v4/posts/{post_id}/restore/{restore_version_id}',
     }),
+    RestoreTeam: effect<Team>()({op: 'RestoreTeam', method: 'POST', path: '/api/v4/teams/{team_id}/restore'}),
     ResumeScheduledRecap: effect<ScheduledRecap>()({
         op: 'ResumeScheduledRecap',
         method: 'POST',
         path: '/api/v4/scheduled_recaps/{scheduled_recap_id}/resume',
+    }),
+    RevokeAllSessions: effect<StatusOK>()({
+        op: 'RevokeAllSessions',
+        method: 'POST',
+        path: '/api/v4/users/{user_id}/sessions/revoke/all',
+    }),
+    RevokeUserAccessToken: effect<StatusOK>()({
+        op: 'RevokeUserAccessToken',
+        method: 'POST',
+        path: '/api/v4/users/tokens/revoke',
+    }),
+    RotateUserAccessToken: effect<UserAccessToken>()({
+        op: 'RotateUserAccessToken',
+        method: 'POST',
+        path: '/api/v4/users/tokens/rotate',
     }),
     SaveReaction: effect<Reaction>()({op: 'SaveReaction', method: 'POST', path: '/api/v4/reactions'}),
     SearchAccessControlPolicies: effect<AccessControlPoliciesResult>()({
@@ -395,6 +699,11 @@ export const Api = {
         path: '/api/v4/posts/search',
     }),
     SearchTeams: effect<Team[] | TeamsWithCount>()({op: 'SearchTeams', method: 'POST', path: '/api/v4/teams/search'}),
+    SendVerificationEmail: effect<StatusOK>()({
+        op: 'SendVerificationEmail',
+        method: 'POST',
+        path: '/api/v4/users/email/verify/send',
+    }),
     SetDefaultProfileImage: effect<StatusOK>()({
         op: 'SetDefaultProfileImage',
         method: 'DELETE',
@@ -422,6 +731,7 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/access_control_policies/cel/simulate_users',
     }),
+    SoftDeleteTeam: effect<StatusOK>()({op: 'SoftDeleteTeam', method: 'DELETE', path: '/api/v4/teams/{team_id}'}),
     StartFollowingThread: effect<StatusOK>()({
         op: 'StartFollowingThread',
         method: 'PUT',
@@ -431,6 +741,11 @@ export const Api = {
         op: 'StopFollowingThread',
         method: 'DELETE',
         path: '/api/v4/users/{user_id}/teams/{team_id}/threads/{thread_id}/following',
+    }),
+    SwitchAccountType: effect<AuthChangeResponse>()({
+        op: 'SwitchAccountType',
+        method: 'POST',
+        path: '/api/v4/users/login/switch',
     }),
     TeamMembersMinusGroupMembers: effect<UsersWithGroupsAndCount>()({
         op: 'TeamMembersMinusGroupMembers',
@@ -442,12 +757,34 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/access_control_policies/cel/test',
     }),
+    TestNotification: effect<StatusOK>()({op: 'TestNotification', method: 'POST', path: '/api/v4/notifications/test'}),
+    UnassignAccessControlPolicyFromChannels: effect<StatusOK>()({
+        op: 'UnassignAccessControlPolicyFromChannels',
+        method: 'DELETE',
+        path: '/api/v4/access_control_policies/{policy_id}/unassign',
+    }),
     UninviteRemoteClusterToChannel: effect<StatusOK>()({
         op: 'UninviteRemoteClusterToChannel',
         method: 'POST',
         path: '/api/v4/remotecluster/{remote_id}/channels/{channel_id}/uninvite',
     }),
+    UnlinkGroupSyncable: effect<StatusOK>()({
+        op: 'UnlinkGroupSyncable',
+        method: 'DELETE',
+        path: '/api/v4/groups/{groupID}/{syncableType}s/{syncableID}/link',
+    }), // not in the OpenAPI spec
     UnpinPost: effect<StatusOK>()({op: 'UnpinPost', method: 'POST', path: '/api/v4/posts/{post_id}/unpin'}),
+    UnsetUserCustomStatusMe: effect<unknown>()({
+        op: 'UnsetUserCustomStatusMe',
+        method: 'DELETE',
+        path: '/api/v4/users/me/status/custom',
+    }),
+    UpdateAccessControlPoliciesActive: effect<AccessControlPolicy[]>()({
+        op: 'UpdateAccessControlPoliciesActive',
+        method: 'PUT',
+        path: '/api/v4/access_control_policies/activate',
+    }),
+    UpdateCFConfig: effect<unknown>()({op: 'UpdateCFConfig', method: 'PUT', path: '/api/v4/content_flagging/config'}),
     UpdateChannelMemberAutotranslationMe: effect<StatusOK>()({
         op: 'UpdateChannelMemberAutotranslationMe',
         method: 'PUT',
@@ -468,10 +805,32 @@ export const Api = {
         method: 'PUT',
         path: '/api/v4/channels/{channel_id}/privacy',
     }),
+    UpdateCommand: effect<Command>()({op: 'UpdateCommand', method: 'PUT', path: '/api/v4/commands/{command_id}'}),
+    UpdateDeliveryTrackingConfig: effect<StatusOK>()({
+        op: 'UpdateDeliveryTrackingConfig',
+        method: 'PUT',
+        path: '/api/v4/delivery_tracking/config',
+    }),
+    UpdateOAuthApp: effect<OAuthApp>()({op: 'UpdateOAuthApp', method: 'PUT', path: '/api/v4/oauth/apps/{app_id}'}),
+    UpdateOutgoingOAuthConnection: effect<OutgoingOAuthConnection>()({
+        op: 'UpdateOutgoingOAuthConnection',
+        method: 'PUT',
+        path: '/api/v4/oauth/outgoing_connections/{outgoing_oauth_connection_id}',
+    }),
+    UpdateOutgoingWebhook: effect<OutgoingWebhook>()({
+        op: 'UpdateOutgoingWebhook',
+        method: 'PUT',
+        path: '/api/v4/hooks/outgoing/{hook_id}',
+    }),
     UpdatePreferences: effect<StatusOK>()({
         op: 'UpdatePreferences',
         method: 'PUT',
         path: '/api/v4/users/{user_id}/preferences',
+    }),
+    UpdatePropertyField: effect<PropertyField>()({
+        op: 'UpdatePropertyField',
+        method: 'PATCH',
+        path: '/api/v4/properties/groups/{group_name}/{object_type}/fields/{field_id}',
     }),
     UpdatePropertyValues: effect<unknown>()({
         op: 'UpdatePropertyValues',
@@ -493,11 +852,21 @@ export const Api = {
         method: 'PUT',
         path: '/api/v4/users/{user_id}/teams/{team_id}/channels/categories/{category_id}',
     }),
+    UpdateSystemPropertyValues: effect<unknown>()({
+        op: 'UpdateSystemPropertyValues',
+        method: 'PATCH',
+        path: '/api/v4/properties/groups/{group_name}/system/values',
+    }),
     UpdateTeam: effect<Team>()({op: 'UpdateTeam', method: 'PUT', path: '/api/v4/teams/{team_id}'}),
     UpdateTeamMemberSchemeRoles: effect<StatusOK>()({
         op: 'UpdateTeamMemberSchemeRoles',
         method: 'PUT',
         path: '/api/v4/teams/{team_id}/members/{user_id}/schemeRoles',
+    }),
+    UpdateTeamScheme: effect<StatusOK>()({
+        op: 'UpdateTeamScheme',
+        method: 'PUT',
+        path: '/api/v4/teams/{team_id}/scheme',
     }),
     UpdateThreadReadForUser: effect<UserThread>()({
         op: 'UpdateThreadReadForUser',
@@ -508,6 +877,27 @@ export const Api = {
         op: 'UpdateThreadsReadForUser',
         method: 'PUT',
         path: '/api/v4/users/{user_id}/teams/{team_id}/threads/read',
+    }),
+    UpdateUserActive: effect<StatusOK>()({
+        op: 'UpdateUserActive',
+        method: 'PUT',
+        path: '/api/v4/users/{user_id}/active',
+    }),
+    UpdateUserCustomStatusMe: effect<unknown>()({
+        op: 'UpdateUserCustomStatusMe',
+        method: 'PUT',
+        path: '/api/v4/users/me/status/custom',
+    }),
+    UpdateUserPassword: effect<StatusOK>()({
+        op: 'UpdateUserPassword',
+        method: 'PUT',
+        path: '/api/v4/users/{user_id}/password',
+    }),
+    UpdateUserRoles: effect<StatusOK>()({op: 'UpdateUserRoles', method: 'PUT', path: '/api/v4/users/{user_id}/roles'}),
+    UpdateUserStatus: effect<UserStatus>()({
+        op: 'UpdateUserStatus',
+        method: 'PUT',
+        path: '/api/v4/users/{user_id}/status',
     }),
     UploadFile: effect<FileUploadResponse>()({op: 'UploadFile', method: 'POST', path: '/api/v4/files'}),
     UpsertDraft: effect<Draft>()({op: 'UpsertDraft', method: 'POST', path: '/api/v4/drafts'}),

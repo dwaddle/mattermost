@@ -148,6 +148,7 @@ export default class MemberListChannel extends React.PureComponent<Props, State>
                 actions={channelIsArchived ? [] : [ChannelMembersDropdown]}
                 actionUserProps={this.props.actionUserProps}
                 focusOnMount={!UserAgent.isMobile()}
+                testIdScope='channel_members_modal.members'
             />
         );
     }

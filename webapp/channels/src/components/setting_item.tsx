@@ -8,6 +8,7 @@ import type SettingItemMinComponent from 'components/setting_item_min';
 import SettingItemMin from 'components/setting_item_min';
 
 import useDidUpdate from './common/hooks/useDidUpdate';
+import SettingSectionContext from './setting_section_context';
 
 type Props = {
 
@@ -65,7 +66,13 @@ const SettingItem = ({
     }, [active]);
 
     if (active) {
-        return <>{max}</>;
+        // the expanded row is the same section item as the collapsed one (`settings.section:<section>`);
+        // only its testid takes the section: SettingItemMax's own `section` changes what Cancel does
+        return (
+            <SettingSectionContext.Provider value={section}>
+                {max}
+            </SettingSectionContext.Provider>
+        );
     }
 
     return (

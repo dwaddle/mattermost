@@ -13,6 +13,7 @@ import {
     InformationOutlineIcon,
 } from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import './alert_banner.scss';
 
@@ -33,10 +34,14 @@ export type AlertBannerProps = {
     closeBtnTooltip?: string;
     onDismiss?: () => void;
     variant?: 'sys' | 'app';
+
+    /** The banner's testid; without it the banner's id. */
+    testId?: TestIdScope;
 };
 
 const AlertBanner = ({
     id,
+    testId,
     mode,
     title,
     customIcon,
@@ -70,18 +75,19 @@ const AlertBanner = ({
         return (
             <button
                 className='AlertBanner__closeButton'
+                data-testid={testId ? `${testId}.close--button` : undefined}
                 aria-label={formatMessage({id: 'alert_banner.tooltipCloseBtn', defaultMessage: 'Close'})}
                 onClick={onDismiss}
             >
                 <CloseIcon size={18}/>
             </button>
         );
-    }, [onDismiss]);
+    }, [onDismiss, testId]);
 
     return (
         <div
             id={id}
-            data-testid={id}
+            data-testid={testId ?? id}
             className={classNames(
                 'AlertBanner',
                 mode,

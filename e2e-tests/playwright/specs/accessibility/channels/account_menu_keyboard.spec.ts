@@ -2,10 +2,8 @@
 // See LICENSE.txt for license information.
 
 import type {Page} from '@playwright/test';
-import type {UserProfile} from '@mattermost/types/users';
 
-import type {ChannelsPage} from '@mattermost/playwright-lib';
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App} from '@mattermost/playwright-lib';
 
 test('MM-63451 should be able to navigate the account settings menu with the keyboard after opening it with the mouse', async ({
     pw,
@@ -14,16 +12,16 @@ test('MM-63451 should be able to navigate the account settings menu with the key
     const {user} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
     // # Click on the account menu button
-    await channelsPage.globalHeader.accountMenuButton.click();
+    await app.globalHeader.openAccountMenuButton.locator.click();
 
-    await testMenuWithKeyboard(user, page, channelsPage);
+    await testMenuWithKeyboard(app, page);
 });
 
 test('MM-63451 should be able to navigate the account settings menu with the keyboard after opening it with the keyboard', async ({
@@ -33,78 +31,81 @@ test('MM-63451 should be able to navigate the account settings menu with the key
     const {user} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
     // # Focus the account menu button
-    await channelsPage.globalHeader.accountMenuButton.focus();
-    await expect(channelsPage.globalHeader.accountMenuButton).toBeFocused();
+    await app.globalHeader.openAccountMenuButton.locator.focus();
+    await expect(app.globalHeader.openAccountMenuButton.locator).toBeFocused();
     await page.keyboard.press('Space');
 
-    await testMenuWithKeyboard(user, page, channelsPage);
+    await testMenuWithKeyboard(app, page);
 });
 
-async function testMenuWithKeyboard(user: UserProfile, page: Page, channelsPage: ChannelsPage) {
+async function testMenuWithKeyboard(app: App, page: Page) {
+    const menu = app.globalHeader.accountMenu;
+    const dnd = menu.dndMenu;
+
     // * Should start focused on the first menu item
-    await expect(page.getByRole('menuitem', {name: '@' + user.username})).toBeFocused();
+    await expect(menu.nameMenuItem.locator).toBeFocused();
 
     // * Should be able to scroll down through the menu with the keyboard
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Set custom status'})).toBeFocused();
+    await expect(menu.setCustomStatusMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Online'})).toBeFocused();
+    await expect(menu.onlineMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Away'})).toBeFocused();
+    await expect(menu.awayMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Do not disturb Disables all notifications'})).toBeFocused();
+    await expect(menu.dndMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Offline'})).toBeFocused();
+    await expect(menu.offlineMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Profile'})).toBeFocused();
+    await expect(menu.profileMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Log Out'})).toBeFocused();
+    await expect(menu.logOutMenuItem.locator).toBeFocused();
 
     // * Should be able to scroll back up through the menu with the keyboard
     await page.keyboard.press('ArrowUp');
-    await expect(page.getByRole('menuitem', {name: 'Profile'})).toBeFocused();
+    await expect(menu.profileMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowUp');
-    await expect(page.getByRole('menuitem', {name: 'Offline'})).toBeFocused();
+    await expect(menu.offlineMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowUp');
-    await expect(page.getByRole('menuitem', {name: 'Do not disturb Disables all notifications'})).toBeFocused();
+    await expect(menu.dndMenuItem.locator).toBeFocused();
 
     // * Should be able to move into the submenu by pressing the right arrow
     await page.keyboard.press('ArrowRight');
-    await expect(page.getByRole('menuitem', {name: "Don't clear"})).toBeFocused();
+    await expect(dnd.doNotClearMenuItem.locator).toBeFocused();
 
     // * Should be able to scroll through the submenu with the keyboard
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: '30 mins'})).toBeFocused();
+    await expect(dnd.thirtyMinutesMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: '1 hour'})).toBeFocused();
+    await expect(dnd.oneHourMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: '2 hours'})).toBeFocused();
+    await expect(dnd.twoHoursMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Tomorrow'})).toBeFocused();
+    await expect(dnd.tomorrowMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: 'Choose date and time'})).toBeFocused();
+    await expect(dnd.customMenuItem.locator).toBeFocused();
 
     // * Should wrap around when you reach the end
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', {name: "Don't clear"})).toBeFocused();
+    await expect(dnd.doNotClearMenuItem.locator).toBeFocused();
     await page.keyboard.press('ArrowUp');
-    await expect(page.getByRole('menuitem', {name: 'Choose date and time'})).toBeFocused();
+    await expect(dnd.customMenuItem.locator).toBeFocused();
 
     // * Should be able to close the submenu by pressing the left arrow
     await page.keyboard.press('ArrowLeft');
-    await expect(page.getByRole('menuitem', {name: 'Do not disturb Disables all notifications'})).toBeFocused();
+    await expect(menu.dndMenuItem.locator).toBeFocused();
 
     // * Should be able to close the menu by pressing escape
     await page.keyboard.press('Escape');
     await expect(page.getByRole('menuitem')).toHaveCount(0);
 
     // * Should be focused back on the menu button
-    await expect(channelsPage.globalHeader.accountMenuButton).toBeFocused();
+    await expect(app.globalHeader.openAccountMenuButton.locator).toBeFocused();
 }

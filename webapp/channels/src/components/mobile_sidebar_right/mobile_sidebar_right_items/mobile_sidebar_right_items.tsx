@@ -5,6 +5,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
 import {isDesktopApp} from '@mattermost/shared/utils/user_agent';
 
 import {Permissions} from 'mattermost-redux/constants';
@@ -79,6 +80,7 @@ export class MobileSidebarRightItems extends React.PureComponent<Props> {
             <Menu.ItemAction
                 id={item.id + '_pluginmenuitem'}
                 key={item.id + '_pluginmenuitem'}
+                testId={`mobile_menu.plugin:${pluginTestKey(item.pluginId)}`}
                 onClick={() => {
                     if (item.action) {
                         item.action();
@@ -141,6 +143,7 @@ export class MobileSidebarRightItems extends React.PureComponent<Props> {
                     {this.props.isCustomStatusEnabled && !isCustomStatusSet && (
                         <Menu.ItemAction
                             id='setCustomStatus'
+                            testId='mobile_menu.set_custom_status'
                             onClick={this.openCustomStatusModal}
                             icon={
                                 <i
@@ -162,6 +165,7 @@ export class MobileSidebarRightItems extends React.PureComponent<Props> {
                 <Menu.Group>
                     <Menu.ItemAction
                         id='recentMentions'
+                        testId='mobile_menu.recent_mentions'
                         onClick={this.onRecentMentionItemClick}
                         icon={
                             <i
@@ -173,6 +177,7 @@ export class MobileSidebarRightItems extends React.PureComponent<Props> {
                     />
                     <Menu.ItemAction
                         id='flaggedPosts'
+                        testId='mobile_menu.saved_messages'
                         onClick={this.onShowFlaggedPostItemClick}
                         icon={
                             <i
@@ -431,6 +436,7 @@ export class MobileSidebarRightItems extends React.PureComponent<Props> {
                 <Menu.Group>
                     <Menu.ItemAction
                         id='logout'
+                        testId='mobile_menu.log_out'
                         onClick={this.onLogoutItemClick}
                         text={formatMessage({id: 'navbar_dropdown.logout', defaultMessage: 'Log Out'})}
                         icon={

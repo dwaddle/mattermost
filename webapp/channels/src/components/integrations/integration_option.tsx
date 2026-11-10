@@ -4,18 +4,24 @@
 import React, {type JSX, type ReactNode} from 'react';
 import {Link} from 'react-router-dom';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 type Props = {
     image: ReactNode;
     title: JSX.Element;
     description: JSX.Element;
     link: string;
+
+    /** Renders `<testId>--link`. */
+    testId: TestId;
 };
 
-const IntegrationOption = ({image, title, description, link}: Props) => {
+const IntegrationOption = ({image, title, description, link, testId}: Props) => {
     return (
         <Link
             to={link}
             className='integration-option'
+            data-testid={`${testId}--link`}
         >
             <div className='integration-option__image'>
                 {image}

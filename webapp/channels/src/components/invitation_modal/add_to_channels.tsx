@@ -130,7 +130,7 @@ export default function AddToChannels(props: Props) {
         />
         <div
             className='AddToChannels__customMessage'
-            data-testid='customMessage'
+            data-testid='invitation_modal.invite.custom_message'
         >
             {!props.customMessage.open && (
                 <div className={'AddToChannels__customMessageTitle ' + props.titleClass}>

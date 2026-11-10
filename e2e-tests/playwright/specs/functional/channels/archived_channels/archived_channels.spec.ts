@@ -5,58 +5,79 @@ import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the member list of an archived channel is viewable but read-only (no member management).
+ *
+ * Written on the generated page objects: the channel header menu, the archive modal and the members panel's rows by user.
  */
 test('MM-T1671 shows a read-only member list for an archived channel', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, adminUser, team, user} = await pw.initSetup();
     const channel = await adminClient.createPublicChannel(team.id, `Archive ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
 
-    const {channelsPage, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: channel.name});
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+
+    // * Verify the member list offers member management while the channel is active (the controls checked below)
+    await (await app.channelHeader.clickOpenMenuButton()).clickMembersMenuItem();
+    await expect(app.rhs.channelMembers.manageButton.locator).toBeVisible();
+    await expect(app.rhs.channelMembers.addButton.locator).toBeVisible();
 
     // # Archive the channel
-    await channelsPage.archiveChannel();
+    const archiveModal = await (await app.channelHeader.clickOpenMenuButton()).clickArchiveChannelMenuItem();
+    await archiveModal.clickConfirmButton();
+    await expect(app.center.archivedNotice.locator).toBeVisible();
 
     // # Open the channel members list
-    const channelMenu = await channelsPage.openChannelMenu();
-    await channelMenu.members.click();
-    await channelsPage.sidebarRight.toBeVisible();
+    await (await app.channelHeader.clickOpenMenuButton()).clickMembersMenuItem();
 
     // * Verify the member list is shown with the channel members
-    await expect(channelsPage.sidebarRight.container.getByText(adminUser.username).first()).toBeVisible();
+    const members = app.rhs.channelMembers;
+    await expect(members.member(adminUser).locator).toBeVisible();
+    await expect(members.member(user).locator).toBeVisible();
 
     // * Verify member management controls are not available for the archived channel
-    await expect(channelsPage.sidebarRight.manageMembersButton).not.toBeVisible();
-    await expect(channelsPage.sidebarRight.addMembersButton).not.toBeVisible();
+    await expect(members.manageButton.locator).not.toBeVisible();
+    await expect(members.addButton.locator).not.toBeVisible();
 });
 
 /**
  * @objective Verify a post from an archived channel can be found in search and its Jump link opens the
  * archived channel in read-only mode.
+ *
+ * Written on the generated page objects: the search box, the result by post id and its Jump link, and the archived notice.
  */
 test('MM-T1679 opens an archived channel by jumping from search results', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
     const channel = await adminClient.createPublicChannel(team.id, `Archived ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
     const message = `archived post ${pw.random.id()}`;
-    await pw.postAs(user, {channel_id: channel.id, message});
+    const post = await pw.postAs(user, {channel_id: channel.id, message});
+    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
 
-    const {channelsPage, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: channel.name});
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
     // # Archive the channel, then move to another channel
-    await channelsPage.archiveChannel();
-    await channelsPage.sidebarLeft.goToItem(DefaultChannel.TownSquare);
-    await channelsPage.centerView.header.toHaveTitle('Town Square');
+    const archiveModal = await (await app.channelHeader.clickOpenMenuButton()).clickArchiveChannelMenuItem();
+    await archiveModal.clickConfirmButton();
+    await expect(app.center.archivedNotice.locator).toBeVisible();
+    await app.lhs.channelList.channel(townSquare).clickLink();
+    await expect(app.channelHeader.openMenuButton.locator).toContainText(townSquare.display_name);
+    await expect(app.center.archivedNotice.locator).not.toBeVisible();
 
     // # Search for the message posted in the archived channel
-    await channelsPage.searchFor(message);
+    await app.globalHeader.search.clickOpenButton();
+    await app.searchBox.inputSearchbox.locator.fill(message);
+    await app.searchBox.inputSearchbox.locator.press('Enter');
 
     // # Jump to the post from the search results
-    await expect(channelsPage.searchResultsPanel.getResultByText(message)).toBeVisible();
-    await channelsPage.searchResultsPanel.jumpToResultWithText(message);
+    const result = app.search.results.post(post);
+    await expect(result.messageText.locator).toHaveText(message);
+    await result.locator.hover();
+    await result.menu.clickJumpLink();
 
     // * Verify the archived channel is opened in read-only mode
-    await channelsPage.centerView.header.toHaveTitle(channel.display_name);
-    await expect(channelsPage.archivedChannelMessage).toBeVisible();
+    await expect(app.channelHeader.openMenuButton.locator).toContainText(channel.display_name);
+    await expect(app.channelHeader.archivedIconText.locator).toBeVisible();
+    await expect(app.center.archivedNotice.locator).toBeVisible();
+    await expect(app.center.postCreate.messageTextbox.locator).not.toBeVisible();
 });

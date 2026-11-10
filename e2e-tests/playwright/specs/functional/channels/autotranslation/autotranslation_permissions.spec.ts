@@ -209,7 +209,7 @@ test.describe('autotranslation configuration tests', () => {
             await channelSettingsModal.toBeVisible();
 
             const newHeader = `DM header ${pw.random.id()}`;
-            await channelsPage.page.getByTestId('channel_settings_header_textbox').fill(newHeader);
+            await channelsPage.page.getByTestId('channel_settings_modal.info.header--textbox').fill(newHeader);
             await channelsPage.page.getByRole('button', {name: 'Save'}).click();
             await channelSettingsModal.close();
 
@@ -255,7 +255,9 @@ test.describe('autotranslation configuration tests', () => {
             if (configTabVisible) {
                 const configurationTab = await channelSettingsModal.openConfigurationTab();
                 await expect(
-                    configurationTab.container.getByTestId('channelTranslationToggle-button'),
+                    configurationTab.container.getByTestId(
+                        'channel_settings_modal.configuration.autotranslation--switch',
+                    ),
                 ).not.toBeVisible();
             }
 

@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import type {ButtonEmphasis, ButtonSize as CompassButtonSize} from '@mattermost/compass-ui/components/button';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type SharedSize = 'xs' | 'sm' | 'md' | 'lg';
 type SharedVariant = '' | 'destructive' | 'inverted';
@@ -28,6 +29,9 @@ type Props = {
     savingMessage?: React.ReactNode;
     defaultMessage?: React.ReactNode;
     extraClasses?: string;
+
+    /** Renders `<testId>--button`; hosts that don't pass one yet (other areas) keep the legacy `saveSetting`. */
+    testId?: TestId;
 };
 
 function mapSize(size?: SharedSize | CompassButtonSize): CompassButtonSize | undefined {
@@ -58,12 +62,13 @@ const SaveButton: React.FC<Props> = ({
     size,
     variant,
     extraClasses = '',
+    testId,
     ...props
 }) => {
     return (
         <Button
             type='submit'
-            data-testid='saveSetting'
+            data-testid={testId ? `${testId}--button` : 'saveSetting'}
             id='saveSetting'
             emphasis={emphasis}
             size={mapSize(size)}

@@ -27,6 +27,8 @@ export default function ColorChooser(props: Props) {
             </label>
             <ColorInput
                 id={props.id}
+                testIdScope='settings.section.color'
+                testIdKey={props.id}
                 value={props.value}
                 onChange={handleChange}
             />

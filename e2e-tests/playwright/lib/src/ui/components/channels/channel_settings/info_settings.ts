@@ -24,15 +24,16 @@ export default class InfoSettings {
         this.nameInput = container.locator('#input_channel-settings-name');
         this.purposeInput = container.getByPlaceholder('Enter a purpose for this channel (optional)');
         this.headerInput = container.getByPlaceholder('Enter a header for this channel');
-        this.urlLabel = container.getByTestId('urlInputLabel');
+        this.urlLabel = container.getByTestId('channel_settings_modal.info.url.label--text');
         this.urlEditButton = container.getByRole('button', {name: 'Edit'});
-        this.urlInput = container.getByTestId('channelURLInput');
+        this.urlInput = container.getByTestId('channel_settings_modal.info.url.value--textbox');
         this.saveChangesPanel = container.locator('.SaveChangesPanel');
-        this.saveButton = container.getByTestId('SaveChangesPanel__save-btn');
-        this.resetButton = container.getByTestId('SaveChangesPanel__cancel-btn');
+        this.saveButton = container.getByTestId('channel_settings_modal.save_panel.save--button');
+        this.resetButton = container.getByTestId('channel_settings_modal.save_panel.cancel--button');
 
         // Same component as the Channel Info RHS, but staged here: edits only
         // reach the server on this tab's own Save (see saveChangesPanel).
+        // the attributes area's component, which keeps its own testids for now
         this.attributes = new ChannelInfoAttributes(container.getByTestId('channelInfoAttributes'));
     }
 

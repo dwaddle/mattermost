@@ -72,16 +72,17 @@ const ExpiryMenu: React.FC<Props> = (props: Props) => {
     };
 
     useEffect(() => {
-        const menuItemArray = Object.keys(expiryMenuItems).map((item, index) => (
+        const menuItemArray = (Object.keys(expiryMenuItems) as CustomStatusDuration[]).map((item, index) => (
             <Menu.ItemAction
                 key={item.toString()}
                 onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                     event.preventDefault();
-                    handleDurationChange(item as CustomStatusDuration);
+                    handleDurationChange(item);
                 }}
-                ariaLabel={expiryMenuItems[item as CustomStatusDuration]?.text.toLowerCase()}
-                text={expiryMenuItems[item as CustomStatusDuration]?.text}
+                ariaLabel={expiryMenuItems[item]?.text.toLowerCase()}
+                text={expiryMenuItems[item]?.text}
                 id={`expiry_menu_item_${index}`}
+                testId={`custom_status_modal.expiry.menu.duration:${item || 'dont_clear'}`}
             />
         ));
 
@@ -94,7 +95,10 @@ const ExpiryMenu: React.FC<Props> = (props: Props) => {
                 <MenuWrapper
                     className={'statusExpiry__menu'}
                 >
-                    <button className='style--none expiry-wrapper expiry-selector'>
+                    <button
+                        className='style--none expiry-wrapper expiry-selector'
+                        data-testid='custom_status_modal.expiry.open--button'
+                    >
                         <FormattedMessage
                             id='custom_status.expiry_dropdown.clear_after'
                             defaultMessage='Clear after'
@@ -120,6 +124,7 @@ const ExpiryMenu: React.FC<Props> = (props: Props) => {
                     <Menu
                         ariaLabel={formatMessage({id: 'custom_status.expiry_dropdown.clear_after', defaultMessage: 'Clear after'})}
                         id='statusExpiryMenu'
+                        testId='custom_status_modal.expiry.menu'
                     >
                         <Menu.Group>
                             {menuItems}

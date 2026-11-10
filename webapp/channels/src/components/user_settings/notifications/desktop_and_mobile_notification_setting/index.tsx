@@ -123,6 +123,7 @@ function DesktopAndMobileNotificationSettings({
                     {optionsOfSendNotifications.map((optionOfSendNotifications) => (
                         <Radio
                             key={optionOfSendNotifications.value}
+                            data-testid={`settings.section.option:${optionOfSendNotifications.value}--radio`}
                             name='desktopActivity'
                             checked={desktopActivity === optionOfSendNotifications.value}
                             value={optionOfSendNotifications.value}
@@ -305,6 +306,7 @@ function DesktopAndMobileNotificationSettings({
     if (active) {
         return (
             <SettingItemMax
+                testIdSection={UserSettingsNotificationSections.DESKTOP_AND_MOBILE}
                 title={
                     <FormattedMessage
                         id={'user.settings.notifications.desktopAndMobile.title'}

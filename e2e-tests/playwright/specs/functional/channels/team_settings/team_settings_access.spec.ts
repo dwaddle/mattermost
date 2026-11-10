@@ -1,108 +1,104 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-/**
- * @objective E2E tests for Team Settings Modal - Access Tab
- * @reference MM-67920
- */
+import {expect, formatMessage, Msg, test, type App} from '@mattermost/playwright-lib';
 
-import {ChannelsPage, expect, test} from '@mattermost/playwright-lib';
+/** Opens Team Settings from the team menu, on its Access tab. */
+async function openAccessTab(app: App) {
+    const settings = await (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
+    const accessTab = settings.tabs.tab('access');
+    await accessTab.select();
+
+    // * Verify Access tab is active
+    await expect(accessTab.locator).toHaveAttribute('aria-selected', 'true');
+    return settings;
+}
 
 test.describe('Team Settings Modal - Access Tab', () => {
     /**
      * MM-67920 Access tab - add and remove allowed domain
      * @objective Verify allowed domains can be added and removed
+     *
+     * Written on the generated page objects: the team menu, the Team Settings tabs, the allowed-domains checkbox,
+     * input and remove button, and the save panel.
      */
     test('MM-67920 Access tab - add and remove allowed domain', async ({pw}) => {
         // # Set up admin user and login
         const {adminUser, adminClient, team} = await pw.initSetup();
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: townSquare});
 
-        // # Navigate to team
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
-
-        // # Open Team Settings Modal
-        const teamSettings = await channelsPage.openTeamSettings();
-
-        // # Switch to Access tab
-        const accessSettings = await teamSettings.openAccessTab();
-
-        // * Verify Access tab is active
-        await expect(teamSettings.accessTab).toHaveAttribute('aria-selected', 'true');
+        // # Open Team Settings on the Access tab
+        const settings = await openAccessTab(app);
+        const domains = settings.access.allowedDomains;
+        const saved = formatMessage(Msg.saveChangesPanel.saved);
 
         // # Enable allowed domains checkbox to show the input
-        await accessSettings.enableAllowedDomains();
+        await settings.access.allowedDomainsCheckbox.locator.check();
 
         // # Add an allowed domain
         const testDomain = 'testdomain.com';
-        await accessSettings.addDomain(testDomain);
+        await domains.inputCombobox.locator.fill(testDomain);
+        await domains.inputCombobox.locator.press('Enter');
 
         // * Verify domain appears in the UI
-        const domainChip = teamSettings.container.locator('#allowedDomains').getByText(testDomain);
-        await expect(domainChip).toBeVisible();
+        await expect(domains.locator).toContainText(testDomain);
 
         // # Save changes
-        await teamSettings.save();
+        await settings.savePanel.clickSaveButton();
 
         // * Wait for "Settings saved" message
-        await teamSettings.verifySavedMessage();
+        await expect(settings.savePanel.messageText.locator).toHaveText(saved);
 
         // * Verify domain was saved via API
         const updatedTeam = await adminClient.getTeam(team.id);
         expect(updatedTeam.allowed_domains).toContain(testDomain);
 
         // # Remove the added domain
-        await accessSettings.removeDomain(testDomain);
+        await domains.clickRemoveButton();
+        await expect(domains.locator).not.toContainText(testDomain);
 
         // # Save changes
-        await teamSettings.save();
-        await teamSettings.verifySavedMessage();
+        await settings.savePanel.clickSaveButton();
+        await expect(settings.savePanel.messageText.locator).toHaveText(saved);
 
         // * Verify domain was removed via API
         const finalTeam = await adminClient.getTeam(team.id);
         expect(finalTeam.allowed_domains).not.toContain(testDomain);
 
         // # Close modal
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 
     /**
      * MM-67920 Access tab - regenerate invite ID
      * @objective Verify team invite ID can be regenerated
+     *
+     * Written on the generated page objects: the team menu, the Team Settings tabs and the invite link's regenerate
+     * button.
      */
     test('MM-67920 Access tab - regenerate invite ID', async ({pw}) => {
         // # Set up admin user and login
         const {adminUser, adminClient, team} = await pw.initSetup();
-        const {page} = await pw.testBrowser.login(adminUser);
-        const channelsPage = new ChannelsPage(page);
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {app} = await pw.testBrowser.login(adminUser);
 
         // Get original invite ID
         const originalInviteId = team.invite_id;
 
-        // # Navigate to team
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
-
-        // # Open Team Settings Modal
-        const teamSettings = await channelsPage.openTeamSettings();
-
-        // # Switch to Access tab
-        const accessSettings = await teamSettings.openAccessTab();
-
-        // * Verify Access tab is active
-        await expect(teamSettings.accessTab).toHaveAttribute('aria-selected', 'true');
+        // # Navigate to team and open Team Settings on the Access tab
+        await app.channelsPage.goto({team, channel: townSquare});
+        const settings = await openAccessTab(app);
 
         // # Click regenerate button
-        await accessSettings.regenerateInviteId();
+        await settings.access.inviteLink.clickRegenerateButton();
 
         // * Verify invite ID changed via API
-        const updatedTeam = await adminClient.getTeam(team.id);
-        expect(updatedTeam.invite_id).not.toBe(originalInviteId);
-        expect(updatedTeam.invite_id).toBeTruthy();
+        await expect.poll(async () => (await adminClient.getTeam(team.id)).invite_id).not.toBe(originalInviteId);
+        expect((await adminClient.getTeam(team.id)).invite_id).toBeTruthy();
 
         // # Close modal
-        await teamSettings.close();
+        await settings.clickCloseButton();
     });
 });

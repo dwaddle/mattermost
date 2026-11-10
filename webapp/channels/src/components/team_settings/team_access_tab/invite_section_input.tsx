@@ -61,7 +61,7 @@ const InviteSectionInput = ({regenerateTeamInviteId}: Props) => {
     }
     const inviteSectionInput = (
         <div
-            data-testid='teamInviteContainer'
+            data-testid='team_settings_modal.access.invite_link'
             id='teamInviteContainer'
         >
             <Input
@@ -71,7 +71,7 @@ const InviteSectionInput = ({regenerateTeamInviteId}: Props) => {
                 maxLength={32}
             />
             <Button
-                data-testid='regenerateButton'
+                data-testid='team_settings_modal.access.invite_link.regenerate--button'
                 id='regenerateButton'
                 emphasis='tertiary'
                 onClick={handleRegenerateInviteId}

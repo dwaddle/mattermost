@@ -185,6 +185,7 @@ function TestResultsModal({
                     nextPage={handleNextPage}
                     search={handleSearch}
                     actionUserProps={{}}
+                    testIdScope='policy_test_modal.users'
                 />
             )}
         </GenericModal>

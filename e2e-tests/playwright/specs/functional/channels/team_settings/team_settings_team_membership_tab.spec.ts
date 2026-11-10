@@ -26,7 +26,7 @@ import {
 
 async function openTeamMembershipTab(page: Page, channelsPage: ChannelsPage) {
     const teamSettings = await channelsPage.openTeamSettings();
-    await teamSettings.container.getByTestId('team_membership-tab-button').click();
+    await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
     const tab = teamSettings.container.locator('.TeamMembershipTab');
     await expect(tab).toBeVisible({timeout: 10000});
     return {teamSettings, tab};
@@ -65,10 +65,12 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const teamSettings = await channelsPage.openTeamSettings();
 
         // * Team Membership tab button is visible
-        await expect(teamSettings.container.getByTestId('team_membership-tab-button')).toBeVisible();
+        await expect(
+            teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab'),
+        ).toBeVisible();
 
         // # Click Team Membership tab
-        await teamSettings.container.getByTestId('team_membership-tab-button').click();
+        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
         const tab = teamSettings.container.locator('.TeamMembershipTab');
         await expect(tab).toBeVisible();
 
@@ -94,9 +96,11 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const teamSettings = await channelsPage.openTeamSettings();
 
         // * Team Membership tab button is visible for team admin
-        await expect(teamSettings.container.getByTestId('team_membership-tab-button')).toBeVisible();
+        await expect(
+            teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab'),
+        ).toBeVisible();
 
-        await teamSettings.container.getByTestId('team_membership-tab-button').click();
+        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
         await expect(teamSettings.container.locator('.TeamMembershipTab')).toBeVisible();
 
         await teamSettings.close();

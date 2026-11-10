@@ -210,6 +210,7 @@ export default class MfaSection extends React.PureComponent<Props, State> {
 
         return (
             <SettingItemMax
+                testIdSection={SECTION_MFA}
                 title={title}
                 inputs={this.renderContent()}
                 extraInfo={this.renderHelpText()}

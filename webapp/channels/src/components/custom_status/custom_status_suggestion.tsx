@@ -6,6 +6,7 @@ import React, {useState} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserCustomStatus} from '@mattermost/types/users';
 import {CustomStatusDuration} from '@mattermost/types/users';
 
@@ -21,10 +22,13 @@ type Props = {
     handleSuggestionClick: (status: UserCustomStatus) => void;
     handleClear?: (status: UserCustomStatus) => void;
     status: UserCustomStatus;
+
+    /** The row renders `${testIdScope}:${status.text}--button`, its clear button `${testIdScope}.clear--button`. */
+    testIdScope?: TestId;
 };
 
 const CustomStatusSuggestion: React.FC<Props> = (props: Props) => {
-    const {handleSuggestionClick, handleClear, status} = props;
+    const {handleSuggestionClick, handleClear, status, testIdScope} = props;
     const {emoji, text, duration} = status;
     const [show, setShow] = useState(false);
 
@@ -53,6 +57,7 @@ const CustomStatusSuggestion: React.FC<Props> = (props: Props) => {
                 <button
                     className='style--none input-clear-x'
                     onClick={handleRecentCustomStatusClear}
+                    data-testid={testIdScope ? `${testIdScope}.clear--button` : undefined}
                 >
                     <i className='icon icon-close-circle'/>
                 </button>
@@ -67,6 +72,7 @@ const CustomStatusSuggestion: React.FC<Props> = (props: Props) => {
             onMouseLeave={hideClearButton}
             onClick={() => handleSuggestionClick(status)}
             tabIndex={0}
+            data-testid={testIdScope ? `${testIdScope}:${status.text}--button` : undefined}
         >
             <div className='statusSuggestion__icon'>
                 <RenderEmoji

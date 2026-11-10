@@ -4,6 +4,7 @@
 import React, {memo, useRef, type JSX} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
@@ -13,7 +14,6 @@ import LoadingScreen from 'components/loading_screen';
 import UserListRow from './user_list_row';
 
 type Props = {
-    rowComponentType?: React.ComponentType<any>;
     actions?: Array<React.ComponentType<any>>;
     actionUserProps?: {
         [userId: string]: {
@@ -22,7 +22,6 @@ type Props = {
             channelMember?: ChannelMembership;
         };
     };
-    isDisabled?: boolean;
     users?: UserProfile[] | null;
     extraInfo?: {[key: string]: Array<string | JSX.Element>};
     actionProps?: {
@@ -36,30 +35,31 @@ type Props = {
         doManageTokens: (user: UserProfile) => void;
         isDisabled?: boolean;
     };
+
+    // Each row is `<testIdScope>.user:<user id>`; the empty state `<testIdScope>.no_users--text`.
+    testIdScope: TestIdScope;
 };
 
 const UserList = ({
     actionUserProps,
-    isDisabled,
     actionProps,
     users: usersFromProps = [],
     extraInfo = {},
     actions = [],
-    rowComponentType = UserListRow,
+    testIdScope,
 }: Props) => {
     const containerRef = useRef(null);
 
     const users = usersFromProps;
-    const RowComponentType = rowComponentType;
 
     let content;
     if (users == null) {
         return <LoadingScreen/>;
-    } else if (users.length > 0 && RowComponentType && actionProps) {
+    } else if (users.length > 0 && actionProps) {
         content = users.map((user: UserProfile, index: number) => {
             const userId = user.id;
             return (
-                <RowComponentType
+                <UserListRow
                     key={user.id}
                     user={user}
                     extraInfo={extraInfo?.[userId]}
@@ -69,7 +69,7 @@ const UserList = ({
                     index={index}
                     totalUsers={users.length}
                     userCount={index >= 0 ? index : -1}
-                    isDisabled={isDisabled}
+                    testIdScope={`${testIdScope}.user`}
                 />
             );
         });
@@ -78,7 +78,7 @@ const UserList = ({
             <div
                 key='no-users-found'
                 className='more-modal__placeholder-row no-users-found'
-                data-testid='noUsersFound'
+                data-testid={`${testIdScope}.no_users--text`}
             >
                 <p>
                     <FormattedMessage

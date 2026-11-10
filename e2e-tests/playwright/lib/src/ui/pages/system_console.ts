@@ -88,7 +88,7 @@ export default class SystemConsolePage {
         this.page = page;
 
         // Layout
-        this.navbar = new SystemConsoleNavbar(page.getByTestId('backstage-navbar'));
+        this.navbar = new SystemConsoleNavbar(page.getByTestId('backstage.navbar'));
         this.sidebar = new SystemConsoleSidebar(page.getByTestId('admin-sidebar'));
 
         const adminConsoleWrapper = page.locator('#adminConsoleWrapper');

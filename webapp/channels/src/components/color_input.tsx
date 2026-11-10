@@ -6,11 +6,17 @@ import {ChromePicker} from 'react-color';
 import type {ColorResult} from 'react-color';
 import tinycolor from 'tinycolor2';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
+
 export interface ColorInputProps {
     id: string;
     onChange: (color: string) => void;
     value: string;
     isDisabled?: boolean;
+
+    /** The input's testid scope (`settings.section.color`); with `testIdKey` the root is `<scope>:<key>`. Without it, the legacy testids. */
+    testIdScope?: TestIdScope;
+    testIdKey?: string;
 }
 
 const ColorInput = ({
@@ -18,6 +24,8 @@ const ColorInput = ({
     onChange: onChangeFromProps,
     value: valueFromProps,
     isDisabled,
+    testIdScope,
+    testIdKey,
 }: ColorInputProps) => {
     const container = useRef<HTMLDivElement>(null);
     const colorInput = useRef<HTMLInputElement>(null);
@@ -107,6 +115,7 @@ const ColorInput = ({
         <div
             className='color-input input-group'
             ref={container}
+            data-testid={testIdKey ? `${testIdScope}:${testIdKey}` : testIdScope}
         >
             <input
                 id={`${id}-inputColorValue`}
@@ -120,18 +129,18 @@ const ColorInput = ({
                 onKeyDown={onKeyDown}
                 maxLength={7}
                 disabled={isDisabled}
-                data-testid='color-inputColorValue'
+                data-testid={testIdScope ? `${testIdScope}.value--textbox` : 'color-inputColorValue'}
             />
             <span
                 id={`${id}-squareColorIcon`}
                 className={`input-group-addon color-pad${isDisabled ? ' color-pad--disabled' : ''}`}
                 onClick={isDisabled ? undefined : togglePicker}
-                data-testid='color-togglerButton'
+                data-testid={testIdScope ? `${testIdScope}.toggle--button` : 'color-togglerButton'}
             >
                 <i
                     id={`${id}-squareColorIconValue`}
                     className='color-icon'
-                    data-testid='color-icon'
+                    data-testid={testIdScope ? `${testIdScope}.swatch` : 'color-icon'}
                     style={{
                         backgroundColor: valueFromState,
                     }}
@@ -141,7 +150,7 @@ const ColorInput = ({
                 <div
                     className='color-popover'
                     id={`${id}-ChromePickerModal`}
-                    data-testid='color-popover'
+                    data-testid={testIdScope ? `${testIdScope}.picker` : 'color-popover'}
                 >
                     <ChromePicker
                         color={valueFromState}

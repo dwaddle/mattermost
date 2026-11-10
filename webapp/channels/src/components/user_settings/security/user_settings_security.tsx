@@ -549,6 +549,7 @@ export class SecurityTab extends React.PureComponent<Props, State> {
                                 emphasis='primary'
                             >
                                 <Link
+                                    data-testid='settings.section.switch_to:gitlab--link'
                                     to={
                                         '/claim/email_to_oauth?email=' +
                                         encodeURIComponent(user.email) +
@@ -577,6 +578,7 @@ export class SecurityTab extends React.PureComponent<Props, State> {
                                 emphasis='primary'
                             >
                                 <Link
+                                    data-testid='settings.section.switch_to:google--link'
                                     to={
                                         '/claim/email_to_oauth?email=' +
                                         encodeURIComponent(user.email) +
@@ -605,6 +607,7 @@ export class SecurityTab extends React.PureComponent<Props, State> {
                                 emphasis='primary'
                             >
                                 <Link
+                                    data-testid='settings.section.switch_to:office365--link'
                                     to={
                                         '/claim/email_to_oauth?email=' +
                                         encodeURIComponent(user.email) +
@@ -633,6 +636,7 @@ export class SecurityTab extends React.PureComponent<Props, State> {
                                 emphasis='primary'
                             >
                                 <Link
+                                    data-testid='settings.section.switch_to:openid--link'
                                     to={
                                         '/claim/email_to_oauth?email=' +
                                         encodeURIComponent(user.email) +
@@ -661,6 +665,7 @@ export class SecurityTab extends React.PureComponent<Props, State> {
                                 emphasis='primary'
                             >
                                 <Link
+                                    data-testid='settings.section.switch_to:ldap--link'
                                     to={
                                         '/claim/email_to_ldap?email=' +
                                         encodeURIComponent(user.email)
@@ -685,6 +690,7 @@ export class SecurityTab extends React.PureComponent<Props, State> {
                                 emphasis='primary'
                             >
                                 <Link
+                                    data-testid='settings.section.switch_to:saml--link'
                                     to={
                                         '/claim/email_to_oauth?email=' +
                                         encodeURIComponent(user.email) +
@@ -724,7 +730,10 @@ export class SecurityTab extends React.PureComponent<Props, State> {
                             asChild={true}
                             emphasis='primary'
                         >
-                            <Link to={link}>
+                            <Link
+                                to={link}
+                                data-testid='settings.section.switch_to:email--link'
+                            >
                                 <FormattedMessage
                                     id='user.settings.security.switchEmail'
                                     defaultMessage='Switch to Using Email and Password'
@@ -1055,6 +1064,7 @@ export class SecurityTab extends React.PureComponent<Props, State> {
         return (
             <div
                 id='securitySettings'
+                data-testid='settings.panel:security--tabpanel'
                 aria-labelledby='securityButton'
                 role='tabpanel'
             >

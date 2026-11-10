@@ -46,7 +46,7 @@ const TeamPictureSection = ({team, file, teamName, disabled, onFileChange, onRem
         return (
             <>
                 <input
-                    data-testid='uploadPicture'
+                    data-testid='team_settings_modal.info.picture.file_input'
                     ref={selectInput}
                     className='hidden'
                     accept={Constants.ACCEPT_STATIC_IMAGE}
@@ -95,7 +95,10 @@ const TeamPictureSection = ({team, file, teamName, disabled, onFileChange, onRem
             );
         }
         return (
-            <div className='team-picture-section__team-icon' >
+            <div
+                className='team-picture-section__team-icon'
+                data-testid='team_settings_modal.info.picture.initials'
+            >
                 <span
                     id='teamIconInitial'
                     onClick={handleInputFile}
@@ -132,7 +135,7 @@ const TeamPictureSection = ({team, file, teamName, disabled, onFileChange, onRem
             return (
                 <button
                     onClick={onRemove}
-                    data-testid='removeImageButton'
+                    data-testid='team_settings_modal.info.picture.remove--button'
                     className='style--none picture-setting-item__remove-button'
                 >
                     <TrashCanOutlineIcon/>
@@ -156,6 +159,7 @@ const TeamPictureSection = ({team, file, teamName, disabled, onFileChange, onRem
 
     return (
         <BaseSettingItem
+            dataTestId='team_settings_modal.info.picture_section'
             title={formatMessage({
                 id: 'setting_picture.title',
                 defaultMessage: 'Team Icon',

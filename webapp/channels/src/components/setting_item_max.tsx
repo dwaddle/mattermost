@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import classNames from 'classnames';
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useContext, useEffect, useRef} from 'react';
 import type {JSX, ReactNode} from 'react';
 import {FormattedMessage} from 'react-intl';
 
@@ -14,6 +14,8 @@ import SaveButton from 'components/save_button';
 import Constants from 'utils/constants';
 import {isKeyPressed} from 'utils/keyboard';
 import {a11yFocus} from 'utils/utils';
+
+import SettingSectionContext from './setting_section_context';
 
 type Props = {
 
@@ -36,6 +38,9 @@ type Props = {
      * Settings or tab section
      */
     section?: string;
+
+    /** The section key for the testid when `section` isn't passed and no SettingItem is around it (that sets it). */
+    testIdSection?: string;
     updateSection?: (section: string) => void;
     setting?: string;
     submit?: ((setting?: string) => void) | null;
@@ -56,6 +61,7 @@ const SettingItemMax = ({
     infoPosition = 'bottom',
     saving = false,
     section = '',
+    testIdSection,
     containerStyle = '',
     shiftEnter,
     disableEnterSubmit,
@@ -166,6 +172,9 @@ const SettingItemMax = ({
         }, [section, updateSection],
     );
 
+    const contextSection = useContext(SettingSectionContext);
+    const testIdKey = section || testIdSection || contextSection;
+
     let serverError = null;
     if (serverErrorFromProps) {
         serverError = (
@@ -183,7 +192,10 @@ const SettingItemMax = ({
                             defaultMessage='Error'
                         />
                     </span>
-                    <span id='serverError'>
+                    <span
+                        id='serverError'
+                        data-testid='settings.section.server_error--text'
+                    >
                         {serverErrorFromProps}
                     </span>
                 </label>
@@ -218,6 +230,7 @@ const SettingItemMax = ({
                 disabled={saving || isValid === false}
                 onClick={handleSubmit}
                 variant={saveButtonVariant}
+                testId='settings.section.save'
             />
         );
     }
@@ -267,6 +280,7 @@ const SettingItemMax = ({
     return (
         <section
             className={`section-max form-horizontal ${containerStyle}`}
+            data-testid={testIdKey ? `settings.section:${testIdKey}` : undefined}
             ref={settingList}
         >
             {title}
@@ -294,7 +308,7 @@ const SettingItemMax = ({
                             {submit}
                             <Button
                                 id='cancelSetting'
-                                data-testid='cancelButton'
+                                data-testid='settings.section.cancel--button'
                                 emphasis='tertiary'
                                 onClick={handleUpdateSection}
                             >

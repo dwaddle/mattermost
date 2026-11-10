@@ -221,8 +221,10 @@ test(
         // A concurrent initSetup() may reset the config between waitUntil above and this line;
         // re-apply once more and wait for the DOM element rather than relying on the earlier check.
         await enableAutotranslationConfig(adminClient, {mockBaseUrl: translationUrl, targetLanguages: ['en', 'es']});
-        await expect(configurationTab.container.getByTestId('channelTranslationToggle-button')).toBeVisible({
-            timeout: duration.half_min,
+        await expect(
+            configurationTab.container.getByTestId('channel_settings_modal.configuration.autotranslation--switch'),
+        ).toBeVisible({
+            timeout: 30000,
         });
         await configurationTab.enableChannelAutotranslation();
         await configurationTab.save();

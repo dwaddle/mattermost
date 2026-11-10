@@ -324,6 +324,7 @@ export class CreateUserGroupsModal extends React.PureComponent<Props, State> {
                             <div className='group-add-user'>
                                 <AddUserToGroupMultiSelect
                                     multilSelectKey={'addUsersToGroupKey'}
+                                    testIdScope='create_user_groups_modal.users'
                                     onSubmitCallback={this.createGroup}
                                     focusOnLoad={false}
                                     savingEnabled={this.isSaveEnabled()}

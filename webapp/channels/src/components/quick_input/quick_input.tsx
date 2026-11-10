@@ -7,6 +7,7 @@ import type {ReactNode} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 export type Props = {
 
@@ -41,6 +42,9 @@ export type Props = {
      * ClassName for the clear button container
      */
     clearClassName?: string;
+
+    /** The clear button renders `${clearTestId}--button`; hosts that don't pass one yet (other areas) keep the legacy `input-clear`. */
+    clearTestId?: TestId;
 
     /**
      * Callback to handle the change event of the input
@@ -93,6 +97,7 @@ export const QuickInput = React.memo(({
     forwardedRef,
     inputComponent,
     clearClassName,
+    clearTestId,
     clearableWithoutValue,
     clearableTooltipText,
     onClear: onClearFromProps,
@@ -165,7 +170,7 @@ export const QuickInput = React.memo(({
             {showClearButton && (
                 <WithTooltip title={clearableTooltipText || defaultClearableTooltipText}>
                     <button
-                        data-testid='input-clear'
+                        data-testid={clearTestId ? `${clearTestId}--button` : 'input-clear'}
                         className={classNames(clearClassName, 'input-clear visible')}
                         onClick={onClear}
                     >

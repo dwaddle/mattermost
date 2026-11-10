@@ -22,13 +22,13 @@ export default class NewChannelModal {
         this.container = container;
 
         this.displayNameInput = container.getByLabel('Channel name');
-        this.urlSection = container.getByTestId('urlInputLabel');
+        this.urlSection = container.getByTestId('new_channel_modal.url.label--text');
         this.purposeInput = container.locator('#new-channel-modal-purpose');
         this.publicTypeButton = container.locator('#public-private-selector-button-O');
         this.privateTypeButton = container.locator('#public-private-selector-button-P');
         this.createButton = container.getByRole('button', {name: 'Create channel'});
         this.cancelButton = container.getByRole('button', {name: 'Cancel'});
-        this.classificationSwitch = new Switch(container, 'channelClassificationToggle-button');
+        this.classificationSwitch = new Switch(container, 'new_channel_modal.classification--switch');
     }
 
     async toBeVisible() {

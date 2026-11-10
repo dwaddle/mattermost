@@ -10,7 +10,9 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {LeaveChannelModal} from './leave_channel_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
+import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `send_draft_modal`. */
 export class SendDraftModal extends Scope {
@@ -105,12 +107,16 @@ export class SendDraftModal extends Scope {
     /** Clicks confirmButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickConfirmButton(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.confirmButton.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 }

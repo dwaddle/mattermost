@@ -19,8 +19,10 @@ export default class InfoSettings {
 
         this.nameInput = container.locator('input#teamName');
         this.descriptionInput = container.locator('textarea#teamDescription');
-        this.uploadInput = container.locator('input[data-testid="uploadPicture"]');
-        this.removeImageButton = container.locator('button[data-testid="removeImageButton"]');
+        this.uploadInput = container.locator('input[data-testid="team_settings_modal.info.picture.file_input"]');
+        this.removeImageButton = container.locator(
+            'button[data-testid="team_settings_modal.info.picture.remove--button"]',
+        );
         this.teamIconImage = container.locator('#teamIconImage');
         this.teamIconInitial = container.locator('#teamIconInitial');
     }

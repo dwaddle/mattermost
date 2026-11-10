@@ -9,6 +9,8 @@ import type {Locator, Page} from '@playwright/test';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {LeaveChannelModal} from './leave_channel_modal';
+import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `notify_confirm_modal`. */
 export class NotifyConfirmModal extends Scope {
@@ -57,7 +59,7 @@ export class NotifyConfirmModal extends Scope {
      * Renders only when !hideConfirm.
      * Opens modal AppsFormContainer.
      * Opens modal KeyboardShortcutsModal.
-     * Opens modal LeaveChannelModal.
+     * Opens modal LeaveChannelModal (`leave_channel_modal`).
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     get confirmButton() {
@@ -99,8 +101,13 @@ export class NotifyConfirmModal extends Scope {
         });
     }
 
-    async clickConfirmButton(): Promise<void> {
+    /** Clicks confirmButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickConfirmButton(): Promise<{leaveChannelModal: LeaveChannelModal; userSettingsModal: UserSettingsModal}> {
         await this.confirmButton.click();
+        return {
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
+        };
     }
 
     /**

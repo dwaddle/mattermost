@@ -61,8 +61,8 @@ describe('Incoming webhook', () => {
 
                 // * Verify that the hook ID in the URL matches with the one shown in a page
                 // * Verify that the copy link is shown.
-                cy.findByText(hookUrl).should('be.visible').
-                    parent().siblings('[data-testid="copyText"]').should('be.visible');
+                cy.findByText(hookUrl).should('be.visible');
+                cy.findByTestId('integrations.confirm.copy_url--button').should('be.visible');
 
                 // # Click "Done" and verify that it redirects to incoming webhooks URL
                 cy.findByText('Done').click();

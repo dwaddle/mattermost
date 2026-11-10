@@ -87,6 +87,7 @@ export default class JoinLeaveSection extends React.PureComponent<Props, State> 
         if (this.props.active) {
             return (
                 <SettingItemMax
+                    testIdSection={AdvancedSections.JOIN_LEAVE}
                     title={
                         <FormattedMessage
                             id='user.settings.advance.joinLeaveTitle'
@@ -104,6 +105,7 @@ export default class JoinLeaveSection extends React.PureComponent<Props, State> 
                             <div className='settings-radio-group'>
                                 <Radio
                                     id='joinLeaveOn'
+                                    data-testid='settings.section.option:true--radio'
                                     value={'true'}
                                     name={AdvancedSections.JOIN_LEAVE}
                                     checked={joinLeaveState === 'true'}
@@ -116,6 +118,7 @@ export default class JoinLeaveSection extends React.PureComponent<Props, State> 
                                 </Radio>
                                 <Radio
                                     id='joinLeaveOff'
+                                    data-testid='settings.section.option:false--radio'
                                     value={'false'}
                                     name={AdvancedSections.JOIN_LEAVE}
                                     checked={joinLeaveState === 'false'}

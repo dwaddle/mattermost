@@ -59,7 +59,9 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // * Access Control tab is visible
-        await expect(channelSettings.container.getByTestId('access_rules-tab-button')).toBeVisible();
+        await expect(
+            channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab'),
+        ).toBeVisible();
 
         await channelSettings.close();
     });
@@ -90,7 +92,9 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // * Access Control tab is NOT visible
-        await expect(channelSettings.container.getByTestId('access_rules-tab-button')).not.toBeVisible();
+        await expect(
+            channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab'),
+        ).not.toBeVisible();
 
         await channelSettings.close();
     });
@@ -110,7 +114,9 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // * Membership Policy tab is visible on public channels when ABAC is enabled (not group-constrained / not default)
-        await expect(channelSettings.container.getByTestId('access_rules-tab-button')).toBeVisible();
+        await expect(
+            channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab'),
+        ).toBeVisible();
 
         await channelSettings.close();
     });
@@ -130,7 +136,9 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // * Access Control tab is NOT visible for group-constrained channel
-        await expect(channelSettings.container.getByTestId('access_rules-tab-button')).not.toBeVisible();
+        await expect(
+            channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab'),
+        ).not.toBeVisible();
 
         await channelSettings.close();
     });
@@ -151,7 +159,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -183,7 +191,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -213,7 +221,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -253,7 +261,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -308,7 +316,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -368,7 +376,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -408,7 +416,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -454,7 +462,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -527,7 +535,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();
@@ -605,7 +613,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const channelSettings = await channelsPage.openChannelSettings();
 
         // # Navigate to Access Control tab
-        await channelSettings.container.getByTestId('access_rules-tab-button').click();
+        await channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
         await expect(tab).toBeVisible();

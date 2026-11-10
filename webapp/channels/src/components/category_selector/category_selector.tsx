@@ -6,10 +6,11 @@ import React, {useState, useMemo, useCallback} from 'react';
 import {useIntl} from 'react-intl';
 import {shallowEqual, useSelector} from 'react-redux';
 import {components} from 'react-select';
-import type {ClearIndicatorProps, GroupBase, OptionProps, Options, OptionsOrGroups} from 'react-select';
+import type {ClearIndicatorProps, GroupBase, InputProps, OptionProps, Options, OptionsOrGroups} from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
 import {FolderOutlineIcon, FolderPlusOutlineIcon} from '@mattermost/compass-icons/components';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {GlobalState} from '@mattermost/types/store';
 
 import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
@@ -30,6 +31,13 @@ export type CategorySelectorProps = {
     helpText?: string;
     menuPortalTargetId?: string;
     disabled?: boolean;
+
+    /**
+     * Testid scope: the selector is `<testIdScope>`, its text input `<testIdScope>.input--combobox`, an existing
+     * category's option `<testIdScope>.option:<name>--option`, the "Create new category" option
+     * `<testIdScope>.create--option`, and the clear control `<testIdScope>.clear`.
+     */
+    testIdScope?: TestIdScope;
 };
 
 const IndicatorsContainer = (props: any) => (
@@ -38,11 +46,20 @@ const IndicatorsContainer = (props: any) => (
     </div>
 );
 
-const ClearIndicator = (props: ClearIndicatorProps<Option>) => (
-    <components.ClearIndicator {...props}>
-        <i className='icon icon-close-circle'/>
-    </components.ClearIndicator>
-);
+const ClearIndicator = (props: ClearIndicatorProps<Option> & {testIdScope?: TestIdScope}) => {
+    const {testIdScope, ...indicatorProps} = props;
+
+    // react-select's clear control is a hidden-from-assistive-tech div that acts on mouse down, not a button
+    const innerProps = {...indicatorProps.innerProps, 'data-testid': testIdScope ? `${testIdScope}.clear` : undefined} as typeof indicatorProps.innerProps;
+    return (
+        <components.ClearIndicator
+            {...indicatorProps}
+            innerProps={innerProps}
+        >
+            <i className='icon icon-close-circle'/>
+        </components.ClearIndicator>
+    );
+};
 
 const DropdownIndicator = () => (
     <i className='icon icon-chevron-down'/>
@@ -67,9 +84,17 @@ const ValueContainer = ({children, ...props}: any) => (
 );
 
 const CREATABLE_NEW_OPTION_KEY = '__isNew__';
-const OptionComponent = (props: OptionProps<Option, false, GroupBase<Option>>) => {
+const OptionComponent = (props: OptionProps<Option, false, GroupBase<Option>> & {testIdScope?: TestIdScope; name: string}) => {
+    const {testIdScope, name, ...optionProps} = props;
     const isCreateOption = Boolean((props.data as Record<string, unknown>)[CREATABLE_NEW_OPTION_KEY]);
     const OptionIcon = isCreateOption ? FolderPlusOutlineIcon : FolderOutlineIcon;
+    let testId;
+    if (testIdScope && isCreateOption) {
+        testId = `${testIdScope}.create--option` as const;
+    } else if (testIdScope) {
+        testId = `${testIdScope}.option:${name}--option` as const;
+    }
+    const innerProps = {...optionProps.innerProps, 'data-testid': testId} as typeof optionProps.innerProps;
 
     return (
         <div
@@ -78,7 +103,10 @@ const OptionComponent = (props: OptionProps<Option, false, GroupBase<Option>>) =
                 focused: props.isFocused,
             })}
         >
-            <components.Option {...props}>
+            <components.Option
+                {...optionProps}
+                innerProps={innerProps}
+            >
                 <OptionIcon size={16}/>
                 <span>{props.children}</span>
             </components.Option>
@@ -86,7 +114,7 @@ const OptionComponent = (props: OptionProps<Option, false, GroupBase<Option>>) =
     );
 };
 
-export default function CategorySelector({value, onChange, getOptions, label, placeholder, helpText, menuPortalTargetId, disabled}: CategorySelectorProps) {
+export default function CategorySelector({value, onChange, getOptions, label, placeholder, helpText, menuPortalTargetId, disabled, testIdScope}: CategorySelectorProps) {
     const {formatMessage} = useIntl();
     const [focused, setFocused] = useState(false);
 
@@ -137,13 +165,43 @@ export default function CategorySelector({value, onChange, getOptions, label, pl
         }
     }, []);
 
+    // the testids go in through the parts' props (react-select's own parts render the elements)
+    const selectComponents = useMemo(() => ({
+        IndicatorsContainer,
+        ClearIndicator: (props: ClearIndicatorProps<Option>) => (
+            <ClearIndicator
+                {...props}
+                testIdScope={testIdScope}
+            />
+        ),
+        DropdownIndicator,
+        Control,
+        ValueContainer,
+        Option: (props: OptionProps<Option, false, GroupBase<Option>>) => (
+            <OptionComponent
+                {...props}
+                testIdScope={testIdScope}
+                name={props.data.value}
+            />
+        ),
+        Input: (props: InputProps<Option, false, GroupBase<Option>>) => (
+            <components.Input
+                {...props}
+                data-testid={testIdScope ? `${testIdScope}.input--combobox` : undefined}
+            />
+        ),
+    }), [testIdScope]);
+
     const portalTarget = menuPortalTargetId ? document.getElementById(menuPortalTargetId) : undefined;
     const legend = label ?? formatMessage({id: 'default_category.label', defaultMessage: 'Default category (optional)'});
     const placeholderText = placeholder ?? formatMessage({id: 'default_category.placeholder', defaultMessage: 'Choose a default category (optional)'});
     const showLegend = Boolean(focused || value);
 
     return (
-        <div className='CategorySelector Input_container'>
+        <div
+            className='CategorySelector Input_container'
+            data-testid={testIdScope}
+        >
             <fieldset
                 className={classNames('Input_fieldset', {
                     Input_fieldset___legend: showLegend,
@@ -162,7 +220,7 @@ export default function CategorySelector({value, onChange, getOptions, label, pl
                     <CreatableSelect<Option>
                         classNamePrefix='CategorySelector'
                         className={classNames('Input', {Input__focus: showLegend})}
-                        components={{IndicatorsContainer, ClearIndicator, DropdownIndicator, Option: OptionComponent, Control, ValueContainer}}
+                        components={selectComponents}
                         isClearable={true}
                         options={options}
                         value={selectedOption}

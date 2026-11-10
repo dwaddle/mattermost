@@ -19,48 +19,48 @@ test(
         await adminClient.createTeam({...openTeam, allow_open_invite: true});
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const sidebarLeft = channelsPage.sidebarLeft;
-        const teamMenu = channelsPage.teamMenu;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const header = app.lhs.header;
+        const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus on team menu button and press Enter to open the menu
-        await sidebarLeft.teamMenuButton.focus();
+        await header.openTeamMenuButton.locator.focus();
         await page.keyboard.press('Enter');
 
         await pw.logFocusedElement(page);
 
         // * Team menu should be visible, list "Join another team", and focus the first menu item - "Invite people"
-        await teamMenu.toBeVisible();
-        await expect(teamMenu.joinAnotherTeam).toBeVisible();
-        await pw.toBeFocusedWithFocusVisible(teamMenu.invitePeople);
+        await expect(teamMenu.locator).toBeVisible();
+        await expect(teamMenu.joinAnotherTeamMenuItem.locator).toBeVisible();
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.invitePeopleMenuItem.locator)).toBe(true);
 
         // # Press ArrowDown to move focus to "Team settings" menu item
         await page.keyboard.press('ArrowDown');
-        await pw.toBeFocusedWithFocusVisible(teamMenu.teamSettings);
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.teamSettingsMenuItem.locator)).toBe(true);
 
         // # Press ArrowDown to move focus to "Manage members" menu item
         await page.keyboard.press('ArrowDown');
-        await pw.toBeFocusedWithFocusVisible(teamMenu.manageMembers);
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.membersMenuItem.locator)).toBe(true);
 
         // # Press ArrowDown to move focus to "Leave team" menu item
         await page.keyboard.press('ArrowDown');
-        await pw.toBeFocusedWithFocusVisible(teamMenu.leaveTeam);
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.leaveTeamMenuItem.locator)).toBe(true);
 
         // # Press ArrowDown to move focus to "Join another team" menu item
         await page.keyboard.press('ArrowDown');
-        await pw.toBeFocusedWithFocusVisible(teamMenu.joinAnotherTeam);
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.joinAnotherTeamMenuItem.locator)).toBe(true);
 
         // # Press ArrowDown to move focus to "Create a team" menu item
         await page.keyboard.press('ArrowDown');
-        await pw.toBeFocusedWithFocusVisible(teamMenu.createTeam);
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.createTeamMenuItem.locator)).toBe(true);
 
         // # Press ArrowDown to move focus to "Learn about teams" menu item
         await page.keyboard.press('ArrowDown');
-        await pw.toBeFocusedWithFocusVisible(teamMenu.learnAboutTeams);
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.learnAboutTeamsMenuItem.locator)).toBe(true);
     },
 );
 
@@ -73,31 +73,31 @@ test(
     async ({pw}) => {
         // # Create and sign in a new user
         const {user} = await pw.initSetup();
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const sidebarLeft = channelsPage.sidebarLeft;
-        const teamMenu = channelsPage.teamMenu;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const header = app.lhs.header;
+        const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus on team menu button and press Enter to open the menu
-        await sidebarLeft.teamMenuButton.focus();
+        await header.openTeamMenuButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Team menu should be visible and focus should be on first menu item
-        await teamMenu.toBeVisible();
-        await pw.toBeFocusedWithFocusVisible(teamMenu.invitePeople);
+        await expect(teamMenu.locator).toBeVisible();
+        expect(await pw.toBeFocusedWithFocusVisible(teamMenu.invitePeopleMenuItem.locator)).toBe(true);
 
         // # Press Tab to exit menu and move to next focusable element outside menu
         await page.keyboard.press('Tab');
 
         // * Team menu should be closed and focus should move to next focusable element
-        await expect(teamMenu.container).not.toBeVisible();
+        await expect(teamMenu.locator).not.toBeVisible();
 
         // * Focus should be on the next focusable element - "Browse or create channels" button
-        await expect(sidebarLeft.teamMenuButton).not.toBeFocused();
-        await expect(sidebarLeft.browseOrCreateChannelButton).toBeFocused();
+        await expect(header.openTeamMenuButton.locator).not.toBeFocused();
+        await expect(header.openBrowseOrAddMenuButton.locator).toBeFocused();
     },
 );
 
@@ -113,45 +113,46 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const sidebarLeft = channelsPage.sidebarLeft;
-        const teamMenu = channelsPage.teamMenu;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const header = app.lhs.header;
+        const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Click on team menu button to open the menu
-        await sidebarLeft.teamMenuButton.focus();
+        await header.openTeamMenuButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Team menu should be visible
-        await teamMenu.toBeVisible();
+        await expect(teamMenu.locator).toBeVisible();
 
         // # Set focus on "Team settings" menu item and press Enter
-        await teamMenu.teamSettings.focus();
+        await teamMenu.teamSettingsMenuItem.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Team settings modal should open (wait for navigation or modal)
-        await channelsPage.teamSettingsModal.toBeVisible();
+        await expect(app.teamSettingsModal.locator).toBeVisible();
 
         // # Close the modal using Escape key
         await page.keyboard.press('Escape');
 
-        await expect(channelsPage.teamSettingsModal.container).not.toBeVisible();
+        await expect(app.teamSettingsModal.locator).not.toBeVisible();
 
         // # Reopen team menu
-        await sidebarLeft.teamMenuButton.focus();
+        await header.openTeamMenuButton.locator.focus();
         await page.keyboard.press('Enter');
-        await teamMenu.toBeVisible();
+        await expect(teamMenu.locator).toBeVisible();
 
         // # Set focus on "Learn about teams" menu item and press Space
-        await teamMenu.invitePeople.focus();
+        await teamMenu.invitePeopleMenuItem.locator.focus();
         await page.keyboard.press(' ');
 
         // * Should navigate to learn about teams documentation or open modal
-        const invitePeopleModal = await channelsPage.getInvitePeopleModal(team.display_name);
-        await invitePeopleModal.toBeVisible();
+        const invitePeopleModal = app.invitationModal;
+        await expect(invitePeopleModal.locator).toBeVisible();
+        await expect(invitePeopleModal.invite.titleText.locator).toContainText(team.display_name);
     },
 );
 
@@ -161,28 +162,28 @@ test(
 test('close menu using Escape key', {tag: ['@accessibility', '@team_menu', '@keyboard_navigation']}, async ({pw}) => {
     // # Create and sign in a new user
     const {user} = await pw.initSetup();
-    const {page, channelsPage} = await pw.testBrowser.login(user);
-    const sidebarLeft = channelsPage.sidebarLeft;
-    const teamMenu = channelsPage.teamMenu;
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const header = app.lhs.header;
+    const teamMenu = app.lhs.teamMenu;
 
     // # Visit a default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
     // # Click on team menu button to open the menu
-    await sidebarLeft.teamMenuButton.click();
+    await header.openTeamMenuButton.locator.click();
 
     // * Team menu should be visible
-    await teamMenu.toBeVisible();
+    await expect(teamMenu.locator).toBeVisible();
 
     // # Press Escape key
     await page.keyboard.press('Escape');
 
     // * Team menu should be closed
-    await expect(teamMenu.container).not.toBeVisible();
+    await expect(teamMenu.locator).not.toBeVisible();
 
     // * Focus should return to the team menu button
-    await pw.toBeFocusedWithFocusVisible(sidebarLeft.teamMenuButton);
+    expect(await pw.toBeFocusedWithFocusVisible(header.openTeamMenuButton.locator)).toBe(true);
 });
 
 /**
@@ -197,27 +198,27 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const sidebarLeft = channelsPage.sidebarLeft;
-        const teamMenu = channelsPage.teamMenu;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const header = app.lhs.header;
+        const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Click on team menu button to open the menu
-        await sidebarLeft.teamMenuButton.click();
+        await header.openTeamMenuButton.locator.click();
 
         // * Team menu should be visible
-        await teamMenu.toBeVisible();
+        await expect(teamMenu.locator).toBeVisible();
 
         // * Verify aria snapshot of team menu structure
-        await expect(teamMenu.container).toMatchAriaSnapshot();
+        await expect(teamMenu.locator).toMatchAriaSnapshot();
 
         // # Analyze the team menu for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page, {disableColorContrast: true})
-            .include(`#${await teamMenu.getContainerId()}`)
+            .include(`[data-testid="${teamMenu.scope}"]`)
             .analyze();
 
         // * Should have no violations
@@ -237,50 +238,52 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {channelsPage} = await pw.testBrowser.login(user);
-        const sidebarLeft = channelsPage.sidebarLeft;
-        const teamMenu = channelsPage.teamMenu;
+        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const header = app.lhs.header;
+        const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Click on team menu button to open the menu
-        await sidebarLeft.teamMenuButton.click();
+        await header.openTeamMenuButton.locator.click();
 
         // * Team menu should be visible
-        await teamMenu.toBeVisible();
+        await expect(teamMenu.locator).toBeVisible();
 
         // * Verify menu container has correct role
-        await expect(teamMenu.container).toHaveAttribute('role', 'menu');
+        await expect(teamMenu.locator).toHaveAttribute('role', 'menu');
 
         // * Verify menu items have correct roles and attributes
-        await expect(teamMenu.invitePeople).toHaveAttribute('role', 'menuitem');
-        await expect(teamMenu.invitePeople).toHaveAttribute('aria-haspopup', 'dialog');
+        await expect(teamMenu.invitePeopleMenuItem.locator).toHaveAttribute('role', 'menuitem');
+        await expect(teamMenu.invitePeopleMenuItem.locator).toHaveAttribute('aria-haspopup', 'dialog');
 
-        await expect(teamMenu.teamSettings).toHaveAttribute('role', 'menuitem');
-        await expect(teamMenu.teamSettings).toHaveAttribute('aria-haspopup', 'dialog');
+        await expect(teamMenu.teamSettingsMenuItem.locator).toHaveAttribute('role', 'menuitem');
+        await expect(teamMenu.teamSettingsMenuItem.locator).toHaveAttribute('aria-haspopup', 'dialog');
 
-        await expect(teamMenu.manageMembers).toHaveAttribute('role', 'menuitem');
-        await expect(teamMenu.manageMembers).toHaveAttribute('aria-haspopup', 'dialog');
+        await expect(teamMenu.membersMenuItem.locator).toHaveAttribute('role', 'menuitem');
+        await expect(teamMenu.membersMenuItem.locator).toHaveAttribute('aria-haspopup', 'dialog');
 
-        await expect(teamMenu.leaveTeam).toHaveAttribute('role', 'menuitem');
-        await expect(teamMenu.leaveTeam).toHaveAttribute('aria-haspopup', 'dialog');
+        await expect(teamMenu.leaveTeamMenuItem.locator).toHaveAttribute('role', 'menuitem');
+        await expect(teamMenu.leaveTeamMenuItem.locator).toHaveAttribute('aria-haspopup', 'dialog');
 
-        await expect(teamMenu.createTeam).toHaveAttribute('role', 'menuitem');
+        await expect(teamMenu.createTeamMenuItem.locator).toHaveAttribute('role', 'menuitem');
 
-        await expect(teamMenu.learnAboutTeams).toHaveAttribute('role', 'menuitem');
+        await expect(teamMenu.learnAboutTeamsMenuItem.locator).toHaveAttribute('role', 'menuitem');
 
         // * Verify menu items are focusable
-        await expect(teamMenu.invitePeople).toHaveAttribute('tabindex', '0');
+        await expect(teamMenu.invitePeopleMenuItem.locator).toHaveAttribute('tabindex', '0');
 
         // * Verify menu items have accessible names
-        await expect(teamMenu.invitePeople).toHaveAccessibleName('Invite people Add or invite people to the team');
-        await expect(teamMenu.teamSettings).toHaveAccessibleName('Team settings');
-        await expect(teamMenu.manageMembers).toHaveAccessibleName('Manage members');
-        await expect(teamMenu.leaveTeam).toHaveAccessibleName('Leave team');
-        await expect(teamMenu.createTeam).toHaveAccessibleName('Create a team');
-        await expect(teamMenu.learnAboutTeams).toHaveAccessibleName('Learn about teams');
+        await expect(teamMenu.invitePeopleMenuItem.locator).toHaveAccessibleName(
+            'Invite people Add or invite people to the team',
+        );
+        await expect(teamMenu.teamSettingsMenuItem.locator).toHaveAccessibleName('Team settings');
+        await expect(teamMenu.membersMenuItem.locator).toHaveAccessibleName('Manage members');
+        await expect(teamMenu.leaveTeamMenuItem.locator).toHaveAccessibleName('Leave team');
+        await expect(teamMenu.createTeamMenuItem.locator).toHaveAccessibleName('Create a team');
+        await expect(teamMenu.learnAboutTeamsMenuItem.locator).toHaveAccessibleName('Learn about teams');
     },
 );
 
@@ -296,40 +299,41 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {channelsPage} = await pw.testBrowser.login(user);
-        const sidebarLeft = channelsPage.sidebarLeft;
-        const teamMenu = channelsPage.teamMenu;
+        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const header = app.lhs.header;
+        const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
-        // # Click on team menu button to open the menu
-        await sidebarLeft.teamMenuButton.click();
+        // # Open the menu from the keyboard (after a mouse click, a focused item never shows the keyboard focus ring)
+        await header.openTeamMenuButton.locator.focus();
+        await app.page.keyboard.press('Enter');
 
         // * Team menu should be visible
-        await teamMenu.toBeVisible();
+        await expect(teamMenu.locator).toBeVisible();
 
         // * Verify icons have aria-hidden attribute (decorative)
         const menuItems = [
-            teamMenu.invitePeople,
-            teamMenu.teamSettings,
-            teamMenu.manageMembers,
-            teamMenu.leaveTeam,
-            teamMenu.createTeam,
-            teamMenu.learnAboutTeams,
+            teamMenu.invitePeopleMenuItem.locator,
+            teamMenu.teamSettingsMenuItem.locator,
+            teamMenu.membersMenuItem.locator,
+            teamMenu.leaveTeamMenuItem.locator,
+            teamMenu.createTeamMenuItem.locator,
+            teamMenu.learnAboutTeamsMenuItem.locator,
         ];
 
         for (const menuItem of menuItems) {
             // * Each menu item should contain an SVG icon with aria-hidden
-            const icon = menuItem.locator('svg').first();
+            const icon = menuItem.getByRole('img', {includeHidden: true}).first();
             await expect(icon).toHaveAttribute('aria-hidden', 'true');
 
             // * Menu item should have visible focus indicator on focus
             await menuItem.focus();
 
             // * Verify the menu item is focused and has focus-visible styles
-            await pw.toBeFocusedWithFocusVisible(menuItem);
+            expect(await pw.toBeFocusedWithFocusVisible(menuItem)).toBe(true);
         }
     },
 );

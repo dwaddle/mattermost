@@ -7,23 +7,36 @@
 import type {Locator} from '@playwright/test';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {FileInfo} from '@mattermost/types/files';
+import type {Group} from '@mattermost/types/groups';
 import type {MmStaticSelectBlock} from '@mattermost/types/mm_blocks';
 import type {Team} from '@mattermost/types/teams';
+import type {UserProfile} from '@mattermost/types/users';
 
 import type {PluginKey} from '../../aria';
 import {Scope, drivers, suggestionTestKey} from '../../aria';
 
 import {Api} from './api';
 import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
+import {ChannelInviteModalUsersResultsGroup, ChannelInviteModalUsersResultsUser} from './channel_invite_modal';
 import {DeletePostModal} from './delete_post_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {FilePreviewModal} from './file_preview_modal';
+import {LeaveChannelModal} from './leave_channel_modal';
 import {Markdown} from './markdown';
 import {NotifyConfirmModal} from './notify_confirm_modal';
 import {ScheduledPostsPage} from './pages';
 import {PostDotMenu} from './post_dot_menu';
+import {RemoveSharingModal} from './remove_sharing_modal';
 import {SendPostOptions} from './send_post_options';
-import type {CenterControl, ModalControl, PluginControl, PostEditControl, RhsControl} from './sets';
+import {UserSettingsModal} from './user_settings_modal';
+import type {
+    CenterControl,
+    ChannelSettingsModalTab,
+    ModalControl,
+    PluginControl,
+    PostEditControl,
+    RhsControl,
+} from './sets';
 
 /** The read-only parts of a `center.post_list.post` item. */
 export type PostItemRow = {
@@ -32,6 +45,347 @@ export type PostItemRow = {
     onlyVisibleToYou: string | null;
     time: string | null;
 };
+/** The read-only parts of a `channel_access_rules_confirm_modal.users.user` item. */
+export type SearchableUserListUserRow = {
+    email: string | null;
+    name: string | null;
+};
+/** The form fields of `integrations.bot_form.default_token`. */
+export type TokenExpiryPickerFormValues = {
+    expiry: string;
+    expiryDate?: string;
+};
+/** Rendered at `add_groups_to_channel_modal.groups`, `add_groups_to_team_modal.groups`, `add_users_to_role_modal.users`, `channel_selector_modal.channels`, `team_selector_modal.teams`: one class, constructed with the scope it is mounted at. */
+export class AddGroupsToChannelModalGroups extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.error--alert` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when this.state.hasError.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.help--text` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.next--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and options.length > pageEnd.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [Api.GetAllChannels, Api.GetAllTeams, Api.GetGroups, Api.GetUsers],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.previous--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and this.state.page > 0.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [Api.GetAllChannels, Api.GetAllTeams, Api.GetGroups, Api.GetUsers],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.remove:{key}--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    remove(remove: string) {
+        return drivers.button(this.byTestId(`${this.scope}.remove:${remove}--button`), {
+            testId: `${this.scope}.remove:${remove}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /** Every `add_groups_to_channel_modal.groups.remove:{key}--button` in the scope. */
+    get removeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.remove:`, '--button');
+    }
+
+    /** The keys of every `add_groups_to_channel_modal.groups.remove:{key}--button` in the scope, in document order. */
+    removeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.remove:`, '--button');
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.save--button` — SaveButton (channels/src/components/save_button.tsx)
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [
+                Api.AddTeamMember,
+                Api.ChannelMembersMinusGroupMembers,
+                Api.LinkGroupSyncable,
+                Api.TeamMembersMinusGroupMembers,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/save_button.tsx#SaveButton',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.search--combobox` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get searchCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.search--combobox`), {
+            testId: `${this.scope}.search--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async chooseSearchCombobox(option: string | RegExp): Promise<void> {
+        await this.searchCombobox.choose(option);
+    }
+
+    /**
+     * `add_groups_to_channel_modal.groups.results` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get results(): Results {
+        return new Results(this.page, `${this.scope}.results`, this.root);
+    }
+
+    /** Every `add_groups_to_channel_modal.groups.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
+    get removeList() {
+        return this.keyedList(`${this.scope}.remove:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.remove:${key}--button`), {
+                testId: `${this.scope}.remove:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+            }),
+        );
+    }
+}
+
+/** Rendered at `add_users_to_group_modal.users`, `create_user_groups_modal.users`: one class, constructed with the scope it is mounted at. */
+export class Users extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `add_users_to_group_modal.users.back--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when this.props.saveButtonPosition === 'bottom'.
+     * Opens modal ViewUserGroupModal.
+     */
+    get backButton() {
+        return drivers.button(this.byTestId(`${this.scope}.back--button`), {
+            testId: `${this.scope}.back--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickBackButton(): Promise<void> {
+        await this.backButton.click();
+    }
+
+    /**
+     * `add_users_to_group_modal.users.error--alert` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when this.state.hasError.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /**
+     * `add_users_to_group_modal.users.help--text` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `add_users_to_group_modal.users.next--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and options.length > pageEnd.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [Api.GetUsers],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `add_users_to_group_modal.users.previous--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     * Renders only when options && options.length > this.props.perPage and !this.props.loading and this.state.page > 0.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [Api.GetUsers],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+
+    /**
+     * `add_users_to_group_modal.users.remove:{key}--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    remove(remove: string) {
+        return drivers.button(this.byTestId(`${this.scope}.remove:${remove}--button`), {
+            testId: `${this.scope}.remove:${remove}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    /** Every `add_users_to_group_modal.users.remove:{key}--button` in the scope. */
+    get removeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.remove:`, '--button');
+    }
+
+    /** The keys of every `add_users_to_group_modal.users.remove:{key}--button` in the scope, in document order. */
+    removeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.remove:`, '--button');
+    }
+
+    /**
+     * `add_users_to_group_modal.users.save--button` — SaveButton (channels/src/components/save_button.tsx)
+     * Opens modal ViewUserGroupModal.
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [Api.AddGroupMembers, Api.CreateGroup],
+            unknownEffects: false,
+            source: 'channels/src/components/save_button.tsx#SaveButton',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
+    }
+
+    /**
+     * `add_users_to_group_modal.users.search--combobox` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
+     */
+    get searchCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.search--combobox`), {
+            testId: `${this.scope}.search--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+        });
+    }
+
+    async chooseSearchCombobox(option: string | RegExp): Promise<void> {
+        await this.searchCombobox.choose(option);
+    }
+
+    /**
+     * `add_users_to_group_modal.users.results` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get results(): Results {
+        return new Results(this.page, `${this.scope}.results`, this.root);
+    }
+
+    /** Every `add_users_to_group_modal.users.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
+    get removeList() {
+        return this.keyedList(`${this.scope}.remove:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.remove:${key}--button`), {
+                testId: `${this.scope}.remove:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
+            }),
+        );
+    }
+}
+
 /** Rendered at `center.channel_banner`, `rhs.thread.channel_banner`: one class, constructed with the scope it is mounted at. */
 export class ChannelBanner extends Scope {
     /**
@@ -341,13 +695,17 @@ export class PostCreate extends Scope {
     async clickSaveButton(): Promise<{
         deletePostModal: DeletePostModal;
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.saveButton.click();
         return {
             deletePostModal: new DeletePostModal(this.page, 'delete_post_modal'),
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 
@@ -404,12 +762,16 @@ export class PostCreate extends Scope {
     /** Clicks sendButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickSendButton(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.sendButton.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 
@@ -555,13 +917,13 @@ export class PostCreateAiActionsRewrite extends Scope {
         await this.promptTextbox.fill(value);
     }
 
-    get prompt(): Prompt {
-        return new Prompt(this.page, `${this.scope}.prompt`, this.root);
+    get prompt(): Input {
+        return new Input(this.page, `${this.scope}.prompt`, this.root);
     }
 }
 
-/** Rendered at `center.post_create.ai_actions.rewrite.prompt`, `modal.post_create.ai_actions.rewrite.prompt`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`: one class, constructed with the scope it is mounted at. */
-export class Prompt extends Scope {
+/** Rendered at `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`: one class, constructed with the scope it is mounted at. */
+export class Input extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
@@ -914,7 +1276,7 @@ export class Message extends Scope {
     }
 }
 
-/** Rendered at `center.post_create.message.suggestions`, `center.post_list.post.select.suggestions`, `drafts.scheduled.post.editor.suggestions`, `edit_channel_header_modal.header.suggestions`, `forward_post_modal.comment.suggestions`, `modal.post_create.message.suggestions`, `plugin.post_create.message.suggestions`, `post_edit.editor.message.suggestions`, `quick_switch_modal.suggestions`, `rhs.post_create.message.suggestions`, `rhs.thread.post.select.suggestions`, `search.results.post.select.suggestions`, `search_box.suggestions`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_create.message.suggestions`, `center.post_list.post.select.suggestions`, `channel_settings_modal.configuration.banner_text.suggestions`, `channel_settings_modal.info.header.suggestions`, `channel_settings_modal.info.purpose.suggestions`, `drafts.scheduled.post.editor.suggestions`, `edit_channel_header_modal.header.suggestions`, `forward_post_modal.comment.suggestions`, `modal.post_create.message.suggestions`, `new_channel_modal.classification_banner_text.suggestions`, `plugin.post_create.message.suggestions`, `post_edit.editor.message.suggestions`, `quick_switch_modal.suggestions`, `rhs.post_create.message.suggestions`, `rhs.thread.post.select.suggestions`, `search.results.post.select.suggestions`, `search_box.suggestions`: one class, constructed with the scope it is mounted at. */
 export class Suggestions extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -2862,6 +3224,202 @@ export class Toast extends Scope {
     }
 }
 
+/** Rendered at `channel_access_rules_confirm_modal.users`, `policy_test_modal.users`, `user_sync_modal.users`: one class, constructed with the scope it is mounted at. */
+export class SearchableUserList extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.count--text` — SearchableUserList (channels/src/components/searchable_user_list/searchable_user_list.tsx)
+     * Renders only when hasChanges and showUserList and currentUsers.length > 0.
+     */
+    get countText() {
+        return drivers.text(this.byTestId(`${this.scope}.count--text`), {
+            testId: `${this.scope}.count--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/searchable_user_list/searchable_user_list.tsx#SearchableUserList',
+        });
+    }
+
+    getCountText(): Promise<string> {
+        return this.countText.text();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.next--button` — SearchableUserList (channels/src/components/searchable_user_list/searchable_user_list.tsx)
+     * Renders only when hasChanges and showUserList and currentUsers.length > 0.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [Api.TestAccessControlPolicyExpression],
+            unknownEffects: false,
+            source: 'channels/src/components/searchable_user_list/searchable_user_list.tsx#SearchableUserList',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.no_users--text` — UserList (channels/src/components/user_list.tsx)
+     * Renders only when hasChanges and showUserList and currentUsers.length > 0.
+     */
+    get noUsersText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_users--text`), {
+            testId: `${this.scope}.no_users--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_list.tsx#UserList',
+        });
+    }
+
+    getNoUsersText(): Promise<string> {
+        return this.noUsersText.text();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.prev--button` — SearchableUserList (channels/src/components/searchable_user_list/searchable_user_list.tsx)
+     * Renders only when hasChanges and showUserList and currentUsers.length > 0.
+     */
+    get prevButton() {
+        return drivers.button(this.byTestId(`${this.scope}.prev--button`), {
+            testId: `${this.scope}.prev--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/searchable_user_list/searchable_user_list.tsx#SearchableUserList',
+        });
+    }
+
+    async clickPrevButton(): Promise<void> {
+        await this.prevButton.click();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.search--textbox` — SearchableUserList (channels/src/components/searchable_user_list/searchable_user_list.tsx)
+     * Renders only when hasChanges and showUserList and currentUsers.length > 0.
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [Api.GetUsersByIds, Api.TestAccessControlPolicyExpression],
+            unknownEffects: false,
+            source: 'channels/src/components/searchable_user_list/searchable_user_list.tsx#SearchableUserList',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.user:{key}` — UserListRow (channels/src/components/user_list_row/user_list_row.tsx)
+     * Renders only when !(users == null) and users.length > 0 && actionProps.
+     */
+    user(user: Pick<UserProfile, 'id'>): SearchableUserListUser {
+        return new SearchableUserListUser(
+            this.page,
+            `${this.scope}.user`,
+            this.byTestId(`${this.scope}.user:${user.id}`),
+        );
+    }
+
+    /** Every `channel_access_rules_confirm_modal.users.user:{key}` in the scope. */
+    get userItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.user:`, '');
+    }
+
+    /** The keys of every `channel_access_rules_confirm_modal.users.user:{key}` in the scope, in document order. */
+    userKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.user:`, '');
+    }
+
+    /** Every `channel_access_rules_confirm_modal.users.user:{key}` in the scope as a list by key, for the list matchers: `expect(x.userList).toHaveKeys([…])`. */
+    get userList() {
+        return this.keyedList(
+            `${this.scope}.user:`,
+            '',
+            (key: string) =>
+                new SearchableUserListUser(this.page, `${this.scope}.user`, this.byTestId(`${this.scope}.user:${key}`)),
+        );
+    }
+}
+
+/** Rendered at `channel_access_rules_confirm_modal.users.user`, `policy_test_modal.users.user`, `user_sync_modal.users.user`: one class, constructed with the scope it is mounted at. */
+export class SearchableUserListUser extends Scope {
+    /**
+     * `channel_access_rules_confirm_modal.users.user:{key}` — UserListRow (channels/src/components/user_list_row/user_list_row.tsx)
+     * Renders only when !(users == null) and users.length > 0 && actionProps.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'channel_access_rules_confirm_modal.users.user:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_list_row/user_list_row.tsx#UserListRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.user.email--text` — UserListRow (channels/src/components/user_list_row/user_list_row.tsx)
+     * Renders only when !(users == null) and users.length > 0 && actionProps.
+     */
+    get emailText() {
+        return drivers.text(this.byTestId(`${this.scope}.email--text`), {
+            testId: `${this.scope}.email--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_list_row/user_list_row.tsx#UserListRow',
+        });
+    }
+
+    getEmailText(): Promise<string> {
+        return this.emailText.text();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.users.user.name--text` — UserListRow (channels/src/components/user_list_row/user_list_row.tsx)
+     * Renders only when !(users == null) and users.length > 0 && actionProps.
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_list_row/user_list_row.tsx#UserListRow',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<SearchableUserListUserRow> {
+        return {
+            email: await this.emailText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+        };
+    }
+}
+
 /** Rendered at `channel_header.menu.move_to_menu`, `lhs.channel_menu.move_to_menu`: one class, constructed with the scope it is mounted at. */
 export class MoveToMenu extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
@@ -2921,6 +3479,984 @@ export class MoveToMenu extends Scope {
                 source: 'channels/src/components/channel_move_to_sub_menu/index.tsx#ChannelMoveToSubMenu',
             }),
         );
+    }
+}
+
+/** Rendered at `channel_invite_modal.team_warning`, `channel_notifications_modal.muted_banner`, `integrations.bot_create_warnings`: one class, constructed with the scope it is mounted at. */
+export class AlertBanner extends Scope {
+    /**
+     * `channel_invite_modal.team_warning.close--button` — AlertBanner (channels/src/components/alert_banner/index.tsx)
+     * Renders only when users.length > 0 || guests.length > 0.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/alert_banner/index.tsx#AlertBanner',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+}
+
+/** Rendered at `channel_invite_modal.users.results`, `add_groups_to_channel_modal.groups.results`, `add_groups_to_team_modal.groups.results`, `add_users_to_group_modal.users.results`, `add_users_to_role_modal.users.results`, `channel_selector_modal.channels.results`, `create_user_groups_modal.users.results`, `direct_messages_modal.list.results`, `team_selector_modal.teams.results`: one class, constructed with the scope it is mounted at. */
+export class Results extends Scope {
+    /**
+     * `channel_invite_modal.users.results.live_region` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     */
+    get liveRegion() {
+        return drivers.container(this.byTestId(`${this.scope}.live_region`), {
+            testId: `${this.scope}.live_region`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    /**
+     * `channel_invite_modal.users.results.no_results--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and options == null || options.length === 0 and !customNoOptionsMessage.
+     */
+    get noResultsText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_results--text`), {
+            testId: `${this.scope}.no_results--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getNoResultsText(): Promise<string> {
+        return this.noResultsText.text();
+    }
+
+    /**
+     * `channel_invite_modal.users.results.selection--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get selectionText() {
+        return drivers.text(this.byTestId(`${this.scope}.selection--text`), {
+            testId: `${this.scope}.selection--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getSelectionText(): Promise<string> {
+        return this.selectionText.text();
+    }
+
+    /**
+     * `channel_invite_modal.users.results.group:{key}` — GroupOption (channels/src/components/channel_invite_modal/group_option/group_option.tsx)
+     */
+    group(group: Pick<Group, 'id'>): ChannelInviteModalUsersResultsGroup {
+        return new ChannelInviteModalUsersResultsGroup(
+            this.page,
+            `${this.scope}.group`,
+            this.byTestId(`${this.scope}.group:${group.id}`),
+        );
+    }
+
+    /** Every `channel_invite_modal.users.results.group:{key}` in the scope. */
+    get groupItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.group:`, '');
+    }
+
+    /** The keys of every `channel_invite_modal.users.results.group:{key}` in the scope, in document order. */
+    groupKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.group:`, '');
+    }
+
+    /**
+     * `channel_invite_modal.users.results.user:{key}` — ChannelInviteModalComponent (channels/src/components/channel_invite_modal/channel_invite_modal.tsx)
+     * Renders only when isUser(option).
+     */
+    user(user: Pick<UserProfile, 'id'>): ChannelInviteModalUsersResultsUser {
+        return new ChannelInviteModalUsersResultsUser(
+            this.page,
+            `${this.scope}.user`,
+            this.byTestId(`${this.scope}.user:${user.id}`),
+        );
+    }
+
+    /** Every `channel_invite_modal.users.results.user:{key}` in the scope. */
+    get userItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.user:`, '');
+    }
+
+    /** The keys of every `channel_invite_modal.users.results.user:{key}` in the scope, in document order. */
+    userKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.user:`, '');
+    }
+
+    /** Every `channel_invite_modal.users.results.group:{key}` in the scope as a list by key, for the list matchers: `expect(x.groupList).toHaveKeys([…])`. */
+    get groupList() {
+        return this.keyedList(
+            `${this.scope}.group:`,
+            '',
+            (key: string) =>
+                new ChannelInviteModalUsersResultsGroup(
+                    this.page,
+                    `${this.scope}.group`,
+                    this.byTestId(`${this.scope}.group:${key}`),
+                ),
+        );
+    }
+
+    /** Every `channel_invite_modal.users.results.user:{key}` in the scope as a list by key, for the list matchers: `expect(x.userList).toHaveKeys([…])`. */
+    get userList() {
+        return this.keyedList(
+            `${this.scope}.user:`,
+            '',
+            (key: string) =>
+                new ChannelInviteModalUsersResultsUser(
+                    this.page,
+                    `${this.scope}.user`,
+                    this.byTestId(`${this.scope}.user:${key}`),
+                ),
+        );
+    }
+}
+
+/** Rendered at `channel_members_modal.members.user.role_menu`, `rhs.channel_members.member.role_menu`: one class, constructed with the scope it is mounted at. */
+export class RoleMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_members_modal.members.user.role_menu.leave--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel and !(users == null) and users.length > 0 && actionProps.
+     * Opens modal LeaveChannelModal (`leave_channel_modal`).
+     */
+    get leaveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.leave--button`), {
+            testId: `${this.scope}.leave--button`,
+            role: 'button',
+            effects: [Api.GetChannelStats, Api.RemoveUserFromChannel],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    /** Clicks leaveButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickLeaveButton(): Promise<LeaveChannelModal> {
+        await this.leaveButton.click();
+        return new LeaveChannelModal(this.page, 'leave_channel_modal');
+    }
+
+    /**
+     * `channel_members_modal.members.user.role_menu.make_admin--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel and !(users == null) and users.length > 0 && actionProps.
+     */
+    get makeAdminButton() {
+        return drivers.button(this.byTestId(`${this.scope}.make_admin--button`), {
+            testId: `${this.scope}.make_admin--button`,
+            role: 'button',
+            effects: [Api.GetChannelMember, Api.GetChannelStats, Api.UpdateChannelMemberSchemeRoles],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    async clickMakeAdminButton(): Promise<void> {
+        await this.makeAdminButton.click();
+    }
+
+    /**
+     * `channel_members_modal.members.user.role_menu.make_member--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel and !(users == null) and users.length > 0 && actionProps.
+     */
+    get makeMemberButton() {
+        return drivers.button(this.byTestId(`${this.scope}.make_member--button`), {
+            testId: `${this.scope}.make_member--button`,
+            role: 'button',
+            effects: [Api.GetChannelMember, Api.GetChannelStats, Api.UpdateChannelMemberSchemeRoles],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    async clickMakeMemberButton(): Promise<void> {
+        await this.makeMemberButton.click();
+    }
+
+    /**
+     * `channel_members_modal.members.user.role_menu.remove--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel and !(users == null) and users.length > 0 && actionProps.
+     * Opens modal LeaveChannelModal (`leave_channel_modal`).
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [Api.GetChannelStats, Api.RemoveUserFromChannel],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    /** Clicks removeButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickRemoveButton(): Promise<LeaveChannelModal> {
+        await this.removeButton.click();
+        return new LeaveChannelModal(this.page, 'leave_channel_modal');
+    }
+}
+
+/** Rendered at `channel_settings_modal.configuration.banner_text`, `channel_settings_modal.info.header`, `channel_settings_modal.info.purpose`, `new_channel_modal.classification_banner_text`: one class, constructed with the scope it is mounted at. */
+export class ChannelSettingsModalConfigurationBannerText extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.description--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     */
+    get descriptionText() {
+        return drivers.text(this.byTestId(`${this.scope}.description--text`), {
+            testId: `${this.scope}.description--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
+        });
+    }
+
+    getDescriptionText(): Promise<string> {
+        return this.descriptionText.text();
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.error--text` — AdvancedTextbox (channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/advanced_textbox/advanced_textbox.tsx#AdvancedTextbox',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `channel_settings_modal.configuration.banner_text.preview` — Textbox (channels/src/components/textbox/textbox.tsx)
+     * Renders only when canManageBanner and bannerSectionOn and !channelAttributesEnabled.
+     */
+    get preview() {
+        return drivers.container(this.byTestId(`${this.scope}.preview`), {
+            testId: `${this.scope}.preview`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/textbox/textbox.tsx#Textbox',
+        });
+    }
+
+    get suggestions(): Suggestions {
+        return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
+    }
+}
+
+/** Rendered at `channel_settings_modal.configuration.classification_level`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
+export class ClassificationLevel extends Scope {
+    /**
+     * `channel_settings_modal.configuration.classification_level.menu` — makeMenu (channels/src/components/dropdown_input.tsx)
+     * Renders only when canManageClassification and classificationEnabled.
+     */
+    get menu(): ClassificationLevelMenu {
+        return new ClassificationLevelMenu(this.page, `${this.scope}.menu`, this.root);
+    }
+}
+
+/** Rendered at `channel_settings_modal.configuration.classification_level.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
+export class ClassificationLevelMenu extends Scope {
+    /**
+     * `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` — makeOption (channels/src/components/dropdown_input.tsx)
+     * Renders only when canManageClassification and classificationEnabled.
+     */
+    option(option: string) {
+        return drivers.option(this.byTestId(`${this.scope}.option:${option}--option`), {
+            testId: `${this.scope}.option:${option}--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/dropdown_input.tsx#makeOption',
+        });
+    }
+
+    /** Every `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '--option');
+    }
+
+    /** The keys of every `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '--option');
+    }
+
+    /** Every `channel_settings_modal.configuration.classification_level.menu.option:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(`${this.scope}.option:`, '--option', (key: string) =>
+            drivers.option(this.byTestId(`${this.scope}.option:${key}--option`), {
+                testId: `${this.scope}.option:${key}--option`,
+                role: 'option',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/dropdown_input.tsx#makeOption',
+            }),
+        );
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.default_category`, `channel_settings_modal.info.managed_category`, `new_channel_modal.default_category`, `new_channel_modal.managed_category`: one class, constructed with the scope it is mounted at. */
+export class CategorySelector extends Scope {
+    /**
+     * `channel_settings_modal.info.default_category.clear` — ClearIndicator (channels/src/components/category_selector/category_selector.tsx)
+     * Renders only when showDefaultCategoryField.
+     */
+    get clear() {
+        return drivers.container(this.byTestId(`${this.scope}.clear`), {
+            testId: `${this.scope}.clear`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/category_selector/category_selector.tsx#ClearIndicator',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.info.default_category.create--option` — OptionComponent (channels/src/components/category_selector/category_selector.tsx)
+     * Renders only when showDefaultCategoryField.
+     */
+    get createOption() {
+        return drivers.option(this.byTestId(`${this.scope}.create--option`, true), {
+            testId: `${this.scope}.create--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/category_selector/category_selector.tsx#OptionComponent',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.info.default_category.input--combobox` — CategorySelector (channels/src/components/category_selector/category_selector.tsx)
+     * Renders only when showDefaultCategoryField.
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get inputCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.input--combobox`), {
+            testId: `${this.scope}.input--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/category_selector/category_selector.tsx#CategorySelector',
+        });
+    }
+
+    async chooseInputCombobox(option: string | RegExp): Promise<void> {
+        await this.inputCombobox.choose(option);
+    }
+
+    /**
+     * `channel_settings_modal.info.default_category.option:{key}--option` — OptionComponent (channels/src/components/category_selector/category_selector.tsx)
+     * Renders only when showDefaultCategoryField.
+     */
+    option(option: string) {
+        return drivers.option(this.byTestId(`${this.scope}.option:${option}--option`, true), {
+            testId: `${this.scope}.option:${option}--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/category_selector/category_selector.tsx#OptionComponent',
+        });
+    }
+
+    /** Every `channel_settings_modal.info.default_category.option:{key}--option` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '--option', true);
+    }
+
+    /** The keys of every `channel_settings_modal.info.default_category.option:{key}--option` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '--option', true);
+    }
+
+    /** Every `channel_settings_modal.info.default_category.option:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(
+            `${this.scope}.option:`,
+            '--option',
+            (key: string) =>
+                drivers.option(this.byTestId(`${this.scope}.option:${key}--option`, true), {
+                    testId: `${this.scope}.option:${key}--option`,
+                    role: 'option',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/category_selector/category_selector.tsx#OptionComponent',
+                }),
+            true,
+        );
+    }
+}
+
+/** Rendered at `channel_settings_modal.info.url`, `convert_gm_to_channel_modal.url`, `new_channel_modal.url`, `rename_channel_modal.url`: one class, constructed with the scope it is mounted at. */
+export class Url extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.info.url.edit--button` — UrlInput (channels/src/components/widgets/inputs/url_input/url_input.tsx)
+     * Renders only when showURLEditor and !isDMorGroupChannel and !readOnly.
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput',
+        });
+    }
+
+    async clickEditButton(): Promise<void> {
+        await this.editButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.info.url.error--alert` — UrlInput (channels/src/components/widgets/inputs/url_input/url_input.tsx)
+     * Renders only when showURLEditor and !isDMorGroupChannel and error.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput',
+        });
+    }
+
+    /**
+     * `channel_settings_modal.info.url.help--text` — UrlInput (channels/src/components/widgets/inputs/url_input/url_input.tsx)
+     * Renders only when showURLEditor and !isDMorGroupChannel and helpText.
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `channel_settings_modal.info.url.label--text` — UrlInput (channels/src/components/widgets/inputs/url_input/url_input.tsx)
+     * Renders only when showURLEditor and !isDMorGroupChannel.
+     */
+    get labelText() {
+        return drivers.text(this.byTestId(`${this.scope}.label--text`), {
+            testId: `${this.scope}.label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput',
+        });
+    }
+
+    getLabelText(): Promise<string> {
+        return this.labelText.text();
+    }
+
+    /**
+     * `channel_settings_modal.info.url.value--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when showURLEditor and !isDMorGroupChannel and isEditing.
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+}
+
+/** Rendered at `channel_settings_modal.save_panel`, `team_settings_modal.save_panel`: one class, constructed with the scope it is mounted at. */
+export class SavePanel extends Scope {
+    /**
+     * `channel_settings_modal.save_panel.cancel--button` — SaveChangesPanel (channels/src/components/widgets/modals/components/save_changes_panel.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/widgets/modals/components/save_changes_panel.tsx#SaveChangesPanel',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.save_panel.close--button` — SaveChangesPanel (channels/src/components/widgets/modals/components/save_changes_panel.tsx)
+     * Renders only when state === 'saved'.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/modals/components/save_changes_panel.tsx#SaveChangesPanel',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `channel_settings_modal.save_panel.message--text` — SaveChangesPanel (channels/src/components/widgets/modals/components/save_changes_panel.tsx)
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/modals/components/save_changes_panel.tsx#SaveChangesPanel',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+
+    /**
+     * `channel_settings_modal.save_panel.save--button` — SaveChangesPanel (channels/src/components/widgets/modals/components/save_changes_panel.tsx)
+     * Opens modal ConfirmModal (`remove_sharing_modal`).
+     * Opens modal ConvertConfirmModal.
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [
+                Api.GetSharedChannelRemotes,
+                Api.GetTeam,
+                Api.InviteRemoteClusterToChannel,
+                Api.PatchChannel,
+                Api.PatchTeam,
+                Api.SetTeamIcon,
+                Api.UninviteRemoteClusterToChannel,
+                Api.UpdateChannelPrivacy,
+                Api.UpdatePropertyValues,
+            ],
+            unknownEffects: true,
+            source: 'channels/src/components/widgets/modals/components/save_changes_panel.tsx#SaveChangesPanel',
+        });
+    }
+
+    /** Clicks saveButton and returns what it opens (modal); the page object is returned at once, with no wait. It can also open ConvertConfirmModal (no page object). */
+    async clickSaveButton(): Promise<RemoveSharingModal> {
+        await this.saveButton.click();
+        return new RemoveSharingModal(this.page, 'remove_sharing_modal');
+    }
+}
+
+/** Rendered at `channel_settings_modal.tabs`, `user_settings_modal.tabs`, `team_settings_modal.tabs`: one class, constructed with the scope it is mounted at. */
+export class Tabs extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_settings_modal.tabs.plugin:{key}--tab` — SettingsSidebar (channels/src/components/settings_sidebar/settings_sidebar.tsx)
+     */
+    plugin(plugin: PluginKey) {
+        return drivers.tab(this.byTestId(`${this.scope}.plugin:${plugin as string}--tab`), {
+            testId: `${this.scope}.plugin:${plugin as string}--tab`,
+            role: 'tab',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar',
+        });
+    }
+
+    /** Every `channel_settings_modal.tabs.plugin:{key}--tab` in the scope. */
+    get pluginItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--tab');
+    }
+
+    /** The keys of every `channel_settings_modal.tabs.plugin:{key}--tab` in the scope, in document order. */
+    pluginKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.plugin:`, '--tab');
+    }
+
+    /**
+     * `channel_settings_modal.tabs.tab:{key}--tab` — SettingsSidebar (channels/src/components/settings_sidebar/settings_sidebar.tsx)
+     */
+    tab(tab: ChannelSettingsModalTab | (string & {})) {
+        return drivers.tab(this.byTestId(`${this.scope}.tab:${tab}--tab`), {
+            testId: `${this.scope}.tab:${tab}--tab`,
+            role: 'tab',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar',
+        });
+    }
+
+    /** Every `channel_settings_modal.tabs.tab:{key}--tab` in the scope. */
+    get tabItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.tab:`, '--tab');
+    }
+
+    /** The keys of every `channel_settings_modal.tabs.tab:{key}--tab` in the scope, in document order. */
+    tabKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.tab:`, '--tab');
+    }
+
+    get accessRulesTab() {
+        return this.tab('access_rules');
+    }
+
+    get archiveTab() {
+        return this.tab('archive');
+    }
+
+    get configurationTab() {
+        return this.tab('configuration');
+    }
+
+    get infoTab() {
+        return this.tab('info');
+    }
+
+    get permissionsPolicyTab() {
+        return this.tab('permissions_policy');
+    }
+
+    /** Every `channel_settings_modal.tabs.plugin:{key}--tab` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    get pluginList() {
+        return this.keyedList(`${this.scope}.plugin:`, '--tab', (key: string) =>
+            drivers.tab(this.byTestId(`${this.scope}.plugin:${key}--tab`), {
+                testId: `${this.scope}.plugin:${key}--tab`,
+                role: 'tab',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar',
+            }),
+        );
+    }
+
+    /** Every `channel_settings_modal.tabs.tab:{key}--tab` in the scope as a list by key, for the list matchers: `expect(x.tabList).toHaveKeys([…])`. */
+    get tabList() {
+        return this.keyedList(`${this.scope}.tab:`, '--tab', (key: string) =>
+            drivers.tab(this.byTestId(`${this.scope}.tab:${key}--tab`), {
+                testId: `${this.scope}.tab:${key}--tab`,
+                role: 'tab',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/settings_sidebar/settings_sidebar.tsx#SettingsSidebar',
+            }),
+        );
+    }
+}
+
+/** Rendered at `custom_status_modal.expiry.custom`, `date_time_picker_modal.when`: one class, constructed with the scope it is mounted at. */
+export class CustomStatusModalExpiryCustom extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `custom_status_modal.expiry.custom.date--button` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     * Renders only when showDateAndTimeField.
+     */
+    get dateButton() {
+        return drivers.button(this.byTestId(`${this.scope}.date--button`), {
+            testId: `${this.scope}.date--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    async clickDateButton(): Promise<void> {
+        await this.dateButton.click();
+    }
+
+    /**
+     * `custom_status_modal.expiry.custom.time--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when showDateAndTimeField and !manualTimeEntry.
+     * Opens menu expiryTimeMenu (`custom_status_modal.expiry.custom.time_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get timeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.time--button`), {
+            testId: `${this.scope}.time--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks timeButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickTimeButton(): Promise<CustomStatusModalExpiryCustomTimeMenu> {
+        await this.timeButton.click();
+        return new CustomStatusModalExpiryCustomTimeMenu(this.page, `${this.scope}.time_menu`);
+    }
+
+    /**
+     * `custom_status_modal.expiry.custom.calendar` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     * Renders only when showDateAndTimeField and isPopperOpen.
+     */
+    get calendar(): CustomStatusModalExpiryCustomCalendar {
+        return new CustomStatusModalExpiryCustomCalendar(this.page, `${this.scope}.calendar`, this.root);
+    }
+
+    get timeMenu(): CustomStatusModalExpiryCustomTimeMenu {
+        return new CustomStatusModalExpiryCustomTimeMenu(this.page, `${this.scope}.time_menu`);
+    }
+}
+
+/** Rendered at `custom_status_modal.expiry.custom.calendar`, `date_time_picker_modal.when.calendar`: one class, constructed with the scope it is mounted at. */
+export class CustomStatusModalExpiryCustomCalendar extends Scope {
+    /**
+     * `custom_status_modal.expiry.custom.calendar.day:{key}--text` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     * Renders only when showDateAndTimeField.
+     */
+    day(day: string) {
+        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
+            testId: `${this.scope}.day:${day}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `custom_status_modal.expiry.custom.calendar.day:{key}--text` in the scope. */
+    get dayItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
+    }
+
+    /** The keys of every `custom_status_modal.expiry.custom.calendar.day:{key}--text` in the scope, in document order. */
+    dayKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.day:`, '--text');
+    }
+
+    /**
+     * `custom_status_modal.expiry.custom.calendar.next_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     * Renders only when showDateAndTimeField.
+     */
+    get nextMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.next_month`), {
+            testId: `${this.scope}.next_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /**
+     * `custom_status_modal.expiry.custom.calendar.previous_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     * Renders only when showDateAndTimeField.
+     */
+    get previousMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.previous_month`), {
+            testId: `${this.scope}.previous_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `custom_status_modal.expiry.custom.calendar.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
+    get dayList() {
+        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
+            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
+                testId: `${this.scope}.day:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+            }),
+        );
+    }
+}
+
+/** Rendered at `custom_status_modal.expiry.custom.time_menu`, `date_time_picker_modal.when.time_menu`: one class, constructed with the scope it is mounted at. */
+export class CustomStatusModalExpiryCustomTimeMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` — DateTimeInputContainer (channels/src/components/datetime_input/datetime_input.tsx)
+     * Renders only when showDateAndTimeField and !manualTimeEntry.
+     */
+    time(time: string) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.time:${time}--menuitem`), {
+            testId: `${this.scope}.time:${time}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
+        });
+    }
+
+    /** Every `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` in the scope. */
+    get timeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.time:`, '--menuitem');
+    }
+
+    /** The keys of every `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` in the scope, in document order. */
+    timeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.time:`, '--menuitem');
+    }
+
+    /** Every `custom_status_modal.expiry.custom.time_menu.time:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.timeList).toHaveKeys([…])`. */
+    get timeList() {
+        return this.keyedList(`${this.scope}.time:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.time:${key}--menuitem`), {
+                testId: `${this.scope}.time:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer',
+            }),
+        );
+    }
+}
+
+/** Rendered at `integrations.bot_form.default_token`, `settings.access_tokens.regenerate`: one class, constructed with the scope it is mounted at. */
+export class TokenExpiryPicker extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `integrations.bot_form.default_token.expiry--combobox` — TokenExpiryPicker (channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx)
+     */
+    get expiryCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.expiry--combobox`), {
+            testId: `${this.scope}.expiry--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx#TokenExpiryPicker',
+        });
+    }
+
+    async chooseExpiryCombobox(option: string | RegExp): Promise<void> {
+        await this.expiryCombobox.choose(option);
+    }
+
+    /**
+     * `integrations.bot_form.default_token.expiry_date--textbox` — TokenExpiryPicker (channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx)
+     * Renders only when expiryPreset === 'custom'.
+     */
+    get expiryDateTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.expiry_date--textbox`), {
+            testId: `${this.scope}.expiry_date--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx#TokenExpiryPicker',
+        });
+    }
+
+    async fillExpiryDateTextbox(value: string): Promise<void> {
+        await this.expiryDateTextbox.fill(value);
+    }
+
+    /**
+     * `integrations.bot_form.default_token.expiry_enforced--text` — TokenExpiryPicker (channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx)
+     * Renders only when enforceExpiry.
+     */
+    get expiryEnforcedText() {
+        return drivers.text(this.byTestId(`${this.scope}.expiry_enforced--text`), {
+            testId: `${this.scope}.expiry_enforced--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx#TokenExpiryPicker',
+        });
+    }
+
+    getExpiryEnforcedText(): Promise<string> {
+        return this.expiryEnforcedText.text();
+    }
+
+    /**
+     * `integrations.bot_form.default_token.max_lifetime_hint--text` — TokenExpiryPicker (channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx)
+     * Renders only when maxLifetimeDays > 0.
+     */
+    get maxLifetimeHintText() {
+        return drivers.text(this.byTestId(`${this.scope}.max_lifetime_hint--text`), {
+            testId: `${this.scope}.max_lifetime_hint--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx#TokenExpiryPicker',
+        });
+    }
+
+    getMaxLifetimeHintText(): Promise<string> {
+        return this.maxLifetimeHintText.text();
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<TokenExpiryPickerFormValues>): Promise<void> {
+        if (values.expiry !== undefined) {
+            await this.expiryCombobox.choose(values.expiry);
+        }
+        if (values.expiryDate !== undefined) {
+            await this.expiryDateTextbox.fill(values.expiryDate);
+        }
     }
 }
 
@@ -3148,8 +4684,8 @@ export class TeamSelectorMenu extends Scope {
         });
     }
 
-    get filter(): Prompt {
-        return new Prompt(this.page, `${this.scope}.filter`, this.root);
+    get filter(): Input {
+        return new Input(this.page, `${this.scope}.filter`, this.root);
     }
 
     /** Every `search.team_selector.menu.team:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.teamList).toHaveKeys([…])`. */
@@ -3174,5 +4710,62 @@ export class TeamSelectorMenu extends Scope {
                 source: 'channels/src/components/new_search/select_team.tsx#SelectTeam',
             }),
         );
+    }
+}
+
+/** Rendered at `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_settings_modal.access.mode_flip_modal`: one class, constructed with the scope it is mounted at. */
+export class ConfirmModal extends Scope {
+    /**
+     * `settings.access_tokens.confirm_modal.cancel--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
+     * Renders only when !hideCancel.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `settings.access_tokens.confirm_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `settings.access_tokens.confirm_modal.confirm--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
+     * Renders only when !hideConfirm.
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [Api.GetUser, Api.PatchTeam, Api.UpdateTeamMemberSchemeRoles],
+            unknownEffects: false,
+            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
     }
 }

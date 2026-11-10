@@ -72,14 +72,8 @@ describe('Verify Guest User Identification in different screens', () => {
         cy.uiOpenTeamMenu('View members');
 
         cy.get('#teamMembersModal').should('be.visible').within(($el) => {
-            cy.wrap($el).findAllByTestId('userListItemDetails').each(($elChild) => {
-                cy.wrap($elChild).invoke('text').then((username) => {
-                    // * Verify Guest Badge in Channel Members List
-                    if (username === guestUser.username) {
-                        cy.wrap($elChild).find('.Tag').should('be.visible').and('have.text', 'GUEST');
-                    }
-                });
-            });
+            // * Verify Guest Badge in the guest's row (rows are keyed by user id)
+            cy.wrap($el).findByTestId(`team_members_modal.members.user:${guestUser.id}`).find('.Tag').should('be.visible').and('have.text', 'GUEST');
 
             // #Close Channel Members Dialog
             cy.wrap($el).find('button[aria-label="Close"]').click();

@@ -504,6 +504,7 @@ export default class UserSettingsDisplay extends React.PureComponent<Props, Stat
                 thirdSection = (
                     <Radio
                         id={name + 'C'}
+                        data-testid={`settings.section.option:${thirdOption.value}--radio`}
                         name={name}
                         checked={format[2]}
                         onChange={(e) => this.handleOnChange(e, thirdDisplay)}
@@ -552,6 +553,7 @@ export default class UserSettingsDisplay extends React.PureComponent<Props, Stat
                     <div className='settings-radio-group'>
                         <Radio
                             id={name + 'A'}
+                            data-testid={`settings.section.option:${firstOption.value}--radio`}
                             name={name}
                             checked={format[0]}
                             onChange={(e) => this.handleOnChange(e, firstDisplay)}
@@ -562,6 +564,7 @@ export default class UserSettingsDisplay extends React.PureComponent<Props, Stat
                         </Radio>
                         <Radio
                             id={name + 'B'}
+                            data-testid={`settings.section.option:${secondOption.value}--radio`}
                             name={name}
                             checked={format[1]}
                             onChange={(e) => this.handleOnChange(e, secondDisplay)}
@@ -1205,6 +1208,7 @@ export default class UserSettingsDisplay extends React.PureComponent<Props, Stat
         return (
             <div
                 id='displaySettings'
+                data-testid='settings.panel:display--tabpanel'
                 aria-labelledby='displayButton'
                 role='tabpanel'
             >

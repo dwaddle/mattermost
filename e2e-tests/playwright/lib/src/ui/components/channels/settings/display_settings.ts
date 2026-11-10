@@ -98,7 +98,10 @@ export default class DisplaySettings {
 
     async verifySectionIsExpanded(section: DisplaySettingsSection) {
         await expect(
-            this.container.getByTestId('section-min').filter({hasText: sectionTitles[section]}),
+            this.container
+                .getByTestId(/^settings\.section:/)
+                .filter({has: this.container.page().getByTestId('settings.section.edit--button')})
+                .filter({hasText: sectionTitles[section]}),
         ).not.toBeVisible();
 
         await expect(this.container.locator('section', {hasText: sectionTitles[section]})).toBeVisible();

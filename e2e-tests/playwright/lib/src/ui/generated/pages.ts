@@ -541,9 +541,10 @@ export class IntegrationsPage {
         );
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves Integrations to the grammar names one). */
+    /** Navigates here and waits until `integrations.options.bots--link` shows. */
     async goto(params: IntegrationsPageParams): Promise<void> {
         await this.page.goto(IntegrationsPage.path(params));
+        await this.page.getByTestId('integrations.options.bots--link').waitFor();
     }
 }
 

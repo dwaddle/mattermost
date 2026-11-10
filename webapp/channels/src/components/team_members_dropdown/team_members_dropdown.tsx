@@ -5,6 +5,7 @@ import React from 'react';
 import {FormattedMessage, injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Team, TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -29,6 +30,9 @@ type Props = WrappedComponentProps & {
     index: number;
     totalUsers: number;
     collapsedThreads: ReturnType<typeof isCollapsedThreadsEnabled>;
+
+    // The member's row: the dropdown is `.role--button`, its items under `.role_menu`.
+    testIdScope: TestId;
     actions: {
         getMyTeamMembers: () => void;
         getMyTeamUnreads: (collapsedThreads: boolean) => void;
@@ -134,7 +138,10 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
         let serverError = null;
         if (this.state.serverError) {
             serverError = (
-                <div className='has-error'>
+                <div
+                    className='has-error'
+                    data-testid={`${this.props.testIdScope}.error--text`}
+                >
                     <label className='has-error control-label'>{this.state.serverError}</label>
                 </div>
             );
@@ -234,6 +241,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
                     confirmButtonText={confirmButton}
                     onConfirm={this.handleDemoteSubmit}
                     onCancel={this.handleDemoteCancel}
+                    testId='team_members_modal.demote_modal'
                 />
             );
         }
@@ -251,6 +259,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
         const menuRemove = (
             <Menu.Item
                 id='removeFromTeam'
+                data-testid={`${this.props.testIdScope}.role_menu.remove--menuitem`}
                 onClick={this.handleRemoveFromTeam}
                 labels={
                     <FormattedMessage
@@ -262,6 +271,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
         );
         const menuMakeAdmin = (
             <Menu.Item
+                data-testid={`${this.props.testIdScope}.role_menu.make_admin--menuitem`}
                 onClick={this.handleMakeAdmin}
                 labels={
                     <FormattedMessage
@@ -273,6 +283,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
         );
         const menuMakeMember = (
             <Menu.Item
+                data-testid={`${this.props.testIdScope}.role_menu.make_member--menuitem`}
                 onClick={this.handleMakeMember}
                 labels={
                     <FormattedMessage
@@ -287,6 +298,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
                 <Menu.Container
                     menuButton={{
                         id: `teamMembersDropdown_${user.username}`,
+                        dataTestId: `${this.props.testIdScope}.role--button`,
                         class: 'dropdown-toggle theme color--link style--none',
                         children: (
                             <>

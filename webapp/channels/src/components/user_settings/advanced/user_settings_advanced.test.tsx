@@ -60,7 +60,7 @@ describe('components/user_settings/display/UserSettingsDisplay', () => {
         const props = {...requiredProps, updateSection, activeSection: 'formatting'};
         renderWithContext(<AdvancedSettingsDisplay {...props}/>);
 
-        await userEvent.click(screen.getByTestId('saveSetting'));
+        await userEvent.click(screen.getByTestId('settings.section.save--button'));
         expect(updateSection).toHaveBeenCalledWith('');
     });
 
@@ -70,7 +70,7 @@ describe('components/user_settings/display/UserSettingsDisplay', () => {
         renderWithContext(<AdvancedSettingsDisplay {...props}/>);
 
         // Click Save → handleSubmit → handleUpdateSection('') → updateSection('')
-        await userEvent.click(screen.getByTestId('saveSetting'));
+        await userEvent.click(screen.getByTestId('settings.section.save--button'));
         expect(updateSection).toHaveBeenCalledWith('');
     });
 

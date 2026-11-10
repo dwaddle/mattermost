@@ -6,6 +6,7 @@ import {FormattedMessage, injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
@@ -52,10 +53,9 @@ type Props = {
     term: string;
     onTermChange: (term: string) => void;
     intl: IntlShape;
-    isDisabled?: boolean;
 
-    // the type of user list row to render
-    rowComponentType?: React.ComponentType<any>;
+    // The list's scope: `.search--textbox`, `.count--text`, `.next--button`, `.prev--button`, and each row `.user:<user id>`.
+    testIdScope: TestIdScope;
 };
 
 type State = {
@@ -229,6 +229,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                 nextButton = (
                     <Button
                         id='searchableUserListNextBtn'
+                        data-testid={`${this.props.testIdScope}.next--button`}
                         emphasis='tertiary'
                         size='small'
                         className='filter-control filter-control__next'
@@ -247,6 +248,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                 previousButton = (
                     <Button
                         id='searchableUserListPrevBtn'
+                        data-testid={`${this.props.testIdScope}.prev--button`}
                         emphasis='tertiary'
                         size='small'
                         className='filter-control filter-control__prev'
@@ -280,6 +282,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                         <QuickInput
                             ref={this.filterRef}
                             id='searchUsersInput'
+                            data-testid={`${this.props.testIdScope}.search--textbox`}
                             className='form-control filter-textbox'
                             placeholder={this.props.intl.formatMessage({id: 'filtered_user_list.search', defaultMessage: 'Search users'})}
                             aria-label={this.props.intl.formatMessage({id: 'filtered_user_list.search', defaultMessage: 'Search users'})}
@@ -298,6 +301,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                     <div className='col-sm-12'>
                         <span
                             id='searchableUserListTotal'
+                            data-testid={`${this.props.testIdScope}.count--text`}
                             className='member-count pull-left'
                             aria-live='polite'
                         >
@@ -313,8 +317,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                             actions={this.props.actions}
                             actionProps={this.props.actionProps}
                             actionUserProps={this.props.actionUserProps}
-                            rowComponentType={this.props.rowComponentType}
-                            isDisabled={this.props.isDisabled}
+                            testIdScope={this.props.testIdScope}
                         />
                     </Scrollbars>
                 </div>

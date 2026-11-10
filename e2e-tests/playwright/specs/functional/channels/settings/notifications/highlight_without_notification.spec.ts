@@ -1,220 +1,185 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import type {Locator} from '@playwright/test';
+
+import {expect, generated, test, type App} from '@mattermost/playwright-lib';
 
 let keywords: string[];
-const highlightWithoutNotificationClass = 'non-notification-highlight';
 
 test.beforeEach(async ({pw}) => {
     keywords = [`AB${pw.random.id()}`, `CD${pw.random.id()}`, `EF${pw.random.id()}`, `Highlight me ${pw.random.id()}`];
 });
 
+/** Opens Settings > Notifications and expands "Keywords that get highlighted (without notifications)". */
+async function openHighlightKeywords(app: App) {
+    await app.globalHeader.clickSettingsButton();
+    await app.userSettingsModal.tabs.tab('notifications').select();
+    const section = app.settings.section('keywordsAndHighlight');
+    await section.clickEditButton();
+    await expect(section.keywordsCombobox.locator).toBeVisible();
+    return section;
+}
+
+/** Adds `keyword` as a highlight keyword, saves, and closes Settings. */
+async function saveHighlightKeyword(app: App, keyword: string) {
+    const section = await openHighlightKeywords(app);
+    await section.keywordsCombobox.locator.fill(keyword);
+    await section.keywordsCombobox.locator.press('Tab');
+    await section.clickSaveButton();
+    await app.userSettingsModal.clickCloseButton();
+}
+
+/** Sends a message from a composer, and returns the list's new post once it shows. */
+async function send(
+    list: App['center']['postList'] | App['rhs']['thread'],
+    composer: generated.PostCreate,
+    message: string,
+) {
+    const before = (await list.postKeys()).length;
+    await composer.fillMessageTextbox(message);
+    await composer.clickSendButton();
+    await expect.poll(async () => (await list.postKeys()).length).toBeGreaterThan(before);
+    return list.post({id: (await list.postKeys()).at(-1)!});
+}
+
+/** The highlighted keywords in a post's message. */
+function highlightsIn(app: App, post: {locator: Locator}) {
+    return new generated.Markdown(app.page, 'markdown', post.locator).keywordHighlightText.locator;
+}
+
+/**
+ * @objective Verify that keywords are added when Enter, comma or Tab is pressed in the keywords textbox
+ */
 test('MM-T5465-1 Should add the keyword when enter, comma or tab is pressed on the textbox', async ({pw}) => {
-    // # Skip test if no license
     await pw.skipIfNoLicense();
 
     const {user} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {app, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
-    await channelsPage.postMessage('Hello World');
+    await send(app.center.postList, app.center.postCreate, 'Hello World');
 
-    // # Open settings modal
-    const settingsModal = await channelsPage.globalHeader.openSettings();
+    // # Open settings modal, the notifications tab, and expand the keywords that get highlighted section
+    const section = await openHighlightKeywords(app);
+    const input = section.keywordsCombobox.locator;
 
-    // # Open notifications tab
-    const notificationsSettings = await settingsModal.openNotificationsTab();
+    // # Enter the keywords, separated by comma, tab and enter
+    await input.fill(keywords[0]);
+    await input.press(',');
+    await input.fill(keywords[1]);
+    await input.press('Tab');
+    await input.fill(keywords[2]);
+    await input.press('Enter');
 
-    // # Open keywords that get highlighted section
-    await notificationsSettings.expandSection('keysWithHighlight');
-
-    const keywordsInput = await notificationsSettings.getKeywordsInput();
-
-    // # Enter keyword 1
-    await keywordsInput.fill(keywords[0]);
-
-    // # Press Comma on the textbox
-    await keywordsInput.press(',');
-
-    // # Enter keyword 2
-    await keywordsInput.fill(keywords[1]);
-
-    // # Press Tab on the textbox
-    await keywordsInput.press('Tab');
-
-    // # Enter keyword 3
-    await keywordsInput.fill(keywords[2]);
-
-    // # Press Enter on the textbox
-    await keywordsInput.press('Enter');
-
-    // * Verify that the keywords have been added to the collapsed description
-    const keysWithHighlightDesc = notificationsSettings.keysWithHighlightDesc;
-    await keysWithHighlightDesc.waitFor();
+    // * Verify the keywords are added to the collapsed description
     for (const keyword of keywords.slice(0, 3)) {
-        expect(await keysWithHighlightDesc).toContainText(keyword);
+        await expect(section.describe.locator).toContainText(keyword);
     }
 });
 
+/**
+ * @objective Verify that keywords are highlighted in a message sent in the center
+ */
 test('MM-T5465-2 Should highlight the keywords when a message is sent with the keyword in center', async ({pw}) => {
-    // # Skip test if no license
     await pw.skipIfNoLicense();
 
     const {user} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {app, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
-    // # Open settings modal
-    const settingsModal = await channelsPage.globalHeader.openSettings();
-
-    // # Open notifications tab
-    const notificationsSettings = await settingsModal.openNotificationsTab();
-
-    // # Open keywords that get highlighted section
-    await notificationsSettings.expandSection('keysWithHighlight');
-
-    // # Enter the keyword
-    const keywordsInput = await notificationsSettings.getKeywordsInput();
-    await keywordsInput.fill(keywords[3]);
-    await keywordsInput.press('Tab');
-
-    // # Save the keyword
-    await notificationsSettings.save();
-
-    // # Close the settings modal
-    await settingsModal.close();
+    // # Save a highlight keyword
+    await saveHighlightKeyword(app, keywords[3]);
 
     // # Post a message without the keyword
     const messageWithoutKeyword = 'This message does not contain the keyword';
-    await channelsPage.postMessage(messageWithoutKeyword);
-    const lastPostWithoutHighlight = await channelsPage.getLastPost();
+    const withoutKeyword = await send(app.center.postList, app.center.postCreate, messageWithoutKeyword);
 
-    // * Verify that the keywords are not highlighted
-    await expect(lastPostWithoutHighlight.container.getByText(messageWithoutKeyword)).toBeVisible();
-    await expect(lastPostWithoutHighlight.container.getByText(messageWithoutKeyword)).not.toHaveClass(
-        highlightWithoutNotificationClass,
-    );
+    // * Verify the message has no highlight
+    await expect(withoutKeyword.locator).toContainText(messageWithoutKeyword);
+    await expect(highlightsIn(app, withoutKeyword)).toHaveCount(0);
 
     // # Post a message with the keyword
     const messageWithKeyword = `This message contains the keyword ${keywords[3]}`;
-    await channelsPage.postMessage(messageWithKeyword);
-    const lastPostWithHighlight = await channelsPage.getLastPost();
+    const withKeyword = await send(app.center.postList, app.center.postCreate, messageWithKeyword);
 
-    // * Verify that the keywords are highlighted
-    await expect(lastPostWithHighlight.container.getByText(messageWithKeyword)).toBeVisible();
-    await expect(lastPostWithHighlight.container.getByText(keywords[3])).toHaveClass(highlightWithoutNotificationClass);
+    // * Verify the keyword is highlighted
+    await expect(withKeyword.locator).toContainText(messageWithKeyword);
+    await expect(highlightsIn(app, withKeyword)).toHaveText([keywords[3]]);
 });
 
+/**
+ * @objective Verify that keywords are highlighted in a reply sent in the RHS
+ */
 test('MM-T5465-3 Should highlight the keywords when a message is sent with the keyword in rhs', async ({pw}) => {
-    // # Skip test if no license
     await pw.skipIfNoLicense();
 
     const {user} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {app, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
-    // # Open settings modal
-    const settingsModal = await channelsPage.globalHeader.openSettings();
+    // # Save a highlight keyword
+    await saveHighlightKeyword(app, keywords[3]);
 
-    // # Open notifications tab
-    const notificationsSettings = await settingsModal.openNotificationsTab();
+    // # Post a message without the keyword, and open it in the RHS
+    const root = await send(app.center.postList, app.center.postCreate, 'This message does not contain the keyword');
+    await root.locator.hover();
+    await root.menu.clickReplyButton();
+    await expect(app.rhs.postCreate.messageTextbox.locator).toBeVisible();
 
-    // # Open keywords that get highlighted section
-    await notificationsSettings.expandSection('keysWithHighlight');
-
-    // # Enter the keyword
-    const keywordsInput = await notificationsSettings.getKeywordsInput();
-    await keywordsInput.fill(keywords[3]);
-    await keywordsInput.press('Tab');
-
-    // # Save the keyword
-    await notificationsSettings.save();
-
-    // # Close the settings modal
-    await settingsModal.close();
-
-    // # Post a message without the keyword
-    const messageWithoutKeyword = 'This message does not contain the keyword';
-    await channelsPage.postMessage(messageWithoutKeyword);
-    const lastPostWithoutHighlight = await channelsPage.getLastPost();
-
-    // # Open the message in the RHS
-    await lastPostWithoutHighlight.hover();
-    await lastPostWithoutHighlight.postMenu.toBeVisible();
-    await lastPostWithoutHighlight.postMenu.reply();
-    await channelsPage.sidebarRight.toBeVisible();
-
-    // # Post a message with the keyword in the RHS
+    // # Reply with the keyword
     const messageWithKeyword = `This message contains the keyword ${keywords[3]}`;
-    await channelsPage.sidebarRight.postMessage(messageWithKeyword);
+    const reply = await send(app.rhs.thread, app.rhs.postCreate, messageWithKeyword);
 
-    // * Verify that the keywords are highlighted
-    const lastPostWithHighlightInRHS = await channelsPage.sidebarRight.getLastPost();
-    await expect(lastPostWithHighlightInRHS.container.getByText(messageWithKeyword)).toBeVisible();
-    await expect(lastPostWithHighlightInRHS.container.getByText(keywords[3])).toHaveClass(
-        highlightWithoutNotificationClass,
-    );
+    // * Verify the keyword is highlighted in the reply
+    await expect(reply.locator).toContainText(messageWithKeyword);
+    await expect(highlightsIn(app, reply)).toHaveText([keywords[3]]);
 });
 
+/**
+ * @objective Verify that highlighted keywords don't count as mentions
+ */
 test('MM-T5465-4 Highlighted keywords should not appear in the Recent Mentions', async ({pw}) => {
-    // # Skip test if no license
     await pw.skipIfNoLicense();
 
     const {user} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {app, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
-    // # Open settings modal
-    const settingsModal = await channelsPage.globalHeader.openSettings();
-
-    // # Open notifications tab
-    const notificationsSettings = await settingsModal.openNotificationsTab();
-
-    // # Open keywords that get highlighted section
-    await notificationsSettings.expandSection('keysWithHighlight');
-
-    // # Enter the keyword
-    const keywordsInput = await notificationsSettings.getKeywordsInput();
-    await keywordsInput.fill(keywords[0]);
-    await keywordsInput.press('Tab');
-
-    // # Save the keyword
-    await notificationsSettings.save();
-
-    // # Close the settings modal
-    await settingsModal.close();
+    // # Save a highlight keyword
+    await saveHighlightKeyword(app, keywords[0]);
 
     // # Open the recent mentions
-    await channelsPage.globalHeader.openRecentMentions();
+    await app.globalHeader.clickRecentMentionsButton();
 
-    // * Verify recent mentions is empty
-    await channelsPage.sidebarRight.toBeVisible();
-    await expect(channelsPage.sidebarRight.container.getByText('No mentions yet')).toBeVisible();
+    // * Verify recent mentions are empty
+    await expect(app.noResults.titleText.locator).toHaveText('No mentions yet');
 });
 
+/**
+ * @objective Verify that keywords are highlighted in a message from another user
+ */
 test('MM-T5465-5 Should highlight keywords in message sent from another user', async ({pw}) => {
-    // # Skip test if no license
     await pw.skipIfNoLicense();
 
     const {adminClient, team, adminUser, user} = await pw.initSetup();
@@ -229,8 +194,8 @@ test('MM-T5465-5 Should highlight keywords in message sent from another user', a
     const highlightKeyword = keywords[0];
     const messageWithKeyword = `This received message contains the ${highlightKeyword} keyword `;
 
-    // # Create a post containing the keyword in the channel by admin
-    await adminClient.createPost(
+    // # Create a post containing the highlighted keyword from the admin
+    const post = await adminClient.createPost(
         pw.random.post({
             message: messageWithKeyword,
             channel_id: channel.id,
@@ -239,36 +204,17 @@ test('MM-T5465-5 Should highlight keywords in message sent from another user', a
     );
 
     // # Now log in as a user in new browser context
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {app, channelsPage} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
     await channelsPage.goto();
     await channelsPage.toBeVisible();
 
-    // # Open settings modal
-    const settingsModal = await channelsPage.globalHeader.openSettings();
+    // # Save the highlight keyword
+    await saveHighlightKeyword(app, highlightKeyword);
 
-    // # Open notifications tab
-    const notificationsSettings = await settingsModal.openNotificationsTab();
-
-    // # Open keywords that get highlighted section
-    await notificationsSettings.expandSection('keysWithHighlight');
-
-    // # Enter the keyword
-    const keywordsInput = await notificationsSettings.getKeywordsInput();
-    await keywordsInput.fill(keywords[0]);
-    await keywordsInput.press('Tab');
-
-    // # Save the keyword
-    await notificationsSettings.save();
-
-    // # Close the settings modal
-    await settingsModal.close();
-
-    // * Verify that the keywords are highlighted in the last message received
-    const lastPostWithHighlight = await channelsPage.getLastPost();
-    await expect(lastPostWithHighlight.container.getByText(messageWithKeyword)).toBeVisible();
-    await expect(lastPostWithHighlight.container.getByText(highlightKeyword)).toHaveClass(
-        highlightWithoutNotificationClass,
-    );
+    // * Verify the keyword is highlighted in the admin's message
+    const received = app.center.postList.post(post);
+    await expect(received.locator).toContainText(messageWithKeyword.trim());
+    await expect(highlightsIn(app, received)).toHaveText([highlightKeyword]);
 });

@@ -7,6 +7,8 @@ import {expect} from '@playwright/test';
 import InfoSettings from './info_settings';
 import ConfigurationSettings from './configuration_settings';
 
+import {ChannelSettingsModal as GeneratedChannelSettingsModal} from '@/ui/generated/channel_settings_modal';
+
 export default class ChannelSettingsModal {
     readonly container: Locator;
 
@@ -19,19 +21,25 @@ export default class ChannelSettingsModal {
     readonly infoSettings;
     readonly configurationSettings;
 
+    /** Generated from the webapp's testids; this class keeps the flows specs already use. */
+    readonly generated: GeneratedChannelSettingsModal;
+
     constructor(container: Locator) {
         this.container = container;
-
-        this.closeButton = container.getByRole('button', {name: 'Close'});
-        this.saveButton = container.getByTestId('SaveChangesPanel__save-btn');
-
-        this.infoTab = container.getByRole('tab', {name: 'info'});
-        this.configurationTab = container.getByRole('tab', {name: 'configuration'});
-
-        this.infoSettings = new InfoSettings(container.getByTestId('channel-settings-info-tab'));
-        this.configurationSettings = new ConfigurationSettings(
-            container.getByTestId('channel-settings-configuration-tab'),
+        this.generated = new GeneratedChannelSettingsModal(
+            container.page(),
+            'channel_settings_modal',
+            container.page().locator(':root'),
         );
+
+        this.closeButton = this.generated.closeButton.locator;
+        this.saveButton = this.generated.savePanel.saveButton.locator;
+
+        this.infoTab = this.generated.tabs.infoTab.locator;
+        this.configurationTab = this.generated.tabs.configurationTab.locator;
+
+        this.infoSettings = new InfoSettings(this.generated.info.locator);
+        this.configurationSettings = new ConfigurationSettings(this.generated.configuration.container);
     }
 
     async toBeVisible() {

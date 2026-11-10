@@ -19,8 +19,8 @@ export default class MembersInvitedModal {
         this.doneButton = container.getByRole('button', {name: 'Done'});
         this.inviteMoreButton = container.getByRole('button', {name: 'Invite More People'});
 
-        this.sentSection = container.getByTestId('invitation-sent-section');
-        this.notSentSection = container.getByTestId('invitation-not-sent-section');
+        this.sentSection = container.getByTestId('invitation_modal.result.sent');
+        this.notSentSection = container.getByTestId('invitation_modal.result.not_sent');
     }
 
     async toBeVisible() {
@@ -36,7 +36,7 @@ export default class MembersInvitedModal {
      */
     async getSentResultReason(): Promise<string> {
         await expect(this.sentSection).toBeVisible();
-        return (await this.sentSection.getByTestId('invitation-result-reason').textContent()) ?? '';
+        return (await this.sentSection.getByTestId('invitation_modal.result.reason--text').textContent()) ?? '';
     }
 
     /**
@@ -44,7 +44,7 @@ export default class MembersInvitedModal {
      */
     async getNotSentResultReason(): Promise<string> {
         await expect(this.notSentSection).toBeVisible();
-        return (await this.notSentSection.getByTestId('invitation-result-reason').textContent()) ?? '';
+        return (await this.notSentSection.getByTestId('invitation_modal.result.reason--text').textContent()) ?? '';
     }
 
     /**

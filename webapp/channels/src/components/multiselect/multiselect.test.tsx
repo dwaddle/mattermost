@@ -20,6 +20,7 @@ describe('components/multiselect/multiselect', () => {
     }
 
     const baseProps = {
+        testIdScope: 'test_multiselect' as const,
         ariaLabelRenderer: (option: Value) => option?.label ?? '',
         handleAdd: jest.fn(),
         handleDelete: jest.fn(),

@@ -6,9 +6,16 @@ import {expect} from '@playwright/test';
 
 import Switch from '../../switch';
 
+import {ChannelSettingsModal, ChannelSettingsModalConfiguration} from '@/ui/generated/channel_settings_modal';
+
 export default class ConfigurationSettings {
     readonly container: Locator;
 
+    /** Generated from the webapp's testids; this class keeps the flows specs already use. */
+    readonly generated: ChannelSettingsModalConfiguration;
+    readonly savePanel: ChannelSettingsModal['savePanel'];
+
+    // The toggles are Compass Switches (role="switch" on a hidden input inside a <label>).
     readonly classificationSwitch: Switch;
     readonly channelBannerSwitch: Switch;
     readonly autotranslationSwitch: Switch;
@@ -17,12 +24,30 @@ export default class ConfigurationSettings {
 
     constructor(container: Locator) {
         this.container = container;
+        this.generated = new ChannelSettingsModalConfiguration(
+            container.page(),
+            'channel_settings_modal.configuration',
+            container,
+        );
+        this.savePanel = new ChannelSettingsModal(container.page(), 'channel_settings_modal', container).savePanel;
 
-        this.classificationSwitch = new Switch(container, 'channelClassificationToggle-button');
-        this.channelBannerSwitch = new Switch(container, 'channelBannerToggle-button');
-        this.autotranslationSwitch = new Switch(container, 'channelTranslationToggle-button');
-        this.joinLeaveMessagesSwitch = new Switch(container, 'channelJoinLeaveMessagesToggle-button');
-        this.shareWithWorkspacesSwitch = new Switch(container, 'shareChannelWithWorkspacesToggle-button');
+        this.classificationSwitch = new Switch(
+            container,
+            'channel_settings_modal.configuration.classification--switch',
+        );
+        this.channelBannerSwitch = new Switch(container, 'channel_settings_modal.configuration.banner--switch');
+        this.autotranslationSwitch = new Switch(
+            container,
+            'channel_settings_modal.configuration.autotranslation--switch',
+        );
+        this.joinLeaveMessagesSwitch = new Switch(
+            container,
+            'channel_settings_modal.configuration.join_leave_messages--switch',
+        );
+        this.shareWithWorkspacesSwitch = new Switch(
+            container,
+            'channel_settings_modal.configuration.share_with_workspaces--switch',
+        );
     }
 
     async toBeVisible() {
@@ -30,7 +55,7 @@ export default class ConfigurationSettings {
     }
 
     async save() {
-        const saveButton = this.container.getByTestId('SaveChangesPanel__save-btn');
+        const saveButton = this.savePanel.saveButton.locator;
 
         // Wait up to 5s for the save panel to appear. Some toggle-only changes
         // (e.g. disable sharing after a reload) may not trigger the save panel
@@ -110,7 +135,7 @@ export default class ConfigurationSettings {
     }
 
     async setChannelBannerText(text: string) {
-        const textBox = this.container.getByTestId('channel_banner_banner_text_textbox');
+        const textBox = this.container.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
         await expect(textBox).toBeVisible();
         await textBox.fill(text);
     }
@@ -139,9 +164,10 @@ export default class ConfigurationSettings {
     }
 
     get bannerTextbox() {
-        return this.container.getByTestId('channel_banner_banner_text_textbox');
+        return this.container.getByTestId('channel_settings_modal.configuration.banner_text--textbox');
     }
 
+    /** With channel attributes on, the banner text is the attributes area's editor, which keeps its own testids. */
     get bannerTextEditor() {
         return this.container.getByTestId('bannerTextEditor');
     }

@@ -6,6 +6,7 @@ import {shallowEqual, useSelector} from 'react-redux';
 
 import glyphMap from '@mattermost/compass-icons/components';
 import type {IconGlyphTypes} from '@mattermost/compass-icons/IconGlyphs';
+import {pluginTestKey} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -69,6 +70,7 @@ function ProductSwitcherPluginMenuItem(props: Props) {
     return (
         <Menu.Item
             id={`product-switcher-menu-item-${item.id}`}
+            data-testid={`global_header.product_menu.plugin:${pluginTestKey(item.pluginId)}--menuitem`}
             leadingElement={Icon ? (
                 <Icon
                     size={20}

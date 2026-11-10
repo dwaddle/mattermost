@@ -609,6 +609,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                                 <Input
                                     autoFocus={true}
                                     id='primaryEmail'
+                                    testId='settings.section.new_email'
                                     name='primaryEmail'
                                     type='email'
                                     onChange={this.updateEmail}
@@ -645,6 +646,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                             <div className='col-sm-7'>
                                 <Input
                                     id='confirmEmail'
+                                    testId='settings.section.confirm_email'
                                     name='confirmEmail'
                                     type='email'
                                     onChange={this.updateConfirmEmail}
@@ -681,6 +683,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                             <div className='col-sm-7'>
                                 <Input
                                     id='currentPassword'
+                                    testId='settings.section.current_password'
                                     name='currentPassword'
                                     type='password'
                                     onChange={this.updateCurrentPassword}
@@ -927,7 +930,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
 
     createFieldManagedByAdminMessage = () => {
         return (
-            <span>
+            <span data-testid='settings.section.managed_by_admin--text'>
                 <FormattedMessage
                     id='user.settings.general.field_locked_by_admin'
                     defaultMessage='This field is managed by your System Admin. Contact them to request a change.'
@@ -985,6 +988,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                         <div className='col-sm-7'>
                             <Input
                                 id='firstName'
+                                testId='settings.section.first_name'
                                 name='firstName'
                                 autoFocus={true}
                                 type='text'
@@ -1016,6 +1020,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                         <div className='col-sm-7'>
                             <Input
                                 id='lastName'
+                                testId='settings.section.last_name'
                                 name='lastName'
                                 type='text'
                                 onChange={this.updateLastName}
@@ -1258,6 +1263,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                         <div className='col-sm-7'>
                             <Input
                                 id='username'
+                                testId='settings.section.username'
                                 name='username'
                                 autoFocus={true}
                                 maxLength={Constants.MAX_USERNAME_LENGTH}
@@ -1641,6 +1647,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
                                 <div className='col-sm-7'>
                                     <Input
                                         id={sectionName}
+                                        testId='settings.section.value'
                                         name={sectionName}
                                         autoFocus={true}
                                         type={inputType}
@@ -1863,6 +1870,7 @@ export class UserSettingsGeneralTab extends PureComponent<Props, State> {
         return (
             <div
                 id='profileSettings'
+                data-testid='settings.panel:profile--tabpanel'
                 aria-labelledby='profileButton'
                 role='tabpanel'
             >

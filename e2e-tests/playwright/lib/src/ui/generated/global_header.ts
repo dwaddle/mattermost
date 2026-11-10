@@ -6,9 +6,13 @@
 
 import type {Locator, Page} from '@playwright/test';
 
+import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {CustomStatusModal} from './custom_status_modal';
+import {AdminConsolePage, IntegrationsPage} from './pages';
+import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `global_header`. */
 export class GlobalHeader extends Scope {
@@ -19,6 +23,67 @@ export class GlobalHeader extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `global_header.help--button` — UserGuideDropdown (channels/src/components/global_header/center_controls/user_guide_dropdown/user_guide_dropdown.tsx)
+     * Renders only when isChannels(productId).
+     * Opens menu Menu.
+     */
+    get helpButton() {
+        return drivers.button(this.byTestId(`${this.scope}.help--button`), {
+            testId: `${this.scope}.help--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/center_controls/user_guide_dropdown/user_guide_dropdown.tsx#UserGuideDropdown',
+        });
+    }
+
+    async clickHelpButton(): Promise<void> {
+        await this.helpButton.click();
+    }
+
+    /**
+     * `global_header.open_account_menu--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`global_header.account_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get openAccountMenuButton() {
+        return drivers.button(this.byTestId(`${this.scope}.open_account_menu--button`), {
+            testId: `${this.scope}.open_account_menu--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks openAccountMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickOpenAccountMenuButton(): Promise<GlobalHeaderAccountMenu> {
+        await this.openAccountMenuButton.click();
+        return new GlobalHeaderAccountMenu(this.page, `${this.scope}.account_menu`);
+    }
+
+    /**
+     * `global_header.product_menu--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`global_header.product_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get productMenuButton() {
+        return drivers.button(this.byTestId(`${this.scope}.product_menu--button`), {
+            testId: `${this.scope}.product_menu--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks productMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickProductMenuButton(): Promise<GlobalHeaderProductMenu> {
+        await this.productMenuButton.click();
+        return new GlobalHeaderProductMenu(this.page, `${this.scope}.product_menu`);
     }
 
     /**
@@ -81,7 +146,7 @@ export class GlobalHeader extends Scope {
     /**
      * `global_header.settings--button` — SettingsButton (channels/src/components/global_header/right_controls/settings_button/settings_button.tsx)
      * Renders only when isChannels(productId).
-     * Opens modal UserSettingsModal.
+     * Opens modal UserSettingsModal (`user_settings_modal`).
      */
     get settingsButton() {
         return drivers.button(this.byTestId(`${this.scope}.settings--button`), {
@@ -93,12 +158,795 @@ export class GlobalHeader extends Scope {
         });
     }
 
-    async clickSettingsButton(): Promise<void> {
+    /** Clicks settingsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickSettingsButton(): Promise<UserSettingsModal> {
         await this.settingsButton.click();
+        return new UserSettingsModal(this.page, 'user_settings_modal');
+    }
+
+    get accountMenu(): GlobalHeaderAccountMenu {
+        return new GlobalHeaderAccountMenu(this.page, `${this.scope}.account_menu`);
+    }
+
+    get helpMenu(): GlobalHeaderHelpMenu {
+        return new GlobalHeaderHelpMenu(this.page, `${this.scope}.help_menu`, this.root);
+    }
+
+    get productMenu(): GlobalHeaderProductMenu {
+        return new GlobalHeaderProductMenu(this.page, `${this.scope}.product_menu`);
     }
 
     get search(): GlobalHeaderSearch {
         return new GlobalHeaderSearch(this.page, `${this.scope}.search`, this.root);
+    }
+}
+
+/** Scope `global_header.account_menu`. */
+export class GlobalHeaderAccountMenu extends Scope {
+    constructor(page: Page, scope = 'global_header.account_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `global_header.account_menu.away--menuitem` — UserAccountAwayMenuItem (channels/src/components/user_account_menu/user_account_away_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get awayMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.away--menuitem`), {
+            testId: `${this.scope}.away--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_away_menuitem.tsx#UserAccountAwayMenuItem',
+        });
+    }
+
+    async clickAwayMenuItem(): Promise<void> {
+        await this.awayMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.custom_status--menuitem` — UserAccountSetCustomStatusMenuItem (channels/src/components/user_account_menu/user_account_custom_status_menuitem.tsx)
+     * Renders only when this.props.isCustomStatusEnabled && isCustomStatusSet and props.isCustomStatusEnabled && isCustomStatusSet.
+     * Opens modal CustomStatusModal (`custom_status_modal`).
+     */
+    get customStatusMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.custom_status--menuitem`), {
+            testId: `${this.scope}.custom_status--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_custom_status_menuitem.tsx#UserAccountSetCustomStatusMenuItem',
+        });
+    }
+
+    /** Clicks customStatusMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickCustomStatusMenuItem(): Promise<CustomStatusModal> {
+        await this.customStatusMenuItem.click();
+        return new CustomStatusModal(this.page, 'custom_status_modal');
+    }
+
+    /**
+     * `global_header.account_menu.dnd--menuitem` — UserAccountDndMenuItem (channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx)
+     */
+    get dndMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.dnd--menuitem`), {
+            testId: `${this.scope}.dnd--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx#UserAccountDndMenuItem',
+        });
+    }
+
+    async clickDndMenuItem(): Promise<void> {
+        await this.dndMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.log_out--menuitem` — UserAccountLogoutMenuItem (channels/src/components/user_account_menu/user_account_logout_menuitem.tsx)
+     * Goes to redirectTo.
+     */
+    get logOutMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.log_out--menuitem`), {
+            testId: `${this.scope}.log_out--menuitem`,
+            role: 'menuitem',
+            effects: [Api.Logout],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_logout_menuitem.tsx#UserAccountLogoutMenuItem',
+        });
+    }
+
+    async clickLogOutMenuItem(): Promise<void> {
+        await this.logOutMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.name--menuitem` — UserAccountNameMenuItem (channels/src/components/user_account_menu/user_account_name_menuitem.tsx)
+     * Opens modal UserSettingsModal (`user_settings_modal`).
+     */
+    get nameMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.name--menuitem`), {
+            testId: `${this.scope}.name--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_name_menuitem.tsx#UserAccountNameMenuItem',
+        });
+    }
+
+    /** Clicks nameMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickNameMenuItem(): Promise<UserSettingsModal> {
+        await this.nameMenuItem.click();
+        return new UserSettingsModal(this.page, 'user_settings_modal');
+    }
+
+    /**
+     * `global_header.account_menu.offline--menuitem` — UserAccountOfflineMenuItem (channels/src/components/user_account_menu/user_account_offline_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get offlineMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.offline--menuitem`), {
+            testId: `${this.scope}.offline--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_offline_menuitem.tsx#UserAccountOfflineMenuItem',
+        });
+    }
+
+    async clickOfflineMenuItem(): Promise<void> {
+        await this.offlineMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.online--menuitem` — UserAccountOnlineMenuItem (channels/src/components/user_account_menu/user_account_online_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get onlineMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.online--menuitem`), {
+            testId: `${this.scope}.online--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_online_menuitem.tsx#UserAccountOnlineMenuItem',
+        });
+    }
+
+    async clickOnlineMenuItem(): Promise<void> {
+        await this.onlineMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.out_of_office--menuitem` — UserAccountOutOfOfficeMenuItem (channels/src/components/user_account_menu/user_account_out_of_office_menuitem.tsx)
+     * Renders only when props.status === UserStatuses.OUT_OF_OFFICE.
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get outOfOfficeMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.out_of_office--menuitem`), {
+            testId: `${this.scope}.out_of_office--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_out_of_office_menuitem.tsx#UserAccountOutOfOfficeMenuItem',
+        });
+    }
+
+    async clickOutOfOfficeMenuItem(): Promise<void> {
+        await this.outOfOfficeMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.profile--menuitem` — UserAccountProfileMenuItem (channels/src/components/user_account_menu/user_account_profile_menuitem.tsx)
+     * Opens modal UserSettingsModal (`user_settings_modal`).
+     */
+    get profileMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.profile--menuitem`), {
+            testId: `${this.scope}.profile--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdatePreferences],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_profile_menuitem.tsx#UserAccountProfileMenuItem',
+        });
+    }
+
+    /** Clicks profileMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickProfileMenuItem(): Promise<UserSettingsModal> {
+        await this.profileMenuItem.click();
+        return new UserSettingsModal(this.page, 'user_settings_modal');
+    }
+
+    /**
+     * `global_header.account_menu.set_custom_status--menuitem` — UserAccountSetCustomStatusMenuItem (channels/src/components/user_account_menu/user_account_set_custom_status_menuitem.tsx)
+     * Renders only when props.isCustomStatusEnabled && !isCustomStatusSet.
+     * Opens modal CustomStatusModal (`custom_status_modal`).
+     */
+    get setCustomStatusMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.set_custom_status--menuitem`), {
+            testId: `${this.scope}.set_custom_status--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_set_custom_status_menuitem.tsx#UserAccountSetCustomStatusMenuItem',
+        });
+    }
+
+    /** Clicks setCustomStatusMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickSetCustomStatusMenuItem(): Promise<CustomStatusModal> {
+        await this.setCustomStatusMenuItem.click();
+        return new CustomStatusModal(this.page, 'custom_status_modal');
+    }
+
+    get dndMenu(): GlobalHeaderAccountMenuDndMenu {
+        return new GlobalHeaderAccountMenuDndMenu(this.page, `${this.scope}.dnd_menu`, this.root);
+    }
+}
+
+/** Scope `global_header.account_menu.dnd_menu`. */
+export class GlobalHeaderAccountMenuDndMenu extends Scope {
+    constructor(page: Page, scope = 'global_header.account_menu.dnd_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `global_header.account_menu.dnd_menu.custom--menuitem` — UserAccountDndMenuItem (channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx)
+     * Opens modal DndCustomTimePicker (`dnd_custom_time_picker_modal`).
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get customMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.custom--menuitem`), {
+            testId: `${this.scope}.custom--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx#UserAccountDndMenuItem',
+        });
+    }
+
+    async clickCustomMenuItem(): Promise<void> {
+        await this.customMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.dnd_menu.do_not_clear--menuitem` — UserAccountDndMenuItem (channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get doNotClearMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.do_not_clear--menuitem`), {
+            testId: `${this.scope}.do_not_clear--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx#UserAccountDndMenuItem',
+        });
+    }
+
+    async clickDoNotClearMenuItem(): Promise<void> {
+        await this.doNotClearMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.dnd_menu.one_hour--menuitem` — UserAccountDndMenuItem (channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get oneHourMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.one_hour--menuitem`), {
+            testId: `${this.scope}.one_hour--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx#UserAccountDndMenuItem',
+        });
+    }
+
+    async clickOneHourMenuItem(): Promise<void> {
+        await this.oneHourMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.dnd_menu.thirty_minutes--menuitem` — UserAccountDndMenuItem (channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get thirtyMinutesMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.thirty_minutes--menuitem`), {
+            testId: `${this.scope}.thirty_minutes--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx#UserAccountDndMenuItem',
+        });
+    }
+
+    async clickThirtyMinutesMenuItem(): Promise<void> {
+        await this.thirtyMinutesMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.dnd_menu.tomorrow--menuitem` — UserAccountDndMenuItem (channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get tomorrowMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.tomorrow--menuitem`), {
+            testId: `${this.scope}.tomorrow--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx#UserAccountDndMenuItem',
+        });
+    }
+
+    async clickTomorrowMenuItem(): Promise<void> {
+        await this.tomorrowMenuItem.click();
+    }
+
+    /**
+     * `global_header.account_menu.dnd_menu.two_hours--menuitem` — UserAccountDndMenuItem (channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx)
+     * Opens modal ResetStatusModal (`reset_status_modal`).
+     */
+    get twoHoursMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.two_hours--menuitem`), {
+            testId: `${this.scope}.two_hours--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdateUserStatus],
+            unknownEffects: false,
+            source: 'channels/src/components/user_account_menu/user_account_dnd_menuitem.tsx#UserAccountDndMenuItem',
+        });
+    }
+
+    async clickTwoHoursMenuItem(): Promise<void> {
+        await this.twoHoursMenuItem.click();
+    }
+}
+
+/** Scope `global_header.help_menu`. */
+export class GlobalHeaderHelpMenu extends Scope {
+    constructor(page: Page, scope = 'global_header.help_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `global_header.help_menu.community--link` — MenuItemExternalLinkImpl (channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx)
+     * Renders only when this.props.enableAskCommunityLink === 'true'.
+     */
+    get communityLink() {
+        return drivers.link(this.byTestId(`${this.scope}.community--link`), {
+            testId: `${this.scope}.community--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx#MenuItemExternalLinkImpl',
+        });
+    }
+
+    async clickCommunityLink(): Promise<void> {
+        await this.communityLink.click();
+    }
+
+    /**
+     * `global_header.help_menu.keyboard_shortcuts--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * Opens modal KeyboardShortcutsModal.
+     */
+    get keyboardShortcutsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.keyboard_shortcuts--button`), {
+            testId: `${this.scope}.keyboard_shortcuts--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    async clickKeyboardShortcutsButton(): Promise<void> {
+        await this.keyboardShortcutsButton.click();
+    }
+
+    /**
+     * `global_header.help_menu.plugin:{key}--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     */
+    plugin(plugin: PluginKey) {
+        return drivers.button(this.byTestId(`${this.scope}.plugin:${plugin as string}--button`), {
+            testId: `${this.scope}.plugin:${plugin as string}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    /** Every `global_header.help_menu.plugin:{key}--button` in the scope. */
+    get pluginItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--button');
+    }
+
+    /** The keys of every `global_header.help_menu.plugin:{key}--button` in the scope, in document order. */
+    pluginKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.plugin:`, '--button');
+    }
+
+    /**
+     * `global_header.help_menu.report_problem--link` — MenuItemExternalLinkImpl (channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx)
+     * Renders only when this.props.reportAProblemLink.
+     */
+    get reportProblemLink() {
+        return drivers.link(this.byTestId(`${this.scope}.report_problem--link`), {
+            testId: `${this.scope}.report_problem--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx#MenuItemExternalLinkImpl',
+        });
+    }
+
+    async clickReportProblemLink(): Promise<void> {
+        await this.reportProblemLink.click();
+    }
+
+    /**
+     * `global_header.help_menu.training--link` — MenuItemExternalLinkImpl (channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx)
+     * Renders only when this.props.helpLink.
+     */
+    get trainingLink() {
+        return drivers.link(this.byTestId(`${this.scope}.training--link`), {
+            testId: `${this.scope}.training--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx#MenuItemExternalLinkImpl',
+        });
+    }
+
+    async clickTrainingLink(): Promise<void> {
+        await this.trainingLink.click();
+    }
+
+    /**
+     * `global_header.help_menu.user_guide--link` — MenuItemExternalLinkImpl (channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx)
+     */
+    get userGuideLink() {
+        return drivers.link(this.byTestId(`${this.scope}.user_guide--link`), {
+            testId: `${this.scope}.user_guide--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_external_link.tsx#MenuItemExternalLinkImpl',
+        });
+    }
+
+    async clickUserGuideLink(): Promise<void> {
+        await this.userGuideLink.click();
+    }
+
+    /** Every `global_header.help_menu.plugin:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    get pluginList() {
+        return this.keyedList(`${this.scope}.plugin:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.plugin:${key}--button`), {
+                testId: `${this.scope}.plugin:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+            }),
+        );
+    }
+}
+
+/** Scope `global_header.product_menu`. */
+export class GlobalHeaderProductMenu extends Scope {
+    constructor(page: Page, scope = 'global_header.product_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `global_header.product_menu.about--menuitem` — ProductSwitcherAboutMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_about_menuitem.tsx)
+     * Opens modal AboutBuildModal.
+     */
+    get aboutMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.about--menuitem`), {
+            testId: `${this.scope}.about--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_about_menuitem.tsx#ProductSwitcherAboutMenuItem',
+        });
+    }
+
+    async clickAboutMenuItem(): Promise<void> {
+        await this.aboutMenuItem.click();
+    }
+
+    /**
+     * `global_header.product_menu.channels--menuitem` — ProductChannelsMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_channels_menuitem.tsx)
+     * Renders only when !productRailShown.
+     * Goes to '/'.
+     */
+    get channelsMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.channels--menuitem`), {
+            testId: `${this.scope}.channels--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_channels_menuitem.tsx#ProductChannelsMenuItem',
+        });
+    }
+
+    async clickChannelsMenuItem(): Promise<void> {
+        await this.channelsMenuItem.click();
+    }
+
+    /**
+     * `global_header.product_menu.download_apps--menuitem` — ProductSwitcherDownloadMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_download_menuitem.tsx)
+     * Renders only when !(!safeAppDownloadLink || isDesktopApp()).
+     */
+    get downloadAppsMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.download_apps--menuitem`), {
+            testId: `${this.scope}.download_apps--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_download_menuitem.tsx#ProductSwitcherDownloadMenuItem',
+        });
+    }
+
+    async clickDownloadAppsMenuItem(): Promise<void> {
+        await this.downloadAppsMenuItem.click();
+    }
+
+    /**
+     * `global_header.product_menu.edition--menuitem` — ProductSwitcherEditionFooter (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_edition_menuitem.tsx)
+     * Renders only when !(isLicensedVersion && !isEntrySKU).
+     */
+    get editionMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.edition--menuitem`), {
+            testId: `${this.scope}.edition--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_edition_menuitem.tsx#ProductSwitcherEditionFooter',
+        });
+    }
+
+    async clickEditionMenuItem(): Promise<void> {
+        await this.editionMenuItem.click();
+    }
+
+    /**
+     * `global_header.product_menu.explore_enterprise--menuitem` — ProductSwitcherCloudTrialMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_cloud_trial_menuitem.tsx)
+     * Renders only when !(!props.isCloudLicensed || !props.isFreeTrialSubscription) and !isAirGapped.
+     * Opens modal TrialBenefitsModal.
+     */
+    get exploreEnterpriseMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.explore_enterprise--menuitem`), {
+            testId: `${this.scope}.explore_enterprise--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_cloud_trial_menuitem.tsx#ProductSwitcherCloudTrialMenuItem',
+        });
+    }
+
+    async clickExploreEnterpriseMenuItem(): Promise<void> {
+        await this.exploreEnterpriseMenuItem.click();
+    }
+
+    /**
+     * `global_header.product_menu.integrations--menuitem` — ProductSwitcherIntegrationsMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_integrations_menuitem.tsx)
+     * Renders only when props.isChannelsProductActive and canVisitIntegrationsPage.
+     * Goes to `/${props.currentTeamName}/integrations` (IntegrationsPage).
+     */
+    get integrationsMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.integrations--menuitem`), {
+            testId: `${this.scope}.integrations--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_integrations_menuitem.tsx#ProductSwitcherIntegrationsMenuItem',
+        });
+    }
+
+    /** Clicks integrationsMenuItem and returns the page it goes to; the page object is returned at once, with no wait. */
+    async clickIntegrationsMenuItem(): Promise<IntegrationsPage> {
+        await this.integrationsMenuItem.click();
+        return new IntegrationsPage(this.page);
+    }
+
+    /**
+     * `global_header.product_menu.marketplace--menuitem` — ProductSwitcherMarketplaceMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_marketplace_menuitem.tsx)
+     * Renders only when props.isChannelsProductActive and isAppMarketplaceEnabled.
+     * Opens modal MarketplaceModal.
+     */
+    get marketplaceMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.marketplace--menuitem`), {
+            testId: `${this.scope}.marketplace--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_marketplace_menuitem.tsx#ProductSwitcherMarketplaceMenuItem',
+        });
+    }
+
+    async clickMarketplaceMenuItem(): Promise<void> {
+        await this.marketplaceMenuItem.click();
+    }
+
+    /**
+     * `global_header.product_menu.plugin:{key}--menuitem` — ProductSwitcherPluginMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_plugin_menuitems.tsx)
+     * Renders only when !(visibleItems.length === 0).
+     */
+    plugin(plugin: PluginKey) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin:${plugin as string}--menuitem`), {
+            testId: `${this.scope}.plugin:${plugin as string}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_plugin_menuitems.tsx#ProductSwitcherPluginMenuItem',
+        });
+    }
+
+    /** Every `global_header.product_menu.plugin:{key}--menuitem` in the scope. */
+    get pluginItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--menuitem');
+    }
+
+    /** The keys of every `global_header.product_menu.plugin:{key}--menuitem` in the scope, in document order. */
+    pluginKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.plugin:`, '--menuitem');
+    }
+
+    /**
+     * `global_header.product_menu.system_console--menuitem` — ProductSwitcherSystemConsoleMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_system_console_menuitem.tsx)
+     * Goes to '/admin_console' (AdminConsolePage).
+     */
+    get systemConsoleMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.system_console--menuitem`), {
+            testId: `${this.scope}.system_console--menuitem`,
+            role: 'menuitem',
+            effects: [Api.UpdatePreferences],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_system_console_menuitem.tsx#ProductSwitcherSystemConsoleMenuItem',
+        });
+    }
+
+    /** Clicks systemConsoleMenuItem and returns the page it goes to; the page object is returned at once, with no wait. */
+    async clickSystemConsoleMenuItem(): Promise<AdminConsolePage> {
+        await this.systemConsoleMenuItem.click();
+        return new AdminConsolePage(this.page);
+    }
+
+    /**
+     * `global_header.product_menu.user_groups--menuitem` — ProductSwitcherUserGroupsMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_user_groups_menuitem.tsx)
+     * Renders only when isMenuItemVisible.
+     * Opens modal UserGroupsModal.
+     */
+    get userGroupsMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.user_groups--menuitem`), {
+            testId: `${this.scope}.user_groups--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_user_groups_menuitem.tsx#ProductSwitcherUserGroupsMenuItem',
+        });
+    }
+
+    async clickUserGroupsMenuItem(): Promise<void> {
+        await this.userGroupsMenuItem.click();
+    }
+
+    /**
+     * `global_header.product_menu.product:{key}--menuitem` — ProductSwitcherProductMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_products_menuitems.tsx)
+     * Renders only when !(products.length === 0) and !(link === null).
+     * Opens page props.link.
+     */
+    product(product: PluginKey): GlobalHeaderProductMenuProduct {
+        return new GlobalHeaderProductMenuProduct(
+            this.page,
+            `${this.scope}.product`,
+            this.byTestId(`${this.scope}.product:${product as string}--menuitem`),
+        );
+    }
+
+    /** Every `global_header.product_menu.product:{key}--menuitem` in the scope. */
+    get productItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.product:`, '--menuitem');
+    }
+
+    /** The keys of every `global_header.product_menu.product:{key}--menuitem` in the scope, in document order. */
+    productKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.product:`, '--menuitem');
+    }
+
+    /** Every `global_header.product_menu.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    get pluginList() {
+        return this.keyedList(`${this.scope}.plugin:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin:${key}--menuitem`), {
+                testId: `${this.scope}.plugin:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_plugin_menuitems.tsx#ProductSwitcherPluginMenuItem',
+            }),
+        );
+    }
+
+    /** Every `global_header.product_menu.product:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.productList).toHaveKeys([…])`. */
+    get productList() {
+        return this.keyedList(
+            `${this.scope}.product:`,
+            '--menuitem',
+            (key: string) =>
+                new GlobalHeaderProductMenuProduct(
+                    this.page,
+                    `${this.scope}.product`,
+                    this.byTestId(`${this.scope}.product:${key}--menuitem`),
+                ),
+        );
+    }
+}
+
+/** Scope `global_header.product_menu.product`. */
+export class GlobalHeaderProductMenuProduct extends Scope {
+    constructor(page: Page, scope = 'global_header.product_menu.product', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `global_header.product_menu.product:{key}--menuitem` — ProductSwitcherProductMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_products_menuitems.tsx)
+     * Renders only when !(products.length === 0) and !(link === null).
+     */
+    get menuItem() {
+        return drivers.menuitem(this.root, {
+            testId: 'global_header.product_menu.product:{key}--menuitem',
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_products_menuitems.tsx#ProductSwitcherProductMenuItem',
+        });
+    }
+
+    async clickMenuItem(): Promise<void> {
+        await this.menuItem.click();
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `global_header.product_menu.product.open_in_new_tab--button` — ProductSwitcherProductMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_products_menuitems.tsx)
+     * Renders only when !(products.length === 0) and !(link === null) and !props.isActive.
+     */
+    get openInNewTabButton() {
+        return drivers.button(this.byTestId(`${this.scope}.open_in_new_tab--button`), {
+            testId: `${this.scope}.open_in_new_tab--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/global_header/left_controls/switch_product_menu/switch_product_products_menuitems.tsx#ProductSwitcherProductMenuItem',
+        });
+    }
+
+    async clickOpenInNewTabButton(): Promise<void> {
+        await this.openInNewTabButton.click();
     }
 }
 

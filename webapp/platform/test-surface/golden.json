@@ -1,12 +1,12 @@
 {
-  "domSites": 726,
-  "domResolved": 695,
-  "domFromPropsResolved": 196,
+  "domSites": 844,
+  "domResolved": 813,
+  "domFromPropsResolved": 246,
   "matchedToOpenAPI": 522,
-  "elementsWithRole": 1174,
-  "elementsWithEffects": 225,
-  "elementsWithOpens": 353,
-  "grammarElements": 1029,
+  "elementsWithRole": 1601,
+  "elementsWithEffects": 322,
+  "elementsWithOpens": 437,
+  "grammarElements": 1773,
   "ceilings": {
     "truncatedTestIdSites": 0
   }

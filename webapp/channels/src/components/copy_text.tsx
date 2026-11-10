@@ -9,17 +9,22 @@ import {ContentCopyIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {copyToClipboard} from 'utils/utils';
 
 type Props = {
     label: MessageDescriptor;
     value: string;
+
+    /** Renders `<testId>--button`. */
+    testId: TestId;
 };
 
 const CopyText = ({
     label,
     value,
+    testId,
 }: Props) => {
     const intl = useIntl();
     const ariaLabel = intl.formatMessage(label);
@@ -36,7 +41,7 @@ const CopyText = ({
     return (
         <WithTooltip title={label}>
             <IconButton
-                data-testid='copyText'
+                data-testid={`${testId}--button`}
                 size='x-small'
                 className='ml-2'
                 icon={<Icon glyph={<ContentCopyIcon/>}/>}

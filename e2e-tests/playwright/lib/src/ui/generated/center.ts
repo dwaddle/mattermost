@@ -10,10 +10,13 @@ import type {Post} from '@mattermost/types/posts';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {ChannelInviteModal} from './channel_invite_modal';
+import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {InvitationModal} from './invitation_modal';
 import {Markdown} from './markdown';
 import {SendPostOptions} from './send_post_options';
-import {Avatar, ChannelBanner, PostCreate, PostItem, Toast} from './shared';
+import {AddGroupsToChannelModalGroups, Avatar, ChannelBanner, PostCreate, PostItem, Toast} from './shared';
 import type {CenterToast} from './sets';
 
 /** Scope `center`. */
@@ -270,7 +273,7 @@ export class CenterPostListChannelIntro extends Scope {
     /**
      * `center.post_list.channel_intro.add_groups_to_team--button` — ToggleModalButton (channels/src/components/toggle_modal_button.tsx)
      * Renders only when !isReadOnly && enableUserCreation and teamIsGroupConstrained.
-     * Opens modal AddGroupsToTeamModal.
+     * Opens modal AddGroupsToTeamModal (`add_groups_to_team_modal.groups`).
      */
     get addGroupsToTeamButton() {
         return drivers.button(this.byTestId(`${this.scope}.add_groups_to_team--button`), {
@@ -282,15 +285,17 @@ export class CenterPostListChannelIntro extends Scope {
         });
     }
 
-    async clickAddGroupsToTeamButton(): Promise<void> {
+    /** Clicks addGroupsToTeamButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAddGroupsToTeamButton(): Promise<AddGroupsToChannelModalGroups> {
         await this.addGroupsToTeamButton.click();
+        return new AddGroupsToChannelModalGroups(this.page, 'add_groups_to_team_modal.groups');
     }
 
     /**
      * `center.post_list.channel_intro.add_members--button` — MoreThanMaxFreeUsers (channels/src/components/post_view/channel_intro_message/add_members_button.tsx)
      * Renders only when !inviteUsers and !channelIsArchived.
-     * Opens modal AddGroupsToChannelModal.
-     * Opens modal ChannelInviteModalComponent.
+     * Opens modal AddGroupsToChannelModal (`add_groups_to_channel_modal.groups`).
+     * Opens modal ChannelInviteModalComponent (`channel_invite_modal`).
      */
     get addMembersButton() {
         return drivers.button(this.byTestId(`${this.scope}.add_members--button`), {
@@ -302,8 +307,16 @@ export class CenterPostListChannelIntro extends Scope {
         });
     }
 
-    async clickAddMembersButton(): Promise<void> {
+    /** Clicks addMembersButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickAddMembersButton(): Promise<{
+        groups: AddGroupsToChannelModalGroups;
+        channelInviteModal: ChannelInviteModal;
+    }> {
         await this.addMembersButton.click();
+        return {
+            groups: new AddGroupsToChannelModalGroups(this.page, 'add_groups_to_channel_modal.groups'),
+            channelInviteModal: new ChannelInviteModal(this.page, 'channel_invite_modal'),
+        };
     }
 
     /**
@@ -326,7 +339,7 @@ export class CenterPostListChannelIntro extends Scope {
     /**
      * `center.post_list.channel_intro.invite--button` — ToggleModalButton (channels/src/components/toggle_modal_button.tsx)
      * Renders only when emphasis.
-     * Opens modal InvitationModal.
+     * Opens modal InvitationModal (`invitation_modal`).
      */
     get inviteButton() {
         return drivers.button(this.byTestId(`${this.scope}.invite--button`), {
@@ -338,13 +351,15 @@ export class CenterPostListChannelIntro extends Scope {
         });
     }
 
-    async clickInviteButton(): Promise<void> {
+    /** Clicks inviteButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickInviteButton(): Promise<InvitationModal> {
         await this.inviteButton.click();
+        return new InvitationModal(this.page, 'invitation_modal');
     }
 
     /**
      * `center.post_list.channel_intro.notifications--button` — NotificationPrefsButton (channels/src/components/post_view/channel_intro_message/channel_intro_message.tsx)
-     * Opens modal ChannelNotificationsModal.
+     * Opens modal ChannelNotificationsModal (`channel_notifications_modal`).
      */
     get notificationsButton() {
         return drivers.button(this.byTestId(`${this.scope}.notifications--button`), {
@@ -356,8 +371,10 @@ export class CenterPostListChannelIntro extends Scope {
         });
     }
 
-    async clickNotificationsButton(): Promise<void> {
+    /** Clicks notificationsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickNotificationsButton(): Promise<ChannelNotificationsModal> {
         await this.notificationsButton.click();
+        return new ChannelNotificationsModal(this.page, 'channel_notifications_modal');
     }
 
     /**

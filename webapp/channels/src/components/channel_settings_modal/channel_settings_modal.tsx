@@ -281,6 +281,7 @@ function ChannelSettingsModal({channelId, isOpen, onExited, focusOriginElement, 
         return visiblePluginTabRegistrations.map((registration) => {
             return {
                 name: getPluginTabName(registration.id),
+                pluginId: registration.pluginId,
                 uiName: registration.uiName,
                 iconTitle: registration.uiName,
                 icon: normalizePluginIcon(registration.icon, basePath),
@@ -468,6 +469,7 @@ function ChannelSettingsModal({channelId, isOpen, onExited, focusOriginElement, 
                 <div className='settings-links'>
                     <React.Suspense fallback={null}>
                         <SettingsSidebar
+                            testIdScope='channel_settings_modal'
                             tabs={tabs}
                             pluginTabs={pluginTabs}
                             activeTab={activeTab}
@@ -487,6 +489,7 @@ function ChannelSettingsModal({channelId, isOpen, onExited, focusOriginElement, 
     return (
         <GenericModal
             id='channelSettingsModal'
+            testId='channel_settings_modal'
             ariaLabel={modalTitle}
             className='ChannelSettingsModal settings-modal'
             show={show}

@@ -7,9 +7,10 @@ import type {RefObject} from 'react';
 import type {MessageDescriptor, IntlShape} from 'react-intl';
 import {FormattedMessage, defineMessages, injectIntl} from 'react-intl';
 import {components} from 'react-select';
-import type {FormatOptionLabelMeta, InputActionMeta, InputProps, Options, StylesConfig, SelectInstance, MultiValue, SingleValue, OptionsOrGroups, GroupBase, MultiValueRemoveProps} from 'react-select';
+import type {FormatOptionLabelMeta, InputActionMeta, InputProps, Options, StylesConfig, SelectInstance, MultiValue, SingleValue, OptionsOrGroups, GroupBase, MultiValueRemoveProps, OptionProps, ContainerProps} from 'react-select';
 import AsyncCreatable from 'react-select/async-creatable';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {Client4} from 'mattermost-redux/client';
@@ -32,6 +33,12 @@ import './users_emails_input.scss';
 type Props = {
     placeholder: string;
     ariaLabel: string;
+
+    /**
+     * Testid scope: the select is `<testIdScope>`, its text input `<testIdScope>.input--combobox`, each suggested user `<testIdScope>.user:<user id>--option`
+     * and the "Add email" suggestion `<testIdScope>.email--option`.
+     */
+    testIdScope?: TestIdScope;
     usersLoader: (search: string, callback: (users: UserProfile[]) => void) => Promise<UserProfile[]> | undefined;
     onUsersLoad?: (users: UserProfile[]) => void;
     onChange: (change: Array<UserProfile | string>) => void;
@@ -269,6 +276,7 @@ export class UsersEmailsInput extends React.PureComponent<Props, State> {
         return (
             <components.Input
                 {...props}
+                data-testid={this.props.testIdScope ? `${this.props.testIdScope}.input--combobox` : undefined}
 
                 // The onPaste is not part of the InputProps type definition. It's fixed in v5 of react-select.
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -337,7 +345,27 @@ export class UsersEmailsInput extends React.PureComponent<Props, State> {
         );
     };
 
+    SelectContainer = (props: ContainerProps<EmailInvite | UserProfile, true>) => (
+        <components.SelectContainer
+            {...props}
+            innerProps={{...props.innerProps, 'data-testid': this.props.testIdScope} as ContainerProps<EmailInvite | UserProfile, true>['innerProps']}
+        />
+    );
+
+    Option = (props: OptionProps<EmailInvite | UserProfile, true>) => {
+        const {testIdScope} = this.props;
+        const option = this.isUserProfile(props.data) ? `user:${props.data.id}` : 'email';
+        return (
+            <components.Option
+                {...props}
+                innerProps={{...props.innerProps, 'data-testid': testIdScope ? `${testIdScope}.${option}--option` : undefined} as OptionProps<EmailInvite | UserProfile, true>['innerProps']}
+            />
+        );
+    };
+
     components = {
+        SelectContainer: this.SelectContainer,
+        Option: this.Option,
         NoOptionsMessage: this.props.suppressNoOptionsMessage ? () => null : this.NoOptionsMessage,
         MultiValueRemove: this.MultiValueRemove,
         IndicatorsContainer: () => null,

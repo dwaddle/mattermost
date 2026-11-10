@@ -1,18 +1,11 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Page} from '@playwright/test';
-
 import {expect, test} from '@mattermost/playwright-lib';
 
-async function dismissWebpackOverlay(page: Page) {
-    await page
-        .locator('#webpack-dev-server-client-overlay')
-        .evaluateAll((nodes) => {
-            nodes.forEach((node) => node.remove());
-        })
-        .catch(() => null);
-}
+// Written on the generated page objects: the Add Bot form (username, default token expiry with its policy hint, Save),
+// the integrations confirmation page, the bot list (bots keyed by user id, their tokens keyed by token id, with status,
+// expiry, Regenerate and the revealed token) and the regenerate dialog with its expiry picker.
 
 test.describe('Bot account personal access token expiry @bot_accounts @personal_access_tokens', () => {
     test('creates and regenerates a user-owned bot token under an enforced maximum lifetime', async ({pw}) => {
@@ -35,54 +28,53 @@ test.describe('Bot account personal access token expiry @bot_accounts @personal_
             );
         });
 
-        const {channelsPage, page} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Create a user-owned bot account. Add Bot always creates a default token.
         const username = `patbot${Date.now().toString(36).slice(-8)}`;
-        await page.goto(`/${team.name}/integrations/bots/add`);
-        await dismissWebpackOverlay(page);
-        await page.locator('#username').fill(username);
+        await app.page.goto(`/${team.name}/integrations/bots/add`);
+        const form = app.integrations.botForm;
+        await form.fillUsernameTextbox(username);
 
         // * The default-token expiry picker is enforced and clamped by the 30-day policy.
-        await expect(page.getByText('Default access token', {exact: true})).toBeVisible();
-        const defaultTokenExpiry = page.locator('#defaultTokenExpiry');
-        await expect(defaultTokenExpiry).toBeVisible();
-        await expect(defaultTokenExpiry.locator('option', {hasText: 'No expiry'})).toHaveCount(0);
-        await expect(defaultTokenExpiry.locator('option', {hasText: '30 days'})).toHaveCount(1);
-        await expect(defaultTokenExpiry.locator('option', {hasText: '90 days'})).toHaveCount(0);
-        await expect(
-            page.getByText('Your administrator requires all personal access tokens to have an expiry date.'),
-        ).toBeVisible();
+        const expiry = form.defaultToken.expiryCombobox.locator;
+        await expect(expiry).toBeVisible();
+        await expect(expiry).not.toContainText('No expiry');
+        await expect(expiry).toContainText('30 days');
+        await expect(expiry).not.toContainText('90 days');
+        await expect(form.defaultToken.expiryEnforcedText.locator).toHaveText(
+            'Your administrator requires all personal access tokens to have an expiry date.',
+        );
 
-        await page.locator('#saveBot').click();
-        await page.waitForURL(/\/integrations\/confirm\?type=bots/);
-        await expect(page.getByText('Token:')).toBeVisible();
+        await form.clickSaveButton();
+        await app.page.waitForURL(/\/integrations\/confirm\?type=bots/);
+        await expect(app.integrations.confirm.copyTokenButton.locator).toBeVisible();
 
         // # Return to the bot list and regenerate the default token.
-        await page.goto(`/${team.name}/integrations/bots`);
-        await dismissWebpackOverlay(page);
-        await page.locator('#searchInput').fill(username);
-        const botItem = page.locator('.backstage-list__item', {hasText: `@${username}`});
-        await expect(botItem).toBeVisible();
+        await app.page.goto(`/${team.name}/integrations/bots`);
+        const botUser = await adminClient.getUserByUsername(username);
+        const bot = app.integrations.bots.bot({user_id: botUser.id});
+        await expect(bot.locator).toBeVisible();
 
-        const defaultTokenRow = botItem.locator('.bot-list__item', {hasText: 'Default Token'});
-        await expect(defaultTokenRow.getByText('Active')).toBeVisible();
-        await expect(defaultTokenRow.getByText('Expires:')).toBeVisible();
-        await expect(defaultTokenRow.getByText('Never')).toBeHidden();
+        // * The default token is the bot's only token, active, with an expiry date rather than "Never"
+        await expect(bot.tokenItems).toHaveCount(1);
+        const token = bot.token({id: (await bot.tokenKeys())[0]});
+        await expect(token.locator).toContainText('Default Token');
+        await expect(token.statusText.locator).toHaveText('Active');
+        await expect(token.expiryText.locator).toContainText('Expires:');
+        await expect(token.expiryText.locator).not.toContainText('Never');
 
-        await defaultTokenRow.getByRole('link', {name: 'Regenerate'}).click();
-        const confirmModal = page.locator('#confirmModal');
-        await expect(confirmModal.getByText('Regenerate Token?')).toBeVisible();
-        await expect(confirmModal.locator('#regenerateBotTokenExpiry')).toBeVisible();
-        await expect(
-            confirmModal.locator('#regenerateBotTokenExpiry').locator('option', {hasText: 'No expiry'}),
-        ).toHaveCount(0);
-        await confirmModal.getByRole('button', {name: 'Yes, Regenerate'}).click();
+        await token.clickRegenerateLink();
+        const regenerate = app.botTokenRegenerateModal;
+        await expect(regenerate.locator).toContainText('Regenerate Token?');
+        await expect(regenerate.expiryCombobox.locator).toBeVisible();
+        await expect(regenerate.expiryCombobox.locator).not.toContainText('No expiry');
+        await expect(regenerate.confirmButton.locator).toHaveText('Yes, Regenerate');
+        await regenerate.clickConfirmButton();
 
         // * The rotated secret is revealed using the same one-time-copy pattern.
-        await expect(botItem.getByText('Access Token:')).toBeVisible();
-        await expect(botItem.getByLabel('Copy Token')).toBeVisible();
+        await expect(bot.newToken.locator).toContainText('Access Token:');
+        await expect(bot.newToken.copyButton.locator).toBeVisible();
     });
 });

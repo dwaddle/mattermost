@@ -13,9 +13,14 @@ import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {ChannelInviteModal} from './channel_invite_modal';
+import {ChannelNotificationsModal} from './channel_notifications_modal';
+import {ChannelSettingsModal} from './channel_settings_modal';
+import {DirectMessagesModal} from './direct_messages_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {RenameChannelModal} from './rename_channel_modal';
 import {RestorePostModal} from './restore_post_modal';
-import {Attachments, ChannelBanner, Header, PostCreate, PostItem, ShowMore, Toast} from './shared';
+import {Attachments, ChannelBanner, Header, PostCreate, PostItem, RoleMenu, ShowMore, Toast} from './shared';
 import type {RhsToast} from './sets';
 
 /** The read-only parts of a `rhs.edit_history.version` item. */
@@ -112,8 +117,8 @@ export class RhsChannelInfo extends Scope {
     /**
      * `rhs.channel_info.add_people--button` — TopButtons (channels/src/components/channel_info_rhs/top_buttons.tsx)
      * Renders only when canAddPeople.
-     * Opens modal ChannelInviteModalComponent.
-     * Opens modal MoreDirectChannels.
+     * Opens modal ChannelInviteModalComponent (`channel_invite_modal`).
+     * Opens modal MoreDirectChannels (`direct_messages_modal`).
      */
     get addPeopleButton() {
         return drivers.button(this.byTestId(`${this.scope}.add_people--button`), {
@@ -125,8 +130,16 @@ export class RhsChannelInfo extends Scope {
         });
     }
 
-    async clickAddPeopleButton(): Promise<void> {
+    /** Clicks addPeopleButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickAddPeopleButton(): Promise<{
+        channelInviteModal: ChannelInviteModal;
+        directMessagesModal: DirectMessagesModal;
+    }> {
         await this.addPeopleButton.click();
+        return {
+            channelInviteModal: new ChannelInviteModal(this.page, 'channel_invite_modal'),
+            directMessagesModal: new DirectMessagesModal(this.page, 'direct_messages_modal'),
+        };
     }
 
     /**
@@ -339,7 +352,7 @@ export class RhsChannelInfoAboutName extends Scope {
     /**
      * `rhs.channel_info.about.name.add--button` — EditableAreaBase (channels/src/components/channel_info_rhs/components/editable_area.tsx)
      * Renders only when !content && editable.
-     * Opens modal RenameChannelModal.
+     * Opens modal RenameChannelModal (`rename_channel_modal`).
      */
     get addButton() {
         return drivers.button(this.byTestId(`${this.scope}.add--button`), {
@@ -351,14 +364,16 @@ export class RhsChannelInfoAboutName extends Scope {
         });
     }
 
-    async clickAddButton(): Promise<void> {
+    /** Clicks addButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAddButton(): Promise<RenameChannelModal> {
         await this.addButton.click();
+        return new RenameChannelModal(this.page, 'rename_channel_modal');
     }
 
     /**
      * `rhs.channel_info.about.name.edit--button` — EditableAreaBase (channels/src/components/channel_info_rhs/components/editable_area.tsx)
      * Renders only when allowEditArea.
-     * Opens modal RenameChannelModal.
+     * Opens modal RenameChannelModal (`rename_channel_modal`).
      */
     get editButton() {
         return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
@@ -370,8 +385,10 @@ export class RhsChannelInfoAboutName extends Scope {
         });
     }
 
-    async clickEditButton(): Promise<void> {
+    /** Clicks editButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickEditButton(): Promise<RenameChannelModal> {
         await this.editButton.click();
+        return new RenameChannelModal(this.page, 'rename_channel_modal');
     }
 }
 
@@ -517,7 +534,7 @@ export class RhsChannelInfoMenu extends Scope {
     /**
      * `rhs.channel_info.menu.notification_preferences--button` — MenuItem (channels/src/components/channel_info_rhs/menu.tsx)
      * Renders only when showNotificationPreferences.
-     * Opens modal ChannelNotificationsModal.
+     * Opens modal ChannelNotificationsModal (`channel_notifications_modal`).
      */
     get notificationPreferencesButton() {
         return drivers.button(this.byTestId(`${this.scope}.notification_preferences--button`), {
@@ -529,8 +546,10 @@ export class RhsChannelInfoMenu extends Scope {
         });
     }
 
-    async clickNotificationPreferencesButton(): Promise<void> {
+    /** Clicks notificationPreferencesButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickNotificationPreferencesButton(): Promise<ChannelNotificationsModal> {
         await this.notificationPreferencesButton.click();
+        return new ChannelNotificationsModal(this.page, 'channel_notifications_modal');
     }
 
     /**
@@ -587,7 +606,7 @@ export class RhsChannelInfoMenu extends Scope {
     /**
      * `rhs.channel_info.menu.settings--button` — MenuItem (channels/src/components/channel_info_rhs/menu.tsx)
      * Renders only when showChannelSettings && canAccessChannelSettings(state, channel.id).
-     * Opens modal ChannelSettingsModal.
+     * Opens modal ChannelSettingsModal (`channel_settings_modal`).
      */
     get settingsButton() {
         return drivers.button(this.byTestId(`${this.scope}.settings--button`), {
@@ -599,8 +618,10 @@ export class RhsChannelInfoMenu extends Scope {
         });
     }
 
-    async clickSettingsButton(): Promise<void> {
+    /** Clicks settingsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickSettingsButton(): Promise<ChannelSettingsModal> {
         await this.settingsButton.click();
+        return new ChannelSettingsModal(this.page, 'channel_settings_modal');
     }
 
     /** Every `rhs.channel_info.menu.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
@@ -626,8 +647,8 @@ export class RhsChannelMembers extends Scope {
     /**
      * `rhs.channel_members.add--button` — ActionBar (channels/src/components/channel_members_rhs/action_bar.tsx)
      * Renders only when canManageMembers and !editing.
-     * Opens modal ChannelInviteModalComponent.
-     * Opens modal MoreDirectChannels.
+     * Opens modal ChannelInviteModalComponent (`channel_invite_modal`).
+     * Opens modal MoreDirectChannels (`direct_messages_modal`).
      */
     get addButton() {
         return drivers.button(this.byTestId(`${this.scope}.add--button`), {
@@ -639,8 +660,16 @@ export class RhsChannelMembers extends Scope {
         });
     }
 
-    async clickAddButton(): Promise<void> {
+    /** Clicks addButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickAddButton(): Promise<{
+        channelInviteModal: ChannelInviteModal;
+        directMessagesModal: DirectMessagesModal;
+    }> {
         await this.addButton.click();
+        return {
+            channelInviteModal: new ChannelInviteModal(this.page, 'channel_invite_modal'),
+            directMessagesModal: new DirectMessagesModal(this.page, 'direct_messages_modal'),
+        };
     }
 
     /**
@@ -790,9 +819,9 @@ export class RhsChannelMembersMember extends Scope {
     }
 
     /** Clicks openRoleMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. */
-    async clickOpenRoleMenuButton(): Promise<RhsChannelMembersMemberRoleMenu> {
+    async clickOpenRoleMenuButton(): Promise<RoleMenu> {
         await this.openRoleMenuButton.click();
-        return new RhsChannelMembersMemberRoleMenu(this.page, `${this.scope}.role_menu`);
+        return new RoleMenu(this.page, `${this.scope}.role_menu`);
     }
 
     /**
@@ -822,94 +851,8 @@ export class RhsChannelMembersMember extends Scope {
         });
     }
 
-    get roleMenu(): RhsChannelMembersMemberRoleMenu {
-        return new RhsChannelMembersMemberRoleMenu(this.page, `${this.scope}.role_menu`);
-    }
-}
-
-/** Scope `rhs.channel_members.member.role_menu`. */
-export class RhsChannelMembersMemberRoleMenu extends Scope {
-    constructor(page: Page, scope = 'rhs.channel_members.member.role_menu', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `rhs.channel_members.member.role_menu.leave--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
-     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel.
-     * Opens modal LeaveChannelModal.
-     */
-    get leaveButton() {
-        return drivers.button(this.byTestId(`${this.scope}.leave--button`), {
-            testId: `${this.scope}.leave--button`,
-            role: 'button',
-            effects: [Api.GetChannelStats, Api.RemoveUserFromChannel],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
-        });
-    }
-
-    async clickLeaveButton(): Promise<void> {
-        await this.leaveButton.click();
-    }
-
-    /**
-     * `rhs.channel_members.member.role_menu.make_admin--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
-     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel.
-     */
-    get makeAdminButton() {
-        return drivers.button(this.byTestId(`${this.scope}.make_admin--button`), {
-            testId: `${this.scope}.make_admin--button`,
-            role: 'button',
-            effects: [Api.GetChannelMember, Api.GetChannelStats, Api.UpdateChannelMemberSchemeRoles],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
-        });
-    }
-
-    async clickMakeAdminButton(): Promise<void> {
-        await this.makeAdminButton.click();
-    }
-
-    /**
-     * `rhs.channel_members.member.role_menu.make_member--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
-     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel.
-     */
-    get makeMemberButton() {
-        return drivers.button(this.byTestId(`${this.scope}.make_member--button`), {
-            testId: `${this.scope}.make_member--button`,
-            role: 'button',
-            effects: [Api.GetChannelMember, Api.GetChannelStats, Api.UpdateChannelMemberSchemeRoles],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
-        });
-    }
-
-    async clickMakeMemberButton(): Promise<void> {
-        await this.makeMemberButton.click();
-    }
-
-    /**
-     * `rhs.channel_members.member.role_menu.remove--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
-     * Renders only when canMakeUserChannelMember || canMakeUserChannelAdmin || canRemoveUserFromChannel.
-     * Opens modal LeaveChannelModal.
-     */
-    get removeButton() {
-        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
-            testId: `${this.scope}.remove--button`,
-            role: 'button',
-            effects: [Api.GetChannelStats, Api.RemoveUserFromChannel],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
-        });
-    }
-
-    async clickRemoveButton(): Promise<void> {
-        await this.removeButton.click();
+    get roleMenu(): RoleMenu {
+        return new RoleMenu(this.page, `${this.scope}.role_menu`);
     }
 }
 

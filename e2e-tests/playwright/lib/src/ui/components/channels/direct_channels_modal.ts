@@ -18,7 +18,7 @@ export default class DirectChannelsModal {
         this.container = container;
 
         this.goButton = container.getByRole('button', {name: 'Go'});
-        this.results = container.getByTestId('more-modal-list');
+        this.results = container.getByTestId('direct_messages_modal.list.results');
         this.searchInput = container.getByRole('combobox', {name: 'Search for people'});
         this.memberLimitHelpText = container.locator('#multiSelectHelpMemberInfo');
         this.newConversationWarning = container.getByText(

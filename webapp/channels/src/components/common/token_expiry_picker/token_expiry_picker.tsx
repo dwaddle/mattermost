@@ -5,11 +5,17 @@ import React from 'react';
 import type {ChangeEvent} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
+
 import type {ExpiryPreset} from './token_expiry';
 import {isExpiryPresetAllowed, isoPlusDays, todayIso} from './token_expiry';
 
 type Props = {
     idPrefix: string;
+
+    // The preset select is `<testIdScope>.expiry--combobox`, the custom date `<testIdScope>.expiry_date--textbox`, and the
+    // policy hints `<testIdScope>.max_lifetime_hint--text` and `<testIdScope>.expiry_enforced--text`.
+    testIdScope?: TestIdScope;
     expiryPreset: ExpiryPreset;
     customExpiryDate: string;
     maxLifetimeDays: number;
@@ -30,6 +36,7 @@ type Props = {
  */
 export default function TokenExpiryPicker({
     idPrefix,
+    testIdScope,
     expiryPreset,
     customExpiryDate,
     maxLifetimeDays,
@@ -47,6 +54,7 @@ export default function TokenExpiryPicker({
         <>
             <select
                 id={`${idPrefix}Expiry`}
+                data-testid={testIdScope && `${testIdScope}.expiry--combobox`}
                 className={selectClassName}
                 value={expiryPreset}
                 onChange={onPresetChange}
@@ -83,6 +91,7 @@ export default function TokenExpiryPicker({
             {expiryPreset === 'custom' && (
                 <input
                     id={`${idPrefix}ExpiryCustom`}
+                    data-testid={testIdScope && `${testIdScope}.expiry_date--textbox`}
                     className={`${selectClassName} mt-2`}
                     type='date'
                     aria-label={intl.formatMessage({id: 'user.settings.tokens.expiry.customDate', defaultMessage: 'Custom expiry date'})}
@@ -93,7 +102,10 @@ export default function TokenExpiryPicker({
                 />
             )}
             {maxLifetimeDays > 0 && (
-                <div className={hintClassName}>
+                <div
+                    className={hintClassName}
+                    data-testid={testIdScope && `${testIdScope}.max_lifetime_hint--text`}
+                >
                     <FormattedMessage
                         id='user.settings.tokens.maxLifetimeHint'
                         defaultMessage='Tokens can be valid for up to {days, number} {days, plural, one {day} other {days}}.'
@@ -102,7 +114,10 @@ export default function TokenExpiryPicker({
                 </div>
             )}
             {enforceExpiry && (
-                <div className={hintClassName}>
+                <div
+                    className={hintClassName}
+                    data-testid={testIdScope && `${testIdScope}.expiry_enforced--text`}
+                >
                     <FormattedMessage
                         id='user.settings.tokens.expiryEnforced'
                         defaultMessage='Your administrator requires all personal access tokens to have an expiry date.'

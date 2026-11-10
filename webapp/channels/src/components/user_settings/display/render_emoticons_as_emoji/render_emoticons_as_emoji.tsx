@@ -84,6 +84,7 @@ const RenderEmoticonsAsEmoji: React.FC<Props> = ({user, renderEmoticonsAsEmoji, 
                     <Radio
                         key={option}
                         id={inputId}
+                        data-testid={`settings.section.option:${option}--radio`}
                         name='renderEmoticonsAsEmoji'
                         value={option}
                         checked={value === option}

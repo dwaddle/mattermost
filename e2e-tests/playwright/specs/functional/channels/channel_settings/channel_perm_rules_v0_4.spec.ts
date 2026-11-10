@@ -52,7 +52,9 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
         await channelsPage.toBeVisible();
 
         const channelSettings = await channelsPage.openChannelSettings();
-        const permissionsTab = channelSettings.container.getByTestId('permissions_policy-tab-button');
+        const permissionsTab = channelSettings.container.getByTestId(
+            'channel_settings_modal.tabs.tab:permissions_policy--tab',
+        );
 
         // Suite-level feature-flag guard already covers PermissionPolicies;
         // assert visibility unconditionally so a regression in the tab's
@@ -88,7 +90,9 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
         await channelsPage.toBeVisible();
 
         const channelSettings = await channelsPage.openChannelSettings();
-        const permissionsTab = channelSettings.container.getByTestId('permissions_policy-tab-button');
+        const permissionsTab = channelSettings.container.getByTestId(
+            'channel_settings_modal.tabs.tab:permissions_policy--tab',
+        );
         await expect(permissionsTab).toBeVisible();
         await permissionsTab.click();
 
@@ -135,7 +139,9 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
         await channelsPage.toBeVisible();
 
         const channelSettings = await channelsPage.openChannelSettings();
-        const permissionsTab = channelSettings.container.getByTestId('permissions_policy-tab-button');
+        const permissionsTab = channelSettings.container.getByTestId(
+            'channel_settings_modal.tabs.tab:permissions_policy--tab',
+        );
         await expect(permissionsTab).toBeVisible();
         await permissionsTab.click();
 
@@ -174,7 +180,9 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
             await channelsPage.toBeVisible();
 
             const channelSettings = await channelsPage.openChannelSettings();
-            const permissionsTab = channelSettings.container.getByTestId('permissions_policy-tab-button');
+            const permissionsTab = channelSettings.container.getByTestId(
+                'channel_settings_modal.tabs.tab:permissions_policy--tab',
+            );
             await expect(permissionsTab).toBeVisible();
             await permissionsTab.click();
 
@@ -196,7 +204,7 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
             const savePanel = channelSettings.container.locator('.SaveChangesPanel');
             await expect(savePanel).toContainText('You have unsaved changes', {timeout: 2000});
             await expect(savePanel).toHaveClass(/error/);
-            await expect(channelSettings.saveButton).toBeDisabled();
+            await expect(savePanel.getByTestId('SaveChangesPanel__save-btn')).toBeDisabled();
 
             // * The Permissions Policy section is still the selected one and the draft is intact
             await expect(permissionsTab).toHaveAttribute('aria-selected', 'true');

@@ -226,9 +226,9 @@ describe('components/user_settings/general/UserSettingsGeneral', () => {
             <UserSettingsGeneral {...{...props, ldapPictureAttributeSet: true}}/>,
         );
         expect(container.querySelector('.profile-img')).toBeTruthy();
-        expect(screen.queryByTestId('inputSettingPictureButton')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('saveSettingPicture')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('removeSettingPicture')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('settings.section.picture.select--button')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('settings.section.picture.save--button')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('settings.section.picture.remove--button')).not.toBeInTheDocument();
     });
 
     describe('locked profile fields for email users', () => {
@@ -297,9 +297,9 @@ describe('components/user_settings/general/UserSettingsGeneral', () => {
             );
 
             expect(container.querySelector('.profile-img')).toBeTruthy();
-            expect(screen.queryByTestId('inputSettingPictureButton')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('saveSettingPicture')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('removeSettingPicture')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('settings.section.picture.select--button')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('settings.section.picture.save--button')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('settings.section.picture.remove--button')).not.toBeInTheDocument();
         });
 
         test('should show the login provider message instead of the admin lock', () => {

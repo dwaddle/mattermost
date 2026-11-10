@@ -233,6 +233,14 @@ export const CreatableReactSelectInput = (props: InputProps<MultiInputValue, tru
         />);
 };
 
+// the keyword input of the "Keywords that get highlighted" section
+const KeywordsWithHighlightInput = (props: InputProps<MultiInputValue, true>) => (
+    <components.Input
+        {...props}
+        data-testid='settings.section.keywords--combobox'
+    />
+);
+
 class NotificationsTab extends React.PureComponent<Props, State> {
     static defaultProps = {
         activeSection: '',
@@ -520,6 +528,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                             <div className='settings-radio-group'>
                                 <Radio
                                     id='channelMentionAutoFollowOn'
+                                    data-testid='settings.section.option:true--radio'
                                     name='channelMentionAutoFollow'
                                     checked={this.state.channelMentionAutoFollow}
                                     onChange={() => this.handleChangeForChannelMentionAutoFollowRadio(true)}
@@ -531,6 +540,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                                 </Radio>
                                 <Radio
                                     id='channelMentionAutoFollowOff'
+                                    data-testid='settings.section.option:false--radio'
                                     name='channelMentionAutoFollow'
                                     checked={!this.state.channelMentionAutoFollow}
                                     onChange={() => this.handleChangeForChannelMentionAutoFollowRadio(false)}
@@ -599,6 +609,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                         <div className='checkbox no-padding'>
                             <Checkbox
                                 id='notificationTriggerFirst'
+                                data-testid='settings.section.keyword:first_name--checkbox'
                                 checked={this.state.firstNameKey}
                                 onChange={this.handleChangeForFirstNameKeyCheckbox}
                             >
@@ -620,6 +631,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                     <div className='checkbox no-padding'>
                         <Checkbox
                             id='notificationTriggerUsername'
+                            data-testid='settings.section.keyword:username--checkbox'
                             checked={this.state.usernameKey}
                             onChange={this.handleChangeForUsernameKeyCheckbox}
                         >
@@ -640,6 +652,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                     <div className='checkbox no-padding'>
                         <Checkbox
                             id='notificationTriggerShouts'
+                            data-testid='settings.section.keyword:channel_wide--checkbox'
                             checked={this.state.channelKey}
                             onChange={this.handleChangeForChannelKeyCheckbox}
                         >
@@ -660,6 +673,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                     <div className='checkbox no-padding'>
                         <Checkbox
                             id='notificationTriggerCustom'
+                            data-testid='settings.section.keyword:custom--checkbox'
                             checked={this.state.isCustomKeysWithNotificationInputChecked}
                             onChange={this.handleChangeForCustomKeysWithNotificationCheckbox}
                         >
@@ -781,6 +795,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                             DropdownIndicator: () => null,
                             Menu: () => null,
                             MenuList: () => null,
+                            Input: KeywordsWithHighlightInput,
                         }}
                         aria-labelledby='mentionKeysWithHighlightInput'
                         onChange={this.handleChangeForCustomKeysWithHighlightInput}
@@ -914,6 +929,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                     <div className='settings-radio-group'>
                         <Radio
                             id='notificationCommentsAny'
+                            data-testid='settings.section.option:any--radio'
                             name='commentsNotificationLevel'
                             checked={commentsActive[0]}
                             onChange={this.handleNotifyCommentsRadio.bind(this, 'any')}
@@ -925,6 +941,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                         </Radio>
                         <Radio
                             id='notificationCommentsRoot'
+                            data-testid='settings.section.option:root--radio'
                             name='commentsNotificationLevel'
                             checked={commentsActive[1]}
                             onChange={this.handleNotifyCommentsRadio.bind(this, 'root')}
@@ -936,6 +953,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                         </Radio>
                         <Radio
                             id='notificationCommentsNever'
+                            data-testid='settings.section.option:never--radio'
                             name='commentsNotificationLevel'
                             checked={commentsActive[2]}
                             onChange={this.handleNotifyCommentsRadio.bind(this, 'never')}
@@ -1064,6 +1082,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
         return (
             <div
                 id='notificationsSettings'
+                data-testid='settings.panel:notifications--tabpanel'
                 aria-labelledby='notificationsButton'
                 role='tabpanel'
             >
@@ -1103,6 +1122,7 @@ class NotificationsTab extends React.PureComponent<Props, State> {
                                             <ExternalLink
                                                 location='user_settings_notifications'
                                                 href='https://mattermost.com/pl/about-notifications'
+                                                data-testid='settings.learn_more--link'
                                             >
                                                 <span>{chunks}</span>
                                             </ExternalLink>

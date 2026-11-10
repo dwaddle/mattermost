@@ -3,6 +3,8 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
+import {SettingsModal} from './support';
+
 /**
  * @objective Verify keyboard navigation through interactive elements in Advanced settings
  */
@@ -17,9 +19,9 @@ test(
             config.FeatureFlags?.WysiwygEditor === true || config.FeatureFlags?.WysiwygEditor === 'true';
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const globalHeader = app.globalHeader;
+        const settingsModal = new SettingsModal(app);
         const advancedSettings = settingsModal.advancedSettings;
 
         // # Visit a default channel page
@@ -27,16 +29,16 @@ test(
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible and focus should be on the modal
         await expect(settingsModal.container).toBeVisible();
-        await pw.toBeFocusedWithFocusVisible(settingsModal.container);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.container)).toBe(true);
 
         // # Press Tab and verify focus is on Close button
         await page.keyboard.press('Tab');
-        await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton)).toBe(true);
 
         // # Click on Advanced tab to open it
         await settingsModal.advancedTab.click();
@@ -46,29 +48,29 @@ test(
 
         // # Press Tab to move focus to Send Messages on CTRL+ENTER button
         await page.keyboard.press('Tab');
-        await pw.toBeFocusedWithFocusVisible(advancedSettings.ctrlEnterEditButton);
+        expect(await pw.toBeFocusedWithFocusVisible(advancedSettings.ctrlEnterEditButton)).toBe(true);
 
         if (wysiwygEnabled) {
             // # Press Tab to move focus to Rich text editing button
             await page.keyboard.press('Tab');
-            await pw.toBeFocusedWithFocusVisible(advancedSettings.wysiwygEditorEditButton);
+            expect(await pw.toBeFocusedWithFocusVisible(advancedSettings.wysiwygEditorEditButton)).toBe(true);
         }
 
         // # Press Tab to move focus to Enable Post Formatting button
         await page.keyboard.press('Tab');
-        await pw.toBeFocusedWithFocusVisible(advancedSettings.postFormattingEditButton);
+        expect(await pw.toBeFocusedWithFocusVisible(advancedSettings.postFormattingEditButton)).toBe(true);
 
         // # Press Tab to move focus to Enable Join/Leave Messages button
         await page.keyboard.press('Tab');
-        await pw.toBeFocusedWithFocusVisible(advancedSettings.joinLeaveEditButton);
+        expect(await pw.toBeFocusedWithFocusVisible(advancedSettings.joinLeaveEditButton)).toBe(true);
 
         // # Press Tab to move focus to Scroll position button
         await page.keyboard.press('Tab');
-        await pw.toBeFocusedWithFocusVisible(advancedSettings.scrollPositionEditButton);
+        expect(await pw.toBeFocusedWithFocusVisible(advancedSettings.scrollPositionEditButton)).toBe(true);
 
         // # Press Tab to move focus to Allow message drafts to sync button
         await page.keyboard.press('Tab');
-        await pw.toBeFocusedWithFocusVisible(advancedSettings.syncDraftsEditButton);
+        expect(await pw.toBeFocusedWithFocusVisible(advancedSettings.syncDraftsEditButton)).toBe(true);
     },
 );
 
@@ -87,16 +89,16 @@ test(
             config.FeatureFlags?.WysiwygEditor === true || config.FeatureFlags?.WysiwygEditor === 'true';
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const globalHeader = app.globalHeader;
+        const settingsModal = new SettingsModal(app);
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -158,16 +160,16 @@ test(
         const {user} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const globalHeader = app.globalHeader;
+        const settingsModal = new SettingsModal(app);
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -218,16 +220,16 @@ test(
         const {user} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const globalHeader = app.globalHeader;
+        const settingsModal = new SettingsModal(app);
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -273,16 +275,16 @@ test(
         const {user} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const globalHeader = app.globalHeader;
+        const settingsModal = new SettingsModal(app);
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -331,16 +333,16 @@ test(
         const {user} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const globalHeader = app.globalHeader;
+        const settingsModal = new SettingsModal(app);
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -389,16 +391,16 @@ test(
         const {user} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const globalHeader = app.globalHeader;
+        const settingsModal = new SettingsModal(app);
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible

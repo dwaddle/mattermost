@@ -10,6 +10,7 @@ import type {UserPropertyField} from '@mattermost/types/properties_user';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `profile_popover`. */
 export class ProfilePopover extends Scope {
@@ -158,7 +159,7 @@ export class ProfilePopoverActions extends Scope {
     /**
      * `profile_popover.actions.edit_profile--button` — ProfilePopoverSelfUserRow (channels/src/components/profile_popover/profile_popover_self_user_row.tsx)
      * Renders only when getUser(state, userId) and !(userId !== currentUserId || haveOverrideProp).
-     * Opens modal UserSettingsModal.
+     * Opens modal UserSettingsModal (`user_settings_modal`).
      */
     get editProfileButton() {
         return drivers.button(this.byTestId(`${this.scope}.edit_profile--button`), {
@@ -170,8 +171,10 @@ export class ProfilePopoverActions extends Scope {
         });
     }
 
-    async clickEditProfileButton(): Promise<void> {
+    /** Clicks editProfileButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickEditProfileButton(): Promise<UserSettingsModal> {
         await this.editProfileButton.click();
+        return new UserSettingsModal(this.page, 'user_settings_modal');
     }
 
     /**

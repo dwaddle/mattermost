@@ -41,6 +41,7 @@ export default function AddWorkspaceDropdown({
 
     const menuButton = useMemo(() => ({
         id: `${MENU_ID}-button`,
+        dataTestId: 'channel_settings_modal.configuration.workspaces.add--button',
         class: buttonClassNames({emphasis: 'tertiary', size: 'sm'}, 'ShareChannelWithWorkspaces__addBtn'),
         children: (
             <>
@@ -102,6 +103,7 @@ export default function AddWorkspaceDropdown({
                 <Menu.Item
                     key={`${rc.remote_id}-${rc.name}`}
                     id={`${MENU_ID}-item-${rc.remote_id}-${rc.name}`}
+                    data-testid={`channel_settings_modal.configuration.workspaces.add_menu.workspace:${rc.remote_id}-${rc.name}--menuitem`}
                     labels={<span>{rc.display_name || rc.name}</span>}
                     onClick={() => handleSelect(rc)}
                 />

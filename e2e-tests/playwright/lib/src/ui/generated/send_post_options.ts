@@ -11,7 +11,9 @@ import {Scope, drivers} from '../../aria';
 import {Api} from './api';
 import {DateTimePickerModalFromReschedule} from './date_time_picker_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {LeaveChannelModal} from './leave_channel_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
+import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `send_post_options`. */
 export class SendPostOptions extends Scope {
@@ -134,12 +136,16 @@ export class SendPostOptionsMenu extends Scope {
     /** Clicks monday9AmMenuItem, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickMonday9AmMenuItem(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.monday9AmMenuItem.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 
@@ -195,12 +201,16 @@ export class SendPostOptionsMenu extends Scope {
     /** Clicks nextMonday9AmMenuItem, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickNextMonday9AmMenuItem(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.nextMonday9AmMenuItem.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 
@@ -257,12 +267,16 @@ export class SendPostOptionsMenu extends Scope {
     /** Clicks recentlyUsedCustomTimeMenuItem, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickRecentlyUsedCustomTimeMenuItem(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.recentlyUsedCustomTimeMenuItem.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 
@@ -318,12 +332,16 @@ export class SendPostOptionsMenu extends Scope {
     /** Clicks tomorrow9AmMenuItem, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickTomorrow9AmMenuItem(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        leaveChannelModal: LeaveChannelModal;
         notifyConfirmModal: NotifyConfirmModal;
+        userSettingsModal: UserSettingsModal;
     }> {
         await this.tomorrow9AmMenuItem.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
 }

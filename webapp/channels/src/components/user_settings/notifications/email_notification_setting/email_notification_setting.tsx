@@ -307,6 +307,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
                     <div className='settings-radio-group'>
                         <Radio
                             id='emailNotificationImmediately'
+                            data-testid='settings.section.option:immediately--radio'
                             name='emailNotifications'
                             checked={newInterval === Preferences.INTERVAL_IMMEDIATE}
                             data-enable-email={'true'}
@@ -320,6 +321,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
                         </Radio>
                         <Radio
                             id='emailNotificationMinutes'
+                            data-testid='settings.section.option:fifteen_minutes--radio'
                             name='emailNotifications'
                             checked={newInterval === Preferences.INTERVAL_FIFTEEN_MINUTES}
                             data-enable-email={'true'}
@@ -334,6 +336,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
                         </Radio>
                         <Radio
                             id='emailNotificationHour'
+                            data-testid='settings.section.option:hour--radio'
                             name='emailNotifications'
                             checked={newInterval === Preferences.INTERVAL_HOUR}
                             data-enable-email={'true'}
@@ -347,6 +350,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
                         </Radio>
                         <Radio
                             id='emailNotificationNever'
+                            data-testid='settings.section.option:never--radio'
                             name='emailNotifications'
                             checked={newInterval === Preferences.INTERVAL_NEVER}
                             data-enable-email={'false'}
@@ -383,6 +387,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
                     <div className='settings-radio-group'>
                         <Radio
                             id='emailNotificationImmediately'
+                            data-testid='settings.section.option:immediately--radio'
                             name='emailNotifications'
                             checked={newInterval === Preferences.INTERVAL_IMMEDIATE}
                             data-enable-email={'true'}
@@ -396,6 +401,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
                         </Radio>
                         <Radio
                             id='emailNotificationNever'
+                            data-testid='settings.section.option:never--radio'
                             name='emailNotifications'
                             checked={newInterval === Preferences.INTERVAL_NEVER}
                             data-enable-email={'false'}
@@ -445,6 +451,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
 
         return (
             <SettingItemMax
+                testIdSection='email'
                 title={
                     <FormattedMessage
                         id='user.settings.notifications.emailNotifications'

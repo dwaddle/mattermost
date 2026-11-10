@@ -1,21 +1,19 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, getRandomId, test} from '@mattermost/playwright-lib';
+import {expect, getRandomId, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
-async function disableManagedCategories(adminClient: any) {
-    await adminClient.patchConfig({
-        TeamSettings: {
-            EnableManagedChannelCategories: false,
-        },
-    });
-}
+// Written on the generated page objects: the channel header menu and Channel Settings' Info tab with its managed
+// category selector.
 
 /**
  * Creates a uniquely-named team and user per test and adds the user to the team.
  */
-async function setupManagedCategoriesTest(pw: any) {
+async function setupManagedCategoriesTest(pw: PlaywrightExtended) {
     const {adminClient, adminUser} = await pw.getAdminClient();
+    if (!adminUser) {
+        throw new Error('Failed to get the admin user');
+    }
     const suffix = getRandomId();
 
     // Guard against UseAnonymousURLs=true left by anonymous_urls tests running on the same
@@ -27,7 +25,7 @@ async function setupManagedCategoriesTest(pw: any) {
         name: `mgd-${suffix}`,
         display_name: `Managed ${suffix}`,
         type: 'O',
-    });
+    } as any);
     const user = await pw.createNewUserProfile(adminClient, {prefix: 'mgd-user'});
     await adminClient.addToTeam(team.id, user.id);
     return {adminClient, adminUser, team, user};
@@ -42,25 +40,23 @@ test.describe('Managed Channel Categories (flag off)', () => {
         {tag: '@managed_categories'},
         async ({pw}) => {
             await pw.ensureFeatureFlag('ManagedChannelCategories', false);
-            // # Initialize setup and disable managed categories
+            // # Initialize setup (the feature flag above is what turns managed categories off; there is no config
+            // setting for it)
             const {adminUser, adminClient, team} = await setupManagedCategoriesTest(pw);
             await pw.skipIfNoLicense();
-            await disableManagedCategories(adminClient);
             await adminClient.addToTeam(team.id, adminUser.id);
 
             // # Log in and open channel settings
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: 'town-square'});
+            const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+            await settings.tabs.infoTab.select();
 
-            const channelSettingsModal = await channelsPage.openChannelSettings();
-            await channelSettingsModal.openInfoTab();
+            // * Verify managed category selector is not rendered, on an Info tab that has loaded
+            await expect(settings.info.nameTextbox.locator).toBeVisible();
+            await expect(settings.info.managedCategory.locator).toHaveCount(0);
 
-            // * Verify managed category selector is not visible
-            const managedSelector = channelSettingsModal.container.locator('.ManagedCategory__control');
-            await expect(managedSelector).not.toBeVisible();
-
-            await channelSettingsModal.close();
+            await settings.clickCloseButton();
         },
     );
 });

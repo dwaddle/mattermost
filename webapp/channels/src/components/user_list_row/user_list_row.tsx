@@ -4,9 +4,9 @@
 import React from 'react';
 import type {JSX, ReactNode} from 'react';
 import {FormattedMessage} from 'react-intl';
-import type {ConnectedComponent} from 'react-redux';
 import styled from 'styled-components';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile as UserProfileType} from '@mattermost/types/users';
@@ -32,7 +32,7 @@ type Props = {
     user: UserProfileType;
     status?: string;
     extraInfo?: Array<string | JSX.Element>;
-    actions?: Array<ConnectedComponent<any, any>>;
+    actions?: Array<React.ComponentType<any>>;
     actionProps?: {
         mfaEnabled: boolean;
         enableUserAccessTokens: boolean;
@@ -44,19 +44,22 @@ type Props = {
         doManageTokens: (user: UserProfileType) => void;
         isDisabled?: boolean;
     };
+
+    // This row's user's props for the actions (UserList picks them out of its per-user map).
     actionUserProps?: {
-        [userId: string]: {
-            channel: Channel;
-            teamMember: TeamMembership;
-            channelMember: ChannelMembership;
-        };
+        channel?: Channel;
+        teamMember: TeamMembership;
+        channelMember?: ChannelMembership;
     };
     index?: number;
     totalUsers?: number;
     userCount?: number;
+
+    // The row is `<testIdScope>:<user id>`; its actions get `testIdScope` for their own parts.
+    testIdScope: TestId;
 };
 
-const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, actionUserProps = {}, index, totalUsers, userCount}: Props) => {
+const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, actionUserProps, index, totalUsers, userCount, testIdScope}: Props) => {
     let buttons = null;
     if (actions) {
         buttons = actions.map((Action, actionIndex) => {
@@ -68,6 +71,7 @@ const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, a
                     totalUsers={totalUsers}
                     {...actionProps}
                     {...actionUserProps}
+                    testIdScope={testIdScope}
                 />
             );
         });
@@ -111,6 +115,7 @@ const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, a
         <div
             key={user.id}
             className='more-modal__row'
+            data-testid={`${testIdScope}:${user.id}`}
         >
             <ProfilePicture
                 src={Client4.getProfilePictureUrl(user.id, user.last_picture_update)}
@@ -119,14 +124,12 @@ const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, a
                 userId={user.id}
                 username={user.username}
             />
-            <div
-                className='more-modal__details'
-                data-testid='userListItemDetails'
-            >
+            <div className='more-modal__details'>
                 <div className='d-flex whitespace--nowrap'>
                     <div
                         id={userCountID}
                         className='more-modal__name'
+                        data-testid={`${testIdScope}.name--text`}
                     >
                         <UserProfile
                             userId={user.id}
@@ -163,15 +166,13 @@ const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, a
                 <div
                     id={userCountEmail}
                     className={emailStyle}
+                    data-testid={`${testIdScope}.email--text`}
                 >
                     <span>{emailProp}</span>
                 </div>
                 {extraInfo}
             </div>
-            <div
-                data-testid='userListItemActions'
-                className='more-modal__actions'
-            >
+            <div className='more-modal__actions'>
                 {buttons}
             </div>
         </div>

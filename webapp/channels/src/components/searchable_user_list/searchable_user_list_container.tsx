@@ -3,6 +3,7 @@
 
 import React, {useState, type JSX} from 'react';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
@@ -37,6 +38,7 @@ type Props = {
         };
     };
     focusOnMount?: boolean;
+    testIdScope: TestIdScope;
 };
 
 export default function SearchableUserListContainer(props: Props) {

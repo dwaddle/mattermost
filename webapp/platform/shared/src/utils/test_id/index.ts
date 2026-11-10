@@ -141,6 +141,7 @@ export const PLUGIN_SLOT_TEST_IDS = {
     channel_header_menu_item: 'channel_header.menu.plugin:{plugin}--menuitem',
     channel_header_bookmarks_menu_item: 'channel_header.menu.bookmarks.plugin:{plugin}--menuitem',
     channel_info_menu_item: 'rhs.channel_info.menu.plugin:{plugin}--menuitem',
+    channel_settings_tab: 'channel_settings_modal.tabs.plugin:{plugin}--tab',
 
     // a file's "..." menu wherever an attachment renders (a post, a thread, a preview…): `*` is the attachment
     // list's scope (`<post>.attachments`)
@@ -148,17 +149,22 @@ export const PLUGIN_SLOT_TEST_IDS = {
 
     // the composer's attachment menu, in the center and the thread panel
     file_upload_method: '*.attach_menu.plugin:{plugin}--menuitem',
+    help_menu_item: 'global_header.help_menu.plugin:{plugin}--menuitem',
     lhs_browse_or_add_menu_item: 'lhs.browse_or_add_menu.plugin:{plugin}--menuitem',
     lhs_team_menu_item: 'lhs.team_menu.plugin:{plugin}--menuitem',
+    mobile_menu_item: 'mobile_menu.plugin:{plugin}--menuitem',
+    new_channel_type: 'new_channel_modal.type.plugin_type:{plugin}--button',
 
     // a post's actions menu wherever a post renders (the center, a thread, search results…)
     post_menu_item: '*.actions_menu.plugin:{plugin}--menuitem',
     post_submenu: '*.actions_menu.plugin_submenu:{plugin}--menuitem',
+    product_menu_item: 'global_header.product_menu.plugin:{plugin}--menuitem',
+    product_menu_product: 'global_header.product_menu.product:{plugin}--menuitem',
     rhs_panel: 'rhs.plugin:{plugin}',
     search_file_menu_item: 'search.results.file.menu.plugin:{plugin}--menuitem',
     search_type: 'search_box.plugin_type:{plugin}--radio',
-
-    // each area's PR lists the slots it renders, once it renders them
+    user_settings_tab: 'user_settings_modal.tabs.plugin:{plugin}--tab',
+    user_settings_panel: 'settings.plugin_panel:{plugin}--tabpanel',
 } as const;
 
 export type PluginSlot = keyof typeof PLUGIN_SLOT_TEST_IDS;
@@ -175,13 +181,21 @@ export const PLUGIN_SLOT_REGISTRY_METHODS: Record<PluginSlot, readonly string[]>
     channel_header_menu_item: ['registerChannelHeaderMenuAction'],
     channel_header_bookmarks_menu_item: ['registerChannelBookmarksMenuAction'],
     channel_info_menu_item: ['registerChannelInfoMenuAction'],
+    channel_settings_tab: ['registerChannelSettingsTab'],
     file_menu_item: ['registerFileDropdownMenuAction'],
     file_upload_method: ['registerFileUploadMethod'],
+    help_menu_item: ['registerUserGuideDropdownMenuAction'],
     lhs_browse_or_add_menu_item: ['registerSidebarBrowseOrAddChannelMenuAction'],
     lhs_team_menu_item: ['registerMainMenuAction'],
+    mobile_menu_item: ['registerMainMenuAction'],
+    new_channel_type: ['registerChannelTypeOption'],
     post_menu_item: ['registerPostDropdownMenuAction'],
     post_submenu: ['registerPostDropdownSubMenuAction'],
+    product_menu_item: ['registerProductSwitcherMenuItem'],
+    product_menu_product: ['registerProduct'],
     rhs_panel: ['registerRightHandSidebarComponent'],
     search_file_menu_item: ['registerFileDropdownMenuAction'],
     search_type: ['registerSearchComponents'],
+    user_settings_tab: ['registerUserSettings'],
+    user_settings_panel: ['registerUserSettings'],
 };

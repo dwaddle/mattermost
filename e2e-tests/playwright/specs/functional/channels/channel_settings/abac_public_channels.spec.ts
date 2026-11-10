@@ -63,7 +63,9 @@ test.describe('ABAC - Public channels', () => {
         // * Membership Policy tab is NOT rendered for the default channel —
         // ValidateChannelEligibilityForAccessControl rejects default channels
         // server-side, so the tab would only let a user assemble unsaveable rules.
-        await expect(channelSettings.container.getByTestId('access_rules-tab-button')).not.toBeVisible();
+        await expect(
+            channelSettings.container.getByTestId('channel_settings_modal.tabs.tab:access_rules--tab'),
+        ).not.toBeVisible();
 
         await channelSettings.close();
     });

@@ -5,6 +5,8 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import type {GetOptionValue} from 'react-select';
 
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
+
 import LoadingScreen from 'components/loading_screen';
 
 import Constants from 'utils/constants';
@@ -27,6 +29,9 @@ export type Props<T extends Value> = {
     selectedItemRef?: React.RefObject<HTMLDivElement | null>;
     options: T[];
     customNoOptionsMessage?: React.ReactNode;
+
+    // The list root; its parts: `.no_results--text`.
+    testIdScope: TestIdScope;
 };
 
 type State = {
@@ -180,6 +185,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
                     <div
                         key='no-users-found'
                         className='no-channel-message'
+                        data-testid={`${this.props.testIdScope}.no_results--text`}
                         tabIndex={0}
                     >
                         <p className='primary-message'>
@@ -210,7 +216,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
 
             renderOutput = (
                 <div
-                    data-testid='more-modal-list'
+                    data-testid={this.props.testIdScope}
                     className='more-modal__list'
                 >
                     <div
@@ -225,6 +231,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
                         />
                     </div>
                     <div
+                        data-testid={`${this.props.testIdScope}.selection--text`}
                         className='sr-only'
                         aria-live='polite'
                         aria-atomic='true'
@@ -245,6 +252,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
 
         return (
             <div
+                data-testid={`${this.props.testIdScope}.live_region`}
                 className='multi-select__wrapper'
                 aria-live='polite'
             >

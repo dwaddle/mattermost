@@ -56,7 +56,9 @@ export default class InvitePeopleModal {
     }
 
     getProfileRow(email: string) {
-        const row = this.container.getByTestId(`MemberProfileInputs__row-${email.toLowerCase()}`);
+        // the row's key is the email normalized for a testid (`a_b_example_com`)
+        const key = email.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        const row = this.container.getByTestId(`invitation_modal.invite.member_profiles.member:${key}`);
         return {
             container: row,
             firstNameInput: row.getByRole('textbox', {name: 'First name'}),

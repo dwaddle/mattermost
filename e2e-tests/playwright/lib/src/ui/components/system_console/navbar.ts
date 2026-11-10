@@ -13,7 +13,7 @@ export default class SystemConsoleNavbar {
 
     constructor(container: Locator) {
         this.container = container;
-        this.backLink = container.getByTestId('backstage-navbar-back');
+        this.backLink = container.getByTestId('backstage.navbar.back--link');
     }
 
     async toBeVisible() {

@@ -24,7 +24,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
         const teamSettings = await channelsPage.openTeamSettings();
 
         // # Collect all visible tab buttons in order
-        const tabButtons = teamSettings.container.locator('[data-testid$="-tab-button"]');
+        const tabButtons = teamSettings.container.getByTestId(/^team_settings_modal\.tabs\..+--tab$/);
 
         // * Exactly 4 tabs are visible
         await expect(tabButtons).toHaveCount(4);
@@ -55,7 +55,9 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
 
         const teamSettings = await channelsPage.openTeamSettings();
 
-        const channelMembershipTab = teamSettings.container.getByTestId('access_policies-tab-button');
+        const channelMembershipTab = teamSettings.container.getByTestId(
+            'team_settings_modal.tabs.tab:access_policies--tab',
+        );
 
         // * Tab button is visible
         await expect(channelMembershipTab).toBeVisible();
@@ -82,7 +84,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
         const teamSettings = await channelsPage.openTeamSettings();
 
         // # Click Channel Membership tab
-        await teamSettings.container.getByTestId('access_policies-tab-button').click();
+        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:access_policies--tab').click();
 
         // * Channel Membership tab content is functional (shows empty state or policy list)
         await expect(teamSettings.container.getByText('No policies found')).toBeVisible({timeout: 10000});
@@ -103,16 +105,16 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
         const teamSettings = await channelsPage.openTeamSettings();
 
         // # Navigate to Team Membership tab
-        await teamSettings.container.getByTestId('team_membership-tab-button').click();
+        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
         await expect(teamSettings.container.locator('.TeamMembershipTab')).toBeVisible();
 
         // # Navigate to Channel Membership tab
-        await teamSettings.container.getByTestId('access_policies-tab-button').click();
+        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:access_policies--tab').click();
         await expect(teamSettings.container.getByText('No policies found')).toBeVisible({timeout: 10000});
         await expect(teamSettings.container.locator('.TeamMembershipTab')).not.toBeVisible();
 
         // # Navigate back to Team Membership tab
-        await teamSettings.container.getByTestId('team_membership-tab-button').click();
+        await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
         await expect(teamSettings.container.locator('.TeamMembershipTab')).toBeVisible();
 
         await teamSettings.close();

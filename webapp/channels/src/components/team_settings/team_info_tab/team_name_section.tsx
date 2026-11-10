@@ -26,7 +26,7 @@ const TeamNameSection = ({clientError, handleNameChanges, name}: Props) => {
     const nameSectionInput = (
         <Input
             id='teamName'
-            data-testid='teamNameInput'
+            data-testid='team_settings_modal.info.name--textbox'
             type='text'
             maxLength={Constants.MAX_TEAMNAME_LENGTH}
             onChange={updateName}
@@ -47,6 +47,7 @@ const TeamNameSection = ({clientError, handleNameChanges, name}: Props) => {
             })}
             content={nameSectionInput}
             error={clientError}
+            dataTestId='team_settings_modal.info.name_section'
         />
     );
 };

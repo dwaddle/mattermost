@@ -14,72 +14,71 @@ test(
         const {user} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        const globalHeader = channelsPage.globalHeader;
-        const settingsModal = channelsPage.settingsModal;
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
         await channelsPage.toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.focus();
+        await app.globalHeader.settingsButton.locator.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible and focus should be on the modal
-        await expect(settingsModal.container).toBeVisible();
-        await pw.toBeFocusedWithFocusVisible(settingsModal.container);
+        await expect(settingsModal.locator).toBeVisible();
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.locator)).toBe(true);
 
         const testArgs = {page, browserName, viewport};
         await pw.hideDynamicChannelsContent(page);
         await pw.matchSnapshot(
             {...testInfo, title: `${testInfo.title}`},
-            {...testArgs, locator: settingsModal.content},
+            {...testArgs, locator: settingsModal.locator},
         );
 
         // # Press Tab to move focus to Close button
         await page.keyboard.press('Tab');
         // * Verify focus is on Close button
-        await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton.locator)).toBe(true);
         await pw.matchSnapshot(
             {...testInfo, title: `${testInfo.title} close button`},
-            {...testArgs, locator: settingsModal.content},
+            {...testArgs, locator: settingsModal.locator},
         );
 
         // # Press Tab to move focus to Notifications tab
         await page.keyboard.press('Tab');
         // * Verify focus is on Notifications tab and Notifications Settings panel is visible
-        await pw.toBeFocusedWithFocusVisible(settingsModal.notificationsTab);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('notifications').locator)).toBe(true);
         await pw.matchSnapshot(
             {...testInfo, title: `${testInfo.title} notifications tab`},
-            {...testArgs, locator: settingsModal.content},
+            {...testArgs, locator: settingsModal.locator},
         );
 
         // # Press arrow down key to move focus to Display tab
         await page.keyboard.press('ArrowDown');
         // * Verify focus is on Display tab and Display Settings panel is visible
-        await pw.toBeFocusedWithFocusVisible(settingsModal.displayTab);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('display').locator)).toBe(true);
         await pw.matchSnapshot(
             {...testInfo, title: `${testInfo.title} display tab`},
-            {...testArgs, locator: settingsModal.content},
+            {...testArgs, locator: settingsModal.locator},
         );
 
         // # Press arrow down key to move focus to Sidebar tab
         await page.keyboard.press('ArrowDown');
         // * Verify focus is on Sidebar tab and Sidebar Settings panel is visible
-        await pw.toBeFocusedWithFocusVisible(settingsModal.sidebarTab);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('sidebar').locator)).toBe(true);
         await pw.matchSnapshot(
             {...testInfo, title: `${testInfo.title} sidebar tab`},
-            {...testArgs, locator: settingsModal.content},
+            {...testArgs, locator: settingsModal.locator},
         );
 
         // # Press arrow down key to move focus to Advanced tab
         await page.keyboard.press('ArrowDown');
         // * Verify focus is on Advanced tab and Advanced Settings panel is visible
-        await pw.toBeFocusedWithFocusVisible(settingsModal.advancedTab);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('advanced').locator)).toBe(true);
         await pw.matchSnapshot(
             {...testInfo, title: `${testInfo.title} advanced tab`},
-            {...testArgs, locator: settingsModal.content},
+            {...testArgs, locator: settingsModal.locator},
         );
     },
 );
