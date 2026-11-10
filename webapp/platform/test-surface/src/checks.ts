@@ -3,12 +3,15 @@
 
 import ts from 'typescript';
 
+import type {TestIdRole} from '@mattermost/types/test_id';
+
 import {escapeRegExp} from './ast.ts';
 import {cmp} from './compare.ts';
 import type {AllowEntry, PluginConfig} from './config.ts';
 import {isGrammarError, toWord} from './grammar.ts';
 import {MAX_TEMPLATE_VALUES} from './limits.ts';
-import type {Diagnostic, Element, Loc, Manifest} from './manifest_types.ts';
+import type {AriaRole, Diagnostic, Element, Loc, Manifest} from './manifest_types.ts';
+import {isAriaRole} from './roles.ts';
 import {isUnscoped, readHostSlots, type Emission, type ScanResult, type Site} from './scan.ts';
 import {templateOf, TOO_MANY_VALUES} from './values.ts';
 
@@ -30,16 +33,16 @@ export type CheckOptions = {
     plugin?: PluginConfig | null;
 };
 
-const ROLE_EQUIV: Record<string, string[]> = {
-    button: ['button'],
-    togglebutton: ['togglebutton', 'button'],
-    link: ['link'],
-    textbox: ['textbox', 'searchbox'],
-    searchbox: ['searchbox', 'textbox'],
-    menuitem: ['menuitem', 'menuitemcheckbox', 'menuitemradio'],
+/** The roles an element may have for a suffix besides the suffix itself (a `--button` may be a toggle button…). */
+const ROLE_EQUIV: Partial<Record<TestIdRole, readonly AriaRole[]>> = {
+    togglebutton: ['button'],
+    textbox: ['searchbox'],
+    searchbox: ['textbox'],
+    menuitem: ['menuitemcheckbox', 'menuitemradio'],
 };
 
-const NON_INTERACTIVE = new Set([null, 'none', 'presentation', 'text', 'img', 'list', 'listitem', 'heading', 'grid', 'table', 'cell', 'columnheader', 'row', 'gridcell', 'status', 'alert', 'tooltip', 'separator', 'region', 'form', 'navigation', 'dialog', 'alertdialog', 'menu', 'tabpanel', 'progressbar', 'main', 'banner', 'complementary', 'contentinfo', 'log', 'feed', 'group', 'article']);
+/** Roles of content a user doesn't operate: `--text` fits them, and they need no suffix. */
+const NON_INTERACTIVE = new Set<AriaRole | null>([null, 'none', 'presentation', 'text', 'img', 'list', 'listitem', 'heading', 'grid', 'table', 'cell', 'columnheader', 'row', 'gridcell', 'status', 'alert', 'tooltip', 'separator', 'region', 'form', 'navigation', 'dialog', 'alertdialog', 'menu', 'tabpanel', 'progressbar', 'main', 'banner', 'complementary', 'contentinfo', 'log', 'feed', 'group', 'article']);
 
 /** Runs every check over a scan and appends diagnostics to the manifest. Returns them sorted. */
 export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] {
@@ -204,6 +207,9 @@ function checkEmissions(emissions: Emission[], push: Push, strictAt: (at: Loc, t
         } else if (suffix && suffix !== 'text' && !role && e.landing.tag) {
             push('role-fit', strict, at, `"${e.template}" is on a <${tagText(e)}> with no ARIA role.`, `Render a native ${suffix} or add role='${suffix}' (and its state attributes); for read-only content use --text.`);
         }
+        if (role && !isAriaRole(role)) {
+            push('aria', false, at, `"${e.template}" is on an element with role "${role}", which isn't a WAI-ARIA role.`, 'Use one of the WAI-ARIA roles (https://www.w3.org/TR/wai-aria-1.2/#role_definitions).');
+        }
         if (e.landing.interactive && !role) {
             push('aria', strict, at, `<${tagText(e)}> with testid "${e.template}" handles input but has no ARIA role.`, 'Render a native control (button, a[href], input) or add role= with its state attributes.');
         }
@@ -220,7 +226,7 @@ function tagText(e: Emission): string {
     return tag ? tag.tagName.getText() : '?';
 }
 
-function fits(suffix: string, role: string): boolean {
+function fits(suffix: TestIdRole, role: AriaRole): boolean {
     if (suffix === role) {
         return true;
     }
@@ -238,7 +244,7 @@ function roleSuffixFor(role: string | null): string | null {
 }
 
 /** A grammar-conforming suggestion for a legacy testid. */
-export function suggest(template: string, role: string | null): string | null {
+export function suggest(template: string, role: AriaRole | null): string | null {
     const [path] = template.split('{key}');
     const words = path.split(/[.\-:]+|__/).map(toWord).filter(Boolean);
     if (!words.length) {

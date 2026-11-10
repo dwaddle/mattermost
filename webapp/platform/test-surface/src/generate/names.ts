@@ -1,6 +1,10 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {TestIdRole} from '@mattermost/types/test_id';
+
+import {ROLE_TABLE} from '../role_table.ts';
+
 /** `join_leave_messages` -> `joinLeaveMessages` */
 export function camel(s: string): string {
     const p = pascal(s);
@@ -13,73 +17,9 @@ export function pascal(s: string): string {
     return (/^[0-9]/).test(out) ? 'N' + out : out;
 }
 
-const ROLE_WORDS: Record<string, string> = {
-    button: 'Button',
-    link: 'Link',
-    textbox: 'Textbox',
-    searchbox: 'Searchbox',
-    checkbox: 'Checkbox',
-    switch: 'Switch',
-    radio: 'Radio',
-    radiogroup: 'RadioGroup',
-    combobox: 'Combobox',
-    listbox: 'Listbox',
-    option: 'Option',
-    tab: 'Tab',
-    tablist: 'TabList',
-    tabpanel: 'TabPanel',
-    menu: 'Menu',
-    menuitem: 'MenuItem',
-    menuitemcheckbox: 'MenuItemCheckbox',
-    menuitemradio: 'MenuItemRadio',
-    dialog: 'Dialog',
-    alertdialog: 'AlertDialog',
-    slider: 'Slider',
-    spinbutton: 'SpinButton',
-    togglebutton: 'ToggleButton',
-    text: 'Text',
-    img: 'Img',
-    list: 'List',
-    listitem: 'ListItem',
-    row: 'Row',
-    grid: 'Grid',
-    gridcell: 'GridCell',
-    status: 'Status',
-    alert: 'Alert',
-    tooltip: 'Tooltip',
-    region: 'Region',
-    separator: 'Separator',
-};
-
-export function roleWord(role: string | null): string {
-    return role ? ROLE_WORDS[role] ?? pascal(role) : '';
-}
-
-/** Roles that have a driver; everything else gets the read-only text driver. */
-const DRIVER_FOR: Record<string, string> = {
-    button: 'button',
-    link: 'link',
-    menuitem: 'menuitem',
-    menuitemcheckbox: 'menuitemcheckbox',
-    menuitemradio: 'menuitemradio',
-    togglebutton: 'togglebutton',
-    switch: 'switch',
-    checkbox: 'checkbox',
-    radio: 'radio',
-    textbox: 'textbox',
-    searchbox: 'searchbox',
-    spinbutton: 'textbox',
-    tab: 'tab',
-    option: 'option',
-    combobox: 'combobox',
-    listbox: 'listbox',
-};
-
-export function driverFor(role: string | null): string {
-    if (!role) {
-        return 'container';
-    }
-    return DRIVER_FOR[role] ?? 'text';
+/** The role in member names: `Button` in `saveButton`; nothing for a container. */
+export function roleWord(role: TestIdRole | null): string {
+    return role ? ROLE_TABLE[role].word : '';
 }
 
 const RESERVED = new Set(['page', 'scope', 'root', 'container', 'constructor', 'byTestId', 'byTestIdPattern', 'keysOf', 'fill', 'read']);

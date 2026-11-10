@@ -1,6 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {TestIdRole} from '@mattermost/types/test_id';
+
+import type {Aria, AriaRole} from './roles.ts';
+
+export type {Aria, AriaRole};
+
 /** Repo-relative location, "channels/src/…/file.tsx:51". */
 export type Loc = string;
 
@@ -28,8 +34,6 @@ export type Instance = {
     via: Loc[];
     keySet?: string[];
 };
-
-export type Aria = {role: string | null; native: boolean; state: string[]};
 
 export type Open = {
     kind: 'modal' | 'menu' | 'popover' | 'page' | 'panel';
@@ -75,7 +79,7 @@ export type Element = {
     grammar: boolean;
     scope: string[];
     name: string;
-    role: string | null;
+    role: TestIdRole | null;
     key?: KeyInfo;
 
     /** Where data-testid is emitted, and the component that emits it. */
@@ -126,7 +130,7 @@ export type TestPart = {
 
     /** Appended to the usage's `testId`: `--dialog`, `.close--button`, `.tab:{key}--tab`. */
     suffix: string;
-    role: string | null;
+    role: TestIdRole | null;
 
     /** TypeScript type of `{key}`, for keyed parts. */
     key?: string;
@@ -145,7 +149,7 @@ export type TestParts = {
     package: string;
     packageVersion: string;
     testIdProp: string;
-    components: Record<string, {at: Loc; role: string | null; parts: TestPart[]}>;
+    components: Record<string, {at: Loc; role: AriaRole | null; parts: TestPart[]}>;
 };
 
 /** A host-owned plugin slot from the published contract: its testid template (`{key}` = plugin key). */

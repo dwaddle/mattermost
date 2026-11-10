@@ -19,7 +19,8 @@ import {loadPublishedParts, publishedComponent, type PublishedParts} from './par
 import type {LoadedProgram} from './program.ts';
 import {isCallUsage, ProgramIndex, usageNode, type CodeNode, type Usage} from './program_index.ts';
 import {reachableFiles} from './reachability.ts';
-import {Roles} from './roles.ts';
+import {ROLE_TABLE} from './role_table.ts';
+import {asWritten, Roles, type AriaRole} from './roles.ts';
 import {Operations} from './routes.ts';
 import {StoreGates, type Gate} from './store_gates.ts';
 import {assignmentsOf, concat, gapsOf, isTruncated, lit, pushesOf, Resolver, templateOf, TOO_MANY_VALUES, type Gap, type Value} from './values.ts';
@@ -93,23 +94,11 @@ export type ScanResult = {
     urlVersion: string | null;
 };
 
-const VALUE_ROLES: Record<string, string> = {
-    textbox: 'string',
-    searchbox: 'string',
-    checkbox: 'boolean',
-    switch: 'boolean',
-    togglebutton: 'boolean',
-    radiogroup: 'string',
-    combobox: 'string',
-    spinbutton: 'number',
-    slider: 'number',
-};
+/** Roles a bare-word testid (a scope root, `channel_settings_modal`) may land on: it names a container, not a control. */
+const CONTAINER_ROLES = new Set<AriaRole>(['none', 'presentation', 'dialog', 'alertdialog', 'menu', 'region', 'form', 'navigation', 'list', 'grid', 'table', 'tabpanel', 'status', 'alert', 'tooltip', 'text']);
 
-const INTERACTIVE_ROLES = new Set(['button', 'togglebutton', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'tab', 'checkbox', 'radio', 'switch', 'textbox', 'searchbox', 'combobox', 'option', 'slider', 'spinbutton']);
-
-const CONTAINER_ROLES = new Set(['none', 'presentation', 'dialog', 'alertdialog', 'menu', 'region', 'form', 'navigation', 'list', 'grid', 'table', 'tabpanel', 'status', 'alert', 'tooltip', 'text']);
-
-const BOOLEAN_ROLES = new Set(['checkbox', 'switch', 'togglebutton', 'radio', 'menuitemcheckbox', 'menuitemradio']);
+/** Roles a component usage's element can have without being something the user operates, though it takes on* props. */
+const NOT_OPERATED = new Set<AriaRole>(['text', 'img', 'list', 'listitem', 'dialog', 'heading', 'grid', 'table', 'cell', 'columnheader', 'row', 'gridcell', 'form', 'navigation', 'status', 'alert', 'region', 'tooltip', 'separator']);
 
 export class Scanner {
     private readonly published: PublishedParts[];
@@ -419,7 +408,7 @@ export class Scanner {
                 handlerTag: usage,
                 ...(root ? {handlerExclude: part.claimed} : {handlerAttrs: part.handlers ?? []}),
                 anchor: elementOf(usage),
-                interactive: role !== null && INTERACTIVE_ROLES.has(role),
+                interactive: role !== null && Boolean(ROLE_TABLE[role].interactive),
             };
         }
         if (site.kind === 'html') {
@@ -439,7 +428,7 @@ export class Scanner {
                 const innerVia = [...land.hops, ...via];
                 aria = (land.library ? this.roles.ofLibrary(land.tag, innerVia) : this.roles.ofIntrinsic(land.tag, innerVia, land.element)) ?? aria;
             }
-            const interactive = hasHandlers || (aria.role !== null && !['text', 'img', 'list', 'listitem', 'dialog', 'heading', 'grid', 'table', 'cell', 'columnheader', 'row', 'gridcell', 'form', 'navigation', 'status', 'alert', 'region', 'tooltip', 'separator'].includes(aria.role));
+            const interactive = hasHandlers || (aria.role !== null && !NOT_OPERATED.has(aria.role));
             return {tag: land?.tag ?? null, aria, handlerTag: usage, anchor: elementOf(usage), interactive};
         }
 
@@ -461,7 +450,7 @@ export class Scanner {
     private usageAria(usage: JsxTag, via: Loc[]): Aria | null {
         const role = this.roles.attrLiterals(usage, 'role', via);
         if (role && role.length) {
-            return {role: role[0], native: false, state: []};
+            return {role: asWritten(role[0]), native: false, state: []};
         }
         if (jsxAttr(usage, 'aria-pressed')) {
             return {role: 'togglebutton', native: false, state: ['aria-pressed']};
@@ -1620,7 +1609,7 @@ function keyInfo(values: Set<string>, gaps: Gap[]): Element['key'] {
 function addForms(elements: Element[]) {
     const byScope = new Map<string, Element[]>();
     for (const e of elements) {
-        if (!e.grammar || e.key || !e.role || !(e.role in VALUE_ROLES)) {
+        if (!e.grammar || e.key || !e.role || !ROLE_TABLE[e.role].value) {
             continue;
         }
         const s = e.scope.join('.');
@@ -1636,7 +1625,7 @@ function addForms(elements: Element[]) {
         const shared = new Set(fields.map((f) => f.name).filter((n, i, all) => all.indexOf(n) !== i));
         for (const f of fields) {
             const field = shared.has(f.name) ? `${f.name}_${f.role}` : f.name;
-            f.form = {scope, field, valueType: BOOLEAN_ROLES.has(f.role!) ? 'boolean' : VALUE_ROLES[f.role!]};
+            f.form = {scope, field, valueType: ROLE_TABLE[f.role!].value!};
         }
     }
 }

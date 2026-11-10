@@ -7,6 +7,8 @@ import os from 'node:os';
 import path from 'node:path';
 import {test} from 'node:test';
 
+import {TEST_ID_ROLES, type TestIdRole} from '@mattermost/types/test_id';
+
 import {FIXTURES, matchSnapshot, scanFixture} from './helpers.ts';
 
 import {loadConfig} from '../src/config.ts';
@@ -14,6 +16,7 @@ import {generate} from '../src/generate/index.ts';
 import {buildModel} from '../src/generate/model.ts';
 import {splitAtKey} from '../src/generate/names.ts';
 import type {Element} from '../src/manifest_types.ts';
+import {ROLE_TABLE} from '../src/role_table.ts';
 
 async function generateFixture(name: string) {
     const config = loadConfig(path.join(FIXTURES, name, 'test-surface.config.json'));
@@ -209,7 +212,7 @@ test('generate: a class never takes the name of a fixed set (or entity) that set
         grammar: true,
         scope: template.split(':')[0].split('.').slice(0, -1),
         name: template.split(':')[0].split('.').pop()!.split('--')[0],
-        role: template.includes('--') ? template.split('--')[1] : null,
+        role: template.includes('--') ? template.split('--')[1] as TestIdRole : null,
         component: {name: 'X', at: 'src/x.tsx:1'},
         instances: [{via: []}],
         aria: {role: null, native: false, state: []},
@@ -241,7 +244,7 @@ test('generate: shapes of one component share a class; colliding names get their
             grammar: true,
             scope: words.slice(0, -1),
             name: words[words.length - 1],
-            role: template.includes('--') ? template.split('--')[1] : null,
+            role: template.includes('--') ? template.split('--')[1] as TestIdRole : null,
             component: {name: component, at},
             instances: [{via: []}],
             aria: {role: null, native: false, state: []},
@@ -281,4 +284,31 @@ test('generate: a composite key (a nested item\'s `<parent>-<child>`) is one key
     assert.deepEqual(splitAtKey('admin.permissions.group:{key}-playbook_private-{key}'), ['admin.permissions.group:', '']);
     assert.deepEqual(splitAtKey('admin.permissions.row:{key}-{key}--button'), ['admin.permissions.row:', '--button']);
     assert.deepEqual(splitAtKey('lhs.channel_list.channel:{key}--link'), ['lhs.channel_list.channel:', '--link']);
+});
+
+test('generate: every testid role gets its driver and verb from the one role table', async () => {
+    const config = loadConfig(path.join(FIXTURES, 'ui', 'test-surface.config.json'));
+    const out = fs.mkdtempSync(path.join(os.tmpdir(), 'test-surface-gen-'));
+    config.output.generated = out;
+    config.i18n = null;
+    const elements: Element[] = TEST_ID_ROLES.map((role) => ({
+        template: `roles.form.${role}--${role}`,
+        grammar: true,
+        scope: ['roles', 'form'],
+        name: role,
+        role,
+        component: {name: 'X', at: 'src/x.tsx:1'},
+        instances: [{via: []}],
+        aria: {role, native: false, state: []},
+        ...(ROLE_TABLE[role].value ? {form: {scope: 'roles.form', field: role, valueType: ROLE_TABLE[role].value!}} : {}),
+    }));
+    const manifest = {...scanFixture('ui').manifest, elements, sets: [], pages: [], pluginSlots: []};
+    await generate(manifest, config);
+    const code = fs.readFileSync(path.join(out, 'roles.ts'), 'utf8');
+    for (const role of TEST_ID_ROLES) {
+        assert.match(code, new RegExp(`drivers\\.${ROLE_TABLE[role].driver}\\(this\\.byTestId\\(\`\\$\\{this\\.scope\\}\\.${role}--${role}\``), role);
+    }
+    assert.match(code, /async chooseRadiogroupRadioGroup\(option: string \| RegExp\): Promise<void> \{\s*await this\.radiogroupRadioGroup\.choose\(option\);/);
+    assert.match(code, /await this\.radiogroupRadioGroup\.choose\(values\.radiogroup\);/);
+    assert.match(code, /await this\.spinbuttonSpinButton\.fill\(values\.spinbutton\);/);
 });

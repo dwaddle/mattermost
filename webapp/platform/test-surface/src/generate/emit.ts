@@ -4,16 +4,15 @@
 /* eslint-disable no-template-curly-in-string -- this module writes TypeScript that uses template literals */
 
 import type {ClassModel, Model, ScopeNode} from './model.ts';
-import {camel, driverFor, memberName, pageGetter, pascal, propKey, roleWord, splitAtKey} from './names.ts';
+import {camel, memberName, pageGetter, pascal, propKey, roleWord, splitAtKey} from './names.ts';
 
 import {cmp} from '../compare.ts';
 import {isGrammarError, parseTestId, type ParsedTestId} from '../grammar.ts';
 import type {Diagnostic, Element, KeyInfo, Manifest, Page} from '../manifest_types.ts';
+import {driverFor, ROLE_TABLE} from '../role_table.ts';
 
 /** What every generated file shares: its header, and the module specifier it imports the runtime by. */
 export type Output = {header: string; runtime: string};
-
-const CLICK_ROLES = new Set(['button', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio']);
 
 /** Imports a generated file needs, collected while emitting. */
 export class Imports {
@@ -320,9 +319,12 @@ class Members {
 
 function verbs(ctx: Ctx, node: ScopeNode, e: Element, getter: string, m: Members) {
     const Name = pascal(e.name) + roleWord(e.role);
-    const role = e.role ?? '';
+    const role = e.role;
     const src = e.component.at;
-    if (CLICK_ROLES.has(role)) {
+    if (!role) {
+        return;
+    }
+    if (ROLE_TABLE[role].click) {
         // the menu as a modal in mobile view is the menu's other form, not another destination: the menu stays the return
         const forms = (e.opens ?? []).filter((o) => o.menuForm).map((o) => ({o, cls: classForScope(ctx, o.scope)}));
         const all = (e.opens ?? []).filter((o) => o.kind !== 'page' && !o.menuForm).map((o) => ({o, cls: classForScope(ctx, o.scope)}));
@@ -407,6 +409,7 @@ function verbs(ctx: Ctx, node: ScopeNode, e: Element, getter: string, m: Members
         return;
     case 'combobox':
     case 'listbox':
+    case 'radiogroup':
         m.add(`choose${Name}`, src, `async choose${Name}(option: string | RegExp): Promise<void> {\n    await this.${getter}.choose(option);\n}`);
         return;
     case 'text':
@@ -559,26 +562,10 @@ function itemSelf(ctx: Ctx, node: ScopeNode, m: Members) {
     m.add('locator', e.component.at, '/** The item\'s element (matchers take the item: `expect(item).toContainMessage(…)`). */\noverride get locator(): Locator {\n    return this.root;\n}');
 }
 
-const FORM_FILL: Record<string, string> = {
-    togglebutton: 'press',
-    switch: 'set',
-    checkbox: 'set',
-    textbox: 'fill',
-    searchbox: 'fill',
-    spinbutton: 'fill',
-    combobox: 'choose',
-    radiogroup: 'choose',
-};
-const FORM_READ: Record<string, string> = {
-    togglebutton: 'isPressed',
-    switch: 'isOn',
-    checkbox: 'isChecked',
-    textbox: 'value',
-    searchbox: 'value',
-};
-
 function form(node: ScopeNode, cls: ClassModel, m: Members, extraTypes: string[]) {
-    const fields = node.members.filter((e) => e.form && FORM_FILL[e.role ?? '']);
+    const fill = (e: Element) => (e.role ? ROLE_TABLE[e.role].fill : undefined);
+    const read = (e: Element) => (e.role ? ROLE_TABLE[e.role].read : undefined);
+    const fields = node.members.filter((e) => e.form && fill(e));
     if (fields.length < 2) {
         return;
     }
@@ -592,17 +579,17 @@ function form(node: ScopeNode, cls: ClassModel, m: Members, extraTypes: string[]
     const conditional = (e: Element) => Boolean(e.renderedWhen?.length);
     extraTypes.push(`/** The form fields of \`${node.path.join('.')}\`. */\nexport type ${type} = {\n${fields.map((e) => `    ${propKey(key(e))}${conditional(e) ? '?' : ''}: ${tsType(e)};`).join('\n')}\n};`);
     const getterOf = (e: Element) => memberName(camel(e.name) + roleWord(e.role));
-    const fill = fields.map((e) => `    if (values.${key(e)} !== undefined) {\n        await this.${getterOf(e)}.${FORM_FILL[e.role!]}(values.${key(e)});\n    }`).join('\n');
-    m.add('fill', node.path.join('.'), `/** Fills the given fields; others are left as they are. */\nasync fill(values: Partial<${type}>): Promise<void> {\n${fill}\n}`);
+    const fills = fields.map((e) => `    if (values.${key(e)} !== undefined) {\n        await this.${getterOf(e)}.${fill(e)}(values.${key(e)});\n    }`).join('\n');
+    m.add('fill', node.path.join('.'), `/** Fills the given fields; others are left as they are. */\nasync fill(values: Partial<${type}>): Promise<void> {\n${fills}\n}`);
 
     // fields named by role too are alternatives (one renders): there is nothing to read them all from
-    const readable = fields.filter((e) => FORM_READ[e.role!]);
+    const readable = fields.filter(read);
     if (readable.length === fields.length && fields.every((e) => e.form!.field === e.name)) {
         // fields that always render first: their reads wait for the form, so by the time a conditional field is
         // checked (without waiting: it may never render) the form is up
         const ordered = [...readable.filter((e) => !conditional(e)), ...readable.filter(conditional)];
         const local = (e: Element) => `v${key(e).charAt(0).toUpperCase()}${key(e).slice(1)}`;
-        const readOf = (e: Element) => (conditional(e) ? `(await this.${getterOf(e)}.locator.count()) ? await this.${getterOf(e)}.${FORM_READ[e.role!]}() : undefined` : `await this.${getterOf(e)}.${FORM_READ[e.role!]}()`);
+        const readOf = (e: Element) => (conditional(e) ? `(await this.${getterOf(e)}.locator.count()) ? await this.${getterOf(e)}.${read(e)}() : undefined` : `await this.${getterOf(e)}.${read(e)}()`);
         const reads = ordered.map((e) => `    const ${local(e)} = ${readOf(e)};`).join('\n');
         m.add('read', node.path.join('.'), `/** Reads every field (a field that isn't rendered reads as \`undefined\`). */\nasync read(): Promise<${type}> {\n${reads}\n    return {\n${readable.map((e) => `        ${propKey(key(e))}: ${local(e)},`).join('\n')}\n    };\n}`);
     }

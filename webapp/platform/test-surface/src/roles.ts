@@ -5,16 +5,43 @@ import path from 'node:path';
 
 import ts from 'typescript';
 
+import {TEST_ID_ROLES} from '@mattermost/types/test_id';
+
 import {attrValue, isIntrinsic, jsxAttr, tagName, type JsxTag} from './ast.ts';
 import {MAX_LANDING_HOPS, MAX_STYLED_HOPS} from './limits.ts';
 import {publishedComponent, type PublishedParts} from './parts.ts';
 import {styledTarget, type Loc, type ProgramIndex} from './program_index.ts';
 import type {Resolver, Value} from './values.ts';
 
-export type Aria = {role: string | null; native: boolean; state: string[]};
+/**
+ * WAI-ARIA 1.2's roles, plus the testid grammar's pseudo-roles (`togglebutton`: a button with `aria-pressed`; `text`:
+ * read-only content). An explicit `role=` outside this list is an `aria` warning.
+ */
+export const ARIA_ROLES = [
+    ...TEST_ID_ROLES,
+    'none', 'presentation', 'generic', 'heading', 'paragraph', 'cell', 'columnheader', 'rowheader', 'rowgroup', 'table', 'treegrid',
+    'tree', 'treeitem', 'form', 'search', 'navigation', 'main', 'banner', 'complementary', 'contentinfo', 'progressbar', 'meter',
+    'scrollbar', 'log', 'marquee', 'timer', 'feed', 'group', 'article', 'document', 'application', 'toolbar', 'figure', 'note',
+    'math', 'term', 'definition', 'blockquote', 'caption', 'code', 'deletion', 'insertion', 'emphasis', 'strong', 'subscript',
+    'superscript', 'time', 'directory', 'mark',
+] as const;
+
+export type AriaRole = typeof ARIA_ROLES[number];
+
+const ARIA_ROLE_SET = new Set<string>(ARIA_ROLES);
+
+export function isAriaRole(role: string): role is AriaRole {
+    return ARIA_ROLE_SET.has(role);
+}
+
+/**
+ * The role a testid lands on. `role` is what the element says (an explicit `role=` may be a word outside
+ * `ARIA_ROLES`, which checks report), `native` whether the tag implies it, `state` the state attributes it carries.
+ */
+export type Aria = {role: AriaRole | null; native: boolean; state: string[]};
 
 /** Roles rendered by library components (not in the scanned program). Matched on the declaring file and export name. */
-export type LibraryRole = {module: RegExp; name: string; role: string | null};
+export type LibraryRole = {module: RegExp; name: string; role: AriaRole | null};
 
 export const LIBRARY_ROLES: LibraryRole[] = [
 
@@ -44,7 +71,7 @@ export const LIBRARY_ROLES: LibraryRole[] = [
     {module: /node_modules\/(@types\/)?react-router(-dom)?\//, name: 'NavLink', role: 'link'},
 ];
 
-const INPUT_ROLES: Record<string, string | null> = {
+const INPUT_ROLES: Record<string, AriaRole | null> = {
     checkbox: 'checkbox',
     radio: 'radio',
     text: 'textbox',
@@ -65,7 +92,7 @@ const INPUT_ROLES: Record<string, string | null> = {
     color: null,
 };
 
-const TAG_ROLES: Record<string, string> = {
+const TAG_ROLES: Record<string, AriaRole> = {
     textarea: 'textbox',
     select: 'combobox',
     img: 'img',
@@ -125,7 +152,7 @@ export class Roles {
         const state = STATE_ATTRS.filter((s) => jsxAttr(tag, s));
         const explicit = this.attrLiterals(tag, 'role', via);
         if (explicit && explicit.length) {
-            return {role: explicit[0], native: false, state};
+            return {role: asWritten(explicit[0]), native: false, state};
         }
 
         // `role={role}` that this instance doesn't pass: the element keeps its implicit role
@@ -184,7 +211,7 @@ export class Roles {
         const explicit = this.attrLiterals(tag, 'role', via);
         const state = STATE_ATTRS.filter((s) => jsxAttr(tag, s));
         if (explicit && explicit.length) {
-            return {role: explicit[0], native: false, state};
+            return {role: asWritten(explicit[0]), native: false, state};
         }
 
         // styled-components: `const Close = styled.button\`…\``; `<Close>` is a <button>, and
@@ -218,6 +245,11 @@ export class Roles {
         }
         return tag.attributes.properties.some((a) => ts.isJsxAttribute(a) && INTERACTIVE_HANDLER.test(a.name.getText()));
     }
+}
+
+/** An explicit `role=` as written: a word outside `ARIA_ROLES` is kept (and reported by the `aria` check), not dropped. */
+export function asWritten(role: string): AriaRole {
+    return role as AriaRole;
 }
 
 /** A value applies to an instance when one usage chain is a prefix of the other (they flowed through the same usages). */

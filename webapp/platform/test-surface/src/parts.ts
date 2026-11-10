@@ -14,7 +14,7 @@ import {inputDiagnostic, readVersioned} from './input.ts';
 import {MAX_HANDLER_DEPTH} from './limits.ts';
 import type {Diagnostic, Loc, TestPart, TestParts} from './manifest_types.ts';
 import type {CodeNode, ProgramIndex} from './program_index.ts';
-import type {Roles} from './roles.ts';
+import {asWritten, type AriaRole, type Roles} from './roles.ts';
 import type {Resolver} from './values.ts';
 
 type Part = Omit<TestPart, 'at'> & {at: Loc};
@@ -27,7 +27,7 @@ type Part = Omit<TestPart, 'at'> & {at: Loc};
  */
 export class LibraryParts {
     private readonly memo = new Map<CodeNode, Part[]>();
-    private readonly roleMemo = new Map<CodeNode, string | null>();
+    private readonly roleMemo = new Map<CodeNode, AriaRole | null>();
     readonly diagnostics: Diagnostic[] = [];
     private readonly ix: ProgramIndex;
     private readonly R: Resolver;
@@ -318,7 +318,7 @@ export class LibraryParts {
     }
 
     /** The role `data-testid` (passed through `{...rest}`) lands on. */
-    rootRole(comp: CodeNode, stack = new Set<CodeNode>()): string | null {
+    rootRole(comp: CodeNode, stack = new Set<CodeNode>()): AriaRole | null {
         if (this.roleMemo.has(comp)) {
             return this.roleMemo.get(comp)!;
         }
@@ -326,7 +326,7 @@ export class LibraryParts {
             return null;
         }
         stack.add(comp);
-        let role: string | null = null;
+        let role: AriaRole | null = null;
         const visit = (n: ts.Node) => {
             if (role !== null) {
                 return;
@@ -343,7 +343,7 @@ export class LibraryParts {
                 } else {
                     const explicit = this.roles.attrLiterals(n, 'role');
                     const child = this.ix.componentOfTag(n);
-                    role = explicit?.[0] ?? (child ? this.rootRole(child, stack) : null);
+                    role = (explicit?.[0] ? asWritten(explicit[0]) : null) ?? (child ? this.rootRole(child, stack) : null);
                 }
             }
             ts.forEachChild(n, visit);
