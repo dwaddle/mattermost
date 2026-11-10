@@ -5,6 +5,8 @@ import React, {useMemo} from 'react';
 import {FormattedMessage, defineMessage, useIntl} from 'react-intl';
 
 import {PlusIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
 
@@ -21,6 +23,8 @@ import './banner_token_controls.scss';
 
 type Props = {
 
+    testId: TestId;
+
     // Every channel attribute with this channel's value, unset ones included.
     attributes: ResolvedChannelAttribute[];
 
@@ -35,7 +39,7 @@ type Props = {
 /**
  * The "+ Attributes" menu inside the banner text field.
  */
-const BannerTokenControls = ({attributes, onInsertToken, disabled, channelKind = 'channel'}: Props) => {
+const BannerTokenControls = ({testId, attributes, onInsertToken, disabled, channelKind = 'channel'}: Props) => {
     const {formatMessage} = useIntl();
 
     const suggestions = useMemo(() => tokenSuggestions(attributes), [attributes]);
@@ -60,7 +64,7 @@ const BannerTokenControls = ({attributes, onInsertToken, disabled, channelKind =
                             />
                         </>
                     ),
-                    dataTestId: 'bannerAttributeTokenButton',
+                    dataTestId: part(testId, 'insert', 'button'),
                     'aria-label': formatMessage({
                         id: 'channel_attributes.banner.insert_attribute_aria',
                         defaultMessage: 'Insert an attribute into the banner text',
@@ -83,7 +87,7 @@ const BannerTokenControls = ({attributes, onInsertToken, disabled, channelKind =
                         <Menu.Item
                             key={suggestion.name}
                             id={`bannerAttributeToken-${suggestion.name}`}
-                            data-testid={`bannerAttributeToken-${suggestion.name}`}
+                            data-testid={part(testId, 'insert_menu.attribute', {key: suggestion.field.id}, 'menuitem')}
                             onClick={() => onInsertToken(attributeToken(suggestion.name))}
 
                             // One child, not two: Menu.Item reads two children as a
@@ -101,7 +105,7 @@ const BannerTokenControls = ({attributes, onInsertToken, disabled, channelKind =
                                 </span>
                             }
                             trailingElements={suggestion.value ? undefined : (
-                                <UnsetValueIndicator testId={`bannerAttributeTokenUnset-${suggestion.name}`}/>
+                                <UnsetValueIndicator testId={part(testId, 'insert_menu.attribute.unset')}/>
                             )}
                         />
                     );

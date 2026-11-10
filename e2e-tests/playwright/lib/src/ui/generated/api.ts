@@ -666,6 +666,11 @@ export const Api = {
         path: '/api/v4/scheduled_recaps/{scheduled_recap_id}/pause',
     }),
     PinPost: effect<StatusOK>()({op: 'PinPost', method: 'POST', path: '/api/v4/posts/{post_id}/pin'}),
+    PostCFPostFlag: effect<StatusOK>()({
+        op: 'PostCFPostFlag',
+        method: 'POST',
+        path: '/api/v4/content_flagging/post/{post_id}/flag',
+    }),
     PostLog: effect<unknown>()({op: 'PostLog', method: 'POST', path: '/api/v4/logs'}),
     PostUserRecentCustomStatusDeleteMe: effect<unknown>()({
         op: 'PostUserRecentCustomStatusDeleteMe',
@@ -781,6 +786,11 @@ export const Api = {
         op: 'SearchAllChannels',
         method: 'POST',
         path: '/api/v4/channels/search',
+    }),
+    SearchChannelsForAccessControlPolicy: effect<ChannelsWithTotalCount>()({
+        op: 'SearchChannelsForAccessControlPolicy',
+        method: 'POST',
+        path: '/api/v4/access_control_policies/{policy_id}/resources/channels/search',
     }),
     SearchFiles: effect<FileSearchResults>()({op: 'SearchFiles', method: 'POST', path: '/api/v4/files/search'}),
     SearchPostsInAllTeams: effect<PostSearchResults>()({

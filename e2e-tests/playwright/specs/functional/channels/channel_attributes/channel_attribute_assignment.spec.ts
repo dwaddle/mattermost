@@ -3,7 +3,7 @@
 
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {chipSwatch, comboboxChips, comboboxSwatches, expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     assertNoForeignRequiredAttributes,
@@ -16,6 +16,7 @@ import {
     trackChannelCreates,
     valueFor,
 } from './helpers';
+import {openAttributeControl, openChannel, openNewChannelModal, pickListOption} from './surface';
 
 test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, () => {
     test.describe.configure({mode: 'serial'});
@@ -59,40 +60,40 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program, caveats, note, userScoped);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const modal = await openNewChannelModal(app);
+            const attribute = (field: {id: string}) => modal.attributes.attribute(field);
 
-            const modal = await channelsPage.openNewChannelModal();
+            const openControl = (field: {id: string}) => openAttributeControl(modal, field);
 
             // Only the channel-scoped attributes belong here; a user attribute in
             // the same group must not leak into channel creation.
-            await expect(page.getByTestId(`channelAttributeRow-${program.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelAttributeRow-${caveats.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelAttributeRow-${note.name}`)).toBeVisible();
-            await expect(page.getByTestId(`channelAttributeRow-${userScoped.name}`)).toHaveCount(0);
+            await expect(attribute(program).locator).toBeVisible();
+            await expect(attribute(caveats).locator).toBeVisible();
+            await expect(attribute(note).locator).toBeVisible();
+            await expect(attribute(userScoped).locator).toHaveCount(0);
 
             const displayName = `Attr Channel ${suffix}`;
-            await modal.fillDisplayName(displayName);
+            await modal.fillNameTextbox(displayName);
 
-            await page.getByTestId(`channelAttribute-${program.name}`).click();
-            await page.getByText('AURORA', {exact: true}).click();
+            await openControl(program);
+            await pickListOption(app, 'AURORA');
 
             // The menu closes on each pick, so a multiselect needs reopening to
             // add the second value. Two values is what proves the array shape.
-            await page.getByTestId(`channelAttribute-${caveats.name}`).click();
-            await page.getByText('NOFORN', {exact: true}).click();
-            await page.getByTestId(`channelAttribute-${caveats.name}`).click();
-            await page.getByText('ORCON', {exact: true}).click();
+            await openControl(caveats);
+            await pickListOption(app, 'NOFORN');
+            await openControl(caveats);
+            await pickListOption(app, 'ORCON');
 
-            await page.getByLabel(note.name, {exact: true}).fill('handle with care');
+            await attribute(note).valueTextbox.fill('handle with care');
 
-            await modal.create();
+            await modal.clickConfirmButton();
 
             // The values ride the create request, so the modal closing means the
             // channel and its values both landed. The channel header is already
             // visible from before, so waiting on it proves nothing.
-            await expect(modal.container).not.toBeVisible();
+            await expect(modal.locator).not.toBeVisible();
 
             const channel = await adminClient.getChannelByName(team.id, displayName.toLowerCase().replace(/\s+/g, '-'));
             const values = await readChannelValues(adminClient, channel.id);
@@ -126,21 +127,19 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const modal = await openNewChannelModal(app);
+            const openControl = (field: {id: string}) => openAttributeControl(modal, field);
 
             const displayName = `Attr Private ${suffix}`;
-            await modal.fillDisplayName(displayName);
-            await modal.privateTypeButton.click();
+            await modal.fillNameTextbox(displayName);
+            await modal.type.clickPrivateButton();
 
-            await page.getByTestId(`channelAttribute-${program.name}`).click();
-            await page.getByText('BOREALIS', {exact: true}).click();
+            await openControl(program);
+            await pickListOption(app, 'BOREALIS');
 
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             const channel = await adminClient.getChannelByName(team.id, displayName.toLowerCase().replace(/\s+/g, '-'));
             expect(channel.type).toBe('P');
@@ -214,32 +213,28 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            const createCount = trackChannelCreates(page);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const createCount = trackChannelCreates(app.page);
+            const modal = await openNewChannelModal(app);
             const displayName = `Attr Keyboard ${suffix}`;
-            await modal.fillDisplayName(displayName);
-            const combobox = modal.getAttributeCombobox(program.name);
+            await modal.fillNameTextbox(displayName);
+            const attribute = modal.attributes.attribute(program);
+            const combobox = attribute.valueCombobox.locator;
 
             // # Complete the form
-            await modal.selectAttributeOption(program.name, 'AURORA');
+            await modal.attributes.attribute(program).valueCombobox.choose('AURORA');
 
             // # Open the menu and press Escape
-            await modal.openAttributeCombobox(program.name);
+            await openAttributeControl(modal, program);
             await combobox.press('Escape');
 
             // * Only the menu closes
             await expect(combobox).toHaveAttribute('aria-expanded', 'false');
 
             // # Reopen, move to the last option with the keyboard and pick it with Enter
-            await modal.openAttributeCombobox(program.name);
+            await openAttributeControl(modal, program);
             await combobox.press('End');
-            const lastOptionId = await modal
-                .getAttributeOption(program.name, optionId(program, 'BOREALIS'))
-                .getAttribute('id');
+            const lastOptionId = await attribute.choice({id: optionId(program, 'BOREALIS')}).locator.getAttribute('id');
             await expect(combobox).toHaveAttribute('aria-activedescendant', lastOptionId ?? '');
             await combobox.press('Enter');
 
@@ -249,8 +244,8 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             expect(createCount()).toBe(0);
 
             // # Create from the same, still open, dialog
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             // * Exactly one channel was created, carrying the keyboard pick
             expect(createCount()).toBe(1);
@@ -284,21 +279,19 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            const createCount = trackChannelCreates(page);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
-            await modal.fillDisplayName(`Attr Escape ${suffix}`);
-            const combobox = modal.getAttributeCombobox(program.name);
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const createCount = trackChannelCreates(app.page);
+            const modal = await openNewChannelModal(app);
+            await modal.fillNameTextbox(`Attr Escape ${suffix}`);
+            const attribute = modal.attributes.attribute(program);
+            const combobox = attribute.valueCombobox.locator;
 
             // # Complete the form, then press Escape on the closed field
-            await modal.selectAttributeOption(program.name, 'AURORA');
+            await modal.attributes.attribute(program).valueCombobox.choose('AURORA');
             await combobox.press('Escape');
 
             // * The dialog closes and nothing is created
-            await expect(modal.container).not.toBeVisible();
+            await expect(modal.locator).not.toBeVisible();
             expect(createCount()).toBe(0);
         } finally {
             await deleteAttributes(adminClient, created);
@@ -328,22 +321,20 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            const createCount = trackChannelCreates(page);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const createCount = trackChannelCreates(app.page);
+            const modal = await openNewChannelModal(app);
             const displayName = `Attr Enter ${suffix}`;
-            await modal.fillDisplayName(displayName);
-            const combobox = modal.getAttributeCombobox(program.name);
+            await modal.fillNameTextbox(displayName);
+            const attribute = modal.attributes.attribute(program);
+            const combobox = attribute.valueCombobox.locator;
 
             // # Complete the form, then press Enter on the closed field
-            await modal.selectAttributeOption(program.name, 'BOREALIS');
+            await modal.attributes.attribute(program).valueCombobox.choose('BOREALIS');
             await combobox.press('Enter');
 
             // * The dialog closes and the picked value is stored on the one channel created
-            await expect(modal.container).not.toBeVisible();
+            await expect(modal.locator).not.toBeVisible();
             expect(createCount()).toBe(1);
             const channel = await adminClient.getChannelByName(team.id, displayName.toLowerCase().replace(/\s+/g, '-'));
             expect(valueFor(await readChannelValues(adminClient, channel.id), program)).toBe(
@@ -375,43 +366,41 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program);
 
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
-            await modal.fillDisplayName(`Attr Error ${suffix}`);
-            const combobox = modal.getAttributeCombobox(program.name);
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const modal = await openNewChannelModal(app);
+            await modal.fillNameTextbox(`Attr Error ${suffix}`);
+            const attribute = modal.attributes.attribute(program);
+            const combobox = attribute.valueCombobox.locator;
 
             // * Announced as required, with no error before the field is touched
             await expect(combobox).toHaveAttribute('aria-required', 'true');
-            await expect(modal.getAttributeError(program.name)).toHaveCount(0);
-            await expect(modal.createButton).toBeDisabled();
+            await expect(attribute.errorAlert.locator).toHaveCount(0);
+            await expect(modal.confirmButton.locator).toBeDisabled();
 
             // # Focus the empty field and tab away
             await combobox.focus();
             await combobox.press('Tab');
 
             // * The error shows, is linked to the field, and Create stays disabled
-            await expect(modal.getAttributeError(program.name)).toContainText('This field is required');
+            await expect(attribute.errorAlert.locator).toContainText('This field is required');
             await expect(combobox).toHaveAttribute('aria-invalid', 'true');
             await expect(combobox).toHaveAccessibleDescription('This field is required');
-            await expect(modal.createButton).toBeDisabled();
+            await expect(modal.confirmButton.locator).toBeDisabled();
 
             // # Pick a value
-            await modal.selectAttributeOption(program.name, 'AURORA');
+            await modal.attributes.attribute(program).valueCombobox.choose('AURORA');
 
             // * The error is gone and Create is enabled
-            await expect(modal.getAttributeError(program.name)).toHaveCount(0);
+            await expect(attribute.errorAlert.locator).toHaveCount(0);
             await expect(combobox).not.toHaveAttribute('aria-invalid', 'true');
-            await expect(modal.createButton).toBeEnabled();
+            await expect(modal.confirmButton.locator).toBeEnabled();
 
             // # Clear the value with the x button
-            await modal.getAttributeClearButton(program.name).click();
+            await attribute.clickClearButton();
 
             // * The error is back and Create is disabled again
-            await expect(modal.getAttributeError(program.name)).toContainText('This field is required');
-            await expect(modal.createButton).toBeDisabled();
+            await expect(attribute.errorAlert.locator).toContainText('This field is required');
+            await expect(modal.confirmButton.locator).toBeDisabled();
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -441,37 +430,41 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(level);
 
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const modal = await openNewChannelModal(app);
             const displayName = `Attr Rank ${suffix}`;
-            await modal.fillDisplayName(displayName);
+            await modal.fillNameTextbox(displayName);
 
             // # Open the rank combobox
-            const listbox = await modal.openAttributeCombobox(level.name);
+            const attribute = modal.attributes.attribute(level);
+            await openAttributeControl(modal, level);
 
             // * Highest rank first, each uncoloured option with its badge and no rank text
-            await modal.expectAttributeOptionOrder(
-                level.name,
+            expect(await attribute.choiceKeys()).toEqual(
                 ['BRAVO', 'ALPHA', 'CHARLIE'].map((name) => optionId(level, name)),
             );
-            await expect(listbox.getByTestId('rank-badge')).toHaveText(['3', '2', '1']);
-            await expect(listbox.getByRole('option')).toHaveText([/^3\s*BRAVO$/, /^2\s*ALPHA$/, /^1\s*CHARLIE$/]);
-            await expect(listbox.getByTestId('attribute-option-swatch')).toHaveCount(0);
+            for (const [name, rank] of [
+                ['BRAVO', '3'],
+                ['ALPHA', '2'],
+                ['CHARLIE', '1'],
+            ]) {
+                const choice = attribute.choice({id: optionId(level, name)});
+                await expect(choice.badgeText.locator).toHaveText(rank);
+                await expect(choice.locator).toHaveText(new RegExp(`^${rank}\\s*${name}$`));
+                await expect(choice.swatch.locator).toHaveCount(0);
+            }
 
             // # Pick the middle-ranked option
-            await modal.selectAttributeOption(level.name, 'ALPHA');
+            await attribute.valueCombobox.choose('ALPHA');
 
             // * The closed field shows it with its badge, and Create is enabled
-            await expect(modal.getAttributeCombobox(level.name)).toHaveValue('ALPHA');
-            await expect(modal.getAttributeRow(level.name).getByTestId('rank-badge')).toHaveText('2');
-            await expect(modal.createButton).toBeEnabled();
+            await expect(attribute.valueCombobox.locator).toHaveValue('ALPHA');
+            await expect(attribute.badgeText.locator).toHaveText('2');
+            await expect(modal.confirmButton.locator).toBeEnabled();
 
             // # Create the channel
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             // * The stored value is ALPHA's option id
             const channel = await adminClient.getChannelByName(team.id, displayName.toLowerCase().replace(/\s+/g, '-'));
@@ -503,31 +496,28 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(caveats);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            const createCount = trackChannelCreates(page);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const createCount = trackChannelCreates(app.page);
+            const modal = await openNewChannelModal(app);
             const displayName = `Attr Chip ${suffix}`;
-            await modal.fillDisplayName(displayName);
+            await modal.fillNameTextbox(displayName);
 
             // # Complete the form with both values
-            await modal.selectAttributeOption(caveats.name, 'NOFORN');
-            await modal.selectAttributeOption(caveats.name, 'ORCON');
-            const chips = modal.getAttributeChips(caveats.name);
+            await modal.attributes.attribute(caveats).valueCombobox.choose('NOFORN');
+            await modal.attributes.attribute(caveats).valueCombobox.choose('ORCON');
+            const chips = comboboxChips(modal.attributes.attribute(caveats));
             await expect(chips).toHaveCount(2);
 
             // # Press Enter on the NOFORN chip
-            await chips.filter({has: page.getByText('NOFORN', {exact: true})}).press('Enter');
+            await chips.first().press('Enter');
 
             // * The chip is removed and nothing was created
             await expect(chips).toHaveCount(1);
             expect(createCount()).toBe(0);
 
             // # Create from the same, still open, dialog
-            await modal.create();
-            await expect(modal.container).not.toBeVisible();
+            await modal.clickConfirmButton();
+            await expect(modal.locator).not.toBeVisible();
 
             // * Exactly one channel was created, holding only the remaining value
             expect(createCount()).toBe(1);
@@ -563,42 +553,27 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(caveats);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
-
-            const modal = await channelsPage.openNewChannelModal();
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
+            const modal = await openNewChannelModal(app);
 
             // # Pick both values
-            await modal.selectAttributeOption(caveats.name, 'NOFORN');
-            await modal.selectAttributeOption(caveats.name, 'ORCON');
-            const chips = modal.getAttributeChips(caveats.name);
+            await modal.attributes.attribute(caveats).valueCombobox.choose('NOFORN');
+            await modal.attributes.attribute(caveats).valueCombobox.choose('ORCON');
+            const attribute = modal.attributes.attribute(caveats);
+            const chips = comboboxChips(attribute);
             await expect(chips).toHaveCount(2);
 
             // * Only the coloured chip carries a swatch, and the field shows no other
-            const nofornChip = chips.filter({has: page.getByText('NOFORN', {exact: true})});
-            const orconChip = chips.filter({has: page.getByText('ORCON', {exact: true})});
-            await expect(nofornChip.getByTestId('attribute-option-swatch')).toHaveCSS(
-                'background-color',
-                'rgb(30, 50, 92)',
-            );
-            await expect(orconChip.getByTestId('attribute-option-swatch')).toHaveCount(0);
-            await expect(modal.getAttributeRow(caveats.name).getByTestId('attribute-option-swatch')).toHaveCount(1);
+            await expect(chipSwatch(chips.nth(0))).toHaveCSS('background-color', 'rgb(30, 50, 92)');
+            await expect(chipSwatch(chips.nth(1))).toHaveCount(0);
+            await expect(comboboxSwatches(attribute)).toHaveCount(1);
 
             // # Open the menu
-            await modal.openAttributeCombobox(caveats.name);
+            await openAttributeControl(modal, caveats);
 
             // * Only the coloured row carries a swatch
-            await expect(
-                modal
-                    .getAttributeOption(caveats.name, optionId(caveats, 'NOFORN'))
-                    .getByTestId('attribute-option-swatch'),
-            ).toBeVisible();
-            await expect(
-                modal
-                    .getAttributeOption(caveats.name, optionId(caveats, 'ORCON'))
-                    .getByTestId('attribute-option-swatch'),
-            ).toHaveCount(0);
+            await expect(attribute.choice({id: optionId(caveats, 'NOFORN')}).swatch.locator).toBeVisible();
+            await expect(attribute.choice({id: optionId(caveats, 'ORCON')}).swatch.locator).toHaveCount(0);
         } finally {
             await deleteAttributes(adminClient, created);
         }

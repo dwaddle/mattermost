@@ -33,8 +33,10 @@ export default class InfoSettings {
 
         // Same component as the Channel Info RHS, but staged here: edits only
         // reach the server on this tab's own Save (see saveChangesPanel).
-        // the attributes area's component, which keeps its own testids for now
-        this.attributes = new ChannelInfoAttributes(container.getByTestId('channelInfoAttributes'));
+        this.attributes = new ChannelInfoAttributes(
+            container.getByTestId('channel_settings_modal.info.attributes'),
+            'channel_settings_modal.info.attributes',
+        );
     }
 
     async toBeVisible() {

@@ -20,7 +20,18 @@ import {DirectMessagesModal} from './direct_messages_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {RenameChannelModal} from './rename_channel_modal';
 import {RestorePostModal} from './restore_post_modal';
-import {Attachments, ChannelBanner, Header, PostCreate, PostItem, RoleMenu, ShowMore, Toast} from './shared';
+import {
+    Attachments,
+    Attributes,
+    ChannelBanner,
+    ChannelInfoAttributes,
+    Header,
+    PostCreate,
+    PostItem,
+    RoleMenu,
+    ShowMore,
+    Toast,
+} from './shared';
 import type {RhsToast} from './sets';
 
 /** The read-only parts of a `rhs.edit_history.version` item. */
@@ -255,6 +266,14 @@ export class RhsChannelInfoAbout extends Scope {
             unknownEffects: false,
             source: 'channels/src/components/channel_info_rhs/about_area_channel.tsx#AboutAreaChannel',
         });
+    }
+
+    /**
+     * `rhs.channel_info.about.attributes` — ChannelInfoAttributes (channels/src/components/channel_attributes/channel_info_attributes.tsx)
+     * Renders only when !(rows.length === 0 && addableAttributes.length === 0).
+     */
+    get attributes(): ChannelInfoAttributes {
+        return new ChannelInfoAttributes(this.page, `${this.scope}.attributes`, this.root);
     }
 
     /**
@@ -1480,5 +1499,13 @@ export class RhsThreadHeader extends Scope {
 
     async clickPopoutButton(): Promise<void> {
         await this.popoutButton.click();
+    }
+
+    /**
+     * `rhs.thread.header.attributes` — ChannelAttributeLabels (channels/src/components/channel_attributes/channel_attribute_labels.tsx)
+     * Renders only when !(chipSpecs.length === 0).
+     */
+    get attributes(): Attributes {
+        return new Attributes(this.page, `${this.scope}.attributes`, this.root);
     }
 }

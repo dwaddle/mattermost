@@ -6,9 +6,7 @@
  * @reference MM-69100
  */
 
-import type {Page} from '@playwright/test';
-
-import {ChannelsPage, expect, newTestPassword, test, duration, DefaultChannel} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, test, duration, Msg} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -19,19 +17,12 @@ import {
     setUserAttribute,
     waitForAttributeViewToInclude,
     waitForAttributeViewToExclude,
-    addAttributeRule,
+    addRule,
     getTeamAccessControlPolicy,
     createParentMembershipPolicy,
     assignTeamToParentPolicy,
 } from './helpers';
-
-async function openTeamMembershipTab(page: Page, channelsPage: ChannelsPage) {
-    const teamSettings = await channelsPage.openTeamSettings();
-    await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
-    const tab = teamSettings.container.locator('.TeamMembershipTab');
-    await expect(tab).toBeVisible();
-    return {teamSettings, tab};
-}
+import {closeTeamSettings, openAccessTab, openTeam, openTeamMembershipTab} from './surface';
 
 test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@abac', '@team_membership']}, () => {
     const createdTeamIds: string[] = [];
@@ -57,7 +48,7 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
         await pw.skipIfNoLicense();
         const {adminClient, team} = await pw.initSetup();
         await enableTeamMembershipABACConfig(adminClient);
-        await ensureDepartmentAttribute(adminClient);
+        const department = await ensureDepartmentAttribute(adminClient);
 
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
         createdUserIds.push(teamAdmin.id);
@@ -66,38 +57,37 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
         await setUserAttribute(adminClient, teamAdmin.id, 'Department', 'Engineering');
         await waitForAttributeViewToInclude(adminClient, 'user.attributes.Department == "Engineering"', [teamAdmin.id]);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
+        const teamSettings = await openTeamMembershipTab(app);
+        const tab = teamSettings.membership;
 
         // # Add Engineering rule; leave auto-add OFF
-        await addAttributeRule(tab, page, 'Engineering');
+        await addRule(tab.rules, department, 'Engineering');
 
         // # Save
-        await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
-        const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
-        await confirmModal.getByRole('button', {name: 'Save'}).click();
+        await teamSettings.savePanel.saveButton.click();
+        const confirmModal = tab.confirmModal;
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
+        await expect(confirmModal.locator).toBeVisible();
+        await confirmModal.clickConfirmButton();
 
         // * Save panel disappears
-        await expect(confirmModal).not.toBeVisible();
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible();
+        await expect(confirmModal.locator).not.toBeVisible();
+        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible();
 
         // * Policy persisted — expression contains "Engineering"
         const policyResult: any = await getTeamAccessControlPolicy(adminClient, team.id);
         expect(JSON.stringify(policyResult)).toContain('Engineering');
 
-        await teamSettings.close();
+        await closeTeamSettings(teamSettings);
     });
 
     test('MM-69100_25 team admin enabling auto-add triggers a team sync job', async ({pw}) => {
         await pw.skipIfNoLicense();
         const {adminClient, team} = await pw.initSetup();
         await enableTeamMembershipABACConfig(adminClient);
-        await ensureDepartmentAttribute(adminClient);
+        const department = await ensureDepartmentAttribute(adminClient);
 
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
         createdUserIds.push(teamAdmin.id);
@@ -108,26 +98,25 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
 
         const testStartTime = Date.now();
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
+        const teamSettings = await openTeamMembershipTab(app);
+        const tab = teamSettings.membership;
 
         // # Add rule and enable auto-add
-        await addAttributeRule(tab, page, 'Engineering');
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeEnabled();
-        await tab.locator('#autoAddMembersCheckbox').click();
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeChecked();
+        await addRule(tab.rules, department, 'Engineering');
+        await expect(tab.autoAddCheckbox.locator).toBeEnabled();
+        await tab.autoAddCheckbox.locator.click();
+        await expect(tab.autoAddCheckbox.locator).toBeChecked();
 
         // # Save
-        await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
-        const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
-        await confirmModal.getByRole('button', {name: 'Save'}).click();
-        await expect(confirmModal).not.toBeVisible();
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible();
+        await teamSettings.savePanel.saveButton.click();
+        const confirmModal = tab.confirmModal;
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
+        await expect(confirmModal.locator).toBeVisible();
+        await confirmModal.clickConfirmButton();
+        await expect(confirmModal.locator).not.toBeVisible();
+        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible();
 
         // * A sync job was created (auto-add ON)
         const jobs: any[] = await (adminClient as any).doFetch(
@@ -137,42 +126,41 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
         const recentJobs = jobs.filter((j: any) => j.create_at >= testStartTime);
         expect(recentJobs.length).toBeGreaterThan(0);
 
-        await teamSettings.close();
+        await closeTeamSettings(teamSettings);
     });
 
     test('MM-69100_26 team admin is hard-blocked from saving a self-excluding rule', async ({pw}) => {
         await pw.skipIfNoLicense();
         const {adminClient, team} = await pw.initSetup();
         await enableTeamMembershipABACConfig(adminClient);
-        await ensureDepartmentAttribute(adminClient);
+        const department = await ensureDepartmentAttribute(adminClient);
 
         // # teamAdmin has NO Department — they do not match the Engineering rule
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
         createdUserIds.push(teamAdmin.id);
         await waitForAttributeViewToExclude(adminClient, 'user.attributes.Department == "Engineering"', [teamAdmin.id]);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
+        const teamSettings = await openTeamMembershipTab(app);
+        const tab = teamSettings.membership;
 
         // # Add Engineering rule (teamAdmin would be excluded)
-        await addAttributeRule(tab, page, 'Engineering');
+        await addRule(tab.rules, department, 'Engineering');
 
         // # Attempt save
-        await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * Self-exclusion modal appears — not the save confirmation
-        await expect(page.getByText('Cannot save access rules')).toBeVisible({timeout: duration.half_min});
-        await expect(page.getByText(/you cannot set these rules/i)).toBeVisible();
-        await expect(page.getByText('Save team membership rules?')).not.toBeVisible();
+        const selfExclusion = tab.selfExclusionModal;
+        await expect(selfExclusion.locator).toContainText('Cannot save access rules');
+        await expect(selfExclusion.locator).toContainText(/you cannot set these rules/i);
+        await expect(tab.confirmModal.locator).not.toBeVisible();
 
         // * "Back to editing" button dismisses the self-exclusion modal
-        await expect(page.getByRole('button', {name: 'Back to editing'})).toBeVisible();
-        await page.getByRole('button', {name: 'Back to editing'}).click();
-        await expect(page.getByText('Cannot save access rules')).not.toBeVisible();
+        await expect(selfExclusion.confirmButton.locator).toHaveText('Back to editing');
+        await selfExclusion.clickConfirmButton();
+        await expect(selfExclusion.locator).not.toBeVisible();
 
         // * Policy unchanged via API
         try {
@@ -182,7 +170,7 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
             // No policy exists — self-exclusion correctly blocked the save
         }
 
-        await teamSettings.close();
+        await closeTeamSettings(teamSettings);
     });
 
     test('MM-69100_27 team admin save-confirmation shows advisory copy on a public team', async ({pw}) => {
@@ -193,7 +181,7 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
         }
         const suffix = pw.random.id();
         await enableTeamMembershipABACConfig(adminClient);
-        await ensureDepartmentAttribute(adminClient);
+        const department = await ensureDepartmentAttribute(adminClient);
 
         // # Fully public team (allow_open_invite=true so team admin can navigate to it)
         const team = await createPublicTeam(adminClient, suffix);
@@ -230,33 +218,32 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
             user1.id,
         ]);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
+        const teamSettings = await openTeamMembershipTab(app);
+        const tab = teamSettings.membership;
 
         // # Add Engineering rule
-        await addAttributeRule(tab, page, 'Engineering');
+        await addRule(tab.rules, department, 'Engineering');
 
         // # Click Save
-        await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
+        await teamSettings.savePanel.saveButton.click();
 
-        const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
+        const confirmModal = tab.confirmModal;
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
+        await expect(confirmModal.locator).toBeVisible();
 
         // * Advisory copy on a public team: match count shown, no removal/affected wording
-        await expect(confirmModal.getByText(/2 users match the current rules/i)).toBeVisible();
-        await expect(confirmModal.getByText(/these rules are advisory: no one is blocked or removed/i)).toBeVisible();
-        await expect(confirmModal.getByText(/does not match/i)).toHaveCount(0);
-        await expect(confirmModal.getByText(/may be affected/i)).toHaveCount(0);
+        await expect(confirmModal.locator).toContainText(/2 users match the current rules/i);
+        await expect(confirmModal.locator).toContainText(/these rules are advisory: no one is blocked or removed/i);
+        await expect(confirmModal.locator).not.toContainText(/does not match/i);
+        await expect(confirmModal.locator).not.toContainText(/may be affected/i);
 
         // # Cancel without saving
-        await confirmModal.getByRole('button', {name: 'Cancel'}).click();
-        await expect(confirmModal).not.toBeVisible();
+        await confirmModal.clickCancelButton();
+        await expect(confirmModal.locator).not.toBeVisible();
 
-        await teamSettings.close();
+        await closeTeamSettings(teamSettings);
     });
 
     test('MM-69100_28 team admin can flip a governed public team to private and trigger a sync job', async ({pw}) => {
@@ -282,32 +269,29 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
 
         const testStartTime = Date.now();
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.openAccessTab();
+        const teamSettings = await openAccessTab(app);
 
         // * Public card is initially selected
-        await expect(teamSettings.container.locator('#public-private-selector-button-O')).toHaveClass(/selected/);
+        await expect(teamSettings.access.discoverability.publicButton.locator).toHaveClass(/selected/);
 
         // # Click Private card — mode-flip modal appears (policy_enforced=true triggers it)
-        await teamSettings.container.locator('#public-private-selector-button-P').click();
+        await teamSettings.access.discoverability.privateButton.click();
 
-        const modeFlipModal = page.locator('.ConfirmModal').filter({hasText: 'Switch to Private Team?'});
-        await expect(modeFlipModal).toBeVisible({timeout: duration.half_min});
+        const modeFlipModal = teamSettings.access.modeFlipModal;
+        await expect(modeFlipModal.locator).toContainMessage(Msg.team_settings.mode_flip_confirm.title);
+        await expect(modeFlipModal.locator).toBeVisible();
 
         // * The modal warns that the flip activates strict ABAC enforcement.
-        await expect(modeFlipModal.getByText(/activate strict ABAC enforcement/i)).toBeVisible();
+        await expect(modeFlipModal.locator).toContainText(/activate strict ABAC enforcement/i);
 
         // # Confirm the flip — confirming saves immediately (no second click)
-        await modeFlipModal.getByRole('button', {name: 'Switch to Private'}).click();
-        await expect(modeFlipModal).not.toBeVisible();
+        await modeFlipModal.clickConfirmButton();
+        await expect(modeFlipModal.locator).not.toBeVisible();
 
         // * The save auto-completes and the panel reports success
-        await teamSettings.verifySavedMessage();
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Team is now private. Privacy is driven by allow_open_invite alone; the
         // feature never mutates team.type, so it stays 'O' from createPublicTeam.
@@ -323,7 +307,7 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
         const recentJobs = jobs.filter((j: any) => j.create_at >= testStartTime);
         expect(recentJobs.length).toBeGreaterThan(0);
 
-        await teamSettings.close();
+        await closeTeamSettings(teamSettings);
     });
 
     test('MM-70055_1 team admin mode-flip modal resolves the member count on a parent-governed team', async ({pw}) => {
@@ -366,28 +350,26 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
 
         await waitForAttributeViewToInclude(adminClient, 'user.attributes.Department == "Engineering"', [teamAdmin.id]);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.openAccessTab();
+        const teamSettings = await openAccessTab(app);
 
         // # Click the Private card
-        await teamSettings.container.locator('#public-private-selector-button-P').click();
+        await teamSettings.access.discoverability.privateButton.click();
 
-        const modeFlipModal = page.locator('.ConfirmModal').filter({hasText: 'Switch to Private Team?'});
-        await expect(modeFlipModal).toBeVisible({timeout: duration.half_min});
+        const modeFlipModal = teamSettings.access.modeFlipModal;
+        await expect(modeFlipModal.locator).toContainMessage(Msg.team_settings.mode_flip_confirm.title);
+        await expect(modeFlipModal.locator).toBeVisible();
 
         // * The count resolves from the parent policy instead of falling back to the
         // generic copy, which is all a team admin used to get (MM-70055).
-        await expect(modeFlipModal.getByText(/not meet criteria and will be removed/i)).toBeVisible({
-            timeout: duration.half_min,
-        });
-        await expect(modeFlipModal.getByText(/Some members may not meet/i)).toHaveCount(0);
+        await expect(modeFlipModal.locator).toContainText(/not meet criteria and will be removed/i);
+        await expect(modeFlipModal.locator).not.toContainText(/Some members may not meet/i);
 
-        await teamSettings.close();
+        await modeFlipModal.clickCancelButton();
+        await expect(modeFlipModal.locator).not.toBeVisible();
+
+        await closeTeamSettings(teamSettings);
     });
 
     test('MM-70057_1 team admin sees the last-synced timestamp in the sync footer', async ({pw}) => {
@@ -430,20 +412,18 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
             )
             .toBe(true);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
+        const teamSettings = await openTeamMembershipTab(app);
+        const tab = teamSettings.membership;
 
         // * The footer reports the completed sync. Reading the job list used to be
         // system-admin only, so a team admin always saw "Never synced" (MM-70057).
-        const syncFooterText = tab.locator('.SyncStatusFooter .SyncStatusFooter__text');
+        const syncFooterText = tab.syncStatus.timeText.locator;
         await expect(syncFooterText).toContainText(/Last synced/i, {timeout: duration.half_min});
         await expect(syncFooterText).not.toContainText(/Never synced/i);
 
-        await teamSettings.close();
+        await closeTeamSettings(teamSettings);
     });
 
     test('MM-69100_29 team admin existing policy and auto-add state load correctly on tab open', async ({pw}) => {
@@ -470,22 +450,20 @@ test.describe('Team Settings Modal - Team Membership as Team Admin', {tag: ['@ab
             })
             .toBe(true);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
-        await channelsPage.toBeVisible();
+        const app = await openTeam(pw, teamAdmin, team);
 
-        const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
+        const teamSettings = await openTeamMembershipTab(app);
+        const tab = teamSettings.membership;
 
         // * Auto-add checkbox is checked (auto_add was loaded from the API)
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeChecked({timeout: duration.half_min});
+        await expect(tab.autoAddCheckbox.locator).toBeChecked({timeout: duration.half_min});
 
         // * Table editor is present
-        await expect(tab.getByTestId('table-editor')).toBeVisible();
+        await expect(tab.rules.locator).toBeVisible();
 
         // * No SaveChangesPanel (nothing dirty after initial load)
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible();
+        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible();
 
-        await teamSettings.close();
+        await closeTeamSettings(teamSettings);
     });
 });

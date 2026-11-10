@@ -6,8 +6,11 @@ import React, {useState, useMemo, useCallback} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CheckIcon, ChevronDownIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -30,6 +33,7 @@ const SingleValueSelector = ({
     channelFields = [],
     targetAttribute,
     onSelectTarget,
+    testId,
 }: {
     value: string;
     disabled: boolean;
@@ -41,6 +45,8 @@ const SingleValueSelector = ({
     channelFields?: UserPropertyField[];
     targetAttribute?: string;
     onSelectTarget?: (name: string) => void;
+
+    testId?: TestId;
 }) => {
     const {formatMessage} = useIntl();
     const [filter, setFilter] = useState('');
@@ -132,7 +138,7 @@ const SingleValueSelector = ({
         return (
             <div className='values-editor'>
                 <div className='value-selector-menu-button__multi-values-container'>
-                    <MaskedChip/>
+                    <MaskedChip testId={part(testId, 'value.masked')}/>
                 </div>
             </div>
         );
@@ -150,6 +156,7 @@ const SingleValueSelector = ({
                 <input
                     type='text'
                     className='values-editor__simple-input'
+                    data-testid={part(testId, 'value', 'textbox')}
                     value={isEditing ? inputValue : value}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDownSimpleInput}
@@ -203,7 +210,7 @@ const SingleValueSelector = ({
                             />
                         </span>
                     ),
-                    dataTestId: 'valueSelectorMenuButton',
+                    dataTestId: part(testId, 'value', 'button'),
                     disabled,
                 }}
                 menu={{
@@ -216,6 +223,7 @@ const SingleValueSelector = ({
                     <Menu.InputItem
                         key='filter_values'
                         id='filter_values'
+                        testId={part(testId, 'value_menu.filter')}
                         type='text'
                         placeholder={formatMessage(allowCreateValue ? {
                             id: 'admin.access_control.table_editor.selector.filter_or_create',
@@ -233,6 +241,7 @@ const SingleValueSelector = ({
                     <Menu.InputItem
                         key='value_text'
                         id='value_text'
+                        testId={part(testId, 'value_menu.value')}
                         type='text'
                         placeholder={placeholder || formatMessage({
                             id: 'admin.access_control.table_editor.value.placeholder',
@@ -269,6 +278,7 @@ const SingleValueSelector = ({
                         <Menu.Item
                             id={`value-option-${id}`}
                             key={id}
+                            data-testid={part(testId, 'value_menu.option', {key: textTestKey(name)}, 'menuitemradio')}
                             role='menuitemradio'
                             forceCloseOnSelect={true}
                             aria-checked={isSelected}
@@ -284,6 +294,7 @@ const SingleValueSelector = ({
                     <Menu.Item
                         id='create-value-option'
                         key='create-value-option'
+                        data-testid={part(testId, 'value_menu.create', 'menuitem')}
                         onClick={() => handleCreateValue(filter)}
                         labels={<span>
                             {formatMessage({
@@ -293,7 +304,7 @@ const SingleValueSelector = ({
                         </span>}
                     />
                 )}
-                {onSelectTarget && channelAttributeMenuItems(channelFields, targetAttribute, onSelectTarget, formatMessage)}
+                {onSelectTarget && channelAttributeMenuItems(channelFields, targetAttribute, onSelectTarget, formatMessage, testId)}
             </Menu.Container>
         </div>
     );

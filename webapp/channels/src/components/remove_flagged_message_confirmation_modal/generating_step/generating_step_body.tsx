@@ -36,7 +36,7 @@ export function GeneratingStepBody({
             />
             <ReportNotice
                 variant='info'
-                testId='generating-section'
+                testId='flagged_message_modal.generating'
                 icon={<LoadingSpinner/>}
                 title={
                     <FormattedMessage

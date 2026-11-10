@@ -9,6 +9,8 @@ import {LockOutlineIcon, PlusIcon} from '@mattermost/compass-icons/components';
 import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AccessControlTestResult} from '@mattermost/types/access_control';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 import {isSessionAttributeField} from '@mattermost/types/properties_user';
@@ -529,11 +531,15 @@ interface TestButtonProps {
      *  permission-rule editors to surface "Simulate rules" instead,
      *  matching the dual-lane simulation modal they open. */
     label?: React.ReactNode;
+
+    testId?: TestId;
 }
 
 interface AddAttributeButtonProps {
     onClick: () => void;
     disabled: boolean;
+
+    testId?: TestId;
 }
 
 interface HelpTextProps {
@@ -541,11 +547,12 @@ interface HelpTextProps {
     onLearnMoreClick?: () => void;
 }
 
-export function TestButton({onClick, disabled, disabledTooltip, label}: TestButtonProps): JSX.Element {
+export function TestButton({onClick, disabled, disabledTooltip, label, testId}: TestButtonProps): JSX.Element {
     const button = (
         <Button
             emphasis='tertiary'
             size='small'
+            data-testid={withRole(testId, 'button')}
             onClick={onClick}
             disabled={disabled}
             leadingIcon={<Icon glyph={<LockOutlineIcon/>}/>}
@@ -630,11 +637,12 @@ export function TestResults({expression, channelId, teamId, isStacked, onExited,
     );
 }
 
-export function AddAttributeButton({onClick, disabled}: AddAttributeButtonProps): JSX.Element {
+export function AddAttributeButton({onClick, disabled, testId}: AddAttributeButtonProps): JSX.Element {
     return (
         <Button
             emphasis='tertiary'
             size='small'
+            data-testid={withRole(testId, 'button')}
             onClick={onClick}
             disabled={disabled}
             leadingIcon={<Icon glyph={<PlusIcon/>}/>}

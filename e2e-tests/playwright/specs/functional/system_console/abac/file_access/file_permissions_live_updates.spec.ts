@@ -3,7 +3,17 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, test, enableABAC, getAdminClient, getRandomId, TestBrowser} from '@mattermost/playwright-lib';
+import {
+    AdminPermission,
+    expect,
+    getAdminClient,
+    getRandomId,
+    openChannel,
+    test,
+    TestBrowser,
+    type PlaywrightExtended,
+    duration,
+} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {
@@ -11,16 +21,23 @@ import {
     setupCustomProfileAttributeValuesForUser,
 } from '../../../channels/custom_profile_attributes/helpers';
 import {
-    createPermissionPolicy,
     createPrivateChannelForABAC,
     createUserForABAC,
     deletePermissionPolicyByName,
     enableUserManagedAttributes,
-    navigateToPermissionPoliciesPage,
+    ensureUserAttributes,
     updatePermissionPolicyExpression,
 } from '../support';
+import {createPermissionPolicy, setAbacEnabled} from '../surface';
 
-import {ensureABACEnabled, waitForPolicy} from './helpers';
+import {
+    ensureABACEnabled,
+    expectFilesRedacted,
+    expectFilesVisible,
+    postNamed,
+    waitForPolicy,
+    postWithFile,
+} from './helpers';
 
 // Each test adds a member, and each addition appends a join system message after the fixture
 // post, so the post under test is never the last one.
@@ -43,7 +60,7 @@ test.describe('ABAC file permissions - live updates', () => {
     let sharedBrowser: TestBrowser | null = null;
 
     test.beforeAll(async ({browser}) => {
-        test.setTimeout(240000);
+        test.setTimeout(duration.four_min);
 
         const {adminClient, adminUser} = await getAdminClient();
         if (!adminUser) {
@@ -85,21 +102,18 @@ test.describe('ABAC file permissions - live updates', () => {
             AccessControlSettings: {EnableAttributeBasedAccessControl: false},
         } as any);
 
-        const {channelsPage: adminChannelsPage} = await sharedBrowser.login(adminUser);
-        await adminChannelsPage.goto(team.name, channelName);
-        await adminChannelsPage.toBeVisible();
-        await adminChannelsPage.centerView.postCreate.postMessage(FIXTURE_MESSAGE, ['sample_text_file.txt']);
+        const {app: adminApp} = await sharedBrowser.login(adminUser);
+        await adminApp.channelsPage.goto({team, channel: {name: channelName}});
+        await expect(adminApp.center.postCreate.messageTextbox.locator).toBeVisible();
+        await postWithFile(adminApp, adminClient, channelId, FIXTURE_MESSAGE);
 
-        const {systemConsolePage} = await sharedBrowser.login(adminUser);
-        await enableABAC(systemConsolePage.page);
-        await navigateToPermissionPoliciesPage(systemConsolePage.page);
-
+        await setAbacEnabled(adminApp, true);
+        await ensureUserAttributes(adminClient);
         policyName = `Dept Live Policy ${getRandomId()}`;
-        await createPermissionPolicy(systemConsolePage.page, {
+        await createPermissionPolicy(adminApp, {
             name: policyName,
-            celExpression: GRANTING_EXPRESSION,
-            permissions: ['Upload Files', 'Download Files'],
-            adminClient,
+            cel: GRANTING_EXPRESSION,
+            permissions: [AdminPermission.UploadFileAttachment, AdminPermission.DownloadFileAttachment],
         });
         await waitForPolicy(adminClient, policyName);
     });
@@ -119,13 +133,29 @@ test.describe('ABAC file permissions - live updates', () => {
     /**
      * Create a user who currently satisfies the policy and drop them into the fixture channel.
      * Each test gets its own so that revoking access is not visible to the others.
+     *
+     * Returns once the server lets them upload there: the page asks once, when the channel loads, and a new user's
+     * attributes can trail that check on a busy server, leaving the upload control disabled for good.
      */
-    async function createAllowedMember() {
+    async function createAllowedMember(pw: PlaywrightExtended) {
         const user = await createUserForABAC(sharedAdminClient, attributeFieldsMap, [
             {name: 'Department', type: 'text', value: 'Engineering'},
         ]);
         await sharedAdminClient.addToTeam(team.id, user.id);
         await sharedAdminClient.addToChannel(user.id, channelId);
+
+        const {client} = await pw.makeClient({username: user.username, password: user.password});
+        await expect
+            .poll(
+                async () => {
+                    const result = await client!.searchAccessControlDecisionActions('channel', channelId, [
+                        'upload_file_attachment',
+                    ]);
+                    return result.decisions?.upload_file_attachment?.allowed ?? false;
+                },
+                {timeout: pw.duration.half_min, message: 'the new member should be allowed to upload'},
+            )
+            .toBe(true);
         return user;
     }
 
@@ -153,13 +183,11 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who currently matches the policy opens the channel
-            const user = await createAllowedMember();
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const user = await createAllowedMember(pw);
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify upload starts out available
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeEnabled({
+            await expect(app.center.postCreate.attachButton.locator).toBeEnabled({
                 timeout: pw.duration.half_min,
             });
 
@@ -167,7 +195,7 @@ test.describe('ABAC file permissions - live updates', () => {
             await revokeByAttribute(user.id);
 
             // * Verify the control becomes unavailable without the page being reloaded
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeDisabled({
+            await expect(app.center.postCreate.attachButton.locator).toBeDisabled({
                 timeout: pw.duration.half_min,
             });
         },
@@ -187,20 +215,18 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who currently matches the policy opens the channel
-            const user = await createAllowedMember();
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const user = await createAllowedMember(pw);
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify the file starts out visible
-            const post = await channelsPage.centerView.getPostByText(FIXTURE_MESSAGE);
-            await post.toHaveFilesVisible();
+            const post = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
+            await expectFilesVisible(post);
 
             // # Admin moves the user out of the granted department
             await revokeByAttribute(user.id);
 
             // * Verify the already-loaded post is re-rendered as redacted, with no reload
-            await post.toHaveFilesRedacted();
+            await expectFilesRedacted(post);
         },
     );
 
@@ -218,29 +244,27 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who currently matches the policy opens the channel
-            const user = await createAllowedMember();
-            const {channelsPage, page} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const user = await createAllowedMember(pw);
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify access starts out granted
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeEnabled({
+            await expect(app.center.postCreate.attachButton.locator).toBeEnabled({
                 timeout: pw.duration.half_min,
             });
-            const post = await channelsPage.centerView.getPostByText(FIXTURE_MESSAGE);
-            await post.toHaveFilesVisible();
+            const post = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
+            await expectFilesVisible(post);
 
             // # Admin revokes access, then the user reloads
             await revokeByAttribute(user.id);
-            await page.reload();
-            await channelsPage.toBeVisible();
+            await app.page.reload();
+            await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
 
             // * Verify the fresh fetch is sanitized rather than served from the stale cache
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeDisabled({
+            await expect(app.center.postCreate.attachButton.locator).toBeDisabled({
                 timeout: pw.duration.half_min,
             });
-            const reloadedPost = await channelsPage.centerView.getPostByText(FIXTURE_MESSAGE);
-            await reloadedPost.toHaveFilesRedacted();
+            const reloadedPost = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
+            await expectFilesRedacted(reloadedPost);
         },
     );
 
@@ -264,13 +288,11 @@ test.describe('ABAC file permissions - live updates', () => {
             test.setTimeout(pw.duration.two_min);
 
             // # A user who matches the policy opens the channel
-            const user = await createAllowedMember();
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const user = await createAllowedMember(pw);
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify upload starts out available
-            await expect(channelsPage.centerView.postCreate.attachmentButton).toBeEnabled({
+            await expect(app.center.postCreate.attachButton.locator).toBeEnabled({
                 timeout: pw.duration.half_min,
             });
 
@@ -282,7 +304,7 @@ test.describe('ABAC file permissions - live updates', () => {
                 await updatePermissionPolicyExpression(sharedAdminClient, policyName, REVOKING_EXPRESSION);
 
                 // * Verify the upload affordance is withdrawn without the page being reloaded
-                await expect(channelsPage.centerView.postCreate.attachmentButton).toBeDisabled({
+                await expect(app.center.postCreate.attachButton.locator).toBeDisabled({
                     timeout: pw.duration.half_min,
                 });
             } finally {

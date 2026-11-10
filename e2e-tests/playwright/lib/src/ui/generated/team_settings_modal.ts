@@ -9,7 +9,18 @@ import type {Locator, Page} from '@playwright/test';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
-import {ConfirmModal, SavePanel, Tabs} from './shared';
+import {ChannelSelectorModal} from './channel_selector_modal';
+import {
+    AlertBanner,
+    Channels,
+    ConfirmModal,
+    Input,
+    Policies,
+    Rules,
+    SavePanel,
+    SelfExclusionModal,
+    Tabs,
+} from './shared';
 
 /** The form fields of `team_settings_modal.info`. */
 export type TeamSettingsModalInfoFormValues = {
@@ -48,8 +59,20 @@ export class TeamSettingsModal extends Scope {
         return new TeamSettingsModalAccess(this.page, `${this.scope}.access`, this.root);
     }
 
+    get accessPolicies(): TeamSettingsModalAccessPolicies {
+        return new TeamSettingsModalAccessPolicies(this.page, `${this.scope}.access_policies`, this.root);
+    }
+
     get info(): TeamSettingsModalInfo {
         return new TeamSettingsModalInfo(this.page, `${this.scope}.info`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.membership` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when team.
+     */
+    get membership(): TeamSettingsModalMembership {
+        return new TeamSettingsModalMembership(this.page, `${this.scope}.membership`, this.root);
     }
 
     /**
@@ -120,12 +143,8 @@ export class TeamSettingsModalAccess extends Scope {
     /**
      * `team_settings_modal.access.self_exclusion_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
-    get selfExclusionModal(): TeamSettingsModalAccessSelfExclusionModal {
-        return new TeamSettingsModalAccessSelfExclusionModal(
-            this.page,
-            `${this.scope}.self_exclusion_modal`,
-            this.root,
-        );
+    get selfExclusionModal(): SelfExclusionModal {
+        return new SelfExclusionModal(this.page, `${this.scope}.self_exclusion_modal`, this.root);
     }
 }
 
@@ -231,16 +250,10 @@ export class TeamSettingsModalAccessDiscoverability extends Scope {
     }
 
     /** Clicks privateButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
-    async clickPrivateButton(): Promise<{
-        selfExclusionModal: TeamSettingsModalAccessSelfExclusionModal;
-        modeFlipModal: ConfirmModal;
-    }> {
+    async clickPrivateButton(): Promise<{selfExclusionModal: SelfExclusionModal; modeFlipModal: ConfirmModal}> {
         await this.privateButton.click();
         return {
-            selfExclusionModal: new TeamSettingsModalAccessSelfExclusionModal(
-                this.page,
-                'team_settings_modal.access.self_exclusion_modal',
-            ),
+            selfExclusionModal: new SelfExclusionModal(this.page, 'team_settings_modal.access.self_exclusion_modal'),
             modeFlipModal: new ConfirmModal(this.page, 'team_settings_modal.access.mode_flip_modal'),
         };
     }
@@ -267,16 +280,10 @@ export class TeamSettingsModalAccessDiscoverability extends Scope {
     }
 
     /** Clicks publicButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
-    async clickPublicButton(): Promise<{
-        selfExclusionModal: TeamSettingsModalAccessSelfExclusionModal;
-        modeFlipModal: ConfirmModal;
-    }> {
+    async clickPublicButton(): Promise<{selfExclusionModal: SelfExclusionModal; modeFlipModal: ConfirmModal}> {
         await this.publicButton.click();
         return {
-            selfExclusionModal: new TeamSettingsModalAccessSelfExclusionModal(
-                this.page,
-                'team_settings_modal.access.self_exclusion_modal',
-            ),
+            selfExclusionModal: new SelfExclusionModal(this.page, 'team_settings_modal.access.self_exclusion_modal'),
             modeFlipModal: new ConfirmModal(this.page, 'team_settings_modal.access.mode_flip_modal'),
         };
     }
@@ -325,14 +332,207 @@ export class TeamSettingsModalAccessInviteLink extends Scope {
     }
 }
 
-/** Scope `team_settings_modal.access.self_exclusion_modal`. */
-export class TeamSettingsModalAccessSelfExclusionModal extends Scope {
-    constructor(page: Page, scope = 'team_settings_modal.access.self_exclusion_modal', root?: Locator) {
+/** Scope `team_settings_modal.access_policies`. */
+export class TeamSettingsModalAccessPolicies extends Scope {
+    constructor(page: Page, scope = 'team_settings_modal.access_policies', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.add_policy--button` — TeamAccessPoliciesTab (channels/src/components/team_settings/team_access_policies_tab/team_access_policies_tab.tsx)
+     * Renders only when team.
+     */
+    get addPolicyButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_policy--button`), {
+            testId: `${this.scope}.add_policy--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_access_policies_tab.tsx#TeamAccessPoliciesTab',
+        });
+    }
+
+    async clickAddPolicyButton(): Promise<void> {
+        await this.addPolicyButton.click();
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor` — TeamPolicyEditor (channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx)
+     * Renders only when view === 'create' || view === 'edit'.
+     */
+    get editor(): TeamSettingsModalAccessPoliciesEditor {
+        return new TeamSettingsModalAccessPoliciesEditor(this.page, `${this.scope}.editor`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.policies` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get policies(): Policies {
+        return new Policies(this.page, `${this.scope}.policies`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.sync_status` — SyncStatusFooter (channels/src/components/team_settings/team_access_policies_tab/sync_status_footer.tsx)
+     * Renders only when !(!hasPolicies || !loaded).
+     */
+    get syncStatus(): TeamSettingsModalAccessPoliciesSyncStatus {
+        return new TeamSettingsModalAccessPoliciesSyncStatus(this.page, `${this.scope}.sync_status`, this.root);
+    }
+}
+
+/** Scope `team_settings_modal.access_policies.editor`. */
+export class TeamSettingsModalAccessPoliciesEditor extends Scope {
+    constructor(page: Page, scope = 'team_settings_modal.access_policies.editor', root?: Locator) {
         super(page, scope, root);
     }
 
     /**
-     * `team_settings_modal.access.self_exclusion_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * `team_settings_modal.access_policies.editor.add_channels--button` — TeamPolicyEditor (channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx)
+     * Renders only when view === 'create' || view === 'edit'.
+     * Opens modal ChannelSelectorModal (`channel_selector_modal`).
+     */
+    get addChannelsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_channels--button`), {
+            testId: `${this.scope}.add_channels--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx#TeamPolicyEditor',
+        });
+    }
+
+    /** Clicks addChannelsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAddChannelsButton(): Promise<ChannelSelectorModal> {
+        await this.addChannelsButton.click();
+        return new ChannelSelectorModal(this.page, 'channel_selector_modal');
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.back--button` — TeamPolicyEditor (channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx)
+     * Renders only when view === 'create' || view === 'edit'.
+     * Opens popover SaveChangesPanel.
+     */
+    get backButton() {
+        return drivers.button(this.byTestId(`${this.scope}.back--button`), {
+            testId: `${this.scope}.back--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx#TeamPolicyEditor',
+        });
+    }
+
+    async clickBackButton(): Promise<void> {
+        await this.backButton.click();
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.delete--button` — TeamPolicyEditor (channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx)
+     * Renders only when view === 'create' || view === 'edit' and policyId.
+     * Opens modal GenericModal (`team_settings_modal.access_policies.editor.delete_modal`).
+     */
+    get deleteButton() {
+        return drivers.button(this.byTestId(`${this.scope}.delete--button`), {
+            testId: `${this.scope}.delete--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx#TeamPolicyEditor',
+        });
+    }
+
+    /** Clicks deleteButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDeleteButton(): Promise<TeamSettingsModalAccessPoliciesEditorDeleteModal> {
+        await this.deleteButton.click();
+        return new TeamSettingsModalAccessPoliciesEditorDeleteModal(this.page, `${this.scope}.delete_modal`);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.channels` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get channels(): Channels {
+        return new Channels(this.page, `${this.scope}.channels`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmModal(): TeamSettingsModalAccessPoliciesEditorConfirmModal {
+        return new TeamSettingsModalAccessPoliciesEditorConfirmModal(
+            this.page,
+            `${this.scope}.confirm_modal`,
+            this.root,
+        );
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showDeleteModal.
+     */
+    get deleteModal(): TeamSettingsModalAccessPoliciesEditorDeleteModal {
+        return new TeamSettingsModalAccessPoliciesEditorDeleteModal(this.page, `${this.scope}.delete_modal`, this.root);
+    }
+
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
+    }
+}
+
+/** Scope `team_settings_modal.access_policies.editor.confirm_modal`. */
+export class TeamSettingsModalAccessPoliciesEditorConfirmModal extends Scope {
+    constructor(page: Page, scope = 'team_settings_modal.access_policies.editor.confirm_modal', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.confirm_modal.cancel--button` — TeamPolicyConfirmationModal (channels/src/components/team_settings/team_access_policies_tab/team_policy_confirmation_modal.tsx)
+     * Renders only when showConfirmationModal.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_policy_confirmation_modal.tsx#TeamPolicyConfirmationModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.confirm_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      * Renders only when showHeader and showCloseButton.
      */
     get closeButton() {
@@ -350,8 +550,69 @@ export class TeamSettingsModalAccessSelfExclusionModal extends Scope {
     }
 
     /**
-     * `team_settings_modal.access.self_exclusion_modal.confirm--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
-     * Renders only when !hideConfirm.
+     * `team_settings_modal.access_policies.editor.confirm_modal.confirm--button` — TeamPolicyConfirmationModal (channels/src/components/team_settings/team_access_policies_tab/team_policy_confirmation_modal.tsx)
+     * Renders only when showConfirmationModal.
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [Api.ValidateExpressionAgainstRequester],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_policy_confirmation_modal.tsx#TeamPolicyConfirmationModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
+    }
+}
+
+/** Scope `team_settings_modal.access_policies.editor.delete_modal`. */
+export class TeamSettingsModalAccessPoliciesEditorDeleteModal extends Scope {
+    constructor(page: Page, scope = 'team_settings_modal.access_policies.editor.delete_modal', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.delete_modal.cancel--button` — TeamPolicyEditor (channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx)
+     * Renders only when view === 'create' || view === 'edit' and showDeleteModal.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx#TeamPolicyEditor',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.delete_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showDeleteModal and showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `team_settings_modal.access_policies.editor.delete_modal.confirm--button` — TeamPolicyEditor (channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx)
+     * Renders only when view === 'create' || view === 'edit' and showDeleteModal.
      */
     get confirmButton() {
         return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
@@ -359,12 +620,73 @@ export class TeamSettingsModalAccessSelfExclusionModal extends Scope {
             role: 'button',
             effects: [],
             unknownEffects: false,
-            source: 'channels/src/components/confirm_modal.tsx#ConfirmModal',
+            source: 'channels/src/components/team_settings/team_access_policies_tab/team_policy_editor.tsx#TeamPolicyEditor',
         });
     }
 
     async clickConfirmButton(): Promise<void> {
         await this.confirmButton.click();
+    }
+}
+
+/** Scope `team_settings_modal.access_policies.sync_status`. */
+export class TeamSettingsModalAccessPoliciesSyncStatus extends Scope {
+    constructor(page: Page, scope = 'team_settings_modal.access_policies.sync_status', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_settings_modal.access_policies.sync_status.sync_now--button` — SyncStatusFooter (channels/src/components/team_settings/team_access_policies_tab/sync_status_footer.tsx)
+     * Renders only when !(!hasPolicies || !loaded) and !syncing.
+     */
+    get syncNowButton() {
+        return drivers.button(this.byTestId(`${this.scope}.sync_now--button`), {
+            testId: `${this.scope}.sync_now--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/sync_status_footer.tsx#SyncStatusFooter',
+        });
+    }
+
+    async clickSyncNowButton(): Promise<void> {
+        await this.syncNowButton.click();
+    }
+
+    /**
+     * `team_settings_modal.access_policies.sync_status.syncing--text` — SyncStatusFooter (channels/src/components/team_settings/team_access_policies_tab/sync_status_footer.tsx)
+     * Renders only when !(!hasPolicies || !loaded) and syncing.
+     */
+    get syncingText() {
+        return drivers.text(this.byTestId(`${this.scope}.syncing--text`), {
+            testId: `${this.scope}.syncing--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/sync_status_footer.tsx#SyncStatusFooter',
+        });
+    }
+
+    getSyncingText(): Promise<string> {
+        return this.syncingText.text();
+    }
+
+    /**
+     * `team_settings_modal.access_policies.sync_status.time--text` — SyncStatusFooter (channels/src/components/team_settings/team_access_policies_tab/sync_status_footer.tsx)
+     * Renders only when !(!hasPolicies || !loaded).
+     */
+    get timeText() {
+        return drivers.text(this.byTestId(`${this.scope}.time--text`), {
+            testId: `${this.scope}.time--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_access_policies_tab/sync_status_footer.tsx#SyncStatusFooter',
+        });
+    }
+
+    getTimeText(): Promise<string> {
+        return this.timeText.text();
     }
 }
 
@@ -620,5 +942,179 @@ export class TeamSettingsModalInfoPicture extends Scope {
 
     async clickRemoveButton(): Promise<void> {
         await this.removeButton.click();
+    }
+}
+
+/** Scope `team_settings_modal.membership`. */
+export class TeamSettingsModalMembership extends Scope {
+    constructor(page: Page, scope = 'team_settings_modal.membership', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_settings_modal.membership.auto_add--checkbox` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when team.
+     */
+    get autoAddCheckbox() {
+        return drivers.checkbox(this.byTestId(`${this.scope}.auto_add--checkbox`), {
+            testId: `${this.scope}.auto_add--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx#TeamMembershipTab',
+        });
+    }
+
+    async setAutoAddCheckbox(on: boolean): Promise<void> {
+        await this.autoAddCheckbox.set(on);
+    }
+
+    /**
+     * `team_settings_modal.membership.auto_add_description--text` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when team.
+     */
+    get autoAddDescriptionText() {
+        return drivers.text(this.byTestId(`${this.scope}.auto_add_description--text`), {
+            testId: `${this.scope}.auto_add_description--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx#TeamMembershipTab',
+        });
+    }
+
+    getAutoAddDescriptionText(): Promise<string> {
+        return this.autoAddDescriptionText.text();
+    }
+
+    /**
+     * `team_settings_modal.membership.locked_rules` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when rulesLocked and team.
+     */
+    get lockedRules() {
+        return drivers.container(this.byTestId(`${this.scope}.locked_rules`), {
+            testId: `${this.scope}.locked_rules`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx#TeamMembershipTab',
+        });
+    }
+
+    /**
+     * `team_settings_modal.membership.title--text` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when team.
+     */
+    get titleText() {
+        return drivers.text(this.byTestId(`${this.scope}.title--text`), {
+            testId: `${this.scope}.title--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx#TeamMembershipTab',
+        });
+    }
+
+    getTitleText(): Promise<string> {
+        return this.titleText.text();
+    }
+
+    /**
+     * `team_settings_modal.membership.confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmModal(): ConfirmModal {
+        return new ConfirmModal(this.page, `${this.scope}.confirm_modal`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.membership.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when attributesLoaded && rulesEditable.
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.membership.self_exclusion_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get selfExclusionModal(): SelfExclusionModal {
+        return new SelfExclusionModal(this.page, `${this.scope}.self_exclusion_modal`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.membership.sync_status` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when hasPolicy && syncLoaded and team.
+     */
+    get syncStatus(): TeamSettingsModalMembershipSyncStatus {
+        return new TeamSettingsModalMembershipSyncStatus(this.page, `${this.scope}.sync_status`, this.root);
+    }
+
+    /**
+     * `team_settings_modal.membership.system_policies` — AlertBanner (channels/src/components/alert_banner/index.tsx)
+     * Renders only when !(safePolicies.length === 0) and policiesLoaded && systemPolicies.length > 0.
+     */
+    get systemPolicies(): AlertBanner {
+        return new AlertBanner(this.page, `${this.scope}.system_policies`, this.root);
+    }
+}
+
+/** Scope `team_settings_modal.membership.sync_status`. */
+export class TeamSettingsModalMembershipSyncStatus extends Scope {
+    constructor(page: Page, scope = 'team_settings_modal.membership.sync_status', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `team_settings_modal.membership.sync_status.sync_now--button` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when hasPolicy && syncLoaded and !syncing and team.
+     */
+    get syncNowButton() {
+        return drivers.button(this.byTestId(`${this.scope}.sync_now--button`), {
+            testId: `${this.scope}.sync_now--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx#TeamMembershipTab',
+        });
+    }
+
+    async clickSyncNowButton(): Promise<void> {
+        await this.syncNowButton.click();
+    }
+
+    /**
+     * `team_settings_modal.membership.sync_status.syncing--text` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when hasPolicy && syncLoaded and syncing and team.
+     */
+    get syncingText() {
+        return drivers.text(this.byTestId(`${this.scope}.syncing--text`), {
+            testId: `${this.scope}.syncing--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx#TeamMembershipTab',
+        });
+    }
+
+    getSyncingText(): Promise<string> {
+        return this.syncingText.text();
+    }
+
+    /**
+     * `team_settings_modal.membership.sync_status.time--text` — TeamMembershipTab (channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx)
+     * Renders only when hasPolicy && syncLoaded and team.
+     */
+    get timeText() {
+        return drivers.text(this.byTestId(`${this.scope}.time--text`), {
+            testId: `${this.scope}.time--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx#TeamMembershipTab',
+        });
+    }
+
+    getTimeText(): Promise<string> {
+        return this.timeText.text();
     }
 }

@@ -1,9 +1,19 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import path from 'node:path';
+
 import type {Client4} from '@mattermost/client';
 
-import {expect, getRandomId, newTestPassword} from '@mattermost/playwright-lib';
+import {
+    assetPath,
+    expect,
+    getRandomId,
+    newTestPassword,
+    type App,
+    type generated,
+    duration,
+} from '@mattermost/playwright-lib';
 
 import {createPrivateChannelForABAC, ensureUserAttributes, getPolicyIdByName} from '../support';
 
@@ -51,7 +61,7 @@ export async function ensureABACEnabled(adminClient: Client4): Promise<void> {
                 const cfg = await adminClient.getConfig();
                 return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === true;
             },
-            {timeout: 15000, intervals: [500, 1000, 2000]},
+            {timeout: duration.half_min, intervals: [500, 1000, 2000]},
         )
         .toBe(true);
 }
@@ -60,8 +70,50 @@ export async function ensureABACEnabled(adminClient: Client4): Promise<void> {
 export async function waitForPolicy(adminClient: Client4, policyName: string): Promise<void> {
     await expect
         .poll(async () => Boolean(await getPolicyIdByName(adminClient, policyName, 1)), {
-            timeout: 30000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
         })
         .toBe(true);
+}
+
+/** Posts a message with an asset file attached through the composer's file chooser, waiting for the post. */
+export async function postWithFile(app: App, client: Client4, channelId: string, message: string) {
+    const composer = app.center.postCreate;
+    const chooser = app.page.waitForEvent('filechooser');
+    await composer.clickAttachButton();
+    await (await chooser).setFiles(path.join(assetPath, 'sample_text_file.txt'));
+    await expect(composer.filePreviews.fileItems).toHaveCount(1);
+    await composer.fillMessageTextbox(message);
+    await composer.clickSendButton();
+    return postNamed(app, client, channelId, message);
+}
+
+/** The center post showing `message`, and its id (found through the API: other posts arrive around it). */
+export async function postNamed(app: App, client: Client4, channelId: string, message: string) {
+    let id = '';
+    await expect
+        .poll(async () => {
+            const {order, posts} = await client.getPosts(channelId);
+            id = order.find((postId) => posts[postId].message === message) ?? '';
+            return id;
+        })
+        .not.toBe('');
+    const post = app.center.postList.post({id});
+    await expect(post.locator).toContainText(message);
+    return Object.assign(post, {postId: id});
+}
+
+/** A post (or a permalink preview, which carries the same parts) with attachments. */
+type WithFiles = Pick<generated.PostItem, 'attachments' | 'redactedFiles'>;
+
+/** A post's files render (and not the redacted placeholder). */
+export async function expectFilesVisible(post: WithFiles) {
+    await expect(post.attachments.locator).toBeVisible();
+    await expect(post.redactedFiles.locator).toHaveCount(0);
+}
+
+/** A post's files are replaced by the redacted placeholder. */
+export async function expectFilesRedacted(post: WithFiles) {
+    await expect(post.redactedFiles.locator).toBeVisible();
+    await expect(post.attachments.locator).toHaveCount(0);
 }

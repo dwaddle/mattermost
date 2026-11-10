@@ -152,7 +152,10 @@ export default function ClassificationLevelsTable({levels, updateLevel, deleteLe
 
     return (
         <TableWrapper>
-            <AdminConsoleListTable<ClassificationLevel> table={table}/>
+            <AdminConsoleListTable<ClassificationLevel>
+                table={table}
+                testIdScope='admin.classification.levels'
+            />
         </TableWrapper>
     );
 }

@@ -1,9 +1,9 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
-import {setupContentFlagging, createPost, verifyAuthorNotification} from './../support';
+import {createPost, openReportDetails, reportCard, setupContentFlagging, verifyReport} from './../support';
 
 /** @objective Verify Removed Flagged posts show appropriate status and do not show the post message
  * @testcase
@@ -54,28 +54,25 @@ test('Verify Removed Flagged posts show appropriate status and do not show the p
         return cfg.ContentFlaggingSettings?.EnableContentFlagging === true;
     });
 
-    const {channelsPage: secondChannelsPage, contentReviewPage: secondContentReviewPage} =
-        await pw.testBrowser.login(secondUser);
-    await verifyAuthorNotification(post.id, secondChannelsPage, secondContentReviewPage, team.name, message, 'Pending');
+    const {app} = await pw.testBrowser.login(secondUser);
+    const reportId = await verifyReport(pw, app, secondUser, team, post.id, message, 'Pending');
 
     const commentRemove = 'Removing this message as it violates the guidelines.';
     const contentModerationMessage = 'Content deleted as part of Content Flagging review process';
-    await secondContentReviewPage.setReportCardByPostID(post.id);
-    await secondContentReviewPage.openViewDetails();
-    await secondContentReviewPage.waitForRHSVisible();
-
-    await secondContentReviewPage.openViewDetails();
+    await openReportDetails(app, reportId);
     await setupContentFlagging(adminClient, [adminUser.id, secondUserID, thirdUserID]);
     await pw.waitUntil(async () => {
         const cfg = await adminClient.getConfig();
         return cfg.ContentFlaggingSettings?.EnableContentFlagging === true;
     });
-    await secondContentReviewPage.clickRemoveMessage();
-    await secondContentReviewPage.enterConfirmationComment(commentRemove);
+    const reviewDialog = await app.rhs.thread.post({id: reportId}).spillageReport.actions.clickRemoveButton();
+    await reviewDialog.form.fillCommentTextbox(commentRemove);
 
-    // New multi-step flow: Continue → wait for report to generate → Remove permanently
-    await secondContentReviewPage.submitFormAndWaitForReport();
-    await secondContentReviewPage.confirmRemovePermanently();
+    // Multi-step flow: Continue -> wait for the report to generate -> Remove permanently
+    await reviewDialog.form.clickPrimaryButton();
+    await expect(reviewDialog.generated.permanentButton.locator).toBeVisible({timeout: duration.half_min});
+    await reviewDialog.generated.clickPermanentButton();
+    await expect(reviewDialog.generated.permanentButton.locator).not.toBeVisible();
     await setupContentFlagging(adminClient, [adminUser.id, secondUserID, thirdUserID]);
 
     // After the remove action succeeds, the reviewer's own view of the flagged
@@ -84,17 +81,12 @@ test('Verify Removed Flagged posts show appropriate status and do not show the p
     // The placeholder appears both in the RHS detail view and in the report
     // card shown in the @content-review center channel — assert each scope
     // separately so a regression in either location is caught.
-    await secondContentReviewPage.verifyFlaggedPostMessageInRHS(contentModerationMessage);
-    await secondContentReviewPage.verifyFlaggedPostMessageInCenter(post.id, contentModerationMessage);
+    for (const where of ['rhs', 'center'] as const) {
+        const quoted = reportCard(app, reportId, where).field({name: 'post_preview'}).value.postPreview.post
+            .messageText;
+        await expect(quoted.locator).toHaveText(contentModerationMessage);
+    }
 
-    const {channelsPage: channelsPageThird, contentReviewPage: contentReviewPageThird} =
-        await pw.testBrowser.login(thirdUser);
-    await verifyAuthorNotification(
-        post.id,
-        channelsPageThird,
-        contentReviewPageThird,
-        team.name,
-        contentModerationMessage,
-        'Removed',
-    );
+    const {app: thirdApp} = await pw.testBrowser.login(thirdUser);
+    await verifyReport(pw, thirdApp, thirdUser, team, post.id, contentModerationMessage, 'Removed');
 });

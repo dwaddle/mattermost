@@ -5,9 +5,11 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {ChannelWithTeamData} from '@mattermost/types/channels';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
+import {Api} from './api';
 import {SearchableUserList} from './shared';
 
 /** Scope `policy_test_modal`. */
@@ -16,12 +18,113 @@ export class PolicyTestModal extends Scope {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    /**
+     * `policy_test_modal.back--button` — TestResultsModal (channels/src/components/admin_console/access_control/modals/policy_test/test_modal.tsx)
+     * Renders only when !showPicker and requireChannel.
+     */
+    get backButton() {
+        return drivers.button(this.byTestId(`${this.scope}.back--button`), {
+            testId: `${this.scope}.back--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/policy_test/test_modal.tsx#TestResultsModal',
+        });
+    }
+
+    async clickBackButton(): Promise<void> {
+        await this.backButton.click();
+    }
+
+    /**
+     * `policy_test_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `policy_test_modal.channel_picker` — TestChannelPicker (channels/src/components/admin_console/access_control/modals/policy_test/test_channel_picker.tsx)
+     * Renders only when showPicker.
+     */
+    get channelPicker(): PolicyTestModalChannelPicker {
+        return new PolicyTestModalChannelPicker(this.page, `${this.scope}.channel_picker`, this.root);
     }
 
     get users(): SearchableUserList {
         return new SearchableUserList(this.page, `${this.scope}.users`, this.root);
+    }
+}
+
+/** Scope `policy_test_modal.channel_picker`. */
+export class PolicyTestModalChannelPicker extends Scope {
+    constructor(page: Page, scope = 'policy_test_modal.channel_picker', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `policy_test_modal.channel_picker.channel:{key}--button` — TestChannelPicker (channels/src/components/admin_console/access_control/modals/policy_test/test_channel_picker.tsx)
+     * Renders only when !(loading && channels.length === 0) and !hasError and !(channels.length === 0).
+     */
+    channel(channel: Pick<ChannelWithTeamData, 'id'>) {
+        return drivers.button(this.byTestId(`${this.scope}.channel:${channel.id}--button`), {
+            testId: `${this.scope}.channel:${channel.id}--button`,
+            role: 'button',
+            effects: [Api.TestAccessControlPolicyExpression],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/policy_test/test_channel_picker.tsx#TestChannelPicker',
+        });
+    }
+
+    /** Every `policy_test_modal.channel_picker.channel:{key}--button` in the scope. */
+    get channelItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.channel:`, '--button');
+    }
+
+    /** The keys of every `policy_test_modal.channel_picker.channel:{key}--button` in the scope, in document order. */
+    channelKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.channel:`, '--button');
+    }
+
+    /**
+     * `policy_test_modal.channel_picker.search--textbox` — TestChannelPicker (channels/src/components/admin_console/access_control/modals/policy_test/test_channel_picker.tsx)
+     * Renders only when showPicker.
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/policy_test/test_channel_picker.tsx#TestChannelPicker',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /** Every `policy_test_modal.channel_picker.channel:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.channelList).toHaveKeys([…])`. */
+    get channelList() {
+        return this.keyedList(`${this.scope}.channel:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.channel:${key}--button`), {
+                testId: `${this.scope}.channel:${key}--button`,
+                role: 'button',
+                effects: [Api.TestAccessControlPolicyExpression],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/policy_test/test_channel_picker.tsx#TestChannelPicker',
+            }),
+        );
     }
 }

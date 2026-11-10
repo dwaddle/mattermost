@@ -7,6 +7,8 @@ import type {MessageDescriptor} from 'react-intl';
 import {FormattedMessage} from 'react-intl';
 
 import type IconProps from '@mattermost/compass-icons/components/props';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -23,7 +25,8 @@ type Props<T extends string> = {
     // Button id is `${idPrefix}-menu-button`, menu id `${idPrefix}-menu` and
     // each option's id `${idPrefix}-${option.id}`.
     idPrefix: string;
-    dataTestId: string;
+
+    testId: TestId;
 
     // What the trigger shows. Kept separate from `options` because a value can
     // outlive its menu entry -- an attribute whose type is hidden from, or no
@@ -52,7 +55,7 @@ type Props<T extends string> = {
 // a `locked` state.
 function AttributeSelect<T extends string>({
     idPrefix,
-    dataTestId,
+    testId,
     selected,
     options = [],
     ariaLabel,
@@ -65,8 +68,14 @@ function AttributeSelect<T extends string>({
     const buttonId = `${idPrefix}-menu-button`;
 
     const value = (
-        <span className='AttributeSelect__value'>
-            <SelectedIcon size={18}/>
+        <span
+            className='AttributeSelect__value'
+            data-testid={part(testId, 'value')}
+        >
+            <SelectedIcon
+                size={18}
+                data-testid={part(testId, 'icon')}
+            />
             <FormattedMessage {...selected.label}/>
         </span>
     );
@@ -79,7 +88,7 @@ function AttributeSelect<T extends string>({
                 className='AttributeSelect'
                 disabled={true}
                 aria-label={ariaLabel}
-                data-testid={dataTestId}
+                data-testid={withRole(testId, 'button')}
             >
                 {value}
             </button>
@@ -96,10 +105,13 @@ function AttributeSelect<T extends string>({
                 children: (
                     <>
                         {value}
-                        <i className='icon icon-chevron-down'/>
+                        <i
+                            className='icon icon-chevron-down'
+                            data-testid={part(testId, 'chevron')}
+                        />
                     </>
                 ),
-                dataTestId,
+                dataTestId: withRole(testId, 'button'),
             }}
             menu={{
                 id: `${idPrefix}-menu`,
@@ -112,6 +124,7 @@ function AttributeSelect<T extends string>({
                 return (
                     <Menu.Item
                         id={`${idPrefix}-${option.id}`}
+                        data-testid={part(testId, 'option', {key: option.id}, 'menuitemradio')}
                         key={option.id}
                         role='menuitemradio'
                         forceCloseOnSelect={true}

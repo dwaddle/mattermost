@@ -6,9 +6,16 @@
 // - [*] indicates an assertion (e.g. * Check the title)
 // ***************************************************************
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
-import {setupBoardAttributesTest, cleanupCustomBoardFields} from './setup';
+import {
+    addAttribute,
+    cleanupCustomBoardFields,
+    openBoardAttributes,
+    rowByName,
+    save,
+    setupBoardAttributesTest,
+} from './setup';
 
 test.describe('Board Attributes - row dot menu', {tag: '@board_attributes'}, () => {
     test.afterEach(async () => {
@@ -16,123 +23,107 @@ test.describe('Board Attributes - row dot menu', {tag: '@board_attributes'}, () 
     });
 
     test('duplicates a custom attribute via the dot menu — copy gets a (2) suffix and persists', async ({pw}) => {
-        const {adminClient, systemConsolePage} = await setupBoardAttributesTest(pw);
-        const ba = systemConsolePage.boardAttributes;
-
-        await ba.goto();
-        await ba.toBeVisible();
-
-        const original = `Dup_${Date.now()}`;
+        const {adminClient, app} = await setupBoardAttributesTest(pw);
+        let ba = await openBoardAttributes(app);
 
         // # Add a saved custom attribute
-        await ba.addAttribute(original);
-        await ba.saveAndWaitForSettled();
+        const original = `Dup_${Date.now()}`;
+        await addAttribute(ba, original);
+        await save(ba);
 
         // # Open the row's dot menu and click Duplicate
-        await ba.openDotMenuByName(original);
-        await ba.clickDuplicate();
+        const before = await ba.rowKeys();
+        const menu = await (await rowByName(ba, adminClient, original)).clickActionsButton();
+        await menu.clickDuplicateMenuItem();
 
         // * A new row appears with the "(2)" suffix
         const copy = `${original} (2)`;
-        await expect(ba.nameInputByValue(copy)).toBeVisible();
+        await expect(ba.rowItems).toHaveCount(before.length + 1);
+        const copyKey = (await ba.rowKeys()).find((key) => !before.includes(key))!;
+        await expect(ba.row(copyKey).nameTextbox.locator).toHaveValue(copy);
 
         // # Save and reload
-        await ba.saveAndWaitForSettled();
-        await ba.goto();
-        await ba.toBeVisible();
+        await save(ba);
+        ba = await openBoardAttributes(app);
 
         // * Both the original and the (2)-suffixed copy persist
-        await expect(ba.nameInputByValue(original)).toBeVisible();
-        await expect(ba.nameInputByValue(copy)).toBeVisible();
-
-        const fields = await adminClient.getPropertyFields('boards', 'post', {targetType: 'system'});
-        const names = (fields ?? []).map((f) => f.name);
-        expect(names).toEqual(expect.arrayContaining([original, copy]));
+        await expect((await rowByName(ba, adminClient, original)).nameTextbox.locator).toHaveValue(original);
+        await expect((await rowByName(ba, adminClient, copy)).nameTextbox.locator).toHaveValue(copy);
     });
 
     test('deletes a saved custom attribute via the confirm modal — row disappears, server reflects', async ({pw}) => {
-        const {adminClient, systemConsolePage} = await setupBoardAttributesTest(pw);
-        const ba = systemConsolePage.boardAttributes;
-
-        await ba.goto();
-        await ba.toBeVisible();
-
-        const name = `Del_${Date.now()}`;
+        const {adminClient, app} = await setupBoardAttributesTest(pw);
+        const ba = await openBoardAttributes(app);
 
         // # Add a saved custom attribute
-        await ba.addAttribute(name);
-        await ba.saveAndWaitForSettled();
+        const name = `Del_${Date.now()}`;
+        await addAttribute(ba, name);
+        await save(ba);
+        const row = await rowByName(ba, adminClient, name);
 
         // # Open the dot menu, click Delete attribute
-        await ba.openDotMenuByName(name);
-        await ba.clickDeleteAttribute();
+        const modal = await (await row.clickActionsButton()).clickDeleteMenuItem();
 
         // * The confirmation modal appears
-        await expect(ba.container.page().getByRole('heading', {name: 'Delete board attribute'})).toBeVisible();
+        await expect(modal.locator).toContainMessage(Msg.admin.board_attributes.delete_modal.title);
 
         // # Confirm
-        await ba.container.page().getByRole('button', {name: 'Delete', exact: true}).click();
+        await modal.clickConfirmButton();
 
         // # Save the delete
-        await ba.saveAndWaitForSettled();
+        await save(ba);
 
         // * The row is gone
-        await expect(ba.nameInputByValue(name)).toHaveCount(0);
+        await expect(row.locator).toHaveCount(0);
 
         // * The server no longer lists the attribute
         const fields = await adminClient.getPropertyFields('boards', 'post', {targetType: 'system'});
-        const names = (fields ?? []).map((f) => f.name);
-        expect(names).not.toContain(name);
+        expect((fields ?? []).map((f) => f.name)).not.toContain(name);
     });
 
     test('dismissing the delete-confirm modal keeps the row intact', async ({pw}) => {
-        const {systemConsolePage} = await setupBoardAttributesTest(pw);
-        const ba = systemConsolePage.boardAttributes;
-
-        await ba.goto();
-        await ba.toBeVisible();
-
-        const name = `Keep_${Date.now()}`;
+        const {adminClient, app} = await setupBoardAttributesTest(pw);
+        const ba = await openBoardAttributes(app);
 
         // # Add and save a custom attribute
-        await ba.addAttribute(name);
-        await ba.saveAndWaitForSettled();
+        const name = `Keep_${Date.now()}`;
+        await addAttribute(ba, name);
+        await save(ba);
+        const row = await rowByName(ba, adminClient, name);
 
         // # Open dot menu, click Delete, then Cancel the modal
-        await ba.openDotMenuByName(name);
-        await ba.clickDeleteAttribute();
-        await ba.container.page().getByRole('button', {name: 'Cancel'}).click();
+        const modal = await (await row.clickActionsButton()).clickDeleteMenuItem();
+        await expect(modal.locator).toBeVisible();
+        await modal.clickCancelButton();
 
         // * Modal is closed
-        await expect(ba.container.page().getByRole('heading', {name: 'Delete board attribute'})).toHaveCount(0);
+        await expect(modal.locator).not.toBeVisible();
 
         // * Row is still present
-        await expect(ba.nameInputByValue(name)).toBeVisible();
+        await expect(row.nameTextbox.locator).toHaveValue(name);
 
         // * Save remains disabled — no pending changes were committed
-        await expect(ba.saveButton).toBeDisabled();
+        await expect(ba.savePanel.saveButton.locator).toBeDisabled();
     });
 
     test('Duplicate and Delete items are disabled on protected (seeded) rows', async ({pw}) => {
-        const {systemConsolePage} = await setupBoardAttributesTest(pw);
-        const ba = systemConsolePage.boardAttributes;
+        const {adminClient, app} = await setupBoardAttributesTest(pw);
+        const ba = await openBoardAttributes(app);
 
-        await ba.goto();
-        await ba.toBeVisible();
+        // # Open the dot menu on a new custom row
+        const custom = await (await addAttribute(ba, `Custom_${Date.now()}`)).clickActionsButton();
+
+        // * Both menu items are enabled there
+        await expect(custom.duplicateMenuItem.locator).not.toHaveAttribute('aria-disabled', 'true');
+        await expect(custom.deleteMenuItem.locator).not.toHaveAttribute('aria-disabled', 'true');
+        await app.page.keyboard.press('Escape');
+        await expect(custom.deleteMenuItem.locator).not.toBeVisible();
 
         // # Open the dot menu on the seeded Status row
-        await ba.openDotMenuByName('status');
+        const menu = await (await rowByName(ba, adminClient, 'status')).clickActionsButton();
 
         // * Both menu items render but are aria-disabled
-        const duplicate = ba.container
-            .page()
-            .getByText('Duplicate', {exact: true})
-            .locator('xpath=ancestor::*[@role="menuitem"][1]');
-        const del = ba.container
-            .page()
-            .getByText('Delete attribute', {exact: true})
-            .locator('xpath=ancestor::*[@role="menuitem"][1]');
-        await expect(duplicate).toHaveAttribute('aria-disabled', 'true');
-        await expect(del).toHaveAttribute('aria-disabled', 'true');
+        await expect(menu.duplicateMenuItem.locator).toHaveAttribute('aria-disabled', 'true');
+        await expect(menu.deleteMenuItem.locator).toHaveAttribute('aria-disabled', 'true');
     });
 });

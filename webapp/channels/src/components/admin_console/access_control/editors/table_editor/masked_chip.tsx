@@ -5,11 +5,17 @@ import React, {type JSX} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole, type TestId} from '@mattermost/shared/utils/test_id';
 
 import './selector_menus.scss';
 
+type Props = {
+
+    testId?: TestId;
+};
+
 /** Non-interactive chip indicating hidden attribute values exist in this condition. */
-const MaskedChip = (): JSX.Element => {
+const MaskedChip = ({testId}: Props): JSX.Element => {
     const {formatMessage} = useIntl();
 
     const tooltipText = formatMessage({
@@ -28,6 +34,7 @@ const MaskedChip = (): JSX.Element => {
                 className='select__multi-value select__multi-value--masked'
                 role='img'
                 aria-label={ariaLabel}
+                data-testid={withRole(testId, 'img')}
             >
                 <div className='select__multi-value__label'>
                     {'••••••••'}

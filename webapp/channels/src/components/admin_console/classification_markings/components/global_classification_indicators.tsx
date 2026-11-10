@@ -149,7 +149,7 @@ export default function GlobalClassificationIndicators({levels, globalBanner, di
                                     <DropdownInput
                                         className='classificationPresetDropdownFieldset'
                                         name='globalBannerLevel'
-                                        testId='globalBannerLevel'
+                                        testId='admin.classification.global_banner_level'
                                         options={levelOptions}
                                         value={selectedLevelOption}
                                         onChange={handleLevelChange}

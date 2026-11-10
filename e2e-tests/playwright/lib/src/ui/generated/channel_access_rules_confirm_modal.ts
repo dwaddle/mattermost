@@ -6,8 +6,10 @@
 
 import type {Locator, Page} from '@playwright/test';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
+import {Api} from './api';
+import {ChannelActivityWarningModal} from './channel_activity_warning_modal';
 import {SearchableUserList} from './shared';
 
 /** Scope `channel_access_rules_confirm_modal`. */
@@ -16,9 +18,185 @@ export class ChannelAccessRulesConfirmModal extends Scope {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    /**
+     * `channel_access_rules_confirm_modal.allowed--button` — ChannelAccessRulesConfirmModal (channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx)
+     * Renders only when channel and hasChanges and showUserList.
+     */
+    get allowedButton() {
+        return drivers.button(this.byTestId(`${this.scope}.allowed--button`), {
+            testId: `${this.scope}.allowed--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx#ChannelAccessRulesConfirmModal',
+        });
+    }
+
+    async clickAllowedButton(): Promise<void> {
+        await this.allowedButton.click();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.cancel--button` — ChannelAccessRulesConfirmModal (channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx)
+     * Renders only when hasChanges.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx#ChannelAccessRulesConfirmModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when hasChanges and showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.confirm--button` — ChannelAccessRulesConfirmModal (channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx)
+     * Renders only when hasChanges.
+     * Opens modal ChannelAccessRulesConfirmModal (`channel_access_rules_confirm_modal`).
+     * Opens modal ChannelActivityWarningModal (`channel_activity_warning_modal`).
+     * Goes to '/admin_console/user_management/channels'.
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [
+                Api.AddChannelMember,
+                Api.AssignAccessControlPolicyToChannels,
+                Api.CreateAccessControlPolicy,
+                Api.CreateJob,
+                Api.DeleteAccessControlPolicy,
+                Api.DeleteChannel,
+                Api.GetChannelMembers,
+                Api.GetChannelModerations,
+                Api.GetGroupsByChannel,
+                Api.GetUsersByIds,
+                Api.GetUsersStatusesByIds,
+                Api.LinkGroupSyncable,
+                Api.PatchChannel,
+                Api.PatchChannelModerations,
+                Api.PatchGroupSyncable,
+                Api.RemoveUserFromChannel,
+                Api.RestoreChannel,
+                Api.TestAccessControlPolicyExpression,
+                Api.UnassignAccessControlPolicyFromChannels,
+                Api.UnlinkGroupSyncable,
+                Api.UpdateChannelMemberSchemeRoles,
+                Api.UpdateChannelPrivacy,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx#ChannelAccessRulesConfirmModal',
+        });
+    }
+
+    /** Clicks confirmButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickConfirmButton(): Promise<{
+        channelAccessRulesConfirmModal: ChannelAccessRulesConfirmModal;
+        channelActivityWarningModal: ChannelActivityWarningModal;
+    }> {
+        await this.confirmButton.click();
+        return {
+            channelAccessRulesConfirmModal: new ChannelAccessRulesConfirmModal(
+                this.page,
+                'channel_access_rules_confirm_modal',
+            ),
+            channelActivityWarningModal: new ChannelActivityWarningModal(this.page, 'channel_activity_warning_modal'),
+        };
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.hide_users--button` — ChannelAccessRulesConfirmModal (channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx)
+     * Renders only when channel and hasChanges and showUserList.
+     */
+    get hideUsersButton() {
+        return drivers.button(this.byTestId(`${this.scope}.hide_users--button`), {
+            testId: `${this.scope}.hide_users--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx#ChannelAccessRulesConfirmModal',
+        });
+    }
+
+    async clickHideUsersButton(): Promise<void> {
+        await this.hideUsersButton.click();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.message--text` — ChannelAccessRulesConfirmModal (channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx)
+     * Renders only when channel and hasChanges.
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx#ChannelAccessRulesConfirmModal',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.restricted--button` — ChannelAccessRulesConfirmModal (channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx)
+     * Renders only when channel and hasChanges and showUserList.
+     */
+    get restrictedButton() {
+        return drivers.button(this.byTestId(`${this.scope}.restricted--button`), {
+            testId: `${this.scope}.restricted--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx#ChannelAccessRulesConfirmModal',
+        });
+    }
+
+    async clickRestrictedButton(): Promise<void> {
+        await this.restrictedButton.click();
+    }
+
+    /**
+     * `channel_access_rules_confirm_modal.view_users--button` — ChannelAccessRulesConfirmModal (channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx)
+     * Renders only when channel and hasChanges and !showUserList.
+     */
+    get viewUsersButton() {
+        return drivers.button(this.byTestId(`${this.scope}.view_users--button`), {
+            testId: `${this.scope}.view_users--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_settings_modal/channel_access_rules_confirm_modal.tsx#ChannelAccessRulesConfirmModal',
+        });
+    }
+
+    async clickViewUsersButton(): Promise<void> {
+        await this.viewUsersButton.click();
     }
 
     get users(): SearchableUserList {

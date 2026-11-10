@@ -981,6 +981,7 @@ function ChannelSettingsConfigurationTab({
                                     {channelAttributesEnabled ? (
                                         <>
                                             <BannerTextEditor
+                                                testId='channel_settings_modal.configuration.banner_text'
                                                 value={updatedChannelBanner.text ?? ''}
                                                 attributes={resolvedAttributes}
                                                 onChange={handleBannerTextChange}
@@ -1048,6 +1049,7 @@ function ChannelSettingsConfigurationTab({
                                             to the saved banner there would preview something the author has
                                             just deleted. */}
                                         <BannerPreview
+                                            testId='channel_settings_modal.configuration.banner_preview'
                                             template={updatedChannelBanner.text ?? classificationBanner.bannerText ?? ''}
                                             attributes={resolvedAttributes}
                                             backgroundColor={previewBackgroundColor}

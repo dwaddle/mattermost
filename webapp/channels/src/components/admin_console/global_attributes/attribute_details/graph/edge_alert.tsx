@@ -4,6 +4,9 @@
 import React from 'react';
 import {defineMessages, useIntl} from 'react-intl';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import type {CheckParentEdgeInvalid} from './graph_utils';
 
 type Props = {
@@ -11,7 +14,8 @@ type Props = {
     childName: string;
     parentName: string;
     className: string;
-    testId: string;
+
+    testId: TestId;
 };
 
 export function GraphParentEdgeAlert({result, childName, parentName, className, testId}: Props) {
@@ -38,7 +42,7 @@ export function GraphParentEdgeAlert({result, childName, parentName, className, 
         <div
             className={className}
             role='alert'
-            data-testid={testId}
+            data-testid={withRole(testId, 'alert')}
         >
             {text}
         </div>

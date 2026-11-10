@@ -8,6 +8,7 @@ import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 
 import {PlusIcon} from '@mattermost/compass-icons/components';
 import {buttonClassNames, type ButtonEmphasis} from '@mattermost/shared/components/button';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {FieldVisibility} from '@mattermost/types/properties';
 
 import * as Menu from 'components/menu';
@@ -124,7 +125,7 @@ function AttributeAppliesTo({
         [appliesTo, allowedTypes],
     );
 
-    const renderAddResourceMenu = (triggerId: string, dataTestId: string, label: string, emphasis: ButtonEmphasis) => (
+    const renderAddResourceMenu = (triggerId: string, testId: 'admin.attribute.applies_to.add' | 'admin.attribute.applies_to.add_inline', label: string, emphasis: ButtonEmphasis) => (
         <Menu.Container
             menuButton={{
                 id: triggerId,
@@ -137,7 +138,7 @@ function AttributeAppliesTo({
                         {label}
                     </>
                 ),
-                dataTestId,
+                dataTestId: withRole(testId, 'button'),
             }}
             menu={{
                 id: `${triggerId}-menu`,
@@ -150,6 +151,7 @@ function AttributeAppliesTo({
                     <Menu.Item
                         id={`${triggerId}-${type}`}
                         key={type}
+                        data-testid={part(testId, 'resource', {key: type}, 'menuitem')}
                         disabled={Boolean(blockedReason)}
                         leadingElement={<ResourceTypeIcon type={type}/>}
                         onClick={() => onAdd(type)}
@@ -167,13 +169,13 @@ function AttributeAppliesTo({
 
     const headerAddResource = availableTypes.length > 0 && !hideAddResource ? renderAddResourceMenu(
         ATTRIBUTE_APPLIES_TO_ADD_HEADER_TRIGGER_ID,
-        'attributeAppliesToAddResourceButtonHeader',
+        'admin.attribute.applies_to.add',
         formatMessage(messages.addResourceHeader),
         'tertiary',
     ) : undefined;
 
     return (
-        <div data-testid='attributeAppliesTo'>
+        <div data-testid='admin.attribute.applies_to'>
             <AdminPanel
                 id='attribute_applies_to'
                 className='AttributeAppliesTo'
@@ -184,7 +186,7 @@ function AttributeAppliesTo({
                 {appliesTo.length === 0 ? (
                     <div
                         className='AttributeAppliesTo__emptyState'
-                        data-testid='attributeAppliesToEmptyState'
+                        data-testid='admin.attribute.applies_to.empty'
                     >
                         <h5 className='AttributeAppliesTo__emptyStateHeading'>
                             <FormattedMessage {...messages.emptyStateHeading}/>
@@ -194,7 +196,7 @@ function AttributeAppliesTo({
                         </p>
                         {availableTypes.length > 0 && !hideAddResource && renderAddResourceMenu(
                             'attribute-applies-to-add-inline',
-                            'attributeAppliesToAddResourceButtonInline',
+                            'admin.attribute.applies_to.add_inline',
                             formatMessage(messages.addResourceHeader),
                             'primary',
                         )}
@@ -241,7 +243,7 @@ function AttributeAppliesTo({
                         </div>
                         {availableTypes.length > 0 && !hideAddResource && renderAddResourceMenu(
                             'attribute-applies-to-add-inline',
-                            'attributeAppliesToAddResourceButtonInline',
+                            'admin.attribute.applies_to.add_inline',
                             formatMessage(messages.addResourceInline),
                             'tertiary',
                         )}

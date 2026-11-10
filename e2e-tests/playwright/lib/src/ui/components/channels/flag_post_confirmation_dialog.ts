@@ -25,14 +25,14 @@ export default class FlagPostConfirmationDialog {
 
         this.flagPostReasonInput = container.locator('#FlagPostModal__reason');
         this.flagPostCommentInput = container.locator('#FlagPostModal__comment');
-        this.cancelButton = container.getByRole('button', {name: 'Cancel'});
-        this.submitButton = container.getByRole('button', {name: 'Submit'});
-        this.postContainer = container.getByTestId('FlagPostModal__post-preview_container');
-        this.postText = container.getByTestId('post-message-text');
+        this.cancelButton = container.getByTestId('flag_post_modal.cancel--button');
+        this.submitButton = container.getByTestId('flag_post_modal.confirm--button');
+        this.postContainer = container.getByTestId('flag_post_modal.post_preview');
+        this.postText = container.getByTestId('flag_post_modal.post_preview.message--text');
         this.flagReasonOption = page.getByRole('listbox');
         this.flagReasonMenuItems = (reason: string) => this.flagReasonOption.getByRole('option', {name: reason});
-        this.cannotFlagPostErrorMessage = container.getByTestId('flag-post-request-error-text');
-        this.requireCommentsErrorMessage = container.getByTestId('advanced-textbox-error-text');
+        this.cannotFlagPostErrorMessage = container.getByTestId('flag_post_modal.request_error--text');
+        this.requireCommentsErrorMessage = container.getByTestId('flag_post_modal.comment.error--text');
     }
 
     async fillFlagComment(comment: string) {

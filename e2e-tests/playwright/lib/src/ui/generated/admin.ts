@@ -5,51 +5,84 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {AccessControlPolicy, PolicySimulationSession} from '@mattermost/types/access_control';
 import type {Group} from '@mattermost/types/groups';
 import type {HealthFinding} from '@mattermost/types/health';
 import type {Job} from '@mattermost/types/jobs';
+import type {PropertyFieldOption} from '@mattermost/types/properties';
+import type {BoardsPropertyFieldOption} from '@mattermost/types/properties_board';
+import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {Scheme} from '@mattermost/types/schemes';
 import type {Team} from '@mattermost/types/teams';
+import type {UserProfile} from '@mattermost/types/users';
 
-import type {AdminSettingKey} from '../../aria';
-import {Scope, drivers, settingTestKey} from '../../aria';
+import type {AdminSettingKey, PluginKey} from '../../aria';
+import {Scope, drivers, settingTestKey, textTestKey} from '../../aria';
 
 import {Api} from './api';
 import {AddUsersToRoleModal} from './add_users_to_role_modal';
 import {AddUsersToTeamModal} from './add_users_to_team_modal';
+import {AttributeModal} from './attribute_modal';
+import {ChannelAccessRulesConfirmModal} from './channel_access_rules_confirm_modal';
 import {ChannelInviteModal} from './channel_invite_modal';
 import {ChannelSelectorModal} from './channel_selector_modal';
+import {JobDetailsModal} from './job_details_modal';
 import {ManageRolesModal} from './manage_roles_modal';
 import {ManageTeamsModal} from './manage_teams_modal';
 import {AdminConsolePage} from './pages';
+import {PolicySelectionModal} from './policy_selection_modal';
 import {ResetPasswordModal} from './reset_password_modal';
 import {
     AlertBanner,
+    Channels,
+    Choice,
     ColorInput,
     ConfirmModal,
     DataGrid,
+    DeleteModal,
     DropdownInput,
     Footer,
     Input,
-    SearchableUserList,
+    Policies,
+    Rules,
 } from './shared';
 import {TeamSelectorModal} from './team_selector_modal';
 import {UserSettingsModal} from './user_settings_modal';
 import type {
+    AdminAttributeAppliesToAddInlineResource,
+    AdminAttributeExternalSourceSource,
+    AdminBlocked,
     AdminChart,
+    AdminClassificationAppliesToChannelSettingsChangePolicyMenuPolicy,
+    AdminClassificationAppliesToChannelSettingsLocation,
+    AdminColor,
     AdminCreate,
+    AdminDecision,
     AdminError,
     AdminGroupBy,
     AdminInterval,
     AdminItem,
     AdminLevel,
+    AdminLocation,
     AdminNotification,
     AdminOption,
+    AdminPermission,
+    AdminPolicy,
     AdminPreset,
+    AdminProfileDisplay,
+    AdminResource,
+    AdminRole,
+    AdminScope,
+    AdminSimulateAccessUserDecision,
+    AdminSource,
+    AdminStacked,
     AdminStat,
+    AdminState,
     AdminStatisticsTable,
     AdminTab,
     AdminTable,
+    AdminType,
+    AdminUserAttributeSource,
 } from './sets';
 
 /** The form fields of `admin.accept_invite_modal`. */
@@ -57,6 +90,46 @@ export type AdminAcceptInviteModalFormValues = {
     code?: string;
     name?: string;
     password?: string;
+};
+/** The form fields of `admin.access_control.policy.edit_policy.name`. */
+export type AdminAccessControlPolicyEditPolicyNameFormValues = {
+    valueSpinbutton?: string;
+    valueTextbox: string;
+};
+/** The form fields of `admin.attribute`. */
+export type AdminAttributeFormValues = {
+    displayName: string;
+    uniqueName?: string;
+};
+/** The read-only parts of a `admin.attribute.graph.row` item. */
+export type AdminAttributeGraphRowRow = {
+    name: string | null;
+};
+/** The read-only parts of a `admin.attribute.ranks.option` item. */
+export type AdminAttributeRanksOptionRow = {
+    badge: string | null;
+    label: string | null;
+};
+/** The read-only parts of a `admin.attribute.values.option` item. */
+export type AdminAttributeValuesOptionRow = {
+    label: string | null;
+};
+/** The read-only parts of a `admin.attributes.row` item. */
+export type AdminAttributesRowRow = {
+    classificationSubtitle: string | null;
+    name: string | null;
+    options: string | null;
+    source: string | null;
+    type: string | null;
+};
+/** The read-only parts of a `admin.board_attributes.row` item. */
+export type AdminBoardAttributesRowRow = {
+    nameError: string | null;
+    valuesError: string | null;
+};
+/** The read-only parts of a `admin.board_attributes.row.option` item. */
+export type AdminBoardAttributesRowOptionRow = {
+    locked: string | null;
 };
 /** The form fields of `admin.channel`. */
 export type AdminChannelFormValues = {
@@ -78,6 +151,16 @@ export type AdminChannelModerationPermissionFormValues = {
 /** The read-only parts of a `admin.channels.row` item. */
 export type AdminChannelsRowRow = {
     name: string | null;
+};
+/** The form fields of `admin.classification`. */
+export type AdminClassificationFormValues = {
+    clearanceAttribute?: boolean;
+    name?: string;
+};
+/** The form fields of `admin.classification.levels.row`. */
+export type AdminClassificationLevelsRowFormValues = {
+    color: string;
+    name: string;
 };
 /** The form fields of `admin.content_flagging.reviewers`. */
 export type AdminContentFlaggingReviewersFormValues = {
@@ -138,6 +221,15 @@ export type AdminServerLogsFormValues = {
     node?: string;
     search: string;
 };
+/** The read-only parts of a `admin.session_attributes.row` item. */
+export type AdminSessionAttributesRowRow = {
+    grace: string | null;
+    name: string | null;
+    serverLabel: string | null;
+    status: string | null;
+    ttl: string | null;
+    type: string | null;
+};
 /** The form fields of `admin.setting`. */
 export type AdminSettingFormValues = {
     unlimited: boolean;
@@ -176,10 +268,15 @@ export type AdminStatisticsTableItemRow = {
 export type AdminTeamFormValues = {
     allowAll?: boolean;
     allowedDomains?: boolean;
+    autoAddMembers: boolean;
     description: string;
     name: string;
     policyEnforce: boolean;
     syncGroups: boolean;
+};
+/** The read-only parts of a `admin.team.access_policy.policy` item. */
+export type AdminTeamAccessPolicyPolicyRow = {
+    name: string | null;
 };
 /** The read-only parts of a `admin.teams.row` item. */
 export type AdminTeamsRowRow = {
@@ -193,6 +290,16 @@ export type AdminUserFormValues = {
     firstName: string;
     lastName: string;
     username: string;
+};
+/** The form fields of `admin.user.attribute`. */
+export type AdminUserAttributeFormValues = {
+    valueCombobox: string;
+    valueTextbox: string;
+};
+/** The read-only parts of a `admin.user.attribute` item. */
+export type AdminUserAttributeRow = {
+    badge: string | null;
+    name: string | null;
 };
 /** The form fields of `admin.users.reset_email_modal`. */
 export type AdminUsersResetEmailModalFormValues = {
@@ -254,8 +361,9 @@ export class Admin extends Scope {
 
     /**
      * `admin.save--button` — SaveButton (channels/src/components/save_button.tsx)
+     * Opens modal ConfirmRemoveAppliesToModal (`admin.attribute.remove_applies_to_modal`).
+     * Opens modal PolicyConfirmationModal (`admin.access_control.policy.confirm_modal`).
      * Goes to '/admin_console/compliance/data_retention_settings'.
-     * Goes to '/admin_console/user_management/permissions'.
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     get saveButton() {
@@ -265,8 +373,13 @@ export class Admin extends Scope {
             effects: [
                 Api.AddChannelsToRetentionPolicy,
                 Api.AddTeamsToRetentionPolicy,
+                Api.AssignAccessControlPolicyToChannels,
+                Api.CreateAccessControlPolicy,
                 Api.CreateDataRetentionPolicy,
+                Api.CreatePropertyField,
                 Api.CreateScheme,
+                Api.DeletePropertyField,
+                Api.GetPropertyFields,
                 Api.GetRolesByNames,
                 Api.PatchConfig,
                 Api.PatchDataRetentionPolicy,
@@ -274,6 +387,9 @@ export class Admin extends Scope {
                 Api.PatchScheme,
                 Api.RemoveChannelsFromRetentionPolicy,
                 Api.RemoveTeamsFromRetentionPolicy,
+                Api.UnassignAccessControlPolicyFromChannels,
+                Api.UpdateAccessControlPoliciesActive,
+                Api.UpdatePropertyField,
                 Api.UpdateTeamScheme,
             ],
             unknownEffects: true,
@@ -281,8 +397,19 @@ export class Admin extends Scope {
         });
     }
 
-    async clickSaveButton(): Promise<void> {
+    /** Clicks saveButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickSaveButton(): Promise<{
+        removeAppliesToModal: DeleteModal;
+        confirmModal: AdminAccessControlPolicyConfirmModal;
+    }> {
         await this.saveButton.click();
+        return {
+            removeAppliesToModal: new DeleteModal(this.page, `${this.scope}.attribute.remove_applies_to_modal`),
+            confirmModal: new AdminAccessControlPolicyConfirmModal(
+                this.page,
+                `${this.scope}.access_control.policy.confirm_modal`,
+            ),
+        };
     }
 
     /**
@@ -318,8 +445,33 @@ export class Admin extends Scope {
         return new AdminAcceptInviteModal(this.page, `${this.scope}.accept_invite_modal`, this.root);
     }
 
+    get accessControl(): AdminAccessControl {
+        return new AdminAccessControl(this.page, `${this.scope}.access_control`, this.root);
+    }
+
+    /**
+     * `admin.attribute` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get attribute(): AdminAttribute {
+        return new AdminAttribute(this.page, `${this.scope}.attribute`, this.root);
+    }
+
+    /**
+     * `admin.attributes` — GlobalAttributes (channels/src/components/admin_console/global_attributes/global_attributes.tsx)
+     */
+    get attributes(): AdminAttributes {
+        return new AdminAttributes(this.page, `${this.scope}.attributes`, this.root);
+    }
+
     get autoTranslation(): AdminAutoTranslation {
         return new AdminAutoTranslation(this.page, `${this.scope}.auto_translation`, this.root);
+    }
+
+    /**
+     * `admin.board_attributes` — BoardAttributes (channels/src/components/admin_console/board_attributes/board_attributes.tsx)
+     */
+    get boardAttributes(): AdminBoardAttributes {
+        return new AdminBoardAttributes(this.page, `${this.scope}.board_attributes`, this.root);
     }
 
     get brandImage(): AdminBrandImage {
@@ -335,6 +487,13 @@ export class Admin extends Scope {
      */
     get channels(): AdminChannels {
         return new AdminChannels(this.page, `${this.scope}.channels`, this.root);
+    }
+
+    /**
+     * `admin.classification` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     */
+    get classification(): AdminClassification {
+        return new AdminClassification(this.page, `${this.scope}.classification`, this.root);
     }
 
     get contentFlagging(): AdminContentFlagging {
@@ -417,6 +576,17 @@ export class Admin extends Scope {
         return new AdminPassword(this.page, `${this.scope}.password`, this.root);
     }
 
+    /**
+     * `admin.permission_policies` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get permissionPolicies(): AdminPermissionPolicies {
+        return new AdminPermissionPolicies(this.page, `${this.scope}.permission_policies`, this.root);
+    }
+
+    get permissionPolicy(): AdminPermissionPolicy {
+        return new AdminPermissionPolicy(this.page, `${this.scope}.permission_policy`, this.root);
+    }
+
     get permissionScheme(): AdminPermissionScheme {
         return new AdminPermissionScheme(this.page, `${this.scope}.permission_scheme`, this.root);
     }
@@ -455,8 +625,8 @@ export class Admin extends Scope {
         return new AdminRevokeTokens(this.page, `${this.scope}.revoke_tokens`, this.root);
     }
 
-    get role(): AdminRole {
-        return new AdminRole(this.page, `${this.scope}.role`, this.root);
+    get role(): AdminRoleScope {
+        return new AdminRoleScope(this.page, `${this.scope}.role`, this.root);
     }
 
     /**
@@ -496,6 +666,13 @@ export class Admin extends Scope {
     }
 
     /**
+     * `admin.session_attributes` — SessionAttributesPage (channels/src/components/admin_console/session_attributes/session_attributes.tsx)
+     */
+    get sessionAttributes(): AdminSessionAttributes {
+        return new AdminSessionAttributes(this.page, `${this.scope}.session_attributes`, this.root);
+    }
+
+    /**
      * `admin.setting:{key}` — GeneratedSetting (channels/src/components/admin_console/generated_setting.tsx)
      */
     setting(setting: AdminSettingKey): AdminSetting {
@@ -522,6 +699,13 @@ export class Admin extends Scope {
      */
     get sidebar(): AdminSidebar {
         return new AdminSidebar(this.page, `${this.scope}.sidebar`, this.root);
+    }
+
+    /**
+     * `admin.simulate_access` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get simulateAccess(): AdminSimulateAccess {
+        return new AdminSimulateAccess(this.page, `${this.scope}.simulate_access`, this.root);
     }
 
     get statistics(): AdminStatistics {
@@ -733,6 +917,4274 @@ export class AdminAcceptInviteModal extends Scope {
     }
 }
 
+/** Scope `admin.access_control`. */
+export class AdminAccessControl extends Scope {
+    constructor(page: Page, scope = 'admin.access_control', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.run_sync--button` — AccessControlSyncJobTable (channels/src/components/admin_console/access_control/jobs/access_control_sync_job_table.tsx)
+     */
+    get runSyncButton() {
+        return drivers.button(this.byTestId(`${this.scope}.run_sync--button`), {
+            testId: `${this.scope}.run_sync--button`,
+            role: 'button',
+            effects: [Api.CreateJob, Api.GetJobsByType],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/jobs/access_control_sync_job_table.tsx#AccessControlSyncJobTable',
+        });
+    }
+
+    async clickRunSyncButton(): Promise<void> {
+        await this.runSyncButton.click();
+    }
+
+    /**
+     * `admin.access_control.sync_jobs_description--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get syncJobsDescriptionText() {
+        return drivers.text(this.byTestId(`${this.scope}.sync_jobs_description--text`), {
+            testId: `${this.scope}.sync_jobs_description--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getSyncJobsDescriptionText(): Promise<string> {
+        return this.syncJobsDescriptionText.text();
+    }
+
+    /**
+     * `admin.access_control.sync_jobs_title--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get syncJobsTitleText() {
+        return drivers.text(this.byTestId(`${this.scope}.sync_jobs_title--text`), {
+            testId: `${this.scope}.sync_jobs_title--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getSyncJobsTitleText(): Promise<string> {
+        return this.syncJobsTitleText.text();
+    }
+
+    /**
+     * `admin.access_control.team_sync_note` — AccessControlSyncJobTable (channels/src/components/admin_console/access_control/jobs/access_control_sync_job_table.tsx)
+     * Renders only when teamAbacEnabled.
+     */
+    get teamSyncNote() {
+        return drivers.container(this.byTestId(`${this.scope}.team_sync_note`), {
+            testId: `${this.scope}.team_sync_note`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/jobs/access_control_sync_job_table.tsx#AccessControlSyncJobTable',
+        });
+    }
+
+    /**
+     * `admin.access_control.policies` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get policies(): Policies {
+        return new Policies(this.page, `${this.scope}.policies`, this.root);
+    }
+
+    get policy(): AdminAccessControlPolicy {
+        return new AdminAccessControlPolicy(this.page, `${this.scope}.policy`, this.root);
+    }
+}
+
+/** Scope `admin.access_control.policy`. */
+export class AdminAccessControlPolicy extends Scope {
+    constructor(page: Page, scope = 'admin.access_control.policy', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policy.add_channels--button` — PolicyDetails (channels/src/components/admin_console/access_control/policy_details/policy_details.tsx)
+     * Opens modal ChannelSelectorModal (`channel_selector_modal`).
+     */
+    get addChannelsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_channels--button`), {
+            testId: `${this.scope}.add_channels--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails',
+        });
+    }
+
+    /** Clicks addChannelsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAddChannelsButton(): Promise<ChannelSelectorModal> {
+        await this.addChannelsButton.click();
+        return new ChannelSelectorModal(this.page, 'channel_selector_modal');
+    }
+
+    /**
+     * `admin.access_control.policy.back--link` — PolicyDetails (channels/src/components/admin_console/access_control/policy_details/policy_details.tsx)
+     */
+    get backLink() {
+        return drivers.link(this.byTestId(`${this.scope}.back--link`), {
+            testId: `${this.scope}.back--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails',
+        });
+    }
+
+    async clickBackLink(): Promise<void> {
+        await this.backLink.click();
+    }
+
+    /**
+     * `admin.access_control.policy.delete--button` — PolicyDetails (channels/src/components/admin_console/access_control/policy_details/policy_details.tsx)
+     * Renders only when policyId.
+     * Opens modal GenericModal (`admin.access_control.policy.delete_modal`).
+     */
+    get deleteButton() {
+        return drivers.button(this.byTestId(`${this.scope}.delete--button`), {
+            testId: `${this.scope}.delete--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails',
+        });
+    }
+
+    /** Clicks deleteButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDeleteButton(): Promise<DeleteModal> {
+        await this.deleteButton.click();
+        return new DeleteModal(this.page, `${this.scope}.delete_modal`);
+    }
+
+    /**
+     * `admin.access_control.policy.delete_masked_values_warning` — PolicyDetails (channels/src/components/admin_console/access_control/policy_details/policy_details.tsx)
+     * Renders only when policyId and hasMaskedRows.
+     */
+    get deleteMaskedValuesWarning() {
+        return drivers.container(this.byTestId(`${this.scope}.delete_masked_values_warning`), {
+            testId: `${this.scope}.delete_masked_values_warning`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.error--text` — PolicyDetails (channels/src/components/admin_console/access_control/policy_details/policy_details.tsx)
+     * Renders only when serverError.
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `admin.access_control.policy.masked_values_warning` — PolicyDetails (channels/src/components/admin_console/access_control/policy_details/policy_details.tsx)
+     * Renders only when hasMaskedRows.
+     */
+    get maskedValuesWarning() {
+        return drivers.container(this.byTestId(`${this.scope}.masked_values_warning`), {
+            testId: `${this.scope}.masked_values_warning`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.switch_mode--button` — PolicyDetails (channels/src/components/admin_console/access_control/policy_details/policy_details.tsx)
+     */
+    get switchModeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.switch_mode--button`), {
+            testId: `${this.scope}.switch_mode--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails',
+        });
+    }
+
+    async clickSwitchModeButton(): Promise<void> {
+        await this.switchModeButton.click();
+    }
+
+    get cel(): Cel {
+        return new Cel(this.page, `${this.scope}.cel`, this.root);
+    }
+
+    /**
+     * `admin.access_control.policy.channels` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get channels(): Channels {
+        return new Channels(this.page, `${this.scope}.channels`, this.root);
+    }
+
+    /**
+     * `admin.access_control.policy.confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmModal(): AdminAccessControlPolicyConfirmModal {
+        return new AdminAccessControlPolicyConfirmModal(this.page, `${this.scope}.confirm_modal`, this.root);
+    }
+
+    /**
+     * `admin.access_control.policy.delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showDeleteConfirmationModal.
+     */
+    get deleteModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.delete_modal`, this.root);
+    }
+
+    get editPolicy(): AdminAccessControlPolicyEditPolicy {
+        return new AdminAccessControlPolicyEditPolicy(this.page, `${this.scope}.edit_policy`, this.root);
+    }
+
+    /**
+     * `admin.access_control.policy.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when !(editorMode === 'cel').
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
+    }
+}
+
+/** Rendered at `admin.access_control.policy.cel`, `admin.permission_policy.cel`: one class, constructed with the scope it is mounted at. */
+export class Cel extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policy.cel.input` — CELEditor (channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx)
+     * Renders only when editorMode === 'cel'.
+     */
+    get input() {
+        return drivers.container(this.byTestId(`${this.scope}.input`), {
+            testId: `${this.scope}.input`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx#CELEditor',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.cel.masked--alert` — CELEditor (channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx)
+     * Renders only when hasMaskedRows and editorMode === 'cel'.
+     */
+    get maskedAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.masked--alert`), {
+            testId: `${this.scope}.masked--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx#CELEditor',
+        });
+    }
+
+    /**
+     * `admin.access_control.policy.cel.status--text` — CELEditor (channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx)
+     * Renders only when editorMode === 'cel'.
+     */
+    get statusText() {
+        return drivers.text(this.byTestId(`${this.scope}.status--text`), {
+            testId: `${this.scope}.status--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/cel_editor/editor.tsx#CELEditor',
+        });
+    }
+
+    getStatusText(): Promise<string> {
+        return this.statusText.text();
+    }
+
+    /**
+     * `admin.access_control.policy.cel.test--button` — TestButton (channels/src/components/admin_console/access_control/editors/shared.tsx)
+     * Renders only when editorMode === 'cel'.
+     */
+    get testButton() {
+        return drivers.button(this.byTestId(`${this.scope}.test--button`), {
+            testId: `${this.scope}.test--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/editors/shared.tsx#TestButton',
+        });
+    }
+
+    async clickTestButton(): Promise<void> {
+        await this.testButton.click();
+    }
+}
+
+/** Scope `admin.access_control.policy.confirm_modal`. */
+export class AdminAccessControlPolicyConfirmModal extends Scope {
+    constructor(page: Page, scope = 'admin.access_control.policy.confirm_modal', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.access_control.policy.confirm_modal.cancel--button` — PolicyConfirmationModal (channels/src/components/admin_console/access_control/modals/confirmation/confirmation_modal.tsx)
+     * Renders only when showConfirmationModal.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/confirmation/confirmation_modal.tsx#PolicyConfirmationModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `admin.access_control.policy.confirm_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `admin.access_control.policy.confirm_modal.confirm--button` — PolicyConfirmationModal (channels/src/components/admin_console/access_control/modals/confirmation/confirmation_modal.tsx)
+     * Renders only when showConfirmationModal.
+     * Goes to '/admin_console/system_attributes/membership_policies'.
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [
+                Api.AssignAccessControlPolicyToChannels,
+                Api.CreateAccessControlPolicy,
+                Api.UnassignAccessControlPolicyFromChannels,
+                Api.UpdateAccessControlPoliciesActive,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/confirmation/confirmation_modal.tsx#PolicyConfirmationModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
+    }
+
+    /**
+     * `admin.access_control.policy.confirm_modal.enforce--checkbox` — PolicyConfirmationModal (channels/src/components/admin_console/access_control/modals/confirmation/confirmation_modal.tsx)
+     * Renders only when showConfirmationModal.
+     */
+    get enforceCheckbox() {
+        return drivers.checkbox(this.byTestId(`${this.scope}.enforce--checkbox`), {
+            testId: `${this.scope}.enforce--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/confirmation/confirmation_modal.tsx#PolicyConfirmationModal',
+        });
+    }
+
+    async setEnforceCheckbox(on: boolean): Promise<void> {
+        await this.enforceCheckbox.set(on);
+    }
+}
+
+/** Rendered at `admin.access_control.policy.edit_policy`, `admin.permission_policies.edit`: one class, constructed with the scope it is mounted at. */
+export class AdminAccessControlPolicyEditPolicy extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.access_control.policy.edit_policy.name` — Setting (channels/src/components/widgets/settings/setting.tsx)
+     */
+    get name(): AdminAccessControlPolicyEditPolicyName {
+        return new AdminAccessControlPolicyEditPolicyName(this.page, `${this.scope}.name`, this.root);
+    }
+}
+
+/** Rendered at `admin.access_control.policy.edit_policy.name`, `admin.permission_policies.edit.name`: one class, constructed with the scope it is mounted at. */
+export class AdminAccessControlPolicyEditPolicyName extends Scope {
+    /**
+     * `admin.access_control.policy.edit_policy.name.help--text` — Setting (channels/src/components/widgets/settings/setting.tsx)
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/settings/setting.tsx#Setting',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `admin.access_control.policy.edit_policy.name.label--text` — Setting (channels/src/components/widgets/settings/setting.tsx)
+     * Renders only when label.
+     */
+    get labelText() {
+        return drivers.text(this.byTestId(`${this.scope}.label--text`), {
+            testId: `${this.scope}.label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/settings/setting.tsx#Setting',
+        });
+    }
+
+    getLabelText(): Promise<string> {
+        return this.labelText.text();
+    }
+
+    /**
+     * `admin.access_control.policy.edit_policy.name.value--spinbutton` — TextSetting (channels/src/components/widgets/settings/text_setting.tsx)
+     * Renders only when !(type === 'textarea') and inputType === 'number'.
+     */
+    get valueSpinButton() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--spinbutton`), {
+            testId: `${this.scope}.value--spinbutton`,
+            role: 'spinbutton',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/settings/text_setting.tsx#TextSetting',
+        });
+    }
+
+    async fillValueSpinButton(value: string): Promise<void> {
+        await this.valueSpinButton.fill(value);
+    }
+
+    /**
+     * `admin.access_control.policy.edit_policy.name.value--textbox` — TextSetting (channels/src/components/widgets/settings/text_setting.tsx)
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/settings/text_setting.tsx#TextSetting',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<AdminAccessControlPolicyEditPolicyNameFormValues>): Promise<void> {
+        if (values.valueSpinbutton !== undefined) {
+            await this.valueSpinButton.fill(values.valueSpinbutton);
+        }
+        if (values.valueTextbox !== undefined) {
+            await this.valueTextbox.fill(values.valueTextbox);
+        }
+    }
+}
+
+/** Scope `admin.attribute`. */
+export class AdminAttribute extends Scope {
+    constructor(page: Page, scope = 'admin.attribute', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.back--link` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get backLink() {
+        return drivers.link(this.byTestId(`${this.scope}.back--link`), {
+            testId: `${this.scope}.back--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    async clickBackLink(): Promise<void> {
+        await this.backLink.click();
+    }
+
+    /**
+     * `admin.attribute.cancel--link` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get cancelLink() {
+        return drivers.link(this.byTestId(`${this.scope}.cancel--link`), {
+            testId: `${this.scope}.cancel--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    async clickCancelLink(): Promise<void> {
+        await this.cancelLink.click();
+    }
+
+    /**
+     * `admin.attribute.display_name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get displayNameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.display_name--textbox`), {
+            testId: `${this.scope}.display_name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillDisplayNameTextbox(value: string): Promise<void> {
+        await this.displayNameTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attribute.options_label--text` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get optionsLabelText() {
+        return drivers.text(this.byTestId(`${this.scope}.options_label--text`), {
+            testId: `${this.scope}.options_label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    getOptionsLabelText(): Promise<string> {
+        return this.optionsLabelText.text();
+    }
+
+    /**
+     * `admin.attribute.save_error--alert` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when errorKind.
+     */
+    get saveErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.save_error--alert`), {
+            testId: `${this.scope}.save_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    /**
+     * `admin.attribute.type--button` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     * Opens menu menu (`admin.attribute.type`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get typeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.type--button`), {
+            testId: `${this.scope}.type--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+
+    /** Clicks typeButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickTypeButton(): Promise<AdminAttributeType> {
+        await this.typeButton.click();
+        return new AdminAttributeType(this.page, `${this.scope}.type`);
+    }
+
+    /**
+     * `admin.attribute.type_label--text` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get typeLabelText() {
+        return drivers.text(this.byTestId(`${this.scope}.type_label--text`), {
+            testId: `${this.scope}.type_label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    getTypeLabelText(): Promise<string> {
+        return this.typeLabelText.text();
+    }
+
+    /**
+     * `admin.attribute.type_locked` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when typeLocked.
+     */
+    get typeLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.type_locked`), {
+            testId: `${this.scope}.type_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    /**
+     * `admin.attribute.unique_name--text` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when !isEditingName.
+     */
+    get uniqueNameText() {
+        return drivers.text(this.byTestId(`${this.scope}.unique_name--text`), {
+            testId: `${this.scope}.unique_name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    getUniqueNameText(): Promise<string> {
+        return this.uniqueNameText.text();
+    }
+
+    /**
+     * `admin.attribute.unique_name--textbox` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when isEditingName.
+     */
+    get uniqueNameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.unique_name--textbox`), {
+            testId: `${this.scope}.unique_name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    async fillUniqueNameTextbox(value: string): Promise<void> {
+        await this.uniqueNameTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attribute.applies_to` — AttributeAppliesTo (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to.tsx)
+     */
+    get appliesTo(): AdminAttributeAppliesTo {
+        return new AdminAttributeAppliesTo(this.page, `${this.scope}.applies_to`);
+    }
+
+    /**
+     * `admin.attribute.external_source` — AttributeExternalSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when !isPluginOwned and showsExternalSource && fieldType !== 'graph'.
+     */
+    get externalSource(): AdminAttributeExternalSource {
+        return new AdminAttributeExternalSource(this.page, `${this.scope}.external_source`, this.root);
+    }
+
+    /**
+     * `admin.attribute.graph` — AttributeOptionsGraphValues (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_values.tsx)
+     * Renders only when isHierarchical.
+     */
+    get graph(): AdminAttributeGraph {
+        return new AdminAttributeGraph(this.page, `${this.scope}.graph`, this.root);
+    }
+
+    get options(): AdminAttributeOptions {
+        return new AdminAttributeOptions(this.page, `${this.scope}.options`, this.root);
+    }
+
+    /**
+     * `admin.attribute.owners_source` — AttributeOwnersSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx)
+     * Renders only when !isPluginOwned and isOwned.
+     */
+    get ownersSource(): AdminAttributeOwnersSource {
+        return new AdminAttributeOwnersSource(this.page, `${this.scope}.owners_source`, this.root);
+    }
+
+    /**
+     * `admin.attribute.plugin_source` — AttributePluginSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_plugin_source.tsx)
+     * Renders only when isPluginOwned.
+     */
+    get pluginSource(): AdminAttributePluginSource {
+        return new AdminAttributePluginSource(this.page, `${this.scope}.plugin_source`, this.root);
+    }
+
+    /**
+     * `admin.attribute.ranks` — AttributeOptionsRankValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     * Renders only when !isHierarchical and !optionsOwnedBySync and typeSupportsOptions.
+     */
+    get ranks(): AdminAttributeRanks {
+        return new AdminAttributeRanks(this.page, `${this.scope}.ranks`, this.root);
+    }
+
+    /**
+     * `admin.attribute.remove_applies_to_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get removeAppliesToModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.remove_applies_to_modal`, this.root);
+    }
+
+    get type(): AdminAttributeType {
+        return new AdminAttributeType(this.page, `${this.scope}.type`);
+    }
+
+    get uniqueName(): AdminAttributeUniqueName {
+        return new AdminAttributeUniqueName(this.page, `${this.scope}.unique_name`, this.root);
+    }
+
+    /**
+     * `admin.attribute.values` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     * Renders only when !isHierarchical and !optionsOwnedBySync and optionsOwnedBySync.
+     */
+    get values(): AdminAttributeValues {
+        return new AdminAttributeValues(this.page, `${this.scope}.values`, this.root);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<AdminAttributeFormValues>): Promise<void> {
+        if (values.displayName !== undefined) {
+            await this.displayNameTextbox.fill(values.displayName);
+        }
+        if (values.uniqueName !== undefined) {
+            await this.uniqueNameTextbox.fill(values.uniqueName);
+        }
+    }
+
+    /** Reads every field (a field that isn't rendered reads as `undefined`). */
+    async read(): Promise<AdminAttributeFormValues> {
+        const vDisplayName = await this.displayNameTextbox.value();
+        const vUniqueName = (await this.uniqueNameTextbox.locator.count())
+            ? await this.uniqueNameTextbox.value()
+            : undefined;
+        return {
+            displayName: vDisplayName,
+            uniqueName: vUniqueName,
+        };
+    }
+}
+
+/** Scope `admin.attribute.applies_to`. */
+export class AdminAttributeAppliesTo extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.applies_to', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.applies_to.add--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attribute.applies_to`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks addButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickAddButton(): Promise<AdminAttributeAppliesTo> {
+        await this.addButton.click();
+        return new AdminAttributeAppliesTo(this.page, this.scope);
+    }
+
+    /**
+     * `admin.attribute.applies_to.add_inline--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attribute.applies_to`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get addInlineButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_inline--button`), {
+            testId: `${this.scope}.add_inline--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks addInlineButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickAddInlineButton(): Promise<AdminAttributeAppliesTo> {
+        await this.addInlineButton.click();
+        return new AdminAttributeAppliesTo(this.page, this.scope);
+    }
+
+    /**
+     * `admin.attribute.applies_to.empty` — AttributeAppliesTo (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to.tsx)
+     * Renders only when appliesTo.length === 0.
+     */
+    get empty() {
+        return drivers.container(this.byTestId(`${this.scope}.empty`), {
+            testId: `${this.scope}.empty`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to.tsx#AttributeAppliesTo',
+        });
+    }
+
+    get add(): AdminAttributeAppliesToAdd {
+        return new AdminAttributeAppliesToAdd(this.page, `${this.scope}.add`, this.root);
+    }
+
+    get addInline(): AdminAttributeAppliesToAdd {
+        return new AdminAttributeAppliesToAdd(this.page, `${this.scope}.add_inline`, this.root);
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel` — AttributeAppliesToChannelItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx)
+     * Renders only when !(appliesTo.length === 0) and type === 'channel'.
+     */
+    get channel(): AdminAttributeAppliesToChannel {
+        return new AdminAttributeAppliesToChannel(this.page, `${this.scope}.channel`, this.root);
+    }
+
+    /**
+     * `admin.attribute.applies_to.post` — AttributeAppliesToPostItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx)
+     */
+    get post(): AdminAttributeAppliesToPost {
+        return new AdminAttributeAppliesToPost(this.page, `${this.scope}.post`, this.root);
+    }
+
+    /**
+     * `admin.attribute.applies_to.user` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     */
+    get user(): AdminAttributeAppliesToUser {
+        return new AdminAttributeAppliesToUser(this.page, `${this.scope}.user`, this.root);
+    }
+}
+
+/** Rendered at `admin.attribute.applies_to.add`, `admin.attribute.applies_to.add_inline`: one class, constructed with the scope it is mounted at. */
+export class AdminAttributeAppliesToAdd extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.applies_to.add.resource:{key}--menuitem` — AttributeAppliesTo (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to.tsx)
+     */
+    resource(resource: AdminAttributeAppliesToAddInlineResource | AdminResource) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.resource:${resource}--menuitem`), {
+            testId: `${this.scope}.resource:${resource}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to.tsx#AttributeAppliesTo',
+        });
+    }
+
+    /** Every `admin.attribute.applies_to.add.resource:{key}--menuitem` in the scope. */
+    get resourceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.resource:`, '--menuitem');
+    }
+
+    /** The keys of every `admin.attribute.applies_to.add.resource:{key}--menuitem` in the scope, in document order. */
+    resourceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.resource:`, '--menuitem');
+    }
+
+    get channelMenuItem() {
+        return this.resource('channel');
+    }
+
+    get postMenuItem() {
+        return this.resource('post');
+    }
+
+    get userMenuItem() {
+        return this.resource('user');
+    }
+
+    /** Every `admin.attribute.applies_to.add.resource:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.resourceList).toHaveKeys([…])`. */
+    get resourceList() {
+        return this.keyedList(
+            `${this.scope}.resource:`,
+            '--menuitem',
+            (key: AdminAttributeAppliesToAddInlineResource | AdminResource) =>
+                drivers.menuitem(this.byTestId(`${this.scope}.resource:${key}--menuitem`), {
+                    testId: `${this.scope}.resource:${key}--menuitem`,
+                    role: 'menuitem',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to.tsx#AttributeAppliesTo',
+                }),
+        );
+    }
+}
+
+/** Scope `admin.attribute.applies_to.channel`. */
+export class AdminAttributeAppliesToChannel extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.applies_to.channel', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.body--region` — AttributeAppliesToChannelItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx)
+     * Renders only when !(appliesTo.length === 0) and type === 'channel' and isOpen.
+     */
+    get bodyRegion() {
+        return drivers.text(this.byTestId(`${this.scope}.body--region`), {
+            testId: `${this.scope}.body--region`,
+            role: 'region',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx#AttributeAppliesToChannelItem',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.remove--button` — AttributeAppliesToChannelItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx)
+     * Renders only when !(appliesTo.length === 0) and type === 'channel'.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx#AttributeAppliesToChannelItem',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.remove_locked` — AttributeAppliesToChannelItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx)
+     * Renders only when !(appliesTo.length === 0) and type === 'channel' and isOpen.
+     */
+    get removeLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.remove_locked`), {
+            testId: `${this.scope}.remove_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx#AttributeAppliesToChannelItem',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.summary--text` — AttributeAppliesToChannelItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx)
+     * Renders only when !(appliesTo.length === 0) and type === 'channel'.
+     */
+    get summaryText() {
+        return drivers.text(this.byTestId(`${this.scope}.summary--text`), {
+            testId: `${this.scope}.summary--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx#AttributeAppliesToChannelItem',
+        });
+    }
+
+    getSummaryText(): Promise<string> {
+        return this.summaryText.text();
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.toggle--button` — AttributeAppliesToChannelItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx)
+     * Renders only when !(appliesTo.length === 0) and type === 'channel'.
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx#AttributeAppliesToChannelItem',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.toggle_locked` — AttributeAppliesToChannelItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx)
+     * Renders only when !(appliesTo.length === 0) and type === 'channel' and lockedTooltip.
+     */
+    get toggleLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.toggle_locked`), {
+            testId: `${this.scope}.toggle_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_channel_item.tsx#AttributeAppliesToChannelItem',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.settings` — ChannelsResourceSettings (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx)
+     * Renders only when isOpen.
+     */
+    get settings(): AdminSettings {
+        return new AdminSettings(this.page, `${this.scope}.settings`, this.root);
+    }
+}
+
+/** Rendered at `admin.attribute.applies_to.channel.settings`, `admin.classification.applies_to.channel.settings`: one class, constructed with the scope it is mounted at. */
+export class AdminSettings extends Scope {
+    /**
+     * `admin.attribute.applies_to.channel.settings.change_policy--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when isOpen.
+     * Opens menu channelsResourceChangePolicyMenu (`admin.attribute.applies_to.channel.settings.change_policy_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get changePolicyButton() {
+        return drivers.button(this.byTestId(`${this.scope}.change_policy--button`), {
+            testId: `${this.scope}.change_policy--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks changePolicyButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickChangePolicyButton(): Promise<AdminSettingsChangePolicyMenu> {
+        await this.changePolicyButton.click();
+        return new AdminSettingsChangePolicyMenu(this.page, `${this.scope}.change_policy_menu`);
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.settings.location:{key}--checkbox` — ChannelsResourceSettings (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx)
+     * Renders only when isOpen.
+     */
+    location(location: AdminClassificationAppliesToChannelSettingsLocation | AdminLocation) {
+        return drivers.checkbox(this.byTestId(`${this.scope}.location:${location}--checkbox`), {
+            testId: `${this.scope}.location:${location}--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx#ChannelsResourceSettings',
+        });
+    }
+
+    /** Every `admin.attribute.applies_to.channel.settings.location:{key}--checkbox` in the scope. */
+    get locationItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.location:`, '--checkbox');
+    }
+
+    /** The keys of every `admin.attribute.applies_to.channel.settings.location:{key}--checkbox` in the scope, in document order. */
+    locationKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.location:`, '--checkbox');
+    }
+
+    get displayBannerTopCheckbox() {
+        return this.location('display_banner_top');
+    }
+
+    get displayLabelHeaderCheckbox() {
+        return this.location('display_label_header');
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.settings.required--switch` — ChannelsResourceSettings (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx)
+     * Renders only when requiredEnforcementEnabled and isOpen.
+     */
+    get requiredSwitch() {
+        return drivers.switch(this.byTestId(`${this.scope}.required--switch`), {
+            testId: `${this.scope}.required--switch`,
+            role: 'switch',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx#ChannelsResourceSettings',
+        });
+    }
+
+    async setRequiredSwitch(on: boolean): Promise<void> {
+        await this.requiredSwitch.set(on);
+    }
+
+    get changePolicyMenu(): AdminSettingsChangePolicyMenu {
+        return new AdminSettingsChangePolicyMenu(this.page, `${this.scope}.change_policy_menu`);
+    }
+
+    /** Every `admin.attribute.applies_to.channel.settings.location:{key}--checkbox` in the scope as a list by key, for the list matchers: `expect(x.locationList).toHaveKeys([…])`. */
+    get locationList() {
+        return this.keyedList(
+            `${this.scope}.location:`,
+            '--checkbox',
+            (key: AdminClassificationAppliesToChannelSettingsLocation | AdminLocation) =>
+                drivers.checkbox(this.byTestId(`${this.scope}.location:${key}--checkbox`), {
+                    testId: `${this.scope}.location:${key}--checkbox`,
+                    role: 'checkbox',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx#ChannelsResourceSettings',
+                }),
+        );
+    }
+}
+
+/** Rendered at `admin.attribute.applies_to.channel.settings.change_policy_menu`, `admin.classification.applies_to.channel.settings.change_policy_menu`: one class, constructed with the scope it is mounted at. */
+export class AdminSettingsChangePolicyMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.applies_to.channel.settings.change_policy_menu.policy:{key}--menuitemradio` — ChannelsResourceSettings (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx)
+     * Renders only when isOpen.
+     */
+    policy(policy: AdminClassificationAppliesToChannelSettingsChangePolicyMenuPolicy | AdminPolicy) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.policy:${policy}--menuitemradio`), {
+            testId: `${this.scope}.policy:${policy}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx#ChannelsResourceSettings',
+        });
+    }
+
+    /** Every `admin.attribute.applies_to.channel.settings.change_policy_menu.policy:{key}--menuitemradio` in the scope. */
+    get policyItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.policy:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.attribute.applies_to.channel.settings.change_policy_menu.policy:{key}--menuitemradio` in the scope, in document order. */
+    policyKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.policy:`, '--menuitemradio');
+    }
+
+    get anyMenuItemRadio() {
+        return this.policy('any');
+    }
+
+    get lowerOnlyMenuItemRadio() {
+        return this.policy('lower_only');
+    }
+
+    get neverMenuItemRadio() {
+        return this.policy('never');
+    }
+
+    get raiseOnlyMenuItemRadio() {
+        return this.policy('raise_only');
+    }
+
+    /** Every `admin.attribute.applies_to.channel.settings.change_policy_menu.policy:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.policyList).toHaveKeys([…])`. */
+    get policyList() {
+        return this.keyedList(
+            `${this.scope}.policy:`,
+            '--menuitemradio',
+            (key: AdminClassificationAppliesToChannelSettingsChangePolicyMenuPolicy | AdminPolicy) =>
+                drivers.menuitemradio(this.byTestId(`${this.scope}.policy:${key}--menuitemradio`), {
+                    testId: `${this.scope}.policy:${key}--menuitemradio`,
+                    role: 'menuitemradio',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx#ChannelsResourceSettings',
+                }),
+        );
+    }
+}
+
+/** Scope `admin.attribute.applies_to.post`. */
+export class AdminAttributeAppliesToPost extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.applies_to.post', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.applies_to.post.body--region` — AttributeAppliesToPostItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx)
+     * Renders only when isOpen.
+     */
+    get bodyRegion() {
+        return drivers.text(this.byTestId(`${this.scope}.body--region`), {
+            testId: `${this.scope}.body--region`,
+            role: 'region',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx#AttributeAppliesToPostItem',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.post.remove--button` — AttributeAppliesToPostItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx)
+     * Renders only when isOpen.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx#AttributeAppliesToPostItem',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /**
+     * `admin.attribute.applies_to.post.toggle--button` — AttributeAppliesToPostItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx)
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx#AttributeAppliesToPostItem',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
+    }
+
+    /**
+     * `admin.attribute.applies_to.post.toggle_locked` — AttributeAppliesToPostItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx)
+     * Renders only when lockedTooltip.
+     */
+    get toggleLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.toggle_locked`), {
+            testId: `${this.scope}.toggle_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_post_item.tsx#AttributeAppliesToPostItem',
+        });
+    }
+}
+
+/** Scope `admin.attribute.applies_to.user`. */
+export class AdminAttributeAppliesToUser extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.applies_to.user', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.body--region` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     * Renders only when isOpen.
+     */
+    get bodyRegion() {
+        return drivers.text(this.byTestId(`${this.scope}.body--region`), {
+            testId: `${this.scope}.body--region`,
+            role: 'region',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.managed_by--button` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     * Renders only when isOpen and externalSource and locked.
+     */
+    get managedByButton() {
+        return drivers.button(this.byTestId(`${this.scope}.managed_by--button`), {
+            testId: `${this.scope}.managed_by--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+
+    async clickManagedByButton(): Promise<void> {
+        await this.managedByButton.click();
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.managed_by_help--text` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     * Renders only when isOpen and externalSource.
+     */
+    get managedByHelpText() {
+        return drivers.text(this.byTestId(`${this.scope}.managed_by_help--text`), {
+            testId: `${this.scope}.managed_by_help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    getManagedByHelpText(): Promise<string> {
+        return this.managedByHelpText.text();
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.profile_display:{key}--togglebutton` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     * Renders only when isOpen.
+     */
+    profileDisplay(profileDisplay: AdminProfileDisplay) {
+        return drivers.togglebutton(this.byTestId(`${this.scope}.profile_display:${profileDisplay}--togglebutton`), {
+            testId: `${this.scope}.profile_display:${profileDisplay}--togglebutton`,
+            role: 'togglebutton',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    /** Every `admin.attribute.applies_to.user.profile_display:{key}--togglebutton` in the scope. */
+    get profileDisplayItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.profile_display:`, '--togglebutton');
+    }
+
+    /** The keys of every `admin.attribute.applies_to.user.profile_display:{key}--togglebutton` in the scope, in document order. */
+    profileDisplayKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.profile_display:`, '--togglebutton');
+    }
+
+    get alwaysToggleButton() {
+        return this.profileDisplay('always');
+    }
+
+    get hiddenToggleButton() {
+        return this.profileDisplay('hidden');
+    }
+
+    get whenSetToggleButton() {
+        return this.profileDisplay('when_set');
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.remove--button` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.remove_locked` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     * Renders only when isOpen and removeLockedTooltip.
+     */
+    get removeLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.remove_locked`), {
+            testId: `${this.scope}.remove_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.toggle--button` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.toggle_locked` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     * Renders only when lockedTooltip.
+     */
+    get toggleLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.toggle_locked`), {
+            testId: `${this.scope}.toggle_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.who_can_set_locked` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     * Renders only when isOpen and whoCanSetLockedTooltip.
+     */
+    get whoCanSetLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.who_can_set_locked`), {
+            testId: `${this.scope}.who_can_set_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    get managedBy(): AdminAttributeAppliesToUserManagedBy {
+        return new AdminAttributeAppliesToUserManagedBy(this.page, `${this.scope}.managed_by`, this.root);
+    }
+
+    get whoCanSet(): AdminAttributeAppliesToUserWhoCanSet {
+        return new AdminAttributeAppliesToUserWhoCanSet(this.page, `${this.scope}.who_can_set`, this.root);
+    }
+
+    /** Every `admin.attribute.applies_to.user.profile_display:{key}--togglebutton` in the scope as a list by key, for the list matchers: `expect(x.profileDisplayList).toHaveKeys([…])`. */
+    get profileDisplayList() {
+        return this.keyedList(`${this.scope}.profile_display:`, '--togglebutton', (key: AdminProfileDisplay) =>
+            drivers.togglebutton(this.byTestId(`${this.scope}.profile_display:${key}--togglebutton`), {
+                testId: `${this.scope}.profile_display:${key}--togglebutton`,
+                role: 'togglebutton',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.attribute.applies_to.user.managed_by`. */
+export class AdminAttributeAppliesToUserManagedBy extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.applies_to.user.managed_by', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.managed_by.icon` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     * Renders only when isOpen and externalSource.
+     */
+    get icon() {
+        return drivers.container(this.byTestId(`${this.scope}.icon`), {
+            testId: `${this.scope}.icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.managed_by.value` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     * Renders only when isOpen and externalSource.
+     */
+    get value() {
+        return drivers.container(this.byTestId(`${this.scope}.value`), {
+            testId: `${this.scope}.value`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+}
+
+/** Scope `admin.attribute.applies_to.user.who_can_set`. */
+export class AdminAttributeAppliesToUserWhoCanSet extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.applies_to.user.who_can_set', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.who_can_set.admin--radio` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     */
+    get adminRadio() {
+        return drivers.radio(this.byTestId(`${this.scope}.admin--radio`), {
+            testId: `${this.scope}.admin--radio`,
+            role: 'radio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    async chooseAdminRadio(): Promise<void> {
+        await this.adminRadio.check();
+    }
+
+    /**
+     * `admin.attribute.applies_to.user.who_can_set.member--radio` — AttributeAppliesToUserItem (channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx)
+     */
+    get memberRadio() {
+        return drivers.radio(this.byTestId(`${this.scope}.member--radio`), {
+            testId: `${this.scope}.member--radio`,
+            role: 'radio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_applies_to_user_item.tsx#AttributeAppliesToUserItem',
+        });
+    }
+
+    async chooseMemberRadio(): Promise<void> {
+        await this.memberRadio.check();
+    }
+}
+
+/** Scope `admin.attribute.external_source`. */
+export class AdminAttributeExternalSource extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.external_source', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.external_source.link--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when unlinkedSources.length > 0.
+     * Opens menu attribute-external-source-menu (`admin.attribute.external_source.link_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get linkButton() {
+        return drivers.button(this.byTestId(`${this.scope}.link--button`), {
+            testId: `${this.scope}.link--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks linkButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickLinkButton(): Promise<AdminAttributeExternalSourceLinkMenu> {
+        await this.linkButton.click();
+        return new AdminAttributeExternalSourceLinkMenu(this.page, `${this.scope}.link_menu`);
+    }
+
+    /**
+     * `admin.attribute.external_source.link_locked` — AttributeExternalSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when unlinkedSources.length > 0 and disableAdding.
+     */
+    get linkLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.link_locked`), {
+            testId: `${this.scope}.link_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource',
+        });
+    }
+
+    /**
+     * `admin.attribute.external_source.status--status` — AttributeExternalSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when !isPluginOwned and showsExternalSource && fieldType !== 'graph'.
+     */
+    get statusStatus() {
+        return drivers.text(this.byTestId(`${this.scope}.status--status`), {
+            testId: `${this.scope}.status--status`,
+            role: 'status',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource',
+        });
+    }
+
+    /**
+     * `admin.attribute.external_source.synced` — AttributeExternalSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when !isPluginOwned and showsExternalSource && fieldType !== 'graph' and linkedSources.length > 0.
+     */
+    get synced() {
+        return drivers.container(this.byTestId(`${this.scope}.synced`), {
+            testId: `${this.scope}.synced`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource',
+        });
+    }
+
+    /**
+     * `admin.attribute.external_source.link_menu` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when unlinkedSources.length > 0.
+     */
+    get linkMenu(): AdminAttributeExternalSourceLinkMenu {
+        return new AdminAttributeExternalSourceLinkMenu(this.page, `${this.scope}.link_menu`);
+    }
+
+    /**
+     * `admin.attribute.external_source.source:{key}` — ExternalSourceChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when linkedSources.length > 0.
+     */
+    source(source: AdminAttributeExternalSourceSource): AdminAttributeExternalSourceSourceItem {
+        return new AdminAttributeExternalSourceSourceItem(
+            this.page,
+            `${this.scope}.source`,
+            this.byTestId(`${this.scope}.source:${source}`),
+        );
+    }
+
+    /** Every `admin.attribute.external_source.source:{key}` in the scope. */
+    get sourceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.source:`, '');
+    }
+
+    /** The keys of every `admin.attribute.external_source.source:{key}` in the scope, in document order. */
+    sourceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.source:`, '');
+    }
+
+    /** Every `admin.attribute.external_source.source:{key}` in the scope as a list by key, for the list matchers: `expect(x.sourceList).toHaveKeys([…])`. */
+    get sourceList() {
+        return this.keyedList(
+            `${this.scope}.source:`,
+            '',
+            (key: AdminAttributeExternalSourceSource) =>
+                new AdminAttributeExternalSourceSourceItem(
+                    this.page,
+                    `${this.scope}.source`,
+                    this.byTestId(`${this.scope}.source:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.attribute.external_source.link_menu`. */
+export class AdminAttributeExternalSourceLinkMenu extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.external_source.link_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.external_source.link_menu.blocked:{key}` — AttributeExternalSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     */
+    blocked(blocked: AdminBlocked) {
+        return drivers.container(this.byTestId(`${this.scope}.blocked:${blocked}`), {
+            testId: `${this.scope}.blocked:${blocked}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource',
+        });
+    }
+
+    /** Every `admin.attribute.external_source.link_menu.blocked:{key}` in the scope. */
+    get blockedItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.blocked:`, '');
+    }
+
+    /** The keys of every `admin.attribute.external_source.link_menu.blocked:{key}` in the scope, in document order. */
+    blockedKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.blocked:`, '');
+    }
+
+    get ldap() {
+        return this.blocked('ldap');
+    }
+
+    get openid() {
+        return this.blocked('openid');
+    }
+
+    get saml() {
+        return this.blocked('saml');
+    }
+
+    /**
+     * `admin.attribute.external_source.link_menu.source:{key}--menuitem` — AttributeExternalSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Opens modal AttributeModal (`attribute_modal`).
+     */
+    source(source: AdminSource) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.source:${source}--menuitem`), {
+            testId: `${this.scope}.source:${source}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource',
+        });
+    }
+
+    /** Every `admin.attribute.external_source.link_menu.source:{key}--menuitem` in the scope. */
+    get sourceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.source:`, '--menuitem');
+    }
+
+    /** The keys of every `admin.attribute.external_source.link_menu.source:{key}--menuitem` in the scope, in document order. */
+    sourceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.source:`, '--menuitem');
+    }
+
+    get ldapMenuItem() {
+        return this.source('ldap');
+    }
+
+    get openidMenuItem() {
+        return this.source('openid');
+    }
+
+    get samlMenuItem() {
+        return this.source('saml');
+    }
+
+    /** Every `admin.attribute.external_source.link_menu.blocked:{key}` in the scope as a list by key, for the list matchers: `expect(x.blockedList).toHaveKeys([…])`. */
+    get blockedList() {
+        return this.keyedList(`${this.scope}.blocked:`, '', (key: AdminBlocked) =>
+            drivers.container(this.byTestId(`${this.scope}.blocked:${key}`), {
+                testId: `${this.scope}.blocked:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource',
+            }),
+        );
+    }
+
+    /** Every `admin.attribute.external_source.link_menu.source:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.sourceList).toHaveKeys([…])`. */
+    get sourceList() {
+        return this.keyedList(`${this.scope}.source:`, '--menuitem', (key: AdminSource) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.source:${key}--menuitem`), {
+                testId: `${this.scope}.source:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.attribute.external_source.source`. */
+export class AdminAttributeExternalSourceSourceItem extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.external_source.source', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.external_source.source:{key}` — ExternalSourceChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when linkedSources.length > 0.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.attribute.external_source.source:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#ExternalSourceChip',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.attribute.external_source.source.edit--button` — ExternalSourceChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when linkedSources.length > 0.
+     * Opens modal AttributeModal (`attribute_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#ExternalSourceChip',
+        });
+    }
+
+    /** Clicks editButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickEditButton(): Promise<AttributeModal> {
+        await this.editButton.click();
+        return new AttributeModal(this.page, 'attribute_modal');
+    }
+
+    /**
+     * `admin.attribute.external_source.source.icon` — ExternalSourceChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when linkedSources.length > 0.
+     */
+    get icon() {
+        return drivers.container(this.byTestId(`${this.scope}.icon`), {
+            testId: `${this.scope}.icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#ExternalSourceChip',
+        });
+    }
+
+    /**
+     * `admin.attribute.external_source.source.remove--button` — ExternalSourceChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx)
+     * Renders only when linkedSources.length > 0.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#ExternalSourceChip',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+}
+
+/** Scope `admin.attribute.graph`. */
+export class AdminAttributeGraph extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.graph', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.graph.drop--alert` — GraphParentEdgeAlert (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_alert.tsx)
+     */
+    get dropAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.drop--alert`), {
+            testId: `${this.scope}.drop--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_alert.tsx#GraphParentEdgeAlert',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.rows--list` — AttributeOptionsGraphValues (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_values.tsx)
+     * Renders only when isHierarchical and !(options.length === 0).
+     */
+    get rowsList() {
+        return drivers.text(this.byTestId(`${this.scope}.rows--list`), {
+            testId: `${this.scope}.rows--list`,
+            role: 'list',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_values.tsx#AttributeOptionsGraphValues',
+        });
+    }
+
+    get addTop(): AdminAttributeGraphAddTop {
+        return new AdminAttributeGraphAddTop(this.page, `${this.scope}.add_top`, this.root);
+    }
+
+    /**
+     * `admin.attribute.graph.child_draft` — ChildDraftRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx)
+     * Renders only when !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys) and childDraft && childDraft.insertAfterIndex === rowIndex.
+     */
+    get childDraft(): AdminAttributeGraphChildDraft {
+        return new AdminAttributeGraphChildDraft(this.page, `${this.scope}.child_draft`, this.root);
+    }
+
+    /**
+     * `admin.attribute.graph.delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when model.
+     */
+    get deleteModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.delete_modal`, this.root);
+    }
+
+    /**
+     * `admin.attribute.graph.empty` — AttributeOptionsGraphValues (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_values.tsx)
+     * Renders only when isHierarchical and options.length === 0.
+     */
+    get empty(): AdminAttributeGraphEmpty {
+        return new AdminAttributeGraphEmpty(this.page, `${this.scope}.empty`, this.root);
+    }
+
+    /**
+     * `admin.attribute.graph.grant_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get grantModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.grant_modal`, this.root);
+    }
+
+    /**
+     * `admin.attribute.graph.pane` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when menuOpen.
+     */
+    get pane(): AdminAttributeGraphPane {
+        return new AdminAttributeGraphPane(this.page, `${this.scope}.pane`);
+    }
+
+    /**
+     * `admin.attribute.graph.row:{key}/{key}` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    row(row: string): AdminAttributeGraphRow {
+        return new AdminAttributeGraphRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.attribute.graph.row:{key}/{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.attribute.graph.row:{key}/{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /** Every `admin.attribute.graph.row:{key}/{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) =>
+                new AdminAttributeGraphRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Scope `admin.attribute.graph.add_top`. */
+export class AdminAttributeGraphAddTop extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.graph.add_top', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.graph.add_top.add--button` — AddTopLevelForm (channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx)
+     * Renders only when !disabled.
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx#AddTopLevelForm',
+        });
+    }
+
+    async clickAddButton(): Promise<void> {
+        await this.addButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.add_top.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !disabled.
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+}
+
+/** Scope `admin.attribute.graph.child_draft`. */
+export class AdminAttributeGraphChildDraft extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.graph.child_draft', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.graph.child_draft.add--button` — ChildDraftRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx)
+     * Renders only when !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys) and childDraft && childDraft.insertAfterIndex === rowIndex.
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx#ChildDraftRow',
+        });
+    }
+
+    async clickAddButton(): Promise<void> {
+        await this.addButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.child_draft.cancel--button` — ChildDraftRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx)
+     * Renders only when !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys) and childDraft && childDraft.insertAfterIndex === rowIndex.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx#ChildDraftRow',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.child_draft.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+}
+
+/** Scope `admin.attribute.graph.empty`. */
+export class AdminAttributeGraphEmpty extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.graph.empty', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.graph.empty.add--button` — AddTopLevelForm (channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx)
+     * Renders only when !disabled.
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/draft_forms.tsx#AddTopLevelForm',
+        });
+    }
+
+    async clickAddButton(): Promise<void> {
+        await this.addButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.empty.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !disabled.
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+}
+
+/** Scope `admin.attribute.graph.pane`. */
+export class AdminAttributeGraphPane extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.graph.pane', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.graph.pane.alert--alert` — GraphParentEdgeAlert (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_alert.tsx)
+     */
+    get alertAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.alert--alert`), {
+            testId: `${this.scope}.alert--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_alert.tsx#GraphParentEdgeAlert',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.pane.back--button` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when view === 'parents' || view === 'children'.
+     */
+    get backButton() {
+        return drivers.button(this.byTestId(`${this.scope}.back--button`), {
+            testId: `${this.scope}.back--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+        });
+    }
+
+    async clickBackButton(): Promise<void> {
+        await this.backButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.pane.candidate:{key}--button` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when showSuggestions && searchFieldBox and view === 'parents' || view === 'children'.
+     * Opens modal AttributeGraphGrantConfirmModal (`admin.attribute.graph.grant_modal`).
+     */
+    candidate(candidate: string) {
+        return drivers.button(this.byTestId(`${this.scope}.candidate:${candidate}--button`), {
+            testId: `${this.scope}.candidate:${candidate}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+        });
+    }
+
+    /** Every `admin.attribute.graph.pane.candidate:{key}--button` in the scope. */
+    get candidateItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.candidate:`, '--button');
+    }
+
+    /** The keys of every `admin.attribute.graph.pane.candidate:{key}--button` in the scope, in document order. */
+    candidateKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.candidate:`, '--button');
+    }
+
+    /**
+     * `admin.attribute.graph.pane.children--menuitem` — NodeMenu (channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx)
+     */
+    get childrenMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.children--menuitem`), {
+            testId: `${this.scope}.children--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu',
+        });
+    }
+
+    async clickChildrenMenuItem(): Promise<void> {
+        await this.childrenMenuItem.click();
+    }
+
+    /**
+     * `admin.attribute.graph.pane.name` — NodeMenu (channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx)
+     * Renders only when disabled.
+     */
+    get name() {
+        return drivers.container(this.byTestId(`${this.scope}.name`), {
+            testId: `${this.scope}.name`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.pane.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !disabled.
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attribute.graph.pane.parents--menuitem` — NodeMenu (channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx)
+     */
+    get parentsMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.parents--menuitem`), {
+            testId: `${this.scope}.parents--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu',
+        });
+    }
+
+    async clickParentsMenuItem(): Promise<void> {
+        await this.parentsMenuItem.click();
+    }
+
+    get children(): AdminAttributeGraphPaneChildren {
+        return new AdminAttributeGraphPaneChildren(this.page, `${this.scope}.children`, this.root);
+    }
+
+    get parents(): AdminAttributeGraphPaneChildren {
+        return new AdminAttributeGraphPaneChildren(this.page, `${this.scope}.parents`, this.root);
+    }
+
+    /** Every `admin.attribute.graph.pane.candidate:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.candidateList).toHaveKeys([…])`. */
+    get candidateList() {
+        return this.keyedList(`${this.scope}.candidate:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.candidate:${key}--button`), {
+                testId: `${this.scope}.candidate:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.attribute.graph.pane.children`, `admin.attribute.graph.pane.parents`: one class, constructed with the scope it is mounted at. */
+export class AdminAttributeGraphPaneChildren extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.graph.pane.children.create--button` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when showSuggestions && searchFieldBox and view === 'parents' || view === 'children'.
+     * Opens modal AttributeGraphGrantConfirmModal (`admin.attribute.graph.grant_modal`).
+     */
+    get createButton() {
+        return drivers.button(this.byTestId(`${this.scope}.create--button`), {
+            testId: `${this.scope}.create--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+        });
+    }
+
+    /** Clicks createButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickCreateButton(): Promise<DeleteModal> {
+        await this.createButton.click();
+        return new DeleteModal(this.page, 'admin.attribute.graph.grant_modal');
+    }
+
+    /**
+     * `admin.attribute.graph.pane.children.empty--text` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when relatedNames.length === 0 and view === 'parents' || view === 'children'.
+     */
+    get emptyText() {
+        return drivers.text(this.byTestId(`${this.scope}.empty--text`), {
+            testId: `${this.scope}.empty--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+        });
+    }
+
+    getEmptyText(): Promise<string> {
+        return this.emptyText.text();
+    }
+
+    /**
+     * `admin.attribute.graph.pane.children.search--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Opens modal AttributeGraphGrantConfirmModal (`admin.attribute.graph.grant_modal`).
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attribute.graph.pane.children.suggestions--list` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when showSuggestions && searchFieldBox and view === 'parents' || view === 'children'.
+     */
+    get suggestionsList() {
+        return drivers.text(this.byTestId(`${this.scope}.suggestions--list`), {
+            testId: `${this.scope}.suggestions--list`,
+            role: 'list',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.pane.children.edge:{key}` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when view === 'parents' || view === 'children'.
+     */
+    edge(edge: string): AdminAttributeGraphPaneChildrenEdge {
+        return new AdminAttributeGraphPaneChildrenEdge(
+            this.page,
+            `${this.scope}.edge`,
+            this.byTestId(`${this.scope}.edge:${edge}`),
+        );
+    }
+
+    /** Every `admin.attribute.graph.pane.children.edge:{key}` in the scope. */
+    get edgeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.edge:`, '');
+    }
+
+    /** The keys of every `admin.attribute.graph.pane.children.edge:{key}` in the scope, in document order. */
+    edgeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.edge:`, '');
+    }
+
+    /** Every `admin.attribute.graph.pane.children.edge:{key}` in the scope as a list by key, for the list matchers: `expect(x.edgeList).toHaveKeys([…])`. */
+    get edgeList() {
+        return this.keyedList(
+            `${this.scope}.edge:`,
+            '',
+            (key: string) =>
+                new AdminAttributeGraphPaneChildrenEdge(
+                    this.page,
+                    `${this.scope}.edge`,
+                    this.byTestId(`${this.scope}.edge:${key}`),
+                ),
+        );
+    }
+}
+
+/** Rendered at `admin.attribute.graph.pane.children.edge`, `admin.attribute.graph.pane.parents.edge`: one class, constructed with the scope it is mounted at. */
+export class AdminAttributeGraphPaneChildrenEdge extends Scope {
+    /**
+     * `admin.attribute.graph.pane.children.edge:{key}` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when view === 'parents' || view === 'children'.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.attribute.graph.pane.children.edge:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.attribute.graph.pane.children.edge.remove--button` — EdgeList (channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx)
+     * Renders only when view === 'parents' || view === 'children'.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+}
+
+/** Scope `admin.attribute.graph.row`. */
+export class AdminAttributeGraphRow extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.graph.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.graph.row:{key}/{key}` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.attribute.graph.row:{key}/{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.attribute.graph.row.add_child--button` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !disabled and !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get addChildButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_child--button`), {
+            testId: `${this.scope}.add_child--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    async clickAddChildButton(): Promise<void> {
+        await this.addChildButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.row.collapse--button` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when hasChildren and !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get collapseButton() {
+        return drivers.button(this.byTestId(`${this.scope}.collapse--button`), {
+            testId: `${this.scope}.collapse--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    async clickCollapseButton(): Promise<void> {
+        await this.collapseButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.row.delete--button` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !disabled and !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get deleteButton() {
+        return drivers.button(this.byTestId(`${this.scope}.delete--button`), {
+            testId: `${this.scope}.delete--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    async clickDeleteButton(): Promise<void> {
+        await this.deleteButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.row.drag_handle` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get dragHandle() {
+        return drivers.container(this.byTestId(`${this.scope}.drag_handle`), {
+            testId: `${this.scope}.drag_handle`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.row.menu_anchor--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when menuOpen.
+     * Opens menu menu (`admin.attribute.graph.pane`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get menuAnchorButton() {
+        return drivers.button(this.byTestId(`${this.scope}.menu_anchor--button`), {
+            testId: `${this.scope}.menu_anchor--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks menuAnchorButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickMenuAnchorButton(): Promise<AdminAttributeGraphPane> {
+        await this.menuAnchorButton.click();
+        return new AdminAttributeGraphPane(this.page, 'admin.attribute.graph.pane');
+    }
+
+    /**
+     * `admin.attribute.graph.row.name--button` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !disabled and !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get nameButton() {
+        return drivers.button(this.byTestId(`${this.scope}.name--button`), {
+            testId: `${this.scope}.name--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    async clickNameButton(): Promise<void> {
+        await this.nameButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.row.name--text` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when disabled and !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `admin.attribute.graph.row.name_wrap` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get nameWrap() {
+        return drivers.container(this.byTestId(`${this.scope}.name_wrap`), {
+            testId: `${this.scope}.name_wrap`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.row.parents--button` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when !disabled and !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get parentsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.parents--button`), {
+            testId: `${this.scope}.parents--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    async clickParentsButton(): Promise<void> {
+        await this.parentsButton.click();
+    }
+
+    /**
+     * `admin.attribute.graph.row.parents_badge--button` — GraphRow (channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx)
+     * Renders only when parentCount >= 2 and !isHiddenByCollapsedAncestor(occurrencePath(occurrence), collapsedKeys).
+     */
+    get parentsBadgeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.parents_badge--button`), {
+            testId: `${this.scope}.parents_badge--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/graph_row.tsx#GraphRow',
+        });
+    }
+
+    async clickParentsBadgeButton(): Promise<void> {
+        await this.parentsBadgeButton.click();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminAttributeGraphRowRow> {
+        return {
+            name: await this.nameText.textIfPresent(),
+        };
+    }
+}
+
+/** Scope `admin.attribute.options`. */
+export class AdminAttributeOptions extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.options', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.options.help--text` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when !isHierarchical and !optionsOwnedBySync and !typeSupportsOptions.
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `admin.attribute.options.need_users--alert` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when !isHierarchical and optionsOwnedBySync and optionsIssue === 'needs_users'.
+     */
+    get needUsersAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.need_users--alert`), {
+            testId: `${this.scope}.need_users--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    /**
+     * `admin.attribute.options.required--alert` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when !isHierarchical and !optionsOwnedBySync and typeSupportsOptions.
+     */
+    get requiredAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.required--alert`), {
+            testId: `${this.scope}.required--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    /**
+     * `admin.attribute.options.synced_help--text` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when !isHierarchical and optionsOwnedBySync.
+     */
+    get syncedHelpText() {
+        return drivers.text(this.byTestId(`${this.scope}.synced_help--text`), {
+            testId: `${this.scope}.synced_help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    getSyncedHelpText(): Promise<string> {
+        return this.syncedHelpText.text();
+    }
+}
+
+/** Scope `admin.attribute.owners_source`. */
+export class AdminAttributeOwnersSource extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.owners_source', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.owners_source.help--text` — AttributeOwnersSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx)
+     * Renders only when !isPluginOwned and isOwned.
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx#AttributeOwnersSource',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `admin.attribute.owners_source.managed_by--text` — AttributeOwnersSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx)
+     * Renders only when !isPluginOwned and isOwned.
+     */
+    get managedByText() {
+        return drivers.text(this.byTestId(`${this.scope}.managed_by--text`), {
+            testId: `${this.scope}.managed_by--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx#AttributeOwnersSource',
+        });
+    }
+
+    getManagedByText(): Promise<string> {
+        return this.managedByText.text();
+    }
+
+    /**
+     * `admin.attribute.owners_source.settings:{key}--link` — OwnerSettingsLink (channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx)
+     * Renders only when pluginInventoryLoaded and owner.type === 'plugin' && installedPluginIds.has(owner.id).
+     * Goes to `/admin_console/plugins/plugin_${pluginId}`.
+     */
+    settings(settings: PluginKey) {
+        return drivers.link(this.byTestId(`${this.scope}.settings:${settings as string}--link`), {
+            testId: `${this.scope}.settings:${settings as string}--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx#OwnerSettingsLink',
+        });
+    }
+
+    /** Every `admin.attribute.owners_source.settings:{key}--link` in the scope. */
+    get settingsItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.settings:`, '--link');
+    }
+
+    /** The keys of every `admin.attribute.owners_source.settings:{key}--link` in the scope, in document order. */
+    settingsKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.settings:`, '--link');
+    }
+
+    /** Every `admin.attribute.owners_source.settings:{key}--link` in the scope as a list by key, for the list matchers: `expect(x.settingsList).toHaveKeys([…])`. */
+    get settingsList() {
+        return this.keyedList(`${this.scope}.settings:`, '--link', (key: string) =>
+            drivers.link(this.byTestId(`${this.scope}.settings:${key}--link`), {
+                testId: `${this.scope}.settings:${key}--link`,
+                role: 'link',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_owners_source.tsx#OwnerSettingsLink',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.attribute.plugin_source`. */
+export class AdminAttributePluginSource extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.plugin_source', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.plugin_source.help--text` — AttributePluginSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_plugin_source.tsx)
+     * Renders only when isPluginOwned.
+     */
+    get helpText() {
+        return drivers.text(this.byTestId(`${this.scope}.help--text`), {
+            testId: `${this.scope}.help--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_plugin_source.tsx#AttributePluginSource',
+        });
+    }
+
+    getHelpText(): Promise<string> {
+        return this.helpText.text();
+    }
+
+    /**
+     * `admin.attribute.plugin_source.managed_by--text` — AttributePluginSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_plugin_source.tsx)
+     * Renders only when isPluginOwned.
+     */
+    get managedByText() {
+        return drivers.text(this.byTestId(`${this.scope}.managed_by--text`), {
+            testId: `${this.scope}.managed_by--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_plugin_source.tsx#AttributePluginSource',
+        });
+    }
+
+    getManagedByText(): Promise<string> {
+        return this.managedByText.text();
+    }
+
+    /**
+     * `admin.attribute.plugin_source.settings--link` — AttributePluginSource (channels/src/components/admin_console/global_attributes/attribute_details/attribute_plugin_source.tsx)
+     * Renders only when isPluginOwned and pluginInventoryLoaded && !isOrphaned.
+     * Goes to `/admin_console/plugins/plugin_${pluginId}`.
+     */
+    get settingsLink() {
+        return drivers.link(this.byTestId(`${this.scope}.settings--link`), {
+            testId: `${this.scope}.settings--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_plugin_source.tsx#AttributePluginSource',
+        });
+    }
+
+    async clickSettingsLink(): Promise<void> {
+        await this.settingsLink.click();
+    }
+}
+
+/** Scope `admin.attribute.ranks`. */
+export class AdminAttributeRanks extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.ranks', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.ranks.add--textbox` — AttributeOptionsRankValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     * Renders only when !isHierarchical and !optionsOwnedBySync and typeSupportsOptions.
+     */
+    get addTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.add--textbox`), {
+            testId: `${this.scope}.add--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#AttributeOptionsRankValues',
+        });
+    }
+
+    async fillAddTextbox(value: string): Promise<void> {
+        await this.addTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attribute.ranks.option:{key}` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    option(option: string): AdminAttributeRanksOption {
+        return new AdminAttributeRanksOption(
+            this.page,
+            `${this.scope}.option`,
+            this.byTestId(`${this.scope}.option:${textTestKey(option)}`),
+        );
+    }
+
+    /** Every `admin.attribute.ranks.option:{key}` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '');
+    }
+
+    /** The keys of every `admin.attribute.ranks.option:{key}` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '');
+    }
+
+    get optionMenu(): AdminAttributeRanksOptionMenu {
+        return new AdminAttributeRanksOptionMenu(this.page, `${this.scope}.option_menu`);
+    }
+
+    /** Every `admin.attribute.ranks.option:{key}` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(
+            `${this.scope}.option:`,
+            '',
+            (key: string) =>
+                new AdminAttributeRanksOption(
+                    this.page,
+                    `${this.scope}.option`,
+                    this.byTestId(`${this.scope}.option:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.attribute.ranks.option`. */
+export class AdminAttributeRanksOption extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.ranks.option', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.ranks.option:{key}` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.attribute.ranks.option:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.attribute.ranks.option.badge--text` — RankBadge (channels/src/components/admin_console/system_properties/rank_badge.tsx)
+     * Renders only when !(rank === undefined || rank === null).
+     */
+    get badgeText() {
+        return drivers.text(this.byTestId(`${this.scope}.badge--text`), {
+            testId: `${this.scope}.badge--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge',
+        });
+    }
+
+    getBadgeText(): Promise<string> {
+        return this.badgeText.text();
+    }
+
+    /**
+     * `admin.attribute.ranks.option.edit--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attribute.ranks.option_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks editButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickEditButton(): Promise<AdminAttributeRanksOptionMenu> {
+        await this.editButton.click();
+        return new AdminAttributeRanksOptionMenu(this.page, 'admin.attribute.ranks.option_menu');
+    }
+
+    /**
+     * `admin.attribute.ranks.option.label--text` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    get labelText() {
+        return drivers.text(this.byTestId(`${this.scope}.label--text`), {
+            testId: `${this.scope}.label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+        });
+    }
+
+    getLabelText(): Promise<string> {
+        return this.labelText.text();
+    }
+
+    /**
+     * `admin.attribute.ranks.option.remove--button` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminAttributeRanksOptionRow> {
+        return {
+            badge: await this.badgeText.textIfPresent(),
+            label: await this.labelText.textIfPresent(),
+        };
+    }
+}
+
+/** Scope `admin.attribute.ranks.option_menu`. */
+export class AdminAttributeRanksOptionMenu extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.ranks.option_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.ranks.option_menu.label--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get labelTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.label--textbox`), {
+            testId: `${this.scope}.label--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillLabelTextbox(value: string): Promise<void> {
+        await this.labelTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attribute.ranks.option_menu.rank--menuitem` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    get rankMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.rank--menuitem`), {
+            testId: `${this.scope}.rank--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+        });
+    }
+
+    async clickRankMenuItem(): Promise<void> {
+        await this.rankMenuItem.click();
+    }
+
+    /**
+     * `admin.attribute.ranks.option_menu.rank:{key}--menuitemradio` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    rank(rank: number) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.rank:${rank}--menuitemradio`), {
+            testId: `${this.scope}.rank:${rank}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+        });
+    }
+
+    /** Every `admin.attribute.ranks.option_menu.rank:{key}--menuitemradio` in the scope. */
+    get rankItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.rank:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.attribute.ranks.option_menu.rank:{key}--menuitemradio` in the scope, in document order. */
+    rankKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.rank:`, '--menuitemradio');
+    }
+
+    get label(): Input {
+        return new Input(this.page, `${this.scope}.label`, this.root);
+    }
+
+    /** Every `admin.attribute.ranks.option_menu.rank:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.rankList).toHaveKeys([…])`. */
+    get rankList() {
+        return this.keyedList(`${this.scope}.rank:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.rank:${key}--menuitemradio`), {
+                testId: `${this.scope}.rank:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.attribute.type`. */
+export class AdminAttributeType extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.type', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.type.chevron` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     */
+    get chevron() {
+        return drivers.container(this.byTestId(`${this.scope}.chevron`), {
+            testId: `${this.scope}.chevron`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+
+    /**
+     * `admin.attribute.type.icon` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     */
+    get icon() {
+        return drivers.container(this.byTestId(`${this.scope}.icon`), {
+            testId: `${this.scope}.icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+
+    /**
+     * `admin.attribute.type.option:{key}--menuitemradio` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     */
+    option(option: string) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.option:${option}--menuitemradio`), {
+            testId: `${this.scope}.option:${option}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+
+    /** Every `admin.attribute.type.option:{key}--menuitemradio` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.attribute.type.option:{key}--menuitemradio` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '--menuitemradio');
+    }
+
+    /**
+     * `admin.attribute.type.value` — AttributeSelect (channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx)
+     */
+    get value() {
+        return drivers.container(this.byTestId(`${this.scope}.value`), {
+            testId: `${this.scope}.value`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+        });
+    }
+
+    /** Every `admin.attribute.type.option:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(`${this.scope}.option:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.option:${key}--menuitemradio`), {
+                testId: `${this.scope}.option:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_select.tsx#AttributeSelect',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.attribute.unique_name`. */
+export class AdminAttributeUniqueName extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.unique_name', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.unique_name.caption--text` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get captionText() {
+        return drivers.text(this.byTestId(`${this.scope}.caption--text`), {
+            testId: `${this.scope}.caption--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    getCaptionText(): Promise<string> {
+        return this.captionText.text();
+    }
+
+    /**
+     * `admin.attribute.unique_name.conflict--status` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get conflictStatus() {
+        return drivers.text(this.byTestId(`${this.scope}.conflict--status`), {
+            testId: `${this.scope}.conflict--status`,
+            role: 'status',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    /**
+     * `admin.attribute.unique_name.edit--button` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    async clickEditButton(): Promise<void> {
+        await this.editButton.click();
+    }
+
+    /**
+     * `admin.attribute.unique_name.edit_locked` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when nameLocked.
+     */
+    get editLocked() {
+        return drivers.container(this.byTestId(`${this.scope}.edit_locked`), {
+            testId: `${this.scope}.edit_locked`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    /**
+     * `admin.attribute.unique_name.empty--alert` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     * Renders only when autoSlugCollapsedToEmpty.
+     */
+    get emptyAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.empty--alert`), {
+            testId: `${this.scope}.empty--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+
+    /**
+     * `admin.attribute.unique_name.error--alert` — AttributeDetails (channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx)
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails',
+        });
+    }
+}
+
+/** Scope `admin.attribute.values`. */
+export class AdminAttributeValues extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.values', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.values.add--textbox` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     * Renders only when !isHierarchical and !optionsOwnedBySync and optionsOwnedBySync.
+     */
+    get addTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.add--textbox`), {
+            testId: `${this.scope}.add--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
+        });
+    }
+
+    async fillAddTextbox(value: string): Promise<void> {
+        await this.addTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attribute.values.unique_error--alert` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     * Renders only when !isHierarchical and !optionsOwnedBySync and optionsOwnedBySync.
+     */
+    get uniqueErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.unique_error--alert`), {
+            testId: `${this.scope}.unique_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
+        });
+    }
+
+    /**
+     * `admin.attribute.values.option:{key}` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    option(option: string): AdminAttributeValuesOption {
+        return new AdminAttributeValuesOption(
+            this.page,
+            `${this.scope}.option`,
+            this.byTestId(`${this.scope}.option:${textTestKey(option)}`),
+        );
+    }
+
+    /** Every `admin.attribute.values.option:{key}` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '');
+    }
+
+    /** The keys of every `admin.attribute.values.option:{key}` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '');
+    }
+
+    get optionMenu(): AdminAttributeValuesOptionMenu {
+        return new AdminAttributeValuesOptionMenu(this.page, `${this.scope}.option_menu`);
+    }
+
+    /** Every `admin.attribute.values.option:{key}` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(
+            `${this.scope}.option:`,
+            '',
+            (key: string) =>
+                new AdminAttributeValuesOption(
+                    this.page,
+                    `${this.scope}.option`,
+                    this.byTestId(`${this.scope}.option:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.attribute.values.option`. */
+export class AdminAttributeValuesOption extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.values.option', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.values.option:{key}` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.attribute.values.option:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.attribute.values.option.edit--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attribute.values.option_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks editButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickEditButton(): Promise<AdminAttributeValuesOptionMenu> {
+        await this.editButton.click();
+        return new AdminAttributeValuesOptionMenu(this.page, 'admin.attribute.values.option_menu');
+    }
+
+    /**
+     * `admin.attribute.values.option.label--text` — OptionChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    get labelText() {
+        return drivers.text(this.byTestId(`${this.scope}.label--text`), {
+            testId: `${this.scope}.label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip',
+        });
+    }
+
+    getLabelText(): Promise<string> {
+        return this.labelText.text();
+    }
+
+    /**
+     * `admin.attribute.values.option.remove--button` — OptionChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminAttributeValuesOptionRow> {
+        return {
+            label: await this.labelText.textIfPresent(),
+        };
+    }
+}
+
+/** Scope `admin.attribute.values.option_menu`. */
+export class AdminAttributeValuesOptionMenu extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.values.option_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attribute.values.option_menu.label--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get labelTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.label--textbox`), {
+            testId: `${this.scope}.label--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillLabelTextbox(value: string): Promise<void> {
+        await this.labelTextbox.fill(value);
+    }
+
+    get label(): Input {
+        return new Input(this.page, `${this.scope}.label`, this.root);
+    }
+}
+
+/** Scope `admin.attributes`. */
+export class AdminAttributes extends Scope {
+    constructor(page: Page, scope = 'admin.attributes', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attributes.clear_filters--button` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when rows.length === 0.
+     */
+    get clearFiltersButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear_filters--button`), {
+            testId: `${this.scope}.clear_filters--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    async clickClearFiltersButton(): Promise<void> {
+        await this.clearFiltersButton.click();
+    }
+
+    /**
+     * `admin.attributes.empty--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when rows.length === 0 and !isSearching && !isFiltered.
+     */
+    get emptyText() {
+        return drivers.text(this.byTestId(`${this.scope}.empty--text`), {
+            testId: `${this.scope}.empty--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    getEmptyText(): Promise<string> {
+        return this.emptyText.text();
+    }
+
+    /**
+     * `admin.attributes.empty_search--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when rows.length === 0.
+     */
+    get emptySearchText() {
+        return drivers.text(this.byTestId(`${this.scope}.empty_search--text`), {
+            testId: `${this.scope}.empty_search--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    getEmptySearchText(): Promise<string> {
+        return this.emptySearchText.text();
+    }
+
+    /**
+     * `admin.attributes.error--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when loadError && !loaded.
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `admin.attributes.load_error--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Failed.
+     */
+    get loadErrorText() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--text`), {
+            testId: `${this.scope}.load_error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getLoadErrorText(): Promise<string> {
+        return this.loadErrorText.text();
+    }
+
+    /**
+     * `admin.attributes.loading` — LoadingSpinner (channels/src/components/widgets/loading/loading_spinner.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loading && rowCount === 0.
+     */
+    get loading() {
+        return drivers.container(this.byTestId(`${this.scope}.loading`), {
+            testId: `${this.scope}.loading`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner',
+        });
+    }
+
+    /**
+     * `admin.attributes.new--button` — GlobalAttributes (channels/src/components/admin_console/global_attributes/global_attributes.tsx)
+     * Goes to ATTRIBUTE_DETAILS_ROUTE.
+     */
+    get newButton() {
+        return drivers.button(this.byTestId(`${this.scope}.new--button`), {
+            testId: `${this.scope}.new--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes.tsx#GlobalAttributes',
+        });
+    }
+
+    async clickNewButton(): Promise<void> {
+        await this.newButton.click();
+    }
+
+    /**
+     * `admin.attributes.no_data--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0.
+     */
+    get noDataText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_data--text`), {
+            testId: `${this.scope}.no_data--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getNoDataText(): Promise<string> {
+        return this.noDataText.text();
+    }
+
+    /**
+     * `admin.attributes.resource_type_filter--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu.
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get resourceTypeFilterButton() {
+        return drivers.button(this.byTestId(`${this.scope}.resource_type_filter--button`), {
+            testId: `${this.scope}.resource_type_filter--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    async clickResourceTypeFilterButton(): Promise<void> {
+        await this.resourceTypeFilterButton.click();
+    }
+
+    /**
+     * `admin.attributes.search--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.attributes.source_filter--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu.
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get sourceFilterButton() {
+        return drivers.button(this.byTestId(`${this.scope}.source_filter--button`), {
+            testId: `${this.scope}.source_filter--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    async clickSourceFilterButton(): Promise<void> {
+        await this.sourceFilterButton.click();
+    }
+
+    /**
+     * `admin.attributes.subtitle--text` — GlobalAttributes (channels/src/components/admin_console/global_attributes/global_attributes.tsx)
+     */
+    get subtitleText() {
+        return drivers.text(this.byTestId(`${this.scope}.subtitle--text`), {
+            testId: `${this.scope}.subtitle--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes.tsx#GlobalAttributes',
+        });
+    }
+
+    getSubtitleText(): Promise<string> {
+        return this.subtitleText.text();
+    }
+
+    get actionsMenu(): AdminAttributesActionsMenu {
+        return new AdminAttributesActionsMenu(this.page, `${this.scope}.actions_menu`);
+    }
+
+    /**
+     * `admin.attributes.delete_error` — AlertBanner (channels/src/components/alert_banner/index.tsx)
+     * Renders only when deleteError.
+     */
+    get deleteError(): AlertBanner {
+        return new AlertBanner(this.page, `${this.scope}.delete_error`, this.root);
+    }
+
+    /**
+     * `admin.attributes.delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get deleteModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.delete_modal`, this.root);
+    }
+
+    /**
+     * `admin.attributes.footer` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when hasPagination.
+     */
+    get footer(): AdminFooter {
+        return new AdminFooter(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.attributes.head` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    get head(): Head {
+        return new Head(this.page, `${this.scope}.head`, this.root);
+    }
+
+    /**
+     * `admin.attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    row(row: string): AdminAttributesRow {
+        return new AdminAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.attributes.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.attributes.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    get topPager(): TopPager {
+        return new TopPager(this.page, `${this.scope}.top_pager`, this.root);
+    }
+
+    /** Every `admin.attributes.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) =>
+                new AdminAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Scope `admin.attributes.actions_menu`. */
+export class AdminAttributesActionsMenu extends Scope {
+    constructor(page: Page, scope = 'admin.attributes.actions_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attributes.actions_menu.delete--menuitem` — ActionsCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Opens modal GlobalAttributeDeleteModal (`admin.attributes.delete_modal`).
+     */
+    get deleteMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.delete--menuitem`), {
+            testId: `${this.scope}.delete--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell',
+        });
+    }
+
+    /** Clicks deleteMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDeleteMenuItem(): Promise<DeleteModal> {
+        await this.deleteMenuItem.click();
+        return new DeleteModal(this.page, 'admin.attributes.delete_modal');
+    }
+
+    /**
+     * `admin.attributes.actions_menu.edit--menuitem` — ActionsCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Goes to attributeDetailsRoute(field.id).
+     */
+    get editMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.edit--menuitem`), {
+            testId: `${this.scope}.edit--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell',
+        });
+    }
+
+    async clickEditMenuItem(): Promise<void> {
+        await this.editMenuItem.click();
+    }
+}
+
+/** Rendered at `admin.attributes.footer`, `admin.board_attributes.footer`, `admin.classification.levels.footer`, `admin.secure_connection.shared_channels.footer`, `admin.session_attributes.footer`, `admin.users.table.footer`: one class, constructed with the scope it is mounted at. */
+export class AdminFooter extends Scope {
+    /**
+     * `admin.attributes.footer.next--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when hasPagination.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `admin.attributes.footer.page_size` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when hasPagination.
+     */
+    get pageSize() {
+        return drivers.container(this.byTestId(`${this.scope}.page_size`), {
+            testId: `${this.scope}.page_size`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    /**
+     * `admin.attributes.footer.pagination--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when hasPagination.
+     */
+    get paginationText() {
+        return drivers.text(this.byTestId(`${this.scope}.pagination--text`), {
+            testId: `${this.scope}.pagination--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getPaginationText(): Promise<string> {
+        return this.paginationText.text();
+    }
+
+    /**
+     * `admin.attributes.footer.previous--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when hasPagination.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+}
+
+/** Rendered at `admin.attributes.head`, `admin.board_attributes.head`, `admin.classification.levels.head`, `admin.secure_connection.shared_channels.head`, `admin.session_attributes.head`, `admin.users.table.head`: one class, constructed with the scope it is mounted at. */
+export class Head extends Scope {
+    /**
+     * `admin.attributes.head.column:{key}` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    column(column: string) {
+        return drivers.container(this.byTestId(`${this.scope}.column:${column}`), {
+            testId: `${this.scope}.column:${column}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    /** Every `admin.attributes.head.column:{key}` in the scope. */
+    get columnItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.column:`, '');
+    }
+
+    /** The keys of every `admin.attributes.head.column:{key}` in the scope, in document order. */
+    columnKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.column:`, '');
+    }
+
+    /** Every `admin.attributes.head.column:{key}` in the scope as a list by key, for the list matchers: `expect(x.columnList).toHaveKeys([…])`. */
+    get columnList() {
+        return this.keyedList(`${this.scope}.column:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.column:${key}`), {
+                testId: `${this.scope}.column:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.attributes.row`. */
+export class AdminAttributesRow extends Scope {
+    constructor(page: Page, scope = 'admin.attributes.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.attributes.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.attributes.row.actions--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attributes.actions_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get actionsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.actions--button`), {
+            testId: `${this.scope}.actions--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks actionsButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickActionsButton(): Promise<AdminAttributesActionsMenu> {
+        await this.actionsButton.click();
+        return new AdminAttributesActionsMenu(this.page, 'admin.attributes.actions_menu');
+    }
+
+    /**
+     * `admin.attributes.row.applies_to` — AppliesToCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get appliesTo() {
+        return drivers.container(this.byTestId(`${this.scope}.applies_to`), {
+            testId: `${this.scope}.applies_to`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell',
+        });
+    }
+
+    /**
+     * `admin.attributes.row.cell:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** Every `admin.attributes.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.attributes.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.attributes.row.classification_link--link` — ActionsCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when row.is_classification.
+     * Goes to CLASSIFICATIONS_MARKINGS_ADMIN_URL.
+     */
+    get classificationLinkLink() {
+        return drivers.link(this.byTestId(`${this.scope}.classification_link--link`), {
+            testId: `${this.scope}.classification_link--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell',
+        });
+    }
+
+    async clickClassificationLinkLink(): Promise<void> {
+        await this.classificationLinkLink.click();
+    }
+
+    /**
+     * `admin.attributes.row.classification_subtitle--text` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when row.is_classification.
+     */
+    get classificationSubtitleText() {
+        return drivers.text(this.byTestId(`${this.scope}.classification_subtitle--text`), {
+            testId: `${this.scope}.classification_subtitle--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
+        });
+    }
+
+    getClassificationSubtitleText(): Promise<string> {
+        return this.classificationSubtitleText.text();
+    }
+
+    /**
+     * `admin.attributes.row.drag_handle--button` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.onReorder && i === 0 and !(tableMeta.isRowDragDisabled?.(row.original.id) === true).
+     */
+    get dragHandleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.drag_handle--button`), {
+            testId: `${this.scope}.drag_handle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    async clickDragHandleButton(): Promise<void> {
+        await this.dragHandleButton.click();
+    }
+
+    /**
+     * `admin.attributes.row.name--text` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `admin.attributes.row.name_conflict--img` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get nameConflictImg() {
+        return drivers.text(this.byTestId(`${this.scope}.name_conflict--img`), {
+            testId: `${this.scope}.name_conflict--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
+        });
+    }
+
+    /**
+     * `admin.attributes.row.options--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get optionsText() {
+        return drivers.text(this.byTestId(`${this.scope}.options--text`), {
+            testId: `${this.scope}.options--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    getOptionsText(): Promise<string> {
+        return this.optionsText.text();
+    }
+
+    /**
+     * `admin.attributes.row.source--text` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get sourceText() {
+        return drivers.text(this.byTestId(`${this.scope}.source--text`), {
+            testId: `${this.scope}.source--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
+        });
+    }
+
+    getSourceText(): Promise<string> {
+        return this.sourceText.text();
+    }
+
+    /**
+     * `admin.attributes.row.source_plugin_icon` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when !row.is_classification.
+     */
+    get sourcePluginIcon() {
+        return drivers.container(this.byTestId(`${this.scope}.source_plugin_icon`), {
+            testId: `${this.scope}.source_plugin_icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
+        });
+    }
+
+    /**
+     * `admin.attributes.row.source_sync_icon` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when !row.is_classification and !(kind === 'plugin') and owners.length > 0 || syncSources.length > 0.
+     */
+    get sourceSyncIcon() {
+        return drivers.container(this.byTestId(`${this.scope}.source_sync_icon`), {
+            testId: `${this.scope}.source_sync_icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
+        });
+    }
+
+    /**
+     * `admin.attributes.row.type--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get typeText() {
+        return drivers.text(this.byTestId(`${this.scope}.type--text`), {
+            testId: `${this.scope}.type--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    getTypeText(): Promise<string> {
+        return this.typeText.text();
+    }
+
+    /**
+     * `admin.attributes.row.type_icon` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get typeIcon() {
+        return drivers.container(this.byTestId(`${this.scope}.type_icon`), {
+            testId: `${this.scope}.type_icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminAttributesRowRow> {
+        return {
+            classificationSubtitle: await this.classificationSubtitleText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+            options: await this.optionsText.textIfPresent(),
+            source: await this.sourceText.textIfPresent(),
+            type: await this.typeText.textIfPresent(),
+        };
+    }
+
+    /** Every `admin.attributes.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.attributes.top_pager`, `admin.board_attributes.top_pager`, `admin.classification.levels.top_pager`, `admin.secure_connection.shared_channels.top_pager`, `admin.session_attributes.top_pager`, `admin.users.table.top_pager`: one class, constructed with the scope it is mounted at. */
+export class TopPager extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.attributes.top_pager.next--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when hasPagination and tableMeta.hasDualSidedPagination.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `admin.attributes.top_pager.previous--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
+     * Renders only when hasPagination and tableMeta.hasDualSidedPagination.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+}
+
 /** Scope `admin.auto_translation`. */
 export class AdminAutoTranslation extends Scope {
     constructor(page: Page, scope = 'admin.auto_translation', root?: Locator) {
@@ -845,6 +5297,825 @@ export class AdminAutoTranslationHeader extends Scope {
 
     getTitleText(): Promise<string> {
         return this.titleText.text();
+    }
+}
+
+/** Scope `admin.board_attributes`. */
+export class AdminBoardAttributes extends Scope {
+    constructor(page: Page, scope = 'admin.board_attributes', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.board_attributes.add_attribute--button` — useBoardAttributesTable (channels/src/components/admin_console/board_attributes/board_attributes_table.tsx)
+     * Renders only when !readIO.loading and canCreate.
+     */
+    get addAttributeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_attribute--button`), {
+            testId: `${this.scope}.add_attribute--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_table.tsx#useBoardAttributesTable',
+        });
+    }
+
+    async clickAddAttributeButton(): Promise<void> {
+        await this.addAttributeButton.click();
+    }
+
+    /**
+     * `admin.board_attributes.load_error--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Failed.
+     */
+    get loadErrorText() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--text`), {
+            testId: `${this.scope}.load_error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getLoadErrorText(): Promise<string> {
+        return this.loadErrorText.text();
+    }
+
+    /**
+     * `admin.board_attributes.loading` — LoadingSpinner (channels/src/components/widgets/loading/loading_spinner.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loading && rowCount === 0.
+     */
+    get loading() {
+        return drivers.container(this.byTestId(`${this.scope}.loading`), {
+            testId: `${this.scope}.loading`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner',
+        });
+    }
+
+    /**
+     * `admin.board_attributes.no_data--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0.
+     */
+    get noDataText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_data--text`), {
+            testId: `${this.scope}.no_data--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getNoDataText(): Promise<string> {
+        return this.noDataText.text();
+    }
+
+    /**
+     * `admin.board_attributes.delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get deleteModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.delete_modal`, this.root);
+    }
+
+    /**
+     * `admin.board_attributes.footer` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when hasPagination.
+     */
+    get footer(): AdminFooter {
+        return new AdminFooter(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.board_attributes.head` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    get head(): Head {
+        return new Head(this.page, `${this.scope}.head`, this.root);
+    }
+
+    /**
+     * `admin.board_attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    row(row: string): AdminBoardAttributesRow {
+        return new AdminBoardAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.board_attributes.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.board_attributes.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /**
+     * `admin.board_attributes.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
+     */
+    get savePanel(): AdminSavePanel {
+        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    }
+
+    get topPager(): TopPager {
+        return new TopPager(this.page, `${this.scope}.top_pager`, this.root);
+    }
+
+    /** Every `admin.board_attributes.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) =>
+                new AdminBoardAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Scope `admin.board_attributes.row`. */
+export class AdminBoardAttributesRow extends Scope {
+    constructor(page: Page, scope = 'admin.board_attributes.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.board_attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.board_attributes.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.board_attributes.row.actions--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.board_attributes.row.actions_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get actionsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.actions--button`), {
+            testId: `${this.scope}.actions--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks actionsButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickActionsButton(): Promise<AdminBoardAttributesRowActionsMenu> {
+        await this.actionsButton.click();
+        return new AdminBoardAttributesRowActionsMenu(this.page, `${this.scope}.actions_menu`);
+    }
+
+    /**
+     * `admin.board_attributes.row.add_value--button` — BoardAttributesValues (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     */
+    get addValueButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_value--button`), {
+            testId: `${this.scope}.add_value--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#BoardAttributesValues',
+        });
+    }
+
+    async clickAddValueButton(): Promise<void> {
+        await this.addValueButton.click();
+    }
+
+    /**
+     * `admin.board_attributes.row.cell:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** Every `admin.board_attributes.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.board_attributes.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.board_attributes.row.drag_handle--button` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.onReorder && i === 0 and !(tableMeta.isRowDragDisabled?.(row.original.id) === true).
+     */
+    get dragHandleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.drag_handle--button`), {
+            testId: `${this.scope}.drag_handle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    async clickDragHandleButton(): Promise<void> {
+        await this.dragHandleButton.click();
+    }
+
+    /**
+     * `admin.board_attributes.row.locked_values` — BoardAttributesValues (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected.
+     */
+    get lockedValues() {
+        return drivers.container(this.byTestId(`${this.scope}.locked_values`), {
+            testId: `${this.scope}.locked_values`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#BoardAttributesValues',
+        });
+    }
+
+    /**
+     * `admin.board_attributes.row.name--textbox` — EditCell (channels/src/components/admin_console/board_attributes/board_attributes_table.tsx)
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_table.tsx#EditCell',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    /**
+     * `admin.board_attributes.row.name_error--text` — BoardAttributesTable (channels/src/components/admin_console/board_attributes/board_attributes_table.tsx)
+     * Renders only when !toDelete && warning.
+     */
+    get nameErrorText() {
+        return drivers.text(this.byTestId(`${this.scope}.name_error--text`), {
+            testId: `${this.scope}.name_error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_table.tsx#BoardAttributesTable',
+        });
+    }
+
+    getNameErrorText(): Promise<string> {
+        return this.nameErrorText.text();
+    }
+
+    /**
+     * `admin.board_attributes.row.type--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.board_attributes.row.type_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get typeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.type--button`), {
+            testId: `${this.scope}.type--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks typeButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickTypeButton(): Promise<AdminBoardAttributesRowTypeMenu> {
+        await this.typeButton.click();
+        return new AdminBoardAttributesRowTypeMenu(this.page, `${this.scope}.type_menu`);
+    }
+
+    /**
+     * `admin.board_attributes.row.values` — BoardAttributesValues (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     */
+    get values() {
+        return drivers.container(this.byTestId(`${this.scope}.values`), {
+            testId: `${this.scope}.values`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#BoardAttributesValues',
+        });
+    }
+
+    /**
+     * `admin.board_attributes.row.values_error--text` — BoardAttributesValues (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when warning === ValidationWarningOptionsUnique.
+     */
+    get valuesErrorText() {
+        return drivers.text(this.byTestId(`${this.scope}.values_error--text`), {
+            testId: `${this.scope}.values_error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#BoardAttributesValues',
+        });
+    }
+
+    getValuesErrorText(): Promise<string> {
+        return this.valuesErrorText.text();
+    }
+
+    get actionsMenu(): AdminBoardAttributesRowActionsMenu {
+        return new AdminBoardAttributesRowActionsMenu(this.page, `${this.scope}.actions_menu`);
+    }
+
+    /**
+     * `admin.board_attributes.row.option:{key}` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     */
+    option(option: Pick<BoardsPropertyFieldOption, 'id'>): AdminBoardAttributesRowOption {
+        return new AdminBoardAttributesRowOption(
+            this.page,
+            `${this.scope}.option`,
+            this.byTestId(`${this.scope}.option:${option.id}`),
+        );
+    }
+
+    /** Every `admin.board_attributes.row.option:{key}` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '');
+    }
+
+    /** The keys of every `admin.board_attributes.row.option:{key}` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '');
+    }
+
+    get optionMenu(): AdminBoardAttributesRowOptionMenu {
+        return new AdminBoardAttributesRowOptionMenu(this.page, `${this.scope}.option_menu`);
+    }
+
+    get typeMenu(): AdminBoardAttributesRowTypeMenu {
+        return new AdminBoardAttributesRowTypeMenu(this.page, `${this.scope}.type_menu`);
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminBoardAttributesRowRow> {
+        return {
+            nameError: await this.nameErrorText.textIfPresent(),
+            valuesError: await this.valuesErrorText.textIfPresent(),
+        };
+    }
+
+    /** Every `admin.board_attributes.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+            }),
+        );
+    }
+
+    /** Every `admin.board_attributes.row.option:{key}` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    get optionList() {
+        return this.keyedList(
+            `${this.scope}.option:`,
+            '',
+            (key: string) =>
+                new AdminBoardAttributesRowOption(
+                    this.page,
+                    `${this.scope}.option`,
+                    this.byTestId(`${this.scope}.option:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.board_attributes.row.actions_menu`. */
+export class AdminBoardAttributesRowActionsMenu extends Scope {
+    constructor(page: Page, scope = 'admin.board_attributes.row.actions_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.board_attributes.row.actions_menu.delete--menuitem` — DotMenu (channels/src/components/admin_console/board_attributes/board_attributes_dot_menu.tsx)
+     * Opens modal RemoveBoardAttributeFieldModal (`admin.board_attributes.delete_modal`).
+     */
+    get deleteMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.delete--menuitem`), {
+            testId: `${this.scope}.delete--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_dot_menu.tsx#DotMenu',
+        });
+    }
+
+    /** Clicks deleteMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDeleteMenuItem(): Promise<DeleteModal> {
+        await this.deleteMenuItem.click();
+        return new DeleteModal(this.page, 'admin.board_attributes.delete_modal');
+    }
+
+    /**
+     * `admin.board_attributes.row.actions_menu.duplicate--menuitem` — DotMenu (channels/src/components/admin_console/board_attributes/board_attributes_dot_menu.tsx)
+     * Renders only when canCreate.
+     */
+    get duplicateMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.duplicate--menuitem`), {
+            testId: `${this.scope}.duplicate--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_dot_menu.tsx#DotMenu',
+        });
+    }
+
+    async clickDuplicateMenuItem(): Promise<void> {
+        await this.duplicateMenuItem.click();
+    }
+}
+
+/** Scope `admin.board_attributes.row.option`. */
+export class AdminBoardAttributesRowOption extends Scope {
+    constructor(page: Page, scope = 'admin.board_attributes.row.option', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.board_attributes.row.option:{key}` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.board_attributes.row.option:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.board_attributes.row.option.delete--button` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected and canDelete.
+     */
+    get deleteButton() {
+        return drivers.button(this.byTestId(`${this.scope}.delete--button`), {
+            testId: `${this.scope}.delete--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    async clickDeleteButton(): Promise<void> {
+        await this.deleteButton.click();
+    }
+
+    /**
+     * `admin.board_attributes.row.option.edit--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.board_attributes.row.option_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks editButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickEditButton(): Promise<AdminBoardAttributesRowOptionMenu> {
+        await this.editButton.click();
+        return new AdminBoardAttributesRowOptionMenu(this.page, 'admin.board_attributes.row.option_menu');
+    }
+
+    /**
+     * `admin.board_attributes.row.option.locked--text` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected and readonly.
+     */
+    get lockedText() {
+        return drivers.text(this.byTestId(`${this.scope}.locked--text`), {
+            testId: `${this.scope}.locked--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    getLockedText(): Promise<string> {
+        return this.lockedText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminBoardAttributesRowOptionRow> {
+        return {
+            locked: await this.lockedText.textIfPresent(),
+        };
+    }
+}
+
+/** Scope `admin.board_attributes.row.option_menu`. */
+export class AdminBoardAttributesRowOptionMenu extends Scope {
+    constructor(page: Page, scope = 'admin.board_attributes.row.option_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.board_attributes.row.option_menu.color:{key}--menuitemradio` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected.
+     */
+    color(color: AdminColor) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.color:${color}--menuitemradio`), {
+            testId: `${this.scope}.color:${color}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    /** Every `admin.board_attributes.row.option_menu.color:{key}--menuitemradio` in the scope. */
+    get colorItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.color:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.board_attributes.row.option_menu.color:{key}--menuitemradio` in the scope, in document order. */
+    colorKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.color:`, '--menuitemradio');
+    }
+
+    get blueMenuItemRadio() {
+        return this.color('blue');
+    }
+
+    get brownMenuItemRadio() {
+        return this.color('brown');
+    }
+
+    get defaultMenuItemRadio() {
+        return this.color('default');
+    }
+
+    get greenMenuItemRadio() {
+        return this.color('green');
+    }
+
+    get orangeMenuItemRadio() {
+        return this.color('orange');
+    }
+
+    get pinkMenuItemRadio() {
+        return this.color('pink');
+    }
+
+    get purpleMenuItemRadio() {
+        return this.color('purple');
+    }
+
+    get redMenuItemRadio() {
+        return this.color('red');
+    }
+
+    get yellowMenuItemRadio() {
+        return this.color('yellow');
+    }
+
+    /**
+     * `admin.board_attributes.row.option_menu.delete--menuitem` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected and canDelete.
+     */
+    get deleteMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.delete--menuitem`), {
+            testId: `${this.scope}.delete--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    async clickDeleteMenuItem(): Promise<void> {
+        await this.deleteMenuItem.click();
+    }
+
+    /**
+     * `admin.board_attributes.row.option_menu.name--textbox` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected.
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    /**
+     * `admin.board_attributes.row.option_menu.name_error--alert` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected and liveRenameTaken.
+     */
+    get nameErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.name_error--alert`), {
+            testId: `${this.scope}.name_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    /** Every `admin.board_attributes.row.option_menu.color:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.colorList).toHaveKeys([…])`. */
+    get colorList() {
+        return this.keyedList(`${this.scope}.color:`, '--menuitemradio', (key: AdminColor) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.color:${key}--menuitemradio`), {
+                testId: `${this.scope}.color:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.board_attributes.row.type_menu`. */
+export class AdminBoardAttributesRowTypeMenu extends Scope {
+    constructor(page: Page, scope = 'admin.board_attributes.row.type_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.board_attributes.row.type_menu.type:{key}--menuitemradio` — SelectType (channels/src/components/admin_console/board_attributes/board_attributes_type_menu.tsx)
+     */
+    type(type: AdminType) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.type:${type}--menuitemradio`), {
+            testId: `${this.scope}.type:${type}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_type_menu.tsx#SelectType',
+        });
+    }
+
+    /** Every `admin.board_attributes.row.type_menu.type:{key}--menuitemradio` in the scope. */
+    get typeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.type:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.board_attributes.row.type_menu.type:{key}--menuitemradio` in the scope, in document order. */
+    typeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.type:`, '--menuitemradio');
+    }
+
+    get dateMenuItemRadio() {
+        return this.type('date');
+    }
+
+    get multiselectMenuItemRadio() {
+        return this.type('multiselect');
+    }
+
+    get selectMenuItemRadio() {
+        return this.type('select');
+    }
+
+    get textMenuItemRadio() {
+        return this.type('text');
+    }
+
+    get userMenuItemRadio() {
+        return this.type('user');
+    }
+
+    /** Every `admin.board_attributes.row.type_menu.type:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.typeList).toHaveKeys([…])`. */
+    get typeList() {
+        return this.keyedList(`${this.scope}.type:`, '--menuitemradio', (key: AdminType) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.type:${key}--menuitemradio`), {
+                testId: `${this.scope}.type:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/board_attributes/board_attributes_type_menu.tsx#SelectType',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.board_attributes.save_panel`, `admin.classification.save_panel`, `admin.content_flagging.save_panel`, `admin.ip_filtering.save_panel`, `admin.session_attributes.save_panel`: one class, constructed with the scope it is mounted at. */
+export class AdminSavePanel extends Scope {
+    /**
+     * `admin.board_attributes.save_panel.cancel--button` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
+     * Renders only when showCancel and !cancelLink.
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/save_changes_panel.tsx#SaveChangesPanel',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `admin.board_attributes.save_panel.error--text` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/save_changes_panel.tsx#SaveChangesPanel',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `admin.board_attributes.save_panel.save--button` — SaveButton (channels/src/components/save_button.tsx)
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [
+                Api.CreateCPAField,
+                Api.CreatePropertyField,
+                Api.DeleteCPAField,
+                Api.DeletePropertyField,
+                Api.GetPropertyFields,
+                Api.ListAllCPAFields,
+                Api.PatchCPAField,
+                Api.UpdateCFConfig,
+                Api.UpdateDeliveryTrackingConfig,
+                Api.UpdatePropertyField,
+                Api.UpdateSystemPropertyValues,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/save_button.tsx#SaveButton',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
     }
 }
 
@@ -1043,6 +6314,14 @@ export class AdminChannel extends Scope {
         });
     }
 
+    get accessPolicy(): AdminChannelAccessPolicy {
+        return new AdminChannelAccessPolicy(this.page, `${this.scope}.access_policy`, this.root);
+    }
+
+    get accessRules(): AdminChannelAccessRules {
+        return new AdminChannelAccessRules(this.page, `${this.scope}.access_rules`, this.root);
+    }
+
     /**
      * `admin.channel.archive_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      * Renders only when channel.
@@ -1070,8 +6349,8 @@ export class AdminChannel extends Scope {
      * `admin.channel.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      * Renders only when channel.
      */
-    get savePanel(): AdminSavePanel {
-        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    get savePanel(): AdminSaveChangesPanel {
+        return new AdminSaveChangesPanel(this.page, `${this.scope}.save_panel`, this.root);
     }
 
     get syncGroups(): AdminSettingsSwitch {
@@ -1112,6 +6391,76 @@ export class AdminChannel extends Scope {
             public: vPublic,
             syncGroups: vSyncGroups,
         };
+    }
+}
+
+/** Scope `admin.channel.access_policy`. */
+export class AdminChannelAccessPolicy extends Scope {
+    constructor(page: Page, scope = 'admin.channel.access_policy', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.channel.access_policy.link--button` — AdminPanelWithButton (channels/src/components/widgets/admin_console/admin_panel_with_button.tsx)
+     * Renders only when accessControlPolicies.length === 0 and onButtonClick && buttonText.
+     * Opens modal PolicySelectionModal (`policy_selection_modal`).
+     */
+    get linkButton() {
+        return drivers.button(this.byTestId(`${this.scope}.link--button`), {
+            testId: `${this.scope}.link--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel_with_button.tsx#AdminPanelWithButton',
+        });
+    }
+
+    /** Clicks linkButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickLinkButton(): Promise<PolicySelectionModal> {
+        await this.linkButton.click();
+        return new PolicySelectionModal(this.page, 'policy_selection_modal');
+    }
+
+    /**
+     * `admin.channel.access_policy.remove_all--button` — AdminPanelWithButton (channels/src/components/widgets/admin_console/admin_panel_with_button.tsx)
+     * Renders only when onButtonClick && buttonText.
+     */
+    get removeAllButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove_all--button`), {
+            testId: `${this.scope}.remove_all--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel_with_button.tsx#AdminPanelWithButton',
+        });
+    }
+
+    async clickRemoveAllButton(): Promise<void> {
+        await this.removeAllButton.click();
+    }
+}
+
+/** Scope `admin.channel.access_rules`. */
+export class AdminChannelAccessRules extends Scope {
+    constructor(page: Page, scope = 'admin.channel.access_rules', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.channel.access_rules.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
     }
 }
 
@@ -1646,7 +6995,7 @@ export class AdminSettingsSwitch extends Scope {
 }
 
 /** Rendered at `admin.channel.save_panel`, `admin.group.save_panel`, `admin.role.save_panel`, `admin.secure_connection.save_panel`, `admin.team.save_panel`: one class, constructed with the scope it is mounted at. */
-export class AdminSavePanel extends Scope {
+export class AdminSaveChangesPanel extends Scope {
     /**
      * `admin.channel.save_panel.cancel--link` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      * Renders only when showCancel and cancelLink and channel.
@@ -1686,7 +7035,7 @@ export class AdminSavePanel extends Scope {
     /**
      * `admin.channel.save_panel.save--button` — SaveButton (channels/src/components/save_button.tsx)
      * Renders only when channel.
-     * Opens modal ChannelAccessRulesConfirmModal (`channel_access_rules_confirm_modal.users`).
+     * Opens modal ChannelAccessRulesConfirmModal (`channel_access_rules_confirm_modal`).
      * Goes to '/admin_console/user_management/channels'.
      */
     get saveButton() {
@@ -1738,9 +7087,9 @@ export class AdminSavePanel extends Scope {
     }
 
     /** Clicks saveButton and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickSaveButton(): Promise<SearchableUserList> {
+    async clickSaveButton(): Promise<ChannelAccessRulesConfirmModal> {
         await this.saveButton.click();
-        return new SearchableUserList(this.page, 'channel_access_rules_confirm_modal.users');
+        return new ChannelAccessRulesConfirmModal(this.page, 'channel_access_rules_confirm_modal');
     }
 }
 
@@ -1949,6 +7298,670 @@ export class AdminChannelsRow extends Scope {
     }
 }
 
+/** Scope `admin.classification`. */
+export class AdminClassification extends Scope {
+    constructor(page: Page, scope = 'admin.classification', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.classification.back--link` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     */
+    get backLink() {
+        return drivers.link(this.byTestId(`${this.scope}.back--link`), {
+            testId: `${this.scope}.back--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    async clickBackLink(): Promise<void> {
+        await this.backLink.click();
+    }
+
+    /**
+     * `admin.classification.cancel--link` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'ready'.
+     */
+    get cancelLink() {
+        return drivers.link(this.byTestId(`${this.scope}.cancel--link`), {
+            testId: `${this.scope}.cancel--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    async clickCancelLink(): Promise<void> {
+        await this.cancelLink.click();
+    }
+
+    /**
+     * `admin.classification.clearance_attribute--checkbox` — ClassificationMarkings (channels/src/components/admin_console/classification_markings/classification_markings.tsx)
+     * Renders only when enabled && abacEnabled.
+     */
+    get clearanceAttributeCheckbox() {
+        return drivers.checkbox(this.byTestId(`${this.scope}.clearance_attribute--checkbox`), {
+            testId: `${this.scope}.clearance_attribute--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/classification_markings/classification_markings.tsx#ClassificationMarkings',
+        });
+    }
+
+    async setClearanceAttributeCheckbox(on: boolean): Promise<void> {
+        await this.clearanceAttributeCheckbox.set(on);
+    }
+
+    /**
+     * `admin.classification.conflict--alert` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'conflict' && conflictField.
+     */
+    get conflictAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.conflict--alert`), {
+            testId: `${this.scope}.conflict--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    /**
+     * `admin.classification.levels--list` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'ready' && template.
+     */
+    get levelsList() {
+        return drivers.text(this.byTestId(`${this.scope}.levels--list`), {
+            testId: `${this.scope}.levels--list`,
+            role: 'list',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    /**
+     * `admin.classification.load_error--alert` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'failed'.
+     */
+    get loadErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--alert`), {
+            testId: `${this.scope}.load_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    /**
+     * `admin.classification.markings--link` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'ready' && template.
+     * Goes to CLASSIFICATIONS_MARKINGS_ADMIN_URL.
+     */
+    get markingsLink() {
+        return drivers.link(this.byTestId(`${this.scope}.markings--link`), {
+            testId: `${this.scope}.markings--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    async clickMarkingsLink(): Promise<void> {
+        await this.markingsLink.click();
+    }
+
+    /**
+     * `admin.classification.missing--text` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'missing'.
+     */
+    get missingText() {
+        return drivers.text(this.byTestId(`${this.scope}.missing--text`), {
+            testId: `${this.scope}.missing--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    getMissingText(): Promise<string> {
+        return this.missingText.text();
+    }
+
+    /**
+     * `admin.classification.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when loadState === 'ready' && template.
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    /**
+     * `admin.classification.save_error--alert` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'ready' and saveFailed.
+     */
+    get saveErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.save_error--alert`), {
+            testId: `${this.scope}.save_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    /**
+     * `admin.classification.type--button` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'ready' && template.
+     */
+    get typeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.type--button`), {
+            testId: `${this.scope}.type--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    async clickTypeButton(): Promise<void> {
+        await this.typeButton.click();
+    }
+
+    /**
+     * `admin.classification.unique_name--text` — ClassificationAttribute (channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx)
+     * Renders only when loadState === 'ready' && template.
+     */
+    get uniqueNameText() {
+        return drivers.text(this.byTestId(`${this.scope}.unique_name--text`), {
+            testId: `${this.scope}.unique_name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute',
+        });
+    }
+
+    getUniqueNameText(): Promise<string> {
+        return this.uniqueNameText.text();
+    }
+
+    get appliesTo(): AdminClassificationAppliesTo {
+        return new AdminClassificationAppliesTo(this.page, `${this.scope}.applies_to`, this.root);
+    }
+
+    /**
+     * `admin.classification.global_banner_level` — DropdownInput (channels/src/components/dropdown_input.tsx)
+     * Renders only when globalBanner.enabled.
+     */
+    get globalBannerLevel(): DropdownInput {
+        return new DropdownInput(this.page, `${this.scope}.global_banner_level`, this.root);
+    }
+
+    get levels(): AdminClassificationLevels {
+        return new AdminClassificationLevels(this.page, `${this.scope}.levels`, this.root);
+    }
+
+    /**
+     * `admin.classification.preset` — DropdownInput (channels/src/components/dropdown_input.tsx)
+     * Renders only when enabled.
+     */
+    get preset(): DropdownInput {
+        return new DropdownInput(this.page, `${this.scope}.preset`, this.root);
+    }
+
+    /**
+     * `admin.classification.remove_channel_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get removeChannelModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.remove_channel_modal`, this.root);
+    }
+
+    /**
+     * `admin.classification.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
+     */
+    get savePanel(): AdminSavePanel {
+        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    }
+
+    /**
+     * `admin.classification.switch_preset_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get switchPresetModal(): ConfirmModal {
+        return new ConfirmModal(this.page, `${this.scope}.switch_preset_modal`, this.root);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<AdminClassificationFormValues>): Promise<void> {
+        if (values.clearanceAttribute !== undefined) {
+            await this.clearanceAttributeCheckbox.set(values.clearanceAttribute);
+        }
+        if (values.name !== undefined) {
+            await this.nameTextbox.fill(values.name);
+        }
+    }
+
+    /** Reads every field (a field that isn't rendered reads as `undefined`). */
+    async read(): Promise<AdminClassificationFormValues> {
+        const vClearanceAttribute = (await this.clearanceAttributeCheckbox.locator.count())
+            ? await this.clearanceAttributeCheckbox.isChecked()
+            : undefined;
+        const vName = (await this.nameTextbox.locator.count()) ? await this.nameTextbox.value() : undefined;
+        return {
+            clearanceAttribute: vClearanceAttribute,
+            name: vName,
+        };
+    }
+}
+
+/** Scope `admin.classification.applies_to`. */
+export class AdminClassificationAppliesTo extends Scope {
+    constructor(page: Page, scope = 'admin.classification.applies_to', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.classification.applies_to.add--button` — AppliesToCard (channels/src/components/admin_console/global_attributes/applies_to/applies_to_card.tsx)
+     * Renders only when !channelResource and loadState === 'ready' && template.
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/applies_to_card.tsx#AppliesToCard',
+        });
+    }
+
+    async clickAddButton(): Promise<void> {
+        await this.addButton.click();
+    }
+
+    /**
+     * `admin.classification.applies_to.empty--text` — AppliesToCard (channels/src/components/admin_console/global_attributes/applies_to/applies_to_card.tsx)
+     * Renders only when !channelResource && readOnlyResources.length === 0 and loadState === 'ready' && template.
+     */
+    get emptyText() {
+        return drivers.text(this.byTestId(`${this.scope}.empty--text`), {
+            testId: `${this.scope}.empty--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/applies_to_card.tsx#AppliesToCard',
+        });
+    }
+
+    getEmptyText(): Promise<string> {
+        return this.emptyText.text();
+    }
+
+    /**
+     * `admin.classification.applies_to.read_only--list` — AppliesToCard (channels/src/components/admin_console/global_attributes/applies_to/applies_to_card.tsx)
+     * Renders only when readOnlyResources.length > 0 and loadState === 'ready' && template.
+     */
+    get readOnlyList() {
+        return drivers.text(this.byTestId(`${this.scope}.read_only--list`), {
+            testId: `${this.scope}.read_only--list`,
+            role: 'list',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/applies_to_card.tsx#AppliesToCard',
+        });
+    }
+
+    /**
+     * `admin.classification.applies_to.channel` — ChannelsResourceRow (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_row.tsx)
+     */
+    get channel(): AdminClassificationAppliesToChannel {
+        return new AdminClassificationAppliesToChannel(this.page, `${this.scope}.channel`, this.root);
+    }
+}
+
+/** Scope `admin.classification.applies_to.channel`. */
+export class AdminClassificationAppliesToChannel extends Scope {
+    constructor(page: Page, scope = 'admin.classification.applies_to.channel', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.classification.applies_to.channel.remove--button` — ChannelsResourceRow (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_row.tsx)
+     * Renders only when expanded.
+     * Opens modal RemoveChannelResourceModal (`admin.classification.remove_channel_modal`).
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [Api.DeletePropertyField],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_row.tsx#ChannelsResourceRow',
+        });
+    }
+
+    /** Clicks removeButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickRemoveButton(): Promise<DeleteModal> {
+        await this.removeButton.click();
+        return new DeleteModal(this.page, 'admin.classification.remove_channel_modal');
+    }
+
+    /**
+     * `admin.classification.applies_to.channel.summary--text` — ChannelsResourceRow (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_row.tsx)
+     */
+    get summaryText() {
+        return drivers.text(this.byTestId(`${this.scope}.summary--text`), {
+            testId: `${this.scope}.summary--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_row.tsx#ChannelsResourceRow',
+        });
+    }
+
+    getSummaryText(): Promise<string> {
+        return this.summaryText.text();
+    }
+
+    /**
+     * `admin.classification.applies_to.channel.toggle--button` — ChannelsResourceRow (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_row.tsx)
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_row.tsx#ChannelsResourceRow',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
+    }
+
+    /**
+     * `admin.classification.applies_to.channel.settings` — ChannelsResourceSettings (channels/src/components/admin_console/global_attributes/applies_to/channels/channels_resource_settings.tsx)
+     * Renders only when expanded.
+     */
+    get settings(): AdminSettings {
+        return new AdminSettings(this.page, `${this.scope}.settings`, this.root);
+    }
+}
+
+/** Scope `admin.classification.levels`. */
+export class AdminClassificationLevels extends Scope {
+    constructor(page: Page, scope = 'admin.classification.levels', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.classification.levels.load_error--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Failed.
+     */
+    get loadErrorText() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--text`), {
+            testId: `${this.scope}.load_error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getLoadErrorText(): Promise<string> {
+        return this.loadErrorText.text();
+    }
+
+    /**
+     * `admin.classification.levels.loading` — LoadingSpinner (channels/src/components/widgets/loading/loading_spinner.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loading && rowCount === 0.
+     */
+    get loading() {
+        return drivers.container(this.byTestId(`${this.scope}.loading`), {
+            testId: `${this.scope}.loading`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner',
+        });
+    }
+
+    /**
+     * `admin.classification.levels.no_data--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0.
+     */
+    get noDataText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_data--text`), {
+            testId: `${this.scope}.no_data--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getNoDataText(): Promise<string> {
+        return this.noDataText.text();
+    }
+
+    /**
+     * `admin.classification.levels.footer` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when hasPagination.
+     */
+    get footer(): AdminFooter {
+        return new AdminFooter(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.classification.levels.head` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    get head(): Head {
+        return new Head(this.page, `${this.scope}.head`, this.root);
+    }
+
+    /**
+     * `admin.classification.levels.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    row(row: string): AdminClassificationLevelsRow {
+        return new AdminClassificationLevelsRow(
+            this.page,
+            `${this.scope}.row`,
+            this.byTestId(`${this.scope}.row:${row}`),
+        );
+    }
+
+    /** Every `admin.classification.levels.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.classification.levels.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    get topPager(): TopPager {
+        return new TopPager(this.page, `${this.scope}.top_pager`, this.root);
+    }
+
+    /** Every `admin.classification.levels.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) =>
+                new AdminClassificationLevelsRow(
+                    this.page,
+                    `${this.scope}.row`,
+                    this.byTestId(`${this.scope}.row:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.classification.levels.row`. */
+export class AdminClassificationLevelsRow extends Scope {
+    constructor(page: Page, scope = 'admin.classification.levels.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.classification.levels.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.classification.levels.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.classification.levels.row.cell:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** Every `admin.classification.levels.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.classification.levels.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.classification.levels.row.color--textbox` — ClassificationColorInput (channels/src/components/admin_console/classification_markings/components/classification_color_input.tsx)
+     */
+    get colorTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.color--textbox`), {
+            testId: `${this.scope}.color--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/classification_markings/components/classification_color_input.tsx#ClassificationColorInput',
+        });
+    }
+
+    async fillColorTextbox(value: string): Promise<void> {
+        await this.colorTextbox.fill(value);
+    }
+
+    /**
+     * `admin.classification.levels.row.drag_handle--button` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.onReorder && i === 0 and !(tableMeta.isRowDragDisabled?.(row.original.id) === true).
+     */
+    get dragHandleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.drag_handle--button`), {
+            testId: `${this.scope}.drag_handle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    async clickDragHandleButton(): Promise<void> {
+        await this.dragHandleButton.click();
+    }
+
+    /**
+     * `admin.classification.levels.row.name--textbox` — LevelNameCell (channels/src/components/admin_console/classification_markings/components/level_name_cell.tsx)
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/classification_markings/components/level_name_cell.tsx#LevelNameCell',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<AdminClassificationLevelsRowFormValues>): Promise<void> {
+        if (values.color !== undefined) {
+            await this.colorTextbox.fill(values.color);
+        }
+        if (values.name !== undefined) {
+            await this.nameTextbox.fill(values.name);
+        }
+    }
+
+    /** Reads every field (a field that isn't rendered reads as `undefined`). */
+    async read(): Promise<AdminClassificationLevelsRowFormValues> {
+        const vColor = await this.colorTextbox.value();
+        const vName = await this.nameTextbox.value();
+        return {
+            color: vColor,
+            name: vName,
+        };
+    }
+
+    /** Every `admin.classification.levels.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+            }),
+        );
+    }
+}
+
 /** Scope `admin.content_flagging`. */
 export class AdminContentFlagging extends Scope {
     constructor(page: Page, scope = 'admin.content_flagging', root?: Locator) {
@@ -2039,8 +8052,8 @@ export class AdminContentFlagging extends Scope {
      * `admin.content_flagging.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      * Renders only when contentFlaggingSettings.
      */
-    get savePanel(): AdminSaveChangesPanel {
-        return new AdminSaveChangesPanel(this.page, `${this.scope}.save_panel`, this.root);
+    get savePanel(): AdminSavePanel {
+        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
     }
 
     /** Every `admin.content_flagging.notification:{key}--checkbox` in the scope as a list by key, for the list matchers: `expect(x.notificationList).toHaveKeys([…])`. */
@@ -2536,63 +8549,6 @@ export class AdminContentFlaggingReviewersTeamsRow extends Scope {
                 source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
             }),
         );
-    }
-}
-
-/** Rendered at `admin.content_flagging.save_panel`, `admin.ip_filtering.save_panel`: one class, constructed with the scope it is mounted at. */
-export class AdminSaveChangesPanel extends Scope {
-    /**
-     * `admin.content_flagging.save_panel.cancel--button` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
-     * Renders only when contentFlaggingSettings and showCancel and !cancelLink.
-     */
-    get cancelButton() {
-        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
-            testId: `${this.scope}.cancel--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/save_changes_panel.tsx#SaveChangesPanel',
-        });
-    }
-
-    async clickCancelButton(): Promise<void> {
-        await this.cancelButton.click();
-    }
-
-    /**
-     * `admin.content_flagging.save_panel.error--text` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
-     * Renders only when contentFlaggingSettings.
-     */
-    get errorText() {
-        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
-            testId: `${this.scope}.error--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/save_changes_panel.tsx#SaveChangesPanel',
-        });
-    }
-
-    getErrorText(): Promise<string> {
-        return this.errorText.text();
-    }
-
-    /**
-     * `admin.content_flagging.save_panel.save--button` — SaveButton (channels/src/components/save_button.tsx)
-     * Renders only when contentFlaggingSettings.
-     */
-    get saveButton() {
-        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
-            testId: `${this.scope}.save--button`,
-            role: 'button',
-            effects: [Api.UpdateCFConfig, Api.UpdateDeliveryTrackingConfig],
-            unknownEffects: false,
-            source: 'channels/src/components/save_button.tsx#SaveButton',
-        });
-    }
-
-    async clickSaveButton(): Promise<void> {
-        await this.saveButton.click();
     }
 }
 
@@ -3440,8 +9396,8 @@ export class AdminGroup extends Scope {
     /**
      * `admin.group.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      */
-    get savePanel(): AdminSavePanel {
-        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    get savePanel(): AdminSaveChangesPanel {
+        return new AdminSaveChangesPanel(this.page, `${this.scope}.save_panel`, this.root);
     }
 
     get teamsAndChannels(): AdminGroupTeamsAndChannels {
@@ -4321,8 +10277,8 @@ export class AdminIpFiltering extends Scope {
     /**
      * `admin.ip_filtering.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      */
-    get savePanel(): AdminSaveChangesPanel {
-        return new AdminSaveChangesPanel(this.page, `${this.scope}.save_panel`, this.root);
+    get savePanel(): AdminSavePanel {
+        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
     }
 }
 
@@ -4568,7 +10524,7 @@ export class AdminJobsTableJob extends Scope {
 
     /**
      * `admin.jobs.table.job.view_details--button` — JobTable (channels/src/components/admin_console/jobs/table.tsx)
-     * Opens modal JobDetailsModal.
+     * Opens modal JobDetailsModal (`job_details_modal`).
      */
     get viewDetailsButton() {
         return drivers.button(this.byTestId(`${this.scope}.view_details--button`), {
@@ -4580,8 +10536,10 @@ export class AdminJobsTableJob extends Scope {
         });
     }
 
-    async clickViewDetailsButton(): Promise<void> {
+    /** Clicks viewDetailsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickViewDetailsButton(): Promise<JobDetailsModal> {
         await this.viewDetailsButton.click();
+        return new JobDetailsModal(this.page, 'job_details_modal');
     }
 }
 
@@ -4938,6 +10896,579 @@ export class AdminPassword extends Scope {
             symbol: vSymbol,
             uppercase: vUppercase,
         };
+    }
+}
+
+/** Scope `admin.permission_policies`. */
+export class AdminPermissionPolicies extends Scope {
+    constructor(page: Page, scope = 'admin.permission_policies', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.permission_policies.add--button` — PermissionPolicyList (channels/src/components/admin_console/permission_policies/permission_policies.tsx)
+     * Goes to '/admin_console/system_attributes/permission_policies/edit_….
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/permission_policies.tsx#PermissionPolicyList',
+        });
+    }
+
+    async clickAddButton(): Promise<void> {
+        await this.addButton.click();
+    }
+
+    /**
+     * `admin.permission_policies.header` — DataGridHeader (channels/src/components/admin_console/data_grid/data_grid_header.tsx)
+     */
+    get header() {
+        return drivers.container(this.byTestId(`${this.scope}.header`), {
+            testId: `${this.scope}.header`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader',
+        });
+    }
+
+    /**
+     * `admin.permission_policies.rows` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get rows() {
+        return drivers.container(this.byTestId(`${this.scope}.rows`), {
+            testId: `${this.scope}.rows`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
+        });
+    }
+
+    /**
+     * `admin.permission_policies.search--textbox` — DataGridSearch (channels/src/components/admin_console/data_grid/data_grid_search.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [Api.SearchAccessControlPolicies],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_search.tsx#DataGridSearch',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.permission_policies.subtitle--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get subtitleText() {
+        return drivers.text(this.byTestId(`${this.scope}.subtitle--text`), {
+            testId: `${this.scope}.subtitle--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getSubtitleText(): Promise<string> {
+        return this.subtitleText.text();
+    }
+
+    /**
+     * `admin.permission_policies.title--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get titleText() {
+        return drivers.text(this.byTestId(`${this.scope}.title--text`), {
+            testId: `${this.scope}.title--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getTitleText(): Promise<string> {
+        return this.titleText.text();
+    }
+
+    get edit(): AdminAccessControlPolicyEditPolicy {
+        return new AdminAccessControlPolicyEditPolicy(this.page, `${this.scope}.edit`, this.root);
+    }
+
+    /**
+     * `admin.permission_policies.footer` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     * Renders only when total.
+     */
+    get footer(): Footer {
+        return new Footer(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.permission_policies.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    row(row: string): AdminPermissionPoliciesRow {
+        return new AdminPermissionPoliciesRow(
+            this.page,
+            `${this.scope}.row`,
+            this.byTestId(`${this.scope}.row:${row}`),
+        );
+    }
+
+    /** Every `admin.permission_policies.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.permission_policies.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /** Every `admin.permission_policies.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) =>
+                new AdminPermissionPoliciesRow(
+                    this.page,
+                    `${this.scope}.row`,
+                    this.byTestId(`${this.scope}.row:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.permission_policies.row`. */
+export class AdminPermissionPoliciesRow extends Scope {
+    constructor(page: Page, scope = 'admin.permission_policies.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.permission_policies.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.permission_policies.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.permission_policies.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.permission_policies.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.permission_policies.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.permission_policies.row.open_menu--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.permission_policies.row.menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get openMenuButton() {
+        return drivers.button(this.byTestId(`${this.scope}.open_menu--button`), {
+            testId: `${this.scope}.open_menu--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks openMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickOpenMenuButton(): Promise<AdminPermissionPoliciesRowMenu> {
+        await this.openMenuButton.click();
+        return new AdminPermissionPoliciesRowMenu(this.page, `${this.scope}.menu`);
+    }
+
+    get menu(): AdminPermissionPoliciesRowMenu {
+        return new AdminPermissionPoliciesRowMenu(this.page, `${this.scope}.menu`);
+    }
+
+    /** Every `admin.permission_policies.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.permission_policies.row.menu`. */
+export class AdminPermissionPoliciesRowMenu extends Scope {
+    constructor(page: Page, scope = 'admin.permission_policies.row.menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.permission_policies.row.menu.delete--menuitem` — PermissionPolicyList (channels/src/components/admin_console/permission_policies/permission_policies.tsx)
+     */
+    get deleteMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.delete--menuitem`), {
+            testId: `${this.scope}.delete--menuitem`,
+            role: 'menuitem',
+            effects: [Api.DeleteAccessControlPolicy, Api.SearchAccessControlPolicies],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/permission_policies.tsx#PermissionPolicyList',
+        });
+    }
+
+    async clickDeleteMenuItem(): Promise<void> {
+        await this.deleteMenuItem.click();
+    }
+
+    /**
+     * `admin.permission_policies.row.menu.edit--menuitem` — PermissionPolicyList (channels/src/components/admin_console/permission_policies/permission_policies.tsx)
+     * Goes to `/admin_console/system_attributes/permission_policies/edit_….
+     */
+    get editMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.edit--menuitem`), {
+            testId: `${this.scope}.edit--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/permission_policies.tsx#PermissionPolicyList',
+        });
+    }
+
+    async clickEditMenuItem(): Promise<void> {
+        await this.editMenuItem.click();
+    }
+}
+
+/** Scope `admin.permission_policy`. */
+export class AdminPermissionPolicy extends Scope {
+    constructor(page: Page, scope = 'admin.permission_policy', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.permission_policy.add_permission--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when pageLoaded && !loadFailed and availableToAdd.length > 0.
+     * Opens menu pp-add-permission-menu (`admin.permission_policy.permission_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get addPermissionButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add_permission--button`), {
+            testId: `${this.scope}.add_permission--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks addPermissionButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickAddPermissionButton(): Promise<AdminPermissionPolicyPermissionMenu> {
+        await this.addPermissionButton.click();
+        return new AdminPermissionPolicyPermissionMenu(this.page, `${this.scope}.permission_menu`);
+    }
+
+    /**
+     * `admin.permission_policy.cancel--link` — PermissionPolicyDetails (channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx)
+     * Renders only when pageLoaded && !loadFailed.
+     */
+    get cancelLink() {
+        return drivers.link(this.byTestId(`${this.scope}.cancel--link`), {
+            testId: `${this.scope}.cancel--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+        });
+    }
+
+    async clickCancelLink(): Promise<void> {
+        await this.cancelLink.click();
+    }
+
+    /**
+     * `admin.permission_policy.error--text` — PermissionPolicyDetails (channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx)
+     * Renders only when pageLoaded && !loadFailed and serverError.
+     */
+    get errorText() {
+        return drivers.text(this.byTestId(`${this.scope}.error--text`), {
+            testId: `${this.scope}.error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+        });
+    }
+
+    getErrorText(): Promise<string> {
+        return this.errorText.text();
+    }
+
+    /**
+     * `admin.permission_policy.evaluation_info` — PermissionPolicyDetails (channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx)
+     * Renders only when pageLoaded && !loadFailed.
+     */
+    get evaluationInfo() {
+        return drivers.container(this.byTestId(`${this.scope}.evaluation_info`), {
+            testId: `${this.scope}.evaluation_info`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+        });
+    }
+
+    /**
+     * `admin.permission_policy.role--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when pageLoaded && !loadFailed.
+     * Opens menu pp-role-selector-menu (`admin.permission_policy.role_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get roleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.role--button`), {
+            testId: `${this.scope}.role--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks roleButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickRoleButton(): Promise<AdminPermissionPolicyRoleMenu> {
+        await this.roleButton.click();
+        return new AdminPermissionPolicyRoleMenu(this.page, `${this.scope}.role_menu`);
+    }
+
+    /**
+     * `admin.permission_policy.role_label--text` — PermissionPolicyDetails (channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx)
+     * Renders only when pageLoaded && !loadFailed.
+     */
+    get roleLabelText() {
+        return drivers.text(this.byTestId(`${this.scope}.role_label--text`), {
+            testId: `${this.scope}.role_label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+        });
+    }
+
+    getRoleLabelText(): Promise<string> {
+        return this.roleLabelText.text();
+    }
+
+    /**
+     * `admin.permission_policy.switch_mode--button` — RuleEditorCard (channels/src/components/admin_console/permission_policies/policy_details/rule_editor_card.tsx)
+     * Renders only when pageLoaded && !loadFailed.
+     */
+    get switchModeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.switch_mode--button`), {
+            testId: `${this.scope}.switch_mode--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/policy_details/rule_editor_card.tsx#RuleEditorCard',
+        });
+    }
+
+    async clickSwitchModeButton(): Promise<void> {
+        await this.switchModeButton.click();
+    }
+
+    get cel(): Cel {
+        return new Cel(this.page, `${this.scope}.cel`, this.root);
+    }
+
+    get permissionMenu(): AdminPermissionPolicyPermissionMenu {
+        return new AdminPermissionPolicyPermissionMenu(this.page, `${this.scope}.permission_menu`);
+    }
+
+    get roleMenu(): AdminPermissionPolicyRoleMenu {
+        return new AdminPermissionPolicyRoleMenu(this.page, `${this.scope}.role_menu`);
+    }
+
+    /**
+     * `admin.permission_policy.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when !(editorMode === 'cel').
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
+    }
+}
+
+/** Scope `admin.permission_policy.permission_menu`. */
+export class AdminPermissionPolicyPermissionMenu extends Scope {
+    constructor(page: Page, scope = 'admin.permission_policy.permission_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.permission_policy.permission_menu.permission:{key}--menuitem` — PermissionPolicyDetails (channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx)
+     * Renders only when pageLoaded && !loadFailed and availableToAdd.length > 0.
+     */
+    permission(permission: AdminPermission) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.permission:${permission}--menuitem`), {
+            testId: `${this.scope}.permission:${permission}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+        });
+    }
+
+    /** Every `admin.permission_policy.permission_menu.permission:{key}--menuitem` in the scope. */
+    get permissionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.permission:`, '--menuitem');
+    }
+
+    /** The keys of every `admin.permission_policy.permission_menu.permission:{key}--menuitem` in the scope, in document order. */
+    permissionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.permission:`, '--menuitem');
+    }
+
+    get createBurnOnReadPostMenuItem() {
+        return this.permission('create_burn_on_read_post');
+    }
+
+    get downloadFileAttachmentMenuItem() {
+        return this.permission('download_file_attachment');
+    }
+
+    get uploadFileAttachmentMenuItem() {
+        return this.permission('upload_file_attachment');
+    }
+
+    /** Every `admin.permission_policy.permission_menu.permission:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.permissionList).toHaveKeys([…])`. */
+    get permissionList() {
+        return this.keyedList(`${this.scope}.permission:`, '--menuitem', (key: AdminPermission) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.permission:${key}--menuitem`), {
+                testId: `${this.scope}.permission:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.permission_policy.role_menu`. */
+export class AdminPermissionPolicyRoleMenu extends Scope {
+    constructor(page: Page, scope = 'admin.permission_policy.role_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.permission_policy.role_menu.role:{key}--menuitem` — PermissionPolicyDetails (channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx)
+     * Renders only when pageLoaded && !loadFailed.
+     */
+    role(role: AdminRole) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.role:${role}--menuitem`), {
+            testId: `${this.scope}.role:${role}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+        });
+    }
+
+    /** Every `admin.permission_policy.role_menu.role:{key}--menuitem` in the scope. */
+    get roleItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.role:`, '--menuitem');
+    }
+
+    /** The keys of every `admin.permission_policy.role_menu.role:{key}--menuitem` in the scope, in document order. */
+    roleKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.role:`, '--menuitem');
+    }
+
+    get systemAdminMenuItem() {
+        return this.role('system_admin');
+    }
+
+    get systemBotMenuItem() {
+        return this.role('system_bot');
+    }
+
+    get systemGuestMenuItem() {
+        return this.role('system_guest');
+    }
+
+    get systemUserMenuItem() {
+        return this.role('system_user');
+    }
+
+    /** Every `admin.permission_policy.role_menu.role:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.roleList).toHaveKeys([…])`. */
+    get roleList() {
+        return this.keyedList(`${this.scope}.role:`, '--menuitem', (key: AdminRole) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.role:${key}--menuitem`), {
+                testId: `${this.scope}.role:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails',
+            }),
+        );
     }
 }
 
@@ -6042,7 +12573,7 @@ export class AdminRevokeTokens extends Scope {
 }
 
 /** Scope `admin.role`. */
-export class AdminRole extends Scope {
+export class AdminRoleScope extends Scope {
     constructor(page: Page, scope = 'admin.role', root?: Locator) {
         super(page, scope, root);
     }
@@ -6131,8 +12662,8 @@ export class AdminRole extends Scope {
     /**
      * `admin.role.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      */
-    get savePanel(): AdminSavePanel {
-        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    get savePanel(): AdminSaveChangesPanel {
+        return new AdminSaveChangesPanel(this.page, `${this.scope}.save_panel`, this.root);
     }
 
     /**
@@ -6899,8 +13430,8 @@ export class AdminSecureConnection extends Scope {
     /**
      * `admin.secure_connection.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      */
-    get savePanel(): AdminSavePanel {
-        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    get savePanel(): AdminSaveChangesPanel {
+        return new AdminSaveChangesPanel(this.page, `${this.scope}.save_panel`, this.root);
     }
 
     /**
@@ -7024,116 +13555,6 @@ export class AdminSecureConnectionSharedChannels extends Scope {
     }
 }
 
-/** Rendered at `admin.secure_connection.shared_channels.footer`, `admin.users.table.footer`: one class, constructed with the scope it is mounted at. */
-export class AdminFooter extends Scope {
-    /**
-     * `admin.secure_connection.shared_channels.footer.next--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
-     * Renders only when hasPagination.
-     */
-    get nextButton() {
-        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
-            testId: `${this.scope}.next--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
-        });
-    }
-
-    async clickNextButton(): Promise<void> {
-        await this.nextButton.click();
-    }
-
-    /**
-     * `admin.secure_connection.shared_channels.footer.page_size` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
-     * Renders only when hasPagination.
-     */
-    get pageSize() {
-        return drivers.container(this.byTestId(`${this.scope}.page_size`), {
-            testId: `${this.scope}.page_size`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
-        });
-    }
-
-    /**
-     * `admin.secure_connection.shared_channels.footer.pagination--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
-     * Renders only when hasPagination.
-     */
-    get paginationText() {
-        return drivers.text(this.byTestId(`${this.scope}.pagination--text`), {
-            testId: `${this.scope}.pagination--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
-        });
-    }
-
-    getPaginationText(): Promise<string> {
-        return this.paginationText.text();
-    }
-
-    /**
-     * `admin.secure_connection.shared_channels.footer.previous--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
-     * Renders only when hasPagination.
-     */
-    get previousButton() {
-        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
-            testId: `${this.scope}.previous--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
-        });
-    }
-
-    async clickPreviousButton(): Promise<void> {
-        await this.previousButton.click();
-    }
-}
-
-/** Rendered at `admin.secure_connection.shared_channels.head`, `admin.users.table.head`: one class, constructed with the scope it is mounted at. */
-export class Head extends Scope {
-    /**
-     * `admin.secure_connection.shared_channels.head.column:{key}` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
-     */
-    column(column: string) {
-        return drivers.container(this.byTestId(`${this.scope}.column:${column}`), {
-            testId: `${this.scope}.column:${column}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
-        });
-    }
-
-    /** Every `admin.secure_connection.shared_channels.head.column:{key}` in the scope. */
-    get columnItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.column:`, '');
-    }
-
-    /** The keys of every `admin.secure_connection.shared_channels.head.column:{key}` in the scope, in document order. */
-    columnKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.column:`, '');
-    }
-
-    /** Every `admin.secure_connection.shared_channels.head.column:{key}` in the scope as a list by key, for the list matchers: `expect(x.columnList).toHaveKeys([…])`. */
-    get columnList() {
-        return this.keyedList(`${this.scope}.column:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.column:${key}`), {
-                testId: `${this.scope}.column:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
-            }),
-        );
-    }
-}
-
 /** Scope `admin.secure_connection.shared_channels.row`. */
 export class AdminSecureConnectionSharedChannelsRow extends Scope {
     constructor(page: Page, scope = 'admin.secure_connection.shared_channels.row', root?: Locator) {
@@ -7211,50 +13632,6 @@ export class AdminSecureConnectionSharedChannelsRow extends Scope {
                 source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
             }),
         );
-    }
-}
-
-/** Rendered at `admin.secure_connection.shared_channels.top_pager`, `admin.users.table.top_pager`: one class, constructed with the scope it is mounted at. */
-export class TopPager extends Scope {
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `admin.secure_connection.shared_channels.top_pager.next--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
-     * Renders only when hasPagination and tableMeta.hasDualSidedPagination.
-     */
-    get nextButton() {
-        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
-            testId: `${this.scope}.next--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
-        });
-    }
-
-    async clickNextButton(): Promise<void> {
-        await this.nextButton.click();
-    }
-
-    /**
-     * `admin.secure_connection.shared_channels.top_pager.previous--button` — PaginationButtons (channels/src/components/common/pagination_buttons/pagination_buttons.tsx)
-     * Renders only when hasPagination and tableMeta.hasDualSidedPagination.
-     */
-    get previousButton() {
-        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
-            testId: `${this.scope}.previous--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
-        });
-    }
-
-    async clickPreviousButton(): Promise<void> {
-        await this.previousButton.click();
     }
 }
 
@@ -7603,8 +13980,8 @@ export class AdminServerLogs extends Scope {
     /**
      * `admin.server_logs.custom_range` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
-    get customRange(): AdminServerLogsCustomRange {
-        return new AdminServerLogsCustomRange(this.page, `${this.scope}.custom_range`, this.root);
+    get customRange(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.custom_range`, this.root);
     }
 
     get duration(): Input {
@@ -7722,65 +14099,6 @@ export class AdminServerLogs extends Scope {
     }
 }
 
-/** Scope `admin.server_logs.custom_range`. */
-export class AdminServerLogsCustomRange extends Scope {
-    constructor(page: Page, scope = 'admin.server_logs.custom_range', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /**
-     * `admin.server_logs.custom_range.cancel--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
-     */
-    get cancelButton() {
-        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
-            testId: `${this.scope}.cancel--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
-        });
-    }
-
-    async clickCancelButton(): Promise<void> {
-        await this.cancelButton.click();
-    }
-
-    /**
-     * `admin.server_logs.custom_range.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
-     * Renders only when showHeader and showCloseButton.
-     */
-    get closeButton() {
-        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
-            testId: `${this.scope}.close--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
-        });
-    }
-
-    async clickCloseButton(): Promise<void> {
-        await this.closeButton.click();
-    }
-
-    /**
-     * `admin.server_logs.custom_range.confirm--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
-     */
-    get confirmButton() {
-        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
-            testId: `${this.scope}.confirm--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
-        });
-    }
-
-    async clickConfirmButton(): Promise<void> {
-        await this.confirmButton.click();
-    }
-}
-
 /** Scope `admin.server_logs.duration_menu`. */
 export class AdminServerLogsDurationMenu extends Scope {
     constructor(page: Page, scope = 'admin.server_logs.duration_menu', root?: Locator) {
@@ -7821,9 +14139,9 @@ export class AdminServerLogsDurationMenu extends Scope {
     }
 
     /** Clicks customMenuItemRadio and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickCustomMenuItemRadio(): Promise<AdminServerLogsCustomRange> {
+    async clickCustomMenuItemRadio(): Promise<DeleteModal> {
         await this.customMenuItemRadio.click();
-        return new AdminServerLogsCustomRange(this.page, 'admin.server_logs.custom_range');
+        return new DeleteModal(this.page, 'admin.server_logs.custom_range');
     }
 
     /**
@@ -8242,6 +14560,520 @@ export class AdminServerLogsNodeMenu extends Scope {
                 effects: [],
                 unknownEffects: false,
                 source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.session_attributes`. */
+export class AdminSessionAttributes extends Scope {
+    constructor(page: Page, scope = 'admin.session_attributes', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.session_attributes.load_error--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Failed.
+     */
+    get loadErrorText() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--text`), {
+            testId: `${this.scope}.load_error--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getLoadErrorText(): Promise<string> {
+        return this.loadErrorText.text();
+    }
+
+    /**
+     * `admin.session_attributes.loading` — LoadingSpinner (channels/src/components/widgets/loading/loading_spinner.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loading && rowCount === 0.
+     */
+    get loading() {
+        return drivers.container(this.byTestId(`${this.scope}.loading`), {
+            testId: `${this.scope}.loading`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner',
+        });
+    }
+
+    /**
+     * `admin.session_attributes.no_data--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0.
+     */
+    get noDataText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_data--text`), {
+            testId: `${this.scope}.no_data--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#ListTable',
+        });
+    }
+
+    getNoDataText(): Promise<string> {
+        return this.noDataText.text();
+    }
+
+    get actionsMenu(): AdminSessionAttributesActionsMenu {
+        return new AdminSessionAttributesActionsMenu(this.page, `${this.scope}.actions_menu`);
+    }
+
+    /**
+     * `admin.session_attributes.disable_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get disableModal(): DeleteModal {
+        return new DeleteModal(this.page, `${this.scope}.disable_modal`, this.root);
+    }
+
+    /**
+     * `admin.session_attributes.footer` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when hasPagination.
+     */
+    get footer(): AdminFooter {
+        return new AdminFooter(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.session_attributes.head` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    get head(): Head {
+        return new Head(this.page, `${this.scope}.head`, this.root);
+    }
+
+    /**
+     * `admin.session_attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    row(row: string): AdminSessionAttributesRow {
+        return new AdminSessionAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    }
+
+    /** Every `admin.session_attributes.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.session_attributes.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /**
+     * `admin.session_attributes.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
+     */
+    get savePanel(): AdminSavePanel {
+        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    }
+
+    get topPager(): TopPager {
+        return new TopPager(this.page, `${this.scope}.top_pager`, this.root);
+    }
+
+    /** Every `admin.session_attributes.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) =>
+                new AdminSessionAttributesRow(
+                    this.page,
+                    `${this.scope}.row`,
+                    this.byTestId(`${this.scope}.row:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.session_attributes.actions_menu`. */
+export class AdminSessionAttributesActionsMenu extends Scope {
+    constructor(page: Page, scope = 'admin.session_attributes.actions_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.session_attributes.actions_menu.disable--menuitem` — SessionAttributesDotMenu (channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx)
+     * Renders only when attrs.enabled.
+     * Opens modal DisableAttributeModal (`admin.session_attributes.disable_modal`).
+     */
+    get disableMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.disable--menuitem`), {
+            testId: `${this.scope}.disable--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+        });
+    }
+
+    /** Clicks disableMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDisableMenuItem(): Promise<DeleteModal> {
+        await this.disableMenuItem.click();
+        return new DeleteModal(this.page, 'admin.session_attributes.disable_modal');
+    }
+
+    /**
+     * `admin.session_attributes.actions_menu.enable--menuitem` — SessionAttributesDotMenu (channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx)
+     * Renders only when !attrs.enabled.
+     */
+    get enableMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.enable--menuitem`), {
+            testId: `${this.scope}.enable--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+        });
+    }
+
+    async clickEnableMenuItem(): Promise<void> {
+        await this.enableMenuItem.click();
+    }
+
+    /**
+     * `admin.session_attributes.actions_menu.grace:{key}--menuitemradio` — SessionAttributesDotMenu (channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx)
+     */
+    grace(grace: number) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.grace:${grace}--menuitemradio`), {
+            testId: `${this.scope}.grace:${grace}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+        });
+    }
+
+    /** Every `admin.session_attributes.actions_menu.grace:{key}--menuitemradio` in the scope. */
+    get graceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.grace:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.session_attributes.actions_menu.grace:{key}--menuitemradio` in the scope, in document order. */
+    graceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.grace:`, '--menuitemradio');
+    }
+
+    /**
+     * `admin.session_attributes.actions_menu.grace_options--menuitem` — SessionAttributesDotMenu (channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx)
+     * Renders only when !isServerAttribute.
+     */
+    get graceOptionsMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.grace_options--menuitem`), {
+            testId: `${this.scope}.grace_options--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+        });
+    }
+
+    async clickGraceOptionsMenuItem(): Promise<void> {
+        await this.graceOptionsMenuItem.click();
+    }
+
+    /**
+     * `admin.session_attributes.actions_menu.ttl:{key}--menuitemradio` — SessionAttributesDotMenu (channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx)
+     */
+    ttl(ttl: number) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.ttl:${ttl}--menuitemradio`), {
+            testId: `${this.scope}.ttl:${ttl}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+        });
+    }
+
+    /** Every `admin.session_attributes.actions_menu.ttl:{key}--menuitemradio` in the scope. */
+    get ttlItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.ttl:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.session_attributes.actions_menu.ttl:{key}--menuitemradio` in the scope, in document order. */
+    ttlKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.ttl:`, '--menuitemradio');
+    }
+
+    /**
+     * `admin.session_attributes.actions_menu.ttl_options--menuitem` — SessionAttributesDotMenu (channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx)
+     * Renders only when !isServerAttribute.
+     */
+    get ttlOptionsMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.ttl_options--menuitem`), {
+            testId: `${this.scope}.ttl_options--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+        });
+    }
+
+    async clickTtlOptionsMenuItem(): Promise<void> {
+        await this.ttlOptionsMenuItem.click();
+    }
+
+    /** Every `admin.session_attributes.actions_menu.grace:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.graceList).toHaveKeys([…])`. */
+    get graceList() {
+        return this.keyedList(`${this.scope}.grace:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.grace:${key}--menuitemradio`), {
+                testId: `${this.scope}.grace:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+            }),
+        );
+    }
+
+    /** Every `admin.session_attributes.actions_menu.ttl:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.ttlList).toHaveKeys([…])`. */
+    get ttlList() {
+        return this.keyedList(`${this.scope}.ttl:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.ttl:${key}--menuitemradio`), {
+                testId: `${this.scope}.ttl:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.session_attributes.row`. */
+export class AdminSessionAttributesRow extends Scope {
+    constructor(page: Page, scope = 'admin.session_attributes.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.session_attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.session_attributes.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.session_attributes.row.actions--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.session_attributes.actions_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get actionsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.actions--button`), {
+            testId: `${this.scope}.actions--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks actionsButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickActionsButton(): Promise<AdminSessionAttributesActionsMenu> {
+        await this.actionsButton.click();
+        return new AdminSessionAttributesActionsMenu(this.page, 'admin.session_attributes.actions_menu');
+    }
+
+    /**
+     * `admin.session_attributes.row.cell:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** Every `admin.session_attributes.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.session_attributes.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.session_attributes.row.drag_handle--button` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.onReorder && i === 0 and !(tableMeta.isRowDragDisabled?.(row.original.id) === true).
+     */
+    get dragHandleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.drag_handle--button`), {
+            testId: `${this.scope}.drag_handle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    async clickDragHandleButton(): Promise<void> {
+        await this.dragHandleButton.click();
+    }
+
+    /**
+     * `admin.session_attributes.row.grace--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get graceText() {
+        return drivers.text(this.byTestId(`${this.scope}.grace--text`), {
+            testId: `${this.scope}.grace--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getGraceText(): Promise<string> {
+        return this.graceText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.name--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.platforms` — PlatformIcons (channels/src/components/admin_console/session_attributes/platform_icons.tsx)
+     */
+    get platforms() {
+        return drivers.container(this.byTestId(`${this.scope}.platforms`), {
+            testId: `${this.scope}.platforms`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons',
+        });
+    }
+
+    /**
+     * `admin.session_attributes.row.server_label--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     * Renders only when isServerSourced(row.original.name).
+     */
+    get serverLabelText() {
+        return drivers.text(this.byTestId(`${this.scope}.server_label--text`), {
+            testId: `${this.scope}.server_label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getServerLabelText(): Promise<string> {
+        return this.serverLabelText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.status--text` — StatusChip (channels/src/components/admin_console/session_attributes/status_chip.tsx)
+     */
+    get statusText() {
+        return drivers.text(this.byTestId(`${this.scope}.status--text`), {
+            testId: `${this.scope}.status--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip',
+        });
+    }
+
+    getStatusText(): Promise<string> {
+        return this.statusText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.ttl--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get ttlText() {
+        return drivers.text(this.byTestId(`${this.scope}.ttl--text`), {
+            testId: `${this.scope}.ttl--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getTtlText(): Promise<string> {
+        return this.ttlText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.type--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get typeText() {
+        return drivers.text(this.byTestId(`${this.scope}.type--text`), {
+            testId: `${this.scope}.type--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getTypeText(): Promise<string> {
+        return this.typeText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminSessionAttributesRowRow> {
+        return {
+            grace: await this.graceText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+            serverLabel: await this.serverLabelText.textIfPresent(),
+            status: await this.statusText.textIfPresent(),
+            ttl: await this.ttlText.textIfPresent(),
+            type: await this.typeText.textIfPresent(),
+        };
+    }
+
+    /** Every `admin.session_attributes.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
             }),
         );
     }
@@ -9069,6 +15901,961 @@ export class AdminSidebarHeaderMenuSwitchTeamsMenu extends Scope {
     }
 }
 
+/** Scope `admin.simulate_access`. */
+export class AdminSimulateAccess extends Scope {
+    constructor(page: Page, scope = 'admin.simulate_access', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.simulate_access.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `admin.simulate_access.load_error--alert` — SimulateAccessModal (channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx)
+     * Renders only when usersError.
+     */
+    get loadErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--alert`), {
+            testId: `${this.scope}.load_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx#SimulateAccessModal',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.permission_filter--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when actions.length > 1.
+     * Opens menu simulate-access-permission-filter-menu.
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get permissionFilterButton() {
+        return drivers.button(this.byTestId(`${this.scope}.permission_filter--button`), {
+            testId: `${this.scope}.permission_filter--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    async clickPermissionFilterButton(): Promise<void> {
+        await this.permissionFilterButton.click();
+    }
+
+    /**
+     * `admin.simulate_access.scope:{key}--togglebutton` — SimulateAccessModal (channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx)
+     * Renders only when pageLoaded && !loadFailed and policySimulationEnabled && showTest.
+     */
+    scopeElement(scope: AdminScope) {
+        return drivers.togglebutton(this.byTestId(`${this.scope}.scope:${scope}--togglebutton`), {
+            testId: `${this.scope}.scope:${scope}--togglebutton`,
+            role: 'togglebutton',
+            effects: [Api.SimulateAccessControlPolicyForUsers],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx#SimulateAccessModal',
+        });
+    }
+
+    /** Every `admin.simulate_access.scope:{key}--togglebutton` in the scope. */
+    get scopeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.scope:`, '--togglebutton');
+    }
+
+    /** The keys of every `admin.simulate_access.scope:{key}--togglebutton` in the scope, in document order. */
+    scopeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.scope:`, '--togglebutton');
+    }
+
+    get allToggleButton() {
+        return this.scopeElement('all');
+    }
+
+    get thisRuleToggleButton() {
+        return this.scopeElement('this_rule');
+    }
+
+    /**
+     * `admin.simulate_access.search--textbox` — SimulateAccessModal (channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx)
+     * Renders only when pageLoaded && !loadFailed and policySimulationEnabled && showTest.
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx#SimulateAccessModal',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.simulate_access.session_editor` — SessionAttributeEditorButton (channels/src/components/admin_console/access_control/modals/simulate_access/session_attribute_editor.tsx)
+     * Renders only when sessionAttributesEnabled and open.
+     */
+    get sessionEditor() {
+        return drivers.container(this.byTestId(`${this.scope}.session_editor`), {
+            testId: `${this.scope}.session_editor`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/session_attribute_editor.tsx#SessionAttributeEditorButton',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.simulate_error--alert` — SimulateAccessModal (channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx)
+     * Renders only when simulationError and pageLoaded && !loadFailed and policySimulationEnabled && showTest.
+     */
+    get simulateErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.simulate_error--alert`), {
+            testId: `${this.scope}.simulate_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx#SimulateAccessModal',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.details` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get details(): AdminSimulateAccessDetails {
+        return new AdminSimulateAccessDetails(this.page, `${this.scope}.details`, this.root);
+    }
+
+    /**
+     * `admin.simulate_access.pagination` — SimulateAccessModal (channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx)
+     * Renders only when !searchTerm && (page > 0 || hasNextPage) and pageLoaded && !loadFailed and policySimulationEnabled && showTest.
+     */
+    get pagination(): AdminSimulateAccessPagination {
+        return new AdminSimulateAccessPagination(this.page, `${this.scope}.pagination`, this.root);
+    }
+
+    /**
+     * `admin.simulate_access.session:{key}` — SessionRow (channels/src/components/admin_console/access_control/modals/simulate_access/session_row.tsx)
+     * Renders only when expanded && bundle?.sessions.
+     */
+    session(session: Pick<PolicySimulationSession, 'id'>): AdminSimulateAccessSession {
+        return new AdminSimulateAccessSession(
+            this.page,
+            `${this.scope}.session`,
+            this.byTestId(`${this.scope}.session:${session.id}`),
+        );
+    }
+
+    /** Every `admin.simulate_access.session:{key}` in the scope. */
+    get sessionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.session:`, '');
+    }
+
+    /** The keys of every `admin.simulate_access.session:{key}` in the scope, in document order. */
+    sessionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.session:`, '');
+    }
+
+    /**
+     * `admin.simulate_access.user:{key}` — PickerRow (channels/src/components/admin_console/access_control/modals/simulate_access/picker_row.tsx)
+     */
+    user(user: Pick<UserProfile, 'id'>): AdminSimulateAccessUser {
+        return new AdminSimulateAccessUser(
+            this.page,
+            `${this.scope}.user`,
+            this.byTestId(`${this.scope}.user:${user.id}`),
+        );
+    }
+
+    /** Every `admin.simulate_access.user:{key}` in the scope. */
+    get userItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.user:`, '');
+    }
+
+    /** The keys of every `admin.simulate_access.user:{key}` in the scope, in document order. */
+    userKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.user:`, '');
+    }
+
+    /** Every `admin.simulate_access.scope:{key}--togglebutton` in the scope as a list by key, for the list matchers: `expect(x.scopeList).toHaveKeys([…])`. */
+    get scopeList() {
+        return this.keyedList(`${this.scope}.scope:`, '--togglebutton', (key: AdminScope) =>
+            drivers.togglebutton(this.byTestId(`${this.scope}.scope:${key}--togglebutton`), {
+                testId: `${this.scope}.scope:${key}--togglebutton`,
+                role: 'togglebutton',
+                effects: [Api.SimulateAccessControlPolicyForUsers],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx#SimulateAccessModal',
+            }),
+        );
+    }
+
+    /** Every `admin.simulate_access.session:{key}` in the scope as a list by key, for the list matchers: `expect(x.sessionList).toHaveKeys([…])`. */
+    get sessionList() {
+        return this.keyedList(
+            `${this.scope}.session:`,
+            '',
+            (key: string) =>
+                new AdminSimulateAccessSession(
+                    this.page,
+                    `${this.scope}.session`,
+                    this.byTestId(`${this.scope}.session:${key}`),
+                ),
+        );
+    }
+
+    /** Every `admin.simulate_access.user:{key}` in the scope as a list by key, for the list matchers: `expect(x.userList).toHaveKeys([…])`. */
+    get userList() {
+        return this.keyedList(
+            `${this.scope}.user:`,
+            '',
+            (key: string) =>
+                new AdminSimulateAccessUser(
+                    this.page,
+                    `${this.scope}.user`,
+                    this.byTestId(`${this.scope}.user:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.simulate_access.details`. */
+export class AdminSimulateAccessDetails extends Scope {
+    constructor(page: Page, scope = 'admin.simulate_access.details', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.simulate_access.details.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `admin.simulate_access.details.action:{key}` — ActionDetailsRow (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when showDetails.
+     */
+    action(action: string): AdminSimulateAccessDetailsAction {
+        return new AdminSimulateAccessDetailsAction(
+            this.page,
+            `${this.scope}.action`,
+            this.byTestId(`${this.scope}.action:${action}`),
+        );
+    }
+
+    /** Every `admin.simulate_access.details.action:{key}` in the scope. */
+    get actionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.action:`, '');
+    }
+
+    /** The keys of every `admin.simulate_access.details.action:{key}` in the scope, in document order. */
+    actionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.action:`, '');
+    }
+
+    /**
+     * `admin.simulate_access.details.attributes` — DecisionDetailsModal (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when userAttrs || sessionAttrs and showDetails.
+     */
+    get attributes(): AdminSimulateAccessDetailsAttributes {
+        return new AdminSimulateAccessDetailsAttributes(this.page, `${this.scope}.attributes`, this.root);
+    }
+
+    /** Every `admin.simulate_access.details.action:{key}` in the scope as a list by key, for the list matchers: `expect(x.actionList).toHaveKeys([…])`. */
+    get actionList() {
+        return this.keyedList(
+            `${this.scope}.action:`,
+            '',
+            (key: string) =>
+                new AdminSimulateAccessDetailsAction(
+                    this.page,
+                    `${this.scope}.action`,
+                    this.byTestId(`${this.scope}.action:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.simulate_access.details.action`. */
+export class AdminSimulateAccessDetailsAction extends Scope {
+    constructor(page: Page, scope = 'admin.simulate_access.details.action', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.simulate_access.details.action:{key}` — ActionDetailsRow (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when showDetails.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.simulate_access.details.action:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#ActionDetailsRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.simulate_access.details.action.decision:{key}--text` — DecisionChip (channels/src/components/admin_console/access_control/modals/simulate_access/decision_chip.tsx)
+     */
+    decision(decision: AdminDecision) {
+        return drivers.text(this.byTestId(`${this.scope}.decision:${decision}--text`), {
+            testId: `${this.scope}.decision:${decision}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_chip.tsx#DecisionChip',
+        });
+    }
+
+    /** Every `admin.simulate_access.details.action.decision:{key}--text` in the scope. */
+    get decisionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.decision:`, '--text');
+    }
+
+    /** The keys of every `admin.simulate_access.details.action.decision:{key}--text` in the scope, in document order. */
+    decisionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.decision:`, '--text');
+    }
+
+    get allowText() {
+        return this.decision('allow');
+    }
+
+    get allowSavedText() {
+        return this.decision('allow_saved');
+    }
+
+    get denyText() {
+        return this.decision('deny');
+    }
+
+    get noSessionDataText() {
+        return this.decision('no_session_data');
+    }
+
+    get notApplicableText() {
+        return this.decision('not_applicable');
+    }
+
+    get notApplicableRuleText() {
+        return this.decision('not_applicable_rule');
+    }
+
+    get pendingText() {
+        return this.decision('pending');
+    }
+
+    /**
+     * `admin.simulate_access.details.action.merged` — TraceBody (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when hasPerRuleTrees.
+     */
+    get merged() {
+        return drivers.container(this.byTestId(`${this.scope}.merged`), {
+            testId: `${this.scope}.merged`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#TraceBody',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.details.action.merged_rule:{key}1` — MergedRuleSection (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when hasPerRuleTrees.
+     */
+    mergedRule(mergedRule: number) {
+        return drivers.container(this.byTestId(`${this.scope}.merged_rule:${mergedRule}1`), {
+            testId: `${this.scope}.merged_rule:${mergedRule}1`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#MergedRuleSection',
+        });
+    }
+
+    /** Every `admin.simulate_access.details.action.merged_rule:{key}1` in the scope. */
+    get mergedRuleItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.merged_rule:`, '1');
+    }
+
+    /** The keys of every `admin.simulate_access.details.action.merged_rule:{key}1` in the scope, in document order. */
+    mergedRuleKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.merged_rule:`, '1');
+    }
+
+    /**
+     * `admin.simulate_access.details.action.origin` — TraceOriginHeader (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when hasMerge.
+     */
+    get origin() {
+        return drivers.container(this.byTestId(`${this.scope}.origin`), {
+            testId: `${this.scope}.origin`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#TraceOriginHeader',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.details.action.origin_help--button` — TraceOriginHeader (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when hasMerge.
+     */
+    get originHelpButton() {
+        return drivers.button(this.byTestId(`${this.scope}.origin_help--button`), {
+            testId: `${this.scope}.origin_help--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#TraceOriginHeader',
+        });
+    }
+
+    async clickOriginHelpButton(): Promise<void> {
+        await this.originHelpButton.click();
+    }
+
+    /**
+     * `admin.simulate_access.details.action.policies` — MultiPolicyTraces (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when traces.length > 0 and showDetails and traces.length > 1.
+     */
+    get policies() {
+        return drivers.container(this.byTestId(`${this.scope}.policies`), {
+            testId: `${this.scope}.policies`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#MultiPolicyTraces',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.details.action.policy:{key}1` — SingleTraceBlock (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     */
+    policy(policy: number) {
+        return drivers.container(this.byTestId(`${this.scope}.policy:${policy}1`), {
+            testId: `${this.scope}.policy:${policy}1`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#SingleTraceBlock',
+        });
+    }
+
+    /** Every `admin.simulate_access.details.action.policy:{key}1` in the scope. */
+    get policyItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.policy:`, '1');
+    }
+
+    /** The keys of every `admin.simulate_access.details.action.policy:{key}1` in the scope, in document order. */
+    policyKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.policy:`, '1');
+    }
+
+    /**
+     * `admin.simulate_access.details.action.rule` — ActionDetailsRow (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when traces.length > 0 and showDetails.
+     */
+    get rule() {
+        return drivers.container(this.byTestId(`${this.scope}.rule`), {
+            testId: `${this.scope}.rule`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#ActionDetailsRow',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.details.action.toggle--button` — ActionDetailsRow (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when traces.length > 0.
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#ActionDetailsRow',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
+    }
+
+    /**
+     * `admin.simulate_access.details.action.trace_node:{key}_{key}` — ExpressionTraceNode (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     */
+    traceNode(traceNode: string) {
+        return drivers.container(this.byTestId(`${this.scope}.trace_node:${traceNode}`), {
+            testId: `${this.scope}.trace_node:${traceNode}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#ExpressionTraceNode',
+        });
+    }
+
+    /** Every `admin.simulate_access.details.action.trace_node:{key}_{key}` in the scope. */
+    get traceNodeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.trace_node:`, '');
+    }
+
+    /** The keys of every `admin.simulate_access.details.action.trace_node:{key}_{key}` in the scope, in document order. */
+    traceNodeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.trace_node:`, '');
+    }
+
+    /**
+     * `admin.simulate_access.details.action.tree` — TraceBody (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     */
+    get tree() {
+        return drivers.container(this.byTestId(`${this.scope}.tree`), {
+            testId: `${this.scope}.tree`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#TraceBody',
+        });
+    }
+
+    /** Every `admin.simulate_access.details.action.decision:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.decisionList).toHaveKeys([…])`. */
+    get decisionList() {
+        return this.keyedList(`${this.scope}.decision:`, '--text', (key: AdminDecision) =>
+            drivers.text(this.byTestId(`${this.scope}.decision:${key}--text`), {
+                testId: `${this.scope}.decision:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_chip.tsx#DecisionChip',
+            }),
+        );
+    }
+
+    /** Every `admin.simulate_access.details.action.merged_rule:{key}1` in the scope as a list by key, for the list matchers: `expect(x.mergedRuleList).toHaveKeys([…])`. */
+    get mergedRuleList() {
+        return this.keyedList(`${this.scope}.merged_rule:`, '1', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.merged_rule:${key}1`), {
+                testId: `${this.scope}.merged_rule:${key}1`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#MergedRuleSection',
+            }),
+        );
+    }
+
+    /** Every `admin.simulate_access.details.action.policy:{key}1` in the scope as a list by key, for the list matchers: `expect(x.policyList).toHaveKeys([…])`. */
+    get policyList() {
+        return this.keyedList(`${this.scope}.policy:`, '1', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.policy:${key}1`), {
+                testId: `${this.scope}.policy:${key}1`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#SingleTraceBlock',
+            }),
+        );
+    }
+
+    /** Every `admin.simulate_access.details.action.trace_node:{key}_{key}` in the scope as a list by key, for the list matchers: `expect(x.traceNodeList).toHaveKeys([…])`. */
+    get traceNodeList() {
+        return this.keyedList(`${this.scope}.trace_node:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.trace_node:${key}`), {
+                testId: `${this.scope}.trace_node:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#ExpressionTraceNode',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.simulate_access.details.attributes`. */
+export class AdminSimulateAccessDetailsAttributes extends Scope {
+    constructor(page: Page, scope = 'admin.simulate_access.details.attributes', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.simulate_access.details.attributes.session` — AttributeSection (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when userAttrs || sessionAttrs.
+     */
+    get session() {
+        return drivers.container(this.byTestId(`${this.scope}.session`), {
+            testId: `${this.scope}.session`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#AttributeSection',
+        });
+    }
+
+    /**
+     * `admin.simulate_access.details.attributes.user` — AttributeSection (channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx)
+     * Renders only when userAttrs || sessionAttrs.
+     */
+    get user() {
+        return drivers.container(this.byTestId(`${this.scope}.user`), {
+            testId: `${this.scope}.user`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_details_modal.tsx#AttributeSection',
+        });
+    }
+}
+
+/** Scope `admin.simulate_access.pagination`. */
+export class AdminSimulateAccessPagination extends Scope {
+    constructor(page: Page, scope = 'admin.simulate_access.pagination', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.simulate_access.pagination.next--button` — SimulateAccessModal (channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx)
+     * Renders only when !searchTerm && (page > 0 || hasNextPage) and pageLoaded && !loadFailed and policySimulationEnabled && showTest.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx#SimulateAccessModal',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `admin.simulate_access.pagination.prev--button` — SimulateAccessModal (channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx)
+     * Renders only when !searchTerm && (page > 0 || hasNextPage) and pageLoaded && !loadFailed and policySimulationEnabled && showTest.
+     */
+    get prevButton() {
+        return drivers.button(this.byTestId(`${this.scope}.prev--button`), {
+            testId: `${this.scope}.prev--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/simulate_access_modal.tsx#SimulateAccessModal',
+        });
+    }
+
+    async clickPrevButton(): Promise<void> {
+        await this.prevButton.click();
+    }
+}
+
+/** Scope `admin.simulate_access.session`. */
+export class AdminSimulateAccessSession extends Scope {
+    constructor(page: Page, scope = 'admin.simulate_access.session', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.simulate_access.session:{key}` — SessionRow (channels/src/components/admin_console/access_control/modals/simulate_access/session_row.tsx)
+     * Renders only when expanded && bundle?.sessions.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.simulate_access.session:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/session_row.tsx#SessionRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.simulate_access.session.state:{key}--text` — SessionStateChip (channels/src/components/admin_console/access_control/modals/simulate_access/session_state_chip.tsx)
+     */
+    state(state: AdminState) {
+        return drivers.text(this.byTestId(`${this.scope}.state:${state}--text`), {
+            testId: `${this.scope}.state:${state}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/session_state_chip.tsx#SessionStateChip',
+        });
+    }
+
+    /** Every `admin.simulate_access.session.state:{key}--text` in the scope. */
+    get stateItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.state:`, '--text');
+    }
+
+    /** The keys of every `admin.simulate_access.session.state:{key}--text` in the scope, in document order. */
+    stateKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.state:`, '--text');
+    }
+
+    get allowedText() {
+        return this.state('allowed');
+    }
+
+    get deniedText() {
+        return this.state('denied');
+    }
+
+    get mixedText() {
+        return this.state('mixed');
+    }
+
+    get notApplicableText() {
+        return this.state('not-applicable');
+    }
+
+    get pendingText() {
+        return this.state('pending');
+    }
+
+    /** Every `admin.simulate_access.session.state:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.stateList).toHaveKeys([…])`. */
+    get stateList() {
+        return this.keyedList(`${this.scope}.state:`, '--text', (key: AdminState) =>
+            drivers.text(this.byTestId(`${this.scope}.state:${key}--text`), {
+                testId: `${this.scope}.state:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/session_state_chip.tsx#SessionStateChip',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.simulate_access.user`. */
+export class AdminSimulateAccessUser extends Scope {
+    constructor(page: Page, scope = 'admin.simulate_access.user', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.simulate_access.user:{key}` — PickerRow (channels/src/components/admin_console/access_control/modals/simulate_access/picker_row.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.simulate_access.user:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/picker_row.tsx#PickerRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.simulate_access.user.decision:{key}--text` — DecisionChip (channels/src/components/admin_console/access_control/modals/simulate_access/decision_chip.tsx)
+     * Renders only when actions.length <= 1.
+     */
+    decision(decision: AdminSimulateAccessUserDecision) {
+        return drivers.text(this.byTestId(`${this.scope}.decision:${decision}--text`), {
+            testId: `${this.scope}.decision:${decision}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_chip.tsx#DecisionChip',
+        });
+    }
+
+    /** Every `admin.simulate_access.user.decision:{key}--text` in the scope. */
+    get decisionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.decision:`, '--text');
+    }
+
+    /** The keys of every `admin.simulate_access.user.decision:{key}--text` in the scope, in document order. */
+    decisionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.decision:`, '--text');
+    }
+
+    get allowText() {
+        return this.decision('allow');
+    }
+
+    get allowSavedText() {
+        return this.decision('allow_saved');
+    }
+
+    get denyText() {
+        return this.decision('deny');
+    }
+
+    get noSessionDataText() {
+        return this.decision('no_session_data');
+    }
+
+    get notApplicableText() {
+        return this.decision('not_applicable');
+    }
+
+    get notApplicableRuleText() {
+        return this.decision('not_applicable_rule');
+    }
+
+    get pendingText() {
+        return this.decision('pending');
+    }
+
+    /**
+     * `admin.simulate_access.user.details--button` — PickerRow (channels/src/components/admin_console/access_control/modals/simulate_access/picker_row.tsx)
+     * Renders only when actions.length <= 1.
+     * Opens modal DecisionDetailsModal (`admin.simulate_access.details`).
+     */
+    get detailsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.details--button`), {
+            testId: `${this.scope}.details--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/picker_row.tsx#PickerRow',
+        });
+    }
+
+    /** Clicks detailsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDetailsButton(): Promise<AdminSimulateAccessDetails> {
+        await this.detailsButton.click();
+        return new AdminSimulateAccessDetails(this.page, 'admin.simulate_access.details');
+    }
+
+    /**
+     * `admin.simulate_access.user.edit_session--button` — SessionAttributeEditorButton (channels/src/components/admin_console/access_control/modals/simulate_access/session_attribute_editor.tsx)
+     * Renders only when sessionAttributesEnabled.
+     */
+    get editSessionButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit_session--button`), {
+            testId: `${this.scope}.edit_session--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/session_attribute_editor.tsx#SessionAttributeEditorButton',
+        });
+    }
+
+    async clickEditSessionButton(): Promise<void> {
+        await this.editSessionButton.click();
+    }
+
+    /**
+     * `admin.simulate_access.user.stacked:{key}--button` — StackedDecisionChip (channels/src/components/admin_console/access_control/modals/simulate_access/stacked_decision_chip.tsx)
+     * Opens modal DecisionDetailsModal (`admin.simulate_access.details`).
+     */
+    stacked(stacked: AdminStacked) {
+        return drivers.button(this.byTestId(`${this.scope}.stacked:${stacked}--button`), {
+            testId: `${this.scope}.stacked:${stacked}--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/access_control/modals/simulate_access/stacked_decision_chip.tsx#StackedDecisionChip',
+        });
+    }
+
+    /** Every `admin.simulate_access.user.stacked:{key}--button` in the scope. */
+    get stackedItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.stacked:`, '--button');
+    }
+
+    /** The keys of every `admin.simulate_access.user.stacked:{key}--button` in the scope, in document order. */
+    stackedKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.stacked:`, '--button');
+    }
+
+    get allowedButton() {
+        return this.stacked('allowed');
+    }
+
+    get deniedButton() {
+        return this.stacked('denied');
+    }
+
+    get mixedButton() {
+        return this.stacked('mixed');
+    }
+
+    get notApplicableButton() {
+        return this.stacked('not-applicable');
+    }
+
+    get pendingButton() {
+        return this.stacked('pending');
+    }
+
+    /** Every `admin.simulate_access.user.decision:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.decisionList).toHaveKeys([…])`. */
+    get decisionList() {
+        return this.keyedList(`${this.scope}.decision:`, '--text', (key: AdminSimulateAccessUserDecision) =>
+            drivers.text(this.byTestId(`${this.scope}.decision:${key}--text`), {
+                testId: `${this.scope}.decision:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/decision_chip.tsx#DecisionChip',
+            }),
+        );
+    }
+
+    /** Every `admin.simulate_access.user.stacked:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.stackedList).toHaveKeys([…])`. */
+    get stackedList() {
+        return this.keyedList(`${this.scope}.stacked:`, '--button', (key: AdminStacked) =>
+            drivers.button(this.byTestId(`${this.scope}.stacked:${key}--button`), {
+                testId: `${this.scope}.stacked:${key}--button`,
+                role: 'button',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/modals/simulate_access/stacked_decision_chip.tsx#StackedDecisionChip',
+            }),
+        );
+    }
+}
+
 /** Scope `admin.statistics`. */
 export class AdminStatistics extends Scope {
     constructor(page: Page, scope = 'admin.statistics', root?: Locator) {
@@ -9539,6 +17326,23 @@ export class AdminTeam extends Scope {
     }
 
     /**
+     * `admin.team.auto_add_members--checkbox` — TeamLevelAccessRules (channels/src/components/admin_console/team_channel_settings/team/details/team_level_access_rules.tsx)
+     */
+    get autoAddMembersCheckbox() {
+        return drivers.checkbox(this.byTestId(`${this.scope}.auto_add_members--checkbox`), {
+            testId: `${this.scope}.auto_add_members--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_level_access_rules.tsx#TeamLevelAccessRules',
+        });
+    }
+
+    async setAutoAddMembersCheckbox(on: boolean): Promise<void> {
+        await this.autoAddMembersCheckbox.set(on);
+    }
+
+    /**
      * `admin.team.description--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
      */
     get descriptionTextbox() {
@@ -9606,6 +17410,20 @@ export class AdminTeam extends Scope {
         await this.syncGroupsSwitch.set(on);
     }
 
+    /**
+     * `admin.team.access_policy` — AdminPanel (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get accessPolicy(): AdminTeamAccessPolicy {
+        return new AdminTeamAccessPolicy(this.page, `${this.scope}.access_policy`, this.root);
+    }
+
+    /**
+     * `admin.team.access_rules` — AdminPanel (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get accessRules(): AdminTeamAccessRules {
+        return new AdminTeamAccessRules(this.page, `${this.scope}.access_rules`, this.root);
+    }
+
     get allowAll(): AdminSettingsSwitch {
         return new AdminSettingsSwitch(this.page, `${this.scope}.allow_all`, this.root);
     }
@@ -9646,6 +17464,13 @@ export class AdminTeam extends Scope {
     }
 
     /**
+     * `admin.team.remove_policy_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get removePolicyModal(): ConfirmModal {
+        return new ConfirmModal(this.page, `${this.scope}.remove_policy_modal`, this.root);
+    }
+
+    /**
      * `admin.team.save_confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      * Renders only when team.
      */
@@ -9657,8 +17482,8 @@ export class AdminTeam extends Scope {
      * `admin.team.save_panel` — SaveChangesPanel (channels/src/components/admin_console/save_changes_panel.tsx)
      * Renders only when team.
      */
-    get savePanel(): AdminSavePanel {
-        return new AdminSavePanel(this.page, `${this.scope}.save_panel`, this.root);
+    get savePanel(): AdminSaveChangesPanel {
+        return new AdminSaveChangesPanel(this.page, `${this.scope}.save_panel`, this.root);
     }
 
     get syncGroups(): AdminSettingsSwitch {
@@ -9672,6 +17497,9 @@ export class AdminTeam extends Scope {
         }
         if (values.allowedDomains !== undefined) {
             await this.allowedDomainsSwitch.set(values.allowedDomains);
+        }
+        if (values.autoAddMembers !== undefined) {
+            await this.autoAddMembersCheckbox.set(values.autoAddMembers);
         }
         if (values.description !== undefined) {
             await this.descriptionTextbox.fill(values.description);
@@ -9689,6 +17517,7 @@ export class AdminTeam extends Scope {
 
     /** Reads every field (a field that isn't rendered reads as `undefined`). */
     async read(): Promise<AdminTeamFormValues> {
+        const vAutoAddMembers = await this.autoAddMembersCheckbox.isChecked();
         const vDescription = await this.descriptionTextbox.value();
         const vName = await this.nameTextbox.value();
         const vPolicyEnforce = await this.policyEnforceSwitch.isOn();
@@ -9700,11 +17529,458 @@ export class AdminTeam extends Scope {
         return {
             allowAll: vAllowAll,
             allowedDomains: vAllowedDomains,
+            autoAddMembers: vAutoAddMembers,
             description: vDescription,
             name: vName,
             policyEnforce: vPolicyEnforce,
             syncGroups: vSyncGroups,
         };
+    }
+}
+
+/** Scope `admin.team.access_policy`. */
+export class AdminTeamAccessPolicy extends Scope {
+    constructor(page: Page, scope = 'admin.team.access_policy', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.team.access_policy.add--button` — AdminPanelWithButton (channels/src/components/widgets/admin_console/admin_panel_with_button.tsx)
+     * Renders only when onButtonClick && buttonText.
+     * Opens modal PolicySelectionModal (`policy_selection_modal`).
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel_with_button.tsx#AdminPanelWithButton',
+        });
+    }
+
+    /** Clicks addButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAddButton(): Promise<PolicySelectionModal> {
+        await this.addButton.click();
+        return new PolicySelectionModal(this.page, 'policy_selection_modal');
+    }
+
+    /**
+     * `admin.team.access_policy.empty--text` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when accessControlPolicies.length === 0 and team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get emptyText() {
+        return drivers.text(this.byTestId(`${this.scope}.empty--text`), {
+            testId: `${this.scope}.empty--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    getEmptyText(): Promise<string> {
+        return this.emptyText.text();
+    }
+
+    /**
+     * `admin.team.access_policy.header` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get header() {
+        return drivers.container(this.byTestId(`${this.scope}.header`), {
+            testId: `${this.scope}.header`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    /**
+     * `admin.team.access_policy.link--button` — AdminPanelWithButton (channels/src/components/widgets/admin_console/admin_panel_with_button.tsx)
+     * Renders only when accessControlPolicies.length === 0 and onButtonClick && buttonText.
+     * Opens modal PolicySelectionModal (`policy_selection_modal`).
+     */
+    get linkButton() {
+        return drivers.button(this.byTestId(`${this.scope}.link--button`), {
+            testId: `${this.scope}.link--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel_with_button.tsx#AdminPanelWithButton',
+        });
+    }
+
+    /** Clicks linkButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickLinkButton(): Promise<PolicySelectionModal> {
+        await this.linkButton.click();
+        return new PolicySelectionModal(this.page, 'policy_selection_modal');
+    }
+
+    /**
+     * `admin.team.access_policy.next--button` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `admin.team.access_policy.pagination--text` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get paginationText() {
+        return drivers.text(this.byTestId(`${this.scope}.pagination--text`), {
+            testId: `${this.scope}.pagination--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    getPaginationText(): Promise<string> {
+        return this.paginationText.text();
+    }
+
+    /**
+     * `admin.team.access_policy.previous--button` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
+    }
+
+    /**
+     * `admin.team.access_policy.subtitle--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get subtitleText() {
+        return drivers.text(this.byTestId(`${this.scope}.subtitle--text`), {
+            testId: `${this.scope}.subtitle--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getSubtitleText(): Promise<string> {
+        return this.subtitleText.text();
+    }
+
+    /**
+     * `admin.team.access_policy.title--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get titleText() {
+        return drivers.text(this.byTestId(`${this.scope}.title--text`), {
+            testId: `${this.scope}.title--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getTitleText(): Promise<string> {
+        return this.titleText.text();
+    }
+
+    /**
+     * `admin.team.access_policy.policy:{key}` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    policy(policy: Pick<AccessControlPolicy, 'id'>): AdminTeamAccessPolicyPolicy {
+        return new AdminTeamAccessPolicyPolicy(
+            this.page,
+            `${this.scope}.policy`,
+            this.byTestId(`${this.scope}.policy:${policy.id}`),
+        );
+    }
+
+    /** Every `admin.team.access_policy.policy:{key}` in the scope. */
+    get policyItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.policy:`, '');
+    }
+
+    /** The keys of every `admin.team.access_policy.policy:{key}` in the scope, in document order. */
+    policyKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.policy:`, '');
+    }
+
+    /** Every `admin.team.access_policy.policy:{key}` in the scope as a list by key, for the list matchers: `expect(x.policyList).toHaveKeys([…])`. */
+    get policyList() {
+        return this.keyedList(
+            `${this.scope}.policy:`,
+            '',
+            (key: string) =>
+                new AdminTeamAccessPolicyPolicy(
+                    this.page,
+                    `${this.scope}.policy`,
+                    this.byTestId(`${this.scope}.policy:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.team.access_policy.policy`. */
+export class AdminTeamAccessPolicyPolicy extends Scope {
+    constructor(page: Page, scope = 'admin.team.access_policy.policy', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.team.access_policy.policy:{key}` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.team.access_policy.policy:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.team.access_policy.policy.name--text` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `admin.team.access_policy.policy.open--link` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     * Goes to '/admin_console/system_attributes/membership_policies/edit_….
+     */
+    get openLink() {
+        return drivers.link(this.byTestId(`${this.scope}.open--link`), {
+            testId: `${this.scope}.open--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    async clickOpenLink(): Promise<void> {
+        await this.openLink.click();
+    }
+
+    /**
+     * `admin.team.access_policy.policy.remove--button` — TeamAccessControl (channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_access_control_policy.tsx#TeamAccessControl',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminTeamAccessPolicyPolicyRow> {
+        return {
+            name: await this.nameText.textIfPresent(),
+        };
+    }
+}
+
+/** Scope `admin.team.access_rules`. */
+export class AdminTeamAccessRules extends Scope {
+    constructor(page: Page, scope = 'admin.team.access_rules', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.team.access_rules.advanced_locked--text` — TeamLevelAccessRules (channels/src/components/admin_console/team_channel_settings/team/details/team_level_access_rules.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced and advancedLocked.
+     */
+    get advancedLockedText() {
+        return drivers.text(this.byTestId(`${this.scope}.advanced_locked--text`), {
+            testId: `${this.scope}.advanced_locked--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_level_access_rules.tsx#TeamLevelAccessRules',
+        });
+    }
+
+    getAdvancedLockedText(): Promise<string> {
+        return this.advancedLockedText.text();
+    }
+
+    /**
+     * `admin.team.access_rules.subtitle--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get subtitleText() {
+        return drivers.text(this.byTestId(`${this.scope}.subtitle--text`), {
+            testId: `${this.scope}.subtitle--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getSubtitleText(): Promise<string> {
+        return this.subtitleText.text();
+    }
+
+    /**
+     * `admin.team.access_rules.switch_mode--button` — Button (platform/shared/src/components/button/button.tsx)
+     */
+    get switchModeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.switch_mode--button`), {
+            testId: `${this.scope}.switch_mode--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/shared/src/components/button/button.tsx#Button',
+        });
+    }
+
+    async clickSwitchModeButton(): Promise<void> {
+        await this.switchModeButton.click();
+    }
+
+    /**
+     * `admin.team.access_rules.title--text` — withTestId (channels/src/components/widgets/admin_console/admin_panel.tsx)
+     */
+    get titleText() {
+        return drivers.text(this.byTestId(`${this.scope}.title--text`), {
+            testId: `${this.scope}.title--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/admin_console/admin_panel.tsx#withTestId',
+        });
+    }
+
+    getTitleText(): Promise<string> {
+        return this.titleText.text();
+    }
+
+    /**
+     * `admin.team.access_rules.rules` — TableEditor (channels/src/components/admin_console/access_control/editors/table_editor/table_editor.tsx)
+     * Renders only when !(editorMode === 'cel').
+     */
+    get rules(): Rules {
+        return new Rules(this.page, `${this.scope}.rules`, this.root);
+    }
+
+    /**
+     * `admin.team.access_rules.sync_status` — TeamMembershipSyncFooter (channels/src/components/admin_console/team_channel_settings/team/details/team_membership_sync_footer.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced and !(!hasAbacPolicy || !loaded).
+     */
+    get syncStatus(): AdminTeamAccessRulesSyncStatus {
+        return new AdminTeamAccessRulesSyncStatus(this.page, `${this.scope}.sync_status`, this.root);
+    }
+}
+
+/** Scope `admin.team.access_rules.sync_status`. */
+export class AdminTeamAccessRulesSyncStatus extends Scope {
+    constructor(page: Page, scope = 'admin.team.access_rules.sync_status', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.team.access_rules.sync_status.sync_now--button` — TeamMembershipSyncFooter (channels/src/components/admin_console/team_channel_settings/team/details/team_membership_sync_footer.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced and !(!hasAbacPolicy || !loaded).
+     */
+    get syncNowButton() {
+        return drivers.button(this.byTestId(`${this.scope}.sync_now--button`), {
+            testId: `${this.scope}.sync_now--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_membership_sync_footer.tsx#TeamMembershipSyncFooter',
+        });
+    }
+
+    async clickSyncNowButton(): Promise<void> {
+        await this.syncNowButton.click();
+    }
+
+    /**
+     * `admin.team.access_rules.sync_status.syncing--text` — TeamMembershipSyncFooter (channels/src/components/admin_console/team_channel_settings/team/details/team_membership_sync_footer.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced and !(!hasAbacPolicy || !loaded).
+     */
+    get syncingText() {
+        return drivers.text(this.byTestId(`${this.scope}.syncing--text`), {
+            testId: `${this.scope}.syncing--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_membership_sync_footer.tsx#TeamMembershipSyncFooter',
+        });
+    }
+
+    getSyncingText(): Promise<string> {
+        return this.syncingText.text();
+    }
+
+    /**
+     * `admin.team.access_rules.sync_status.time--text` — TeamMembershipSyncFooter (channels/src/components/admin_console/team_channel_settings/team/details/team_membership_sync_footer.tsx)
+     * Renders only when team and this.props.abacSupported && this.state.policyEnforced and !(!hasAbacPolicy || !loaded).
+     */
+    get timeText() {
+        return drivers.text(this.byTestId(`${this.scope}.time--text`), {
+            testId: `${this.scope}.time--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/details/team_membership_sync_footer.tsx#TeamMembershipSyncFooter',
+        });
+    }
+
+    getTimeText(): Promise<string> {
+        return this.timeText.text();
     }
 }
 
@@ -10210,6 +18486,27 @@ export class AdminUser extends Scope {
     }
 
     /**
+     * `admin.user.attribute:{key}` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     */
+    attribute(attribute: Pick<UserPropertyField, 'id'>): AdminUserAttribute {
+        return new AdminUserAttribute(
+            this.page,
+            `${this.scope}.attribute`,
+            this.byTestId(`${this.scope}.attribute:${attribute.id}`),
+        );
+    }
+
+    /** Every `admin.user.attribute:{key}` in the scope. */
+    get attributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.attribute:`, '');
+    }
+
+    /** The keys of every `admin.user.attribute:{key}` in the scope, in document order. */
+    attributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.attribute:`, '');
+    }
+
+    /**
      * `admin.user.card` — AdminUserCard (channels/src/components/admin_console/admin_user_card/admin_user_card.tsx)
      */
     get card(): AdminUserCard {
@@ -10278,6 +18575,320 @@ export class AdminUser extends Scope {
             lastName: vLastName,
             username: vUsername,
         };
+    }
+
+    /** Every `admin.user.attribute:{key}` in the scope as a list by key, for the list matchers: `expect(x.attributeList).toHaveKeys([…])`. */
+    get attributeList() {
+        return this.keyedList(
+            `${this.scope}.attribute:`,
+            '',
+            (key: string) =>
+                new AdminUserAttribute(
+                    this.page,
+                    `${this.scope}.attribute`,
+                    this.byTestId(`${this.scope}.attribute:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.user.attribute`. */
+export class AdminUserAttribute extends Scope {
+    constructor(page: Page, scope = 'admin.user.attribute', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.user.attribute:{key}` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.user.attribute:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.user.attribute.badge--text` — RankBadge (channels/src/components/admin_console/system_properties/rank_badge.tsx)
+     * Renders only when !(rank === undefined || rank === null) and rank !== undefined.
+     */
+    get badgeText() {
+        return drivers.text(this.byTestId(`${this.scope}.badge--text`), {
+            testId: `${this.scope}.badge--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge',
+        });
+    }
+
+    getBadgeText(): Promise<string> {
+        return this.badgeText.text();
+    }
+
+    /**
+     * `admin.user.attribute.clear--button` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     */
+    get clearButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
+            testId: `${this.scope}.clear--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async clickClearButton(): Promise<void> {
+        await this.clearButton.click();
+    }
+
+    /**
+     * `admin.user.attribute.error--alert` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when error.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    /**
+     * `admin.user.attribute.graph--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get graphButton() {
+        return drivers.button(this.byTestId(`${this.scope}.graph--button`), {
+            testId: `${this.scope}.graph--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks graphButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickGraphButton(): Promise<Admin> {
+        await this.graphButton.click();
+        return new Admin(this.page, 'admin');
+    }
+
+    /**
+     * `admin.user.attribute.name--text` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `admin.user.attribute.owner:{key}--text` — CpaFieldManagementIndicator (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when hasSyncedSources.
+     */
+    owner(owner: string) {
+        return drivers.text(this.byTestId(`${this.scope}.owner:${owner}--text`), {
+            testId: `${this.scope}.owner:${owner}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+        });
+    }
+
+    /** Every `admin.user.attribute.owner:{key}--text` in the scope. */
+    get ownerItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.owner:`, '--text');
+    }
+
+    /** The keys of every `admin.user.attribute.owner:{key}--text` in the scope, in document order. */
+    ownerKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.owner:`, '--text');
+    }
+
+    /**
+     * `admin.user.attribute.source:{key}--text` — CpaFieldManagementIndicator (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when hasSyncedSources.
+     */
+    source(source: AdminUserAttributeSource) {
+        return drivers.text(this.byTestId(`${this.scope}.source:${source}--text`), {
+            testId: `${this.scope}.source:${source}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+        });
+    }
+
+    /** Every `admin.user.attribute.source:{key}--text` in the scope. */
+    get sourceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.source:`, '--text');
+    }
+
+    /** The keys of every `admin.user.attribute.source:{key}--text` in the scope, in document order. */
+    sourceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.source:`, '--text');
+    }
+
+    get ldapText() {
+        return this.source('ldap');
+    }
+
+    get openidText() {
+        return this.source('openid');
+    }
+
+    get samlText() {
+        return this.source('saml');
+    }
+
+    /**
+     * `admin.user.attribute.swatch` — AttributeOptionSwatch (channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx)
+     * Renders only when option.color.
+     */
+    get swatch() {
+        return drivers.container(this.byTestId(`${this.scope}.swatch`), {
+            testId: `${this.scope}.swatch`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch',
+        });
+    }
+
+    /**
+     * `admin.user.attribute.value--combobox` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     */
+    get valueCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.value--combobox`), {
+            testId: `${this.scope}.value--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async chooseValueCombobox(option: string | RegExp): Promise<void> {
+        await this.valueCombobox.choose(option);
+    }
+
+    /**
+     * `admin.user.attribute.value--textbox` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+
+    /**
+     * `admin.user.attribute.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     */
+    choice(choice: Pick<PropertyFieldOption, 'id'>): Choice {
+        return new Choice(
+            this.page,
+            `${this.scope}.choice`,
+            this.byTestId(`${this.scope}.choice:${choice.id}--option`, true),
+        );
+    }
+
+    /** Every `admin.user.attribute.choice:{key}--option` in the scope. */
+    get choiceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** The keys of every `admin.user.attribute.choice:{key}--option` in the scope, in document order. */
+    choiceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<AdminUserAttributeFormValues>): Promise<void> {
+        if (values.valueCombobox !== undefined) {
+            await this.valueCombobox.choose(values.valueCombobox);
+        }
+        if (values.valueTextbox !== undefined) {
+            await this.valueTextbox.fill(values.valueTextbox);
+        }
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminUserAttributeRow> {
+        return {
+            badge: await this.badgeText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+        };
+    }
+
+    /** Every `admin.user.attribute.owner:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.ownerList).toHaveKeys([…])`. */
+    get ownerList() {
+        return this.keyedList(`${this.scope}.owner:`, '--text', (key: string) =>
+            drivers.text(this.byTestId(`${this.scope}.owner:${key}--text`), {
+                testId: `${this.scope}.owner:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+            }),
+        );
+    }
+
+    /** Every `admin.user.attribute.source:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.sourceList).toHaveKeys([…])`. */
+    get sourceList() {
+        return this.keyedList(`${this.scope}.source:`, '--text', (key: AdminUserAttributeSource) =>
+            drivers.text(this.byTestId(`${this.scope}.source:${key}--text`), {
+                testId: `${this.scope}.source:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+            }),
+        );
+    }
+
+    /** Every `admin.user.attribute.choice:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.choiceList).toHaveKeys([…])`. */
+    get choiceList() {
+        return this.keyedList(
+            `${this.scope}.choice:`,
+            '--option',
+            (key: string) =>
+                new Choice(
+                    this.page,
+                    `${this.scope}.choice`,
+                    this.byTestId(`${this.scope}.choice:${key}--option`, true),
+                ),
+            true,
+        );
     }
 }
 

@@ -7,18 +7,22 @@
 import type {Locator, Page} from '@playwright/test';
 import type {Bot} from '@mattermost/types/bots';
 import type {Command, IncomingWebhook, OAuthApp, OutgoingWebhook} from '@mattermost/types/integrations';
+import type {PropertyFieldOption} from '@mattermost/types/properties';
+import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {UserAccessToken} from '@mattermost/types/users';
 
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {Admin} from './admin';
 import {
     DeleteIntegrationModalForDeleteCommand,
     DeleteIntegrationModalForDeleteIncomingWebhook,
     DeleteIntegrationModalForDeleteOAuthApp,
     DeleteIntegrationModalForDeleteOutgoingWebhook,
 } from './delete_integration_modal';
-import {AlertBanner, TokenExpiryPicker} from './shared';
+import {AlertBanner, Choice, TokenExpiryPicker} from './shared';
+import type {IntegrationsSource} from './sets';
 
 /** The form fields of `integrations.bot_form`. */
 export type IntegrationsBotFormFormValues = {
@@ -28,6 +32,16 @@ export type IntegrationsBotFormFormValues = {
     postChannels: boolean;
     role: string;
     username: string;
+};
+/** The form fields of `integrations.bot_form.attributes.attribute`. */
+export type IntegrationsBotFormAttributesAttributeFormValues = {
+    valueCombobox?: string;
+    valueTextbox?: string;
+};
+/** The read-only parts of a `integrations.bot_form.attributes.attribute` item. */
+export type IntegrationsBotFormAttributesAttributeRow = {
+    badge: string | null;
+    name: string | null;
 };
 /** The form fields of `integrations.bots.bot.new_token`. */
 export type IntegrationsBotsBotNewTokenFormValues = {
@@ -262,6 +276,14 @@ export class IntegrationsBotForm extends Scope {
         await this.usernameTextbox.fill(value);
     }
 
+    /**
+     * `integrations.bot_form.attributes` — BotAttributesSection (channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx)
+     * Renders only when this.props.attributesEnabled.
+     */
+    get attributes(): IntegrationsBotFormAttributes {
+        return new IntegrationsBotFormAttributes(this.page, `${this.scope}.attributes`, this.root);
+    }
+
     get defaultToken(): TokenExpiryPicker {
         return new TokenExpiryPicker(this.page, `${this.scope}.default_token`, this.root);
     }
@@ -286,6 +308,514 @@ export class IntegrationsBotForm extends Scope {
         if (values.username !== undefined) {
             await this.usernameTextbox.fill(values.username);
         }
+    }
+}
+
+/** Scope `integrations.bot_form.attributes`. */
+export class IntegrationsBotFormAttributes extends Scope {
+    constructor(page: Page, scope = 'integrations.bot_form.attributes', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `integrations.bot_form.attributes.add--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu botAttributesAddMenu (`integrations.bot_form.attributes.add_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get addButton() {
+        return drivers.button(this.byTestId(`${this.scope}.add--button`), {
+            testId: `${this.scope}.add--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks addButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickAddButton(): Promise<IntegrationsBotFormAttributesAddMenu> {
+        await this.addButton.click();
+        return new IntegrationsBotFormAttributesAddMenu(this.page, `${this.scope}.add_menu`);
+    }
+
+    /**
+     * `integrations.bot_form.attributes.load_error--alert` — BotAttributesSection (channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx)
+     * Renders only when this.props.attributesEnabled.
+     */
+    get loadErrorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.load_error--alert`), {
+            testId: `${this.scope}.load_error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection',
+        });
+    }
+
+    /**
+     * `integrations.bot_form.attributes.retry--button` — Button (platform/shared/src/components/button/button.tsx)
+     */
+    get retryButton() {
+        return drivers.button(this.byTestId(`${this.scope}.retry--button`), {
+            testId: `${this.scope}.retry--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/shared/src/components/button/button.tsx#Button',
+        });
+    }
+
+    async clickRetryButton(): Promise<void> {
+        await this.retryButton.click();
+    }
+
+    get addMenu(): IntegrationsBotFormAttributesAddMenu {
+        return new IntegrationsBotFormAttributesAddMenu(this.page, `${this.scope}.add_menu`);
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute:{key}` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when rowFields.length > 0.
+     */
+    attribute(attribute: Pick<UserPropertyField, 'id'>): IntegrationsBotFormAttributesAttribute {
+        return new IntegrationsBotFormAttributesAttribute(
+            this.page,
+            `${this.scope}.attribute`,
+            this.byTestId(`${this.scope}.attribute:${attribute.id}`),
+        );
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute:{key}` in the scope. */
+    get attributeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.attribute:`, '');
+    }
+
+    /** The keys of every `integrations.bot_form.attributes.attribute:{key}` in the scope, in document order. */
+    attributeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.attribute:`, '');
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute:{key}` in the scope as a list by key, for the list matchers: `expect(x.attributeList).toHaveKeys([…])`. */
+    get attributeList() {
+        return this.keyedList(
+            `${this.scope}.attribute:`,
+            '',
+            (key: string) =>
+                new IntegrationsBotFormAttributesAttribute(
+                    this.page,
+                    `${this.scope}.attribute`,
+                    this.byTestId(`${this.scope}.attribute:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `integrations.bot_form.attributes.add_menu`. */
+export class IntegrationsBotFormAttributesAddMenu extends Scope {
+    constructor(page: Page, scope = 'integrations.bot_form.attributes.add_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `integrations.bot_form.attributes.add_menu.field:{key}--menuitem` — BotAttributesSection (channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx)
+     * Renders only when addableFields.length > 0.
+     */
+    field(field: Pick<UserPropertyField, 'id'>) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.field:${field.id}--menuitem`), {
+            testId: `${this.scope}.field:${field.id}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection',
+        });
+    }
+
+    /** Every `integrations.bot_form.attributes.add_menu.field:{key}--menuitem` in the scope. */
+    get fieldItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.field:`, '--menuitem');
+    }
+
+    /** The keys of every `integrations.bot_form.attributes.add_menu.field:{key}--menuitem` in the scope, in document order. */
+    fieldKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.field:`, '--menuitem');
+    }
+
+    /**
+     * `integrations.bot_form.attributes.add_menu.manage--menuitem` — BotAttributesSection (channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx)
+     * Renders only when canEditAdminManaged.
+     */
+    get manageMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.manage--menuitem`), {
+            testId: `${this.scope}.manage--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection',
+        });
+    }
+
+    async clickManageMenuItem(): Promise<void> {
+        await this.manageMenuItem.click();
+    }
+
+    /**
+     * `integrations.bot_form.attributes.add_menu.none--menuitem` — BotAttributesSection (channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx)
+     * Renders only when !(addableFields.length > 0).
+     */
+    get noneMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.none--menuitem`), {
+            testId: `${this.scope}.none--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection',
+        });
+    }
+
+    async clickNoneMenuItem(): Promise<void> {
+        await this.noneMenuItem.click();
+    }
+
+    /** Every `integrations.bot_form.attributes.add_menu.field:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.fieldList).toHaveKeys([…])`. */
+    get fieldList() {
+        return this.keyedList(`${this.scope}.field:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.field:${key}--menuitem`), {
+                testId: `${this.scope}.field:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection',
+            }),
+        );
+    }
+}
+
+/** Scope `integrations.bot_form.attributes.attribute`. */
+export class IntegrationsBotFormAttributesAttribute extends Scope {
+    constructor(page: Page, scope = 'integrations.bot_form.attributes.attribute', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute:{key}` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when rowFields.length > 0.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'integrations.bot_form.attributes.attribute:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.badge--text` — RankBadge (channels/src/components/admin_console/system_properties/rank_badge.tsx)
+     * Renders only when !(rank === undefined || rank === null) and rank !== undefined.
+     */
+    get badgeText() {
+        return drivers.text(this.byTestId(`${this.scope}.badge--text`), {
+            testId: `${this.scope}.badge--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge',
+        });
+    }
+
+    getBadgeText(): Promise<string> {
+        return this.badgeText.text();
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.clear--button` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when rowFields.length > 0.
+     */
+    get clearButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
+            testId: `${this.scope}.clear--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async clickClearButton(): Promise<void> {
+        await this.clearButton.click();
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.error--alert` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when rowFields.length > 0 and error.
+     */
+    get errorAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.error--alert`), {
+            testId: `${this.scope}.error--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.graph--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get graphButton() {
+        return drivers.button(this.byTestId(`${this.scope}.graph--button`), {
+            testId: `${this.scope}.graph--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks graphButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickGraphButton(): Promise<Admin> {
+        await this.graphButton.click();
+        return new Admin(this.page, 'admin');
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.name--text` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when rowFields.length > 0.
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.owner:{key}--text` — CpaFieldManagementIndicator (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when rowFields.length > 0 and hasSyncedSources.
+     */
+    owner(owner: string) {
+        return drivers.text(this.byTestId(`${this.scope}.owner:${owner}--text`), {
+            testId: `${this.scope}.owner:${owner}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+        });
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute.owner:{key}--text` in the scope. */
+    get ownerItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.owner:`, '--text');
+    }
+
+    /** The keys of every `integrations.bot_form.attributes.attribute.owner:{key}--text` in the scope, in document order. */
+    ownerKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.owner:`, '--text');
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.remove--button` — UserAttributeFields (channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx)
+     * Renders only when rowFields.length > 0 and removable.
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx#UserAttributeFields',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.source:{key}--text` — CpaFieldManagementIndicator (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when rowFields.length > 0 and hasSyncedSources.
+     */
+    source(source: IntegrationsSource) {
+        return drivers.text(this.byTestId(`${this.scope}.source:${source}--text`), {
+            testId: `${this.scope}.source:${source}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+        });
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute.source:{key}--text` in the scope. */
+    get sourceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.source:`, '--text');
+    }
+
+    /** The keys of every `integrations.bot_form.attributes.attribute.source:{key}--text` in the scope, in document order. */
+    sourceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.source:`, '--text');
+    }
+
+    get ldapText() {
+        return this.source('ldap');
+    }
+
+    get openidText() {
+        return this.source('openid');
+    }
+
+    get samlText() {
+        return this.source('saml');
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.swatch` — AttributeOptionSwatch (channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx)
+     * Renders only when option.color.
+     */
+    get swatch() {
+        return drivers.container(this.byTestId(`${this.scope}.swatch`), {
+            testId: `${this.scope}.swatch`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch',
+        });
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.value--combobox` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when rowFields.length > 0.
+     */
+    get valueCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.value--combobox`), {
+            testId: `${this.scope}.value--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async chooseValueCombobox(option: string | RegExp): Promise<void> {
+        await this.valueCombobox.choose(option);
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.value--textbox` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     * Renders only when rowFields.length > 0.
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+
+    /**
+     * `integrations.bot_form.attributes.attribute.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when rowFields.length > 0.
+     */
+    choice(choice: Pick<PropertyFieldOption, 'id'>): Choice {
+        return new Choice(
+            this.page,
+            `${this.scope}.choice`,
+            this.byTestId(`${this.scope}.choice:${choice.id}--option`, true),
+        );
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute.choice:{key}--option` in the scope. */
+    get choiceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** The keys of every `integrations.bot_form.attributes.attribute.choice:{key}--option` in the scope, in document order. */
+    choiceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<IntegrationsBotFormAttributesAttributeFormValues>): Promise<void> {
+        if (values.valueCombobox !== undefined) {
+            await this.valueCombobox.choose(values.valueCombobox);
+        }
+        if (values.valueTextbox !== undefined) {
+            await this.valueTextbox.fill(values.valueTextbox);
+        }
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<IntegrationsBotFormAttributesAttributeRow> {
+        return {
+            badge: await this.badgeText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+        };
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute.owner:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.ownerList).toHaveKeys([…])`. */
+    get ownerList() {
+        return this.keyedList(`${this.scope}.owner:`, '--text', (key: string) =>
+            drivers.text(this.byTestId(`${this.scope}.owner:${key}--text`), {
+                testId: `${this.scope}.owner:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+            }),
+        );
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute.source:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.sourceList).toHaveKeys([…])`. */
+    get sourceList() {
+        return this.keyedList(`${this.scope}.source:`, '--text', (key: IntegrationsSource) =>
+            drivers.text(this.byTestId(`${this.scope}.source:${key}--text`), {
+                testId: `${this.scope}.source:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
+            }),
+        );
+    }
+
+    /** Every `integrations.bot_form.attributes.attribute.choice:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.choiceList).toHaveKeys([…])`. */
+    get choiceList() {
+        return this.keyedList(
+            `${this.scope}.choice:`,
+            '--option',
+            (key: string) =>
+                new Choice(
+                    this.page,
+                    `${this.scope}.choice`,
+                    this.byTestId(`${this.scope}.choice:${key}--option`, true),
+                ),
+            true,
+        );
     }
 }
 

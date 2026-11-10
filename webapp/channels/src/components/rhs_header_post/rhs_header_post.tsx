@@ -217,6 +217,7 @@ class RhsHeaderPost extends React.PureComponent<Props> {
                         channelId={this.props.channel.id}
                         surface={[ChannelLabelSurface.INFO, ChannelLabelSurface.HEADER]}
                         allowEmptyVisible={true}
+                        testId='rhs.thread.header.attributes'
                     />
                 </div>
                 <div className='controls'>

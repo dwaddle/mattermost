@@ -6,7 +6,7 @@ import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 
 import type {PlaywrightExtended} from '@mattermost/playwright-lib';
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, Msg, test} from '@mattermost/playwright-lib';
 
 import {
     DISPLAY_LABEL_INFO,
@@ -19,6 +19,7 @@ import {
     setChannelValue,
     valueFor,
 } from './helpers';
+import {add, editor, openChannel, openChannelSettingsInfo, row, setText} from './surface';
 
 // Editing in Channel Info (and this same editor reused in Channel Settings) is
 // admin-only, whatever an attribute's own setter tier says.
@@ -70,30 +71,28 @@ test.describe('Channel attribute editing in Channel Settings', {tag: ['@channel_
                 `chanadmin-stage-${suffix}`,
             );
 
-            const {channelsPage} = await pw.testBrowser.login(channelAdmin);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, channelAdmin, team, channel);
 
-            const channelSettings = await channelsPage.openChannelSettings();
-            const infoSettings = await channelSettings.openInfoTab();
+            const channelSettings = await openChannelSettingsInfo(app);
+            const infoSettings = channelSettings.info;
 
             // # Add the unset attribute in the modal and commit with Enter, as the
             // # inline editor expects. An unset optional attribute has no row until added.
-            await infoSettings.attributes.add(note.name);
-            await infoSettings.attributes.editor(note.name).fill('drafted in modal');
-            await infoSettings.attributes.editor(note.name).press('Enter');
+            await add(app, infoSettings.attributes, note);
+            await editor(infoSettings.attributes, note).fill('drafted in modal');
+            await editor(infoSettings.attributes, note).press('Enter');
 
             // * The row reflects the edit immediately, and the tab reports an unsaved
             // * change, but nothing has reached the server yet
-            await expect(infoSettings.attributes.editButton(note.name)).toHaveText('drafted in modal');
-            await expect(channelSettings.container.getByText('You have unsaved changes')).toBeVisible();
+            await expect(row(infoSettings.attributes, note).editButton.locator).toHaveText('drafted in modal');
+            await expect(channelSettings.savePanel.messageText).toHaveMessage(Msg.saveChangesPanel.message);
             expect(valueFor(await readChannelValues(adminClient, channel.id), note)).toBeUndefined();
 
             // # Save the tab
-            await infoSettings.save();
+            await channelSettings.savePanel.clickSaveButton();
 
             // * The panel leaves the unsaved state and the value is now stored
-            await expect(infoSettings.saveChangesPanel).not.toBeVisible();
+            await expect(channelSettings.savePanel.saveButton.locator).not.toBeVisible();
             await expect
                 .poll(async () => {
                     return valueFor(await readChannelValues(adminClient, channel.id), note);
@@ -135,22 +134,20 @@ test.describe('Channel attribute editing in Channel Settings', {tag: ['@channel_
             );
             await setChannelValue(adminClient, channel.id, note, 'original');
 
-            const {channelsPage} = await pw.testBrowser.login(channelAdmin);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const app = await openChannel(pw, channelAdmin, team, channel);
 
-            const channelSettings = await channelsPage.openChannelSettings();
-            const infoSettings = await channelSettings.openInfoTab();
-            await expect(infoSettings.attributes.editButton(note.name)).toHaveText('original');
+            const channelSettings = await openChannelSettingsInfo(app);
+            const infoSettings = channelSettings.info;
+            await expect(row(infoSettings.attributes, note).editButton.locator).toHaveText('original');
 
             // # Edit the attribute, then discard it with Reset instead of Save
-            await infoSettings.attributes.setText(note.name, 'discarded', 'enter');
-            await expect(infoSettings.attributes.editButton(note.name)).toHaveText('discarded');
-            await infoSettings.resetChanges();
+            await setText(app, infoSettings.attributes, note, 'discarded', 'enter');
+            await expect(row(infoSettings.attributes, note).editButton.locator).toHaveText('discarded');
+            await channelSettings.savePanel.clickCancelButton();
 
             // * The row reverts to the stored value, and the panel clears
-            await expect(infoSettings.attributes.editButton(note.name)).toHaveText('original');
-            await expect(infoSettings.saveChangesPanel).not.toBeVisible();
+            await expect(row(infoSettings.attributes, note).editButton.locator).toHaveText('original');
+            await expect(channelSettings.savePanel.saveButton.locator).not.toBeVisible();
 
             // * The discarded edit never reached the server
             expect(valueFor(await readChannelValues(adminClient, channel.id), note)).toBe('original');

@@ -10,6 +10,8 @@ import {defineMessage, FormattedMessage, useIntl} from 'react-intl';
 import {ArrowDownBoldCircleOutlineIcon, ArrowDownIcon, ArrowUpBoldCircleOutlineIcon, ArrowUpIcon, CheckAllIcon, CheckIcon, ClockOutlineIcon, ElementOfIcon, EqualIcon, FunctionIcon, NotEqualVariantIcon} from '@mattermost/compass-icons/components';
 import type IconProps from '@mattermost/compass-icons/components/props';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {IDMappedObjects} from '@mattermost/types/utilities';
 
 import * as Menu from 'components/menu';
@@ -56,9 +58,11 @@ interface OperatorSelectorProps {
     // When provided (native attributes), the menu is restricted to exactly these
     // operator labels and the multiselect heuristic is bypassed.
     allowedOperators?: string[];
+
+    testId?: TestId;
 }
 
-const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeType, allowedOperators}: OperatorSelectorProps) => {
+const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeType, allowedOperators, testId}: OperatorSelectorProps) => {
     const {formatMessage} = useIntl();
     const [filter, setFilter] = useState('');
 
@@ -166,6 +170,7 @@ const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeTyp
                 <Menu.Item
                     id={id}
                     key={id}
+                    data-testid={part(testId, 'operator_menu.operator', {key: id}, 'menuitemradio')}
                     role='menuitemradio'
                     forceCloseOnSelect={true}
                     aria-checked={id === currentOperatorDescriptor.id}
@@ -178,7 +183,10 @@ const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeTyp
                                     {...description}
                                     values={{
                                         functionName: (
-                                            <span className='operator-selector-menu__function-name'>
+                                            <span
+                                                className='operator-selector-menu__function-name'
+                                                data-testid={part(testId, 'operator_menu.operator.function_name', 'text')}
+                                            >
                                                 {`(${functionName})`}
                                             </span>
                                         ),
@@ -214,7 +222,7 @@ const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeTyp
                         </WithTooltip>
                     </>
                 ),
-                dataTestId: 'operatorSelectorMenuButton',
+                dataTestId: part(testId, 'operator', 'button'),
                 disabled,
             }}
             menu={{

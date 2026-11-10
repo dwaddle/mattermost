@@ -649,6 +649,7 @@ function ChannelSettingsInfoTab({
                     <ChannelInfoAttributes
                         ref={attributesRef}
                         channelId={channel.id}
+                        testId='channel_settings_modal.info.attributes'
                         deferred={true}
                         onPendingChange={setHasAttributeChanges}
                     />

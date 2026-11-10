@@ -6,8 +6,11 @@ import React, {useState, useMemo, useCallback} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CheckIcon, ChevronDownIcon, CloseIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -27,6 +30,7 @@ const MultiValueSelector = ({
     channelFields = [],
     targetAttribute,
     onSelectTarget,
+    testId,
 }: {
     values: string[];
     disabled: boolean;
@@ -38,6 +42,8 @@ const MultiValueSelector = ({
     channelFields?: UserPropertyField[];
     targetAttribute?: string;
     onSelectTarget?: (name: string) => void;
+
+    testId?: TestId;
 }) => {
     const {formatMessage} = useIntl();
     const [filter, setFilter] = useState('');
@@ -71,9 +77,7 @@ const MultiValueSelector = ({
     });
 
     const handleSelectItem = useCallback((name: string) => {
-        const newValues = values.includes(name) ?
-            values.filter((v) => v !== name) :
-            [...values, name];
+        const newValues = values.includes(name) ? values.filter((v) => v !== name) : [...values, name];
         updateValues(newValues);
     }, [values, updateValues]);
 
@@ -110,7 +114,7 @@ const MultiValueSelector = ({
             if (hasMaskedValues) {
                 return (
                     <div className='value-selector-menu-button__multi-values-container'>
-                        <MaskedChip/>
+                        <MaskedChip testId={part(testId, 'value.masked')}/>
                     </div>
                 );
             }
@@ -135,11 +139,13 @@ const MultiValueSelector = ({
                     <div
                         key={value}
                         className='select__multi-value'
+                        data-testid={part(testId, 'value.chip', {key: textTestKey(value)})}
                     >
                         <div className='select__multi-value__label'>{value}</div>
                         {!disabled && (
                             <div
                                 className='select__multi-value__remove'
+                                data-testid={part(testId, 'value.chip.remove', 'button')}
                                 onClick={(e) => handleRemoveValue(e, value)}
                                 role='button'
                                 tabIndex={0}
@@ -154,7 +160,7 @@ const MultiValueSelector = ({
                         )}
                     </div>
                 ))}
-                {hasMaskedValues && <MaskedChip/>}
+                {hasMaskedValues && <MaskedChip testId={part(testId, 'value.masked')}/>}
             </div>
         );
     }, [values, disabled, hasMaskedValues]);
@@ -183,7 +189,7 @@ const MultiValueSelector = ({
                             />
                         </span>
                     ),
-                    dataTestId: 'valueSelectorMenuButton',
+                    dataTestId: part(testId, 'value', 'button'),
                     disabled,
                 }}
                 menu={{
@@ -195,6 +201,7 @@ const MultiValueSelector = ({
                 <Menu.InputItem
                     key='filter_values'
                     id='filter_values'
+                    testId={part(testId, 'value_menu.filter')}
                     type='text'
                     placeholder={formatMessage(actualAllowCreateForMenu ? {
                         id: 'admin.access_control.table_editor.selector.filter_or_create',
@@ -225,6 +232,7 @@ const MultiValueSelector = ({
                         <Menu.Item
                             id={`value-option-${id}`}
                             key={id}
+                            data-testid={part(testId, 'value_menu.multi_option', {key: textTestKey(name)}, 'menuitemcheckbox')}
                             role='menuitemcheckbox'
                             forceCloseOnSelect={false}
                             aria-checked={isSelected}
@@ -240,6 +248,7 @@ const MultiValueSelector = ({
                     <Menu.Item
                         id='create-value-option'
                         key='create-value-option'
+                        data-testid={part(testId, 'value_menu.create', 'menuitem')}
                         onClick={() => handleCreateValue(filter)}
                         labels={<span>
                             {formatMessage({
@@ -249,7 +258,7 @@ const MultiValueSelector = ({
                         </span>}
                     />
                 )}
-                {onSelectTarget && channelAttributeMenuItems(channelFields, targetAttribute, onSelectTarget, formatMessage)}
+                {onSelectTarget && channelAttributeMenuItems(channelFields, targetAttribute, onSelectTarget, formatMessage, testId)}
             </Menu.Container>
         </div>
     );

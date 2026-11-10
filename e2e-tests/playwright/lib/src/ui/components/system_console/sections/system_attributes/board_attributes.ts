@@ -29,11 +29,11 @@ export default class BoardAttributes {
     readonly saveButton: Locator;
 
     constructor(container: Locator) {
-        this.container = container.getByTestId('boardAttributes');
+        this.container = container.getByTestId('admin.board_attributes');
         this.page = container.page();
 
         this.addAttributeButton = this.container.getByRole('button', {name: 'Add attribute'});
-        this.saveButton = this.page.getByTestId('saveSetting');
+        this.saveButton = this.page.getByTestId('admin.board_attributes.save_panel.save--button');
     }
 
     // ── Visibility / navigation ─────────────────────────────────────────
@@ -55,7 +55,7 @@ export default class BoardAttributes {
     // ── Row / cell accessors ───────────────────────────────────────────
 
     nameInput(nth: number): Locator {
-        return this.container.getByTestId('board-attribute-field-input').nth(nth);
+        return this.container.getByTestId('admin.board_attributes.row.name--textbox').nth(nth);
     }
 
     /**
@@ -67,12 +67,12 @@ export default class BoardAttributes {
      */
     nameInputByValue(value: string): Locator {
         return this.container
-            .getByTestId('board-attribute-field-input')
+            .getByTestId('admin.board_attributes.row.name--textbox')
             .and(this.container.locator(`input[value="${escapeCssAttributeValue(value)}"]`));
     }
 
     lastNameInput(): Locator {
-        return this.container.getByTestId('board-attribute-field-input').last();
+        return this.container.getByTestId('admin.board_attributes.row.name--textbox').last();
     }
 
     /**
@@ -88,7 +88,7 @@ export default class BoardAttributes {
         // can't match through option chips or filter inputs.
         return this.container.locator('tr', {
             has: this.page.locator(
-                `input[data-testid="board-attribute-field-input"][value="${escapeCssAttributeValue(name)}"]`,
+                `input[data-testid="admin.board_attributes.row.name--textbox"][value="${escapeCssAttributeValue(name)}"]`,
             ),
         });
     }
@@ -103,7 +103,7 @@ export default class BoardAttributes {
     }
 
     typeSelectorInRow(row: Locator): Locator {
-        return row.getByTestId('fieldTypeSelectorMenuButton');
+        return row.getByTestId('admin.board_attributes.row.type--button');
     }
 
     typeSelectorByName(name: string): Locator {
@@ -111,7 +111,7 @@ export default class BoardAttributes {
     }
 
     dotMenuInRow(row: Locator): Locator {
-        return row.locator('[data-testid^="board-attribute-field_dotmenu-"]');
+        return row.locator('[data-testid="admin.board_attributes.row.actions--button"]');
     }
 
     dotMenuByName(name: string): Locator {
@@ -129,7 +129,7 @@ export default class BoardAttributes {
         // delete button inside.
         return this.optionChip(optionName)
             .locator('xpath=ancestor::span[@data-flip-key][1]')
-            .locator('button[data-testid^="property-option-delete-"]');
+            .locator('button[data-testid^="admin.board_attributes.row.option_delete:"]');
     }
 
     // ── Header / table-level actions ───────────────────────────────────
@@ -144,7 +144,7 @@ export default class BoardAttributes {
         await this.addAttributeButton.click();
         const row = this.lastAddedRow();
         if (name !== undefined) {
-            const input = row.locator('[data-testid="board-attribute-field-input"]');
+            const input = row.locator('[data-testid="admin.board_attributes.row.name--textbox"]');
             await input.fill(name);
             await input.blur();
         }
@@ -153,7 +153,15 @@ export default class BoardAttributes {
 
     async saveAndWaitForSettled() {
         await expect(this.saveButton).toBeEnabled();
+
+        // The button is disabled while saving too, so its disabled state alone can pass before the
+        // server has the change: wait for the save's first write to the board fields as well.
+        const written = this.page.waitForResponse(
+            (r) => /\/properties\/groups\/boards\/[^/]+\/fields/.test(r.url()) && r.request().method() !== 'GET',
+            {timeout: 15_000},
+        );
         await this.saveButton.click();
+        await written;
 
         // Save flushes pending changes; button returns to disabled state once
         // all API calls complete and React re-renders with the new baseline.
@@ -195,7 +203,7 @@ export default class BoardAttributes {
 
     async addOptionInRow(row: Locator, optionName: string) {
         await row.getByRole('button', {name: 'Add value'}).click();
-        const newChip = row.locator('[data-testid^="property-option-chip-"]').last();
+        const newChip = row.locator('[data-testid^="admin.board_attributes.row.option:"]').last();
         await newChip.click();
         const renameInput = this.page.getByPlaceholder('Option name');
         await renameInput.fill(optionName);

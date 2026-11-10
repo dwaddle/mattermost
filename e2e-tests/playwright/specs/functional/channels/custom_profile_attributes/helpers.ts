@@ -1,13 +1,11 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Page} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 import type {FieldType} from '@mattermost/types/properties';
 import type {UserPropertyField, UserPropertyFieldPatch} from '@mattermost/types/properties_user';
 
-import type {ChannelsPage} from '@mattermost/playwright-lib';
-import {expect} from '@mattermost/playwright-lib';
+import {expect, type App, type generated, duration} from '@mattermost/playwright-lib';
 
 // Common test data constants
 export const TEST_PHONE = '555-123-4567';
@@ -145,162 +143,142 @@ export function getFieldIdByName(fieldsMap: Record<string, UserPropertyField>, n
     throw new Error(`Could not find field ID for attribute: ${name}`);
 }
 
+/** The Profile settings section of a custom attribute (`customAttribute_<field id>`). */
+export function attributeSection(
+    app: App,
+    fieldsMap: Record<string, UserPropertyField>,
+    attributeName: string,
+): generated.SettingsSectionItem {
+    return app.settings.section(`customAttribute_${getFieldIdByName(fieldsMap, attributeName)}`);
+}
+
+/** Saves an open attribute section and waits for it to collapse (the Edit button returns only once the save is done). */
+async function saveSection(section: ReturnType<typeof attributeSection>) {
+    await section.clickSaveButton();
+    await expect(section.editButton.locator).toBeVisible();
+}
+
+/** Picks options of a select attribute by index, in Profile settings. */
+async function pickOptions(
+    section: ReturnType<typeof attributeSection>,
+    field: UserPropertyField,
+    optionIndices: number[],
+) {
+    const options = (field.attrs?.options ?? []) as Array<{id: string}>;
+    for (const index of optionIndices) {
+        // a single select closes its menu after each pick; a multiselect keeps it open
+        if ((await section.valueCombobox.locator.getAttribute('aria-expanded')) !== 'true') {
+            await section.valueCombobox.locator.click();
+        }
+        await section.choice({id: options[index].id}).option.select();
+    }
+}
+
 /**
- * Helper function to edit a text attribute
- * @param {Page} page - The Playwright page object
- * @param {Object} fieldsMap - Map of field IDs to field objects
- * @param {string} attributeName - The name of the attribute to edit
- * @param {string} newValue - The new value to set
+ * Edits a text attribute in Profile settings: Edit, replace the value, Save.
+ * @param newValue - The new value to set (empty clears it)
  */
 export async function editTextAttribute(
-    page: Page,
+    app: App,
     fieldsMap: Record<string, UserPropertyField>,
     attributeName: string,
     newValue: string,
 ): Promise<void> {
-    const fieldId = getFieldIdByName(fieldsMap, attributeName);
-    await page.locator(`text=${attributeName}`).scrollIntoViewIfNeeded();
-    await page.locator(`#customAttribute_${fieldId}Edit`).scrollIntoViewIfNeeded();
-    await page.locator(`#customAttribute_${fieldId}Edit`).click();
-    await page.locator(`#customAttribute_${fieldId}`).scrollIntoViewIfNeeded();
-    await page.locator(`#customAttribute_${fieldId}`).clear();
+    const section = attributeSection(app, fieldsMap, attributeName);
+    await section.clickEditButton();
+    await section.valueTextbox.clear();
     if (newValue) {
-        await page.locator(`#customAttribute_${fieldId}`).fill(newValue);
+        await section.fillValueTextbox(newValue);
     }
-    await page.locator('button:has-text("Save")').click();
-    // Wait for the Edit button to reappear — it is only visible when the section is in
-    // display mode (not editing). It returns to display mode only after the save API call
-    // resolves and the component calls updateSection(''). Without this wait, the next
-    // Edit click fires updateSection() while the save is still in-flight, which closes
-    // the active section and disrupts subsequent saves.
-    await page.locator(`#customAttribute_${fieldId}Edit`).waitFor({state: 'visible'});
+    await saveSection(section);
 }
 
 /**
- * Helper function to edit a select attribute
- * @param {Page} page - The Playwright page object
- * @param {Object} fieldsMap - Map of field IDs to field objects
- * @param {string} attributeName - The name of the attribute to edit
- * @param {number} optionIndex - The index of the option to select, counted over all
- *   options in definition order (the Combobox keeps the selected row in the list)
+ * Edits a select attribute in Profile settings, picking the option at `optionIndex`, counted over all
+ * options in definition order (the Combobox keeps the selected row in the list).
  */
 export async function editSelectAttribute(
-    page: Page,
+    app: App,
     fieldsMap: Record<string, UserPropertyField>,
     attributeName: string,
     optionIndex: number,
 ): Promise<void> {
-    const fieldId = getFieldIdByName(fieldsMap, attributeName);
-    await page.locator(`text=${attributeName}`).scrollIntoViewIfNeeded();
-    await page.locator(`#customAttribute_${fieldId}Edit`).scrollIntoViewIfNeeded();
-    await page.locator(`#customAttribute_${fieldId}Edit`).click();
-
-    // The Combobox input carries the field-scoped id and takes focus when the section opens.
-    const input = page.locator(`#customProfileAttribute_${fieldId}`);
-    await expect(input).toBeFocused();
-    await input.scrollIntoViewIfNeeded();
-    await input.click();
-
-    // A closed menu stays mounted at opacity 0, so check aria-expanded rather than visibility.
-    // The menu is portaled out of the modal; its listbox id is derived from the input id.
-    await expect(input).toHaveAttribute('aria-expanded', 'true');
-    const listbox = page.locator(`#customProfileAttribute_${fieldId}-listbox`);
-    await listbox.getByRole('option').nth(optionIndex).click();
-
-    await page.locator('button:has-text("Save")').click();
-    // Wait for the Edit button to reappear — same reasoning as editTextAttribute.
-    await page.locator(`#customAttribute_${fieldId}Edit`).waitFor({state: 'visible'});
+    const section = attributeSection(app, fieldsMap, attributeName);
+    await section.clickEditButton();
+    await pickOptions(section, fieldsMap[getFieldIdByName(fieldsMap, attributeName)], [optionIndex]);
+    await saveSection(section);
 }
 
 /**
- * Helper function to edit a multiselect attribute
- * @param {Page} page - The Playwright page object
- * @param {Object} fieldsMap - Map of field IDs to field objects
- * @param {string} attributeName - The name of the attribute to edit
- * @param {Array<number>} optionIndices - The indices of the options to select, counted over
- *   all options in definition order. Selected rows stay in the list and clicking one
- *   deselects it, so each index must point at a row that isn't already selected.
+ * Edits a multiselect attribute in Profile settings, adding the options at `optionIndices`, counted over all
+ * options in definition order. Selected rows stay in the list and clicking one deselects it, so each index
+ * must point at a row that isn't already selected.
  */
 export async function editMultiselectAttribute(
-    page: Page,
+    app: App,
     fieldsMap: Record<string, UserPropertyField>,
     attributeName: string,
     optionIndices: number[],
 ): Promise<void> {
-    const fieldId = getFieldIdByName(fieldsMap, attributeName);
-    await page.locator(`text=${attributeName}`).scrollIntoViewIfNeeded();
-    await page.locator(`#customAttribute_${fieldId}Edit`).scrollIntoViewIfNeeded();
-    await page.locator(`#customAttribute_${fieldId}Edit`).click();
-
-    const input = page.locator(`#customProfileAttribute_${fieldId}`);
-    const listbox = page.locator(`#customProfileAttribute_${fieldId}-listbox`);
-    await expect(input).toBeFocused();
-
-    for (const index of optionIndices) {
-        // The menu closes after each pick; clicking the input opens it if it isn't open yet.
-        await input.scrollIntoViewIfNeeded();
-        await input.click();
-        await expect(input).toHaveAttribute('aria-expanded', 'true');
-
-        const option = listbox.getByRole('option').nth(index);
-        await expect(option).not.toHaveAttribute('aria-selected', 'true');
-        await option.click();
-    }
-
-    await page.locator('button:has-text("Save")').click();
-    // Wait for the Edit button to reappear — same reasoning as editTextAttribute.
-    await page.locator(`#customAttribute_${fieldId}Edit`).waitFor({state: 'visible'});
+    const section = attributeSection(app, fieldsMap, attributeName);
+    await section.clickEditButton();
+    await pickOptions(section, fieldsMap[getFieldIdByName(fieldsMap, attributeName)], optionIndices);
+    await saveSection(section);
 }
 
-/**
- * Helper function to verify an attribute exists in the profile settings
- * @param {Page} page - The Playwright page object
- * @param {Array} attributes - Array of attribute objects with name
- */
-export async function verifyAttributesExistInSettings(page: Page, attributes: CustomProfileAttribute[]): Promise<void> {
+/** Verifies each attribute has its section in Profile settings, labelled with its name. */
+export async function verifyAttributesExistInSettings(
+    app: App,
+    fieldsMap: Record<string, UserPropertyField>,
+    attributes: CustomProfileAttribute[],
+): Promise<void> {
     for (const attribute of attributes) {
-        // Wait for the attribute label to appear — custom profile attribute fields are
-        // fetched asynchronously after the settings modal opens, so we need an explicit
-        // wait before asserting visibility.
-        const label = page.locator('.user-settings').getByText(attribute.name, {exact: false});
-        await label.waitFor({state: 'visible', timeout: 15000});
-        await label.scrollIntoViewIfNeeded();
+        // fields are fetched after the settings open, hence the longer wait
+        await expect(attributeSection(app, fieldsMap, attribute.name).title.locator).toContainText(attribute.name, {
+            timeout: duration.half_min,
+        });
     }
 }
 
-/**
- * Helper function to verify an attribute is displayed in the profile popover
- * @param {ChannelsPage} channelsPage - The Playwright channels page object
- * @param {string} attributeName - The name of the attribute to verify
- * @param {string} attributeValue - The value of the attribute to verify
- */
+/** Verifies an attribute shows in the open profile popover with its name and value. */
 export async function verifyAttributeInPopover(
-    channelsPage: ChannelsPage,
+    app: App,
+    fieldsMap: Record<string, UserPropertyField>,
     attributeName: string,
     attributeValue: string,
 ): Promise<void> {
-    const popover = channelsPage.userProfilePopover.container;
+    const field = fieldsMap[getFieldIdByName(fieldsMap, attributeName)];
+    const shown = app.profilePopover.attribute(field).locator;
 
-    // Check for the attribute name
-    const nameElement = popover.getByText(attributeName, {exact: false});
-    await expect(nameElement).toBeVisible();
-
-    // Check for the attribute value
-    const valueElement = popover.getByText(attributeValue, {exact: false});
-    await expect(valueElement).toBeVisible();
+    // the popover labels a field with its display name when it has one
+    await expect(shown).toContainText((field.attrs?.display_name as string | undefined) || attributeName);
+    await expect(shown).toContainText(attributeValue);
 }
 
-/**
- * Helper function to verify an attribute is not displayed in the profile popover
- * @param {ChannelsPage} channelsPage - The Playwright channels page object
- * @param {string} attributeName - The name of the attribute to verify
- */
-export async function verifyAttributeNotInPopover(channelsPage: ChannelsPage, attributeName: string): Promise<void> {
-    const popover = channelsPage.userProfilePopover.container;
+/** Verifies an attribute isn't in the open profile popover (the popover itself has loaded: its username shows). */
+export async function verifyAttributeNotInPopover(
+    app: App,
+    fieldsMap: Record<string, UserPropertyField>,
+    attributeName: string,
+): Promise<void> {
+    await expect(app.profilePopover.usernameText.locator).toBeVisible();
+    await expect(app.profilePopover.attribute({id: getFieldIdByName(fieldsMap, attributeName)}).locator).toHaveCount(0);
+}
 
-    // Check that the attribute name is not present
-    const nameElement = popover.getByText(attributeName, {exact: false});
-    await expect(nameElement).not.toBeVisible();
+/** Posts a message from the composer, opens the author's profile popover from it, and returns the post id. */
+export async function openOwnPopover(app: App, message: string) {
+    await app.center.postCreate.fillMessageTextbox(message);
+    await app.center.postCreate.clickSendButton();
+    let id = '';
+    await expect
+        .poll(async () => {
+            id = (await app.center.postList.postKeys()).at(-1) ?? '';
+            return id ? app.center.postList.post({id}).messageText.locator.textContent() : '';
+        })
+        .toBe(message);
+    await app.center.postList.post({id}).avatar.locator.click();
+    await expect(app.profilePopover.locator).toBeVisible();
+    return id;
 }
 
 /**

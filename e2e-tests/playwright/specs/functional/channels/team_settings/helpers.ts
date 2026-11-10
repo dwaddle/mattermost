@@ -5,7 +5,7 @@ import type {Locator, Page} from '@playwright/test';
 import {expect} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 
-import {newTestPassword} from '@mattermost/playwright-lib';
+import {newTestPassword, type generated, duration} from '@mattermost/playwright-lib';
 
 export async function enableABACConfig(client: Client4) {
     await client.patchConfig({
@@ -30,7 +30,8 @@ export async function enableAPIUserDeletion(client: Client4) {
     });
 }
 
-export async function ensureDepartmentAttribute(client: Client4) {
+/** Makes sure the `Department` text attribute exists, and returns it. */
+export async function ensureDepartmentAttribute(client: Client4): Promise<{id: string; name: string}> {
     let fields: any[] = [];
     try {
         fields = await (client as any).doFetch(`${client.getBaseRoute()}/custom_profile_attributes/fields`, {
@@ -57,6 +58,10 @@ export async function ensureDepartmentAttribute(client: Client4) {
             }
         }
     }
+    const all: any[] = await (client as any).doFetch(`${client.getBaseRoute()}/custom_profile_attributes/fields`, {
+        method: 'GET',
+    });
+    return all.find((f: any) => f.name === 'Department');
 }
 
 export async function createParentPolicy(client: Client4, name: string) {
@@ -295,21 +300,34 @@ export async function createTeamAdmin(adminClient: Client4, teamId: string) {
  * Adds an attribute rule row in the policy editor and fills in a value.
  * Handles the auto-opening attribute selector menu.
  */
+/**
+ * Adds a rule `<attribute> == value` to a rules table (a text attribute, whose value is typed): Add opens the new
+ * row's attribute menu by itself. Tab commits the value before the caller goes on.
+ */
+export async function addRule(rules: generated.Rules, field: {id: string}, value: string) {
+    const row = rules.row((await rules.rowKeys()).length);
+    await rules.clickAddButton();
+    await row.attributeMenu.attribute(field).click();
+    await row.fillValueTextbox(value);
+    await row.valueTextbox.press('Tab');
+    await expect(row.valueTextbox.locator).toHaveValue(value);
+}
+
 export async function addAttributeRule(container: Locator, page: Page, value: string, attributeName = 'Department') {
     const addAttrBtn = container.getByRole('button', {name: /Add attribute/});
-    await expect(addAttrBtn).toBeEnabled({timeout: 10000});
+    await expect(addAttrBtn).toBeEnabled();
     await addAttrBtn.click();
 
     // The attribute selector menu auto-opens — select by name, not by position.
     // Clicking the first item is unreliable when multiple attributes exist (e.g. Location
     // sorts before Department and gets picked instead, causing self-inclusion to fail).
     const attributeMenu = page.locator('[id^="attribute-selector-menu"]');
-    await attributeMenu.waitFor({state: 'visible', timeout: 5000});
+    await attributeMenu.waitFor({state: 'visible', timeout: duration.ten_sec});
     await attributeMenu.locator('li').filter({hasText: attributeName}).first().click();
 
     // Fill value in the simple input (text-type attribute renders direct input)
     const valueInput = container.locator('.values-editor__simple-input').first();
-    await valueInput.waitFor({state: 'visible', timeout: 10000});
+    await valueInput.waitFor({state: 'visible', timeout: duration.ten_sec});
     await valueInput.fill(value);
 
     // Blur the input so React commits the onChange before the caller proceeds
@@ -395,16 +413,3 @@ export async function createPrivateTeam(client: Client4, suffix: string) {
 /**
  * Adds a channel to the policy via the channel selector modal.
  */
-export async function addChannelToPolicy(container: Locator, page: Page, channelDisplayName: string) {
-    await container.getByRole('button', {name: /Add channels/}).click();
-    const channelModal = page.locator('.channel-selector-modal');
-    await channelModal.waitFor();
-    await expect(channelModal.locator('.more-modal__row').first()).toBeVisible({timeout: 10000});
-    await channelModal.locator('.more-modal__row').filter({hasText: channelDisplayName}).click();
-    await channelModal.getByRole('button', {name: 'Add'}).click();
-
-    // Wait for the modal to fully close before returning — callers must not proceed
-    // until the channel is committed to form state, otherwise a save click races
-    // against the React state update and the confirmation modal never appears.
-    await channelModal.waitFor({state: 'hidden', timeout: 20000});
-}

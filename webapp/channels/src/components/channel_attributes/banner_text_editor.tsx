@@ -7,6 +7,8 @@ import {useIntl} from 'react-intl';
 
 import {CloseCircleIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
 import {getPropertyFieldLabel} from 'mattermost-redux/utils/property_utils';
@@ -127,6 +129,8 @@ type Props = {
     maxLength?: number;
     hasError?: boolean;
 
+    testId: TestId;
+
     // The channel's kind, which picks the words: board rather than channel for a board.
     channelKind?: ChannelKind;
 };
@@ -140,7 +144,7 @@ type Props = {
  * chips with free text in a single caret flow; everything below exists to keep that
  * DOM and the template string in agreement.
  */
-const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, hasError, channelKind = 'channel'}: Props) => {
+const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, hasError, testId, channelKind = 'channel'}: Props) => {
     const {formatMessage} = useIntl();
     const editorRef = useRef<HTMLDivElement>(null);
 
@@ -351,7 +355,7 @@ const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, has
                     tabIndex={disabled ? -1 : 0}
                     aria-multiline='false'
                     aria-label={formatMessage({id: 'channel_banner.banner_text.label', defaultMessage: 'Banner text'})}
-                    data-testid='bannerTextEditor'
+                    data-testid={withRole(testId, 'textbox')}
                     data-placeholder={formatMessage(channelKindMessages.bannerTextPlaceholder[channelKind])}
                     onInput={emit}
                     onBlur={rememberCaret}
@@ -376,7 +380,7 @@ const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, has
                                 })}
                                 contentEditable={false}
                                 data-token={segment.name}
-                                data-testid={`bannerTextEditorChip-${segment.name}`}
+                                data-testid={part(testId, 'token', {key: segments.slice(0, index).filter((s) => s.type !== 'text').length})}
                             >
                                 {label}
                                 {!disabled && (
@@ -387,7 +391,7 @@ const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, has
                                             {id: 'channel_attributes.banner.remove_attribute', defaultMessage: 'Remove {label}'},
                                             {label},
                                         )}
-                                        data-testid={`bannerTextEditorChipRemove-${segment.name}`}
+                                        data-testid={part(testId, 'token.remove', 'button')}
                                         onMouseDown={(event) => event.preventDefault()}
                                         onClick={handleRemoveToken}
                                     >
@@ -415,6 +419,7 @@ const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, has
 
                 <div className='BannerTextEditor__actions'>
                     <BannerTokenControls
+                        testId={testId}
                         attributes={attributes}
                         onInsertToken={handleInsertToken}
                         disabled={disabled}

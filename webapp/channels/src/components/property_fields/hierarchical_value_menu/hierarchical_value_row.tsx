@@ -12,6 +12,7 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
 } from '@mattermost/compass-icons/components';
+import {withRole, type TestId} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -49,6 +50,9 @@ export type HierarchicalValueRowProps = {
     onToggleExpand: () => void;
     onFocusSearch: (seedChar: string) => void;
     innerRef: (element: HTMLLIElement | null) => void;
+
+    // The row's path (`<menu>.node:<label>`); it renders `<testId>--menuitemcheckbox`.
+    testId?: TestId;
 } & ForwardedMuiItemProps;
 
 export default function HierarchicalValueRow({
@@ -65,6 +69,7 @@ export default function HierarchicalValueRow({
     onToggleExpand,
     onFocusSearch,
     innerRef,
+    testId,
     ...rest
 }: HierarchicalValueRowProps) {
     const {formatMessage} = useIntl();
@@ -136,6 +141,7 @@ export default function HierarchicalValueRow({
         <Menu.Item
             id={rowId}
             ref={innerRef}
+            data-testid={withRole(testId, 'menuitemcheckbox')}
             role='menuitemcheckbox'
             forceCloseOnSelect={false}
             aria-checked={isSelected}

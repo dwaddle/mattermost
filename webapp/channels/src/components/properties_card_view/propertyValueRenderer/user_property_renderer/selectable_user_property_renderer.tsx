@@ -4,6 +4,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField} from '@mattermost/types/properties';
 
 import './selectable_user_property_renderer.scss';
@@ -14,9 +16,10 @@ type Props = {
     field: PropertyField;
     metadata?: UserPropertyMetadata;
     initialValue?: string;
+    testIdScope?: TestId;
 };
 
-export function SelectableUserPropertyRenderer({field, metadata, initialValue}: Props) {
+export function SelectableUserPropertyRenderer({field, metadata, initialValue, testIdScope}: Props) {
     const {formatMessage} = useIntl();
     const [value, setValue] = useState('');
 
@@ -43,7 +46,7 @@ export function SelectableUserPropertyRenderer({field, metadata, initialValue}: 
     return (
         <div
             className='SelectableUserPropertyRenderer'
-            data-testid='selectable-user-property'
+            data-testid={part(testIdScope, 'selectable_user')}
         >
             <UserSelector
                 isMulti={false}

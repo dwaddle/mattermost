@@ -8,14 +8,15 @@
  * Local runs: upload or use a license with SkuShortName `enterprise`, `entry`, or `advanced`.
  */
 
-import type {Locator, Page} from '@playwright/test';
+import type {Locator} from '@playwright/test';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {AdminResource, expect, Msg, test, type App} from '@mattermost/playwright-lib';
 
 import {
     GLOBAL_ATTRIBUTES_ADMIN_PATH,
     createGlobalAttributeField,
+    listedAttribute,
     createLinkedDependentField,
     deleteAppliesToAttributeAndLinkedFieldsIfExists,
     deleteGlobalAttributeFieldIfExists,
@@ -58,39 +59,39 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
 
             try {
                 // # Log in and open the Attribute Management page
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
                 // # Click "New attribute" to open the create page
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
-                await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+                await app.admin.attributes.newButton.click();
+                await expect(app.page).toHaveURL(/attribute_details/);
 
                 // # Fill in the Display name; the Unique name caption auto-derives live
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(expectedName);
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(expectedName);
 
                 // # Exercise the Edit/Done round-trip once, confirming the input is focused
                 // and seeded, then revert back to static display without changing the value
-                await systemConsolePage.page.getByTestId('attributeNameEditLink').click();
-                const nameInput = systemConsolePage.page.getByTestId('attributeNameInput');
+                await app.admin.attribute.uniqueName.editButton.click();
+                const nameInput = app.admin.attribute.uniqueNameTextbox.locator;
                 await expect(nameInput).toBeFocused();
                 await expect(nameInput).toHaveValue(expectedName);
-                await systemConsolePage.page.getByTestId('attributeNameEditLink').click();
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(expectedName);
+                await app.admin.attribute.uniqueName.editButton.click();
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(expectedName);
 
                 // # Save
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * Redirected back to the Attribute Management list
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 // * The new attribute renders with the expected Display name, Type, and Source
-                const row = systemConsolePage.page.locator('tr', {
-                    has: systemConsolePage.page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-name')).toHaveText(displayName);
-                await expect(row.getByTestId('global-attribute-type')).toContainText('Text');
-                await expect(row.getByTestId('global-attribute-source')).toContainText('Managed here');
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).nameText.locator).toHaveText(displayName);
+                await expect(app.admin.attributes.row(row.id).typeText.locator).toContainText('Text');
+                await expect(app.admin.attributes.row(row.id).sourceText.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.source.managed,
+                );
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, expectedName);
             }
@@ -108,23 +109,23 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
             // # Log in and open the Attribute Management page
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
             // # Open the create page
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
-            await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+            await app.admin.attributes.newButton.click();
+            await expect(app.page).toHaveURL(/attribute_details/);
 
             // # Type a Display name that auto-slugs straight to a reserved CEL keyword
-            await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill('For');
+            await app.admin.attribute.displayNameTextbox.fill('For');
 
             // * Inline validation error is shown without ever clicking "Edit"
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameError')).toContainText('reserved word');
+            await expect(app.admin.attribute.uniqueName.errorAlert.locator).toContainText('reserved word');
             // * Save is disabled
-            await expect(systemConsolePage.page.getByTestId('saveSetting')).toBeDisabled();
+            await expect(app.admin.saveButton.locator).toBeDisabled();
 
             // * No navigation occurred
-            await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+            await expect(app.page).toHaveURL(/attribute_details/);
         });
 
         /**
@@ -152,27 +153,23 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
 
             try {
                 // # Log in and open the create page
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
-                await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                await app.admin.attributes.newButton.click();
+                await expect(app.page).toHaveURL(/attribute_details/);
 
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(
-                    autoDerivedName,
-                );
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(autoDerivedName);
 
                 // # Open the manual Name editor and replace the auto-derived slug with a reserved word
-                await systemConsolePage.page.getByTestId('attributeNameEditLink').click();
-                const nameInput = systemConsolePage.page.getByTestId('attributeNameInput');
+                await app.admin.attribute.uniqueName.editButton.click();
+                const nameInput = app.admin.attribute.uniqueNameTextbox.locator;
                 await nameInput.fill('for');
 
                 // * The inline error appears and Done reports itself as unavailable, while staying
                 // focusable (aria-disabled, not the disabled attribute) and pointing at the reason
-                const doneLink = systemConsolePage.page.getByTestId('attributeNameEditLink');
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameError')).toContainText(
-                    'reserved word',
-                );
+                const doneLink = app.admin.attribute.uniqueName.editButton.locator;
+                await expect(app.admin.attribute.uniqueName.errorAlert.locator).toContainText('reserved word');
                 await expect(doneLink).toHaveAttribute('aria-disabled', 'true');
                 await expect(doneLink).toHaveAttribute('aria-describedby', 'attribute-unique-name-error');
 
@@ -200,12 +197,10 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 // * Also rejected
                 await expect(nameInput).toBeVisible();
                 await expect(nameInput).toHaveValue('for');
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameError')).toContainText(
-                    'reserved word',
-                );
+                await expect(app.admin.attribute.uniqueName.errorAlert.locator).toContainText('reserved word');
 
                 // # Click away onto the Display name field (blur), same commit path as Done/Enter
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').click();
+                await app.admin.attribute.displayNameTextbox.locator.click();
 
                 // * Also rejected -- the editor stays open rather than committing on click-away
                 await expect(nameInput).toBeVisible();
@@ -218,25 +213,23 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 await nameInput.pressSequentially(`_${timestamp}`);
 
                 // * The error clears and Done is live again
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameError')).toHaveCount(0);
+                await expect(app.admin.attribute.uniqueName.errorAlert.locator).toHaveCount(0);
                 await expect(doneLink).not.toHaveAttribute('aria-disabled', 'true');
 
                 // # Commit with Enter this time
                 await nameInput.press('Enter');
 
                 // * Committed -- the editor closed and the corrected Name is shown
-                await expect(systemConsolePage.page.getByTestId('attributeNameInput')).toHaveCount(0);
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(correctedName);
+                await expect(app.admin.attribute.uniqueNameTextbox.locator).toHaveCount(0);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(correctedName);
 
                 // # Save
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * The attribute was created with the corrected Name
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                const row = systemConsolePage.page.locator('tr', {
-                    has: systemConsolePage.page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-name')).toHaveText(displayName);
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).nameText.locator).toHaveText(displayName);
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, correctedName);
             }
@@ -257,20 +250,20 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const autoDerivedName = `playwright_esc_${timestamp}`;
 
             // # Log in and open the create page
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
-            await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            await app.admin.attributes.newButton.click();
+            await expect(app.page).toHaveURL(/attribute_details/);
 
-            await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
+            await app.admin.attribute.displayNameTextbox.fill(displayName);
 
             // # Escape hatch 1: clear the field. An empty Name has no validation error, so Done
             // goes live again and applies its usual revert.
-            await systemConsolePage.page.getByTestId('attributeNameEditLink').click();
-            const nameInput = systemConsolePage.page.getByTestId('attributeNameInput');
+            await app.admin.attribute.uniqueName.editButton.click();
+            const nameInput = app.admin.attribute.uniqueNameTextbox.locator;
             await nameInput.fill('for');
 
-            const doneLink = systemConsolePage.page.getByTestId('attributeNameEditLink');
+            const doneLink = app.admin.attribute.uniqueName.editButton.locator;
             await expect(doneLink).toHaveAttribute('aria-disabled', 'true');
 
             await nameInput.fill('');
@@ -278,26 +271,23 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await doneLink.click();
 
             // * Exited edit mode, reverted to the auto-derived slug, no error left behind
-            await expect(systemConsolePage.page.getByTestId('attributeNameInput')).toHaveCount(0);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(autoDerivedName);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameError')).toHaveCount(0);
+            await expect(app.admin.attribute.uniqueNameTextbox.locator).toHaveCount(0);
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(autoDerivedName);
+            await expect(app.admin.attribute.uniqueName.errorAlert.locator).toHaveCount(0);
 
             // # Escape hatch 2: press Escape while the field is invalid, discarding the edit
-            await systemConsolePage.page.getByTestId('attributeNameEditLink').click();
-            await systemConsolePage.page.getByTestId('attributeNameInput').fill('for');
-            await expect(systemConsolePage.page.getByTestId('attributeNameEditLink')).toHaveAttribute(
-                'aria-disabled',
-                'true',
-            );
-            await systemConsolePage.page.getByTestId('attributeNameInput').press('Escape');
+            await app.admin.attribute.uniqueName.editButton.click();
+            await app.admin.attribute.uniqueNameTextbox.fill('for');
+            await expect(app.admin.attribute.uniqueName.editButton.locator).toHaveAttribute('aria-disabled', 'true');
+            await app.admin.attribute.uniqueNameTextbox.press('Escape');
 
             // * Exited edit mode with the reserved word discarded
-            await expect(systemConsolePage.page.getByTestId('attributeNameInput')).toHaveCount(0);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(autoDerivedName);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameError')).toHaveCount(0);
+            await expect(app.admin.attribute.uniqueNameTextbox.locator).toHaveCount(0);
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(autoDerivedName);
+            await expect(app.admin.attribute.uniqueName.errorAlert.locator).toHaveCount(0);
 
             // * Save is available again, since the Name is back to a valid auto-derived slug
-            await expect(systemConsolePage.page.getByTestId('saveSetting')).toBeEnabled();
+            await expect(app.admin.saveButton.locator).toBeEnabled();
         });
 
         /**
@@ -318,43 +308,43 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const pinnedName = `custom_blur_${timestamp}`;
 
             // # Log in and open the create page
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
-            await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            await app.admin.attributes.newButton.click();
+            await expect(app.page).toHaveURL(/attribute_details/);
 
-            const displayNameInput = systemConsolePage.page.getByTestId('attributeDisplayNameInput');
+            const displayNameInput = app.admin.attribute.displayNameTextbox.locator;
             await displayNameInput.fill(displayName);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(autoDerivedName);
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(autoDerivedName);
 
             // # Open the editor and click away without changing the seeded value
-            await systemConsolePage.page.getByTestId('attributeNameEditLink').click();
-            await expect(systemConsolePage.page.getByTestId('attributeNameInput')).toBeFocused();
+            await app.admin.attribute.uniqueName.editButton.click();
+            await expect(app.admin.attribute.uniqueNameTextbox.locator).toBeFocused();
             await displayNameInput.click();
 
             // * Exited edit mode, still showing the auto-derived slug
-            await expect(systemConsolePage.page.getByTestId('attributeNameInput')).toHaveCount(0);
-            await expect(systemConsolePage.page.getByTestId('attributeNameEditLink')).toHaveText('Edit');
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(autoDerivedName);
+            await expect(app.admin.attribute.uniqueNameTextbox.locator).toHaveCount(0);
+            await expect(app.admin.attribute.uniqueName.editButton.locator).toHaveMessage(
+                Msg.admin.global_attributes.attribute_details.unique_name.edit,
+            );
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(autoDerivedName);
 
             // * Auto-derivation is still live
             await displayNameInput.fill(extendedDisplayName);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(
-                extendedAutoDerivedName,
-            );
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(extendedAutoDerivedName);
 
             // # Open the editor, type a different Name, and click away
-            await systemConsolePage.page.getByTestId('attributeNameEditLink').click();
-            await systemConsolePage.page.getByTestId('attributeNameInput').fill(pinnedName);
+            await app.admin.attribute.uniqueName.editButton.click();
+            await app.admin.attribute.uniqueNameTextbox.fill(pinnedName);
             await displayNameInput.click();
 
             // * Committed -- the editor closed and the typed Name is shown
-            await expect(systemConsolePage.page.getByTestId('attributeNameInput')).toHaveCount(0);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(pinnedName);
+            await expect(app.admin.attribute.uniqueNameTextbox.locator).toHaveCount(0);
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(pinnedName);
 
             // * Manual override stays in effect -- further Display name edits do not overwrite it
             await displayNameInput.fill(`${extendedDisplayName} Three`);
-            await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(pinnedName);
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(pinnedName);
         });
 
         /**
@@ -372,43 +362,41 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_select_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
-                await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+                await app.admin.attributes.newButton.click();
+                await expect(app.page).toHaveURL(/attribute_details/);
 
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(expectedName);
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(expectedName);
 
                 // # Switch type to Select
-                await systemConsolePage.page.getByTestId('attributeTypeMenuButton').click();
-                await systemConsolePage.page.getByRole('menuitemradio', {name: 'Select', exact: true}).click();
+                await app.admin.attribute.typeButton.click();
+                await app.admin.attribute.type.option('select').click();
 
                 // * Save is disabled with zero options, with an inline reason shown
-                await expect(systemConsolePage.page.getByTestId('attributeOptionsRequiredError')).toContainText(
+                await expect(app.admin.attribute.options.requiredAlert.locator).toContainText(
                     'At least one option is required',
                 );
-                await expect(systemConsolePage.page.getByTestId('saveSetting')).toBeDisabled();
+                await expect(app.admin.saveButton.locator).toBeDisabled();
 
                 // # Add two options via Enter
-                const optionsInput = systemConsolePage.page.getByTestId('attributeOptionsValues__addInput');
+                const optionsInput = app.admin.attribute.values.addTextbox.locator;
                 await optionsInput.fill('Engineering');
                 await optionsInput.press('Enter');
                 await optionsInput.fill('Sales');
                 await optionsInput.press('Enter');
 
                 // * Save is now enabled
-                await expect(systemConsolePage.page.getByTestId('saveSetting')).toBeEnabled();
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await expect(app.admin.saveButton.locator).toBeEnabled();
+                await app.admin.saveButton.click();
 
                 // * Redirected back to the list, showing the correct type and option count
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                const row = systemConsolePage.page.locator('tr', {
-                    has: systemConsolePage.page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-type')).toContainText('Select');
-                await expect(row.getByTestId('global-attribute-options')).toContainText('2 options');
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).typeText.locator).toContainText('Select');
+                await expect(app.admin.attributes.row(row.id).optionsText.locator).toContainText('2 options');
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, expectedName);
             }
@@ -429,25 +417,25 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_ranked_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(expectedName);
+                await app.admin.attributes.newButton.click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(expectedName);
 
-                await systemConsolePage.page.getByTestId('attributeTypeMenuButton').click();
-                await systemConsolePage.page.getByRole('menuitemradio', {name: /Ranked/}).click();
+                await app.admin.attribute.typeButton.click();
+                await app.admin.attribute.type.option('rank').click();
 
-                const optionsInput = systemConsolePage.page.getByTestId('attributeOptionsRankValues__addInput');
+                const optionsInput = app.admin.attribute.ranks.addTextbox.locator;
                 await optionsInput.fill('Low');
                 await optionsInput.press('Enter');
                 await optionsInput.fill('High');
                 await optionsInput.press('Enter');
 
                 // * Chips render in ascending rank order
-                const chipLabels = systemConsolePage.page.getByTestId('attributeOptionsRankValues__chipLabel');
-                await expect(chipLabels).toHaveText(['Low', 'High']);
+                const {ranks} = app.admin.attribute;
+                await expect(ranks.optionList).toHaveKeys(['Low', 'High']);
 
                 // # Reorder "High" to position 1 via its popover's Rank submenu.
                 // The submenu opens on hover (components/menu/sub_menu.tsx) and closes
@@ -455,25 +443,25 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 // on the nested item would move the mouse off the trigger first, racing
                 // the close and detaching the item mid-click. Hover to open, then select
                 // with the keyboard so the pointer never leaves the trigger.
-                await chipLabels.filter({hasText: 'High'}).click();
-                const rankTrigger = systemConsolePage.page.getByText('Rank', {exact: true});
-                await rankTrigger.hover();
-                const rankOneOption = systemConsolePage.page.getByRole('menuitemradio', {name: '1'});
+                await ranks.option('High').editButton.click();
+                const {optionMenu} = ranks;
+                await optionMenu.rankMenuItem.hover();
+                const rankOneOption = optionMenu.rank(1).locator;
                 await rankOneOption.waitFor();
                 await rankOneOption.focus();
-                await systemConsolePage.page.keyboard.press('Enter');
+                await app.page.keyboard.press('Enter');
 
                 // * Reordered — "High" now renders first
-                await expect(chipLabels).toHaveText(['High', 'Low']);
+                await expect(ranks.optionList).toHaveKeys(['High', 'Low']);
 
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                const row = systemConsolePage.page.locator('tr', {
-                    has: systemConsolePage.page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-type')).toContainText('Ranked');
-                await expect(row.getByTestId('global-attribute-options')).toContainText('2 options');
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).typeText.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.type.rank,
+                );
+                await expect(app.admin.attributes.row(row.id).optionsText.locator).toContainText('2 options');
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, expectedName);
             }
@@ -490,24 +478,18 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
-            await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            await app.admin.attributes.newButton.click();
+            await expect(app.page).toHaveURL(/attribute_details/);
 
-            await systemConsolePage.page.getByTestId('attributeTypeMenuButton').click();
+            await app.admin.attribute.typeButton.click();
 
             for (const label of ['Text', 'Phone', 'URL', 'Select', 'Multiselect', 'Ranked']) {
-                await expect(
-                    systemConsolePage.page.getByRole('menuitemradio', {name: label, exact: true}),
-                ).toBeVisible();
+                await expect(app.page.getByRole('menuitemradio', {name: label, exact: true})).toBeVisible();
             }
-            await expect(
-                systemConsolePage.page.getByRole('menuitemradio', {name: 'Text', exact: true}),
-            ).toHaveAttribute('aria-checked', 'true');
-            await expect(systemConsolePage.page.getByRole('menuitemradio', {name: 'Email', exact: true})).toHaveCount(
-                0,
-            );
+            await expect(app.admin.attribute.type.option('text').locator).toHaveAttribute('aria-checked', 'true');
+            await expect(app.admin.attribute.type.option('email').locator).toHaveCount(0);
         });
 
         for (const {uiType, valueType, displayPrefix, expectedNamePrefix} of [
@@ -534,34 +516,32 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 const expectedName = `${expectedNamePrefix}_${timestamp}`;
 
                 try {
-                    const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                    await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                    const {app} = await pw.testBrowser.login(adminUser);
+                    await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                    await systemConsolePage.page.getByTestId('newAttributeButton').click();
-                    await expect(systemConsolePage.page).toHaveURL(/attribute_details/);
+                    await app.admin.attributes.newButton.click();
+                    await expect(app.page).toHaveURL(/attribute_details/);
 
-                    await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                    await expect(systemConsolePage.page.getByTestId('attributeUniqueNameValue')).toHaveText(
-                        expectedName,
-                    );
+                    await app.admin.attribute.displayNameTextbox.fill(displayName);
+                    await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(expectedName);
 
-                    await systemConsolePage.page.getByTestId('attributeTypeMenuButton').click();
-                    await systemConsolePage.page.getByRole('menuitemradio', {name: uiType, exact: true}).click();
+                    await app.admin.attribute.typeButton.click();
+                    await app.page.getByRole('menuitemradio', {name: uiType, exact: true}).click();
 
                     // * Phone/URL keep the free-text options help — they are text subtypes,
                     // not option lists
-                    await expect(systemConsolePage.page.getByTestId('attributeOptionsHelp')).toBeVisible();
-                    await expect(systemConsolePage.page.getByTestId('attributeOptionsValues')).toHaveCount(0);
-                    await expect(systemConsolePage.page.getByTestId('attributeTypeMenuButton')).toContainText(uiType);
+                    await expect(app.admin.attribute.options.helpText.locator).toBeVisible();
+                    await expect(app.admin.attribute.values.locator).toHaveCount(0);
+                    await expect(app.admin.attribute.typeButton.locator).toContainText(uiType);
 
-                    await systemConsolePage.page.getByTestId('saveSetting').click();
+                    await app.admin.saveButton.click();
 
-                    await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                    const row = systemConsolePage.page.locator('tr', {
-                        has: systemConsolePage.page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                    });
-                    await expect(row.getByTestId('global-attribute-type')).toContainText(uiType);
-                    await expect(row.getByTestId('global-attribute-options')).toContainText('Free Text');
+                    await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                    const row = await listedAttribute(app.admin.attributes, displayName);
+                    await expect(app.admin.attributes.row(row.id).typeText.locator).toContainText(uiType);
+                    await expect(app.admin.attributes.row(row.id).optionsText.locator).toContainMessage(
+                        Msg.admin.global_attributes.table.options.free_text,
+                    );
 
                     const field = await getGlobalAttributeFieldByName(adminClient, expectedName);
                     expect(field?.type).toBe('text');
@@ -580,29 +560,27 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
+            await app.admin.attributes.newButton.click();
 
-            await systemConsolePage.page.getByTestId('attributeTypeMenuButton').click();
-            await systemConsolePage.page.getByRole('menuitemradio', {name: 'Select', exact: true}).click();
-            const optionsInput = systemConsolePage.page.getByTestId('attributeOptionsValues__addInput');
+            await app.admin.attribute.typeButton.click();
+            await app.admin.attribute.type.option('select').click();
+            const optionsInput = app.admin.attribute.values.addTextbox.locator;
             await optionsInput.fill('Engineering');
             await optionsInput.press('Enter');
 
             // # Switch to Text (options editor unmounts) and back to Select
-            await systemConsolePage.page.getByTestId('attributeTypeMenuButton').click();
-            await systemConsolePage.page.getByRole('menuitemradio', {name: 'Text', exact: true}).click();
-            await expect(systemConsolePage.page.getByTestId('attributeOptionsValues')).toHaveCount(0);
+            await app.admin.attribute.typeButton.click();
+            await app.admin.attribute.type.option('text').click();
+            await expect(app.admin.attribute.values.locator).toHaveCount(0);
 
-            await systemConsolePage.page.getByTestId('attributeTypeMenuButton').click();
-            await systemConsolePage.page.getByRole('menuitemradio', {name: 'Select', exact: true}).click();
+            await app.admin.attribute.typeButton.click();
+            await app.admin.attribute.type.option('select').click();
 
             // * The previously-entered option is still there, not discarded
-            await expect(systemConsolePage.page.getByTestId('attributeOptionsValues__chipLabel')).toHaveText(
-                'Engineering',
-            );
+            await expect(app.admin.attribute.values.optionList).toHaveKeys(['Engineering']);
         });
 
         /**
@@ -622,39 +600,32 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_ldap_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
+                await app.admin.attributes.newButton.click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
 
-                // # Open the external source picker and link AD/LDAP.
-                // A bare getByRole('textbox') is ambiguous -- it also matches the
-                // admin sidebar's "Find settings" filter and the Display name input
-                // already on the page -- so scope to the AttributeModal dialog once
-                // it's open, rather than the whole page.
-                await systemConsolePage.page.getByTestId('attributeExternalSourceTrigger').click();
-                await systemConsolePage.page.getByRole('menuitem', {name: /^AD\/LDAP/}).click();
-                const ldapDialog = systemConsolePage.page.getByRole('dialog');
-                await expect(ldapDialog).toBeVisible();
-                await ldapDialog.getByRole('textbox').fill('employeeID');
-                await ldapDialog.getByRole('button', {name: 'Save'}).click();
+                // # Open the external source picker and link AD/LDAP
+                await app.admin.attribute.externalSource.linkButton.click();
+                await app.admin.attribute.externalSource.linkMenu.source('ldap').click();
+                await expect(app.attributeModal.locator).toBeVisible();
+                await app.attributeModal.valueTextbox.fill('employeeID');
+                await app.attributeModal.confirmButton.click();
 
                 // * A chip for AD/LDAP now appears on the Options line, prefixed by Synced with, and Type shows Text
-                await expect(systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap')).toBeVisible();
-                await expect(systemConsolePage.page.getByTestId('attributeTypeMenuButton')).toContainText('Text');
-                await expect(systemConsolePage.page.getByTestId('attributeExternalSourceSynced')).toContainText(
-                    'Synced with',
+                await expect(app.admin.attribute.externalSource.source('ldap').locator).toBeVisible();
+                await expect(app.admin.attribute.typeButton.locator).toContainText('Text');
+                await expect(app.admin.attribute.externalSource.synced.locator).toContainMessage(
+                    Msg.admin.global_attributes.attribute_details.external_source.synced_with,
                 );
 
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * The new attribute shows "AD/LDAP" in the Source column
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                const row = systemConsolePage.page.locator('tr', {
-                    has: systemConsolePage.page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-source')).toContainText('AD/LDAP');
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).sourceText.locator).toContainText('AD/LDAP');
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, expectedName);
             }
@@ -678,61 +649,58 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_dual_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
+                await app.admin.attributes.newButton.click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
 
                 // # Before anything is linked, the menu offers both sources
-                await systemConsolePage.page.getByTestId('attributeExternalSourceTrigger').click();
-                await expect(systemConsolePage.page.getByRole('menuitem', {name: /^AD\/LDAP/})).toBeVisible();
-                await expect(systemConsolePage.page.getByRole('menuitem', {name: /^SAML/})).toBeVisible();
+                await app.admin.attribute.externalSource.linkButton.click();
+                await expect(app.admin.attribute.externalSource.linkMenu.source('ldap').locator).toBeVisible();
+                await expect(app.admin.attribute.externalSource.linkMenu.source('saml').locator).toBeVisible();
 
                 // # Link AD/LDAP
-                await systemConsolePage.page.getByRole('menuitem', {name: /^AD\/LDAP/}).click();
-                await systemConsolePage.page.getByPlaceholder('department').fill('employeeID');
-                await systemConsolePage.page.getByRole('button', {name: 'Save'}).click();
+                await app.admin.attribute.externalSource.linkMenu.source('ldap').click();
+                await app.attributeModal.valueTextbox.fill('employeeID');
+                await app.attributeModal.confirmButton.click();
 
                 // * The chip shows the source and the value that was actually typed
-                await expect(systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap')).toHaveText(
+                await expect(app.admin.attribute.externalSource.source('ldap').locator).toHaveText(
                     'AD/LDAP: employeeID',
                 );
 
                 // # Reopen the trigger -- AD/LDAP is no longer offered, only SAML
-                await systemConsolePage.page.getByTestId('attributeExternalSourceTrigger').click();
-                await expect(systemConsolePage.page.getByRole('menuitem', {name: /^SAML/})).toBeVisible();
-                await expect(systemConsolePage.page.getByRole('menuitem', {name: /^AD\/LDAP/})).not.toBeVisible();
+                await app.admin.attribute.externalSource.linkButton.click();
+                await expect(app.admin.attribute.externalSource.linkMenu.source('saml').locator).toBeVisible();
+                await expect(app.admin.attribute.externalSource.linkMenu.source('ldap').locator).not.toBeVisible();
 
                 // # Link SAML too
-                await systemConsolePage.page.getByRole('menuitem', {name: /^SAML/}).click();
-                await systemConsolePage.page.getByPlaceholder('department').fill('position');
-                await systemConsolePage.page.getByRole('button', {name: 'Save'}).click();
+                await app.admin.attribute.externalSource.linkMenu.source('saml').click();
+                await app.attributeModal.valueTextbox.fill('position');
+                await app.attributeModal.confirmButton.click();
 
                 // * Both chips are shown with their own values
-                await expect(systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap')).toHaveText(
+                await expect(app.admin.attribute.externalSource.source('ldap').locator).toHaveText(
                     'AD/LDAP: employeeID',
                 );
-                await expect(systemConsolePage.page.getByTestId('attributeExternalSourceChip-saml')).toHaveText(
-                    'SAML: position',
-                );
+                await expect(app.admin.attribute.externalSource.source('saml').locator).toHaveText('SAML: position');
 
                 // * Only OpenID Connect is left, disabled because it can't be combined with them
-                await systemConsolePage.page.getByTestId('attributeExternalSourceTrigger').click();
-                await expect(systemConsolePage.page.getByRole('menuitem')).toHaveCount(1);
-                const openIdItem = systemConsolePage.page.getByRole('menuitem', {name: /^OpenID Connect/});
+                await app.admin.attribute.externalSource.linkButton.click();
+                const linkMenu = app.admin.attribute.externalSource.linkMenu;
+                await expect.poll(() => linkMenu.sourceKeys()).toEqual(['openid']);
+                const openIdItem = linkMenu.sourceItems.first();
                 await expect(openIdItem).toBeDisabled();
                 await expect(openIdItem).toContainText("Can't be combined with AD/LDAP and SAML");
-                await systemConsolePage.page.keyboard.press('Escape');
+                await app.page.keyboard.press('Escape');
 
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * With both linked, the list's Source column shows both sources together
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                const row = systemConsolePage.page.locator('tr', {
-                    has: systemConsolePage.page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-source')).toContainText('AD/LDAP, SAML');
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).sourceText.locator).toContainText('AD/LDAP, SAML');
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, expectedName);
             }
@@ -765,19 +733,19 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 let userField = linkedFields.find((f) => f.object_type === 'user');
                 expect(userField?.attrs?.ldap).toBe('oldDept');
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}/attribute_details/${template.id}`);
 
                 // # Edit the AD/LDAP chip to a new directory attribute and save
-                await page.getByTestId('attributeExternalSourceChip-ldap-edit').click();
-                const input = page.getByPlaceholder('department');
+                await app.admin.attribute.externalSource.source('ldap').editButton.click();
+                const input = app.attributeModal.valueTextbox.locator;
                 await expect(input).toHaveValue('oldDept');
                 await input.fill('newDept');
-                await page.getByRole('button', {name: 'Save'}).click();
-                await expect(page.getByTestId('attributeExternalSourceChip-ldap')).toHaveText('AD/LDAP: newDept');
+                await app.attributeModal.confirmButton.click();
+                await expect(app.admin.attribute.externalSource.source('ldap').locator).toHaveText('AD/LDAP: newDept');
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 // * The linked Users field's attrs.ldap moved with the template — not left at oldDept
@@ -810,14 +778,14 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     display_name: displayName,
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}/attribute_details/${template.id}`);
 
                 // # Remove the AD/LDAP link and save
-                await page.getByTestId('attributeExternalSourceChip-ldap-remove').click();
-                await expect(page.getByTestId('attributeExternalSourceChip-ldap')).toHaveCount(0);
-                await page.getByTestId('saveSetting').click();
+                await app.admin.attribute.externalSource.source('ldap').removeButton.click();
+                await expect(app.admin.attribute.externalSource.source('ldap').locator).toHaveCount(0);
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 // * Users field no longer carries attrs.ldap (empty/absent — sync will skip it)
@@ -839,38 +807,36 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
+            await app.admin.attributes.newButton.click();
 
             // # Link AD/LDAP
-            await systemConsolePage.page.getByTestId('attributeExternalSourceTrigger').click();
-            await systemConsolePage.page.getByRole('menuitem', {name: /^AD\/LDAP/}).click();
-            await systemConsolePage.page.getByPlaceholder('department').fill('employeeID');
-            await systemConsolePage.page.getByRole('button', {name: 'Save'}).click();
-            await expect(systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap')).toHaveText(
-                'AD/LDAP: employeeID',
-            );
+            await app.admin.attribute.externalSource.linkButton.click();
+            await app.admin.attribute.externalSource.linkMenu.source('ldap').click();
+            await app.attributeModal.valueTextbox.fill('employeeID');
+            await app.attributeModal.confirmButton.click();
+            await expect(app.admin.attribute.externalSource.source('ldap').locator).toHaveText('AD/LDAP: employeeID');
 
             // # Click the chip's edit action -- the modal reopens pre-filled with the current value
-            await systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap-edit').click();
-            await expect(systemConsolePage.page.getByPlaceholder('department')).toHaveValue('employeeID');
+            await app.admin.attribute.externalSource.source('ldap').editButton.click();
+            await expect(app.attributeModal.valueTextbox.locator).toHaveValue('employeeID');
 
             // # Change the value and save
-            await systemConsolePage.page.getByPlaceholder('department').fill('newEmployeeID');
-            await systemConsolePage.page.getByRole('button', {name: 'Save'}).click();
-            await expect(systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap')).toHaveText(
+            await app.attributeModal.valueTextbox.fill('newEmployeeID');
+            await app.attributeModal.confirmButton.click();
+            await expect(app.admin.attribute.externalSource.source('ldap').locator).toHaveText(
                 'AD/LDAP: newEmployeeID',
             );
 
             // # Click the chip's remove action -- the link clears immediately, no modal opens
-            await systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap-remove').click();
-            await expect(systemConsolePage.page.getByTestId('attributeExternalSourceChip-ldap')).not.toBeVisible();
-            await expect(systemConsolePage.page.getByPlaceholder('department')).not.toBeVisible();
+            await app.admin.attribute.externalSource.source('ldap').removeButton.click();
+            await expect(app.admin.attribute.externalSource.source('ldap').locator).not.toBeVisible();
+            await expect(app.attributeModal.valueTextbox.locator).not.toBeVisible();
 
             // * The trigger is back, offering AD/LDAP again since nothing is linked anymore
-            await expect(systemConsolePage.page.getByTestId('attributeExternalSourceTrigger')).toBeVisible();
+            await expect(app.admin.attribute.externalSource.linkButton.locator).toBeVisible();
         });
 
         /**
@@ -885,69 +851,69 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
+            const {app} = await pw.testBrowser.login(adminUser);
+            const {page} = app;
             await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-            await page.getByTestId('newAttributeButton').click();
-            await page.getByTestId('attributeDisplayNameInput').fill(`Playwright Synced Select ${Date.now()}`);
+            await app.admin.attributes.newButton.click();
+            await app.admin.attribute.displayNameTextbox.fill(`Playwright Synced Select ${Date.now()}`);
 
             // # Switch to Select, then link AD/LDAP
-            const typeButton = page.getByTestId('attributeTypeMenuButton');
+            const typeButton = app.admin.attribute.typeButton.locator;
             await typeButton.click();
-            await page.getByRole('menuitemradio', {name: 'Select', exact: true}).click();
-            await page.getByTestId('attributeExternalSourceTrigger').click();
-            await page.getByRole('menuitem', {name: /^AD\/LDAP/}).click();
+            await app.admin.attribute.type.option('select').click();
+            await app.admin.attribute.externalSource.linkButton.click();
+            await app.admin.attribute.externalSource.linkMenu.source('ldap').click();
 
             // * The source can populate a Select, so the modal warns of no conversion
-            await expect(page.getByPlaceholder('department')).toBeVisible();
-            await expect(page.getByText(/converted to a TEXT attribute/i)).not.toBeVisible();
+            await expect(app.attributeModal.valueTextbox.locator).toBeVisible();
+            await expect(app.attributeModal.typeWarningText.locator).not.toBeVisible();
 
-            await page.getByPlaceholder('department').fill('departmentNumber');
-            await page.getByRole('button', {name: 'Save'}).click();
+            await app.attributeModal.valueTextbox.fill('departmentNumber');
+            await app.attributeModal.confirmButton.click();
 
             // * Type stays Select and is locked, and the sync owns the options
-            await expect(page.getByTestId('attributeExternalSourceChip-ldap')).toBeVisible();
+            await expect(app.admin.attribute.externalSource.source('ldap').locator).toBeVisible();
             await expect(typeButton).toContainText('Select');
             await expect(typeButton).toBeDisabled();
-            await expect(page.getByTestId('attributeOptionsSyncedHelp')).toContainText(
+            await expect(app.admin.attribute.options.syncedHelpText.locator).toContainText(
                 'Options are managed by the AD/LDAP sync.',
             );
 
             // * Save waits for Users, whose sync provides the options
-            await expect(page.getByTestId('attributeOptionsNeedUsersError')).toBeVisible();
-            await expect(page.getByTestId('saveSetting')).toBeDisabled();
+            await expect(app.admin.attribute.options.needUsersAlert.locator).toBeVisible();
+            await expect(app.admin.saveButton.locator).toBeDisabled();
 
             // # Apply it to Users
-            await page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-            await page.getByRole('menuitem', {name: 'Users'}).click();
+            await app.admin.attribute.appliesTo.addButton.click();
+            await app.admin.attribute.appliesTo.add.resource('user').click();
 
             // * Save is available
-            await expect(page.getByTestId('attributeOptionsNeedUsersError')).not.toBeVisible();
-            await expect(page.getByTestId('saveSetting')).toBeEnabled();
+            await expect(app.admin.attribute.options.needUsersAlert.locator).not.toBeVisible();
+            await expect(app.admin.saveButton.locator).toBeEnabled();
 
             // # Remove the chip and switch to Ranked, a type the source cannot populate
-            await page.getByTestId('attributeExternalSourceChip-ldap-remove').click();
+            await app.admin.attribute.externalSource.source('ldap').removeButton.click();
             await expect(typeButton).toBeEnabled();
             await typeButton.click();
-            await page.getByRole('menuitemradio', {name: 'Ranked', exact: true}).click();
-            await page.getByTestId('attributeExternalSourceTrigger').click();
-            await page.getByRole('menuitem', {name: /^AD\/LDAP/}).click();
+            await app.admin.attribute.type.option('rank').click();
+            await app.admin.attribute.externalSource.linkButton.click();
+            await app.admin.attribute.externalSource.linkMenu.source('ldap').click();
 
             // * The modal warns the field will convert to Text
-            await expect(page.getByText(/converted to a TEXT attribute/i)).toBeVisible();
+            await expect(app.attributeModal.typeWarningText.locator).toBeVisible();
 
             // # Save the link anyway
-            await page.getByPlaceholder('department').fill('employeeID');
-            await page.getByRole('button', {name: 'Save'}).click();
+            await app.attributeModal.valueTextbox.fill('employeeID');
+            await app.attributeModal.confirmButton.click();
 
             // * Type switched to Text and is locked
-            await expect(page.getByTestId('attributeExternalSourceChip-ldap')).toBeVisible();
+            await expect(app.admin.attribute.externalSource.source('ldap').locator).toBeVisible();
             await expect(typeButton).toContainText('Text');
             await expect(typeButton).toBeDisabled();
 
             // # Remove the chip
-            await page.getByTestId('attributeExternalSourceChip-ldap-remove').click();
+            await app.admin.attribute.externalSource.source('ldap').removeButton.click();
 
             // * Type is editable again
             await expect(typeButton).toBeEnabled();
@@ -963,21 +929,22 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            await app.admin.attributes.newButton.click();
 
             // * Empty state renders with its heading/helper text
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToEmptyState')).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.empty.locator).toBeVisible();
 
             // * No resource rows exist yet
-            for (const type of ['user', 'channel', 'post']) {
-                await expect(systemConsolePage.page.getByTestId(`attributeAppliesToRow-${type}`)).not.toBeVisible();
+            const {appliesTo} = app.admin.attribute;
+            for (const resource of [appliesTo.user, appliesTo.channel, appliesTo.post]) {
+                await expect(resource.locator).not.toBeVisible();
             }
 
             // * Both triggers are available
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader')).toBeVisible();
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonInline')).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.addButton.locator).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.addInlineButton.locator).toBeVisible();
         });
 
         /**
@@ -991,43 +958,39 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            await app.admin.attributes.newButton.click();
 
             // # Open the picker; all three types are offered, in order
-            await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-            const menuItems = systemConsolePage.page.getByRole('menuitem');
+            await app.admin.attribute.appliesTo.addButton.click();
+            const menuItems = app.admin.attribute.appliesTo.add.resourceItems;
             await expect(menuItems).toHaveText(['Users', 'Channels', 'Posts']);
 
             // # Pick Users
-            await systemConsolePage.page.getByRole('menuitem', {name: 'Users'}).click();
+            await app.admin.attribute.appliesTo.add.resource('user').click();
 
             // * Users row renders, empty state is gone
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToRow-user')).toBeVisible();
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToEmptyState')).not.toBeVisible();
+            await expect(app.admin.attribute.appliesTo.user.locator).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.empty.locator).not.toBeVisible();
 
             // # Reopen the picker -- only Channels and Posts remain
-            await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-            await expect(systemConsolePage.page.getByRole('menuitem')).toHaveText(['Channels', 'Posts']);
+            await app.admin.attribute.appliesTo.addButton.click();
+            await expect(menuItems).toHaveText(['Channels', 'Posts']);
 
             // # Add Channels, then Posts
-            await systemConsolePage.page.getByRole('menuitem', {name: 'Channels'}).click();
-            await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-            await systemConsolePage.page.getByRole('menuitem', {name: 'Posts'}).click();
+            await app.admin.attribute.appliesTo.add.resource('channel').click();
+            await app.admin.attribute.appliesTo.addButton.click();
+            await app.admin.attribute.appliesTo.add.resource('post').click();
 
             // * All three rows render, in insertion order
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToRow-user')).toBeVisible();
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToRow-channel')).toBeVisible();
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToRow-post')).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.user.locator).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.channel.locator).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.post.locator).toBeVisible();
 
             // * Both triggers are gone now that all three types are selected
-            await expect(
-                systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader'),
-            ).not.toBeVisible();
-            await expect(
-                systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonInline'),
-            ).not.toBeVisible();
+            await expect(app.admin.attribute.appliesTo.addButton.locator).not.toBeVisible();
+            await expect(app.admin.attribute.appliesTo.addInlineButton.locator).not.toBeVisible();
         });
 
         /**
@@ -1039,39 +1002,36 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await systemConsolePage.page.getByTestId('newAttributeButton').click();
+            const {app} = await pw.testBrowser.login(adminUser);
+            await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+            await app.admin.attributes.newButton.click();
 
             // Regression guard: no property-field delete request fires for a pre-save removal.
             let deleteRequestFired = false;
-            await systemConsolePage.page.route(
-                '**/api/v4/properties/groups/access_control/*/fields/*',
-                async (route) => {
-                    if (route.request().method() === 'DELETE') {
-                        deleteRequestFired = true;
-                    }
-                    await route.continue();
-                },
-            );
+            await app.page.route('**/api/v4/properties/groups/access_control/*/fields/*', async (route) => {
+                if (route.request().method() === 'DELETE') {
+                    deleteRequestFired = true;
+                }
+                await route.continue();
+            });
 
             // # Add Channels
-            await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-            await systemConsolePage.page.getByRole('menuitem', {name: 'Channels'}).click();
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToRow-channel')).toBeVisible();
+            await app.admin.attribute.appliesTo.addButton.click();
+            await app.admin.attribute.appliesTo.add.resource('channel').click();
+            await expect(app.admin.attribute.appliesTo.channel.locator).toBeVisible();
 
             // # Remove is only reachable once the row is expanded
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToRow-channel-remove')).not.toBeVisible();
-            await systemConsolePage.page.getByTestId('attributeAppliesToRow-channel-toggle').click();
-            await systemConsolePage.page.getByTestId('attributeAppliesToRow-channel-remove').click();
+            await expect(app.admin.attribute.appliesTo.channel.removeButton.locator).not.toBeVisible();
+            await app.admin.attribute.appliesTo.channel.toggleButton.click();
+            await app.admin.attribute.appliesTo.channel.removeButton.click();
 
             // * The row disappears immediately, no modal/dialog ever rendered
-            await expect(systemConsolePage.page.getByTestId('attributeAppliesToRow-channel')).not.toBeVisible();
-            await expect(systemConsolePage.page.getByRole('dialog')).not.toBeVisible();
+            await expect(app.admin.attribute.appliesTo.channel.locator).not.toBeVisible();
+            await expect(app.admin.attribute.removeAppliesToModal.locator).not.toBeVisible();
 
             // # Reopen the picker -- Channels is offered again
-            await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-            await expect(systemConsolePage.page.getByRole('menuitem', {name: 'Channels'})).toBeVisible();
+            await app.admin.attribute.appliesTo.addButton.click();
+            await expect(app.admin.attribute.appliesTo.add.resource('channel').locator).toBeVisible();
 
             expect(deleteRequestFired).toBe(false);
         });
@@ -1091,22 +1051,22 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_applies_to_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                await app.admin.attributes.newButton.click();
 
                 // # Fill Display name, add Users and Channels
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-                await systemConsolePage.page.getByRole('menuitem', {name: 'Users'}).click();
-                await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-                await systemConsolePage.page.getByRole('menuitem', {name: 'Channels'}).click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                await app.admin.attribute.appliesTo.addButton.click();
+                await app.admin.attribute.appliesTo.add.resource('user').click();
+                await app.admin.attribute.appliesTo.addButton.click();
+                await app.admin.attribute.appliesTo.add.resource('channel').click();
 
                 // # Save
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * Redirected back to the Attribute Management list
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 // * Exactly two linked fields exist, pointing back at the template
                 const templateFields = await adminClient.getPropertyFields('access_control', 'template', {
@@ -1150,39 +1110,36 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `pw_applies_retry_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await systemConsolePage.page.getByTestId('newAttributeButton').click();
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
+                await app.admin.attributes.newButton.click();
 
                 // # Fill Display name, add Users, Channels, and Posts
-                await systemConsolePage.page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                for (const label of ['Users', 'Channels', 'Posts']) {
-                    await systemConsolePage.page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-                    await systemConsolePage.page.getByRole('menuitem', {name: label}).click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                for (const resource of [AdminResource.User, AdminResource.Channel, AdminResource.Post]) {
+                    await app.admin.attribute.appliesTo.addButton.click();
+                    await app.admin.attribute.appliesTo.add.resource(resource).click();
                 }
 
                 // # Force the "post" linked-field creation request to fail; let user/channel/template through
-                await systemConsolePage.page.route(
-                    '**/api/v4/properties/groups/access_control/post/fields',
-                    async (route) => {
-                        if (route.request().method() === 'POST') {
-                            await route.fulfill({
-                                status: 500,
-                                contentType: 'application/json',
-                                body: JSON.stringify({message: 'forced failure'}),
-                            });
-                        } else {
-                            await route.continue();
-                        }
-                    },
-                );
+                await app.page.route('**/api/v4/properties/groups/access_control/post/fields', async (route) => {
+                    if (route.request().method() === 'POST') {
+                        await route.fulfill({
+                            status: 500,
+                            contentType: 'application/json',
+                            body: JSON.stringify({message: 'forced failure'}),
+                        });
+                    } else {
+                        await route.continue();
+                    }
+                });
 
                 // # Click Save
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * The banner names the failed resource, and Save is re-clickable
-                await expect(systemConsolePage.page.getByTestId('attributeSaveError')).toContainText('Posts');
-                await expect(systemConsolePage.page.getByTestId('saveSetting')).not.toBeDisabled();
+                await expect(app.admin.attribute.saveErrorAlert.locator).toContainText('Posts');
+                await expect(app.admin.saveButton.locator).not.toBeDisabled();
 
                 // * Nothing survived the rollback -- no template, no user/channel linked fields
                 const templateFieldsAfterFailure = await adminClient.getPropertyFields('access_control', 'template', {
@@ -1205,11 +1162,11 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 expect(channelFields.find((f) => f.name === expectedName && f.delete_at === 0)).toBeUndefined();
 
                 // # Remove the interception and retry
-                await systemConsolePage.page.unroute('**/api/v4/properties/groups/access_control/post/fields');
-                await systemConsolePage.page.getByTestId('saveSetting').click();
+                await app.page.unroute('**/api/v4/properties/groups/access_control/post/fields');
+                await app.admin.saveButton.click();
 
                 // * This time it succeeds
-                await expect(systemConsolePage.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
+                await expect(app.page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 const templateFieldsAfterRetry = await adminClient.getPropertyFields('access_control', 'template', {
                     targetType: 'system',
@@ -1241,50 +1198,51 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_graph_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId('newAttributeButton').click();
+                await app.admin.attributes.newButton.click();
                 await expect(page).toHaveURL(/attribute_details/);
 
-                await page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(expectedName);
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(expectedName);
 
                 // # Switch type to Hierarchical
-                await page.getByTestId('attributeTypeMenuButton').click();
-                await page.getByRole('menuitemradio', {name: 'Hierarchical'}).click();
+                await app.admin.attribute.typeButton.click();
+                await app.admin.attribute.type.option('graph').click();
 
                 // * Empty canvas, no extra required-options copy, External source hidden, Save disabled
-                await expect(page.getByTestId('attributeTypeMenuButton')).toContainText('Hierarchical');
-                await expect(page.getByTestId('attributeOptionsGraphEmpty')).toBeVisible();
-                await expect(page.getByTestId('attributeExternalSource')).toHaveCount(0);
-                await expect(page.getByTestId('attributeOptionsRequiredError')).toHaveCount(0);
-                await expect(page.getByText('At least one option is required')).toHaveCount(0);
-                await expect(page.getByTestId('saveSetting')).toBeDisabled();
+                await expect(app.admin.attribute.typeButton.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.type.graph,
+                );
+                await expect(app.admin.attribute.graph.empty.locator).toBeVisible();
+                await expect(app.admin.attribute.externalSource.locator).toHaveCount(0);
+                await expect(app.admin.attribute.options.requiredAlert.locator).toHaveCount(0);
+                await expect(app.admin.saveButton.locator).toBeDisabled();
 
                 // # Add a root, then a child from its row menu
-                await page.getByTestId('attributeOptionsGraphEmpty__nameInput').fill('Air');
-                await page.getByTestId('attributeOptionsGraphEmpty__addButton').click();
-                await expect(graphRow(page, 'Air')).toBeVisible();
-                await expect(page.getByTestId('saveSetting')).toBeEnabled();
+                await app.admin.attribute.graph.empty.nameTextbox.fill('Air');
+                await app.admin.attribute.graph.empty.addButton.click();
+                await expect(graphRow(app, 'Air').locator).toBeVisible();
+                await expect(app.admin.saveButton.locator).toBeEnabled();
 
-                await openGraphRowAddChild(page, 'Air');
-                await page.getByTestId('attributeOptionsGraphRow__childNameInput').fill('Fighter');
-                await page.getByTestId('attributeOptionsGraphRow__childAddButton').click();
+                await openGraphRowAddChild(app, 'Air');
+                await app.admin.attribute.graph.childDraft.nameTextbox.fill('Fighter');
+                await app.admin.attribute.graph.childDraft.addButton.click();
 
-                await expect(graphRow(page, 'Fighter', 'Air')).toBeVisible();
-                await expect(graphRow(page, 'Fighter', 'Air')).toHaveAttribute('data-depth', '1');
+                await expect(graphRow(app, 'Fighter', 'Air').locator).toBeVisible();
+                await expect(graphRow(app, 'Fighter', 'Air').locator).toHaveAttribute('data-depth', '1');
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * List shows Hierarchical with two options
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                const row = page.locator('tr', {
-                    has: page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-type')).toContainText('Hierarchical');
-                await expect(row.getByTestId('global-attribute-options')).toContainText('2 options');
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).typeText.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.type.graph,
+                );
+                await expect(app.admin.attributes.row(row.id).optionsText.locator).toContainText('2 options');
 
                 // * Saved payload is a graph field; named parents live on the options route
                 const field = await getGlobalAttributeFieldByName(adminClient, expectedName);
@@ -1310,34 +1268,33 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const displayName = `Playwright Graph ${timestamp}`;
             const expectedName = `playwright_graph_${timestamp}`;
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {app} = await pw.testBrowser.login(adminUser);
+            const {page} = app;
             await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await page.getByTestId('newAttributeButton').click();
+            await app.admin.attributes.newButton.click();
 
-            await page.getByTestId('attributeDisplayNameInput').fill(displayName);
-            await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(expectedName);
+            await app.admin.attribute.displayNameTextbox.fill(displayName);
+            await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(expectedName);
 
-            await page.getByTestId('attributeTypeMenuButton').click();
-            await page.getByRole('menuitemradio', {name: 'Hierarchical'}).click();
+            await app.admin.attribute.typeButton.click();
+            await app.admin.attribute.type.option('graph').click();
 
-            await page.getByTestId('attributeOptionsGraphEmpty__nameInput').fill('Engineering');
-            await page.getByTestId('attributeOptionsGraphEmpty__addButton').click();
-            await expect(graphRow(page, 'Engineering')).toBeVisible();
-            await expect(page.getByTestId('saveSetting')).toBeEnabled();
+            await app.admin.attribute.graph.empty.nameTextbox.fill('Engineering');
+            await app.admin.attribute.graph.empty.addButton.click();
+            await expect(graphRow(app, 'Engineering').locator).toBeVisible();
+            await expect(app.admin.saveButton.locator).toBeEnabled();
 
             // # Try to add the same name again (case-insensitive)
-            await page.getByTestId('attributeOptionsGraphAddTop__nameInput').fill('engineering');
-            await page.getByTestId('attributeOptionsGraphAddTop__nameInput').press('Enter');
+            await app.admin.attribute.graph.addTop.nameTextbox.fill('engineering');
+            await app.admin.attribute.graph.addTop.nameTextbox.press('Enter');
 
             // * Duplicate is refused; the unique-name alert is shown; Save stays enabled
-            await expect(page.getByRole('alert')).toContainText('"engineering" already exists in this field.');
-            await expect(page.getByTestId('attributeOptionsGraphAddTop__nameInput')).toHaveAttribute(
-                'aria-invalid',
-                'true',
+            await expect(app.admin.attribute.graph.addTop.name.messageAlert.locator).toContainText(
+                '"engineering" already exists in this field.',
             );
-            await expect(graphRow(page, 'Engineering')).toHaveCount(1);
-            await expect(page.getByTestId('saveSetting')).toBeEnabled();
+            await expect(app.admin.attribute.graph.addTop.nameTextbox.locator).toHaveAttribute('aria-invalid', 'true');
+            await expect(graphRow(app, 'Engineering').locator).toHaveCount(1);
+            await expect(app.admin.saveButton.locator).toBeEnabled();
         });
 
         /**
@@ -1348,31 +1305,31 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireHierarchicalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {app} = await pw.testBrowser.login(adminUser);
+            const {page} = app;
             await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await page.getByTestId('newAttributeButton').click();
+            await app.admin.attributes.newButton.click();
 
-            await page.getByTestId('attributeTypeMenuButton').click();
-            await page.getByRole('menuitemradio', {name: 'Select', exact: true}).click();
-            const selectInput = page.getByTestId('attributeOptionsValues__addInput');
+            await app.admin.attribute.typeButton.click();
+            await app.admin.attribute.type.option('select').click();
+            const selectInput = app.admin.attribute.values.addTextbox.locator;
             await selectInput.fill('Engineering');
             await selectInput.press('Enter');
-            await expect(page.getByTestId('attributeOptionsValues__chipLabel')).toHaveText('Engineering');
+            await expect(app.admin.attribute.values.optionList).toHaveKeys(['Engineering']);
 
-            await page.getByTestId('attributeTypeMenuButton').click();
-            await page.getByRole('menuitemradio', {name: 'Hierarchical'}).click();
-            await expect(page.getByText('Engineering')).toHaveCount(0);
-            await expect(page.getByTestId('attributeOptionsGraphEmpty')).toBeVisible();
+            await app.admin.attribute.typeButton.click();
+            await app.admin.attribute.type.option('graph').click();
+            await expect(app.admin.attribute.values.optionList).toHaveKeyCount(0);
+            await expect(app.admin.attribute.graph.empty.locator).toBeVisible();
 
-            await page.getByTestId('attributeOptionsGraphEmpty__nameInput').fill('Root');
-            await page.getByTestId('attributeOptionsGraphEmpty__addButton').click();
-            await expect(graphRow(page, 'Root')).toBeVisible();
+            await app.admin.attribute.graph.empty.nameTextbox.fill('Root');
+            await app.admin.attribute.graph.empty.addButton.click();
+            await expect(graphRow(app, 'Root').locator).toBeVisible();
 
-            await page.getByTestId('attributeTypeMenuButton').click();
-            await page.getByRole('menuitemradio', {name: 'Select', exact: true}).click();
-            await expect(graphRow(page, 'Root')).toHaveCount(0);
-            await expect(page.getByTestId('attributeOptionsValues__chipLabel')).toHaveCount(0);
+            await app.admin.attribute.typeButton.click();
+            await app.admin.attribute.type.option('select').click();
+            await expect(graphRow(app, 'Root').locator).toHaveCount(0);
+            await expect(app.admin.attribute.values.optionList).toHaveKeyCount(0);
         });
 
         /**
@@ -1389,26 +1346,27 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_suggest_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await page.getByTestId('newAttributeButton').click();
-                await page.getByTestId('attributeDisplayNameInput').fill(displayName);
+                await app.admin.attributes.newButton.click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
 
-                await page.getByTestId('attributeTypeMenuButton').click();
-                await page.getByRole('menuitemradio', {name: 'Hierarchical'}).click();
+                await app.admin.attribute.typeButton.click();
+                await app.admin.attribute.type.option('graph').click();
 
                 // # Air and Maritime as sibling roots
-                await page.getByTestId('attributeOptionsGraphEmpty__nameInput').fill('Air');
-                await page.getByTestId('attributeOptionsGraphEmpty__addButton').click();
-                await page.getByTestId('attributeOptionsGraphAddTop__nameInput').fill('Maritime');
-                await page.getByTestId('attributeOptionsGraphAddTop__addButton').click();
+                await app.admin.attribute.graph.empty.nameTextbox.fill('Air');
+                await app.admin.attribute.graph.empty.addButton.click();
+                await app.admin.attribute.graph.addTop.nameTextbox.fill('Maritime');
+                await app.admin.attribute.graph.addTop.addButton.click();
 
                 // # Open Air's Parents pane and focus the search field
-                await openGraphRowParents(page, 'Air');
-                const valueMenu = page.getByRole('menu', {name: 'Edit Air'});
-                await expect(page.getByTestId('attributeGraphParentsPane__back')).toHaveText('Parents of Air');
+                await openGraphRowParents(app, 'Air');
+                const valueMenu = app.admin.attribute.graph.pane.locator;
+                await expect(app.admin.attribute.graph.pane.backButton.locator).toHaveText('Parents of Air');
                 await expect(valueMenu).toBeVisible();
+                await expect(valueMenu).toHaveAccessibleName('Edit Air');
 
                 // Measure the pane, not role=menu. Nested MUI Modal aria-hides the
                 // parent menu paper; its getBoundingClientRect can shift ~16px even
@@ -1417,13 +1375,13 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 // The menu itself mounts with a grow transition, so read the height only
                 // once that has settled — otherwise this baseline lands mid-animation
                 // and every later reading looks like unrelated growth.
-                const pane = page.locator('.attribute-graph-parents-pane');
+                const pane = valueMenu;
                 const heightBeforeSearch = await waitForStableRectHeight(pane);
-                await page.getByTestId('attributeGraphParentsPane__search').click();
+                await app.admin.attribute.graph.pane.parents.searchTextbox.locator.click();
 
-                const suggestions = page.getByTestId('attributeGraphParentsPane__suggestions');
+                const suggestions = app.admin.attribute.graph.pane.parents.suggestionsList.locator;
                 await expect(suggestions).toBeVisible();
-                await expect(page.getByTestId('attributeGraphParentsPane__candidate-Maritime')).toBeVisible();
+                await expect(app.admin.attribute.graph.pane.candidate('Maritime').locator).toBeVisible();
 
                 // * Suggestions live in a portal below the field, not inside the pane
                 const suggestionsAreInsideMenu = await suggestions.evaluate((el) =>
@@ -1432,7 +1390,7 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 expect(suggestionsAreInsideMenu).toBe(false);
 
                 const listBox = await suggestions.boundingBox();
-                const searchBox = await page.getByTestId('attributeGraphParentsPane__search').boundingBox();
+                const searchBox = await app.admin.attribute.graph.pane.parents.searchTextbox.locator.boundingBox();
                 expect(listBox).toBeTruthy();
                 expect(searchBox).toBeTruthy();
                 expect(listBox!.height).toBeGreaterThan(0);
@@ -1450,9 +1408,9 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 });
                 expect(widthDelta).toBeLessThan(1);
 
-                // Nested MUI popover aria-hides the parent menu, so getByRole without
-                // includeHidden (and boundingBox visibility checks) cannot resolve it.
-                const mountedValueMenu = page.getByRole('menu', {name: 'Edit Air', includeHidden: true});
+                // Nested MUI popover aria-hides the parent menu, so boundingBox visibility
+                // checks cannot resolve it: check it is still mounted instead.
+                const mountedValueMenu = valueMenu;
 
                 // * Pane does not grow by a suggestion row (~36px). Focus and the
                 // nested modal can still shift getBoundingClientRect by ~6–16px. Read the
@@ -1462,8 +1420,8 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 expect(Math.abs(heightAfterSearch - heightBeforeSearch)).toBeLessThan(24);
                 await expect(mountedValueMenu).toBeAttached();
 
-                await page.getByTestId('attributeGraphParentsPane__candidate-Maritime').click();
-                await expect(graphRow(page, 'Air', 'Maritime')).toBeVisible();
+                await app.admin.attribute.graph.pane.candidate('Maritime').click();
+                await expect(graphRow(app, 'Air', 'Maritime').locator).toBeVisible();
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, expectedName);
             }
@@ -1482,47 +1440,48 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_grant_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await page.getByTestId('newAttributeButton').click();
-                await page.getByTestId('attributeDisplayNameInput').fill(displayName);
+                await app.admin.attributes.newButton.click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
 
-                await page.getByTestId('attributeTypeMenuButton').click();
-                await page.getByRole('menuitemradio', {name: 'Hierarchical'}).click();
+                await app.admin.attribute.typeButton.click();
+                await app.admin.attribute.type.option('graph').click();
 
                 // # Maritime (root), Air (root) with child Fighter
-                await page.getByTestId('attributeOptionsGraphEmpty__nameInput').fill('Maritime');
-                await page.getByTestId('attributeOptionsGraphEmpty__addButton').click();
-                await page.getByTestId('attributeOptionsGraphAddTop__nameInput').fill('Air');
-                await page.getByTestId('attributeOptionsGraphAddTop__addButton').click();
-                await openGraphRowAddChild(page, 'Air');
-                await page.getByTestId('attributeOptionsGraphRow__childNameInput').fill('Fighter');
-                await page.getByTestId('attributeOptionsGraphRow__childAddButton').click();
+                await app.admin.attribute.graph.empty.nameTextbox.fill('Maritime');
+                await app.admin.attribute.graph.empty.addButton.click();
+                await app.admin.attribute.graph.addTop.nameTextbox.fill('Air');
+                await app.admin.attribute.graph.addTop.addButton.click();
+                await openGraphRowAddChild(app, 'Air');
+                await app.admin.attribute.graph.childDraft.nameTextbox.fill('Fighter');
+                await app.admin.attribute.graph.childDraft.addButton.click();
 
                 // # Open Air's Parents pane and grant Maritime as a parent (newly reaches Fighter)
-                await openGraphRowParents(page, 'Air');
-                await expect(page.getByTestId('attributeGraphParentsPane__back')).toHaveText('Parents of Air');
-                await page.getByTestId('attributeGraphParentsPane__search').click();
-                await page.getByTestId('attributeGraphParentsPane__candidate-Maritime').click();
+                await openGraphRowParents(app, 'Air');
+                await expect(app.admin.attribute.graph.pane.backButton.locator).toHaveText('Parents of Air');
+                await app.admin.attribute.graph.pane.parents.searchTextbox.locator.click();
+                await app.admin.attribute.graph.pane.candidate('Maritime').click();
 
-                await expect(page.getByTestId('attributeGraphGrantConfirmModal')).toBeVisible();
-                await expect(page.getByRole('heading', {name: 'Add Maritime as a parent?'})).toBeVisible();
-                await expect(
-                    page.getByText(
-                        'Air and all of its child values will also sit under Maritime. Are you sure you want to add this parent?',
-                    ),
-                ).toBeVisible();
-                await expect(page.getByRole('menu', {name: 'Edit Air'})).toHaveCount(0);
-                await expect(page.locator('#backdropForMenuComponent')).toHaveCount(0);
+                const {grantModal} = app.admin.attribute.graph;
+                await expect(grantModal.locator).toBeVisible();
+                await expect(grantModal.locator).toContainText('Add Maritime as a parent?');
+                await expect(grantModal.locator).toContainText(
+                    'Air and all of its child values will also sit under Maritime. Are you sure you want to add this parent?',
+                );
 
-                await page.getByTestId('attributeGraphGrantConfirmModal').getByRole('button', {name: /^add$/i}).click();
+                // * The value menu (and its backdrop with it) has closed under the dialog
+                await expect(app.admin.attribute.graph.pane.locator).toHaveCount(0);
+
+                await expect(grantModal.confirmButton.locator).toHaveText(/^add$/i);
+                await grantModal.confirmButton.click();
 
                 // * Air now sits under Maritime as well as at the root of Fighter
-                await expect(graphRow(page, 'Air', 'Maritime')).toBeVisible();
-                await expect(graphRow(page, 'Fighter', 'Air')).toBeVisible();
+                await expect(graphRow(app, 'Air', 'Maritime').locator).toBeVisible();
+                await expect(graphRow(app, 'Fighter', 'Air').locator).toBeVisible();
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 const field = await getGlobalAttributeFieldByName(adminClient, expectedName);
@@ -1551,43 +1510,45 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `playwright_del_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await page.getByTestId('newAttributeButton').click();
-                await page.getByTestId('attributeDisplayNameInput').fill(displayName);
+                await app.admin.attributes.newButton.click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
 
-                await page.getByTestId('attributeTypeMenuButton').click();
-                await page.getByRole('menuitemradio', {name: 'Hierarchical'}).click();
+                await app.admin.attribute.typeButton.click();
+                await app.admin.attribute.type.option('graph').click();
 
-                await page.getByTestId('attributeOptionsGraphEmpty__nameInput').fill('Air');
-                await page.getByTestId('attributeOptionsGraphEmpty__addButton').click();
-                await openGraphRowAddChild(page, 'Air');
-                await page.getByTestId('attributeOptionsGraphRow__childNameInput').fill('Fighter');
-                await page.getByTestId('attributeOptionsGraphRow__childAddButton').click();
+                await app.admin.attribute.graph.empty.nameTextbox.fill('Air');
+                await app.admin.attribute.graph.empty.addButton.click();
+                await openGraphRowAddChild(app, 'Air');
+                await app.admin.attribute.graph.childDraft.nameTextbox.fill('Fighter');
+                await app.admin.attribute.graph.childDraft.addButton.click();
 
                 // # Delete Air — blocked because Fighter would be orphaned
-                await openGraphRowDelete(page, 'Air');
-                await expect(page.getByRole('heading', {name: "Can't delete Air"})).toBeVisible();
-                await expect(
-                    page.getByText(/Child values need a parent\. Air is the only parent of 1 child value/),
-                ).toBeVisible();
-                await page.getByRole('button', {name: 'Go to Fighter'}).click();
+                await openGraphRowDelete(app, 'Air');
+                const {deleteModal} = app.admin.attribute.graph;
+                await expect(deleteModal.locator).toContainText("Can't delete Air");
+                await expect(deleteModal.locator).toContainText(
+                    /Child values need a parent\. Air is the only parent of 1 child value/,
+                );
+                await expect(deleteModal.confirmButton.locator).toHaveText('Go to Fighter');
+                await deleteModal.confirmButton.click();
 
                 // * Air and Fighter are both still on the canvas, and Go to flashes Fighter
-                await expect(graphRow(page, 'Air')).toBeVisible();
-                await expect(graphRow(page, 'Fighter', 'Air')).toBeVisible();
-                await expect(graphRow(page, 'Fighter', 'Air')).toHaveClass(
+                await expect(graphRow(app, 'Air').locator).toBeVisible();
+                await expect(graphRow(app, 'Fighter', 'Air').locator).toBeVisible();
+                await expect(graphRow(app, 'Fighter', 'Air').locator).toHaveClass(
                     /attribute-options-graph-values__row--highlight/,
                 );
 
                 // # Delete the leaf — no confirm; the row is removed immediately
-                await openGraphRowDelete(page, 'Fighter', 'Air');
+                await openGraphRowDelete(app, 'Fighter', 'Air');
 
-                await expect(graphRow(page, 'Fighter', 'Air')).toHaveCount(0);
-                await expect(graphRow(page, 'Air')).toBeVisible();
+                await expect(graphRow(app, 'Fighter', 'Air').locator).toHaveCount(0);
+                await expect(graphRow(app, 'Air').locator).toBeVisible();
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 const field = await getGlobalAttributeFieldByName(adminClient, expectedName);
@@ -1622,23 +1583,23 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             const expectedName = `pw_cfg_${timestamp}`;
 
             try {
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await page.getByTestId('newAttributeButton').click();
+                await app.admin.attributes.newButton.click();
 
                 // # Fill Display name, add Users, expand the row, and set both controls to their
                 // first values (Always / Member -- the picker's default and Member need an
                 // explicit pick here too, not just an assumed default)
-                await page.getByTestId('attributeDisplayNameInput').fill(displayName);
-                await page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-                await page.getByRole('menuitem', {name: 'Users'}).click();
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToUserProfileDisplay-always').click();
-                await page.getByTestId('attributeAppliesToUserWhoCanSet-member').click();
+                await app.admin.attribute.displayNameTextbox.fill(displayName);
+                await app.admin.attribute.appliesTo.addButton.click();
+                await app.admin.attribute.appliesTo.add.resource('user').click();
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.profileDisplay('always').toggle();
+                await app.admin.attribute.appliesTo.user.whoCanSet.memberRadio.locator.click();
 
                 // # Save
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 const templateFields = await adminClient.getPropertyFields('access_control', 'template', {
@@ -1655,12 +1616,12 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
 
                 // # Reopen Edit and switch Who can set the value to System Administrator -- the
                 // other option not covered by the create above
-                await page.getByTestId(`global-attribute-actions-${templateField!.id}`).click();
-                await page.locator(`#global-attribute-actions-${templateField!.id}-edit`).click();
+                await app.admin.attributes.row(templateField!.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${templateField!.id}$`));
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToUserWhoCanSet-admin').click();
-                await page.getByTestId('saveSetting').click();
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.whoCanSet.adminRadio.locator.click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 linkedFields = await fetchLinkedFieldsForTemplate(adminClient, templateField!.id);
@@ -1670,12 +1631,12 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 // * Every remaining Profile display option (When set, Hidden) is individually
                 // selectable and persists correctly, one save per value
                 for (const value of ['when_set', 'hidden'] as const) {
-                    await page.getByTestId(`global-attribute-actions-${templateField!.id}`).click();
-                    await page.locator(`#global-attribute-actions-${templateField!.id}-edit`).click();
+                    await app.admin.attributes.row(templateField!.id).actionsButton.click();
+                    await app.admin.attributes.actionsMenu.editMenuItem.click();
                     await expect(page).toHaveURL(new RegExp(`attribute_details/${templateField!.id}$`));
-                    await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                    await page.getByTestId(`attributeAppliesToUserProfileDisplay-${value}`).click();
-                    await page.getByTestId('saveSetting').click();
+                    await app.admin.attribute.appliesTo.user.toggleButton.click();
+                    await app.admin.attribute.appliesTo.user.profileDisplay(value).toggle();
+                    await app.admin.saveButton.click();
                     await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                     linkedFields = await fetchLinkedFieldsForTemplate(adminClient, templateField!.id);
@@ -1713,17 +1674,17 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     display_name: displayName,
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-                await page.getByTestId(`global-attribute-actions-${template.id}`).click();
-                await page.locator(`#global-attribute-actions-${template.id}-edit`).click();
+                await app.admin.attributes.row(template.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${template.id}$`));
 
                 // # Set Who can set the value to System Administrator, save
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToUserWhoCanSet-admin').click();
-                await page.getByTestId('saveSetting').click();
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.whoCanSet.adminRadio.locator.click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 let linkedFields = await fetchLinkedFieldsForTemplate(adminClient, template.id);
@@ -1732,11 +1693,11 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 expect(userField?.permission_values).toBe('sysadmin');
 
                 // # Switch it back to Member, save again
-                await page.getByTestId(`global-attribute-actions-${template.id}`).click();
-                await page.locator(`#global-attribute-actions-${template.id}-edit`).click();
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToUserWhoCanSet-member').click();
-                await page.getByTestId('saveSetting').click();
+                await app.admin.attributes.row(template.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.whoCanSet.memberRadio.locator.click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 linkedFields = await fetchLinkedFieldsForTemplate(adminClient, template.id);
@@ -1776,41 +1737,36 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     display_name: displayName,
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}/attribute_details/${template.id}`);
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
 
                 // * The Managed by indicator names AD/LDAP, above the "not editable" helper text
-                const managedBy = page.getByTestId('attributeAppliesToUserManagedBy');
+                const managedBy = app.admin.attribute.appliesTo.user.managedByButton.locator;
                 await expect(managedBy).toContainText('AD/LDAP');
-                await expect(
-                    page.getByTestId('attributeAppliesToRow-user-body').getByText('Not editable in Mattermost.'),
-                ).toBeVisible();
+                await expect(app.admin.attribute.appliesTo.user.managedByHelpText.locator).toHaveMessage(
+                    Msg.admin.global_attributes.attribute_details.applies_to.item.user.managed_by.help,
+                );
 
                 // * It carries the same glyph as the Definition block's synced chip, compared by
-                // path data so the two cannot drift apart unnoticed
-                const chipIcon = await page
-                    .getByTestId('attributeExternalSourceChip-ldap')
-                    .locator('svg path')
-                    .first()
-                    .getAttribute('d');
+                // its markup so the two cannot drift apart unnoticed
+                const chipIcon = await app.admin.attribute.externalSource.source('ldap').icon.locator.innerHTML();
                 expect(chipIcon).toBeTruthy();
-                await expect(managedBy.locator('svg path').first()).toHaveAttribute('d', chipIcon!);
+                expect(await app.admin.attribute.appliesTo.user.managedBy.icon.locator.innerHTML()).toBe(chipIcon);
 
-                // * It is greyed out and cannot be operated: it carries no chevron to suggest a
-                // menu, and forcing a click past the disabled state still opens none
+                // * It is greyed out and cannot be operated: as a locked select it renders no
+                // chevron to suggest a menu, and forcing a click past the disabled state still opens none
                 await expect(managedBy).toBeDisabled();
                 await expect(managedBy).toHaveAccessibleName(/^Managed by: AD\/LDAP\./);
-                await expect(managedBy.locator('.AttributeSelect__value')).toHaveCSS('opacity', '0.6');
-                await expect(managedBy.locator('.icon-chevron-down')).toHaveCount(0);
+                await expect(app.admin.attribute.appliesTo.user.managedBy.value.locator).toHaveCSS('opacity', '0.6');
                 await managedBy.click({force: true});
                 await expect(page.getByRole('menuitemradio')).toHaveCount(0);
 
                 // * The row's editable settings are still there -- the indicator reports the
                 // source, it does not lock the rest of the card
-                await expect(page.getByTestId('attributeAppliesToUserProfileDisplay-always')).toBeEnabled();
-                await expect(page.getByTestId('attributeAppliesToUserWhoCanSet-admin')).toBeEnabled();
+                await expect(app.admin.attribute.appliesTo.user.profileDisplay('always').locator).toBeEnabled();
+                await expect(app.admin.attribute.appliesTo.user.whoCanSet.adminRadio.locator).toBeEnabled();
             } finally {
                 await deleteAppliesToAttributeAndLinkedFieldsIfExists(adminClient, name);
             }
@@ -1825,46 +1781,42 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             const {adminUser} = await requireGlobalAttributesEnabled(pw);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {app} = await pw.testBrowser.login(adminUser);
+            const {page} = app;
             await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
-            await page.getByTestId('newAttributeButton').click();
+            await app.admin.attributes.newButton.click();
 
-            await page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-            await page.getByRole('menuitem', {name: 'Users'}).click();
-            await page.getByTestId('attributeAppliesToRow-user-toggle').click();
+            await app.admin.attribute.appliesTo.addButton.click();
+            await app.admin.attribute.appliesTo.add.resource('user').click();
+            await app.admin.attribute.appliesTo.user.toggleButton.click();
 
             // * An attribute managed in Mattermost has no Managed by row at all
-            await expect(page.getByTestId('attributeAppliesToRow-user-body')).toBeVisible();
-            await expect(page.getByTestId('attributeAppliesToUserManagedBy')).toHaveCount(0);
-            await expect(page.getByText('Not editable in Mattermost.')).toHaveCount(0);
+            await expect(app.admin.attribute.appliesTo.user.bodyRegion.locator).toBeVisible();
+            await expect(app.admin.attribute.appliesTo.user.managedByButton.locator).toHaveCount(0);
+            await expect(app.admin.attribute.appliesTo.user.managedByHelpText.locator).toHaveCount(0);
 
             // # Link SAML
-            await page.getByTestId('attributeExternalSourceTrigger').click();
-            await page.getByRole('menuitem', {name: /^SAML/}).click();
-            await page.getByPlaceholder('department').fill('position');
-            await page.getByRole('button', {name: 'Save'}).click();
+            await app.admin.attribute.externalSource.linkButton.click();
+            await app.admin.attribute.externalSource.linkMenu.source('saml').click();
+            await app.attributeModal.valueTextbox.fill('position');
+            await app.attributeModal.confirmButton.click();
 
             // * The indicator appears naming SAML, not AD/LDAP
-            const managedBy = page.getByTestId('attributeAppliesToUserManagedBy');
+            const managedBy = app.admin.attribute.appliesTo.user.managedByButton.locator;
             await expect(managedBy).toContainText('SAML');
             await expect(managedBy).not.toContainText('AD/LDAP');
 
             // * ...with the same glyph the SAML chip in the Definition block carries
-            const chipIcon = await page
-                .getByTestId('attributeExternalSourceChip-saml')
-                .locator('svg path')
-                .first()
-                .getAttribute('d');
+            const chipIcon = await app.admin.attribute.externalSource.source('saml').icon.locator.innerHTML();
             expect(chipIcon).toBeTruthy();
-            await expect(managedBy.locator('svg path').first()).toHaveAttribute('d', chipIcon!);
+            expect(await app.admin.attribute.appliesTo.user.managedBy.icon.locator.innerHTML()).toBe(chipIcon);
 
             // # Unlink it again
-            await page.getByTestId('attributeExternalSourceChip-saml-remove').click();
+            await app.admin.attribute.externalSource.source('saml').removeButton.click();
 
             // * The indicator and its helper text go away with the link
-            await expect(page.getByTestId('attributeAppliesToUserManagedBy')).toHaveCount(0);
-            await expect(page.getByText('Not editable in Mattermost.')).toHaveCount(0);
+            await expect(app.admin.attribute.appliesTo.user.managedByButton.locator).toHaveCount(0);
+            await expect(app.admin.attribute.appliesTo.user.managedByHelpText.locator).toHaveCount(0);
         });
     });
 
@@ -1878,7 +1830,7 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
         }) => {
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             await requireGlobalAttributesEnabled(pw);
-            const {adminClient, adminUser, team, user} = await pw.initSetup();
+            const {adminClient, adminUser, team, user, townSquare} = await pw.initSetup();
 
             const timestamp = Date.now();
             const name = `e2e_global_attribute_display_name_${timestamp}`;
@@ -1903,36 +1855,42 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 });
 
                 // # Post a message as the user and open their own profile popover
-                const {channelsPage} = await pw.testBrowser.login(user);
-                await channelsPage.goto(team.name, 'town-square');
-                await channelsPage.postMessage(`display-name-rendering-${timestamp}`);
-
-                const lastPost = await channelsPage.getLastPost();
-                await channelsPage.openProfilePopover(lastPost);
+                const {app: asUser} = await pw.testBrowser.login(user);
+                await asUser.channelsPage.goto({team, channel: townSquare});
+                const message = `display-name-rendering-${timestamp}`;
+                await asUser.center.postCreate.fillMessageTextbox(message);
+                await asUser.center.postCreate.clickSendButton();
+                const {postList} = asUser.center;
+                await expect
+                    .poll(async () => {
+                        const lastId = (await postList.postKeys()).at(-1);
+                        return lastId ? postList.post({id: lastId}).messageText.locator.textContent() : '';
+                    })
+                    .toBe(message);
+                await postList.post({id: (await postList.postKeys()).at(-1)!}).avatar.locator.click();
 
                 // * The profile popover renders the display_name, not the internal name
-                await expect(
-                    channelsPage.page.locator(`#user-popover__custom_attributes-title-${userField.id}`),
-                ).toHaveText(displayName);
-                await channelsPage.userProfilePopover.close();
+                await expect(asUser.profilePopover.attribute(userField).locator).toContainText(displayName);
+                await expect(asUser.profilePopover.attribute(userField).locator).not.toContainText(name);
+                await asUser.page.keyboard.press('Escape');
+                await expect(asUser.profilePopover.locator).not.toBeVisible();
 
                 // * Account settings (Settings > Profile) also renders the display_name, both as
                 // the section heading and as the input's accessible name once in edit mode
-                const profileModal = await channelsPage.openProfileModal();
-                await expect(profileModal.getAttributeSection(displayName)).toBeVisible();
-                await profileModal.editAttribute(displayName);
-                await expect(profileModal.getAttributeInput(displayName)).toBeVisible();
-                await profileModal.closeModal();
+                const settings = await (await asUser.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
+                const section = asUser.settings.section(`customAttribute_${userField.id}`);
+                await expect(section.title.locator).toHaveText(displayName);
+                await section.clickEditButton();
+                await expect(section.valueTextbox.locator).toHaveAccessibleName(displayName);
+                await settings.clickCloseButton();
+                await expect(settings.locator).not.toBeVisible();
 
                 // # Open the admin user detail page for the target user
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                await systemConsolePage.page.goto(`/admin_console/user_management/user/${user.id}`);
-                await systemConsolePage.users.userDetail.toBeVisible();
+                const {app} = await pw.testBrowser.login(adminUser);
+                await app.page.goto(`/admin_console/user_management/user/${user.id}`);
 
                 // * The admin user detail label also uses display_name
-                await expect(
-                    systemConsolePage.page.getByTestId(`user-detail-custom-attribute-label-${userField.id}`),
-                ).toContainText(displayName);
+                await expect(app.admin.user.attribute(userField!).locator).toContainText(displayName);
             } finally {
                 if (userField) {
                     await deleteLinkedDependentField(adminClient, userField.id);
@@ -1962,27 +1920,30 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     attrs: {display_name: displayName},
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
 
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${field.id}$`));
                 // Heading is "Edit {name} Attribute" (attribute_details.tsx's editTitle), not
                 // a static "Edit attribute" -- it includes the attribute's own display name.
-                await expect(page.getByRole('heading', {name: `Edit ${displayName} Attribute`})).toBeVisible();
-                await expect(page.getByTestId('attributeDisplayNameInput')).toHaveValue(displayName);
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(name);
+                await expect(app.admin.header).toContainMessage(
+                    Msg.admin.global_attributes.attribute_details.edit_title,
+                    {
+                        name: displayName,
+                    },
+                );
+                await expect(app.admin.attribute.displayNameTextbox.locator).toHaveValue(displayName);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
 
-                await page.getByTestId('attributeDisplayNameInput').fill(updatedDisplayName);
-                await page.getByTestId('saveSetting').click();
+                await app.admin.attribute.displayNameTextbox.fill(updatedDisplayName);
+                await app.admin.saveButton.click();
 
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
-                await expect(
-                    page.getByTestId('global-attribute-name').filter({hasText: updatedDisplayName}),
-                ).toBeVisible();
+                await expect(app.admin.attributes.row(field.id).nameText.locator).toHaveText(updatedDisplayName);
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
             }
@@ -2012,17 +1973,17 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     actions: ['display_label_info'],
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${field.id}$`));
-                await expect(page.getByTestId('attributeAppliesToRow-channel')).toBeVisible();
+                await expect(app.admin.attribute.appliesTo.channel.locator).toBeVisible();
 
-                await page.getByTestId('attributeDisplayNameInput').fill(updatedDisplayName);
-                await page.getByTestId('saveSetting').click();
+                await app.admin.attribute.displayNameTextbox.fill(updatedDisplayName);
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 const linkedFields = await fetchLinkedFieldsForTemplate(adminClient, field.id);
@@ -2057,16 +2018,16 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     actions: ['display_label_info'],
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${field.id}$`));
 
-                await page.getByTestId('attributeDisplayNameInput').fill(updatedDisplayName);
-                await page.getByTestId('saveSetting').click();
+                await app.admin.attribute.displayNameTextbox.fill(updatedDisplayName);
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 const linkedFields = await fetchLinkedFieldsForTemplate(adminClient, field.id);
@@ -2106,22 +2067,22 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     attrs: {display_name: displayName},
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(name);
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
 
                 // # No-op Edit/Done round-trip -- open Edit, change nothing, click Done
-                await page.getByTestId('attributeNameEditLink').click();
-                await page.getByTestId('attributeNameEditLink').click();
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(name);
+                await app.admin.attribute.uniqueName.editButton.click();
+                await app.admin.attribute.uniqueName.editButton.click();
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
 
                 // * Changing Display name afterward must not re-slug the pinned Unique name
-                await page.getByTestId('attributeDisplayNameInput').fill(`${displayName} Updated`);
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(name);
+                await app.admin.attribute.displayNameTextbox.fill(`${displayName} Updated`);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
             }
@@ -2145,20 +2106,20 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     attrs: {display_name: displayName},
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(name);
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
 
-                await page.getByTestId('attributeNameEditLink').click();
-                await page.getByTestId('attributeNameInput').press('Escape');
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(name);
+                await app.admin.attribute.uniqueName.editButton.click();
+                await app.admin.attribute.uniqueNameTextbox.press('Escape');
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
 
-                await page.getByTestId('attributeDisplayNameInput').fill(`${displayName} Updated`);
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(name);
+                await app.admin.attribute.displayNameTextbox.fill(`${displayName} Updated`);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
             }
@@ -2183,26 +2144,26 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 });
                 await createLinkedDependentField(adminClient, name, field.id, 'text', 'user');
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
 
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toBeVisible();
-                await expect(page.getByTestId('attributeTypeMenuButton')).toBeDisabled();
+                await expect(app.admin.attribute.appliesTo.user.locator).toBeVisible();
+                await expect(app.admin.attribute.typeButton.locator).toBeDisabled();
 
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToRow-user-remove').click();
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toHaveCount(0);
-                await expect(page.getByTestId('attributeTypeMenuButton')).toBeEnabled();
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.removeButton.click();
+                await expect(app.admin.attribute.appliesTo.user.locator).toHaveCount(0);
+                await expect(app.admin.attribute.typeButton.locator).toBeEnabled();
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // # Removing a resource with stored values warns before deleting it
-                await expect(page.getByRole('dialog')).toBeVisible();
-                await page.getByRole('button', {name: 'Remove and save', exact: true}).click();
+                await expect(app.admin.attribute.removeAppliesToModal.locator).toBeVisible();
+                await app.admin.attribute.removeAppliesToModal.confirmButton.click();
 
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
@@ -2237,22 +2198,22 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 });
                 const linked = await createLinkedDependentField(adminClient, name, field.id, 'text', 'user');
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
 
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToRow-user-remove').click();
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toHaveCount(0);
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.removeButton.click();
+                await expect(app.admin.attribute.appliesTo.user.locator).toHaveCount(0);
 
-                await page.getByTestId('attributeAppliesToAddResourceButtonHeader').click();
-                await page.getByRole('menuitem', {name: 'Users'}).click();
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toBeVisible();
+                await app.admin.attribute.appliesTo.addButton.click();
+                await app.admin.attribute.appliesTo.add.resource('user').click();
+                await expect(app.admin.attribute.appliesTo.user.locator).toBeVisible();
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 const remaining = await fetchLinkedFieldsForTemplate(adminClient, field.id);
@@ -2285,34 +2246,34 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 });
                 await createLinkedDependentField(adminClient, name, field.id, 'text', 'user');
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
 
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toBeVisible();
-                await expect(page.getByTestId('attributeNameEditLink')).toBeDisabled();
+                await expect(app.admin.attribute.appliesTo.user.locator).toBeVisible();
+                await expect(app.admin.attribute.uniqueName.editButton.locator).toBeDisabled();
 
                 // # A pending local removal does not unlock the Name -- the dependent field is
                 // still live on the server until Save actually removes it
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToRow-user-remove').click();
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toHaveCount(0);
-                await expect(page.getByTestId('attributeNameEditLink')).toBeDisabled();
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.removeButton.click();
+                await expect(app.admin.attribute.appliesTo.user.locator).toHaveCount(0);
+                await expect(app.admin.attribute.uniqueName.editButton.locator).toBeDisabled();
 
-                await page.getByTestId('saveSetting').click();
-                await expect(page.getByRole('dialog')).toBeVisible();
-                await page.getByRole('button', {name: 'Remove and save', exact: true}).click();
+                await app.admin.saveButton.click();
+                await expect(app.admin.attribute.removeAppliesToModal.locator).toBeVisible();
+                await app.admin.attribute.removeAppliesToModal.confirmButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 // * Only once the removal is actually persisted does re-opening the attribute
                 // show the Name as editable
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toHaveCount(0);
-                await expect(page.getByTestId('attributeNameEditLink')).toBeEnabled();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
+                await expect(app.admin.attribute.appliesTo.user.locator).toHaveCount(0);
+                await expect(app.admin.attribute.uniqueName.editButton.locator).toBeEnabled();
             } finally {
                 await deleteAppliesToAttributeAndLinkedFieldsIfExists(adminClient, name);
             }
@@ -2337,24 +2298,24 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 });
                 const linked = await createLinkedDependentField(adminClient, name, field.id, 'text', 'user');
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
 
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToRow-user-remove').click();
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toHaveCount(0);
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.removeButton.click();
+                await expect(app.admin.attribute.appliesTo.user.locator).toHaveCount(0);
 
-                await page.getByTestId('saveSetting').click();
-                await expect(page.getByRole('dialog')).toBeVisible();
-                await page.getByRole('button', {name: 'Cancel', exact: true}).click();
+                await app.admin.saveButton.click();
+                await expect(app.admin.attribute.removeAppliesToModal.locator).toBeVisible();
+                await app.admin.attribute.removeAppliesToModal.cancelButton.click();
 
                 // * Still on the form, Save re-clickable, nothing sent to the server
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${field.id}$`));
-                await expect(page.getByTestId('saveSetting')).toBeEnabled();
+                await expect(app.admin.saveButton.locator).toBeEnabled();
 
                 const remaining = await fetchLinkedFieldsForTemplate(adminClient, field.id);
                 expect(remaining).toHaveLength(1);
@@ -2387,16 +2348,16 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 });
                 const linked = await createLinkedDependentField(adminClient, name, field.id, 'text', 'user');
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
 
-                await page.getByTestId('attributeAppliesToRow-user-toggle').click();
-                await page.getByTestId('attributeAppliesToRow-user-remove').click();
-                await expect(page.getByTestId('attributeAppliesToRow-user')).toHaveCount(0);
+                await app.admin.attribute.appliesTo.user.toggleButton.click();
+                await app.admin.attribute.appliesTo.user.removeButton.click();
+                await expect(app.admin.attribute.appliesTo.user.locator).toHaveCount(0);
 
                 // # Force the template PATCH to fail for a reason unrelated to type (e.g. a
                 // name conflict), without touching the DELETE/POST linked-field requests
@@ -2418,12 +2379,12 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     },
                 );
 
-                await page.getByTestId('saveSetting').click();
-                await expect(page.getByRole('dialog')).toBeVisible();
-                await page.getByRole('button', {name: 'Remove and save', exact: true}).click();
+                await app.admin.saveButton.click();
+                await expect(app.admin.attribute.removeAppliesToModal.locator).toBeVisible();
+                await app.admin.attribute.removeAppliesToModal.confirmButton.click();
 
                 // * Save reports failure and stays on the form
-                await expect(page.getByTestId('attributeSaveError')).toBeVisible();
+                await expect(app.admin.attribute.saveErrorAlert.locator).toBeVisible();
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${field.id}$`));
 
                 // * The linked field survives -- PATCH ran (and failed) before any DELETE could
@@ -2461,31 +2422,31 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     attrs: {display_name: renamingDisplayName},
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${renamingField.id}`).click();
-                await page.locator(`#global-attribute-actions-${renamingField.id}-edit`).click();
+                await app.admin.attributes.row(renamingField.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${renamingField.id}$`));
 
                 // # Rename the second attribute's Unique Name to the first attribute's Unique Name
-                await page.getByTestId('attributeNameEditLink').click();
-                const nameInput = page.getByTestId('attributeNameInput');
+                await app.admin.attribute.uniqueName.editButton.click();
+                const nameInput = app.admin.attribute.uniqueNameTextbox.locator;
                 await nameInput.fill(takenName);
                 await nameInput.press('Enter');
-                await expect(page.getByTestId('attributeUniqueNameValue')).toHaveText(takenName);
+                await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(takenName);
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
 
                 // * The real server 409 surfaces via the Save error banner, naming the conflicting
                 // attribute, and the admin stays on the form with Save re-clickable
-                const banner = page.getByTestId('attributeSaveError');
+                const banner = app.admin.attribute.saveErrorAlert.locator;
                 await expect(banner).toBeVisible();
                 await expect(banner).toContainText(takenName);
                 await expect(banner).toContainText('already exists');
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${renamingField.id}$`));
-                await expect(page.getByTestId('saveSetting')).toBeEnabled();
+                await expect(app.admin.saveButton.locator).toBeEnabled();
 
                 // * The rename was never persisted
                 const templates = await adminClient.getPropertyFields('access_control', 'template', {
@@ -2524,30 +2485,30 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                     },
                 });
 
-                const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-                const {page} = systemConsolePage;
+                const {app} = await pw.testBrowser.login(adminUser);
+                const {page} = app;
                 await page.goto(GLOBAL_ATTRIBUTES_ADMIN_PATH);
 
-                await page.getByTestId(`global-attribute-actions-${field.id}`).click();
-                await page.locator(`#global-attribute-actions-${field.id}-edit`).click();
+                await app.admin.attributes.row(field.id).actionsButton.click();
+                await app.admin.attributes.actionsMenu.editMenuItem.click();
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${field.id}$`));
 
-                const chipLabels = page.getByTestId('attributeOptionsValues__chipLabel');
-                await expect(chipLabels).toHaveText(['Engineering', 'Sales']);
+                const chips = app.admin.attribute.values.optionList;
+                await expect(chips).toHaveKeys(['Engineering', 'Sales']);
 
                 // # Add a new option to the already-persisted field
-                const optionsInput = page.getByTestId('attributeOptionsValues__addInput');
+                const optionsInput = app.admin.attribute.values.addTextbox.locator;
                 await optionsInput.fill('Marketing');
                 await optionsInput.press('Enter');
-                await expect(chipLabels).toHaveText(['Engineering', 'Sales', 'Marketing']);
+                await expect(chips).toHaveKeys(['Engineering', 'Sales', 'Marketing']);
 
-                // # Rename the existing "Sales" option (index 1) via its chip's popover
-                await page.getByTestId('attribute-option-chip-1').click();
-                const labelInput = page.getByRole('textbox', {name: 'Option label'});
+                // # Rename the existing "Sales" option via its chip's popover
+                await app.admin.attribute.values.option('Sales').editButton.click();
+                const labelInput = app.admin.attribute.values.optionMenu.labelTextbox.locator;
                 await expect(labelInput).toHaveValue('Sales');
                 await labelInput.fill('Retail');
                 await labelInput.press('Enter');
-                await expect(chipLabels).toHaveText(['Engineering', 'Retail', 'Marketing']);
+                await expect(chips).toHaveKeys(['Engineering', 'Retail', 'Marketing']);
 
                 // # Close the chip's popover (the rename already committed above)
                 await labelInput.press('Escape');
@@ -2557,18 +2518,18 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 await optionsInput.press('Enter');
 
                 // * Rejected -- a "Values must be unique." error appears and no fourth chip commits
-                await expect(page.getByRole('alert').filter({hasText: 'Values must be unique.'})).toBeVisible();
-                await expect(chipLabels).toHaveText(['Engineering', 'Retail', 'Marketing']);
+                await expect(app.admin.attribute.values.uniqueErrorAlert.locator).toHaveMessage(
+                    Msg.admin.global_attributes.attribute_details.options.values_unique,
+                );
+                await expect(chips).toHaveKeys(['Engineering', 'Retail', 'Marketing']);
                 await optionsInput.fill('');
 
-                await page.getByTestId('saveSetting').click();
+                await app.admin.saveButton.click();
                 await expect(page).toHaveURL(new RegExp(`${GLOBAL_ATTRIBUTES_ADMIN_PATH}$`));
 
                 // * The saved attribute reflects the edited options, both in the list and via the API
-                const row = page.locator('tr', {
-                    has: page.getByTestId('global-attribute-name').filter({hasText: displayName}),
-                });
-                await expect(row.getByTestId('global-attribute-options')).toContainText('3 options');
+                const row = await listedAttribute(app.admin.attributes, displayName);
+                await expect(app.admin.attributes.row(row.id).optionsText.locator).toContainText('3 options');
 
                 const templates = await adminClient.getPropertyFields('access_control', 'template', {
                     targetType: 'system',
@@ -2586,28 +2547,27 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
     });
 });
 
-function graphRow(page: Page, optionName: string, parentName = '') {
-    return page.locator(
-        `[data-testid="attributeOptionsGraphRow"][data-option-name="${optionName}"][data-parent-name="${parentName}"]`,
-    );
+/** A hierarchical attribute's row for `option`, keyed by its path: under `parent` when it has one. */
+function graphRow(app: App, option: string, parent = '') {
+    return app.admin.attribute.graph.row(parent ? `${parent}/${option}` : option);
 }
 
-async function openGraphRowAddChild(page: Page, optionName: string, parentName = '') {
-    const row = graphRow(page, optionName, parentName);
-    await row.hover();
-    await row.getByTestId('attributeOptionsGraphRow__addChild').click();
+async function openGraphRowAddChild(app: App, option: string, parent = '') {
+    const row = graphRow(app, option, parent);
+    await row.locator.hover();
+    await row.clickAddChildButton();
 }
 
-async function openGraphRowParents(page: Page, optionName: string, parentName = '') {
-    const row = graphRow(page, optionName, parentName);
-    await row.hover();
-    await row.getByTestId('attributeOptionsGraphRow__parents').click();
+async function openGraphRowParents(app: App, option: string, parent = '') {
+    const row = graphRow(app, option, parent);
+    await row.locator.hover();
+    await row.clickParentsButton();
 }
 
-async function openGraphRowDelete(page: Page, optionName: string, parentName = '') {
-    const row = graphRow(page, optionName, parentName);
-    await row.hover();
-    await row.getByTestId('attributeOptionsGraphRow__delete').click();
+async function openGraphRowDelete(app: App, option: string, parent = '') {
+    const row = graphRow(app, option, parent);
+    await row.locator.hover();
+    await row.clickDeleteButton();
 }
 
 // Polls getBoundingClientRect().height until two consecutive reads agree, so callers
@@ -2625,7 +2585,7 @@ async function waitForStableRectHeight(locator: Locator): Promise<number> {
                 lastHeight = height;
                 return isStable;
             },
-            {timeout: 2000, intervals: [50, 100, 150, 300]},
+            {intervals: [50, 100, 150, 300]},
         )
         .toBe(true);
 

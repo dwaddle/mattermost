@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
 import type {TextFieldMetadata} from 'components/properties_card_view/properties_card_view';
@@ -10,15 +12,16 @@ import type {TextFieldMetadata} from 'components/properties_card_view/properties
 type Props = {
     value: PropertyValue<unknown>;
     metadata?: TextFieldMetadata;
+    testIdScope?: TestId;
 };
 
-export default function TextPropertyRenderer({value, metadata}: Props) {
+export default function TextPropertyRenderer({value, metadata, testIdScope}: Props) {
     const isSet = value.value !== null && value.value !== undefined && value.value !== '';
 
     return (
         <span
             className='TextProperty'
-            data-testid='text-property'
+            data-testid={part(testIdScope, 'text', 'text')}
         >
             {isSet && String(value.value)}
 

@@ -37,7 +37,7 @@ function renderPane(
 }
 
 async function openParentsView() {
-    await userEvent.click(screen.getByTestId('attributeGraphParentsPane__openParents'));
+    await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.parents--menuitem'));
 }
 
 function isFollowing(earlier: Node, later: Node) {
@@ -52,7 +52,7 @@ function expectSeparatorBetween(before: HTMLElement, after: HTMLElement) {
 }
 
 async function openParentSearch() {
-    await userEvent.click(screen.getByTestId('attributeGraphParentsPane__search'));
+    await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.parents.search--textbox'));
 }
 
 describe('classifyParentCandidate', () => {
@@ -93,25 +93,25 @@ describe('AttributeGraphParentsPane', () => {
         renderPane(chain, 'B');
         await openParentsView();
 
-        expect(screen.getByTestId('attributeGraphParentsPane__back')).toHaveTextContent('Parents of B');
-        expect(screen.getByTestId('attributeGraphParentsPane__parentRow')).toHaveTextContent('A');
-        expect(screen.getByTestId('attributeGraphParentsPane__parentRow')).not.toHaveTextContent('sits under');
+        expect(screen.getByTestId('admin.attribute.graph.pane.back--button')).toHaveTextContent('Parents of B');
+        expect(screen.getByTestId(/^admin\.attribute\.graph\.pane\.parents\.edge:/)).toHaveTextContent('A');
+        expect(screen.getByTestId(/^admin\.attribute\.graph\.pane\.parents\.edge:/)).not.toHaveTextContent('sits under');
         expectSeparatorBetween(
-            screen.getByTestId('attributeGraphParentsPane__back'),
-            screen.getByTestId('attributeGraphParentsPane__parentRow'),
+            screen.getByTestId('admin.attribute.graph.pane.back--button'),
+            screen.getByTestId(/^admin\.attribute\.graph\.pane\.parents\.edge:/),
         );
         expectSeparatorBetween(
-            screen.getByTestId('attributeGraphParentsPane__parentRow'),
-            screen.getByTestId('attributeGraphParentsPane__search'),
+            screen.getByTestId(/^admin\.attribute\.graph\.pane\.parents\.edge:/),
+            screen.getByTestId('admin.attribute.graph.pane.parents.search--textbox'),
         );
-        expect(screen.getByTestId('attributeGraphParentsPane__search')).toHaveAttribute(
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents.search--textbox')).toHaveAttribute(
             'placeholder',
             'Add a parent, or type a new name…',
         );
-        expect(screen.queryByTestId('attributeGraphParentsPane__suggestions')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-A')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-B')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-C')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.parents.suggestions--list')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:A--button')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:B--button')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:C--button')).not.toBeInTheDocument();
         expect(screen.queryByText('Options below this one aren\'t listed')).not.toBeInTheDocument();
         expect(screen.queryByTestId('attributeGraphParentsPane__helper')).not.toBeInTheDocument();
     });
@@ -122,17 +122,17 @@ describe('AttributeGraphParentsPane', () => {
         await openParentsView();
         await openParentSearch();
 
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-A')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-B')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-C')).not.toBeInTheDocument();
-        expect(screen.getByTestId('attributeGraphParentsPane__empty')).toHaveTextContent('No parents yet.');
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:A--button')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:B--button')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:C--button')).not.toBeInTheDocument();
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents.empty--text')).toHaveTextContent('No parents yet.');
         expectSeparatorBetween(
-            screen.getByTestId('attributeGraphParentsPane__back'),
-            screen.getByTestId('attributeGraphParentsPane__empty'),
+            screen.getByTestId('admin.attribute.graph.pane.back--button'),
+            screen.getByTestId('admin.attribute.graph.pane.parents.empty--text'),
         );
         expectSeparatorBetween(
-            screen.getByTestId('attributeGraphParentsPane__empty'),
-            screen.getByTestId('attributeGraphParentsPane__search'),
+            screen.getByTestId('admin.attribute.graph.pane.parents.empty--text'),
+            screen.getByTestId('admin.attribute.graph.pane.parents.search--textbox'),
         );
     });
 
@@ -141,10 +141,10 @@ describe('AttributeGraphParentsPane', () => {
         renderPane(chain, 'C');
         await openParentsView();
 
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-A')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:A--button')).not.toBeInTheDocument();
         await openParentSearch();
-        expect(screen.queryByTestId('attributeGraphParentsPane__candidate-B')).not.toBeInTheDocument();
-        expect(screen.getByTestId('attributeGraphParentsPane__candidate-A')).toBeEnabled();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.candidate:B--button')).not.toBeInTheDocument();
+        expect(screen.getByTestId('admin.attribute.graph.pane.candidate:A--button')).toBeEnabled();
     });
 
     it('closes suggestions when search blurs, on outside click, and on Escape', async () => {
@@ -152,23 +152,23 @@ describe('AttributeGraphParentsPane', () => {
         renderPane(chain, 'C');
         await openParentsView();
 
-        const search = screen.getByTestId('attributeGraphParentsPane__search');
+        const search = screen.getByTestId('admin.attribute.graph.pane.parents.search--textbox');
         fireEvent.focus(search);
-        expect(screen.getByTestId('attributeGraphParentsPane__suggestions')).toBeInTheDocument();
-        expect(screen.getByTestId('attributeGraphParentsPane__suggestions').closest('.attribute-graph-parents-pane')).toBeNull();
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents.suggestions--list')).toBeInTheDocument();
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents.suggestions--list').closest('.attribute-graph-parents-pane')).toBeNull();
 
         fireEvent.blur(search);
-        expect(screen.queryByTestId('attributeGraphParentsPane__suggestions')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.parents.suggestions--list')).not.toBeInTheDocument();
 
         fireEvent.focus(search);
-        expect(screen.getByTestId('attributeGraphParentsPane__suggestions')).toBeInTheDocument();
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents.suggestions--list')).toBeInTheDocument();
         fireEvent.pointerDown(document.body);
-        expect(screen.queryByTestId('attributeGraphParentsPane__suggestions')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.parents.suggestions--list')).not.toBeInTheDocument();
 
         fireEvent.focus(search);
-        expect(screen.getByTestId('attributeGraphParentsPane__suggestions')).toBeInTheDocument();
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents.suggestions--list')).toBeInTheDocument();
         fireEvent.keyDown(search, {key: 'Escape'});
-        expect(screen.queryByTestId('attributeGraphParentsPane__suggestions')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('admin.attribute.graph.pane.parents.suggestions--list')).not.toBeInTheDocument();
     });
 
     it('closes suggestions on Escape when a candidate is focused', async () => {
@@ -176,13 +176,13 @@ describe('AttributeGraphParentsPane', () => {
         await openParentsView();
         await openParentSearch();
 
-        const candidate = screen.getByTestId('attributeGraphParentsPane__candidate-A');
+        const candidate = screen.getByTestId('admin.attribute.graph.pane.candidate:A--button');
         candidate.focus();
         expect(candidate).toHaveFocus();
         await userEvent.keyboard('{Escape}');
 
-        expect(screen.queryByTestId('attributeGraphParentsPane__suggestions')).not.toBeInTheDocument();
-        expect(screen.getByTestId('attributeGraphParentsPane__back')).toHaveTextContent('Parents of C');
+        expect(screen.queryByTestId('admin.attribute.graph.pane.parents.suggestions--list')).not.toBeInTheDocument();
+        expect(screen.getByTestId('admin.attribute.graph.pane.back--button')).toHaveTextContent('Parents of C');
     });
 
     it('portals the suggestion list outside the pane so search does not grow the menu', async () => {
@@ -202,13 +202,13 @@ describe('AttributeGraphParentsPane', () => {
         await openParentsView();
         const searchField = document.querySelector(`.${SEARCH_FIELD_CLASS}`) as HTMLElement;
         Object.defineProperty(searchField, 'offsetWidth', {configurable: true, value: 240});
-        Object.defineProperty(screen.getByTestId('attributeGraphParentsPane__search'), 'offsetWidth', {
+        Object.defineProperty(screen.getByTestId('admin.attribute.graph.pane.parents.search--textbox'), 'offsetWidth', {
             configurable: true,
             value: 200,
         });
         await openParentSearch();
 
-        const suggestions = screen.getByTestId('attributeGraphParentsPane__suggestions');
+        const suggestions = screen.getByTestId('admin.attribute.graph.pane.parents.suggestions--list');
         expect(document.body).toContainElement(suggestions);
         expect(suggestions.closest('[data-testid="attributeGraphParentsPane"]')).toBeNull();
         expect(suggestions.closest('.attribute-graph-parents-pane')).toBeNull();
@@ -223,10 +223,10 @@ describe('AttributeGraphParentsPane', () => {
         await openParentsView();
         await openParentSearch();
 
-        const candidate = screen.getByTestId('attributeGraphParentsPane__candidate-A');
+        const candidate = screen.getByTestId('admin.attribute.graph.pane.candidate:A--button');
         fireEvent.mouseDown(candidate);
         fireEvent.pointerDown(candidate);
-        expect(screen.getByTestId('attributeGraphParentsPane__suggestions')).toBeInTheDocument();
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents.suggestions--list')).toBeInTheDocument();
         await userEvent.click(candidate);
 
         await waitFor(() => {
@@ -239,7 +239,7 @@ describe('AttributeGraphParentsPane', () => {
         const {onOptionsChange} = renderPane(options, 'C');
         await openParentsView();
         await openParentSearch();
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__candidate-A'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.candidate:A--button'));
 
         await waitFor(() => {
             expect(onOptionsChange).toHaveBeenCalledWith(addParentEdge(options, 'C', 'A'));
@@ -251,8 +251,8 @@ describe('AttributeGraphParentsPane', () => {
         const options = [opt('A'), opt('B', ['A'])];
         const {onOptionsChange} = renderPane(options, 'B');
         await openParentsView();
-        await userEvent.type(screen.getByTestId('attributeGraphParentsPane__search'), 'West');
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__create'));
+        await userEvent.type(screen.getByTestId('admin.attribute.graph.pane.parents.search--textbox'), 'West');
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.parents.create--button'));
 
         await waitFor(() => {
             expect(onOptionsChange).toHaveBeenCalledWith(
@@ -266,7 +266,7 @@ describe('AttributeGraphParentsPane', () => {
         const {onOptionsChange} = renderPane(options, 'C');
         await openParentsView();
         await openParentSearch();
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__candidate-P'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.candidate:P--button'));
 
         await Promise.resolve();
         expect(onOptionsChange).not.toHaveBeenCalled();
@@ -279,7 +279,7 @@ describe('AttributeGraphParentsPane', () => {
         renderPane(options, 'C', onOptionsChangeTrue, {confirmGrant: confirmGrantTrue});
         await openParentsView();
         await openParentSearch();
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__candidate-P'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.candidate:P--button'));
 
         await waitFor(() => {
             expect(onOptionsChangeTrue).toHaveBeenCalledWith(addParentEdge(options, 'C', 'P'));
@@ -297,7 +297,7 @@ describe('AttributeGraphParentsPane', () => {
         const {onOptionsChange} = renderPane(options, 'C', jest.fn(), {confirmGrant: confirmGrantFalse});
         await openParentsView();
         await openParentSearch();
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__candidate-P'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.candidate:P--button'));
         await Promise.resolve();
         expect(onOptionsChange).not.toHaveBeenCalled();
         expect(confirmGrantFalse).toHaveBeenCalled();
@@ -307,7 +307,7 @@ describe('AttributeGraphParentsPane', () => {
         const options = [opt('A'), opt('B', ['A'])];
         const {onOptionsChange} = renderPane(options, 'B');
         await openParentsView();
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__parentRemove'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.parents.edge.remove--button'));
 
         expect(onOptionsChange).toHaveBeenCalledWith(removeParentEdge(options, 'B', 'A'));
         expect(onOptionsChange.mock.calls[0][0].find((o: PropertyFieldOption) => o.name === 'B')?.parents).toEqual([]);
@@ -317,7 +317,7 @@ describe('AttributeGraphParentsPane', () => {
     it('shows a Remove Parent tooltip on the parent-row close control', async () => {
         renderPane([opt('A'), opt('B', ['A'])], 'B');
         await openParentsView();
-        await userEvent.hover(screen.getByTestId('attributeGraphParentsPane__parentRemove'));
+        await userEvent.hover(screen.getByTestId('admin.attribute.graph.pane.parents.edge.remove--button'));
         expect(await screen.findByRole('tooltip', {hidden: true})).toHaveTextContent('Remove Parent');
     });
 
@@ -337,12 +337,12 @@ describe('AttributeGraphParentsPane', () => {
     it('shows an editable name, Parents and Children line items, and a delete icon on the main pane', () => {
         renderPane([opt('A'), opt('B', ['A'])], 'A');
 
-        expect(screen.getByTestId('attributeGraphParentsPane__nameInput')).toHaveValue('A');
-        expect(screen.getByTestId('attributeGraphParentsPane__openParents')).toHaveTextContent('Top level');
-        expect(screen.getByTestId('attributeGraphParentsPane__openChildren')).toHaveTextContent('1');
+        expect(screen.getByTestId('admin.attribute.graph.pane.name--textbox')).toHaveValue('A');
+        expect(screen.getByTestId('admin.attribute.graph.pane.parents--menuitem')).toHaveTextContent('Top level');
+        expect(screen.getByTestId('admin.attribute.graph.pane.children--menuitem')).toHaveTextContent('1');
         expectSeparatorBetween(
-            screen.getByTestId('attributeGraphParentsPane__nameInput'),
-            screen.getByTestId('attributeGraphParentsPane__openParents'),
+            screen.getByTestId('admin.attribute.graph.pane.name--textbox'),
+            screen.getByTestId('admin.attribute.graph.pane.parents--menuitem'),
         );
         expect(screen.getByRole('menuitem', {name: 'Delete this value'})).toBeInTheDocument();
         expect(screen.queryByTestId('attributeGraphParentsPane__children')).not.toBeInTheDocument();
@@ -360,7 +360,7 @@ describe('AttributeGraphParentsPane', () => {
         });
         renderPane([opt('A'), opt('B', ['A'])], 'A', jest.fn(), {onRename});
 
-        const input = screen.getByTestId('attributeGraphParentsPane__nameInput');
+        const input = screen.getByTestId('admin.attribute.graph.pane.name--textbox');
         await userEvent.clear(input);
         await userEvent.type(input, 'B{Enter}');
         expect(onRename).toHaveBeenCalledWith('A', 'B');
@@ -375,7 +375,7 @@ describe('AttributeGraphParentsPane', () => {
         const onRename = jest.fn(() => 'applied' as const);
         renderPane([opt('A')], 'A', jest.fn(), {onRename});
 
-        const input = screen.getByTestId('attributeGraphParentsPane__nameInput');
+        const input = screen.getByTestId('admin.attribute.graph.pane.name--textbox');
         await userEvent.clear(input);
         await userEvent.type(input, 'Temp{Escape}');
         expect(onRename).not.toHaveBeenCalled();
@@ -391,20 +391,20 @@ describe('AttributeGraphParentsPane', () => {
         const options = [opt('A'), opt('B', ['A']), opt('C', ['A'])];
         const {onOptionsChange} = renderPane(options, 'A');
 
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__openChildren'));
-        expect(screen.getByTestId('attributeGraphParentsPane__back')).toHaveTextContent('Children of A');
-        expect(screen.getByTestId('attributeGraphParentsPane__childSearch')).toHaveAttribute(
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.children--menuitem'));
+        expect(screen.getByTestId('admin.attribute.graph.pane.back--button')).toHaveTextContent('Children of A');
+        expect(screen.getByTestId('admin.attribute.graph.pane.children.search--textbox')).toHaveAttribute(
             'placeholder',
             'Add a child, or type a new name…',
         );
-        const childRows = screen.getAllByTestId('attributeGraphParentsPane__childRow');
+        const childRows = screen.getAllByTestId(/^admin\.attribute\.graph\.pane\.children\.edge:/);
         expect(childRows.map((row) => row.textContent)).toEqual(
             expect.arrayContaining(['B', 'C']),
         );
-        expectSeparatorBetween(screen.getByTestId('attributeGraphParentsPane__back'), childRows[0]);
-        expectSeparatorBetween(childRows[childRows.length - 1], screen.getByTestId('attributeGraphParentsPane__childSearch'));
+        expectSeparatorBetween(screen.getByTestId('admin.attribute.graph.pane.back--button'), childRows[0]);
+        expectSeparatorBetween(childRows[childRows.length - 1], screen.getByTestId('admin.attribute.graph.pane.children.search--textbox'));
 
-        await userEvent.click(screen.getAllByTestId('attributeGraphParentsPane__childRemove')[0]);
+        await userEvent.click(screen.getAllByTestId('admin.attribute.graph.pane.children.edge.remove--button')[0]);
         expect(onOptionsChange).toHaveBeenCalledWith(removeParentEdge(options, 'B', 'A'));
     });
 
@@ -412,18 +412,18 @@ describe('AttributeGraphParentsPane', () => {
         const options = [opt('A')];
         const {onOptionsChange} = renderPane(options, 'A');
 
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__openChildren'));
-        expect(screen.getByTestId('attributeGraphParentsPane__childrenEmpty')).toHaveTextContent('No children yet.');
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.children--menuitem'));
+        expect(screen.getByTestId('admin.attribute.graph.pane.children.empty--text')).toHaveTextContent('No children yet.');
         expectSeparatorBetween(
-            screen.getByTestId('attributeGraphParentsPane__back'),
-            screen.getByTestId('attributeGraphParentsPane__childrenEmpty'),
+            screen.getByTestId('admin.attribute.graph.pane.back--button'),
+            screen.getByTestId('admin.attribute.graph.pane.children.empty--text'),
         );
         expectSeparatorBetween(
-            screen.getByTestId('attributeGraphParentsPane__childrenEmpty'),
-            screen.getByTestId('attributeGraphParentsPane__childSearch'),
+            screen.getByTestId('admin.attribute.graph.pane.children.empty--text'),
+            screen.getByTestId('admin.attribute.graph.pane.children.search--textbox'),
         );
-        await userEvent.type(screen.getByTestId('attributeGraphParentsPane__childSearch'), 'Wing');
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__createChild'));
+        await userEvent.type(screen.getByTestId('admin.attribute.graph.pane.children.search--textbox'), 'Wing');
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.children.create--button'));
 
         expect(onOptionsChange).toHaveBeenCalledWith(addChildOption(options, 'Wing', 'A'));
     });
@@ -435,12 +435,12 @@ describe('AttributeGraphParentsPane', () => {
         const leaf = `L${GRAPH_MAX_DEPTH - 1}`;
         const {onOptionsChange} = renderPane(options, leaf);
 
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__openChildren'));
-        await userEvent.type(screen.getByTestId('attributeGraphParentsPane__childSearch'), 'Overflow');
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__createChild'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.children--menuitem'));
+        await userEvent.type(screen.getByTestId('admin.attribute.graph.pane.children.search--textbox'), 'Overflow');
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.children.create--button'));
 
         await waitFor(() => {
-            expect(screen.getByTestId('attributeGraphParentsPane__alert')).toHaveTextContent(
+            expect(screen.getByTestId('admin.attribute.graph.pane.alert--alert')).toHaveTextContent(
                 `Adding this parent pushes "Overflow" to depth ${GRAPH_MAX_DEPTH + 1}; the limit is 100.`,
             );
         });
@@ -451,12 +451,12 @@ describe('AttributeGraphParentsPane', () => {
         const options = [opt('A'), opt('B')];
         const {onOptionsChange} = renderPane(options, 'A');
 
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__openChildren'));
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__childSearch'));
-        const childSuggestions = screen.getByTestId('attributeGraphParentsPane__childSuggestions');
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.children--menuitem'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.children.search--textbox'));
+        const childSuggestions = screen.getByTestId('admin.attribute.graph.pane.children.suggestions--list');
         expect(document.body).toContainElement(childSuggestions);
         expect(childSuggestions.closest('.attribute-graph-parents-pane')).toBeNull();
-        await userEvent.click(screen.getByTestId('attributeGraphParentsPane__candidate-B'));
+        await userEvent.click(screen.getByTestId('admin.attribute.graph.pane.candidate:B--button'));
 
         await waitFor(() => {
             expect(onOptionsChange).toHaveBeenCalledWith(addParentEdge(options, 'B', 'A'));
@@ -472,7 +472,7 @@ describe('GraphParentEdgeAlert', () => {
                 parentName='B'
                 childName='A'
                 className='attribute-graph-parents-pane__alert'
-                testId='attributeGraphParentsPane__alert'
+                testId='admin.attribute.graph.pane.alert--alert'
             />,
         );
         expect(screen.getByRole('alert')).toHaveTextContent(
@@ -488,7 +488,7 @@ describe('GraphParentEdgeAlert', () => {
                 parentName='B'
                 childName='A'
                 className='attribute-graph-parents-pane__alert'
-                testId='attributeGraphParentsPane__alert'
+                testId='admin.attribute.graph.pane.alert--alert'
             />,
         );
         expect(screen.getByRole('alert')).toHaveTextContent(
@@ -505,7 +505,7 @@ describe('GraphParentEdgeAlert', () => {
                 parentName='B'
                 childName='A'
                 className='attribute-graph-parents-pane__alert'
-                testId='attributeGraphParentsPane__alert'
+                testId='admin.attribute.graph.pane.alert--alert'
             />,
         );
         expect(screen.getByRole('alert')).toHaveTextContent('An option can have at most 100 parents.');
@@ -518,7 +518,7 @@ describe('GraphParentEdgeAlert', () => {
                 parentName='A'
                 childName='A'
                 className='attribute-graph-parents-pane__alert'
-                testId='attributeGraphParentsPane__alert'
+                testId='admin.attribute.graph.pane.alert--alert'
             />,
         );
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();

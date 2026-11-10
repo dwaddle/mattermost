@@ -4,6 +4,8 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import './report_notice.scss';
 
 type Props = {
@@ -11,7 +13,7 @@ type Props = {
     icon: React.ReactNode;
     title: React.ReactNode;
     body: React.ReactNode;
-    testId?: string;
+    testId?: TestId;
 };
 
 export default function ReportNotice({variant, icon, title, body, testId}: Props) {

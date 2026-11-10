@@ -8,6 +8,7 @@ import {css} from 'styled-components';
 
 import {CheckIcon, ChevronRightIcon, CloseCircleIcon} from '@mattermost/compass-icons/components';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import RankBadge from 'components/admin_console/system_properties/rank_badge';
 import {moveOptionByAscIndex, nextRank, sortOptionsByRankAsc} from 'components/admin_console/system_properties/rank_utils';
@@ -60,7 +61,7 @@ const AttributeOptionsRankValues = ({options, onOptionsChange, disabled = false}
     return (
         <div
             className='attribute-options-rank-values'
-            data-testid='attributeOptionsRankValues'
+            data-testid='admin.attribute.ranks'
         >
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- mousedown only forwards focus to the keyboard-accessible add input */}
             <div
@@ -89,7 +90,7 @@ const AttributeOptionsRankValues = ({options, onOptionsChange, disabled = false}
                         ref={addInputRef}
                         type='text'
                         className='attribute-options-rank-values__add-input'
-                        data-testid='attributeOptionsRankValues__addInput'
+                        data-testid='admin.attribute.ranks.add--textbox'
                         value={query}
                         maxLength={maxOptionNameLength}
                         aria-label={placeholderText}
@@ -184,9 +185,12 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
     return (
         <span
             className='attribute-options-rank-values__chip'
-            data-testid='attributeOptionsRankValues__chip'
+            data-testid={`admin.attribute.ranks.option:${textTestKey(option.name)}`}
         >
-            <RankBadge rank={option.rank}/>
+            <RankBadge
+                rank={option.rank}
+                testId='admin.attribute.ranks.option.badge'
+            />
             <Menu.Container
                 menuButton={{
                     id: chipId,
@@ -195,10 +199,10 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
                     children: (
                         <span
                             className='attribute-options-rank-values__chip-label'
-                            data-testid='attributeOptionsRankValues__chipLabel'
+                            data-testid='admin.attribute.ranks.option.label--text'
                         >{option.name}</span>
                     ),
-                    dataTestId: chipId,
+                    dataTestId: 'admin.attribute.ranks.option.edit--button',
                 }}
                 menu={{
                     id: `${chipId}-popover`,
@@ -212,6 +216,7 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
                 <Menu.InputItem
                     key='label'
                     id={`${chipId}-label`}
+                    testId='admin.attribute.ranks.option_menu.label'
                     type='text'
                     customStyles={labelInputCustomStyles}
                     value={label}
@@ -238,6 +243,7 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
                 />
                 <Menu.SubMenu
                     id={`${chipId}-rank`}
+                    data-testid='admin.attribute.ranks.option_menu.rank--menuitem'
                     menuId={`${chipId}-rank-menu`}
                     labels={(
                         <span>{formatMessage({
@@ -257,6 +263,7 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
                         <Menu.Item
                             key={rankValue}
                             id={`${chipId}-rank-${position}`}
+                            data-testid={`admin.attribute.ranks.option_menu.rank:${rankValue}--menuitemradio`}
                             role='menuitemradio'
                             forceCloseOnSelect={true}
                             aria-checked={position === ascIndex}
@@ -270,7 +277,7 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
             <button
                 type='button'
                 className='attribute-options-rank-values__chip-remove'
-                data-testid={`${chipId}-remove`}
+                data-testid='admin.attribute.ranks.option.remove--button'
                 onClick={() => onRemove(ascIndex)}
                 aria-label={removeLabel}
                 disabled={disabled}

@@ -102,11 +102,17 @@ const SearchableSyncJobChannelList = (props: Props) => {
         const syncChangesDisplay = channelSyncData ? (
             <div className='changes-cell'>
                 <span className='changes-summary'>
-                    <span className='added'>
+                    <span
+                        className='added'
+                        data-testid='job_details_modal.channels.channel.added--text'
+                    >
                         {'+' + (channelSyncData.MembersAdded?.length || 0)}
                     </span>
                     {' / '}
-                    <span className='removed'>
+                    <span
+                        className='removed'
+                        data-testid='job_details_modal.channels.channel.removed--text'
+                    >
                         {'-' + (channelSyncData.MembersRemoved?.length || 0)}
                     </span>
                 </span>
@@ -118,7 +124,7 @@ const SearchableSyncJobChannelList = (props: Props) => {
                 className='more-modal__row job-sync-row'
                 key={channel.id}
                 id={`ChannelRow-${channel.name}`}
-                data-testid={`ChannelRow-${channel.name}`}
+                data-testid={`job_details_modal.channels.channel:${channel.name}`}
                 aria-label={ariaLabel}
                 onClick={() => handleRowClick(channel)}
                 tabIndex={0}

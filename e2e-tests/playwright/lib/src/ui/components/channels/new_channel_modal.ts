@@ -31,6 +31,18 @@ export default class NewChannelModal {
         this.classificationSwitch = new Switch(container, 'new_channel_modal.classification--switch');
     }
 
+    /** A channel attribute's row (`new_channel_modal.attributes.attribute:<field id>`). */
+    attributeRow(field: {id: string}) {
+        return this.container.getByTestId(`new_channel_modal.attributes.attribute:${field.id}`);
+    }
+
+    /** A channel attribute's control: a dropdown, a textbox, or a graph picker's button. */
+    attributeControl(field: {id: string}) {
+        return this.attributeRow(field).getByTestId(
+            /^new_channel_modal\.attributes\.attribute\.value(--button|--textbox)?$/,
+        );
+    }
+
     async toBeVisible() {
         await expect(this.container).toBeVisible();
     }

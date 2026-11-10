@@ -9,6 +9,8 @@ import type {IntlShape} from 'react-intl';
 
 import {Combobox} from '@mattermost/compass-ui/components/combobox';
 import type {ComboboxOption} from '@mattermost/compass-ui/components/combobox';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FieldType, PropertyFieldOption} from '@mattermost/types/properties';
 
 import {sortOptionsByRank} from 'mattermost-redux/utils/property_utils';
@@ -84,8 +86,7 @@ export type AttributeComboboxProps = {
     options: PropertyFieldOption[];
     id?: string;
 
-    /** Test ID of the input, and prefix for the option and clear-button test IDs. */
-    testId?: string;
+    testIdScope?: TestId;
     disabled?: boolean;
     invalid?: boolean;
 
@@ -118,13 +119,24 @@ function optionRank(option: PropertyFieldOption, type: AttributeComboboxType): n
     return type === 'rank' && typeof option.rank === 'number' ? option.rank : undefined;
 }
 
-function optionVisual(option: PropertyFieldOption, type: AttributeComboboxType): ReactElement | undefined {
+// A row's visual is `<scope>.choice.swatch` or `.choice.badge`; the closed field's own is `<scope>.swatch` or `.badge`.
+function optionVisual(option: PropertyFieldOption, type: AttributeComboboxType, testIdScope: TestId | undefined, inRow: boolean): ReactElement | undefined {
     if (option.color) {
-        return <AttributeOptionSwatch color={option.color}/>;
+        return (
+            <AttributeOptionSwatch
+                color={option.color}
+                testId={part(testIdScope, inRow ? 'choice.swatch' : 'swatch')}
+            />
+        );
     }
     const rank = optionRank(option, type);
     if (rank !== undefined) {
-        return <RankBadge rank={rank}/>;
+        return (
+            <RankBadge
+                rank={rank}
+                testId={part(testIdScope, inRow ? 'choice.badge' : 'badge')}
+            />
+        );
     }
     return undefined;
 }
@@ -133,9 +145,9 @@ function toComboboxOptions(
     options: readonly PropertyFieldOption[],
     type: AttributeComboboxType,
     formatMessage: IntlShape['formatMessage'],
-    testIdPrefix?: string,
+    testIdScope?: TestId,
 ): ComboboxOption[] {
-    const visuals = options.map((option) => optionVisual(option, type));
+    const visuals = options.map((option) => optionVisual(option, type, testIdScope, true));
 
     // Compass reserves the leading slot per row, so rows without a visual need a placeholder to stay aligned.
     // Not in a multiselect: Compass copies a row's visual into its chip, where a placeholder is an empty gap.
@@ -147,13 +159,13 @@ function toComboboxOptions(
         // Compass hides leading visuals from assistive tech, so the rank goes in the row's name instead.
         const rank = optionRank(option, type);
         comboboxOption.menuItemProps = {
-            'data-testid': testIdPrefix ? `${testIdPrefix}-option-${option.id}` : undefined,
+            'data-testid': part(testIdScope, 'choice', {key: option.id}, 'option'),
             'aria-label': rank === undefined ? undefined : formatMessage(messages.rankedOption, {name: option.name, rank}),
         };
         if (visuals[index]) {
             comboboxOption.leadingVisual = visuals[index];
         } else if (reserveSlot) {
-            comboboxOption.leadingVisual = <AttributeOptionVisualPlaceholder/>;
+            comboboxOption.leadingVisual = <AttributeOptionVisualPlaceholder testId={part(testIdScope, 'choice.placeholder')}/>;
         }
         return comboboxOption;
     });
@@ -166,7 +178,7 @@ export function AttributeCombobox({
     label,
     options,
     id,
-    testId,
+    testIdScope,
     disabled,
     invalid,
     required,
@@ -188,8 +200,8 @@ export function AttributeCombobox({
     }), [formatMessage, label]);
     const orderedOptions = useMemo(() => (type === 'rank' ? sortOptionsByRank(options) : options), [options, type]);
     const comboboxOptions = useMemo(
-        () => toComboboxOptions(orderedOptions, type, formatMessage, testId),
-        [orderedOptions, type, formatMessage, testId],
+        () => toComboboxOptions(orderedOptions, type, formatMessage, testIdScope),
+        [orderedOptions, type, formatMessage, testIdScope],
     );
     const rankDescriptionId = useId();
 
@@ -205,7 +217,7 @@ export function AttributeCombobox({
         () => (multiple ? undefined : options.find((option) => option.id === values[0])),
         [multiple, options, values],
     );
-    const leadingIcon = useMemo(() => (selected ? optionVisual(selected, type) : undefined), [selected, type]);
+    const leadingIcon = useMemo(() => (selected ? optionVisual(selected, type, testIdScope, false) : undefined), [selected, type, testIdScope]);
 
     // The leading icon is hidden from assistive tech too, so the closed field describes its rank.
     const selectedRank = selected ? optionRank(selected, type) : undefined;
@@ -229,7 +241,7 @@ export function AttributeCombobox({
         <>
             <Combobox
                 id={id}
-                data-testid={testId}
+                data-testid={part(testIdScope, 'value', 'combobox')}
                 aria-label={label}
                 aria-describedby={describedBy}
                 className={classNames('AttributeCombobox', className)}
@@ -238,7 +250,7 @@ export function AttributeCombobox({
                 value={multiple ? values : values[0] ?? ''}
                 selectedOptions={selectedOptions}
                 clearable={true}
-                clearButtonProps={{'data-testid': testId ? `${testId}-clear` : undefined}}
+                clearButtonProps={{'data-testid': part(testIdScope, 'clear', 'button')}}
                 disabled={disabled}
                 invalid={invalid}
                 required={required}

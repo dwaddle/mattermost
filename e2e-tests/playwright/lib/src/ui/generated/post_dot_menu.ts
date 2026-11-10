@@ -11,6 +11,7 @@ import {Scope, drivers} from '../../aria';
 import {Api} from './api';
 import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
 import {DeletePostModal} from './delete_post_modal';
+import {FlagPostModal} from './flag_post_modal';
 import {ForwardPostModal} from './forward_post_modal';
 import type {PostDotMenuOption} from './sets';
 
@@ -124,7 +125,7 @@ export class PostDotMenu extends Scope {
     /**
      * `post_dot_menu.flag--menuitem` — DotMenuClass (channels/src/components/dot_menu/dot_menu.tsx)
      * Renders only when showFlagContent.
-     * Opens modal FlagPostModal.
+     * Opens modal FlagPostModal (`flag_post_modal`).
      */
     get flagMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.flag--menuitem`), {
@@ -136,8 +137,10 @@ export class PostDotMenu extends Scope {
         });
     }
 
-    async clickFlagMenuItem(): Promise<void> {
+    /** Clicks flagMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickFlagMenuItem(): Promise<FlagPostModal> {
         await this.flagMenuItem.click();
+        return new FlagPostModal(this.page, 'flag_post_modal');
     }
 
     /**

@@ -7,6 +7,8 @@ import {FormattedMessage} from 'react-intl';
 import {AlertOutlineIcon, DownloadOutlineIcon} from '@mattermost/compass-icons/components';
 import {Button, type ButtonEmphasis} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {Client4} from 'mattermost-redux/client';
 
@@ -14,11 +16,12 @@ import './data_spillage_download_report.scss';
 
 type Props = {
     flaggedPostId: string;
+    testIdScope?: TestId;
 };
 
 type Status = 'idle' | 'generating' | 'error';
 
-export default function DataSpillageDownloadReport({flaggedPostId}: Props) {
+export default function DataSpillageDownloadReport({flaggedPostId, testIdScope}: Props) {
     const [status, setStatus] = useState<Status>('idle');
     const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -118,7 +121,7 @@ export default function DataSpillageDownloadReport({flaggedPostId}: Props) {
     return (
         <div
             className='DataSpillageDownloadReport'
-            data-testid='data-spillage-download-report'
+            data-testid={testIdScope}
         >
             <Button
                 type='button'
@@ -128,7 +131,7 @@ export default function DataSpillageDownloadReport({flaggedPostId}: Props) {
                 onClick={handleClick}
                 disabled={status === 'generating'}
                 loading={status === 'generating'}
-                data-testid='data-spillage-action-download-report'
+                data-testid={part(testIdScope, 'download', 'button')}
                 leadingIcon={icon}
             >
                 {label}

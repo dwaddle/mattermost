@@ -5,6 +5,9 @@ import React from 'react';
 import type {MessageDescriptor} from 'react-intl';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import * as Menu from 'components/menu';
 import Input from 'components/widgets/inputs/input/input';
 
@@ -18,7 +21,7 @@ type Props<T extends string> = {
 
     // Prefixes the element ids and names the input; must be unique on the page.
     id: string;
-    testId: string;
+    testId: TestId;
     label: MessageDescriptor;
     menuButtonAriaLabel: MessageDescriptor;
     menuAriaLabel: MessageDescriptor;
@@ -39,7 +42,7 @@ export default function FilterMenu<T extends string>({id, testId, label, menuBut
                 menuButton={{
                     id: `${id}Button`,
                     class: 'inputWithMenu',
-                    dataTestId: testId,
+                    dataTestId: withRole(testId, 'button'),
                     'aria-label': formatMessage(menuButtonAriaLabel),
                     as: 'div',
                     children: (

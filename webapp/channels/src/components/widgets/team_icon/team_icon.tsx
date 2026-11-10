@@ -37,7 +37,7 @@ type Props = {
     /** react-intl helper object */
     intl: IntlShape;
 
-    /** The icon's path: `.icon--img` or `.initials--img`; hosts that don't pass one yet (the team sidebar, content flagging's reviewers and the properties card) keep the legacy `teamIconImage` and `teamIconInitial`. */
+    /** The icon's path: `.icon--img` or `.initials--img`; hosts that don't pass one yet (the team sidebar, content flagging's reviewers and the permission schemes' team list) keep the legacy `teamIconImage` and `teamIconInitial`. */
     testIdScope?: TestId;
 };
 

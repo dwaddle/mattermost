@@ -3,7 +3,7 @@
 
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, Msg, test} from '@mattermost/playwright-lib';
 
 import {
     deleteClassificationFieldsIfExist,
@@ -20,10 +20,21 @@ import {
     purgeAttributes,
     setChannelValue,
 } from './helpers';
+import {
+    bannerToken,
+    bannerTokenNames,
+    clearBannerText,
+    expectBanner,
+    insertBannerToken,
+    openChannel,
+    openChannelSettingsConfiguration,
+    removeBannerToken,
+    setBannerColor,
+    typeBannerText,
+} from './surface';
 
 const BANNER_COLOR = '#1e325c';
 const CUSTOM_COLOR = '#3a7d44';
-const COLOR_INPUT = '#channel_banner_banner_background_color_picker-inputColorValue';
 
 // The channel-linked classification field is always named this.
 const CLASSIFICATION = 'classification';
@@ -56,43 +67,42 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
                 {field_id: channelFieldId, value: level.id},
             ] as never);
 
-            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, adminUser, team, channel);
 
-            let settings = await channelsPage.openChannelSettings();
-            let configuration = await settings.openConfigurationTab();
-            let colorInput = configuration.container.locator(COLOR_INPUT);
+            let settings = await openChannelSettingsConfiguration(app);
+            let configuration = settings.configuration;
+            let colorInput = configuration.bannerColor.valueTextbox.locator;
 
             // * Classification is in the banner, so its colour is authoritative
-            await expect(configuration.bannerTokenChip(CLASSIFICATION)).toBeVisible();
+            await expect((await bannerToken(configuration, CLASSIFICATION)).locator).toBeVisible();
             await expect(colorInput).toBeDisabled();
             await expect(colorInput).toHaveValue(level.color.toUpperCase());
 
             // # Take classification out of the banner
-            await configuration.removeBannerToken(CLASSIFICATION);
+            await removeBannerToken(configuration, CLASSIFICATION);
 
             // * Nothing would display, so there is nothing to colour yet
             await expect(colorInput).toBeDisabled();
 
             // # Author a banner of its own
-            await configuration.typeBannerText('Handle with care');
+            await typeBannerText(app, configuration, 'Handle with care');
 
             // * The colour is the channel's again
             await expect(colorInput).toBeEnabled();
-            await configuration.setChannelBannerBackgroundColor(CUSTOM_COLOR.replace('#', ''));
-            await configuration.save();
-            await settings.close();
+            await setBannerColor(configuration, CUSTOM_COLOR.replace('#', ''));
+            await settings.savePanel.clickSaveButton();
+            await settings.clickCloseButton();
+            await expect(settings.locator).not.toBeVisible();
 
             // * Members see the channel's colour, not the classification's
-            await expect(channelsPage.centerView.channelBanner).toHaveText('Handle with care');
-            await channelsPage.centerView.assertChannelBanner('Handle with care', CUSTOM_COLOR);
+            await expectBanner(app.center.channelBanner, 'Handle with care', CUSTOM_COLOR);
 
             // # Put classification back
-            settings = await channelsPage.openChannelSettings();
-            configuration = await settings.openConfigurationTab();
-            colorInput = configuration.container.locator(COLOR_INPUT);
+            settings = await openChannelSettingsConfiguration(app);
+            configuration = settings.configuration;
+            colorInput = configuration.bannerColor.valueTextbox.locator;
             await expect(colorInput).toBeEnabled();
-            await configuration.insertBannerToken(CLASSIFICATION);
+            await insertBannerToken(configuration, {id: channelFieldId, name: CLASSIFICATION});
 
             // * The picker locks to the classification colour again
             await expect(colorInput).toBeDisabled();
@@ -128,17 +138,17 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, adminUser, team, channel);
 
             // # Remove every attribute from the banner and switch it off
-            let settings = await channelsPage.openChannelSettings();
-            let configuration = await settings.openConfigurationTab();
-            await expect(configuration.bannerTokenChip(marking.name)).toBeVisible();
-            await configuration.clearBannerText();
-            await configuration.disableChannelBanner();
-            await configuration.save();
-            await settings.close();
+            let settings = await openChannelSettingsConfiguration(app);
+            let configuration = settings.configuration;
+            await expect((await bannerToken(configuration, marking.name)).locator).toBeVisible();
+            await clearBannerText(configuration);
+            await configuration.setBannerSwitch(false);
+            await settings.savePanel.clickSaveButton();
+            await settings.clickCloseButton();
+            await expect(settings.locator).not.toBeVisible();
 
             // * The emptied text is what was stored
             const stored = await adminClient.getChannel(channel.id);
@@ -146,16 +156,16 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
             expect(stored.banner_info?.enabled).toBe(false);
 
             // # Switch the banner back on
-            settings = await channelsPage.openChannelSettings();
-            configuration = await settings.openConfigurationTab();
-            await configuration.enableChannelBanner();
+            settings = await openChannelSettingsConfiguration(app);
+            configuration = settings.configuration;
+            await configuration.setBannerSwitch(true);
 
             // * The designated attribute is not seeded back in. Anchored on the
             // * attributes menu: once it is offered the fields have loaded, which is
             // * when seeding would have happened.
-            await expect(configuration.bannerTokenButton).toBeVisible();
-            await expect(configuration.bannerTextEditor).toHaveText('');
-            await expect(configuration.bannerTokenChip(marking.name)).toHaveCount(0);
+            await expect(configuration.bannerText.insertButton.locator).toBeVisible();
+            await expect(configuration.bannerTextTextbox.locator).toHaveText('');
+            expect(await bannerTokenNames(configuration)).not.toContain(marking.name);
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -186,31 +196,30 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, adminUser, team, channel);
 
-            const settings = await channelsPage.openChannelSettings();
-            const configuration = await settings.openConfigurationTab();
-            const unsaved = configuration.container.getByText('You have unsaved changes');
+            const settings = await openChannelSettingsConfiguration(app);
+            const configuration = settings.configuration;
+            const unsaved = settings.savePanel.messageText;
 
             // # Save a first edit, and let the saved notice close. Typed into a cleared
             // # editor: End does not reliably land the caret after a trailing chip.
-            await configuration.clearBannerText();
-            await configuration.typeBannerText('first');
-            await expect(unsaved).toBeVisible();
-            await configuration.save();
-            await expect(unsaved).toHaveCount(0);
+            await clearBannerText(configuration);
+            await typeBannerText(app, configuration, 'first');
+            await expect(unsaved).toHaveMessage(Msg.saveChangesPanel.message);
+            await settings.savePanel.clickSaveButton();
+            await expect(unsaved).not.toHaveMessage(Msg.saveChangesPanel.message);
 
             // # Edit the text again, then the colour
-            await configuration.typeBannerText(' · second');
+            await typeBannerText(app, configuration, ' · second');
 
             // * The tab reports the new edit
-            await expect(unsaved).toBeVisible();
-            await configuration.save();
-            await expect(unsaved).toHaveCount(0);
+            await expect(unsaved).toHaveMessage(Msg.saveChangesPanel.message);
+            await settings.savePanel.clickSaveButton();
+            await expect(unsaved).not.toHaveMessage(Msg.saveChangesPanel.message);
 
-            await configuration.setChannelBannerBackgroundColor(CUSTOM_COLOR.replace('#', ''));
-            await expect(unsaved).toBeVisible();
+            await setBannerColor(configuration, CUSTOM_COLOR.replace('#', ''));
+            await expect(unsaved).toHaveMessage(Msg.saveChangesPanel.message);
         } finally {
             await deleteAttributes(adminClient, created);
         }
@@ -242,39 +251,36 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: channel.name});
+            const app = await openChannel(pw, adminUser, team, channel);
 
             // * The attribute drives the banner before anyone touches the settings
-            await channelsPage.centerView.assertChannelBanner('SECRET', BANNER_COLOR);
+            await expectBanner(app.center.channelBanner, 'SECRET', BANNER_COLOR);
 
             // # Switch the banner off
-            let settings = await channelsPage.openChannelSettings();
-            let configuration = await settings.openConfigurationTab();
-            await expect(
-                configuration.container.getByTestId('channel_settings_modal.configuration.banner--switch'),
-            ).toBeChecked();
-            await configuration.disableChannelBanner();
-            await configuration.save();
-            await settings.close();
+            let settings = await openChannelSettingsConfiguration(app);
+            let configuration = settings.configuration;
+            await expect(configuration.bannerSwitch.locator).toBeChecked();
+            await configuration.setBannerSwitch(false);
+            await settings.savePanel.clickSaveButton();
+            await settings.clickCloseButton();
+            await expect(settings.locator).not.toBeVisible();
 
             // * No banner, and off is what was stored
-            await channelsPage.centerView.assertChannelBannerNotVisible();
+            await expect(app.center.channelBanner.locator).not.toBeVisible();
             expect((await adminClient.getChannel(channel.id)).banner_info?.enabled).toBe(false);
 
             // # Switch it back on
-            settings = await channelsPage.openChannelSettings();
-            configuration = await settings.openConfigurationTab();
-            await expect(
-                configuration.container.getByTestId('channel_settings_modal.configuration.banner--switch'),
-            ).not.toBeChecked();
-            await configuration.enableChannelBanner();
-            await configuration.save();
-            await settings.close();
+            settings = await openChannelSettingsConfiguration(app);
+            configuration = settings.configuration;
+            await expect(configuration.bannerSwitch.locator).not.toBeChecked();
+            await configuration.setBannerSwitch(true);
+            await settings.savePanel.clickSaveButton();
+            await settings.clickCloseButton();
+            await expect(settings.locator).not.toBeVisible();
 
             // * The banner is back. Saving it stores the colour the picker showed, so
             // * only the text is the attribute's.
-            await expect(page.getByTestId('center.channel_banner.text--text')).toHaveText('SECRET');
+            await expect(app.center.channelBanner.textText.locator).toHaveText('SECRET');
             expect((await adminClient.getChannel(channel.id)).banner_info?.enabled).toBe(true);
         } finally {
             await deleteAttributes(adminClient, created);

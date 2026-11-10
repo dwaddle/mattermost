@@ -5,13 +5,14 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {PropertyFieldOption} from '@mattermost/types/properties';
 
 import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {DeactivateAccountModal} from './deactivate_account_modal';
-import {ConfirmModal, Input, TokenExpiryPicker} from './shared';
+import {Choice, ConfirmModal, Input, TokenExpiryPicker} from './shared';
 import type {
     SettingsKeyword,
     SettingsOption,
@@ -43,10 +44,12 @@ export type SettingsSectionItemFormValues = {
     lastName?: string;
     newEmail?: string;
     username?: string;
-    value?: string;
+    valueCombobox?: string;
+    valueTextbox?: string;
 };
 /** The read-only parts of a `settings.section` item. */
 export type SettingsSectionItemRow = {
+    badge: string | null;
     managedByAdmin: string | null;
     serverError: string | null;
 };
@@ -743,6 +746,24 @@ export class SettingsSectionItem extends Scope {
     }
 
     /**
+     * `settings.section.badge--text` — RankBadge (channels/src/components/admin_console/system_properties/rank_badge.tsx)
+     * Renders only when !(rank === undefined || rank === null) and rank !== undefined and !(this.props.customProfileAttributeFields == null).
+     */
+    get badgeText() {
+        return drivers.text(this.byTestId(`${this.scope}.badge--text`), {
+            testId: `${this.scope}.badge--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge',
+        });
+    }
+
+    getBadgeText(): Promise<string> {
+        return this.badgeText.text();
+    }
+
+    /**
      * `settings.section.cancel--button` — SettingItemMax (channels/src/components/setting_item_max.tsx)
      * Opens modal ConfirmModal (`settings.discard_changes`).
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
@@ -761,6 +782,24 @@ export class SettingsSectionItem extends Scope {
     async clickCancelButton(): Promise<ConfirmModal> {
         await this.cancelButton.click();
         return new ConfirmModal(this.page, 'settings.discard_changes');
+    }
+
+    /**
+     * `settings.section.clear--button` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
+     */
+    get clearButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
+            testId: `${this.scope}.clear--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async clickClearButton(): Promise<void> {
+        await this.clearButton.click();
     }
 
     /**
@@ -1273,6 +1312,20 @@ export class SettingsSectionItem extends Scope {
     }
 
     /**
+     * `settings.section.swatch` — AttributeOptionSwatch (channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx)
+     * Renders only when option.color and !(this.props.customProfileAttributeFields == null) and active.
+     */
+    get swatch() {
+        return drivers.container(this.byTestId(`${this.scope}.swatch`), {
+            testId: `${this.scope}.swatch`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch',
+        });
+    }
+
+    /**
      * `settings.section.switch_to:{key}--link` — SecurityTab (channels/src/components/user_settings/security/user_settings_security.tsx)
      * Renders only when active.
      * Goes to '/claim/email_to_ldap?email=' + encodeURIComponent(user.ema….
@@ -1359,6 +1412,24 @@ export class SettingsSectionItem extends Scope {
     }
 
     /**
+     * `settings.section.value--combobox` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
+     */
+    get valueCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.value--combobox`), {
+            testId: `${this.scope}.value--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox',
+        });
+    }
+
+    async chooseValueCombobox(option: string | RegExp): Promise<void> {
+        await this.valueCombobox.choose(option);
+    }
+
+    /**
      * `settings.section.value--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
      * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
      */
@@ -1374,6 +1445,28 @@ export class SettingsSectionItem extends Scope {
 
     async fillValueTextbox(value: string): Promise<void> {
         await this.valueTextbox.fill(value);
+    }
+
+    /**
+     * `settings.section.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * Renders only when !(this.props.customProfileAttributeFields == null) and active and !isReadOnly.
+     */
+    choice(choice: Pick<PropertyFieldOption, 'id'>): Choice {
+        return new Choice(
+            this.page,
+            `${this.scope}.choice`,
+            this.byTestId(`${this.scope}.choice:${choice.id}--option`, true),
+        );
+    }
+
+    /** Every `settings.section.choice:{key}--option` in the scope. */
+    get choiceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** The keys of every `settings.section.choice:{key}--option` in the scope, in document order. */
+    choiceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.choice:`, '--option', true);
     }
 
     /**
@@ -1474,14 +1567,18 @@ export class SettingsSectionItem extends Scope {
         if (values.username !== undefined) {
             await this.usernameTextbox.fill(values.username);
         }
-        if (values.value !== undefined) {
-            await this.valueTextbox.fill(values.value);
+        if (values.valueCombobox !== undefined) {
+            await this.valueCombobox.choose(values.valueCombobox);
+        }
+        if (values.valueTextbox !== undefined) {
+            await this.valueTextbox.fill(values.valueTextbox);
         }
     }
 
     /** Reads the item's read-only parts (`null` where one isn't rendered). */
     async read(): Promise<SettingsSectionItemRow> {
         return {
+            badge: await this.badgeText.textIfPresent(),
             managedByAdmin: await this.managedByAdminText.textIfPresent(),
             serverError: await this.serverErrorText.textIfPresent(),
         };
@@ -1562,6 +1659,21 @@ export class SettingsSectionItem extends Scope {
                 unknownEffects: false,
                 source: 'channels/src/components/user_settings/security/user_settings_security.tsx#SecurityTab',
             }),
+        );
+    }
+
+    /** Every `settings.section.choice:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.choiceList).toHaveKeys([…])`. */
+    get choiceList() {
+        return this.keyedList(
+            `${this.scope}.choice:`,
+            '--option',
+            (key: string) =>
+                new Choice(
+                    this.page,
+                    `${this.scope}.choice`,
+                    this.byTestId(`${this.scope}.choice:${key}--option`, true),
+                ),
+            true,
         );
     }
 

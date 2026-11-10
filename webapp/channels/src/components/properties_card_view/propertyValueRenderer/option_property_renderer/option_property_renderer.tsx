@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyValue} from '@mattermost/types/properties';
 
 import {resolveOptionChipColors} from 'utils/property_option_colors';
@@ -14,13 +16,15 @@ type Props = {
     field: PropertyField;
     value: PropertyValue<unknown>;
     maxItems?: number;
+
+    testIdScope?: TestId;
 };
 
 /**
  * The chip renderer for every option-bearing field: `select`, `rank` and
  * `multiselect`. One `.SelectProperty` chip per resolved option.
  */
-export default function OptionPropertyRenderer({field, value, maxItems}: Props) {
+export default function OptionPropertyRenderer({field, value, maxItems, testIdScope}: Props) {
     const chips = resolveOptionChips(field, value.value);
 
     // Cap after resolving, not before. `resolveOptionChips` has already dropped the
@@ -38,7 +42,7 @@ export default function OptionPropertyRenderer({field, value, maxItems}: Props) 
                     <div
                         key={key}
                         className='SelectProperty'
-                        data-testid='select-property'
+                        data-testid={part(testIdScope, 'select', 'text')}
                         style={{backgroundColor, color}}
                     >
                         {chip.label}

@@ -547,6 +547,10 @@ export default class ChannelsPage {
     }
 
     async getFlaggedPostViewDetailButton(flaggedPostId: string) {
-        return this.page.getByTestId(`data-spillage-action-view-details_${flaggedPostId}`);
+        // the report card that shows this flagged post, then its footer's View details
+        return this.page
+            .getByTestId(/\.post\.spillage_report$/)
+            .filter({has: this.page.locator(`#postMessageText_${flaggedPostId}`)})
+            .getByTestId(/\.spillage_report\.footer\.view_details--button$/);
     }
 }

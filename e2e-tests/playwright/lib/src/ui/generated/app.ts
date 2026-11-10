@@ -17,12 +17,14 @@ import {Admin} from './admin';
 import {AppBar} from './app_bar';
 import {AppsForm} from './apps_form';
 import {ArchiveChannelModal} from './archive_channel_modal';
+import {AttributeModal} from './attribute_modal';
 import {Backstage} from './backstage';
 import {BotTokenDeleteModal} from './bot_token_delete_modal';
 import {BotTokenRegenerateModal} from './bot_token_regenerate_modal';
 import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
 import {Center} from './center';
 import {ChannelAccessRulesConfirmModal} from './channel_access_rules_confirm_modal';
+import {ChannelActivityWarningModal} from './channel_activity_warning_modal';
 import {ChannelHeader} from './channel_header';
 import {ChannelInviteModal} from './channel_invite_modal';
 import {ChannelMembersModal} from './channel_members_modal';
@@ -30,6 +32,7 @@ import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {ChannelSelectorModal} from './channel_selector_modal';
 import {ChannelSettingsModal} from './channel_settings_modal';
 import {Claim} from './claim';
+import {ClassificationBanner} from './classification_banner';
 import {ConvertGmToChannelModal} from './convert_gm_to_channel_modal';
 import {CreateUserGroupsModal} from './create_user_groups_modal';
 import {CustomStatusModal} from './custom_status_modal';
@@ -42,17 +45,21 @@ import {DeletePostModal} from './delete_post_modal';
 import {DeleteScheduledPostModal} from './delete_scheduled_post_modal';
 import {DenyJoinRequestModal} from './deny_join_request_modal';
 import {DirectMessagesModal} from './direct_messages_modal';
+import {DiscardChangesModal} from './discard_changes_modal';
 import {Drafts} from './drafts';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {EmojiGifPicker} from './emoji_gif_picker';
 import {EmojiPicker} from './emoji_picker';
 import {ErrorView} from './error_view';
 import {FilePreviewModal} from './file_preview_modal';
+import {FlagPostModal} from './flag_post_modal';
+import {FlaggedMessageModal} from './flagged_message_modal';
 import {ForwardPostModal} from './forward_post_modal';
 import {GifPicker} from './gif_picker';
 import {GlobalHeader} from './global_header';
 import {Integrations} from './integrations';
 import {InvitationModal} from './invitation_modal';
+import {JobDetailsModal} from './job_details_modal';
 import {Latex} from './latex';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {LeaveTeamModal} from './leave_team_modal';
@@ -108,7 +115,9 @@ import {
 } from './pages';
 import {PasswordReset} from './password_reset';
 import {Plugin} from './plugin';
+import {PolicySelectionModal} from './policy_selection_modal';
 import {PolicyTestModal} from './policy_test_modal';
+import {PostAttributes} from './post_attributes';
 import {PostDotMenu} from './post_dot_menu';
 import {PostEdit} from './post_edit';
 import {PostPriorityPicker} from './post_priority_picker';
@@ -187,7 +196,7 @@ export class App extends Scope {
     }
 
     get admin(): Admin {
-        return new Admin(this.page, 'admin', this.root);
+        return new Admin(this.page, 'admin');
     }
 
     /**
@@ -213,6 +222,13 @@ export class App extends Scope {
      */
     get archiveChannelModal(): ArchiveChannelModal {
         return new ArchiveChannelModal(this.page, 'archive_channel_modal', this.root);
+    }
+
+    /**
+     * `attribute_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get attributeModal(): AttributeModal {
+        return new AttributeModal(this.page, 'attribute_modal', this.root);
     }
 
     get backstage(): Backstage {
@@ -246,8 +262,19 @@ export class App extends Scope {
         return new Center(this.page, 'center', this.root);
     }
 
+    /**
+     * `channel_access_rules_confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when hasChanges.
+     */
     get channelAccessRulesConfirmModal(): ChannelAccessRulesConfirmModal {
         return new ChannelAccessRulesConfirmModal(this.page, 'channel_access_rules_confirm_modal', this.root);
+    }
+
+    /**
+     * `channel_activity_warning_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get channelActivityWarningModal(): ChannelActivityWarningModal {
+        return new ChannelActivityWarningModal(this.page, 'channel_activity_warning_modal', this.root);
     }
 
     get channelHeader(): ChannelHeader {
@@ -286,11 +313,15 @@ export class App extends Scope {
      * `channel_settings_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
     get channelSettingsModal(): ChannelSettingsModal {
-        return new ChannelSettingsModal(this.page, 'channel_settings_modal', this.root);
+        return new ChannelSettingsModal(this.page, 'channel_settings_modal');
     }
 
     get claim(): Claim {
         return new Claim(this.page, 'claim', this.root);
+    }
+
+    get classificationBanner(): ClassificationBanner {
+        return new ClassificationBanner(this.page, 'classification_banner', this.root);
     }
 
     get convertGmToChannelModal(): ConvertGmToChannelModal {
@@ -369,6 +400,13 @@ export class App extends Scope {
         return new DirectMessagesModal(this.page, 'direct_messages_modal', this.root);
     }
 
+    /**
+     * `discard_changes_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get discardChangesModal(): DiscardChangesModal {
+        return new DiscardChangesModal(this.page, 'discard_changes_modal', this.root);
+    }
+
     get drafts(): Drafts {
         return new Drafts(this.page, 'drafts', this.root);
     }
@@ -404,6 +442,20 @@ export class App extends Scope {
     }
 
     /**
+     * `flag_post_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get flagPostModal(): FlagPostModal {
+        return new FlagPostModal(this.page, 'flag_post_modal', this.root);
+    }
+
+    /**
+     * `flagged_message_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get flaggedMessageModal(): FlaggedMessageModal {
+        return new FlaggedMessageModal(this.page, 'flagged_message_modal', this.root);
+    }
+
+    /**
      * `forward_post_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
     get forwardPostModal(): ForwardPostModal {
@@ -428,6 +480,13 @@ export class App extends Scope {
      */
     get invitationModal(): InvitationModal {
         return new InvitationModal(this.page, 'invitation_modal', this.root);
+    }
+
+    /**
+     * `job_details_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get jobDetailsModal(): JobDetailsModal {
+        return new JobDetailsModal(this.page, 'job_details_modal', this.root);
     }
 
     get latex(): Latex {
@@ -537,8 +596,22 @@ export class App extends Scope {
         return new Plugin(this.page, 'plugin', this.root);
     }
 
+    /**
+     * `policy_selection_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get policySelectionModal(): PolicySelectionModal {
+        return new PolicySelectionModal(this.page, 'policy_selection_modal', this.root);
+    }
+
+    /**
+     * `policy_test_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
     get policyTestModal(): PolicyTestModal {
         return new PolicyTestModal(this.page, 'policy_test_modal', this.root);
+    }
+
+    get postAttributes(): PostAttributes {
+        return new PostAttributes(this.page, 'post_attributes', this.root);
     }
 
     /**
@@ -678,6 +751,9 @@ export class App extends Scope {
         return new UserSettingsModal(this.page, 'user_settings_modal', this.root);
     }
 
+    /**
+     * `user_sync_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
     get userSyncModal(): UserSyncModal {
         return new UserSyncModal(this.page, 'user_sync_modal', this.root);
     }

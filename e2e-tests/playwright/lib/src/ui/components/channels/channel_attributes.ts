@@ -4,30 +4,23 @@
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
-/**
- * Which of the channel header's two chip slots to address: 'header' is the row
- * under the channel name, 'info' the inline strip beside the member count. Each
- * slot carries its own test ids, since both can be on screen at once.
- *
- * 'info-header' is the merged row the thread chrome uses, where the two slots
- * share one row so overflow is decided once.
- */
-export type ChannelAttributeSurface = 'header' | 'info' | 'info-header';
+type Field = {id: string};
 
 /**
- * The attribute chips in one channel header slot.
+ * The attribute chips in one place (`channel_header.attributes`, `rhs.thread.header.attributes`,
+ * `threads.pane.attributes`). Chips are keyed by position, since their values are typed by admins.
  */
 export class ChannelAttributeLabels {
     readonly container: Locator;
-    readonly surface: ChannelAttributeSurface;
+    readonly scope: string;
 
-    constructor(container: Locator, surface: ChannelAttributeSurface) {
+    constructor(container: Locator, scope: string) {
         this.container = container;
-        this.surface = surface;
+        this.scope = scope;
     }
 
     get chips() {
-        return this.container.getByTestId('attributeChip');
+        return this.container.getByTestId(new RegExp(`^${this.scope.replace(/\./g, '\\.')}\\.chip:\\d+$`));
     }
 
     chip(value: string) {
@@ -35,11 +28,12 @@ export class ChannelAttributeLabels {
     }
 
     get overflowButton() {
-        return this.container.getByTestId(`channelAttributeLabelsOverflow-${this.surface}`);
+        return this.container.getByTestId(`${this.scope}.overflow--button`);
     }
 
+    /** Portalled to the body. */
     get popover() {
-        return this.container.page().getByTestId(`channelAttributeLabelsPopover-${this.surface}`);
+        return this.container.page().getByTestId(`${this.scope}.overflow_popover`);
     }
 
     async toBeVisible() {
@@ -62,67 +56,75 @@ export class ChannelAttributeLabels {
 }
 
 /**
- * The Channel Attributes block in the Channel Info panel, including its inline editors.
- * Locators key off the machine name, which is what the product puts in every test id.
+ * The Channel Attributes block in the Channel Info panel and the channel settings Info tab, including its
+ * inline editors. Rows are keyed by field id (names are typed by admins); a row's parts are under
+ * `<scope>.attribute`, and values by position.
  */
 export class ChannelInfoAttributes {
     readonly container: Locator;
+    readonly scope: string;
 
-    constructor(container: Locator) {
+    constructor(container: Locator, scope: string) {
         this.container = container;
+        this.scope = scope;
     }
 
-    row(name: string) {
-        return this.container.getByTestId(`channelInfoAttributeRow-${name}`);
+    row(field: Field) {
+        return this.container.getByTestId(`${this.scope}.attribute:${field.id}`);
     }
 
     /**
      * The displayed value. An editable text value renders as plain text inside its
      * edit button; every other value, and a read-only text one, renders as a chip.
      */
-    chip(name: string) {
-        return this.row(name)
-            .getByTestId('attributeChip')
-            .or(this.row(name).getByTestId(`channelInfoAttributeTextValue-${name}`));
+    chip(field: Field) {
+        return this.row(field)
+            .getByTestId(`${this.scope}.attribute.chip:0`)
+            .or(this.row(field).getByTestId(`${this.scope}.attribute.value--text`));
     }
 
-    editButton(name: string) {
-        return this.row(name).getByTestId(`channelInfoAttributeEdit-${name}`);
+    editButton(field: Field) {
+        return this.row(field).getByTestId(`${this.scope}.attribute.edit--button`);
     }
 
-    // Page-wide: a select's options render in a menu portalled to the body, outside
-    // the row. The test id is unique either way.
-    editor(name: string) {
-        return this.container.page().getByTestId(`channelAttributeEdit-${name}`);
+    /**
+     * Page-wide: a select's options render in a menu portalled to the body, outside the row, and only one
+     * editor is open at a time. The text input, or a select's first option.
+     */
+    editor(field: Field) {
+        const page = this.container.page();
+        return this.row(field)
+            .getByTestId(`${this.scope}.attribute.editor--textbox`)
+            .or(page.getByTestId(`${this.scope}.attribute.edit_menu.option:0--menuitem`));
     }
 
-    error(name: string) {
-        return this.container.getByTestId(`channelInfoAttributeError-${name}`);
+    error(field: Field) {
+        return this.row(field).getByTestId(`${this.scope}.attribute.error--alert`);
     }
 
-    lock(name: string) {
-        return this.container.getByTestId(`channelInfoAttributeLock-${name}`);
+    lock(field: Field) {
+        return this.row(field).getByTestId(`${this.scope}.attribute.locked`);
     }
 
-    unset(name: string) {
-        return this.container.getByTestId(`channelInfoAttributeUnset-${name}`);
+    unset(field: Field) {
+        return this.row(field).getByTestId(`${this.scope}.attribute.unset--text`);
     }
 
     get addButton() {
-        return this.container.getByTestId('channelInfoAddAttributeButton');
+        return this.container.getByTestId(`${this.scope}.add--button`);
     }
 
-    addMenuItem(name: string) {
-        return this.container.page().getByTestId(`channelInfoAddAttribute-${name}`);
+    addMenuItem(field: Field) {
+        return this.container.page().getByTestId(`${this.scope}.add_menu.attribute:${field.id}--menuitem`);
     }
 
     async toBeVisible() {
         await expect(this.container).toBeVisible();
     }
 
-    async startEditing(name: string) {
-        await this.editButton(name).click();
-        await expect(this.editor(name)).toBeVisible();
+    async startEditing(field: Field) {
+        await this.editButton(field).click();
+        await expect(this.editor(field)).toBeVisible();
     }
 
     /**
@@ -130,10 +132,10 @@ export class ChannelInfoAttributes {
      * successful write and deliberately keeps it open on a failed one, so callers
      * assert the outcome they expect.
      */
-    async setText(name: string, text: string, commit: 'enter' | 'blur' | 'escape' = 'enter') {
-        await this.startEditing(name);
+    async setText(field: Field, text: string, commit: 'enter' | 'blur' | 'escape' = 'enter') {
+        await this.startEditing(field);
 
-        const input = this.editor(name);
+        const input = this.editor(field);
         await input.fill(text);
 
         if (commit === 'enter') {
@@ -150,11 +152,11 @@ export class ChannelInfoAttributes {
     }
 
     /**
-     * editor(name) on a select field is the first menu option, not a combobox, so
+     * editor(field) on a select field is the first menu option, not a combobox, so
      * clicking it would pick that option. Options are picked by name instead.
      */
-    async select(name: string, option: string) {
-        await this.startEditing(name);
+    async select(field: Field, option: string) {
+        await this.startEditing(field);
         await this.pickOption(option);
     }
 
@@ -166,8 +168,8 @@ export class ChannelInfoAttributes {
      * The trigger's own chip carries the remove control -- no need to reopen
      * the menu first, and removing does not open it either.
      */
-    async deselect(name: string, option: string) {
-        await this.row(name)
+    async deselect(field: Field, option: string) {
+        await this.row(field)
             .getByRole('button', {name: `Remove ${option}`, exact: true})
             .click();
     }
@@ -176,14 +178,14 @@ export class ChannelInfoAttributes {
      * A text attribute opens its input as soon as it is added; a select one lands as
      * a closed "Not set" row, so its menu is opened here.
      */
-    async add(name: string, option?: string) {
+    async add(field: Field, option?: string) {
         await this.addButton.click();
-        await this.addMenuItem(name).click();
-        await expect(this.editor(name).or(this.unset(name))).toBeVisible();
-        if (!(await this.editor(name).isVisible())) {
-            await this.editButton(name).click();
+        await this.addMenuItem(field).click();
+        await expect(this.editor(field).or(this.unset(field))).toBeVisible();
+        if (!(await this.editor(field).isVisible())) {
+            await this.editButton(field).click();
         }
-        await expect(this.editor(name)).toBeVisible();
+        await expect(this.editor(field)).toBeVisible();
 
         if (option !== undefined) {
             await this.pickOption(option);

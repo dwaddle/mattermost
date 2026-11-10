@@ -1,12 +1,13 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {Api, expect, settle, test, duration} from '@mattermost/playwright-lib';
 
 import {
     deleteCustomProfileAttributes,
     setupCustomProfileAttributeFields,
 } from '../../../channels/custom_profile_attributes/helpers';
+import {openPolicy} from '../surface';
 import {
     assertAccessControlAutocompleteContains,
     createPrivateChannelForABAC,
@@ -19,7 +20,6 @@ import {
     createParentPolicyViaAPI,
     deleteParentPolicy,
     deletePropertyFieldQuietly,
-    openPolicyEditor,
     setChannelAttributeValue,
 } from './helpers';
 
@@ -56,7 +56,7 @@ test.describe('ABAC resource.attributes - test picker', {tag: ['@abac', '@abac_r
     });
 
     test('picker resolves a resource rule against the chosen channel', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
         await pw.ensureFeatureFlag('ResourceAttributesInPolicies', true);
 
@@ -91,50 +91,41 @@ test.describe('ABAC resource.attributes - test picker', {tag: ['@abac', '@abac_r
         // Fail fast if the editor won't see the attribute (keeps the Test button disabled).
         await assertAccessControlAutocompleteContains(adminClient, [attr]);
 
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        const page = systemConsolePage.page;
-        await openPolicyEditor(page, policyId);
+        const {app} = await pw.testBrowser.login(adminUser);
+        const policy = await openPolicy(app, policyId);
+        const {testButton} = policy.rules;
+        await expect(testButton.locator).toBeEnabled({timeout: duration.half_min});
+        await policy.rules.clickTestButton();
+        const modal = app.policyTestModal;
 
-        const testButton = page.getByRole('button', {name: /test access rule/i});
-        await expect(testButton).toBeVisible({timeout: 10000});
-        await expect(testButton).toBeEnabled({timeout: 15000});
-        await testButton.click();
+        // # Picker step: no channel scope on the parent, so the picker precedes the members list
+        const picker = modal.channelPicker;
+        await expect(picker.searchTextbox.locator).toBeVisible();
+        await picker.fillSearchTextbox(channelUS.display_name);
+        await picker.channel(channelUS).click();
 
-        const modal = page.locator('.TestResultsModal');
+        // * Members step: the rule now resolves against channelUS (region == "us")
+        await expect(picker.locator).not.toBeVisible();
+        await expect(modal.backButton.locator).toBeVisible();
 
-        // Picker step: no channel scope on the parent, so the picker precedes the
-        // members list.
-        await expect(modal.getByText('Select a channel to test against')).toBeVisible({timeout: 10000});
-        const channelSearch = modal.locator('.TestChannelPicker__search-input');
-        await channelSearch.fill(channelUS.display_name);
-        const channelRow = modal.locator('.TestChannelPicker__row', {hasText: channelUS.display_name});
-        await expect(channelRow).toBeVisible({timeout: 10000});
-        await channelRow.click();
-
-        // Members step: the rule now resolves against channelUS (region == "us").
-        await expect(modal.getByText('Access Rule Test Results')).toBeVisible({timeout: 10000});
-        await expect(modal.locator('.TestResultsModal__back')).toBeVisible();
-
-        const memberSearch = modal.locator('input[placeholder*="Search" i]').first();
+        const {users} = modal;
         await expect(async () => {
-            await memberSearch.fill(userUS.username);
-            await expect(modal.locator('.more-modal__name', {hasText: userUS.username})).toBeVisible({timeout: 3000});
-        }).toPass({timeout: 60000, intervals: [3000]});
+            await users.fillSearchTextbox(userUS.username);
+            await expect(users.user(userUS).locator).toBeVisible({timeout: duration.four_sec});
+        }).toPass({timeout: duration.one_min, intervals: [3000]});
 
-        // The non-matching user (region == "eu") is not admitted against this channel.
+        // * The non-matching user (region == "eu") is not admitted against this channel.
         // Wait for the search round-trip before asserting absence: the previous
         // row is cleared the moment the term changes, so toHaveCount(0) would
         // pass on that intermediate empty render even if userEU were admitted.
-        const euSearch = page.waitForResponse(
-            (r) => r.url().includes('/access_control_policies/cel/test') && r.request().method() === 'POST',
-            {timeout: 15000},
-        );
-        await memberSearch.fill(userEU.username);
-        await euSearch;
-        await expect(modal.locator('.more-modal__name', {hasText: userEU.username})).toHaveCount(0);
+        await settle(users.searchTextbox, (box) => box.fill(userEU.username), {
+            wait: Api.TestAccessControlPolicyExpression,
+            unlisted: true,
+        });
+        await expect(users.user(userEU).locator).toHaveCount(0);
 
-        // The back arrow returns to the picker (only present because it preceded).
-        await modal.locator('.TestResultsModal__back').click();
-        await expect(modal.getByText('Select a channel to test against')).toBeVisible({timeout: 10000});
+        // # The back arrow returns to the picker (only present because it preceded)
+        await modal.clickBackButton();
+        await expect(picker.searchTextbox.locator).toBeVisible();
     });
 });

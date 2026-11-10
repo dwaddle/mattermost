@@ -19,12 +19,8 @@ type Props = {
     isDisabled?: boolean;
     savingMessage?: string;
 
-    /**
-     * The panel's path: `.save--button`, `.cancel--link` (or `.cancel--button`), `.error--text`. Hosts that don't
-     * pass one yet (the attributes and classification markings pages) keep the legacy `saveSetting` and
-     * `saveChangesPanel-errorMessage`.
-     */
-    testId?: TestId;
+    /** The panel's path: `.save--button`, `.cancel--link` (or `.cancel--button`), `.error--text`. */
+    testId: TestId;
 } & (
     {cancelLink: string; onCancel?: never} |
     {cancelLink?: never; onCancel: () => void} |
@@ -83,7 +79,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
             )}
             <div
                 className='error-message'
-                data-testid={testId ? `${testId}.error--text` : 'saveChangesPanel-errorMessage'}
+                data-testid={part(testId, 'error', 'text')}
             >
                 {serverError}
             </div>

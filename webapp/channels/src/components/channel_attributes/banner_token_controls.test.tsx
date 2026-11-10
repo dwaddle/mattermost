@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {screen, waitFor} from '@testing-library/react';
+import {screen, waitFor, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -12,6 +12,8 @@ import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities
 import {renderWithContext} from 'tests/react_testing_utils';
 
 import BannerTokenControls from './banner_token_controls';
+
+const T = 'channel_settings_modal.configuration.banner_text';
 
 function attribute(name: string, displayValue: string, displayName?: string): ResolvedChannelAttribute {
     const field = {
@@ -58,12 +60,13 @@ describe('BannerTokenControls', () => {
     test('renders nothing when the channel has no attributes to offer', () => {
         renderWithContext(
             <BannerTokenControls
+                testId={T}
                 attributes={[]}
                 onInsertToken={jest.fn()}
             />,
         );
 
-        expect(screen.queryByTestId('bannerAttributeTokenButton')).not.toBeInTheDocument();
+        expect(screen.queryByTestId(`${T}.insert--button`)).not.toBeInTheDocument();
     });
 
     test('offers each attribute by its display name and inserts its machine-name token', async () => {
@@ -72,12 +75,13 @@ describe('BannerTokenControls', () => {
 
         renderWithContext(
             <BannerTokenControls
+                testId={T}
                 attributes={[attribute('caveat', 'NOFORN', 'Caveat / Releasability')]}
                 onInsertToken={onInsertToken}
             />,
         );
 
-        await userEvent.click(screen.getByTestId('bannerAttributeTokenButton'));
+        await userEvent.click(screen.getByTestId(`${T}.insert--button`));
 
         const items = await screen.findAllByRole('menuitem');
         const caveat = items.find((item) => item.textContent?.includes('Caveat / Releasability'));
@@ -96,16 +100,19 @@ describe('BannerTokenControls', () => {
 
         renderWithContext(
             <BannerTokenControls
+                testId={T}
                 attributes={[attribute('program', 'AURORA'), attribute('caveat', '')]}
                 onInsertToken={jest.fn()}
             />,
         );
 
-        await userEvent.click(screen.getByTestId('bannerAttributeTokenButton'));
+        await userEvent.click(screen.getByTestId(`${T}.insert--button`));
 
         // Only the attribute with no value is flagged.
-        expect(await screen.findByTestId('bannerAttributeTokenUnset-caveat')).toBeInTheDocument();
-        expect(screen.queryByTestId('bannerAttributeTokenUnset-program')).not.toBeInTheDocument();
+        const caveatItem = await screen.findByTestId(`${T}.insert_menu.attribute:field_caveat--menuitem`);
+        const programItem = screen.getByTestId(`${T}.insert_menu.attribute:field_program--menuitem`);
+        expect(within(caveatItem).getByTestId(`${T}.insert_menu.attribute.unset`)).toBeInTheDocument();
+        expect(within(programItem).queryByTestId(`${T}.insert_menu.attribute.unset`)).not.toBeInTheDocument();
 
         // The icon is not the only carrier: the state is part of each item's name.
         expect(screen.getByRole('menuitem', {name: /program.*Value on this channel: AURORA/})).toBeInTheDocument();
@@ -119,11 +126,12 @@ describe('BannerTokenControls', () => {
             <BannerTokenControls
                 attributes={[attribute('program', 'AURORA')]}
                 onInsertToken={jest.fn()}
+                testId={T}
                 channelKind='board'
             />,
         );
 
-        await userEvent.click(screen.getByTestId('bannerAttributeTokenButton'));
+        await userEvent.click(screen.getByTestId(`${T}.insert--button`));
 
         expect(await screen.findByRole('menu', {name: 'Board attributes'})).toBeInTheDocument();
         expect(screen.getByRole('menuitem', {name: /program.*Value on this board: AURORA/})).toBeInTheDocument();
@@ -132,12 +140,13 @@ describe('BannerTokenControls', () => {
     test('disables insertion when the banner fields are locked', () => {
         renderWithContext(
             <BannerTokenControls
+                testId={T}
                 attributes={[attribute('program', 'AURORA')]}
                 onInsertToken={jest.fn()}
                 disabled={true}
             />,
         );
 
-        expect(screen.getByTestId('bannerAttributeTokenButton')).toBeDisabled();
+        expect(screen.getByTestId(`${T}.insert--button`)).toBeDisabled();
     });
 });

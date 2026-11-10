@@ -6,6 +6,8 @@ import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import {Checkbox} from '@mattermost/compass-ui/components/checkbox';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {isChannelAttributesRequiredEnabled} from 'mattermost-redux/selectors/entities/general';
 
@@ -30,6 +32,9 @@ type Props = {
     ordered?: boolean;
 
     disabled?: boolean;
+
+    // Each host page names where the settings sit, e.g. `admin.attribute.applies_to.channel.settings`.
+    testIdScope?: TestId;
 };
 
 /**
@@ -39,7 +44,7 @@ type Props = {
  * Never dispatches and never saves. Two hosts render it — the Applies-to card's
  * Channels row and the Classification page — and each owns its own Save.
  */
-const ChannelsResourceSettings = ({value, onChange, ordered, disabled}: Props) => {
+const ChannelsResourceSettings = ({value, onChange, ordered, disabled, testIdScope}: Props) => {
     const intl = useIntl();
     const {formatMessage} = intl;
 
@@ -83,7 +88,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled}: Props) =
     return (
         <div
             className='ChannelsResourceSettings'
-            data-testid='channelsResourceSettings'
+            data-testid={testIdScope}
         >
             {requiredEnforcementEnabled && (
                 <div className='ChannelsResourceSettings__field'>
@@ -108,7 +113,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled}: Props) =
                                     disabled={disabled}
                                     onChange={handleRequiredToggle}
                                     aria-label={formatMessage(messages.requiredLabel)}
-                                    data-testid='channelsResourceRequired-button'
+                                    data-testid={part(testIdScope, 'required', 'switch')}
                                 />
                                 <span
                                     className='ChannelsResourceSettings__switchKnob'
@@ -144,7 +149,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled}: Props) =
                                     checked={checked}
                                     disabled={disabled}
                                     onChange={(e) => handleLocationChange(location, e.target.checked)}
-                                    data-testid={`channelsResourceLocation-${location}`}
+                                    data-testid={part(testIdScope, 'location', {key: location}, 'checkbox')}
                                 >
                                     {displayLocationLabel(location, intl)}
                                 </Checkbox>
@@ -174,7 +179,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled}: Props) =
                                     <i className='icon icon-chevron-down'/>
                                 </>
                             ),
-                            dataTestId: 'channelsResourceChangePolicyButton',
+                            dataTestId: part(testIdScope, 'change_policy', 'button'),
                         }}
                         menu={{
                             id: 'channelsResourceChangePolicyMenu',
@@ -185,6 +190,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled}: Props) =
                             <Menu.Item
                                 id={`channelsResourceChangePolicy-${policy}`}
                                 key={policy}
+                                data-testid={part(testIdScope, 'change_policy_menu.policy', {key: policy}, 'menuitemradio')}
                                 role='menuitemradio'
                                 aria-checked={policy === value.changePolicy}
                                 forceCloseOnSelect={true}
