@@ -224,3 +224,8 @@ test('ui: a click that dispatches a constant shows the panel a render condition 
 test('ui: a constant only tested for membership shows nothing', () => {
     assert.deepEqual(opens('toolbar.files--button'), []);
 });
+
+test('ui: two navigations that read alike for 60 characters stay two, each with its whole target', () => {
+    const targets = element(out(), 'header.long_paths--button').opens?.map((o) => o.target);
+    assert.deepEqual(targets, ["'/help/a-rather-long-path-segment/that-runs-past-sixty-characters/first'", "'/help/a-rather-long-path-segment/that-runs-past-sixty-characters/second'"]);
+});

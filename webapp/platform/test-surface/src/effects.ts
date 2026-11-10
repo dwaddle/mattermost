@@ -3,7 +3,7 @@
 
 import ts from 'typescript';
 
-import {calleeName, isFunctionLike, isJsxTag, nameOfFunction, propName, returnsOf, shortText, strip, type FunctionLike} from './ast.ts';
+import {calleeName, isFunctionLike, isJsxTag, nameOfFunction, oneLine, propName, returnsOf, shortText, strip, type FunctionLike} from './ast.ts';
 import type {CodeNode, Loc, ProgramIndex} from './program_index.ts';
 import {compatible} from './roles.ts';
 import type {Operations} from './routes.ts';
@@ -12,15 +12,18 @@ import {assignmentsOf, type Resolver, type Source} from './values.ts';
 
 export type Opened = {kind: 'modal' | 'popover' | 'page' | 'menu' | 'panel'; node: CodeNode | null; target: string; at: Loc; dialogOps?: string[]};
 
-/** A navigation: its target expression (resolved to a route later), and whether only some paths through the handler take it. */
-export type Navigation = {expr: ts.Expression | null; conditional: boolean};
+/**
+ * A navigation: its target expression (resolved to a route later), the target as written (whole, on one line), and
+ * whether only some paths through the handler take it.
+ */
+export type Navigation = {expr: ts.Expression | null; target: string; conditional: boolean};
 
 export type Effects = {
     ops: Set<string>;
     opens: Map<string, Opened>;
 
-    /** Where it navigates, by the target as written. */
-    navigates: Map<string, Navigation>;
+    /** Where it navigates, by where the target is written (two targets that read alike stay apart). */
+    navigates: Map<Loc, Navigation>;
 
     /** Constants it passes on as data (`state: RHSStates.CHANNEL_INFO`), by declaration; matched to store-gated UI. */
     signals: Map<string, string>;
@@ -61,7 +64,7 @@ export function mergeEffects(a: Effects, b: Effects, conditional = false): Effec
     for (const [k, n] of b.navigates) {
         const prev = a.navigates.get(k);
         const c = conditional || n.conditional;
-        a.navigates.set(k, {expr: prev?.expr ?? n.expr, conditional: prev ? prev.conditional && c : c});
+        a.navigates.set(k, {expr: prev?.expr ?? n.expr, target: prev?.target ?? n.target, conditional: prev ? prev.conditional && c : c});
     }
     for (const [k, t] of b.signals) {
         a.signals.set(k, t);
@@ -705,7 +708,9 @@ export class Tracer {
 
             // navigation
             if (ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression) && ['push', 'replace'].includes(n.expression.name.text) && (/history|router/i).test(n.expression.expression.getText())) {
-                mergeEffects(acc, {...emptyEffects(), navigates: new Map([[n.arguments[0] ? shortText(n.arguments[0], 60) : '?', {expr: n.arguments[0] ?? null, conditional: inBranch(n, root)}]])});
+                const arg = n.arguments[0];
+                const nav = {expr: arg ?? null, target: arg ? oneLine(arg) : '?', conditional: inBranch(n, root)};
+                mergeEffects(acc, {...emptyEffects(), navigates: new Map([[this.ix.where(arg ?? n), nav]])});
             }
 
             // local state that shows a modal/popover: setShowX(true), this.setState({showX: true})

@@ -233,6 +233,18 @@ export class Header extends Scope {
     }
 
     /**
+     * `header.long_paths--button` (src/long_paths.tsx:9)
+     * Goes to '/help/a-rather-long-path-segment/that-runs-past-sixty-char….
+     */
+    get longPathsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.long_paths--button`), {testId: `${this.scope}.long_paths--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/long_paths.tsx:9'});
+    }
+
+    async clickLongPathsButton(): Promise<void> {
+        await this.longPathsButton.click();
+    }
+
+    /**
      * `header.note` (src/menu.tsx:164)
      */
     get note() {

@@ -5,7 +5,7 @@ import fs from 'node:fs';
 
 import ts from 'typescript';
 
-import {attrValue, exprName, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, propName, returnsOf, shortText, strip, tagName, type FunctionLike, type JsxTag} from './ast.ts';
+import {attrValue, exprName, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, oneLine, propName, returnsOf, strip, tagName, type FunctionLike, type JsxTag} from './ast.ts';
 import {cmp} from './compare.ts';
 import {Conditions} from './conditions.ts';
 import {relativeToRoot, type Config} from './config.ts';
@@ -724,7 +724,7 @@ export class Scanner {
         // a router link navigates when clicked: <Link to=…>, <NavLink to=…>
         const to = this.isRouterLink(tag) ? attrValue(jsxAttr(tag, 'to')) : undefined;
         if (to) {
-            acc.navigates.set(shortText(to, 60), {expr: to, conditional: false});
+            acc.navigates.set(this.ix.where(to), {expr: to, target: oneLine(to), conditional: false});
         }
         return acc;
     }
@@ -1154,9 +1154,17 @@ export class Scanner {
                     opens.set(k, withDialogOps(opens.get(k), {kind: o.kind, target: o.target, at: o.at, ...(o.dialogOps ? {dialogOps: o.dialogOps} : {}), ...(menuForm ? {menuForm: true as const} : {})}));
                 }
             }
-            for (const [n, nav] of effects.navigates) {
-                const o: Open = {kind: 'page', target: n, at: first.site.at, ...(nav.conditional ? {conditional: true as const} : {})};
-                opens.set('page:' + n, o);
+            for (const nav of effects.navigates.values()) {
+                // the same target from two places is one open, conditional only when both are
+                const prev = opens.get('page:' + nav.target);
+                if (prev) {
+                    if (prev.conditional && !nav.conditional) {
+                        delete prev.conditional;
+                    }
+                    continue;
+                }
+                const o: Open = {kind: 'page', target: nav.target, at: first.site.at, ...(nav.conditional ? {conditional: true as const} : {})};
+                opens.set('page:' + nav.target, o);
                 if (nav.expr) {
                     navigations.set(o, nav.expr);
                 }

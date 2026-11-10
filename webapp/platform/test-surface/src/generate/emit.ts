@@ -431,11 +431,16 @@ function pageTarget(ctx: Ctx, e: Element): string | null {
     return classes[0];
 }
 
+/** A navigation target as the doc shows it: the manifest keeps the whole expression, the doc its first 60 characters. */
+function shortTarget(target: string): string {
+    return target.length > 60 ? target.slice(0, 59) + '…' : target;
+}
+
 function element(ctx: Ctx, node: ScopeNode, e: Element, m: Members, mt: {ops?: string[]; widen?: boolean} = {}) {
     const factory = driverFor(e.role);
     ctx.imports.aria.add('drivers');
     const getter = memberName(camel(e.name) + roleWord(e.role));
-    const opensDoc = [...new Set((e.opens ?? []).map((o) => (o.kind === 'page' ? `Goes to ${o.target}${o.page ? ` (${o.page})` : ''}.` : `Opens ${o.kind} ${o.target}${o.scope ? ` (\`${o.scope}\`)` : ''}.`)))].slice(0, 3);
+    const opensDoc = [...new Set((e.opens ?? []).map((o) => (o.kind === 'page' ? `Goes to ${shortTarget(o.target)}${o.page ? ` (${o.page})` : ''}.` : `Opens ${o.kind} ${o.target}${o.scope ? ` (\`${o.scope}\`)` : ''}.`)))].slice(0, 3);
     if (e.key) {
         const fn = memberName(camel(e.name));
         const shared = sharedKeySets(ctx, node, e, fn);
@@ -529,7 +534,7 @@ function childScope(ctx: Ctx, node: ScopeNode, word: string, child: ScopeNode, m
         const fn = memberName(camel(word));
         const id = testIdExpr(node, e.template, kp.expr(fn));
         ctx.imports.locator = true;
-        const opensDoc = (e.opens ?? []).map((o) => `Opens ${o.kind} ${o.target}.`).slice(0, 3);
+        const opensDoc = (e.opens ?? []).map((o) => `Opens ${o.kind} ${shortTarget(o.target)}.`).slice(0, 3);
         m.add(fn, e.component.at, `${doc(e, opensDoc, node)}\n${fn}(${kp.decl}): ${cls.name} {\n    return new ${cls.name}(this.page, ${scopeExpr}, this.byTestId(${id}${popupArg(node, e)}));\n}`);
         addItemsLocator(node, e, m);
         return;

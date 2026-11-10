@@ -114,6 +114,11 @@ export function typeText(checker: ts.TypeChecker, t: ts.Type, flags = ts.TypeFor
     return checker.typeToString(t, undefined, flags);
 }
 
+/** A node's source on one line (whitespace runs collapsed), whole: for identity, where `shortText` is for display. */
+export function oneLine(n: ts.Node): string {
+    return n.getText().replace(/\s+/g, ' ');
+}
+
 export function shortText(n: ts.Node, max = 60): string {
     const t = n.getText().replace(/\s+/g, ' ');
     return t.length > max ? t.slice(0, max - 1) + '…' : t;

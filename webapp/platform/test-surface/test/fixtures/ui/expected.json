@@ -995,6 +995,42 @@
       ]
     },
     {
+      "template": "header.long_paths--button",
+      "grammar": true,
+      "scope": [
+        "header"
+      ],
+      "name": "long_paths",
+      "role": "button",
+      "component": {
+        "name": "LongPaths",
+        "at": "src/long_paths.tsx:9"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/help/a-rather-long-path-segment/that-runs-past-sixty-characters/first'",
+          "at": "src/long_paths.tsx:9",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "'/help/a-rather-long-path-segment/that-runs-past-sixty-characters/second'",
+          "at": "src/long_paths.tsx:9"
+        }
+      ]
+    },
+    {
       "template": "header.menu.leave--menuitem",
       "grammar": true,
       "scope": [
