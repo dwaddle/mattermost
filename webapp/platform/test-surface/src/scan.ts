@@ -1417,14 +1417,14 @@ export class Scanner {
         if (!c) {
             return [];
         }
-        const obj = this.constObject(c.file, c.export);
+        const obj = this.ix.constObject(c.file, c.export);
         if (!obj) {
             this.diagnostics.push({rule: 'plugin-slots', severity: 'error', at: relativeToRoot(this.config, c.file), message: `No \`export const ${c.export} = {…}\` here (config pluginSlots).`});
             return [];
         }
         const registry = new Map<string, string[]>();
         if (c.registryExport) {
-            const reg = this.constObject(c.file, c.registryExport);
+            const reg = this.ix.constObject(c.file, c.registryExport);
             if (!reg) {
                 this.diagnostics.push({rule: 'plugin-slots', severity: 'error', at: relativeToRoot(this.config, c.file), message: `No \`export const ${c.registryExport} = {…}\` here (config pluginSlots.registryExport).`});
             }
@@ -1444,22 +1444,6 @@ export class Scanner {
             }
         }
         return out.sort((a, b) => cmp(a.slot, b.slot));
-    }
-
-    /** `export const <name> = {…}` (possibly `as const` / `satisfies`) in a file. */
-    private constObject(file: string, name: string): ts.ObjectLiteralExpression | undefined {
-        const sf = this.ix.program.getSourceFile(file);
-        for (const st of sf?.statements ?? []) {
-            if (ts.isVariableStatement(st)) {
-                for (const d of st.declarationList.declarations) {
-                    const init = d.initializer && strip(d.initializer);
-                    if (ts.isIdentifier(d.name) && d.name.text === name && init && ts.isObjectLiteralExpression(init)) {
-                        return init;
-                    }
-                }
-            }
-        }
-        return undefined;
     }
 
     /**
@@ -1632,6 +1616,9 @@ function keyInfo(values: Set<string>, gaps: Gap[]): Element['key'] {
     }
     if (kinds.size === 1 && kinds.has('suggestion')) {
         return {kind: 'suggestion', type: 'string'};
+    }
+    if (kinds.size === 1 && kinds.has('text')) {
+        return {kind: 'text', type: 'string'};
     }
     if (kinds.size === 1 && kinds.has('number')) {
         return {kind: 'number', type: 'number', ...(vals.length ? {values: vals} : {})};

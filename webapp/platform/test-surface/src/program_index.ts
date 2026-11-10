@@ -225,6 +225,22 @@ export class ProgramIndex {
         return name ? `${file}#${name}` : file;
     }
 
+    /** `export const <name> = {…}` (possibly `as const` / `satisfies`) in a file. */
+    constObject(file: string, name: string): ts.ObjectLiteralExpression | undefined {
+        const sf = this.program.getSourceFile(file);
+        for (const st of sf?.statements ?? []) {
+            if (ts.isVariableStatement(st)) {
+                for (const d of st.declarationList.declarations) {
+                    const init = d.initializer && strip(d.initializer);
+                    if (ts.isIdentifier(d.name) && d.name.text === name && init && ts.isObjectLiteralExpression(init)) {
+                        return init;
+                    }
+                }
+            }
+        }
+        return undefined;
+    }
+
     // ---- symbol -> code node --------------------------------------------------------
 
     private readonly symbolMemo = new Map<ts.Symbol, {node: CodeNode | null; deps: ts.SourceFile[]}>();

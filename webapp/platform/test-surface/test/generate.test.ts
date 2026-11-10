@@ -346,3 +346,14 @@ test('generate: the index records the runtime API version the page objects are w
     const {read} = await generateFixture('ui');
     assert.match(read('index.ts'), /import type \{RuntimeApiCheck\} from '@mattermost\/playwright-lib';\n[\s\S]*export const GENERATOR_API = \d+;\nexport type GeneratorApiCheck = RuntimeApiCheck<typeof GENERATOR_API>;/);
 });
+
+test('generate: a text-keyed item takes the text and builds its key at runtime', async () => {
+    const config = loadConfig(path.join(FIXTURES, 'ui', 'test-surface.config.json'));
+    config.output.generated = fs.mkdtempSync(path.join(os.tmpdir(), 'test-surface-gen-'));
+    config.i18n = null;
+    const option: Element = {template: 'texts.list.option:{key}--option', grammar: true, scope: ['texts', 'list'], name: 'option', role: 'option', key: {kind: 'text', type: 'string'}, component: {name: 'X', at: 'src/x.tsx#X'}, instances: [{via: []}], aria: {role: 'option', native: false, state: []}};
+    await generate({...scanFixture('ui').manifest, elements: [option], sets: [], pages: [], pluginSlots: []}, config);
+    const code = fs.readFileSync(path.join(config.output.generated, 'texts.ts'), 'utf8');
+    assert.match(code, /import \{Scope, drivers, textTestKey\} from '@mattermost\/playwright-lib';/);
+    assert.match(code, /option\(option: string\) \{\s*return drivers\.option\(this\.byTestId\(`\$\{this\.scope\}\.option:\$\{textTestKey\(option\)\}--option`\)/);
+});

@@ -20,9 +20,9 @@ export type SourceRef = string;
 /**
  * What fills a testid's key: a fixed `set` of literals, an `entity` field (`channel.name`), a `plugin` id
  * (`pluginTestKey`), a config `setting` path (`settingTestKey`), an autocomplete `suggestion` term
- * (`suggestionTestKey`), a `number`, or any `string`.
+ * (`suggestionTestKey`), a `text` (`textTestKey`), a `number`, or any `string`.
  */
-export type KeyKind = 'set' | 'entity' | 'plugin' | 'setting' | 'suggestion' | 'string' | 'number';
+export type KeyKind = 'set' | 'entity' | 'plugin' | 'setting' | 'suggestion' | 'text' | 'string' | 'number';
 
 export type KeyInfo = {
     kind: KeyKind;

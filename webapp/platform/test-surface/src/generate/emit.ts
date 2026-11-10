@@ -283,6 +283,12 @@ function keyParam(ctx: Ctx, k: KeyInfo | undefined, name: string): KeyParam {
         ctx.imports.aria.add('suggestionTestKey');
         return {decl: `${p}: string`, expr: () => `suggestionTestKey(${p})`};
     }
+
+    // a text key (an option's name): the text, turned into its testid key at runtime
+    if (k.kind === 'text') {
+        ctx.imports.aria.add('textTestKey');
+        return {decl: `${p}: string`, expr: () => `textTestKey(${p})`};
+    }
     if (k.kind === 'setting') {
         ctx.imports.ariaTypes.add('AdminSettingPath');
         ctx.imports.aria.add('settingTestKey');

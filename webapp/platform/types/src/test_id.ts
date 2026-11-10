@@ -170,9 +170,10 @@ export const TEST_KEY_BRANDS = {
     plugin: 'PluginTestKey',
     setting: 'SettingTestKey',
     suggestion: 'SuggestionTestKey',
+    text: 'TextTestKey',
 } as const satisfies Record<string, keyof TestKeyTypes>;
 
-type TestKeyTypes = {PluginTestKey: PluginTestKey; SettingTestKey: SettingTestKey; SuggestionTestKey: SuggestionTestKey};
+type TestKeyTypes = {PluginTestKey: PluginTestKey; SettingTestKey: SettingTestKey; SuggestionTestKey: SuggestionTestKey; TextTestKey: TextTestKey};
 
 /**
  * A plugin id as a testid key: `com.mattermost.calls` -> `com_mattermost_calls` (keys can't contain
@@ -196,13 +197,25 @@ export function settingTestKey(path: string): SettingTestKey {
 }
 
 /**
+ * A text as a testid key, for items that have nothing better to be keyed by (an option's name, a recent status's
+ * text): `Out to lunch.` -> `Out to lunch_` (keys can't contain `.`, `:` or `--`). Prefer an id; key by text only
+ * where the text is the item's identity and isn't translated. The scanner types keys of this type as texts, and
+ * the generated page objects take the text.
+ */
+export type TextTestKey = string & {readonly __textTestKey: true};
+
+export function textTestKey(text: string): TextTestKey {
+    return text.trim().replace(/[.:]/g, '_').replace(/-{2,}/g, '-') as TextTestKey;
+}
+
+/**
  * An autocomplete suggestion's term as a testid key: `@john.doe` -> `john_doe`, `~town-square` -> `town-square`,
- * `:smile:` -> `smile` (the sigil goes; keys can't contain `.`, `:` or `--`). Suggestion lists reorder as you type,
+ * `:smile:` -> `smile` (the sigil goes, then it is a `textTestKey`). Suggestion lists reorder as you type,
  * so items are keyed by what they suggest, not by position. The scanner types keys of this type as terms, and the
  * generated page objects take the term (a username, a channel name).
  */
 export type SuggestionTestKey = string & {readonly __suggestionTestKey: true};
 
 export function suggestionTestKey(term: string): SuggestionTestKey {
-    return term.trim().replace(/^[@~/:]/, '').replace(/:$/, '').replace(/[.:]/g, '_').replace(/-{2,}/g, '-') as SuggestionTestKey;
+    return textTestKey(term.trim().replace(/^[@~/:]/, '').replace(/:$/, '')) as string as SuggestionTestKey;
 }

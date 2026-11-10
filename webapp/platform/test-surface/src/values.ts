@@ -239,6 +239,10 @@ export class Resolver {
             info.kind = 'suggestion';
             return;
         }
+        if (t?.aliasSymbol?.getName() === TEST_KEY_BRANDS.text) {
+            info.kind = 'text';
+            return;
+        }
         if (t && (t.flags & ts.TypeFlags.NumberLike)) {
             info.kind = 'number';
         }
@@ -1490,7 +1494,7 @@ export class Resolver {
             if (brand === TEST_KEY_BRANDS.setting) {
                 return [this.settingGap(x, depth, seen, env)];
             }
-            if (brand === TEST_KEY_BRANDS.plugin || brand === TEST_KEY_BRANDS.suggestion) {
+            if (brand === TEST_KEY_BRANDS.plugin || brand === TEST_KEY_BRANDS.suggestion || brand === TEST_KEY_BRANDS.text) {
                 return [this.gapFor(x)];
             }
             const r = this.resolveCall(x, depth, seen, env);
@@ -1593,6 +1597,13 @@ export class Resolver {
     }
 
     private resolveCall(x: ts.CallExpression, depth: number, seen: Set<ts.Node>, env: Env | null): Value[] {
+        // the testid helpers build their testid from literal arguments: read as templates, not inlined (their optional
+        // key and role branches would give ids with and without them)
+        const helper = this.testIdHelper(x);
+        const built = helper ? this.resolveTestIdHelper(helper, x, depth, seen, env) : null;
+        if (built) {
+            return built;
+        }
         if (calleeName(x) === 'useMemo') {
             const f = strip(x.arguments[0]);
             if (f && isFunctionLike(f)) {
@@ -1618,6 +1629,122 @@ export class Resolver {
             }
         }
         return [this.alwaysTruthy(x) ? {k: 'computed', at: this.ix.where(x), truthy: true} : {k: 'computed', at: this.ix.where(x)}];
+    }
+
+    /**
+     * The `@mattermost/shared/utils/test_id` helper a call is (`part`, `keyed`, `pluginSlotTestId`, `pluginSlotPath`):
+     * the callee, through imports and re-exports, is declared in that module (its source, or a `declare module`).
+     */
+    private testIdHelper(x: ts.CallExpression): TestIdHelper | null {
+        const callee = strip(x.expression) as ts.Expression;
+        let name: ts.Identifier | null = null;
+        if (ts.isIdentifier(callee)) {
+            name = callee;
+        } else if (ts.isPropertyAccessExpression(callee) && ts.isIdentifier(callee.name)) {
+            name = callee.name;
+        }
+        if (!name || !TEST_ID_HELPERS.has(name.text)) {
+            return null;
+        }
+        let sym = this.checker.getSymbolAtLocation(name);
+        if (sym && (sym.flags & ts.SymbolFlags.Alias)) {
+            sym = this.checker.getAliasedSymbol(sym);
+        }
+        const decl = sym?.declarations?.[0];
+        if (!decl) {
+            return null;
+        }
+        for (let n: ts.Node | undefined = decl; n; n = n.parent) {
+            if (ts.isModuleDeclaration(n) && ts.isStringLiteral(n.name) && n.name.text === TEST_ID_MODULE) {
+                return name.text as TestIdHelper;
+            }
+        }
+        return TEST_ID_SOURCE.test(decl.getSourceFile().fileName.split(path.sep).join('/')) ? name.text as TestIdHelper : null;
+    }
+
+    /**
+     * A testid helper's values, built as a template from its literal arguments:
+     * `part(scope, 'a.b')` -> `<scope>.a.b`, `part(scope, 'a', 'button')` -> `<scope>.a--button`,
+     * `part(scope, 'row', {key}, 'button')` -> `<scope>.row:<key>--button`, `keyed(testId, key, 'button')` ->
+     * `<testId>:<key>--button`, `pluginSlotTestId('slot', pluginId, scope)` -> the slot's template from the published
+     * contract with the plugin key (and `*` the scope). No scope (undefined or '') or, for `keyed`, no key renders no
+     * testid. Null when an argument that must be literal isn't (the call is then read like any other).
+     */
+    private resolveTestIdHelper(helper: TestIdHelper, x: ts.CallExpression, depth: number, seen: Set<ts.Node>, env: Env | null): Value[] | null {
+        const args = x.arguments;
+        const literals = (e: ts.Expression | undefined): string[] | null => {
+            const vals = e ? this.resolve(e, depth + 1, seen, env) : [];
+            return vals.length && vals.every((v) => v.k === 'lit') ? vals.map((v) => (v as {s: string}).s) : null;
+        };
+
+        // a scope that is missing or empty renders no testid
+        const scopes = (e: ts.Expression | undefined): Value[] => (e ? this.resolve(e, depth + 1, seen, env) : [{k: 'absent'} as Value]).
+            map((v) => (v.k === 'lit' && v.s === '' ? {k: 'absent', ...(v.via ? {via: v.via} : {})} as Value : v));
+        const roles = (e: ts.Expression | undefined): Value[] | null => {
+            if (!e) {
+                return [lit('')];
+            }
+            const rs = literals(e);
+            return rs ? rs.map((r) => lit(`--${r}`)) : null;
+        };
+
+        // runtime data fills the key; a key that can be missing renders "undefined" (part) or no testid (keyed)
+        const keys = (e: ts.Expression, missing: 'text' | 'none'): Value[] => this.resolve(e, depth + 1, seen, env).map((v) => {
+            if ((v.k === 'unres' && v.why === 'runtime-value') || v.k === 'computed') {
+                return {...this.gapFor(strip(e) as ts.Expression), ...(v.via ? {via: v.via} : {})} as Value;
+            }
+            return v.k === 'absent' && missing === 'text' ? lit('undefined', v.via) : v;
+        });
+        switch (helper) {
+        case 'part': {
+            const paths = literals(args[1]);
+            const third = args[2] && strip(args[2]) as ts.Expression;
+            const keyExpr = third && ts.isObjectLiteralExpression(third) ? this.memberOfLiteral(third, 'key') : undefined;
+            const role = roles(keyExpr ? args[3] : args[2]);
+            if (!paths || !role || (third && ts.isObjectLiteralExpression(third) && !keyExpr)) {
+                return null;
+            }
+            let acc = concat(scopes(args[0]), paths.map((p) => lit(`.${p}`)));
+            if (keyExpr) {
+                acc = concat(concat(acc, [lit(':')]), keys(keyExpr, 'text'));
+            }
+            return this.locateTruncation(concat(acc, role), x);
+        }
+        case 'keyed': {
+            const role = roles(args[2]);
+            if (!role || !args[1]) {
+                return null;
+            }
+            return this.locateTruncation(concat(concat(concat(scopes(args[0]), [lit(':')]), keys(args[1], 'none')), role), x);
+        }
+        default: {
+            const slots = literals(args[0]);
+            const table = this.pluginSlotTemplates();
+            const templates = slots?.map((s) => table?.get(s));
+            if (!templates?.length || !templates.every((t): t is string => t !== undefined) || !args[1]) {
+                return null;
+            }
+            const key: Value = {k: 'pat', parts: [{gap: {kind: 'plugin', type: TEST_KEY_BRANDS.plugin, expr: shortText(args[1])}}]};
+            return templates.flatMap((t) => {
+                const id = helper === 'pluginSlotPath' ? t.replace(/--[a-z]+$/, '') : t;
+                const [before, after] = id.split(KEY_PLACEHOLDER);
+                const head = before.startsWith('*') ? concat(scopes(args[2]), [lit(before.slice(1))]) : [lit(before)];
+                return concat(concat(head, [key]), [lit(after ?? '')]);
+            });
+        }
+        }
+    }
+
+    private slotTemplates: Map<string, string> | null | undefined;
+
+    /** The published plugin slot contract (config `pluginSlots`): slot -> template, `{plugin}` written `{key}`. */
+    private pluginSlotTemplates(): Map<string, string> | null {
+        if (this.slotTemplates === undefined) {
+            const c = this.ix.config.pluginSlots;
+            const obj = c ? this.ix.constObject(c.file, c.export) : undefined;
+            this.slotTemplates = obj ? new Map(obj.properties.flatMap((p) => (ts.isPropertyAssignment(p) && ts.isStringLiteralLike(p.initializer) ? [[propName(p.name) ?? p.name.getText(), p.initializer.text.replace('{plugin}', KEY_PLACEHOLDER)] as [string, string]] : []))) : null;
+        }
+        return this.slotTemplates;
     }
 
     /** Values of a simple condition (a prop, a variable, or its negation), or null when the condition is computed. */
@@ -1927,6 +2054,13 @@ export function templateOf(v: Value): string | null {
 export function gapsOf(v: Value): Gap[] {
     return v.k === 'pat' ? v.parts.filter((p): p is {gap: Gap} => typeof p !== 'string').map((p) => p.gap) : [];
 }
+
+/** The module the components' testid helpers come from, and its source in the repo. */
+const TEST_ID_MODULE = '@mattermost/shared/utils/test_id';
+const TEST_ID_SOURCE = /(^|\/)shared\/src\/utils\/test_id(\/index)?\.tsx?$/;
+
+type TestIdHelper = 'part' | 'keyed' | 'pluginSlotTestId' | 'pluginSlotPath';
+const TEST_ID_HELPERS = new Set<string>(['part', 'keyed', 'pluginSlotTestId', 'pluginSlotPath'] satisfies TestIdHelper[]);
 
 /** `PluginTestKey` from `@mattermost/types/test_id`: a plugin id normalized for a testid key. */
 function isPluginKey(t: ts.Type | null): boolean {
