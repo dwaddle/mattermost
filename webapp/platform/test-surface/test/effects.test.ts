@@ -6,6 +6,8 @@ import {test} from 'node:test';
 
 import {element, matchSnapshot, scanFixture} from './helpers.ts';
 
+import {meForm} from '../src/routes.ts';
+
 const out = () => scanFixture('effects');
 const ops = (t: string) => element(out(), t).effects?.ops ?? [];
 
@@ -13,11 +15,16 @@ test('effects: manifest snapshot', () => {
     matchSnapshot('effects', 'expected.json', out().manifest);
 });
 
-test('effects: client routes evaluate helpers and match OpenAPI, exact and literal-for-param', () => {
+test('effects: client routes evaluate helpers and match OpenAPI, exact and literal-for-param (`me` as its own operation)', () => {
     const byId = new Map(out().manifest.operations.map((o) => [o.opId, o]));
     assert.deepEqual(byId.get('PatchChannel'), {opId: 'PatchChannel', verb: 'PUT', path: '/api/v4/channels/{channel_id}/patch', body: 'Channel', bodyImports: {Channel: '@mattermost/types/channels'}, inSpec: true});
-    assert.equal(byId.get('GetUser')?.path, '/api/v4/users/{user_id}');
-    assert.equal(byId.get('GetUser')?.body, 'UserProfile');
+
+    // the client calls `/users/me` for GET /users/{user_id}: the current user's form is an operation of its own, with
+    // the literal path, so a wait for GetUser (another user) doesn't take it
+    assert.equal(byId.get('GetUserMe')?.path, '/api/v4/users/me');
+    assert.equal(byId.get('GetUserMe')?.body, 'UserProfile');
+    assert.equal(byId.get('GetUserMe')?.inSpec, true);
+    assert.ok(!byId.has('GetUser'));
     assert.equal(byId.get('RequestJoinChannel')?.inSpec, false);
 });
 
@@ -26,9 +33,9 @@ test('effects: connect + bindActionCreators -> thunk -> Client4; catch blocks an
 });
 
 test('effects: useCallback, IIFE and factory handlers', () => {
-    assert.deepEqual(ops('effects.me.action--button'), ['GetUser']);
+    assert.deepEqual(ops('effects.me.action--button'), ['GetUserMe']);
     assert.deepEqual(ops('effects.join.action--button'), ['RequestJoinChannel']);
-    assert.deepEqual(ops('effects.panel.iife--button'), ['GetUser']);
+    assert.deepEqual(ops('effects.panel.iife--button'), ['GetUserMe']);
 });
 
 test('effects: a parent callback with no static source is delegated', () => {
@@ -47,12 +54,12 @@ test('effects: a submit button fires its form onSubmit; type=button does not', (
 });
 
 test('effects: a local handler calling a prop callback takes only its instance\'s callback', () => {
-    assert.deepEqual(ops('effects.me_dialog.confirm.action--button'), ['GetUser']);
+    assert.deepEqual(ops('effects.me_dialog.confirm.action--button'), ['GetUserMe']);
     assert.deepEqual(ops('effects.patch_dialog.confirm.action--button'), ['PatchChannel']);
 });
 
 test('effects: a testid written by a render helper inside a component takes only its instance\'s callback', () => {
-    assert.deepEqual(ops('effects.helper_me.value--textbox'), ['GetUser']);
+    assert.deepEqual(ops('effects.helper_me.value--textbox'), ['GetUserMe']);
     assert.deepEqual(ops('effects.helper_patch.value--textbox'), ['PatchChannel']);
 });
 
@@ -67,7 +74,7 @@ test('effects: a button that opens a modal through openModal does not fire the m
 
 test('effects: a shared dialog\'s confirm fires only the callback its opener passed, through a wrapper', () => {
     assert.deepEqual(ops('effects.delete_hook_modal.confirm--button'), ['PatchChannel']);
-    assert.deepEqual(ops('effects.leave_modal.confirm--button'), ['GetUser']);
+    assert.deepEqual(ops('effects.leave_modal.confirm--button'), ['GetUserMe']);
 });
 
 test('effects: a modal opened with a testid in its dialogProps is named by that opener', () => {
@@ -77,8 +84,8 @@ test('effects: a modal opened with a testid in its dialogProps is named by that 
 
 test('effects: each opener of a shared modal records the requests its own callbacks send', () => {
     assert.deepEqual(element(out(), 'effects.channels.row.delete--button').opens?.[0].dialogOps, ['PatchChannel']);
-    assert.deepEqual(element(out(), 'effects.me_rows.row.delete--button').opens?.[0].dialogOps, ['GetUser']);
-    assert.deepEqual(ops('effects.delete_row_modal.confirm--button'), ['GetUser', 'PatchChannel']);
+    assert.deepEqual(element(out(), 'effects.me_rows.row.delete--button').opens?.[0].dialogOps, ['GetUserMe']);
+    assert.deepEqual(ops('effects.delete_row_modal.confirm--button'), ['GetUserMe', 'PatchChannel']);
 });
 
 test('effects: a modal whose root container sits under another scope is named by that container', () => {
@@ -112,11 +119,18 @@ test('effects: a branch on a boolean parameter the call leaves false (its defaul
 });
 
 test('effects: a result a cycle cut short is not reused: each end of a cycle fires both requests', () => {
-    assert.deepEqual(ops('effects.cycle.ping--button'), ['GetUser', 'PatchChannel']);
-    assert.deepEqual(ops('effects.cycle.pong--button'), ['GetUser', 'PatchChannel']);
+    assert.deepEqual(ops('effects.cycle.ping--button'), ['GetUserMe', 'PatchChannel']);
+    assert.deepEqual(ops('effects.cycle.pong--button'), ['GetUserMe', 'PatchChannel']);
 });
 
 test('effects: a call through data that returns nothing is unknown, unless it is a known harmless method', () => {
     assert.equal(element(out(), 'effects.registry.action--button').effects?.unknown, true);
     assert.equal(element(out(), 'effects.registry.focus--button').effects, undefined);
+});
+
+test('effects: meForm puts `me` where the client hard-codes it for a placeholder, and only there', () => {
+    assert.equal(meForm('/api/v4/users/{user_id}/status/custom', '/api/v4/users/me/status/custom'), '/api/v4/users/me/status/custom');
+    assert.equal(meForm('/api/v4/users/{user_id}/teams/{team_id}/channels', '/api/v4/users/me/teams/{teamId}/channels'), '/api/v4/users/me/teams/{team_id}/channels');
+    assert.equal(meForm('/api/v4/users/{user_id}', '/api/v4/users/{userId}'), null);
+    assert.equal(meForm('/api/v4/users/{user_id}', '/api/v4/users/me/patch'), null);
 });

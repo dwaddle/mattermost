@@ -127,11 +127,11 @@ test('generate: a shared modal opened with different callbacks gets a type per o
 
     // the three confirmations share a class; opened some other way, its confirm can send either request:
     // an array, so settle needs `wait`
-    assert.match(code, /effects: \[Api\.GetUser, Api\.PatchChannel\] as ReadonlyArray<typeof Api\.GetUser \| typeof Api\.PatchChannel>/);
+    assert.match(code, /effects: \[Api\.GetUserMe, Api\.PatchChannel\] as ReadonlyArray<typeof Api\.GetUserMe \| typeof Api\.PatchChannel>/);
 
     // an opener returns its variant, whose confirm sends only that opener's request
-    assert.match(code, /export class ConfirmDialogForGetUser extends ConfirmDialog \{\n\s+\/\*\*[^\n]*\*\/\n\s+override get confirmButton\(\) \{\n[^\n]*effects: \[Api\.GetUser\],/);
-    assert.match(code, /async clickLeaveButton\(\): Promise<ConfirmDialogForGetUser>/);
+    assert.match(code, /export class ConfirmDialogForGetUserMe extends ConfirmDialog \{\n\s+\/\*\*[^\n]*\*\/\n\s+override get confirmButton\(\) \{\n[^\n]*effects: \[Api\.GetUserMe\],/);
+    assert.match(code, /async clickLeaveButton\(\): Promise<ConfirmDialogForGetUserMe>/);
     assert.match(code, /async clickDeleteButton\(\): Promise<ConfirmDialogForPatchChannel>/);
 
     // one row class serves both lists, whose links pass different callbacks: its method returns the modal itself

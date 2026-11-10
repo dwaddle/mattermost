@@ -352,6 +352,27 @@ export function opMatcher(ops: OpenApiOp[]): (verb: string, p: string) => OpenAp
     };
 }
 
+/**
+ * The spec path with `me` where the client hard-codes it for a placeholder (`/api/v4/users/{user_id}/status/custom`
+ * called as `/users/me/status/custom` -> `/api/v4/users/me/status/custom`), or null when it fills none with `me`.
+ */
+export function meForm(specPath: string, clientPath: string): string | null {
+    const spec = specPath.replace(/\/$/, '').split('/');
+    const client = normPath(clientPath).split('/');
+    if (spec.length !== client.length) {
+        return null;
+    }
+    let found = false;
+    const out = spec.map((s, i) => {
+        if ((/^\{[^}]*\}$/).test(s) && client[i] === 'me') {
+            found = true;
+            return 'me';
+        }
+        return s;
+    });
+    return found ? out.join('/') : null;
+}
+
 /** `getMe` -> `GetMe`: an operation id for a client method the spec doesn't have. */
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -388,12 +409,16 @@ export class Operations {
                     matched++;
                 }
                 const body = bodies.get(name) ?? null;
-                const opId = m ? m.opId : capitalize(name);
+
+                // the client calls the current user's form (`/users/me/…`): its own operation, `<OpId>Me`, with the literal
+                // path, so waiting for the template (`/users/{user_id}/…`) can mean another user
+                const me = m ? meForm(m.path, r.path) : null;
+                const opId = m ? `${m.opId}${me ? 'Me' : ''}` : capitalize(name);
                 const existing = this.byId.get(opId);
                 const op: Operation = existing ?? {
                     opId,
                     verb: m ? m.verb : r.verb,
-                    path: m ? m.path : r.path,
+                    path: m ? me ?? m.path : r.path,
                     body: body?.type ?? null,
                     ...(body && Object.keys(body.imports).length ? {bodyImports: body.imports} : {}),
                     schema: m?.schema ?? null,

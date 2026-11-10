@@ -135,7 +135,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser",
+          "GetUserMe",
           "PatchChannel"
         ],
         "unknown": false,
@@ -167,7 +167,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser",
+          "GetUserMe",
           "PatchChannel"
         ],
         "unknown": false,
@@ -236,7 +236,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser",
+          "GetUserMe",
           "PatchChannel"
         ],
         "unknown": false,
@@ -491,7 +491,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser"
+          "GetUserMe"
         ],
         "unknown": false,
         "delegated": []
@@ -626,7 +626,7 @@
           "target": "ConfirmDialogRedux",
           "at": "src/modals.tsx#LeaveLink",
           "dialogOps": [
-            "GetUser"
+            "GetUserMe"
           ],
           "scope": "effects.leave_modal"
         }
@@ -660,7 +660,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser"
+          "GetUserMe"
         ],
         "unknown": false,
         "delegated": []
@@ -693,7 +693,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser"
+          "GetUserMe"
         ],
         "unknown": false,
         "delegated": []
@@ -728,7 +728,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser"
+          "GetUserMe"
         ],
         "unknown": false,
         "delegated": []
@@ -766,7 +766,7 @@
           "target": "ConfirmDialogRedux",
           "at": "src/modals.tsx#DeleteRowLink",
           "dialogOps": [
-            "GetUser"
+            "GetUserMe"
           ],
           "scope": "effects.delete_row_modal"
         }
@@ -857,7 +857,7 @@
       },
       "effects": {
         "ops": [
-          "GetUser"
+          "GetUserMe"
         ],
         "unknown": false,
         "delegated": []
@@ -1046,9 +1046,9 @@
   "sets": [],
   "operations": [
     {
-      "opId": "GetUser",
+      "opId": "GetUserMe",
       "verb": "GET",
-      "path": "/api/v4/users/{user_id}",
+      "path": "/api/v4/users/me",
       "body": "UserProfile",
       "bodyImports": {
         "UserProfile": "@mattermost/types/users"
