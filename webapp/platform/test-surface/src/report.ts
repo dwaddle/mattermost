@@ -64,7 +64,7 @@ export function summary(result: ScanResult, diagnostics: Diagnostic[]): string {
         `DOM sites resolved: ${n('domResolved')}/${n('domSites')} (${pct(n('domResolved'), n('domSites'))}); from props ${n('domFromPropsResolved')}/${n('domFromProps')} (${pct(n('domFromPropsResolved'), n('domFromProps'))})`,
         `elements: ${n('elements')} templates, ${n('grammarElements')} follow the grammar; ${n('elementsWithRole')} with an ARIA role`,
         `  with effects ${n('elementsWithEffects')} (unknown ${n('elementsWithUnknownEffects')}), opens ${n('elementsWithOpens')}, render conditions ${n('elementsWithConditions')}`,
-        `client: ${n('apiCalls')} ${'/api/v4'} fetches, ${n('matchedToOpenAPI')} match an OpenAPI operation (${pct(n('matchedToOpenAPI'), n('apiCalls'))}); ${result.specGaps.length} endpoints missing from the spec`,
+        `client: ${n('apiCalls')} ${result.urlVersion ?? 'API'} fetches, ${n('matchedToOpenAPI')} match an OpenAPI operation (${pct(n('matchedToOpenAPI'), n('apiCalls'))}); ${result.specGaps.length} endpoints missing from the spec`,
         `diagnostics: ${diagnostics.filter((d) => d.severity === 'error').length} errors, ${diagnostics.filter((d) => d.severity === 'warning').length} warnings`,
         ...[...byRule.entries()].sort().map(([r, c]) => `  ${r.padEnd(12)} ${String(c.error).padStart(5)} errors ${String(c.warning).padStart(5)} warnings`),
         `timings ms: ${JSON.stringify(s.timings)}`,

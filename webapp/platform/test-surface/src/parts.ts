@@ -11,6 +11,7 @@ import {cmp} from './compare.ts';
 import {relativeToRoot, type Config} from './config.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId} from './grammar.ts';
 import {inputDiagnostic, readVersioned} from './input.ts';
+import {MAX_HANDLER_DEPTH} from './limits.ts';
 import type {Diagnostic, Loc, TestPart, TestParts} from './manifest_types.ts';
 import type {CodeNode, ProgramIndex} from './program_index.ts';
 import type {Roles} from './roles.ts';
@@ -280,7 +281,7 @@ export class LibraryParts {
 
     private calledProps(e: ts.Node, comp: CodeNode, depth: number, out: Set<string>, seen: Set<ts.Node>) {
         const x = strip(e as ts.Expression) as ts.Expression;
-        if (seen.has(x) || depth > 8) {
+        if (seen.has(x) || depth > MAX_HANDLER_DEPTH) {
             return;
         }
         seen.add(x);

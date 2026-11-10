@@ -6,6 +6,7 @@ import path from 'node:path';
 import ts from 'typescript';
 
 import {attrValue, isIntrinsic, jsxAttr, tagName, type JsxTag} from './ast.ts';
+import {MAX_LANDING_HOPS, MAX_STYLED_HOPS} from './limits.ts';
 import {publishedComponent, type PublishedParts} from './parts.ts';
 import {styledTarget, type Loc, type ProgramIndex} from './program_index.ts';
 import type {Resolver, Value} from './values.ts';
@@ -168,7 +169,7 @@ export class Roles {
             }
         }
         const decl = sym?.declarations?.[0];
-        if (depth < 4 && decl && ts.isVariableDeclaration(decl) && decl.initializer) {
+        if (depth < MAX_STYLED_HOPS && decl && ts.isVariableDeclaration(decl) && decl.initializer) {
             const init = decl.initializer;
             const wrapped = styledTarget(ts.isTaggedTemplateExpression(init) ? init.tag : init);
             if (wrapped && (ts.isIdentifier(wrapped) || ts.isPropertyAccessExpression(wrapped))) {
@@ -246,7 +247,7 @@ export function styledElement(ix: ProgramIndex, tag: JsxTag): string | null {
 }
 
 function styledElementOf(ix: ProgramIndex, ref: ts.Expression, hops: number): string | null {
-    if (hops > 4) {
+    if (hops > MAX_STYLED_HOPS) {
         return null;
     }
     let sym = ix.checker.getSymbolAtLocation(ref);
@@ -266,7 +267,7 @@ function styledElementOf(ix: ProgramIndex, ref: ts.Expression, hops: number): st
     } else {
         return null;
     }
-    for (let depth = 0; e && depth < 6; depth++) {
+    for (let depth = 0; e && depth < MAX_LANDING_HOPS; depth++) {
         if (ts.isPropertyAccessExpression(e)) {
             if (ts.isIdentifier(e.expression) && e.expression.text === 'styled') {
                 return e.name.text;

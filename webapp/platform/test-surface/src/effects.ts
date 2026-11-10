@@ -4,6 +4,7 @@
 import ts from 'typescript';
 
 import {calleeName, isFunctionLike, isJsxTag, nameOfFunction, oneLine, propName, returnsOf, shortText, strip, type FunctionLike} from './ast.ts';
+import {MAX_CALLEE_DEPTH} from './limits.ts';
 import type {CodeNode, Loc, ProgramIndex} from './program_index.ts';
 import {compatible} from './roles.ts';
 import type {Operations} from './routes.ts';
@@ -217,7 +218,7 @@ export class Tracer {
         if (memo) {
             return memo;
         }
-        if (this.ctInProgress.has(c) || this.ctDepth > 12) {
+        if (this.ctInProgress.has(c) || this.ctDepth > MAX_CALLEE_DEPTH) {
             this.ctCuts++;
             this.taint[this.taint.length - 1]?.add(DEPTH_CUT);
             return {targets: [], dynamic: true};

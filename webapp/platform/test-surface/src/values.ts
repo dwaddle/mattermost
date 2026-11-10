@@ -6,6 +6,7 @@ import path from 'node:path';
 import ts from 'typescript';
 
 import {calleeName, isFunctionLike, propName, returnsOf, shortText, strip, typeText, type FunctionLike} from './ast.ts';
+import {MAX_ARRAY_SPREAD_DEPTH, MAX_HELPER_RETURNS, MAX_OBJECT_KEYS_DEPTH, MAX_PARAM_OBJECT_DEPTH, MAX_RESOLVE_DEPTH, MAX_TEMPLATE_VALUES, MAX_USAGE_VALUES} from './limits.ts';
 import {usageAttrs, usageNode, type CodeNode, type Loc, type ProgramIndex, type Usage} from './program_index.ts';
 
 /** Runtime data that fills a slot of a testid. */
@@ -69,13 +70,6 @@ type PropAt =
     {kind: 'connect'} |
     {kind: 'absent'};
 
-// Each prop hop costs a few steps (a conditional, a template, a prop read). A post's scope reaches a file tile in a
-// spillage report's post preview through about ten components, which needs more than 32.
-const MAX_DEPTH = 48;
-export const MAX_VALUES = 256;
-
-/** Values gathered across a component's usages: linear in the number of usages, so the bound is much higher. */
-const MAX_USAGE_VALUES = 8192;
 const LIST_METHODS = ['map', 'forEach', 'filter', 'flatMap', 'find', 'some', 'every'];
 
 export const lit = (s: string, via?: Loc[]): Value => (via ? {k: 'lit', s, via} : {k: 'lit', s});
@@ -423,7 +417,7 @@ export class Resolver {
             return this.sources(e.expr, depth, seen, e.via);
         }
         const x = strip(e) as ts.Expression;
-        if (!x || depth > MAX_DEPTH) {
+        if (!x || depth > MAX_RESOLVE_DEPTH) {
             return [];
         }
         const pp = this.propsPath(x);
@@ -527,7 +521,7 @@ export class Resolver {
     /** The objects an expression can be: itself, a variable's initializer, or a parameter's argument at each call. */
     private literalsOf(v: ts.Expression, depth = 0): ts.Expression[] {
         const x = strip(v) as ts.Expression;
-        if (depth > 3 || !ts.isIdentifier(x)) {
+        if (depth > MAX_PARAM_OBJECT_DEPTH || !ts.isIdentifier(x)) {
             return [x];
         }
         const d = this.valueDecl(x);
@@ -565,7 +559,7 @@ export class Resolver {
      * array literal becomes a marker, so known elements are kept and the rest is a typed gap.
      */
     arrayElements(e: ts.Expression | Source, depth = 0): Source[] | null {
-        if (depth > 4) {
+        if (depth > MAX_ARRAY_SPREAD_DEPTH) {
             return null;
         }
         const out: Source[] = [];
@@ -1011,7 +1005,7 @@ export class Resolver {
         if (!x || x.kind === ts.SyntaxKind.NullKeyword || (ts.isIdentifier(x) && x.text === 'undefined')) {
             return new Set();
         }
-        if (depth > 4 || seen.has(x)) {
+        if (depth > MAX_OBJECT_KEYS_DEPTH || seen.has(x)) {
             return null;
         }
         seen.add(x);
@@ -1352,7 +1346,7 @@ export class Resolver {
         if (ts.isStringLiteral(x) || ts.isNoSubstitutionTemplateLiteral(x)) {
             return [lit(x.text)];
         }
-        if (depth > MAX_DEPTH) {
+        if (depth > MAX_RESOLVE_DEPTH) {
             return [{...this.gapFor(x), recursive: true} as Value];
         }
         if (x.kind === ts.SyntaxKind.UndefinedKeyword || x.kind === ts.SyntaxKind.NullKeyword || (ts.isIdentifier(x) && x.text === 'undefined')) {
@@ -1588,7 +1582,7 @@ export class Resolver {
                 }
             });
             const rets = returnsOf(fn);
-            if (rets.length && rets.length <= 8) {
+            if (rets.length && rets.length <= MAX_HELPER_RETURNS) {
                 return rets.flatMap((r) => this.resolve(r, depth + 1, new Set([...seen, fn]), benv));
             }
         }
@@ -1845,7 +1839,7 @@ export function concat(a: Value[], b: Value[]): Value[] {
     const out: Value[] = [];
 
     // a side with a single value makes this linear; only true cross products are bounded tightly
-    const cap = a.length === 1 || b.length === 1 ? MAX_USAGE_VALUES : MAX_VALUES;
+    const cap = a.length === 1 || b.length === 1 ? MAX_USAGE_VALUES : MAX_TEMPLATE_VALUES;
     for (const x of a) {
         for (const y of b) {
             if (x.k !== 'lit' && x.k !== 'pat') {

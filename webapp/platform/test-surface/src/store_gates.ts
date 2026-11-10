@@ -5,6 +5,7 @@ import ts from 'typescript';
 
 import {isFunctionLike, propName, returnsOf, strip} from './ast.ts';
 import type {Conditions} from './conditions.ts';
+import {MAX_MAP_STATE_DEPTH, MAX_STORE_CONDITION_DEPTH} from './limits.ts';
 import {isCallUsage, type CodeNode, type ProgramIndex, type Usage} from './program_index.ts';
 import type {Resolver} from './values.ts';
 
@@ -108,7 +109,7 @@ export class StoreGates {
     /** The constants a condition is true for: `x === K`, through `&&`/`||`, locals, selectors and connected props. */
     private constantsOf(e: ts.Expression | undefined, depth: number, seen: Set<ts.Node>): string[] {
         const x = strip(e) as ts.Expression | undefined;
-        if (!x || depth > 5 || seen.has(x)) {
+        if (!x || depth > MAX_STORE_CONDITION_DEPTH || seen.has(x)) {
             return [];
         }
         seen.add(x);
@@ -153,7 +154,7 @@ export class StoreGates {
         const out: ts.Expression[] = [];
         const objects = (e: ts.Node | undefined, depth: number) => {
             const x = strip(e as ts.Expression) as ts.Node | undefined;
-            if (!x || depth > 3) {
+            if (!x || depth > MAX_MAP_STATE_DEPTH) {
                 return;
             }
             if (ts.isObjectLiteralExpression(x)) {

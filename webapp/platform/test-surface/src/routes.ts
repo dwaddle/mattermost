@@ -10,6 +10,7 @@ import ts from 'typescript';
 import {exprName, strip, typeText} from './ast.ts';
 import {cmp} from './compare.ts';
 import {inputDiagnostic} from './input.ts';
+import {MAX_BODY_TYPE_DEPTH, MAX_URL_DEPTH} from './limits.ts';
 import type {Diagnostic} from './manifest_types.ts';
 import type {ProgramIndex} from './program_index.ts';
 
@@ -96,7 +97,7 @@ export function clientRoutes(ix: ProgramIndex): {routes: Map<string, ClientRoute
 
     const evalUrl = (e: ts.Expression | undefined, env: Map<string, string | null>, depth = 0): string => {
         const x = strip(e) as ts.Expression;
-        if (!x || depth > 12) {
+        if (!x || depth > MAX_URL_DEPTH) {
             return '{*}';
         }
         if (ts.isStringLiteral(x) || ts.isNoSubstitutionTemplateLiteral(x)) {
@@ -241,7 +242,7 @@ function bodyTypeOf(ix: ProgramIndex, fn: ts.FunctionLikeDeclaration): BodyType 
 
 /** Every named type in `t` must be importable (from an entity dir) or built-in. */
 function collectImports(ix: ProgramIndex, t: ts.Type, out: Record<string, string>, depth: number): boolean {
-    if (depth > 6) {
+    if (depth > MAX_BODY_TYPE_DEPTH) {
         return false;
     }
     if (t.flags & (ts.TypeFlags.String | ts.TypeFlags.Number | ts.TypeFlags.Boolean | ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void | ts.TypeFlags.Literal | ts.TypeFlags.BooleanLiteral)) {

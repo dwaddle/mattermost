@@ -4,6 +4,7 @@
 import ts from 'typescript';
 
 import {isFunctionLike, nameOfFunction, shortText} from './ast.ts';
+import {MAX_CONDITION_INLINE_DEPTH} from './limits.ts';
 import type {Loc, ProgramIndex} from './program_index.ts';
 import type {Resolver} from './values.ts';
 
@@ -136,7 +137,7 @@ export class Conditions {
 
     classify(expr: ts.Expression, depth = 0): string {
         const k = this.classifyDirect(expr);
-        if (k !== 'other' || depth > 2) {
+        if (k !== 'other' || depth > MAX_CONDITION_INLINE_DEPTH) {
             return k;
         }
 

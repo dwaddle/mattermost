@@ -11,6 +11,7 @@ import {componentName, emptyEffects, mergeEffects, Tracer, withDialogOps, type E
 import {pascal} from './generate/names.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId, type GrammarError, type ParsedTestId} from './grammar.ts';
 import {readVersioned} from './input.ts';
+import {MAX_CONDITION_USAGES, MAX_LANDING_HOPS, MAX_SCOPE_DEPTH, MAX_SCOPE_PATH, MAX_TEMPLATE_VALUES} from './limits.ts';
 import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type PluginInfo, type PluginSlot, type RenderCondition, type TestPart} from './manifest_types.ts';
 import {pageOf} from './navigation.ts';
 import {buildPages, discoverRoutes} from './pages.ts';
@@ -21,7 +22,7 @@ import {reachableFiles} from './reachability.ts';
 import {Roles} from './roles.ts';
 import {Operations} from './routes.ts';
 import {StoreGates, type Gate} from './store_gates.ts';
-import {assignmentsOf, concat, gapsOf, isTruncated, lit, MAX_VALUES, pushesOf, Resolver, templateOf, TOO_MANY_VALUES, type Gap, type Value} from './values.ts';
+import {assignmentsOf, concat, gapsOf, isTruncated, lit, pushesOf, Resolver, templateOf, TOO_MANY_VALUES, type Gap, type Value} from './values.ts';
 
 export type SiteKind = 'dom' | 'component' | 'object' | 'part' | 'html';
 
@@ -87,6 +88,9 @@ export type ScanResult = {
 
     /** The node a usage location points at (for checks that compare positions along usage chains). */
     usageNodeAt: (loc: Loc) => ts.Node | undefined;
+
+    /** The REST client's URL prefix (`/api/v4`), for the summary. */
+    urlVersion: string | null;
 };
 
 const VALUE_ROLES: Record<string, string> = {
@@ -382,7 +386,7 @@ export class Scanner {
         let tag = usage;
         let path = propPath;
         const hops: Loc[] = [];
-        for (let depth = 0; depth < 6; depth++) {
+        for (let depth = 0; depth < MAX_LANDING_HOPS; depth++) {
             if (isIntrinsic(tag)) {
                 return {tag, library: false, hops};
             }
@@ -841,7 +845,7 @@ export class Scanner {
         const out = this.conditions.of(e.landing.anchor);
 
         // conditions at the usages the testid flowed through (`{canX && <Item/>}` in the parent)
-        for (const loc of e.via.slice(0, 3)) {
+        for (const loc of e.via.slice(0, MAX_CONDITION_USAGES)) {
             const u = this.usageByLoc.get(loc);
             if (u) {
                 out.push(...this.conditions.of(usageAnchor(u)));
@@ -851,7 +855,7 @@ export class Scanner {
         // a literal testid inside a component: conditions where that component is rendered (when it is rendered in few places)
         const owner = e.site.owner;
         const usages = owner && !e.via.length ? this.ix.usages.get(owner) ?? [] : [];
-        if (usages.length && usages.length <= 3) {
+        if (usages.length && usages.length <= MAX_CONDITION_USAGES) {
             for (const u of usages) {
                 out.push(...this.conditions.of(usageAnchor(u)));
             }
@@ -878,7 +882,7 @@ export class Scanner {
             return memo;
         }
         const out = new Set<string>();
-        if (path.length > 8 || stack.has(node)) {
+        if (path.length > MAX_SCOPE_PATH || stack.has(node)) {
             return out;
         }
         stack.add(node);
@@ -1014,7 +1018,7 @@ export class Scanner {
         const out = new Map<string, number>();
         let level: ts.Node[] = [node];
         const seen = new Set<ts.Node>();
-        for (let depth = 0; depth <= 4 && level.length; depth++) {
+        for (let depth = 0; depth <= MAX_SCOPE_DEPTH && level.length; depth++) {
             const next: ts.Node[] = [];
             for (const n of level) {
                 if (seen.has(n)) {
@@ -1342,7 +1346,7 @@ export class Scanner {
             const cut = vals.find((v) => v.k === 'unres' && v.why === TOO_MANY_VALUES);
             if (cut?.k === 'unres') {
                 // some targets were left out: the page can't be told from the rest
-                this.diag('truncated', 'warning', o.at, `A navigation to ${o.target} can go to more than ${MAX_VALUES} paths (${cut.at}); the scan keeps only some, so its page is unknown.`, 'Build the path from fewer lists, or navigate through a route helper with typed params.');
+                this.diag('truncated', 'warning', o.at, `A navigation to ${o.target} can go to more than ${MAX_TEMPLATE_VALUES} paths (${cut.at}); the scan keeps only some, so its page is unknown.`, 'Build the path from fewer lists, or navigate through a route helper with typed params.');
                 continue;
             }
             const page = pageOf(vals, pages);
@@ -1389,7 +1393,7 @@ export class Scanner {
             const u = this.usageByLoc.get(loc);
             return u ? usageAnchor(u) : undefined;
         };
-        return {manifest, stats: this.stats(sites, emissions, elements), sites, emissions, unknownEffects, specGaps, usageNodeAt};
+        return {manifest, stats: this.stats(sites, emissions, elements), sites, emissions, unknownEffects, specGaps, usageNodeAt, urlVersion: this.config.client?.urlVersion ?? null};
     }
 
     /** The published slot contract: `export const X = {slot: 'template with {plugin}', …} as const`, and the registry methods that fill each slot. */
