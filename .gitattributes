@@ -1,0 +1,8 @@
+# Written by @mattermost/test-surface (`npm run test-surface && npm run test-surface:generate` in webapp/channels):
+# the webapp's test surface manifest and the Playwright page objects generated from it, for the webapp and for each
+# plugin test package. They are committed so a review shows what a webapp change does to the tests, and collapsed in
+# diffs as generated. Don't edit them, and don't merge them by hand: on a conflict, take either side and regenerate.
+webapp/channels/test-surface.json linguist-generated=true
+e2e-tests/playwright/lib/src/ui/generated/** linguist-generated=true
+e2e-tests/playwright/plugins/*/*.ts linguist-generated=true
+e2e-tests/playwright/plugins/*/app-map.json linguist-generated=true
