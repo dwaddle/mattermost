@@ -1129,6 +1129,25 @@ export class Scanner {
      */
     private addNestedScopes(elements: Element[], byTemplate: Map<string, Emission[]>) {
         const opened = new Set(elements.flatMap((e) => (e.opens ?? []).map((o) => o.scope).filter((x): x is string => Boolean(x))));
+
+        // a scope that renders in a portal (a modal, a floating popover) isn't inside its parent's element in the DOM: its
+        // container lands under a portal component, or its component is used under one; a scope with no container of its
+        // own, when one of its testids is written in a file that renders a portal
+        const portaled = new Map<string, boolean>();
+        const isPortaled = (scope: string) => {
+            let hit = portaled.get(scope);
+            if (hit === undefined) {
+                const container = byTemplate.get(scope) ?? [];
+                if (container.length) {
+                    hit = container.some((em) => underPortal(em.landing.tag ?? em.site.node) || (em.site.owner ? this.ix.usages.get(em.site.owner) ?? [] : []).some((u) => underPortal(usageAnchor(u))));
+                } else {
+                    const members = elements.filter((e) => e.template.startsWith(scope + '.')).flatMap((e) => byTemplate.get(e.template) ?? []);
+                    hit = members.some((em) => fileRendersPortal(em.site.node.getSourceFile()));
+                }
+                portaled.set(scope, hit);
+            }
+            return hit;
+        };
         for (const el of elements) {
             if (!el.grammar || (el.role && !el.key)) {
                 continue;
@@ -1136,12 +1155,11 @@ export class Scanner {
             const own = el.scope[0] ?? el.name;
             const inside = new Set<string>();
             for (const e of byTemplate.get(el.template) ?? []) {
-                const tag = e.landing.tag ?? e.site.tag;
-                if (!tag) {
-                    continue;
-                }
-                for (const s of this.scopesRenderedBy(elementOf(tag))) {
-                    if (!s.includes('.') && s !== own && !opened.has(s)) {
+                // the children the testid's own tag is written with (`<PostAriaLabelDiv data-testid={…}>…</…>`), and
+                // the element it lands on
+                const tags = [...new Set([e.site.tag, e.landing.tag].filter((x): x is JsxTag => Boolean(x)))];
+                for (const s of tags.flatMap((tag) => [...this.scopesRenderedBy(elementOf(tag))])) {
+                    if (!s.includes('.') && s !== own && !opened.has(s) && !isPortaled(s)) {
                         inside.add(s);
                     }
                 }
@@ -1667,6 +1685,44 @@ function usageAnchor(u: Usage): ts.Node {
 function sectionType(route: string): string {
     // eslint-disable-next-line no-template-curly-in-string -- the type is written as a template literal
     return parseRoute(route.replace(/^\/+|\/+$/g, '')).segments.map((s) => (typeof s === 'string' ? s : '${string}')).join('');
+}
+
+/** Components that render their children elsewhere in the DOM: portals, modals, overlays. */
+const PORTAL_TAG = /(^|\.)(\w*Portal|\w*Modal|\w*Overlay)$/;
+
+const portalFiles = new WeakMap<ts.SourceFile, boolean>();
+
+/** Whether a file renders a portal component anywhere. */
+function fileRendersPortal(sf: ts.SourceFile): boolean {
+    let hit = portalFiles.get(sf);
+    if (hit === undefined) {
+        let found = false;
+        const visit = (n: ts.Node) => {
+            if (found) {
+                return;
+            }
+            if ((ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)) && !isIntrinsic(n) && PORTAL_TAG.test(tagName(n))) {
+                found = true;
+                return;
+            }
+            ts.forEachChild(n, visit);
+        };
+        visit(sf);
+        hit = found;
+        portalFiles.set(sf, hit);
+    }
+    return hit;
+}
+
+/** Whether a node is, or is inside, a JSX element of a portal component (in its own file). */
+function underPortal(node: ts.Node): boolean {
+    for (let n: ts.Node | undefined = node; n; n = n.parent) {
+        const tag = ts.isJsxElement(n) ? n.openingElement : n;
+        if ((ts.isJsxOpeningElement(tag) || ts.isJsxSelfClosingElement(tag)) && !isIntrinsic(tag) && PORTAL_TAG.test(tagName(tag))) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function elementOf(tag: JsxTag): ts.Node {

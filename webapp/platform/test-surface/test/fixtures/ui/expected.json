@@ -253,6 +253,53 @@
       }
     },
     {
+      "template": "card",
+      "grammar": true,
+      "scope": [],
+      "name": "card",
+      "role": null,
+      "component": {
+        "name": "Card",
+        "at": "src/nested.tsx#Card"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renders": [
+        "snippet"
+      ]
+    },
+    {
+      "template": "card.open--button",
+      "grammar": true,
+      "scope": [
+        "card"
+      ],
+      "name": "open",
+      "role": "button",
+      "component": {
+        "name": "Card",
+        "at": "src/nested.tsx#Card"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
       "template": "field_menu.field:{key}--menuitem",
       "grammar": true,
       "scope": [
@@ -1902,10 +1949,7 @@
         "role": null,
         "native": false,
         "state": []
-      },
-      "renders": [
-        "mention_popover"
-      ]
+      }
     },
     {
       "template": "note_modal.save--button",
@@ -2413,6 +2457,29 @@
           "kind": "prop"
         }
       ]
+    },
+    {
+      "template": "snippet.text--text",
+      "grammar": true,
+      "scope": [
+        "snippet"
+      ],
+      "name": "text",
+      "role": "text",
+      "component": {
+        "name": "Snippet",
+        "at": "src/nested.tsx#Snippet"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
     },
     {
       "template": "sort_menu.field:{key}--menuitem",

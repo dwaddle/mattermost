@@ -30,7 +30,7 @@ async function generateFixture(name: string) {
 
 test('generate: one file per top-level scope, plus api, sets, app, index and the app map', async () => {
     const {files, result} = await generateFixture('ui');
-    assert.deepEqual(files, ['add_menu.ts', 'api.ts', 'app-map.json', 'app.ts', 'banner.ts', 'bar.ts', 'field_menu.ts', 'footer.ts', 'header.ts', 'index.ts', 'info_popover.ts', 'lazy_modal.ts', 'leave_modal.ts', 'left.ts', 'mention_popover.ts', 'menu_modal.ts', 'note_modal.ts', 'pages.ts', 'right.ts', 'role_menu.ts', 'save_bar.ts', 'sets.ts', 'settings_modal.ts', 'shared.ts', 'side.ts', 'sort_menu.ts', 'static_items.ts', 'team_picker.ts', 'tip.ts', 'toolbar.ts', 'twin.ts']);
+    assert.deepEqual(files, ['add_menu.ts', 'api.ts', 'app-map.json', 'app.ts', 'banner.ts', 'bar.ts', 'card.ts', 'field_menu.ts', 'footer.ts', 'header.ts', 'index.ts', 'info_popover.ts', 'lazy_modal.ts', 'leave_modal.ts', 'left.ts', 'mention_popover.ts', 'menu_modal.ts', 'note_modal.ts', 'pages.ts', 'right.ts', 'role_menu.ts', 'save_bar.ts', 'sets.ts', 'settings_modal.ts', 'shared.ts', 'side.ts', 'snippet.ts', 'sort_menu.ts', 'static_items.ts', 'team_picker.ts', 'tip.ts', 'toolbar.ts', 'twin.ts']);
     assert.deepEqual(result.diagnostics.filter((d) => d.severity === 'error'), []);
 });
 
@@ -371,12 +371,13 @@ test('generate: a text-keyed item takes the text and builds its key at runtime',
 
 test('generate: a scope rendered inside another one\'s element gets an accessor there, rooted at that element', async () => {
     const {read} = await generateFixture('ui');
-    const note = read('note_modal.ts');
-    assert.match(note, /import \{MentionPopover\} from '\.\/mention_popover';/);
-    assert.match(note, /get mentionPopover\(\): MentionPopover \{\n {8}return MentionPopover\.within\(this\.locator\);/);
+    const card = read('card.ts');
+    assert.match(card, /import \{Snippet\} from '\.\/snippet';/);
+    assert.match(card, /get snippet\(\): Snippet \{\n {8}return Snippet\.within\(this\.locator\);/);
 
-    // what a click opens renders in a portal: no accessor on the opener's scope
+    // what a click opens, and what a file with a portal (a modal) renders, isn't in the element: no accessor
     assert.doesNotMatch(read('header.ts'), /get settingsModal\(\)/);
+    assert.doesNotMatch(read('note_modal.ts'), /get mentionPopover\(\)/);
 });
 
 test('generate: a page with no pageReady entry is an error, so every goto() either waits or says why it can\'t', async () => {
