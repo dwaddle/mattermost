@@ -9,22 +9,12 @@
  * ROLE is an ARIA role name or the pseudo-role `text` (read-only content); no role means a container.
  */
 
-import {isTestIdProblem, parseTestId as parseGrammar, TEST_ID_ROLES, type TestIdProblem, type TestIdRole} from '@mattermost/types/test_id';
-
-export const ROLES = TEST_ID_ROLES;
-export type Role = TestIdRole;
+import {isTestIdProblem, parseTestId as parseGrammar, TEST_ID_ROLES, type TestIdParts, type TestIdProblem} from '@mattermost/types/test_id';
 
 export const KEY_PLACEHOLDER = '{key}';
 
-export type ParsedTestId = {
-    scope: string[];
-    name: string;
-    hasKey: boolean;
-
-    /** The literal key, when the testid was written with one (not a placeholder). */
-    key: string | null;
-    role: Role | null;
-};
+/** A template's parts (`key` is the literal key, or null where runtime data fills it). The scanner never composes. */
+export type ParsedTestId = Omit<TestIdParts, 'composed'>;
 
 export type GrammarError = {rule: 'grammar' | 'unscoped'; message: string; fix: string};
 
@@ -43,7 +33,7 @@ export function parseTestId(id: string): ParsedTestId | GrammarError {
 function grammarError(id: string, p: TestIdProblem): GrammarError {
     switch (p.problem) {
     case 'unknown_role':
-        return {rule: 'grammar', message: `"${id}" has an unknown role "--${p.role}".`, fix: `Use one of: ${ROLES.join(', ')}.`};
+        return {rule: 'grammar', message: `"${id}" has an unknown role "--${p.role}".`, fix: `Use one of: ${TEST_ID_ROLES.join(', ')}.`};
     case 'dashes_before_role':
         return {rule: 'grammar', message: `"${id}" contains "--" before its role.`, fix: 'Only the role suffix may follow "--". Inside names use "_".'};
     case 'empty_key':
@@ -63,8 +53,13 @@ function grammarError(id: string, p: TestIdProblem): GrammarError {
             fix: hint && hint !== p.word ? `Words match [a-z][a-z0-9_]*, e.g. "${hint}".` : 'Words match [a-z][a-z0-9_]*.',
         };
     }
-    default:
+    case 'unscoped':
         return {rule: 'unscoped', message: `"${id}" has no scope.`, fix: 'Prefix it with where it lives, e.g. "channel_header.menu.' + toWord(p.word) + '".'};
+    default: {
+        // a problem the grammar added that this mapping doesn't word yet fails to compile here
+        const unhandled: never = p;
+        return unhandled;
+    }
     }
 }
 
