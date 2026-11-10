@@ -49202,7 +49202,8 @@
       "component": {
         "name": "TeamController",
         "at": "channels/src/components/team_controller/team_controller.tsx#TeamController"
-      }
+      },
+      "noReady": "redirects to the team's default channel: open a channel with app.channelsPage.goto()."
     },
     {
       "class": "ChannelsPage",
@@ -49247,7 +49248,8 @@
       "component": {
         "name": "ChannelIdentifierRouter",
         "at": "channels/src/components/channel_layout/channel_identifier_router/channel_identifier_router.tsx#ChannelIdentifierRouter"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves ChannelIdentifierRouter to the grammar names one."
     },
     {
       "class": "DraftsPage",
@@ -49268,7 +49270,8 @@
       "component": {
         "name": "Drafts",
         "at": "channels/src/components/drafts/index.tsx#Drafts"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves Drafts to the grammar names one."
     },
     {
       "class": "EmojiPage",
@@ -49289,7 +49292,8 @@
       "component": {
         "name": "EmojiPage",
         "at": "channels/src/components/emoji/emoji_page.tsx#EmojiPage"
-      }
+      },
+      "noReady": "the custom emoji page renders no testid yet."
     },
     {
       "class": "IntegrationsPage",
@@ -49304,13 +49308,43 @@
             "field": "name",
             "module": "@mattermost/types/teams"
           }
+        },
+        {
+          "name": "section",
+          "as": "section",
+          "optional": true,
+          "values": [
+            "bots",
+            "bots/add",
+            "bots/edit",
+            "commands",
+            "commands/add",
+            "commands/confirm",
+            "commands/edit",
+            "commands/installed",
+            "confirm",
+            "incoming_webhooks",
+            "incoming_webhooks/add",
+            "incoming_webhooks/edit",
+            "oauth2-apps",
+            "oauth2-apps/add",
+            "oauth2-apps/edit",
+            "outgoing-oauth2-connections",
+            "outgoing-oauth2-connections/add",
+            "outgoing-oauth2-connections/edit",
+            "outgoing_webhooks",
+            "outgoing_webhooks/add",
+            "outgoing_webhooks/edit"
+          ],
+          "section": true
         }
       ],
       "scopes": [],
       "component": {
         "name": "Integrations",
         "at": "channels/src/components/integrations/integrations.tsx#Integrations"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves Integrations to the grammar names one."
     },
     {
       "class": "RecapsPage",
@@ -49331,7 +49365,8 @@
       "component": {
         "name": "Recaps",
         "at": "channels/src/components/recaps/recaps.tsx#Recaps"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves Recaps to the grammar names one."
     },
     {
       "class": "ScheduledPostsPage",
@@ -49352,7 +49387,8 @@
       "component": {
         "name": "Drafts",
         "at": "channels/src/components/drafts/index.tsx#Drafts"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves Drafts to the grammar names one."
     },
     {
       "class": "ThreadsPage",
@@ -49378,7 +49414,8 @@
       "component": {
         "name": "GlobalThreads",
         "at": "channels/src/components/threading/global_threads/global_threads.tsx#GlobalThreads"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves GlobalThreads to the grammar names one."
     },
     {
       "class": "PopoutPage",
@@ -49388,7 +49425,8 @@
       "component": {
         "name": "PopoutController",
         "at": "channels/src/components/popout_controller/popout_controller.tsx#PopoutController"
-      }
+      },
+      "noReady": "only routes to a popout below it (channel, thread, RHS, help)."
     },
     {
       "class": "ChannelPopoutPage",
@@ -49433,7 +49471,8 @@
       "component": {
         "name": "ChannelPopout",
         "at": "channels/src/components/channel_popout/channel_popout.tsx#ChannelPopout"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves ChannelPopout to the grammar names one."
     },
     {
       "class": "HelpPopoutPage",
@@ -49449,7 +49488,8 @@
       "component": {
         "name": "HelpPopout",
         "at": "channels/src/components/help_popout/help_popout.tsx#HelpPopout"
-      }
+      },
+      "noReady": "the help pages render no testid yet."
     },
     {
       "class": "RhsPopoutPage",
@@ -49470,7 +49510,8 @@
       "component": {
         "name": "RhsPopout",
         "at": "channels/src/components/rhs_popout/rhs_popout.tsx#RhsPopout"
-      }
+      },
+      "noReady": "renders no testid of its own yet."
     },
     {
       "class": "ThreadPopoutPage",
@@ -49496,17 +49537,125 @@
       "component": {
         "name": "ThreadPopout",
         "at": "channels/src/components/thread_popout/thread_popout.tsx#ThreadPopout"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves ThreadPopout to the grammar names one."
     },
     {
       "class": "AdminConsolePage",
       "path": "/admin_console",
-      "params": [],
+      "params": [
+        {
+          "name": "section",
+          "as": "section",
+          "optional": true,
+          "values": [
+            "about/license",
+            "authentication/email",
+            "authentication/gitlab",
+            "authentication/guest_access",
+            "authentication/ldap",
+            "authentication/mfa",
+            "authentication/oauth",
+            "authentication/openid",
+            "authentication/password",
+            "authentication/saml",
+            "authentication/signup",
+            "billing/company_info",
+            "billing/subscription",
+            "compliance/audit_logging",
+            "compliance/custom_terms_of_service",
+            "compliance/data_retention",
+            "compliance/data_retention_settings",
+            "compliance/data_retention_settings/custom_policy",
+            "compliance/data_retention_settings/custom_policy/${string}",
+            "compliance/data_retention_settings/global_policy",
+            "compliance/export",
+            "compliance/monitoring",
+            "environment/cache_settings",
+            "environment/database",
+            "environment/developer",
+            "environment/elasticsearch",
+            "environment/file_storage",
+            "environment/high_availability",
+            "environment/image_proxy",
+            "environment/logging",
+            "environment/mobile_security",
+            "environment/mobile_security_feature_discovery",
+            "environment/notifications",
+            "environment/performance_monitoring",
+            "environment/push_notification_server",
+            "environment/rate_limiting",
+            "environment/session_lengths",
+            "environment/smtp",
+            "environment/web_server",
+            "experimental/feature_flags",
+            "experimental/features",
+            "integrations/bot_accounts",
+            "integrations/cors",
+            "integrations/embedding",
+            "integrations/gif",
+            "integrations/integration_management",
+            "plugins/plugin_${string}",
+            "plugins/plugin_management",
+            "reporting/server_logs",
+            "reporting/site_health",
+            "reporting/system_analytics",
+            "reporting/team_statistics",
+            "reporting/workspace_optimization",
+            "site_config/announcement_banner",
+            "site_config/classification_markings",
+            "site_config/customization",
+            "site_config/data_spillage",
+            "site_config/emoji",
+            "site_config/file_sharing_downloads",
+            "site_config/ip_filtering",
+            "site_config/localization",
+            "site_config/notices",
+            "site_config/posts",
+            "site_config/public_links",
+            "site_config/recaps",
+            "site_config/secure_connections",
+            "site_config/secure_connections/${string}",
+            "site_config/users_and_teams",
+            "site_config/wrangler",
+            "system_attributes/attribute_based_access_control",
+            "system_attributes/board_attributes",
+            "system_attributes/manage_attributes",
+            "system_attributes/manage_attributes/attribute_details",
+            "system_attributes/manage_attributes/attribute_details/${string}",
+            "system_attributes/manage_attributes/classification",
+            "system_attributes/membership_policies",
+            "system_attributes/membership_policies/edit_policy",
+            "system_attributes/membership_policies/edit_policy/${string}",
+            "system_attributes/permission_policies",
+            "system_attributes/permission_policies/edit_policy",
+            "system_attributes/permission_policies/edit_policy/${string}",
+            "system_attributes/session_attributes",
+            "system_attributes/user_attributes",
+            "user_management/channels",
+            "user_management/channels/${string}",
+            "user_management/groups",
+            "user_management/groups/${string}",
+            "user_management/permissions",
+            "user_management/permissions/system_scheme",
+            "user_management/permissions/team_override_scheme",
+            "user_management/permissions/team_override_scheme/${string}",
+            "user_management/system_roles",
+            "user_management/system_roles/${string}",
+            "user_management/teams",
+            "user_management/teams/${string}",
+            "user_management/user/${string}",
+            "user_management/users"
+          ],
+          "section": true
+        }
+      ],
       "scopes": [],
       "component": {
         "name": "AdminConsole",
         "at": "channels/src/components/admin_console/admin_console.tsx#AdminConsole"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves AdminConsole to the grammar names one."
     },
     {
       "class": "ClaimPage",
@@ -49516,7 +49665,8 @@
       "component": {
         "name": "ClaimController",
         "at": "channels/src/components/claim/claim_controller.tsx#ClaimController"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves ClaimController to the grammar names one."
     },
     {
       "class": "ComponentLibraryPage",
@@ -49526,7 +49676,8 @@
       "component": {
         "name": "ComponentLibrary",
         "at": "channels/src/components/component_library/index.tsx#ComponentLibrary"
-      }
+      },
+      "noReady": "a development page with no testids."
     },
     {
       "class": "CreateTeamPage",
@@ -49536,7 +49687,8 @@
       "component": {
         "name": "CreateTeam",
         "at": "channels/src/components/create_team/create_team.tsx#CreateTeam"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves CreateTeam to the grammar names one."
     },
     {
       "class": "DoVerifyEmailPage",
@@ -49546,7 +49698,8 @@
       "component": {
         "name": "DoVerifyEmail",
         "at": "channels/src/components/do_verify_email/do_verify_email.tsx#DoVerifyEmail"
-      }
+      },
+      "noReady": "verifies the link and redirects."
     },
     {
       "class": "ErrorPage",
@@ -49556,7 +49709,8 @@
       "component": {
         "name": "ErrorPage",
         "at": "channels/src/components/error_page/error_page.tsx#ErrorPage"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves ErrorPage to the grammar names one."
     },
     {
       "class": "HelpPage",
@@ -49572,7 +49726,8 @@
       "component": {
         "name": "Help",
         "at": "channels/src/components/help/help.tsx#Help"
-      }
+      },
+      "noReady": "the help pages render no testid yet."
     },
     {
       "class": "LinkingLandingPage",
@@ -49582,7 +49737,8 @@
       "component": {
         "name": "LinkingLandingPage",
         "at": "channels/src/components/linking_landing_page/linking_landing_page.tsx#LinkingLandingPage"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves LinkingLandingPage to the grammar names one."
     },
     {
       "class": "LoginPage",
@@ -49592,7 +49748,8 @@
       "component": {
         "name": "Login",
         "at": "channels/src/components/login/login.tsx#Login"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves Login to the grammar names one."
     },
     {
       "class": "DesktopAuthTokenPage",
@@ -49602,7 +49759,8 @@
       "component": {
         "name": "DesktopAuthToken",
         "at": "channels/src/components/desktop_auth_token.tsx#DesktopAuthToken"
-      }
+      },
+      "noReady": "hands the login over to the desktop app and redirects."
     },
     {
       "class": "MFAPage",
@@ -49612,7 +49770,8 @@
       "component": {
         "name": "MFAController",
         "at": "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves MFAController to the grammar names one."
     },
     {
       "class": "AuthorizePage",
@@ -49622,7 +49781,8 @@
       "component": {
         "name": "Authorize",
         "at": "channels/src/components/authorize/authorize.tsx#Authorize"
-      }
+      },
+      "noReady": "the OAuth authorize screen renders no testid yet."
     },
     {
       "class": "PreparingWorkspacePage",
@@ -49632,7 +49792,8 @@
       "component": {
         "name": "PreparingWorkspace",
         "at": "channels/src/components/preparing_workspace/preparing_workspace.tsx#PreparingWorkspace"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves PreparingWorkspace to the grammar names one."
     },
     {
       "class": "PasswordResetSendLinkPage",
@@ -49642,7 +49803,8 @@
       "component": {
         "name": "PasswordResetSendLink",
         "at": "channels/src/components/password_reset_send_link/password_reset_send_link.tsx#PasswordResetSendLink"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves PasswordResetSendLink to the grammar names one."
     },
     {
       "class": "PasswordResetFormPage",
@@ -49652,7 +49814,8 @@
       "component": {
         "name": "PasswordResetForm",
         "at": "channels/src/components/password_reset_form/password_reset_form.tsx#PasswordResetForm"
-      }
+      },
+      "noReady": "renders no testid yet."
     },
     {
       "class": "SelectTeamPage",
@@ -49662,7 +49825,8 @@
       "component": {
         "name": "SelectTeam",
         "at": "channels/src/components/select_team/select_team.tsx#SelectTeam"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves SelectTeam to the grammar names one."
     },
     {
       "class": "ShouldVerifyEmailPage",
@@ -49672,7 +49836,8 @@
       "component": {
         "name": "ShouldVerifyEmail",
         "at": "channels/src/components/should_verify_email/should_verify_email.tsx#ShouldVerifyEmail"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves ShouldVerifyEmail to the grammar names one."
     },
     {
       "class": "SignupPage",
@@ -49682,7 +49847,8 @@
       "component": {
         "name": "Signup",
         "at": "channels/src/components/signup/signup.tsx#Signup"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves Signup to the grammar names one."
     },
     {
       "class": "SignupUserCompleteDesktopPage",
@@ -49692,7 +49858,8 @@
       "component": {
         "name": "DesktopAuthToken",
         "at": "channels/src/components/desktop_auth_token.tsx#DesktopAuthToken"
-      }
+      },
+      "noReady": "hands the signup over to the desktop app and redirects."
     },
     {
       "class": "TermsOfServicePage",
@@ -49702,7 +49869,8 @@
       "component": {
         "name": "TermsOfService",
         "at": "channels/src/components/terms_of_service/terms_of_service.tsx#TermsOfService"
-      }
+      },
+      "noReady": "no ready testid yet: the PR that moves TermsOfService to the grammar names one."
     }
   ],
   "pluginSlots": [],
