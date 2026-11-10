@@ -1110,6 +1110,32 @@
       }
     },
     {
+      "template": "values.overloaded.message--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "overloaded"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Overloaded",
+        "at": "src/overload.tsx#Overloaded"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/overload.tsx#OverloadedUser"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "values.paired.a_y--text",
       "grammar": true,
       "scope": [

@@ -187,3 +187,8 @@ test('values: only id-like entity fields key a testid without review; a reviewed
     assert.deepEqual(keyOrigin(ds), []);
     assert.deepEqual(ds.filter((d) => d.rule === 'allow').map((d) => d.message), ['checks.keyFields.allow entry for Team.display_name no longer matches any key.']);
 });
+
+test('values: an overloaded helper is read through the declaration that has a body', () => {
+    element(out(), 'values.overloaded.message--text');
+    assert.ok(!out().diagnostics.some((d) => d.at.startsWith('src/overload.tsx') && d.rule === 'unresolved'));
+});
