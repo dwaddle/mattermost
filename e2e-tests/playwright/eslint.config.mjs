@@ -125,6 +125,18 @@ const GENERATED_API_SPECS = [
     'specs/visual/channels/intro_channel.spec.ts',
 ];
 
+// Files where the spec rules' extended checks (template, variable, hasText and selector locators; pw.wait and timer
+// sleeps) found what the area-fix wave moves: there the two rules stay warnings until then (see the last block).
+const EXTENDED_LINT_PENDING = [
+    'specs/accessibility/channels/intro_channel.spec.ts',
+    'specs/functional/channels/emoji_picker/scroll_disabled_with_picker.spec.ts',
+    'specs/functional/channels/interactive_messages/mm_blocks_ephemeral.spec.ts',
+    'specs/functional/channels/interactive_messages/mm_blocks_incoming_webhook.spec.ts',
+    'specs/functional/channels/messaging/message_delivery_and_links.spec.ts',
+    'specs/functional/channels/search/search_result_display_refresh_scroll.spec.ts',
+    'specs/functional/channels/sidebar_left/dm_gm_profiles_on_load.spec.ts',
+];
+
 export default [
     {
         ignores: [
@@ -231,6 +243,13 @@ export default [
         files: ['lib/src/ui/generated/**/*.ts'], // page objects locate and act; specs assert
         rules: {
             '@mattermost/e2e-no-expect-in-page-objects': 'warn',
+        },
+    },
+    {
+        files: EXTENDED_LINT_PENDING,
+        rules: {
+            '@mattermost/e2e-no-literal-locators': 'warn',
+            '@mattermost/e2e-no-wait-for-timeout': 'warn',
         },
     },
 ];
