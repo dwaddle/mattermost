@@ -6,10 +6,15 @@
 
 import type {Locator, Page} from '@playwright/test';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
-import {Users} from './shared';
+import {Input, Users} from './shared';
 
+/** The form fields of `create_user_groups_modal`. */
+export type CreateUserGroupsModalFormValues = {
+    mention: string;
+    name: string;
+};
 /** Scope `create_user_groups_modal`. */
 export class CreateUserGroupsModal extends Scope {
     constructor(page: Page, scope = 'create_user_groups_modal', root?: Locator) {
@@ -21,7 +26,69 @@ export class CreateUserGroupsModal extends Scope {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
+    /**
+     * `create_user_groups_modal.mention--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get mentionTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.mention--textbox`), {
+            testId: `${this.scope}.mention--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillMentionTextbox(value: string): Promise<void> {
+        await this.mentionTextbox.fill(value);
+    }
+
+    /**
+     * `create_user_groups_modal.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get nameTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.name--textbox`), {
+            testId: `${this.scope}.name--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNameTextbox(value: string): Promise<void> {
+        await this.nameTextbox.fill(value);
+    }
+
+    get mention(): Input {
+        return new Input(this.page, `${this.scope}.mention`, this.root);
+    }
+
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+
     get users(): Users {
         return new Users(this.page, `${this.scope}.users`, this.root);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<CreateUserGroupsModalFormValues>): Promise<void> {
+        if (values.mention !== undefined) {
+            await this.mentionTextbox.fill(values.mention);
+        }
+        if (values.name !== undefined) {
+            await this.nameTextbox.fill(values.name);
+        }
+    }
+
+    /** Reads every field (a field that isn't rendered reads as `undefined`). */
+    async read(): Promise<CreateUserGroupsModalFormValues> {
+        const vMention = await this.mentionTextbox.value();
+        const vName = await this.nameTextbox.value();
+        return {
+            mention: vMention,
+            name: vName,
+        };
     }
 }

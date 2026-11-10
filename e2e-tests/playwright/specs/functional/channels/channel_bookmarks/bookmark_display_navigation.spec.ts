@@ -7,12 +7,19 @@ import {createLinkBookmark, createLinkBookmarks} from './support';
 
 /**
  * @objective Verify the bookmarks bar remains visible and usable with an announcement banner present.
+ *
+ * Written on the generated page objects: the admin announcement banner and the bar's bookmarks by id.
  */
 test('MM-T5609 displays the bookmarks bar correctly with an announcement banner', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();
     const channel = await adminClient.createPublicChannel(team.id, `Banner ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
-    await createLinkBookmark(userClient, channel.id, 'Mattermost Community', 'https://community.mattermost.com');
+    const bookmark = await createLinkBookmark(
+        userClient,
+        channel.id,
+        'Mattermost Community',
+        'https://community.mattermost.com',
+    );
     const bannerText = `Announcement ${pw.random.id()}`;
 
     // # Enable an announcement banner above a channel with a bookmark
@@ -23,13 +30,12 @@ test('MM-T5609 displays the bookmarks bar correctly with an announcement banner'
         },
     } as any);
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // * Verify both the announcement and bookmark display correctly
-    await expect(page.getByText(bannerText, {exact: true})).toBeVisible();
-    await channelsPage.channelBookmarksBar.toBeVisible();
-    await expect(channelsPage.channelBookmarksBar.getBookmark('Mattermost Community')).toBeVisible();
+    // * Both the announcement and the bookmark display correctly
+    await expect(app.announcementBar.admin.messageText.locator).toHaveText(bannerText);
+    await expect(app.channelBookmarks.bookmark(bookmark).openLink.locator).toHaveText('Mattermost Community');
 });
 
 /**
@@ -40,28 +46,30 @@ test('MM-T5611 opens external and internal bookmark links', {tag: '@channels'}, 
     const {adminClient, team, user, userClient} = await pw.initSetup();
     const channel = await adminClient.createPublicChannel(team.id, `Open ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
-
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await createLinkBookmark(userClient, channel.id, 'External site', 'https://example.com');
-    await createLinkBookmark(
+    const external = await createLinkBookmark(userClient, channel.id, 'External site', 'https://example.com');
+    const internal = await createLinkBookmark(
         userClient,
         channel.id,
         'Town Square',
         `${testConfig.baseURL}/${team.name}/channels/town-square`,
     );
-    await channelsPage.goto(team.name, channel.name);
+
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
     // # Open the external bookmark
     const popupPromise = page.waitForEvent('popup');
-    await channelsPage.channelBookmarksBar.getBookmark('External site').click();
+    await app.channelBookmarks.bookmark(external).openLink.click();
     const popup = await popupPromise;
-    // * Verify it opens externally in a new tab
+
+    // * It opens in a new tab
     await expect.poll(() => popup.url()).toContain('example.com');
     await popup.close();
 
     // # Open the internal bookmark
-    await channelsPage.channelBookmarksBar.getBookmark('Town Square').click();
-    // * Verify it navigates to Town Square in Mattermost
+    await app.channelBookmarks.bookmark(internal).openLink.click();
+
+    // * It navigates to Town Square in Mattermost
     await expect.poll(() => page.url()).toContain(`/${team.name}/channels/town-square`);
 });
 
@@ -76,16 +84,16 @@ test(
         const {adminClient, team, user, userClient} = await pw.initSetup();
         const channel = await adminClient.createPublicChannel(team.id, `Overflow ${pw.random.id()}`);
         await adminClient.addToChannel(user.id, channel.id);
-        await createLinkBookmarks(userClient, channel.id, 12);
+        const bookmarks = await createLinkBookmarks(userClient, channel.id, 12);
+        const last = bookmarks[bookmarks.length - 1];
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.channelBookmarksBar.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel});
 
-        // * Verify the overflow control exposes the last bookmark
-        const overflowButton = channelsPage.channelBookmarksBar.getOverflowButton();
-        await expect(overflowButton).toBeVisible();
-        await overflowButton.click();
-        await expect(page.getByRole('menuitem', {name: /Bookmark 12/})).toBeVisible();
+        // * The last bookmark isn't in the bar, and the overflow menu exposes it
+        await expect(app.channelBookmarks.bookmark(bookmarks[0]).locator).toBeVisible();
+        await expect(app.channelBookmarks.bookmark(last).locator).toHaveCount(0);
+        const overflow = await app.channelBookmarks.clickOpenMenuButton();
+        await expect(overflow.bookmark(last).locator).toContainText('Bookmark 12');
     },
 );

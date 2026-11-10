@@ -30,12 +30,12 @@ describe('components/TeamGroupsManageModal', () => {
 
     test('should show confirm modal when remove-group button is clicked', async () => {
         const wrapper = renderWithContext(<TeamGroupsManageModal {...baseProps}/>);
-        expect(await wrapper.findByTestId('group-name')).toBeInTheDocument();
-        await userEvent.click(wrapper.getByTestId('menu-button'));
+        expect(await wrapper.findByTestId('team_groups_manage_modal.group.name--text')).toBeInTheDocument();
+        await userEvent.click(wrapper.getByTestId('team_groups_manage_modal.group.role--button'));
 
-        await userEvent.click(wrapper.getByTestId('remove-group-button'));
+        await userEvent.click(wrapper.getByTestId('team_groups_manage_modal.group.role_menu.remove--button'));
 
-        expect(await wrapper.findByTestId('confirm-modal')).toBeInTheDocument();
+        expect(await wrapper.findByTestId('team_groups_manage_modal.remove_group_modal')).toBeInTheDocument();
     });
 
     test('should call loadItems on render', async () => {
@@ -48,14 +48,14 @@ describe('components/TeamGroupsManageModal', () => {
 
     test('should hide confirm modal when cancel button is clicked', async () => {
         const wrapper = renderWithContext(<TeamGroupsManageModal {...baseProps}/>);
-        expect(await wrapper.findByTestId('group-name')).toBeInTheDocument();
-        await userEvent.click(wrapper.getByTestId('menu-button'));
+        expect(await wrapper.findByTestId('team_groups_manage_modal.group.name--text')).toBeInTheDocument();
+        await userEvent.click(wrapper.getByTestId('team_groups_manage_modal.group.role--button'));
 
-        await userEvent.click(wrapper.getByTestId('remove-group-button'));
-        expect(await wrapper.findByTestId('confirm-modal')).toBeInTheDocument();
+        await userEvent.click(wrapper.getByTestId('team_groups_manage_modal.group.role_menu.remove--button'));
+        expect(await wrapper.findByTestId('team_groups_manage_modal.remove_group_modal')).toBeInTheDocument();
 
-        await userEvent.click(wrapper.getByTestId('cancel-button'));
-        await waitForElementToBeRemoved(() => wrapper.queryByTestId('confirm-modal'));
-        expect(wrapper.queryByTestId('confirm-modal')).toBeNull();
+        await userEvent.click(wrapper.getByTestId('team_groups_manage_modal.remove_group_modal.cancel--button'));
+        await waitForElementToBeRemoved(() => wrapper.queryByTestId('team_groups_manage_modal.remove_group_modal'));
+        expect(wrapper.queryByTestId('team_groups_manage_modal.remove_group_modal')).toBeNull();
     });
 });

@@ -217,20 +217,18 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
         // Join button that the server rejects for a private channel.
         const pendingRequest = isMember ? undefined : this.getPendingRequest(channel.id);
 
-        const ariaLabel = pendingRequest ?
-            this.props.intl.formatMessage(
-                {
-                    id: 'more_channels.requested.aria',
-                    defaultMessage: '{channelName}, join request pending',
-                },
-                {channelName: channel.display_name},
-            ) :
-            `${channel.display_name}, ${channel.purpose}`.toLowerCase();
+        const ariaLabel = pendingRequest ? this.props.intl.formatMessage(
+            {
+                id: 'more_channels.requested.aria',
+                defaultMessage: '{channelName}, join request pending',
+            },
+            {channelName: channel.display_name},
+        ) : `${channel.display_name}, ${channel.purpose}`.toLowerCase();
 
         const discoverableIndicator = isDiscoverable ? (
             <div
                 className='discoverableIndicatorContainer'
-                data-testid='discoverable-indicator'
+                data-testid='browse_channels.list.channel.discoverable--text'
                 aria-label={this.props.intl.formatMessage(kindMessages.discoverableAria[kind])}
             >
                 <AccountPlusOutlineIcon size={14}/>
@@ -256,7 +254,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                 {discoverableIndicator}
                 {discoverableIndicator ? <span className='dot'/> : null}
                 <AccountOutlineIcon size={14}/>
-                <span data-testid={`channelMemberCount-${channel.name}`} >{memberCount}</span>
+                <span data-testid='browse_channels.list.channel.member_count--text'>{memberCount}</span>
                 {channel.purpose.length > 0 ? <span className='dot'/> : null}
                 <span className='more-modal__description'>{channel.purpose}</span>
             </div>
@@ -275,6 +273,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
             return (
                 <Button
                     id='joinViewChannelButton'
+                    data-testid={isMember ? 'browse_channels.list.channel.view--button' : 'browse_channels.list.channel.join--button'}
                     onClick={(e) => this.handleJoin(channel, e)}
                     emphasis={joinViewChannelButtonEmphasis}
                     size='small'
@@ -299,6 +298,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
         const renderRequestToJoinButton = () => (
             <Button
                 id='requestToJoinChannelButton'
+                data-testid='browse_channels.list.channel.request--button'
                 onClick={(e) => this.handleRequestToJoin(channel, e)}
                 emphasis='primary'
                 size='small'
@@ -323,6 +323,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
             <Button
                 id='withdrawRequestButton'
                 className='withdrawButton'
+                data-testid='browse_channels.list.channel.withdraw--button'
                 onClick={(e) => this.handleWithdrawRequest(channel, e)}
                 emphasis='tertiary'
                 size='small'
@@ -386,7 +387,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                 className='more-modal__row'
                 key={channel.id}
                 id={`ChannelRow-${channel.name}`}
-                data-testid={`ChannelRow-${channel.name}`}
+                data-testid={`browse_channels.list.channel:${channel.name}`}
                 aria-label={ariaLabel}
                 onClick={handleRowClick}
                 tabIndex={0}
@@ -662,6 +663,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                 </span>
                 <QuickInput
                     id='searchChannelsTextbox'
+                    data-testid='browse_channels.search--textbox'
                     ref={this.filter}
                     className='form-control filter-textbox'
                     placeholder={this.props.intl.formatMessage({id: 'filtered_channels_list.search', defaultMessage: 'Search channels'})}
@@ -684,6 +686,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
             <Menu.Item
                 key='channelsMoreDropdownAll'
                 id='channelsMoreDropdownAll'
+                data-testid={`browse_channels.type_filter_menu.filter:${Filter.All}--menuitem`}
                 onClick={() => this.filterChange(Filter.All)}
                 leadingElement={<GlobeCheckedIcon size={16}/>}
                 labels={
@@ -698,6 +701,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
             <Menu.Item
                 key='channelsMoreDropdownPublic'
                 id='channelsMoreDropdownPublic'
+                data-testid={`browse_channels.type_filter_menu.filter:${Filter.Public}--menuitem`}
                 onClick={() => this.filterChange(Filter.Public)}
                 leadingElement={<GlobeIcon size={16}/>}
                 labels={
@@ -712,6 +716,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
             <Menu.Item
                 key='channelsMoreDropdownPrivate'
                 id='channelsMoreDropdownPrivate'
+                data-testid={`browse_channels.type_filter_menu.filter:${Filter.Private}--menuitem`}
                 onClick={() => this.filterChange(Filter.Private)}
                 leadingElement={<LockOutlineIcon size={16}/>}
                 labels={
@@ -731,6 +736,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                 <Menu.Item
                     key='channelsMoreDropdownRecommended'
                     id='channelsMoreDropdownRecommended'
+                    data-testid={`browse_channels.type_filter_menu.filter:${Filter.Recommended}--menuitem`}
                     onClick={() => this.filterChange(Filter.Recommended)}
                     leadingElement={<GlobeCheckedIcon size={16}/>}
                     labels={
@@ -754,6 +760,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                 <Menu.Item
                     key='channelsMoreDropdownDiscoverable'
                     id='channelsMoreDropdownDiscoverable'
+                    data-testid={`browse_channels.type_filter_menu.filter:${Filter.Discoverable}--menuitem`}
                     onClick={() => this.filterChange(Filter.Discoverable)}
                     leadingElement={<AccountPlusOutlineIcon size={16}/>}
                     labels={
@@ -768,6 +775,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                 <Menu.Item
                     key='channelsMoreDropdownMyPending'
                     id='channelsMoreDropdownMyPending'
+                    data-testid={`browse_channels.type_filter_menu.filter:${Filter.MyPendingRequests}--menuitem`}
                     onClick={() => this.filterChange(Filter.MyPendingRequests)}
                     leadingElement={<ClockOutlineIcon size={16}/>}
                     labels={
@@ -787,6 +795,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
             <Menu.Item
                 key='channelsMoreDropdownArchived'
                 id='channelsMoreDropdownArchived'
+                data-testid={`browse_channels.type_filter_menu.filter:${Filter.Archived}--menuitem`}
                 onClick={() => this.filterChange(Filter.Archived)}
                 leadingElement={<ArchiveOutlineIcon size={16}/>}
                 labels={
@@ -825,6 +834,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                 <Menu.Container
                     menuButton={{
                         id: 'menuWrapper',
+                        dataTestId: 'browse_channels.type_filter--button',
                         children: menuButton,
                         'aria-label': this.props.intl.formatMessage({id: 'more_channels.channel_type_filter', defaultMessage: 'Channel type filter'}),
                     }}
@@ -833,7 +843,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
                         'aria-label': this.props.intl.formatMessage({id: 'more_channels.channel_type_filter', defaultMessage: 'Channel type filter'}),
                     }}
                 >
-                    {channelDropdownItems.map((item) => item)}
+                    {channelDropdownItems}
                 </Menu.Container>
             </>
         );
@@ -842,6 +852,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
         const hideJoinedPreferenceCheckbox = (
             <div
                 id={'hideJoinedPreferenceCheckbox'}
+                data-testid='browse_channels.hide_joined--checkbox'
                 onClick={this.handleChecked}
                 onKeyDown={(e) => {
                     e.stopPropagation();
@@ -870,6 +881,7 @@ export class SearchableChannelList extends React.PureComponent<Props, State> {
         const hideArchivedPreferenceCheckbox = this.props.filter === Filter.Archived ? null : (
             <div
                 id={'hideArchivedPreferenceCheckbox'}
+                data-testid='browse_channels.hide_archived--checkbox'
                 onClick={this.handleArchivedChecked}
                 onKeyDown={(e) => {
                     e.stopPropagation();

@@ -72,7 +72,7 @@ export class RestorePostModal extends Scope {
 
     /**
      * `restore_post_modal.message--text` — PostMessageView (channels/src/components/post_view/post_message_view/post_message_view.tsx)
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      */

@@ -12,10 +12,12 @@ import type {
     PolicySimulationResponse,
 } from '@mattermost/types/access_control';
 import type {AnalyticsRow, LogsByNode} from '@mattermost/types/admin';
+import type {ChannelBookmark, UpdateChannelBookmarkResponse} from '@mattermost/types/channel_bookmarks';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {
     Channel,
     ChannelJoinRequest,
+    ChannelJoinRequestApprovalResponse,
     ChannelJoinRequestList,
     ChannelMemberCountsByGroup,
     ChannelMembership,
@@ -61,7 +63,7 @@ import type {PreferenceType} from '@mattermost/types/preferences';
 import type {PropertyField} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {Reaction} from '@mattermost/types/reactions';
-import type {ScheduledRecap} from '@mattermost/types/recaps';
+import type {Recap, RecapLimitStatus, ScheduledRecap} from '@mattermost/types/recaps';
 import type {RemoteCluster} from '@mattermost/types/remote_clusters';
 import type {Role} from '@mattermost/types/roles';
 import type {ScheduledPost} from '@mattermost/types/schedule_post';
@@ -169,6 +171,11 @@ export const Api = {
         path: '/api/v4/custom_profile_attributes/fields',
     }),
     CreateChannel: effect<ServerChannel>()({op: 'CreateChannel', method: 'POST', path: '/api/v4/channels'}),
+    CreateChannelBookmark: effect<ChannelBookmark>()({
+        op: 'CreateChannelBookmark',
+        method: 'POST',
+        path: '/api/v4/channels/{channel_id}/bookmarks',
+    }),
     CreateDataRetentionPolicy: effect<DataRetentionCustomPolicies>()({
         op: 'CreateDataRetentionPolicy',
         method: 'POST',
@@ -198,11 +205,17 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/properties/groups/{group_name}/{object_type}/fields',
     }),
+    CreateRecap: effect<Recap>()({op: 'CreateRecap', method: 'POST', path: '/api/v4/recaps'}),
     CreateRemoteCluster: effect<unknown>()({op: 'CreateRemoteCluster', method: 'POST', path: '/api/v4/remotecluster'}),
     CreateScheduledPost: effect<ScheduledPost>()({
         op: 'CreateScheduledPost',
         method: 'POST',
         path: '/api/v4/posts/schedule',
+    }),
+    CreateScheduledRecap: effect<ScheduledRecap>()({
+        op: 'CreateScheduledRecap',
+        method: 'POST',
+        path: '/api/v4/scheduled_recaps',
     }),
     CreateScheme: effect<Scheme>()({op: 'CreateScheme', method: 'POST', path: '/api/v4/schemes'}),
     CreateTeam: effect<Team>()({op: 'CreateTeam', method: 'POST', path: '/api/v4/teams'}),
@@ -224,6 +237,11 @@ export const Api = {
         path: '/api/v4/custom_profile_attributes/fields/{field_id}',
     }),
     DeleteChannel: effect<StatusOK>()({op: 'DeleteChannel', method: 'DELETE', path: '/api/v4/channels/{channel_id}'}),
+    DeleteChannelBookmark: effect<ChannelBookmark>()({
+        op: 'DeleteChannelBookmark',
+        method: 'DELETE',
+        path: '/api/v4/channels/{channel_id}/bookmarks/{bookmark_id}',
+    }),
     DeleteCommand: effect<StatusOK>()({op: 'DeleteCommand', method: 'DELETE', path: '/api/v4/commands/{command_id}'}),
     DeleteDraftMe: effect<unknown>()({
         op: 'DeleteDraftMe',
@@ -231,6 +249,12 @@ export const Api = {
         path: '/api/v4/users/me/channels/{channel_id}/drafts',
     }),
     DeleteEmoji: effect<StatusOK>()({op: 'DeleteEmoji', method: 'DELETE', path: '/api/v4/emoji/{emoji_id}'}),
+    DeleteGroup: effect<Group>()({op: 'DeleteGroup', method: 'DELETE', path: '/api/v4/groups/{group_id}'}),
+    DeleteGroupMembers: effect<GroupMember[]>()({
+        op: 'DeleteGroupMembers',
+        method: 'DELETE',
+        path: '/api/v4/groups/{group_id}/members',
+    }),
     DeleteIncomingWebhook: effect<StatusOK>()({
         op: 'DeleteIncomingWebhook',
         method: 'DELETE',
@@ -263,10 +287,16 @@ export const Api = {
         method: 'DELETE',
         path: '/api/v4/users/{user_id}/posts/{post_id}/reactions/{emoji_name}',
     }),
+    DeleteRecap: effect<StatusOK>()({op: 'DeleteRecap', method: 'DELETE', path: '/api/v4/recaps/{recap_id}'}),
     DeleteScheduledPost: effect<ScheduledPost>()({
         op: 'DeleteScheduledPost',
         method: 'DELETE',
         path: '/api/v4/posts/schedule/{scheduled_post_id}',
+    }),
+    DeleteScheduledRecap: effect<unknown>()({
+        op: 'DeleteScheduledRecap',
+        method: 'DELETE',
+        path: '/api/v4/scheduled_recaps/{scheduled_recap_id}',
     }),
     DeleteScheme: effect<StatusOK>()({op: 'DeleteScheme', method: 'DELETE', path: '/api/v4/schemes/{scheme_id}'}),
     DemoteUserToGuest: effect<StatusOK>()({
@@ -477,6 +507,11 @@ export const Api = {
         method: 'GET',
         path: '/api/v4/properties/groups/{group_name}/{object_type}/values/{target_id}',
     }),
+    GetRecapLimitStatus: effect<RecapLimitStatus>()({
+        op: 'GetRecapLimitStatus',
+        method: 'GET',
+        path: '/api/v4/recaps/limit_status',
+    }),
     GetRolesByNames: effect<Role[]>()({op: 'GetRolesByNames', method: 'POST', path: '/api/v4/roles/names'}),
     GetServerLimits: effect<ServerLimits>()({op: 'GetServerLimits', method: 'GET', path: '/api/v4/limits/server'}),
     GetSharedChannelRemotes: effect<RemoteClusterInfo[]>()({
@@ -617,6 +652,8 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/channels/members/me/mark_read',
     }),
+    MarkRecapAsRead: effect<Recap>()({op: 'MarkRecapAsRead', method: 'POST', path: '/api/v4/recaps/{recap_id}/read'}),
+    MoveThread: effect<StatusOK>()({op: 'MoveThread', method: 'POST', path: '/api/v4/posts/{post_id}/move'}),
     PatchCPAField: effect<UserPropertyField>()({
         op: 'PatchCPAField',
         method: 'PATCH',
@@ -703,6 +740,11 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/oauth/apps/{app_id}/regen_secret',
     }),
+    RegenerateRecap: effect<Recap>()({
+        op: 'RegenerateRecap',
+        method: 'POST',
+        path: '/api/v4/recaps/{recap_id}/regenerate',
+    }),
     RegenerateTeamInviteId: effect<Team>()({
         op: 'RegenerateTeamInviteId',
         method: 'POST',
@@ -735,11 +777,17 @@ export const Api = {
         method: 'DELETE',
         path: '/api/v4/channels/{channel_id}/members/{user_id}',
     }),
+    RequestJoinChannel: effect<ChannelJoinRequest | ChannelJoinRequestApprovalResponse>()({
+        op: 'RequestJoinChannel',
+        method: 'POST',
+        path: '/api/v4/channels/{channelId}/join_request',
+    }), // not in the OpenAPI spec
     RestoreChannel: effect<ServerChannel>()({
         op: 'RestoreChannel',
         method: 'POST',
         path: '/api/v4/channels/{channel_id}/restore',
     }),
+    RestoreGroup: effect<Group>()({op: 'RestoreGroup', method: 'POST', path: '/api/v4/groups/{group_id}/restore'}),
     RestorePostVersion: effect<Post>()({
         op: 'RestorePostVersion',
         method: 'POST',
@@ -852,6 +900,7 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/users/login/switch',
     }),
+    TeamExists: effect<unknown>()({op: 'TeamExists', method: 'GET', path: '/api/v4/teams/name/{team_name}/exists'}),
     TeamMembersMinusGroupMembers: effect<UsersWithGroupsAndCount>()({
         op: 'TeamMembersMinusGroupMembers',
         method: 'GET',
@@ -895,6 +944,11 @@ export const Api = {
         path: '/api/v4/access_control_policies/activate',
     }),
     UpdateCFConfig: effect<unknown>()({op: 'UpdateCFConfig', method: 'PUT', path: '/api/v4/content_flagging/config'}),
+    UpdateChannelBookmark: effect<UpdateChannelBookmarkResponse>()({
+        op: 'UpdateChannelBookmark',
+        method: 'PATCH',
+        path: '/api/v4/channels/{channel_id}/bookmarks/{bookmark_id}',
+    }),
     UpdateChannelMemberAutotranslationMe: effect<StatusOK>()({
         op: 'UpdateChannelMemberAutotranslationMe',
         method: 'PUT',
@@ -951,6 +1005,11 @@ export const Api = {
         op: 'UpdateScheduledPost',
         method: 'PUT',
         path: '/api/v4/posts/schedule/{scheduled_post_id}',
+    }),
+    UpdateScheduledRecap: effect<ScheduledRecap>()({
+        op: 'UpdateScheduledRecap',
+        method: 'PUT',
+        path: '/api/v4/scheduled_recaps/{scheduled_recap_id}',
     }),
     UpdateSidebarCategoriesForTeamForUser: effect<ChannelCategory[]>()({
         op: 'UpdateSidebarCategoriesForTeamForUser',

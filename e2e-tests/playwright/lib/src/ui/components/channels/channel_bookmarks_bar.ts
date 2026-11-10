@@ -45,11 +45,11 @@ export default class ChannelBookmarksBar {
     }
 
     getBookmarkItem(name: string | RegExp): Locator {
-        return this.container.getByTestId(/^bookmark-item-/).filter({hasText: name});
+        return this.container.getByTestId(/^channel_bookmarks\.bookmark:/).filter({hasText: name});
     }
 
     getBookmarkIcon(name: string | RegExp): Locator {
-        return this.getBookmarkItem(name).getByTestId('bookmark-icon');
+        return this.getBookmarkItem(name).getByTestId('channel_bookmarks.bookmark.icon');
     }
 
     async openAddMenu() {

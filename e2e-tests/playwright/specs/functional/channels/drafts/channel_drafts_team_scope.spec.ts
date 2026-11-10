@@ -7,6 +7,9 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify channel drafts on the global Drafts page are scoped to the
  * current active team, while each team's Drafts LHS entry and pencil icons stay
  * independent.
+ *
+ * Written on the generated page objects: the composer, the sidebar's channel rows (draft pencil), the Drafts link
+ * and badge, the team sidebar's buttons by team id, and the Drafts page's tab count and drafts keyed by channel id.
  */
 test('MM-T4410 Channel Drafts are scoped to current active team', {tag: '@messaging'}, async ({pw}) => {
     const team1Draft = `team1-draft-${pw.random.id()}`;
@@ -21,82 +24,89 @@ test('MM-T4410 Channel Drafts are scoped to current active team', {tag: '@messag
         unique: true,
     });
     await adminClient.addToTeam(team2.id, user.id);
+    const [team1TownSquare, team1OffTopic, team2TownSquare, team2OffTopic] = await Promise.all([
+        adminClient.getChannelByName(team1.id, 'town-square'),
+        adminClient.getChannelByName(team1.id, 'off-topic'),
+        adminClient.getChannelByName(team2.id, 'town-square'),
+        adminClient.getChannelByName(team2.id, 'off-topic'),
+    ]);
 
-    const {channelsPage, draftsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const composer = app.center.postCreate;
+    const title = app.channelHeader.openMenuButton.locator;
+    const channels = app.lhs.channelList;
 
     // # Open Town Square on Team1 and leave a channel draft
-    await channelsPage.goto(team1.name, 'town-square');
-    await channelsPage.toBeVisible();
-    await channelsPage.centerView.postCreate.writeMessage(team1Draft);
+    await app.channelsPage.goto({team: team1, channel: team1TownSquare});
+    await composer.fillMessageTextbox(team1Draft);
 
     // # Switch away so the draft is persisted with show:true
-    await channelsPage.sidebarLeft.goToItem('off-topic');
-    await channelsPage.centerView.header.toHaveTitle('Off-Topic');
+    await channels.channel(team1OffTopic).clickLink();
+    await expect(title).toContainText(team1OffTopic.display_name);
 
     // * Global Drafts appears in the LHS with count 1
-    await channelsPage.sidebarLeft.draftsVisible();
-    expect(await channelsPage.sidebarLeft.getDraftsBadgeCount()).toBe('1');
+    await expect(app.lhs.draftsLink.locator).toBeVisible();
+    await expect(app.lhs.drafts.draftBadgeText.locator).toHaveText('1');
 
     // * Town Square shows a pencil icon for the draft
     // (move the mouse off the sidebar first: the pencil is hidden while its row is hovered)
-    await channelsPage.centerView.postCreate.input.hover();
-    await expect(channelsPage.sidebarLeft.draftIcon('town-square')).toBeVisible();
+    await composer.messageTextbox.locator.hover();
+    await expect(channels.channel(team1TownSquare).draftText.locator).toBeVisible();
 
-    // # Switch to Team2 Off-Topic and leave a different channel draft
-    await channelsPage.switchToTeam(team2.name);
+    // # Switch to Team2
+    await app.teamSidebar.team(team2.id).locator.click();
 
     // * Team1's Town Square draft icon is not carried over into Team2's sidebar
-    await expect(channelsPage.sidebarLeft.draftIcon('town-square')).not.toBeAttached();
+    await expect(channels.channel(team2TownSquare).link.locator).toBeVisible();
+    await expect(channels.channel(team2TownSquare).draftText.locator).toHaveCount(0);
 
-    await channelsPage.sidebarLeft.goToItem('off-topic');
-    await channelsPage.centerView.header.toHaveTitle('Off-Topic');
-    await channelsPage.centerView.postCreate.writeMessage(team2Draft);
+    // # Open Team2 Off-Topic and leave a different channel draft
+    await channels.channel(team2OffTopic).clickLink();
+    await expect(title).toContainText(team2OffTopic.display_name);
+    await composer.fillMessageTextbox(team2Draft);
 
     // # Switch away so the Team2 draft is persisted with show:true
-    await channelsPage.sidebarLeft.goToItem('town-square');
-    await channelsPage.centerView.header.toHaveTitle('Town Square');
+    await channels.channel(team2TownSquare).clickLink();
+    await expect(title).toContainText(team2TownSquare.display_name);
 
     // * Global Drafts appears in the LHS with count 1 for Team2 only
-    await channelsPage.sidebarLeft.draftsVisible();
-    expect(await channelsPage.sidebarLeft.getDraftsBadgeCount()).toBe('1');
+    await expect(app.lhs.drafts.draftBadgeText.locator).toHaveText('1');
 
     // * Off-Topic on Team2 shows a pencil icon for the draft
-    // (move the mouse off the sidebar first: the pencil is hidden while its row is hovered)
-    await channelsPage.centerView.postCreate.input.hover();
-    await expect(channelsPage.sidebarLeft.draftIcon('off-topic')).toBeVisible();
+    await composer.messageTextbox.locator.hover();
+    await expect(channels.channel(team2OffTopic).draftText.locator).toBeVisible();
 
     // # Open global Drafts on Team2
-    await channelsPage.sidebarLeft.goToDrafts();
-    await draftsPage.toBeVisible();
+    await app.lhs.clickDraftsLink();
 
     // * Only the current team's draft is listed, for Off-Topic
-    await draftsPage.expectDraftCount(1);
-    expect(await draftsPage.getBadgeCountOnTab()).toBe('1');
-    const team2DraftPost = await draftsPage.getDraftByChannelName('Off-Topic');
-    await expect(team2DraftPost.panelHeader).toContainText('In:');
-    await expect(team2DraftPost.panelHeader).toContainText('Off-Topic');
-    await expect(team2DraftPost.panelBody).toContainText(team2Draft);
+    const drafts = app.drafts;
+    await expect.poll(async () => (await drafts.list.draftKeys()).length).toBe(1);
+    await expect(drafts.tabs.draftsCountText.locator).toHaveText('1');
+    const team2DraftRow = drafts.list.draft(team2OffTopic.id);
+    await expect(team2DraftRow.header.locator).toContainText('In:');
+    await expect(team2DraftRow.header.locator).toContainText(team2OffTopic.display_name);
+    await expect(team2DraftRow.message.locator).toContainText(team2Draft);
 
     // # Switch back to Team1
-    await channelsPage.switchToTeam(team1.name);
+    await app.teamSidebar.team(team1.id).locator.click();
 
     // * Team2's Off-Topic draft icon is not carried over into Team1's sidebar
-    await expect(channelsPage.sidebarLeft.draftIcon('off-topic')).not.toBeAttached();
+    await expect(channels.channel(team1OffTopic).link.locator).toBeVisible();
+    await expect(channels.channel(team1OffTopic).draftText.locator).toHaveCount(0);
 
     // * Drafts remains visible with count scoped to Team1
-    await channelsPage.sidebarLeft.draftsVisible();
-    expect(await channelsPage.sidebarLeft.getDraftsBadgeCount()).toBe('1');
+    await expect(app.lhs.drafts.draftBadgeText.locator).toHaveText('1');
 
     // # Open global Drafts on Team1
-    await channelsPage.sidebarLeft.goToDrafts();
-    await draftsPage.toBeVisible();
+    await app.lhs.clickDraftsLink();
 
     // * Only the Town Square draft from Team1 is listed
-    await draftsPage.expectDraftCount(1);
-    expect(await draftsPage.getBadgeCountOnTab()).toBe('1');
-    const team1DraftPost = await draftsPage.getDraftByChannelName('Town Square');
-    await expect(team1DraftPost.panelHeader).toContainText('In:');
-    await expect(team1DraftPost.panelHeader).toContainText('Town Square');
-    await expect(team1DraftPost.panelBody).toContainText(team1Draft);
-    await expect(draftsPage.draftViews()).not.toContainText(team2Draft);
+    await expect.poll(async () => (await drafts.list.draftKeys()).length).toBe(1);
+    await expect(drafts.tabs.draftsCountText.locator).toHaveText('1');
+    const team1DraftRow = drafts.list.draft(team1TownSquare.id);
+    await expect(team1DraftRow.header.locator).toContainText('In:');
+    await expect(team1DraftRow.header.locator).toContainText(team1TownSquare.display_name);
+    await expect(team1DraftRow.message.locator).toContainText(team1Draft);
+    await expect(drafts.list.draft(team2OffTopic.id).locator).toHaveCount(0);
 });

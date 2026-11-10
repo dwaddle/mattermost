@@ -44,6 +44,7 @@ import {
     Footer,
     Input,
     Policies,
+    QuickInput,
     Rules,
 } from './shared';
 import {TeamSelectorModal} from './team_selector_modal';
@@ -15537,8 +15538,8 @@ export class AdminSidebar extends Scope {
         return this.keysOf(`${this.scope}.category:`, '');
     }
 
-    get filter(): AdminSidebarFilter {
-        return new AdminSidebarFilter(this.page, `${this.scope}.filter`, this.root);
+    get filter(): QuickInput {
+        return new QuickInput(this.page, `${this.scope}.filter`, this.root);
     }
 
     get header(): AdminSidebarHeader {
@@ -15723,36 +15724,6 @@ export class AdminSidebarCategorySection extends Scope {
     }
 }
 
-/** Scope `admin.sidebar.filter`. */
-export class AdminSidebarFilter extends Scope {
-    constructor(page: Page, scope = 'admin.sidebar.filter', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `admin.sidebar.filter.clear--button` — QuickInput (channels/src/components/quick_input/quick_input.tsx)
-     * Renders only when showClearButton.
-     */
-    get clearButton() {
-        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
-            testId: `${this.scope}.clear--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/quick_input/quick_input.tsx#QuickInput',
-        });
-    }
-
-    async clickClearButton(): Promise<void> {
-        await this.clearButton.click();
-    }
-}
-
 /** Scope `admin.sidebar.header`. */
 export class AdminSidebarHeader extends Scope {
     constructor(page: Page, scope = 'admin.sidebar.header', root?: Locator) {
@@ -15818,7 +15789,7 @@ export class AdminSidebarHeaderMenu extends Scope {
     /**
      * `admin.sidebar.header.menu.about--menuitem` — AdminNavbarDropdown (channels/src/components/admin_console/admin_navbar_dropdown/admin_navbar_dropdown.tsx)
      * Renders only when me.
-     * Opens modal AboutBuildModal.
+     * Opens modal AboutBuildModal (`about_build_modal`).
      */
     get aboutMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.about--menuitem`), {

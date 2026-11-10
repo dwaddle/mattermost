@@ -18,6 +18,7 @@ import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {ChannelSettingsModal} from './channel_settings_modal';
 import {DirectMessagesModal} from './direct_messages_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {JoinPrivateChannelModal} from './join_private_channel_modal';
 import {RenameChannelModal} from './rename_channel_modal';
 import {RestorePostModal} from './restore_post_modal';
 import {
@@ -1048,7 +1049,7 @@ export class RhsEditHistoryVersion extends Scope {
     /**
      * `rhs.edit_history.version.message--text` — PostMessageView (channels/src/components/post_view/post_message_view/post_message_view.tsx)
      * Renders only when post.
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      */
@@ -1462,7 +1463,7 @@ export class RhsThreadHeader extends Scope {
     /**
      * `rhs.thread.header.popout--button` — PopoutButton (channels/src/components/popout_button.tsx)
      * Renders only when canPopout().
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
@@ -1497,8 +1498,10 @@ export class RhsThreadHeader extends Scope {
         });
     }
 
-    async clickPopoutButton(): Promise<void> {
+    /** Clicks popoutButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickPopoutButton(): Promise<JoinPrivateChannelModal> {
         await this.popoutButton.click();
+        return new JoinPrivateChannelModal(this.page, 'join_private_channel_modal');
     }
 
     /**

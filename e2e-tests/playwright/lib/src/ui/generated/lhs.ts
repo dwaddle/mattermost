@@ -13,7 +13,9 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {AddGroupsToTeamModal} from './add_groups_to_team_modal';
+import {BrowseChannels} from './browse_channels';
 import {ChannelInviteModal} from './channel_invite_modal';
+import {CreateUserGroupsModal} from './create_user_groups_modal';
 import {DirectMessagesModal} from './direct_messages_modal';
 import {InvitationModal} from './invitation_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
@@ -21,7 +23,7 @@ import {LeaveTeamModal} from './leave_team_modal';
 import {NewChannelModal} from './new_channel_modal';
 import {ChannelsPage, CreateTeamPage, DraftsPage, SelectTeamPage} from './pages';
 import {QuickSwitchModal} from './quick_switch_modal';
-import {MoveToMenu, Users} from './shared';
+import {MoveToMenu} from './shared';
 import {TeamMembersModal} from './team_members_modal';
 import {TeamSettingsModal} from './team_settings_modal';
 
@@ -118,7 +120,7 @@ export class LhsBrowseOrAddMenu extends Scope {
     /**
      * `lhs.browse_or_add_menu.browse_channels--menuitem` — SidebarBrowserOrAddChannelMenu (channels/src/components/sidebar/sidebar_header/sidebar_browse_or_add_channel_menu.tsx)
      * Renders only when props.canJoinPublicChannel and currentTeam and props.canCreateChannel || props.canJoinPublicChannel.
-     * Opens modal BrowseChannels.
+     * Opens modal BrowseChannels (`browse_channels`).
      */
     get browseChannelsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.browse_channels--menuitem`), {
@@ -130,8 +132,10 @@ export class LhsBrowseOrAddMenu extends Scope {
         });
     }
 
-    async clickBrowseChannelsMenuItem(): Promise<void> {
+    /** Clicks browseChannelsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickBrowseChannelsMenuItem(): Promise<BrowseChannels> {
         await this.browseChannelsMenuItem.click();
+        return new BrowseChannels(this.page, 'browse_channels');
     }
 
     /**
@@ -177,7 +181,7 @@ export class LhsBrowseOrAddMenu extends Scope {
     /**
      * `lhs.browse_or_add_menu.create_user_group--menuitem` — SidebarBrowserOrAddChannelMenu (channels/src/components/sidebar/sidebar_header/sidebar_browse_or_add_channel_menu.tsx)
      * Renders only when props.canCreateCustomGroups and currentTeam and props.canCreateChannel || props.canJoinPublicChannel.
-     * Opens modal CreateUserGroupsModal (`create_user_groups_modal.users`).
+     * Opens modal CreateUserGroupsModal (`create_user_groups_modal`).
      */
     get createUserGroupMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.create_user_group--menuitem`), {
@@ -190,9 +194,9 @@ export class LhsBrowseOrAddMenu extends Scope {
     }
 
     /** Clicks createUserGroupMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickCreateUserGroupMenuItem(): Promise<Users> {
+    async clickCreateUserGroupMenuItem(): Promise<CreateUserGroupsModal> {
         await this.createUserGroupMenuItem.click();
-        return new Users(this.page, 'create_user_groups_modal.users');
+        return new CreateUserGroupsModal(this.page, 'create_user_groups_modal');
     }
 
     /**
@@ -1085,7 +1089,7 @@ export class LhsTeamMenu extends Scope {
     /**
      * `lhs.team_menu.manage_groups--menuitem` — ManageGroupsMenuItem (channels/src/components/sidebar/sidebar_header/sidebar_team_menu.tsx)
      * Renders only when isTeamGroupConstrained && isLicensedForLDAPGroups && haveICurrentTeamPermission(state, Permissions.MANAGE_TEA….
-     * Opens modal TeamGroupsManageModal.
+     * Opens modal TeamGroupsManageModal (`team_groups_manage_modal`).
      */
     get manageGroupsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.manage_groups--menuitem`), {

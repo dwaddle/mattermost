@@ -18,12 +18,12 @@ export default class ViewUserGroupModal {
     constructor(container: Locator) {
         this.container = container;
 
-        this.actionsButton = container.getByRole('button', {name: 'User group actions'});
-        this.restoreGroupButton = container.getByRole('button', {name: 'Restore Group'});
-        this.addPeopleButton = container.getByRole('button', {name: 'Add people'});
+        this.actionsButton = container.getByTestId('view_user_group_modal.menu--button');
+        this.restoreGroupButton = container.getByTestId('view_user_group_modal.restore--button');
+        this.addPeopleButton = container.getByTestId('view_user_group_modal.add_people--button');
 
         // The group actions menu renders in a portal outside the modal.
-        this.archiveGroupItem = container.page().getByRole('menuitem', {name: 'Archive Group'});
+        this.archiveGroupItem = container.page().getByTestId('view_user_group_modal.menu.archive--menuitem');
     }
 
     async toBeVisible() {

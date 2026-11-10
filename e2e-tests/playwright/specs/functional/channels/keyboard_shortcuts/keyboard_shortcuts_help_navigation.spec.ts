@@ -6,59 +6,77 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify the keyboard shortcuts modal opens from Ctrl/Cmd+/ and /shortcuts, displays the
  * platform-specific upload shortcut, and can be closed by the shortcut, its close button, or Escape.
+ *
+ * Written on the generated page objects: the composer, the Keyboard Shortcuts modal, its Files section and its close
+ * button.
  */
 test('MM-T1239 CTRL/CMD+/ and /shortcuts open keyboard shortcuts', async ({pw}) => {
-    const {user, team, townSquare} = await pw.initSetup();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
 
-    // # Open the keyboard shortcuts modal with the shortcut
-    const {channelsPage, page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: townSquare});
-    await channelsPage.centerView.postCreate.input.focus();
-    await page.keyboard.press('ControlOrMeta+/');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
+    const input = app.center.postCreate.messageTextbox.locator;
+    const modal = app.keyboardShortcutsModal;
 
-    // * Verify the shortcuts modal opens and shows the platform-specific "Upload files" shortcut
-    const modal = channelsPage.keyboardShortcutsModal;
-    await expect(modal).toBeVisible();
-    const filesSection = modal.locator('.subsection').filter({hasText: 'Files'});
-    await expect(filesSection).toBeVisible();
-    await expect(filesSection.getByText(process.platform === 'darwin' ? '⌘' : 'Ctrl')).toBeVisible();
-    await expect(filesSection.getByText('U', {exact: true})).toBeVisible();
+    // # Press Ctrl/Cmd+/ in the message box
+    await input.focus();
+    await input.press('ControlOrMeta+/');
 
-    // # Close the modal by pressing the same shortcut again
-    await page.keyboard.press('ControlOrMeta+/');
-    await expect(modal).not.toBeVisible();
+    // * Verify the modal opens and shows the platform's upload shortcut (Cmd+U on macOS, Ctrl+U elsewhere)
+    await expect(modal.body.locator).toBeVisible();
+    const modifier = process.platform === 'darwin' ? '⌘' : 'Ctrl';
+    await expect(modal.files.locator).toHaveText(new RegExp(`${modifier}\\s*U\\s*$`));
 
-    // # Reopen via the slash command and close using the modal's close button
-    await channelsPage.postMessage('/shortcuts');
-    await expect(modal).toBeVisible();
-    await modal.getByRole('button', {name: 'Close'}).click();
-    await expect(modal).not.toBeVisible();
+    // # Press Ctrl/Cmd+/ again
+    // * Verify the modal closes
+    await modal.body.locator.press('ControlOrMeta+/');
+    await expect(modal.body.locator).not.toBeVisible();
 
-    // # Reopen via the slash command and close by pressing Escape
-    await channelsPage.postMessage('/shortcuts');
-    await expect(modal).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(modal).not.toBeVisible();
+    // # Run /shortcuts, then close the modal with its close button
+    // * Verify it opens and closes
+    await input.fill('/shortcuts');
+    await input.press('Enter');
+    await expect(modal.body.locator).toBeVisible();
+    await modal.clickCloseButton();
+    await expect(modal.body.locator).not.toBeVisible();
+
+    // # Run /shortcuts again, then close the modal with Escape
+    // * Verify it opens and closes
+    await input.fill('/shortcuts');
+    await input.press('Enter');
+    await expect(modal.body.locator).toBeVisible();
+    await modal.body.locator.press('Escape');
+    await expect(modal.body.locator).not.toBeVisible();
 });
 
 /**
  * @objective Verify Ctrl/Cmd+K channel switch keeps focus so typed characters are not lost.
+ *
+ * Written on the generated page objects: the channel switcher's results keyed by channel id, the channel header and
+ * the composer.
  */
 test('MM-T1242 CTRL/CMD+K typed characters are not lost after switching channels', async ({pw}) => {
-    const {user, team, offTopic, townSquare} = await pw.initSetup();
+    const {user, team, userClient} = await pw.initSetup();
+    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
     const message = 'Hello World!';
 
-    // # Open quick switcher, select the current channel, and type into the focused page
-    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
-    await channelsPage.centerView.postCreate.input.focus();
-    await page.keyboard.press('ControlOrMeta+K');
-    await expect(channelsPage.findChannelsModal.input).toBeVisible();
-    await channelsPage.findChannelsModal.input.fill('off');
-    await channelsPage.findChannelsModal.selectChannel(offTopic);
-    await channelsPage.centerView.header.toHaveTitle('Off-Topic');
+    const input = app.center.postCreate.messageTextbox.locator;
+
+    // # Open the channel switcher with Ctrl/Cmd+K and pick Off-Topic
+    await input.focus();
+    await input.press('ControlOrMeta+K');
+    const switcher = app.quickSwitchModal;
+    await switcher.searchTextbox.fill('off');
+    await switcher.suggestions.item(offTopic.id).locator.click();
+    await expect(app.channelHeader.openMenuButton.locator).toContainText(offTopic.display_name);
+
+    // # Type without clicking anywhere
     await page.keyboard.type(message);
 
-    // * Verify typed characters land in the post textbox
-    await expect(channelsPage.centerView.postCreate.input).toHaveValue(message);
+    // * Verify the text went into the message box
+    await expect(input).toHaveValue(message);
 });

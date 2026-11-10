@@ -11,8 +11,10 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {CustomStatusModal} from './custom_status_modal';
+import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {MarketplaceModal} from './marketplace_modal';
 import {AdminConsolePage, IntegrationsPage} from './pages';
+import {UserGroupsModal} from './user_groups_modal';
 import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `global_header`. */
@@ -540,7 +542,7 @@ export class GlobalHeaderHelpMenu extends Scope {
 
     /**
      * `global_header.help_menu.keyboard_shortcuts--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
-     * Opens modal KeyboardShortcutsModal.
+     * Opens modal KeyboardShortcutsModal (`keyboard_shortcuts_modal`).
      */
     get keyboardShortcutsButton() {
         return drivers.button(this.byTestId(`${this.scope}.keyboard_shortcuts--button`), {
@@ -552,8 +554,10 @@ export class GlobalHeaderHelpMenu extends Scope {
         });
     }
 
-    async clickKeyboardShortcutsButton(): Promise<void> {
+    /** Clicks keyboardShortcutsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickKeyboardShortcutsButton(): Promise<KeyboardShortcutsModal> {
         await this.keyboardShortcutsButton.click();
+        return new KeyboardShortcutsModal(this.page, 'keyboard_shortcuts_modal');
     }
 
     /**
@@ -659,7 +663,7 @@ export class GlobalHeaderProductMenu extends Scope {
 
     /**
      * `global_header.product_menu.about--menuitem` — ProductSwitcherAboutMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_about_menuitem.tsx)
-     * Opens modal AboutBuildModal.
+     * Opens modal AboutBuildModal (`about_build_modal`).
      */
     get aboutMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.about--menuitem`), {
@@ -838,7 +842,7 @@ export class GlobalHeaderProductMenu extends Scope {
     /**
      * `global_header.product_menu.user_groups--menuitem` — ProductSwitcherUserGroupsMenuItem (channels/src/components/global_header/left_controls/switch_product_menu/switch_product_user_groups_menuitem.tsx)
      * Renders only when isMenuItemVisible.
-     * Opens modal UserGroupsModal.
+     * Opens modal UserGroupsModal (`user_groups_modal`).
      */
     get userGroupsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.user_groups--menuitem`), {
@@ -850,8 +854,10 @@ export class GlobalHeaderProductMenu extends Scope {
         });
     }
 
-    async clickUserGroupsMenuItem(): Promise<void> {
+    /** Clicks userGroupsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickUserGroupsMenuItem(): Promise<UserGroupsModal> {
         await this.userGroupsMenuItem.click();
+        return new UserGroupsModal(this.page, 'user_groups_modal');
     }
 
     /**

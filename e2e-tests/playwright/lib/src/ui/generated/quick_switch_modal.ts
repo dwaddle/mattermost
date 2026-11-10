@@ -37,7 +37,7 @@ export class QuickSwitchModal extends Scope {
 
     /**
      * `quick_switch_modal.search--textbox` — QuickSwitchModal (channels/src/components/quick_switch_modal/quick_switch_modal.tsx)
-     * Opens modal RequestJoinChannelModal.
+     * Opens modal RequestJoinChannelModal (`request_join_channel_modal`).
      * Goes to '/' + selected.name.
      * Goes to `${teamUrl}/${channel.name}`.
      */

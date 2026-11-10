@@ -1,64 +1,80 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, suggestionTestKey, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that pressing Tab completes the highlighted at-mention suggestion in the message box.
+ *
+ * Written on the generated page objects: the composer and its suggestions, keyed by what they suggest.
  */
 test('MM-T1273 completes at-mention autocomplete with Tab', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // # Type the first characters of the user's own username to trigger the mention autocomplete
-    const {postCreate} = channelsPage.centerView;
-    await postCreate.selectFromAutocompleteWithTab(`@${user.username.substring(0, 5)}`);
+    // # Type the start of the username and wait for the user to be the highlighted suggestion
+    const composer = app.center.postCreate;
+    const input = composer.messageTextbox.locator;
+    await input.pressSequentially(`@${user.username.substring(0, 5)}`);
+    const suggestion = composer.message.suggestions.item(suggestionTestKey(`@${user.username}`)).locator;
+    await expect(suggestion).toHaveAttribute('aria-selected', 'true');
 
-    // * Verify the highlighted username is completed into the message box
-    expect(await postCreate.getInputValue()).toContain(`@${user.username}`);
+    // # Complete it with Tab
+    await input.press('Tab');
+
+    // * Verify the full mention is in the message box
+    await expect(input).toHaveValue(new RegExp(`@${user.username}`));
 });
 
 /**
  * @objective Verify that pressing Tab completes the highlighted emoji suggestion in the message box.
+ *
+ * Written on the generated page objects: the composer and its suggestions, keyed by what they suggest.
  */
 test('MM-T1274 completes emoji autocomplete with Tab', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // # Type a partial emoji name to trigger the emoji autocomplete, then select with Tab
-    const {postCreate} = channelsPage.centerView;
-    await postCreate.selectFromAutocompleteWithTab(':tomato');
+    // # Type the start of an emoji name and wait for it to be the highlighted suggestion
+    const composer = app.center.postCreate;
+    const input = composer.messageTextbox.locator;
+    await input.pressSequentially(':tomato');
+    // (suggestions are keyed by the text they insert: a system emoji's is the character itself)
+    const suggestion = composer.message.suggestions.item(suggestionTestKey('🍅')).locator;
+    await expect(suggestion).toHaveAttribute('aria-selected', 'true');
 
-    // * Verify the highlighted emoji is completed into the message box.
-    // Current behavior inserts the rendered emoji glyph rather than the `:tomato:` shortcode.
-    expect(await postCreate.getInputValue()).toContain('🍅');
+    // # Complete it with Tab
+    await input.press('Tab');
+
+    // * Verify the emoji is in the message box
+    await expect(input).toHaveValue(/🍅/);
 });
 
 /**
  * @objective Verify that selecting "Keyboard shortcuts" from the Help menu opens the Keyboard Shortcuts modal.
+ *
+ * Written on the generated page objects: the Help menu's item returns the Keyboard Shortcuts modal.
  */
 test('MM-T1279 opens keyboard shortcuts modal from the Help menu', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
-    // # Create and log in as a test user
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // # Open the Help menu and click "Keyboard shortcuts"
-    await channelsPage.globalHeader.openKeyboardShortcuts();
+    // # Open Keyboard shortcuts from the Help menu
+    await app.globalHeader.clickHelpButton();
+    const modal = await app.globalHeader.helpMenu.clickKeyboardShortcutsButton();
 
-    // * Verify the Keyboard Shortcuts modal is displayed
-    await expect(channelsPage.keyboardShortcutsModal).toBeVisible();
+    // * Verify the modal opens
+    await expect(modal.body.locator).toBeVisible();
 
-    // # Close the modal with the Escape key
-    await channelsPage.page.keyboard.press('Escape');
+    // # Close it with Escape
+    await page.keyboard.press('Escape');
 
-    // * Verify the Keyboard Shortcuts modal is no longer displayed
-    await expect(channelsPage.keyboardShortcutsModal).not.toBeVisible();
+    // * Verify the modal closes
+    await expect(modal.body.locator).not.toBeVisible();
 });

@@ -14,17 +14,24 @@ import {AddUsersToGroupModal} from './add_users_to_group_modal';
 import {AddUsersToRoleModal} from './add_users_to_role_modal';
 import {AddUsersToTeamModal} from './add_users_to_team_modal';
 import {Admin} from './admin';
+import {AnnouncementBar} from './announcement_bar';
 import {AppBar} from './app_bar';
 import {AppsForm} from './apps_form';
 import {ArchiveChannelModal} from './archive_channel_modal';
 import {AttributeModal} from './attribute_modal';
 import {Backstage} from './backstage';
+import {BookmarkDeleteModal} from './bookmark_delete_modal';
+import {BookmarkMenu} from './bookmark_menu';
+import {BookmarkModal} from './bookmark_modal';
+import {BookmarksMenu} from './bookmarks_menu';
 import {BotTokenDeleteModal} from './bot_token_delete_modal';
 import {BotTokenRegenerateModal} from './bot_token_regenerate_modal';
+import {BrowseChannels} from './browse_channels';
 import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
 import {Center} from './center';
 import {ChannelAccessRulesConfirmModal} from './channel_access_rules_confirm_modal';
 import {ChannelActivityWarningModal} from './channel_activity_warning_modal';
+import {ChannelBookmarks} from './channel_bookmarks';
 import {ChannelHeader} from './channel_header';
 import {ChannelInviteModal} from './channel_invite_modal';
 import {ChannelMembersModal} from './channel_members_modal';
@@ -34,6 +41,8 @@ import {ChannelSettingsModal} from './channel_settings_modal';
 import {Claim} from './claim';
 import {ClassificationBanner} from './classification_banner';
 import {ConvertGmToChannelModal} from './convert_gm_to_channel_modal';
+import {CreateRecapModal} from './create_recap_modal';
+import {CreateTeam} from './create_team';
 import {CreateUserGroupsModal} from './create_user_groups_modal';
 import {CustomStatusModal} from './custom_status_modal';
 import {DateTimePickerModal} from './date_time_picker_modal';
@@ -45,6 +54,7 @@ import {DeletePostModal} from './delete_post_modal';
 import {DeleteScheduledPostModal} from './delete_scheduled_post_modal';
 import {DenyJoinRequestModal} from './deny_join_request_modal';
 import {DirectMessagesModal} from './direct_messages_modal';
+import {DisableAutotranslationModal} from './disable_autotranslation_modal';
 import {DiscardChangesModal} from './discard_changes_modal';
 import {Drafts} from './drafts';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
@@ -60,6 +70,8 @@ import {GlobalHeader} from './global_header';
 import {Integrations} from './integrations';
 import {InvitationModal} from './invitation_modal';
 import {JobDetailsModal} from './job_details_modal';
+import {JoinPrivateChannelModal} from './join_private_channel_modal';
+import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {Latex} from './latex';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {LeaveTeamModal} from './leave_team_modal';
@@ -75,6 +87,7 @@ import {MenuModal} from './menu_modal';
 import {MobileHeader} from './mobile_header';
 import {MobileMenu} from './mobile_menu';
 import {Modal} from './modal';
+import {MoveThreadModal} from './move_thread_modal';
 import {NewChannelModal} from './new_channel_modal';
 import {NoResults} from './no_results';
 import {NotifyConfirmModal} from './notify_confirm_modal';
@@ -124,26 +137,35 @@ import {PostPriorityPicker} from './post_priority_picker';
 import {ProfilePopover} from './profile_popover';
 import {Public} from './public';
 import {QuickSwitchModal} from './quick_switch_modal';
+import {Recaps} from './recaps';
 import {RemoveSharingModal} from './remove_sharing_modal';
 import {RenameChannelModal} from './rename_channel_modal';
+import {RequestJoinChannelModal} from './request_join_channel_modal';
 import {ResetPasswordModal} from './reset_password_modal';
 import {RestorePostModal} from './restore_post_modal';
 import {Rhs} from './rhs';
 import {Search} from './search';
 import {SearchBox} from './search_box';
+import {SelectTeam} from './select_team';
 import {SendDraftModal} from './send_draft_modal';
 import {SendPostOptions} from './send_post_options';
 import {Settings} from './settings';
 import {ShouldVerifyEmail} from './should_verify_email';
+import {ShowTranslationModal} from './show_translation_modal';
 import {Signup} from './signup';
 import {TeamMembersModal} from './team_members_modal';
 import {TeamSelectorModal} from './team_selector_modal';
 import {TeamSettingsModal} from './team_settings_modal';
+import {TeamSidebar} from './team_sidebar';
 import {ThreadMenu} from './thread_menu';
 import {Threads} from './threads';
+import {UpdateUserGroupModal} from './update_user_group_modal';
+import {UserGroupPopover} from './user_group_popover';
+import {UserGroupsModal} from './user_groups_modal';
 import {UserSettingsModal} from './user_settings_modal';
 import {UserSyncModal} from './user_sync_modal';
 import {UsersToBeRemovedModal} from './users_to_be_removed_modal';
+import {ViewUserGroupModal} from './view_user_group_modal';
 
 /**
  * Plugin test packages add their page objects here by declaration merging (types only):
@@ -177,6 +199,9 @@ export class App extends Scope {
         return new AddGroupsToTeamModal(this.page, 'add_groups_to_team_modal', this.root);
     }
 
+    /**
+     * `add_users_to_group_modal` — AddUsersToGroupModal (channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx)
+     */
     get addUsersToGroupModal(): AddUsersToGroupModal {
         return new AddUsersToGroupModal(this.page, 'add_users_to_group_modal', this.root);
     }
@@ -197,6 +222,10 @@ export class App extends Scope {
 
     get admin(): Admin {
         return new Admin(this.page, 'admin');
+    }
+
+    get announcementBar(): AnnouncementBar {
+        return new AnnouncementBar(this.page, 'announcement_bar', this.root);
     }
 
     /**
@@ -236,6 +265,28 @@ export class App extends Scope {
     }
 
     /**
+     * `bookmark_delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get bookmarkDeleteModal(): BookmarkDeleteModal {
+        return new BookmarkDeleteModal(this.page, 'bookmark_delete_modal', this.root);
+    }
+
+    get bookmarkMenu(): BookmarkMenu {
+        return new BookmarkMenu(this.page, 'bookmark_menu');
+    }
+
+    /**
+     * `bookmark_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get bookmarkModal(): BookmarkModal {
+        return new BookmarkModal(this.page, 'bookmark_modal', this.root);
+    }
+
+    get bookmarksMenu(): BookmarksMenu {
+        return new BookmarksMenu(this.page, 'bookmarks_menu');
+    }
+
+    /**
      * `bot_token_delete_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      * Renders only when matchesFilter(this.props.bot, filter, this.props.owner).
      */
@@ -249,6 +300,13 @@ export class App extends Scope {
      */
     get botTokenRegenerateModal(): BotTokenRegenerateModal {
         return new BotTokenRegenerateModal(this.page, 'bot_token_regenerate_modal', this.root);
+    }
+
+    /**
+     * `browse_channels` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get browseChannels(): BrowseChannels {
+        return new BrowseChannels(this.page, 'browse_channels', this.root);
     }
 
     /**
@@ -275,6 +333,14 @@ export class App extends Scope {
      */
     get channelActivityWarningModal(): ChannelActivityWarningModal {
         return new ChannelActivityWarningModal(this.page, 'channel_activity_warning_modal', this.root);
+    }
+
+    /**
+     * `channel_bookmarks` — ChannelBookmarks (channels/src/components/channel_bookmarks/channel_bookmarks.tsx)
+     * Renders only when hasBookmarks and this.props.isChannelBookmarksEnabled.
+     */
+    get channelBookmarks(): ChannelBookmarks {
+        return new ChannelBookmarks(this.page, 'channel_bookmarks', this.root);
     }
 
     get channelHeader(): ChannelHeader {
@@ -326,6 +392,17 @@ export class App extends Scope {
 
     get convertGmToChannelModal(): ConvertGmToChannelModal {
         return new ConvertGmToChannelModal(this.page, 'convert_gm_to_channel_modal', this.root);
+    }
+
+    /**
+     * `create_recap_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get createRecapModal(): CreateRecapModal {
+        return new CreateRecapModal(this.page, 'create_recap_modal', this.root);
+    }
+
+    get createTeam(): CreateTeam {
+        return new CreateTeam(this.page, 'create_team', this.root);
     }
 
     get createUserGroupsModal(): CreateUserGroupsModal {
@@ -396,8 +473,18 @@ export class App extends Scope {
         return new DenyJoinRequestModal(this.page, 'deny_join_request_modal', this.root);
     }
 
+    /**
+     * `direct_messages_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
     get directMessagesModal(): DirectMessagesModal {
         return new DirectMessagesModal(this.page, 'direct_messages_modal', this.root);
+    }
+
+    /**
+     * `disable_autotranslation_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get disableAutotranslationModal(): DisableAutotranslationModal {
+        return new DisableAutotranslationModal(this.page, 'disable_autotranslation_modal', this.root);
     }
 
     /**
@@ -489,6 +576,20 @@ export class App extends Scope {
         return new JobDetailsModal(this.page, 'job_details_modal', this.root);
     }
 
+    /**
+     * `join_private_channel_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get joinPrivateChannelModal(): JoinPrivateChannelModal {
+        return new JoinPrivateChannelModal(this.page, 'join_private_channel_modal', this.root);
+    }
+
+    /**
+     * `keyboard_shortcuts_modal` — KeyboardShortcutsModal (channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx)
+     */
+    get keyboardShortcutsModal(): KeyboardShortcutsModal {
+        return new KeyboardShortcutsModal(this.page, 'keyboard_shortcuts_modal', this.root);
+    }
+
     get latex(): Latex {
         return new Latex(this.page, 'latex', this.root);
     }
@@ -565,6 +666,10 @@ export class App extends Scope {
 
     get modal(): Modal {
         return new Modal(this.page, 'modal', this.root);
+    }
+
+    get moveThreadModal(): MoveThreadModal {
+        return new MoveThreadModal(this.page, 'move_thread_modal', this.root);
     }
 
     /**
@@ -648,6 +753,10 @@ export class App extends Scope {
         return new QuickSwitchModal(this.page, 'quick_switch_modal', this.root);
     }
 
+    get recaps(): Recaps {
+        return new Recaps(this.page, 'recaps', this.root);
+    }
+
     /**
      * `remove_sharing_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      * Renders only when canManageSharedChannels.
@@ -658,6 +767,13 @@ export class App extends Scope {
 
     get renameChannelModal(): RenameChannelModal {
         return new RenameChannelModal(this.page, 'rename_channel_modal', this.root);
+    }
+
+    /**
+     * `request_join_channel_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get requestJoinChannelModal(): RequestJoinChannelModal {
+        return new RequestJoinChannelModal(this.page, 'request_join_channel_modal', this.root);
     }
 
     /**
@@ -691,6 +807,10 @@ export class App extends Scope {
         return new SearchBox(this.page, 'search_box', this.root);
     }
 
+    get selectTeam(): SelectTeam {
+        return new SelectTeam(this.page, 'select_team', this.root);
+    }
+
     /**
      * `send_draft_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
@@ -708,6 +828,14 @@ export class App extends Scope {
 
     get shouldVerifyEmail(): ShouldVerifyEmail {
         return new ShouldVerifyEmail(this.page, 'should_verify_email', this.root);
+    }
+
+    /**
+     * `show_translation_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when getPost(state, postId).
+     */
+    get showTranslationModal(): ShowTranslationModal {
+        return new ShowTranslationModal(this.page, 'show_translation_modal', this.root);
     }
 
     get signup(): Signup {
@@ -735,12 +863,35 @@ export class App extends Scope {
         return new TeamSettingsModal(this.page, 'team_settings_modal', this.root);
     }
 
+    get teamSidebar(): TeamSidebar {
+        return new TeamSidebar(this.page, 'team_sidebar', this.root);
+    }
+
     get threadMenu(): ThreadMenu {
         return new ThreadMenu(this.page, 'thread_menu');
     }
 
     get threads(): Threads {
         return new Threads(this.page, 'threads', this.root);
+    }
+
+    get updateUserGroupModal(): UpdateUserGroupModal {
+        return new UpdateUserGroupModal(this.page, 'update_user_group_modal', this.root);
+    }
+
+    /**
+     * `user_group_popover` — UserGroupPopover (channels/src/components/user_group_popover/user_group_popover.tsx)
+     * Renders only when isMounted.
+     */
+    get userGroupPopover(): UserGroupPopover {
+        return new UserGroupPopover(this.page, 'user_group_popover', this.root);
+    }
+
+    /**
+     * `user_groups_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get userGroupsModal(): UserGroupsModal {
+        return new UserGroupsModal(this.page, 'user_groups_modal', this.root);
     }
 
     /**
@@ -763,6 +914,13 @@ export class App extends Scope {
      */
     get usersToBeRemovedModal(): UsersToBeRemovedModal {
         return new UsersToBeRemovedModal(this.page, 'users_to_be_removed_modal', this.root);
+    }
+
+    /**
+     * `view_user_group_modal` — ViewUserGroupModal (channels/src/components/view_user_group_modal/view_user_group_modal.tsx)
+     */
+    get viewUserGroupModal(): ViewUserGroupModal {
+        return new ViewUserGroupModal(this.page, 'view_user_group_modal', this.root);
     }
 
     /** `/admin_console` */

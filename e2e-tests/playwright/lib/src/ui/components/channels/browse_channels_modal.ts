@@ -31,11 +31,11 @@ export default class BrowseChannelsModal {
     }
 
     async toBeDoneLoading() {
-        await expect(this.container.getByTestId('loading-screen')).toHaveCount(0);
+        await expect(this.container.getByTestId('browse_channels.loading')).toHaveCount(0);
     }
 
     async toHaveNResults(count: number) {
-        await expect(this.results.locator('[data-testid^="ChannelRow-"]')).toHaveCount(count);
+        await expect(this.results.locator('[data-testid^="browse_channels.list.channel:"]')).toHaveCount(count);
     }
 
     async fillSearchInput(text: string) {
@@ -43,9 +43,9 @@ export default class BrowseChannelsModal {
     }
 
     async toHaveChannelAsNthResult(channelName: string, index: number) {
-        const row = this.results.locator('[data-testid^="ChannelRow-"]').nth(index);
+        const row = this.results.locator('[data-testid^="browse_channels.list.channel:"]').nth(index);
 
-        expect(await row.getAttribute('data-testid')).toEqual(`ChannelRow-${channelName}`);
+        expect(await row.getAttribute('data-testid')).toEqual(`browse_channels.list.channel:${channelName}`);
     }
 
     getChannelRow(channelDisplayName: string): Locator {

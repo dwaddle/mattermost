@@ -73,9 +73,9 @@ describe('Emoji sorting', () => {
                 'arrow_up_small',
                 'black_medium_small_square',
                 'black_small_square',
-                'mostly_sunny,sun_small_cloud,sun_behind_small_cloud',
+                'mostly_sunny',
                 'white_medium_small_square',
-                'zany_face,grinning_face_with_one_large_and_one_small_eye',
+                'zany_face',
             ]);
         });
     });

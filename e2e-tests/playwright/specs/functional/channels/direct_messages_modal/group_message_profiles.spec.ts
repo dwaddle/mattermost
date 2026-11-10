@@ -12,6 +12,9 @@ import {expect, test} from '@mattermost/playwright-lib';
  * has more DMs/GMs than the configured "Number of direct messages to show" limit) still appears in the
  * Direct Messages modal with its members fully loaded — i.e. with a non-zero member count and the
  * participant usernames as its name.
+ *
+ * Written on the generated page objects: the Direct Messages picker (its group rows keyed by channel id, with their
+ * member count and name), the composer, and the sidebar's channel rows by name.
  */
 test(
     "MM-65058 Direct Messages modal should load group members for GMs which haven't been loaded otherwise",
@@ -41,9 +44,9 @@ test(
         }
 
         // # Log the user in and open the channels page
-        const {page, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Create 11 GMs using the Direct Channels modal
         const gmChannels = [];
@@ -51,16 +54,23 @@ test(
             const memberA = users[i * 2];
             const memberB = users[i * 2 + 1];
 
-            // # Open the modal
-            const dialog = await channelsPage.openDirectChannelsModal();
-
-            // # Select the users and create the channel
-            await dialog.selectUser(memberA);
-            await dialog.selectUser(memberB);
-            await dialog.goToChannel();
+            // # Open the modal, select the users and create the channel
+            const dialog = await (
+                await app.lhs.header.clickOpenBrowseOrAddMenuButton()
+            ).clickOpenDirectMessageMenuItem();
+            for (const member of [memberA, memberB]) {
+                await dialog.list.searchCombobox.locator.fill(member.username);
+                await dialog.list.user(member).locator.click();
+                await expect(dialog.list.remove(member.id).locator).toBeVisible();
+            }
+            await dialog.list.clickSaveButton();
+            await expect(page).toHaveURL(/\/messages\/[a-z0-9]{40}$/);
+            await expect(dialog.locator).not.toBeVisible();
 
             // # Make a post in the channel to ensure that it has a last_post_at value
-            await channelsPage.postMessage(`gm message ${i}`);
+            await app.center.postCreate.fillMessageTextbox(`gm message ${i}`);
+            await app.center.postCreate.clickSendButton();
+            await expect(app.center.postCreate.messageTextbox.locator).toHaveValue('');
 
             // # Save the channel's information for later
             gmChannels.push({
@@ -73,14 +83,14 @@ test(
         const otherGms = gmChannels.slice(1);
 
         // # Refresh the app and go back to Town Square
-        await channelsPage.goto(team.name, 'town-square');
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // * Verify the target GM is not present in the sidebar to ensure that the sidebar hasn't loaded it
-        await expect(page.locator(`#sidebarItem_${targetGm.channel.name}`)).toHaveCount(0);
+        await expect(app.lhs.channelList.channel(targetGm.channel).locator).toHaveCount(0);
 
         // * Wait until the other GMs are loaded and present in the sidebar
         for (const otherGm of otherGms) {
-            const otherGmEntry = page.locator(`#sidebarItem_${otherGm.channel.name}`);
+            const otherGmEntry = app.lhs.channelList.channel(otherGm.channel).link.locator;
 
             await expect(otherGmEntry).toHaveCount(1);
             await expect(otherGmEntry).toContainText(gmChannelDisplayName(otherGm.members));
@@ -93,31 +103,28 @@ test(
         }
 
         // # Open the Direct Messages modal again
-        const dialog = await channelsPage.openDirectChannelsModal();
+        const dialog = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickOpenDirectMessageMenuItem();
 
         // # Wait for the list to populate
-        const rows = dialog.container.locator('#multiSelectList .more-modal__row');
-        await expect.poll(async () => rows.count()).toBeGreaterThanOrEqual(totalGms);
+        await expect.poll(async () => (await dialog.list.groupKeys()).length).toBeGreaterThanOrEqual(totalGms);
 
         // * Verify the modal contains an entry for every GM the user has, including the one that fell
         // * out of the sidebar
         for (const {channel, members} of gmChannels) {
-            // Each GM row renders the member usernames joined by ', '. We use the second member's
-            // username (which is unique per GM) to locate the corresponding row.
-            const usernameMarker = `@${members[1].username}`;
-            const gmRow = rows.filter({hasText: usernameMarker});
+            // Each GM row is keyed by its channel id
+            const gmRow = dialog.list.group(channel);
 
             // * Verify the row is rendered
-            await expect(gmRow, `expected to find a row in the DM modal for GM ${channel.id}`).toHaveCount(1);
+            await expect(gmRow.locator, `expected to find a row in the DM modal for GM ${channel.id}`).toHaveCount(1);
 
             // * Verify the GM icon shows the correct member count (channel members minus current user)
             await expect(
-                gmRow.locator('.more-modal__gm-icon'),
+                gmRow.memberCountText.locator,
                 `expected GM ${channel.id} to show a member count of ${members.length}`,
             ).toHaveText(members.length.toString());
 
             // * Verify the row's name section includes every participant's username
-            const nameContainer = gmRow.locator('.more-modal__name');
+            const nameContainer = gmRow.nameText.locator;
             for (const participant of members) {
                 await expect(
                     nameContainer,

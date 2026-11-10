@@ -6,6 +6,7 @@
 
 import type {Page} from '@playwright/test';
 import type {Post} from '@mattermost/types/posts';
+import type {UpdateChannelBookmarkResponse} from '@mattermost/types/channel_bookmarks';
 import type {ServerChannel} from '@mattermost/types/channels';
 
 import {drivers, effect} from '../src/aria';
@@ -57,5 +58,17 @@ export async function typeTests() {
     // @ts-expect-error tab keys are typed (a built-in tab or a plugin tab name), not numbers
     settings.tabs.tab(3);
 
-    return {post, channel, sent};
+    // a shared modal opened from a known opener fires only that opener's request: Edit opens the bookmark
+    // modal whose Save updates, so no `wait`, and waiting for the create doesn't compile
+    const edit = await app.bookmarkMenu.clickEditMenuItem();
+    const updated: UpdateChannelBookmarkResponse = await settle(edit.confirmButton, (b) => b.click());
+    // @ts-expect-error opened from Edit, Save never creates a bookmark
+    await settle(edit.confirmButton, (b) => b.click(), {wait: Api.CreateChannelBookmark});
+
+    // opened some other way (no opener): either request, so `wait` names one
+    await settle(app.bookmarkModal.confirmButton, (b) => b.click(), {wait: Api.CreateChannelBookmark});
+    // @ts-expect-error opened some other way, the modal can create or update: name the one to wait for
+    await settle(app.bookmarkModal.confirmButton, (b) => b.click());
+
+    return {post, channel, sent, updated};
 }

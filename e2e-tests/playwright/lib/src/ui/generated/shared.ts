@@ -27,6 +27,7 @@ import {DeletePostModal} from './delete_post_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {FilePreviewModal} from './file_preview_modal';
 import {FlaggedMessageModal} from './flagged_message_modal';
+import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {Markdown} from './markdown';
 import {MarketplaceModal} from './marketplace_modal';
@@ -37,6 +38,7 @@ import {RemoveSharingModal} from './remove_sharing_modal';
 import {RhsChannelInfo} from './rhs';
 import {SendPostOptions} from './send_post_options';
 import {UserSettingsModal} from './user_settings_modal';
+import {ViewUserGroupModal} from './view_user_group_modal';
 import type {
     AdminOperator,
     CenterAction,
@@ -261,7 +263,7 @@ export class Users extends Scope {
     /**
      * `add_users_to_group_modal.users.back--button` — MultiSelect (channels/src/components/multiselect/multiselect.tsx)
      * Renders only when this.props.saveButtonPosition === 'bottom'.
-     * Opens modal ViewUserGroupModal.
+     * Opens modal ViewUserGroupModal (`view_user_group_modal`).
      */
     get backButton() {
         return drivers.button(this.byTestId(`${this.scope}.back--button`), {
@@ -273,8 +275,10 @@ export class Users extends Scope {
         });
     }
 
-    async clickBackButton(): Promise<void> {
+    /** Clicks backButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickBackButton(): Promise<ViewUserGroupModal> {
         await this.backButton.click();
+        return new ViewUserGroupModal(this.page, 'view_user_group_modal');
     }
 
     /**
@@ -369,7 +373,7 @@ export class Users extends Scope {
 
     /**
      * `add_users_to_group_modal.users.save--button` — SaveButton (channels/src/components/save_button.tsx)
-     * Opens modal ViewUserGroupModal.
+     * Opens modal ViewUserGroupModal (`view_user_group_modal`).
      */
     get saveButton() {
         return drivers.button(this.byTestId(`${this.scope}.save--button`), {
@@ -381,8 +385,10 @@ export class Users extends Scope {
         });
     }
 
-    async clickSaveButton(): Promise<void> {
+    /** Clicks saveButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickSaveButton(): Promise<ViewUserGroupModal> {
         await this.saveButton.click();
+        return new ViewUserGroupModal(this.page, 'view_user_group_modal');
     }
 
     /**
@@ -406,8 +412,8 @@ export class Users extends Scope {
      * `add_users_to_group_modal.users.results` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
      * Renders only when !this.props.loading and !(options == null || options.length === 0).
      */
-    get results(): Results {
-        return new Results(this.page, `${this.scope}.results`, this.root);
+    get results(): UsersResults {
+        return new UsersResults(this.page, `${this.scope}.results`, this.root);
     }
 
     /** Every `add_users_to_group_modal.users.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
@@ -424,7 +430,95 @@ export class Users extends Scope {
     }
 }
 
-/** Rendered at `admin.accept_invite_modal.destination_team`, `admin.classification.global_banner_level`, `admin.classification.preset`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `add_users_to_group_modal.users.results`, `create_user_groups_modal.users.results`: one class, constructed with the scope it is mounted at. */
+export class UsersResults extends Scope {
+    /**
+     * `add_users_to_group_modal.users.results.live_region` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     */
+    get liveRegion() {
+        return drivers.container(this.byTestId(`${this.scope}.live_region`), {
+            testId: `${this.scope}.live_region`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    /**
+     * `add_users_to_group_modal.users.results.no_results--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and options == null || options.length === 0 and !customNoOptionsMessage.
+     */
+    get noResultsText() {
+        return drivers.text(this.byTestId(`${this.scope}.no_results--text`), {
+            testId: `${this.scope}.no_results--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getNoResultsText(): Promise<string> {
+        return this.noResultsText.text();
+    }
+
+    /**
+     * `add_users_to_group_modal.users.results.selection--text` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
+     * Renders only when !this.props.loading and !(options == null || options.length === 0).
+     */
+    get selectionText() {
+        return drivers.text(this.byTestId(`${this.scope}.selection--text`), {
+            testId: `${this.scope}.selection--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList',
+        });
+    }
+
+    getSelectionText(): Promise<string> {
+        return this.selectionText.text();
+    }
+
+    /**
+     * `add_users_to_group_modal.users.results.user:{key}` — MultiSelectOption (channels/src/components/add_user_to_group_multiselect/multiselect_option/multiselect_option.tsx)
+     */
+    user(user: Pick<UserProfile, 'id'>) {
+        return drivers.container(this.byTestId(`${this.scope}.user:${user.id}`), {
+            testId: `${this.scope}.user:${user.id}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/add_user_to_group_multiselect/multiselect_option/multiselect_option.tsx#MultiSelectOption',
+        });
+    }
+
+    /** Every `add_users_to_group_modal.users.results.user:{key}` in the scope. */
+    get userItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.user:`, '');
+    }
+
+    /** The keys of every `add_users_to_group_modal.users.results.user:{key}` in the scope, in document order. */
+    userKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.user:`, '');
+    }
+
+    /** Every `add_users_to_group_modal.users.results.user:{key}` in the scope as a list by key, for the list matchers: `expect(x.userList).toHaveKeys([…])`. */
+    get userList() {
+        return this.keyedList(`${this.scope}.user:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.user:${key}`), {
+                testId: `${this.scope}.user:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/add_user_to_group_multiselect/multiselect_option/multiselect_option.tsx#MultiSelectOption',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.accept_invite_modal.destination_team`, `admin.classification.global_banner_level`, `admin.classification.preset`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `create_recap_modal.schedule.time_of_day`, `create_recap_modal.schedule.time_period`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
 export class DropdownInput extends Scope {
     /**
      * `admin.accept_invite_modal.destination_team.menu` — makeMenu (channels/src/components/dropdown_input.tsx)
@@ -435,7 +529,7 @@ export class DropdownInput extends Scope {
     }
 }
 
-/** Rendered at `admin.accept_invite_modal.destination_team.menu`, `admin.classification.global_banner_level.menu`, `admin.classification.preset.menu`, `admin.secure_connection.destination_team.menu`, `admin.users.filters.role.menu`, `admin.users.filters.status.menu`, `channel_settings_modal.configuration.classification_level.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.accept_invite_modal.destination_team.menu`, `admin.classification.global_banner_level.menu`, `admin.classification.preset.menu`, `admin.secure_connection.destination_team.menu`, `admin.users.filters.role.menu`, `admin.users.filters.status.menu`, `channel_settings_modal.configuration.classification_level.menu`, `create_recap_modal.schedule.time_of_day.menu`, `create_recap_modal.schedule.time_period.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
 export class DropdownInputMenu extends Scope {
     /**
      * `admin.accept_invite_modal.destination_team.menu.option:{key}--option` — makeOption (channels/src/components/dropdown_input.tsx)
@@ -1286,7 +1380,7 @@ export class RulesRowAttributeMenu extends Scope {
     }
 }
 
-/** Rendered at `admin.access_control.policy.rules.row.attribute_menu.filter`, `admin.access_control.policy.rules.row.value_menu.filter`, `admin.access_control.policy.rules.row.value_menu.search`, `admin.access_control.policy.rules.row.value_menu.value`, `admin.attribute.graph.add_top.name`, `admin.attribute.graph.child_draft.name`, `admin.attribute.graph.empty.name`, `admin.attribute.ranks.option_menu.label`, `admin.attribute.values.option_menu.label`, `admin.channel.access_rules.rules.row.attribute_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.search`, `admin.channel.access_rules.rules.row.value_menu.value`, `admin.permission_policy.rules.row.attribute_menu.filter`, `admin.permission_policy.rules.row.value_menu.filter`, `admin.permission_policy.rules.row.value_menu.search`, `admin.permission_policy.rules.row.value_menu.value`, `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.access_rules.rules.row.attribute_menu.filter`, `admin.team.access_rules.rules.row.value_menu.filter`, `admin.team.access_rules.rules.row.value_menu.search`, `admin.team.access_rules.rules.row.value_menu.value`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.access_rules.rules.row.attribute_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.search`, `channel_settings_modal.access_rules.rules.row.value_menu.value`, `channel_settings_modal.info.name`, `channel_settings_modal.permissions_policy.editor.rules.row.attribute_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.search`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.value`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `login_mfa.token`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.attributes.attribute.value`, `new_channel_modal.name`, `password_reset.email`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`, `signup.card.email`, `signup.card.username`, `team_settings_modal.access_policies.editor.name`, `team_settings_modal.access_policies.editor.rules.row.attribute_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.search`, `team_settings_modal.access_policies.editor.rules.row.value_menu.value`, `team_settings_modal.membership.rules.row.attribute_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.search`, `team_settings_modal.membership.rules.row.value_menu.value`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.access_control.policy.rules.row.attribute_menu.filter`, `admin.access_control.policy.rules.row.value_menu.filter`, `admin.access_control.policy.rules.row.value_menu.search`, `admin.access_control.policy.rules.row.value_menu.value`, `admin.attribute.graph.add_top.name`, `admin.attribute.graph.child_draft.name`, `admin.attribute.graph.empty.name`, `admin.attribute.ranks.option_menu.label`, `admin.attribute.values.option_menu.label`, `admin.channel.access_rules.rules.row.attribute_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.search`, `admin.channel.access_rules.rules.row.value_menu.value`, `admin.permission_policy.rules.row.attribute_menu.filter`, `admin.permission_policy.rules.row.value_menu.filter`, `admin.permission_policy.rules.row.value_menu.search`, `admin.permission_policy.rules.row.value_menu.value`, `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.access_rules.rules.row.attribute_menu.filter`, `admin.team.access_rules.rules.row.value_menu.filter`, `admin.team.access_rules.rules.row.value_menu.search`, `admin.team.access_rules.rules.row.value_menu.value`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `bookmark_modal.link`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.access_rules.rules.row.attribute_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.search`, `channel_settings_modal.access_rules.rules.row.value_menu.value`, `channel_settings_modal.info.name`, `channel_settings_modal.permissions_policy.editor.rules.row.attribute_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.search`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.value`, `convert_gm_to_channel_modal.name`, `create_recap_modal.channel_search`, `create_team.name`, `create_user_groups_modal.mention`, `create_user_groups_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `login_mfa.token`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.attributes.attribute.value`, `new_channel_modal.name`, `password_reset.email`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`, `signup.card.email`, `signup.card.username`, `team_settings_modal.access_policies.editor.name`, `team_settings_modal.access_policies.editor.rules.row.attribute_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.search`, `team_settings_modal.access_policies.editor.rules.row.value_menu.value`, `team_settings_modal.membership.rules.row.attribute_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.search`, `team_settings_modal.membership.rules.row.value_menu.value`, `update_user_group_modal.mention`, `update_user_group_modal.name`, `user_groups_modal.search`, `view_user_group_modal.search`: one class, constructed with the scope it is mounted at. */
 export class Input extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -1819,7 +1913,7 @@ export class AlertBanner extends Scope {
     }
 }
 
-/** Rendered at `admin.channel.archive_modal`, `admin.classification.switch_preset_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.remove_policy_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `marketplace_modal.update_confirm_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`, `team_settings_modal.membership.confirm_modal`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.channel.archive_modal`, `admin.classification.switch_preset_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.remove_policy_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `marketplace_modal.update_confirm_modal`, `recaps.recap.delete_modal`, `recaps.scheduled.delete_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`, `team_settings_modal.membership.confirm_modal`: one class, constructed with the scope it is mounted at. */
 export class ConfirmModal extends Scope {
     /**
      * `admin.channel.archive_modal.cancel--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
@@ -1875,6 +1969,8 @@ export class ConfirmModal extends Scope {
                 Api.CreateJob,
                 Api.DeleteAccessControlPolicy,
                 Api.DeleteChannel,
+                Api.DeleteRecap,
+                Api.DeleteScheduledRecap,
                 Api.DeleteScheme,
                 Api.GetChannelMembers,
                 Api.GetChannelModerations,
@@ -2180,6 +2276,32 @@ export class ColorInput extends Scope {
 
     async fillValueTextbox(value: string): Promise<void> {
         await this.valueTextbox.fill(value);
+    }
+}
+
+/** Rendered at `admin.sidebar.filter`, `user_group_popover.search`: one class, constructed with the scope it is mounted at. */
+export class QuickInput extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.sidebar.filter.clear--button` — QuickInput (channels/src/components/quick_input/quick_input.tsx)
+     * Renders only when showClearButton.
+     */
+    get clearButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
+            testId: `${this.scope}.clear--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/quick_input/quick_input.tsx#QuickInput',
+        });
+    }
+
+    async clickClearButton(): Promise<void> {
+        await this.clearButton.click();
     }
 }
 
@@ -2806,6 +2928,7 @@ export class PostCreate extends Scope {
     async clickSaveButton(): Promise<{
         deletePostModal: DeletePostModal;
         editChannelHeaderModal: EditChannelHeaderModal;
+        keyboardShortcutsModal: KeyboardShortcutsModal;
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
@@ -2815,6 +2938,7 @@ export class PostCreate extends Scope {
         return {
             deletePostModal: new DeletePostModal(this.page, 'delete_post_modal'),
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            keyboardShortcutsModal: new KeyboardShortcutsModal(this.page, 'keyboard_shortcuts_modal'),
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
@@ -2875,6 +2999,7 @@ export class PostCreate extends Scope {
     /** Clicks sendButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickSendButton(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        keyboardShortcutsModal: KeyboardShortcutsModal;
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
@@ -2883,6 +3008,7 @@ export class PostCreate extends Scope {
         await this.sendButton.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            keyboardShortcutsModal: new KeyboardShortcutsModal(this.page, 'keyboard_shortcuts_modal'),
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
@@ -3746,7 +3872,7 @@ export class PostItem extends Scope {
     /**
      * `center.post_list.post.message--text` — PostMessageView (channels/src/components/post_view/post_message_view/post_message_view.tsx)
      * Renders only when !showConcealedPlaceholder.
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      */
@@ -4094,7 +4220,7 @@ export class PostItem extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments`, `center.post_list.post.permalink_preview.attachments`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments`, `flag_post_modal.post_preview.attachments`, `forward_post_modal.preview.attachments`, `post_attributes.value.post_preview.post.attachments`, `restore_post_modal.attachments`, `rhs.edit_history.version.attachments`, `rhs.thread.post.attachments`, `rhs.thread.post.permalink_preview.attachments`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments`, `search.results.post.attachments`, `search.results.post.permalink_preview.attachments`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments`, `center.post_list.post.permalink_preview.attachments`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments`, `flag_post_modal.post_preview.attachments`, `forward_post_modal.preview.attachments`, `move_thread_modal.preview.attachments`, `post_attributes.value.post_preview.post.attachments`, `restore_post_modal.attachments`, `rhs.edit_history.version.attachments`, `rhs.thread.post.attachments`, `rhs.thread.post.permalink_preview.attachments`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments`, `search.results.post.attachments`, `search.results.post.permalink_preview.attachments`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments`: one class, constructed with the scope it is mounted at. */
 export class Attachments extends Scope {
     /**
      * `center.post_list.post.attachments.file:{key}--button` — ImageTile (channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx)
@@ -4199,7 +4325,7 @@ export class Attachments extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.file_card`, `center.post_list.post.permalink_preview.attachments.file_card`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `flag_post_modal.post_preview.attachments.file_card`, `forward_post_modal.preview.attachments.file_card`, `post_attributes.value.post_preview.post.attachments.file_card`, `restore_post_modal.attachments.file_card`, `rhs.edit_history.version.attachments.file_card`, `rhs.thread.post.attachments.file_card`, `rhs.thread.post.permalink_preview.attachments.file_card`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `search.results.post.attachments.file_card`, `search.results.post.permalink_preview.attachments.file_card`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.file_card`, `center.post_list.post.permalink_preview.attachments.file_card`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `flag_post_modal.post_preview.attachments.file_card`, `forward_post_modal.preview.attachments.file_card`, `move_thread_modal.preview.attachments.file_card`, `post_attributes.value.post_preview.post.attachments.file_card`, `restore_post_modal.attachments.file_card`, `rhs.edit_history.version.attachments.file_card`, `rhs.thread.post.attachments.file_card`, `rhs.thread.post.permalink_preview.attachments.file_card`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`, `search.results.post.attachments.file_card`, `search.results.post.permalink_preview.attachments.file_card`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsFileCard extends Scope {
     /**
      * `center.post_list.post.attachments.file_card:{key}` — FileAttachment (channels/src/components/file_attachment/file_attachment.tsx)
@@ -4271,7 +4397,7 @@ export class AttachmentsFileCard extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.file_card.menu`, `center.post_list.post.permalink_preview.attachments.file_card.menu`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `flag_post_modal.post_preview.attachments.file_card.menu`, `forward_post_modal.preview.attachments.file_card.menu`, `post_attributes.value.post_preview.post.attachments.file_card.menu`, `restore_post_modal.attachments.file_card.menu`, `rhs.edit_history.version.attachments.file_card.menu`, `rhs.thread.post.attachments.file_card.menu`, `rhs.thread.post.permalink_preview.attachments.file_card.menu`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `search.results.post.attachments.file_card.menu`, `search.results.post.permalink_preview.attachments.file_card.menu`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.file_card.menu`, `center.post_list.post.permalink_preview.attachments.file_card.menu`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `flag_post_modal.post_preview.attachments.file_card.menu`, `forward_post_modal.preview.attachments.file_card.menu`, `move_thread_modal.preview.attachments.file_card.menu`, `post_attributes.value.post_preview.post.attachments.file_card.menu`, `restore_post_modal.attachments.file_card.menu`, `rhs.edit_history.version.attachments.file_card.menu`, `rhs.thread.post.attachments.file_card.menu`, `rhs.thread.post.permalink_preview.attachments.file_card.menu`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`, `search.results.post.attachments.file_card.menu`, `search.results.post.permalink_preview.attachments.file_card.menu`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.file_card.menu`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsFileCardMenu extends Scope {
     /**
      * `center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
@@ -4331,7 +4457,7 @@ export class AttachmentsFileCardMenu extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.image`, `center.post_list.post.permalink_preview.attachments.image`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `flag_post_modal.post_preview.attachments.image`, `forward_post_modal.preview.attachments.image`, `post_attributes.value.post_preview.post.attachments.image`, `restore_post_modal.attachments.image`, `rhs.edit_history.version.attachments.image`, `rhs.thread.post.attachments.image`, `rhs.thread.post.permalink_preview.attachments.image`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `search.results.post.attachments.image`, `search.results.post.permalink_preview.attachments.image`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.image`, `center.post_list.post.permalink_preview.attachments.image`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `flag_post_modal.post_preview.attachments.image`, `forward_post_modal.preview.attachments.image`, `move_thread_modal.preview.attachments.image`, `post_attributes.value.post_preview.post.attachments.image`, `restore_post_modal.attachments.image`, `rhs.edit_history.version.attachments.image`, `rhs.thread.post.attachments.image`, `rhs.thread.post.permalink_preview.attachments.image`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image`, `search.results.post.attachments.image`, `search.results.post.permalink_preview.attachments.image`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsImage extends Scope {
     /**
      * `center.post_list.post.attachments.image:{key}` — SingleImageView (channels/src/components/single_image_view/single_image_view.tsx)
@@ -4404,7 +4530,7 @@ export class AttachmentsImage extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.attachments.image.picture`, `center.post_list.post.image_preview`, `center.post_list.post.link_preview.image`, `center.post_list.post.permalink_preview.attachments.image.picture`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `flag_post_modal.post_preview.attachments.image.picture`, `forward_post_modal.preview.attachments.image.picture`, `markdown.image`, `post_attributes.value.post_preview.post.attachments.image.picture`, `restore_post_modal.attachments.image.picture`, `rhs.edit_history.version.attachments.image.picture`, `rhs.thread.post.attachments.image.picture`, `rhs.thread.post.image_preview`, `rhs.thread.post.link_preview.image`, `rhs.thread.post.permalink_preview.attachments.image.picture`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `search.results.post.attachments.image.picture`, `search.results.post.image_preview`, `search.results.post.link_preview.image`, `search.results.post.permalink_preview.attachments.image.picture`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.attachments.image.picture`, `center.post_list.post.image_preview`, `center.post_list.post.link_preview.image`, `center.post_list.post.permalink_preview.attachments.image.picture`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `flag_post_modal.post_preview.attachments.image.picture`, `forward_post_modal.preview.attachments.image.picture`, `markdown.image`, `move_thread_modal.preview.attachments.image.picture`, `post_attributes.value.post_preview.post.attachments.image.picture`, `restore_post_modal.attachments.image.picture`, `rhs.edit_history.version.attachments.image.picture`, `rhs.thread.post.attachments.image.picture`, `rhs.thread.post.image_preview`, `rhs.thread.post.link_preview.image`, `rhs.thread.post.permalink_preview.attachments.image.picture`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`, `search.results.post.attachments.image.picture`, `search.results.post.image_preview`, `search.results.post.link_preview.image`, `search.results.post.permalink_preview.attachments.image.picture`, `search.results.post.spillage_report.card.field.value.post_preview.post.attachments.image.picture`: one class, constructed with the scope it is mounted at. */
 export class Picture extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -4873,7 +4999,7 @@ export class PostItemMenuRecentReactions extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.message`, `center.post_list.post.permalink_preview.message`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.message`, `flag_post_modal.post_preview.message`, `forward_post_modal.preview.message`, `post_attributes.value.post_preview.post.message`, `restore_post_modal.message`, `rhs.edit_history.version.message`, `rhs.thread.post.message`, `rhs.thread.post.permalink_preview.message`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.message`, `search.results.post.message`, `search.results.post.permalink_preview.message`, `search.results.post.spillage_report.card.field.value.post_preview.post.message`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.message`, `center.post_list.post.permalink_preview.message`, `center.post_list.post.spillage_report.card.field.value.post_preview.post.message`, `flag_post_modal.post_preview.message`, `forward_post_modal.preview.message`, `move_thread_modal.preview.message`, `post_attributes.value.post_preview.post.message`, `restore_post_modal.message`, `rhs.edit_history.version.message`, `rhs.thread.post.message`, `rhs.thread.post.permalink_preview.message`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post.message`, `search.results.post.message`, `search.results.post.permalink_preview.message`, `search.results.post.spillage_report.card.field.value.post_preview.post.message`: one class, constructed with the scope it is mounted at. */
 export class ShowMore extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -4899,12 +5025,12 @@ export class ShowMore extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.permalink_preview`, `center.post_list.post.spillage_report.card.field.value.post_preview.post`, `flag_post_modal.post_preview`, `forward_post_modal.preview`, `post_attributes.value.post_preview.post`, `rhs.thread.post.permalink_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post`, `search.results.post.permalink_preview`, `search.results.post.spillage_report.card.field.value.post_preview.post`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_list.post.permalink_preview`, `center.post_list.post.spillage_report.card.field.value.post_preview.post`, `flag_post_modal.post_preview`, `forward_post_modal.preview`, `move_thread_modal.preview`, `post_attributes.value.post_preview.post`, `rhs.thread.post.permalink_preview`, `rhs.thread.post.spillage_report.card.field.value.post_preview.post`, `search.results.post.permalink_preview`, `search.results.post.spillage_report.card.field.value.post_preview.post`: one class, constructed with the scope it is mounted at. */
 export class PostMessagePreview extends Scope {
     /**
      * `center.post_list.post.permalink_preview.message--text` — PostMessageView (channels/src/components/post_view/post_message_view/post_message_view.tsx)
      * Renders only when embed.data && 'post_id' in embed.data && embed.data.post_id and previewPost.
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      */
@@ -6147,7 +6273,7 @@ export class MoveToMenu extends Scope {
     }
 }
 
-/** Rendered at `channel_invite_modal.users.results`, `add_groups_to_channel_modal.groups.results`, `add_groups_to_team_modal.groups.results`, `add_users_to_group_modal.users.results`, `create_user_groups_modal.users.results`, `direct_messages_modal.list.results`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `channel_invite_modal.users.results`, `add_groups_to_channel_modal.groups.results`, `add_groups_to_team_modal.groups.results`, `direct_messages_modal.list.results`: one class, constructed with the scope it is mounted at. */
 export class Results extends Scope {
     /**
      * `channel_invite_modal.users.results.live_region` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)

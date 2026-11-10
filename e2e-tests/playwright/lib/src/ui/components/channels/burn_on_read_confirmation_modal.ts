@@ -20,11 +20,11 @@ export default class BurnOnReadConfirmationModal {
         this.message = container.locator('#confirmModalBody');
 
         // Action buttons - use flexible selectors
-        this.deleteButton = container.getByRole('button', {name: /delete|burn|confirm/i});
-        this.cancelButton = container.getByRole('button', {name: /cancel/i});
+        this.deleteButton = container.getByTestId('burn_on_read_confirmation_modal.confirm--button');
+        this.cancelButton = container.getByTestId('burn_on_read_confirmation_modal.cancel--button');
 
         // Checkbox for "don't show again" preference
-        this.dontShowAgainCheckbox = container.getByRole('checkbox');
+        this.dontShowAgainCheckbox = container.getByTestId('burn_on_read_confirmation_modal.dont_show_again--checkbox');
     }
 
     async toBeVisible() {

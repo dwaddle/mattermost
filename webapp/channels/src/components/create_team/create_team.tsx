@@ -101,7 +101,7 @@ export class CreateTeam extends React.PureComponent<Props & RouteComponentProps,
                 <div className='col-sm-12'>
                     <div
                         className='signup-team__container'
-                        data-testid='create-team-form'
+                        data-testid='create_team.form'
                     >
                         <SiteNameAndDescription
                             customDescriptionText={customDescriptionText}

@@ -1,7 +1,14 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, type App} from '@mattermost/playwright-lib';
+
+/** Opens Browse Channels from the sidebar's browse-or-add menu. */
+async function openBrowseChannels(app: App) {
+    const dialog = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickBrowseChannelsMenuItem();
+    await expect(dialog.searchTextbox.locator).toBeVisible();
+    return dialog;
+}
 
 /**
  * @objective Verify accessibility support in Browse Channels Dialog screen
@@ -34,30 +41,27 @@ test(
         });
 
         // # Log in as regular user
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
         await channelsPage.goto(team.name, 'town-square');
         await channelsPage.toBeVisible();
 
         // # Open the Browse Channels modal
-        const dialog = await channelsPage.openBrowseChannelsModal();
+        const dialog = await openBrowseChannels(app);
 
         // * Verify the search input exists
-        const searchInput = dialog.searchInput;
-        await expect(searchInput).toBeVisible();
+        await expect(dialog.searchTextbox.locator).toBeVisible();
 
         // # Wait for channel list to load
-        await dialog.toBeDoneLoading();
+        await expect(dialog.loading.locator).not.toBeVisible();
 
         // # Hide already joined channels
-        const hideJoinedCheckbox = dialog.hideJoinedCheckbox;
-        await hideJoinedCheckbox.click();
+        await dialog.hideJoinedCheckbox.locator.click();
 
         // # Focus on Create Channel button and tab through elements
         // Tab order: Close → Search → Channel type filter → Hide Archived → Hide Joined → first channel
-        const createChannelButton = dialog.createNewChannelButton;
-        await createChannelButton.focus();
+        await dialog.createChannelButton.locator.focus();
         await page.keyboard.press('Tab');
         await page.keyboard.press('Tab');
         await page.keyboard.press('Tab');
@@ -66,19 +70,25 @@ test(
         await page.keyboard.press('Tab');
 
         // * Verify channel name is highlighted and has proper aria-label
-        await dialog.toHaveChannelAsNthResult(channel1.name, 0);
-        const channel1AriaLabel = `${channel1.display_name.toLowerCase()}, ${channel1.purpose.toLowerCase()}`;
-        const channel1Item = dialog.container.getByLabel(channel1AriaLabel);
+        await expect.poll(async () => (await dialog.list.channelKeys())[0]).toBe(channel1.name);
+        const channel1Item = dialog.list.channel(channel1).locator;
         await expect(channel1Item).toBeVisible();
+        await expect(channel1Item).toHaveAttribute(
+            'aria-label',
+            `${channel1.display_name.toLowerCase()}, ${channel1.purpose.toLowerCase()}`,
+        );
         await expect(channel1Item).toBeFocused();
 
         // # Press Tab again to move to next channel
         await page.keyboard.press('Tab');
 
         // * Verify focus moved to next channel
-        await dialog.toHaveChannelAsNthResult(channel2.name, 1);
-        const channel2AriaLabel = `${channel2.display_name.toLowerCase()}, ${channel2.purpose.toLowerCase()}`;
-        const channel2Item = dialog.container.getByLabel(channel2AriaLabel);
+        await expect.poll(async () => (await dialog.list.channelKeys())[1]).toBe(channel2.name);
+        const channel2Item = dialog.list.channel(channel2).locator;
+        await expect(channel2Item).toHaveAttribute(
+            'aria-label',
+            `${channel2.display_name.toLowerCase()}, ${channel2.purpose.toLowerCase()}`,
+        );
         await expect(channel2Item).toBeFocused();
     },
 );
@@ -97,17 +107,17 @@ test(
         const {team, user} = await pw.initSetup();
 
         // # Log in as regular user
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
         await channelsPage.goto(team.name, 'town-square');
         await channelsPage.toBeVisible();
 
         // # Open the Browse Channels modal
-        const dialog = await channelsPage.openBrowseChannelsModal();
+        const dialog = await openBrowseChannels(app);
 
         // * Verify aria snapshot of Browse Channels dialog
-        await expect(dialog.container).toMatchAriaSnapshot(`
+        await expect(dialog.locator).toMatchAriaSnapshot(`
             - dialog "Browse Channels":
               - document:
                 - heading "Browse Channels" [level=1]

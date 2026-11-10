@@ -65,17 +65,4 @@ describe('components/widgets/team-icon', () => {
         expect(container.querySelector('.no-hover')).not.toBeInTheDocument();
         expect(container.querySelector('.TeamIcon')).not.toHaveClass('no-hover');
     });
-
-    test('should keep the legacy testids when the host passes no scope', () => {
-        render(withIntl(<TeamIcon content='test'/>));
-        expect(screen.getByTestId('teamIconInitial')).toHaveTextContent('te');
-
-        render(withIntl(
-            <TeamIcon
-                url='http://example.com/image.png'
-                content='test'
-            />,
-        ));
-        expect(screen.getByTestId('teamIconImage')).toBeInTheDocument();
-    });
 });

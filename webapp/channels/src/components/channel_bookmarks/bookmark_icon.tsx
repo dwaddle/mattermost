@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux';
 import styled from 'styled-components';
 
 import {FileGenericOutlineIcon, BookOutlineIcon, ProductBoardsIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelBookmark} from '@mattermost/types/channel_bookmarks';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -26,6 +27,7 @@ type Props = {
     imageUrl?: string;
     fileInfo?: FileInfo | FilePreviewInfo;
     size?: 16 | 24;
+    testId?: TestId;
 };
 
 const BookmarkIcon = ({
@@ -34,6 +36,7 @@ const BookmarkIcon = ({
     imageUrl,
     fileInfo,
     size = 16,
+    testId,
 }: Props) => {
     let icon = <BookOutlineIcon size={size}/>;
     if (type === 'file') {
@@ -80,7 +83,7 @@ const BookmarkIcon = ({
     return (
         <Icon
             $size={size}
-            data-testid='bookmark-icon'
+            data-testid={testId}
             data-icon-kind={iconKind}
         >
             {icon}

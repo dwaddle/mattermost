@@ -10,6 +10,7 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
+import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {MarketplaceModal} from './marketplace_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
@@ -108,6 +109,7 @@ export class SendDraftModal extends Scope {
     /** Clicks confirmButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
     async clickConfirmButton(): Promise<{
         editChannelHeaderModal: EditChannelHeaderModal;
+        keyboardShortcutsModal: KeyboardShortcutsModal;
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
@@ -116,6 +118,7 @@ export class SendDraftModal extends Scope {
         await this.confirmButton.click();
         return {
             editChannelHeaderModal: new EditChannelHeaderModal(this.page, 'edit_channel_header_modal'),
+            keyboardShortcutsModal: new KeyboardShortcutsModal(this.page, 'keyboard_shortcuts_modal'),
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),

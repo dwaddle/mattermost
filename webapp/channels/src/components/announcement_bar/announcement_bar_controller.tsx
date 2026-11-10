@@ -42,6 +42,7 @@ class AnnouncementBarController extends React.PureComponent<Props> {
         if (this.props.config?.EnableBanner === 'true' && this.props.config.BannerText?.trim()) {
             adminConfiguredAnnouncementBar = (
                 <TextDismissableBar
+                    testId='announcement_bar.admin'
                     className='admin-announcement'
                     color={this.props.config.BannerColor}
                     textColor={this.props.config.BannerTextColor}

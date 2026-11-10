@@ -6,26 +6,30 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that entering a link in the bookmark create modal auto-fills the bookmark title from the
  * link.
+ *
+ * Written on the generated page objects: the channel menu's bookmarks submenu and the bookmark dialog.
  */
 test('MM-T5604 auto-fills the bookmark title from the entered link', {tag: '@channels'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
-    // # Open the bookmark create modal via the channel menu's Bookmarks Bar submenu
-    const channelMenu = await channelsPage.openChannelMenu();
-    await channelMenu.openBookmarksSubmenu();
-    await channelMenu.addBookmarkLink.click();
-    await channelsPage.bookmarkCreateModal.toBeVisible();
+    // # Open the bookmark dialog from the channel menu's Bookmarks Bar submenu
+    const menu = await app.channelHeader.clickOpenMenuButton();
+    await menu.bookmarksMenuItem.locator.hover();
+    const dialog = await menu.bookmarks.clickAddLinkMenuItem();
 
     // # Enter a link
-    await channelsPage.bookmarkCreateModal.linkInput.fill('https://www.amazon.com');
+    await dialog.fillLinkTextbox('https://www.amazon.com');
 
-    // * Verify the title field is auto-filled from the link
-    await expect(channelsPage.bookmarkCreateModal.titleInput).toHaveValue(/amazon/i);
+    // * The title is auto-filled from the link
+    await expect(dialog.titleTextbox.locator).toHaveValue(/amazon/i);
 
     // # Cancel without saving
-    await channelsPage.bookmarkCreateModal.cancelButton.click();
-    await channelsPage.bookmarkCreateModal.notToBeVisible();
+    await dialog.clickCancelButton();
+
+    // * The dialog closes and nothing was saved
+    await expect(dialog.locator).not.toBeVisible();
+    expect(await userClient.getChannelBookmarks(channel.id)).toHaveLength(0);
 });

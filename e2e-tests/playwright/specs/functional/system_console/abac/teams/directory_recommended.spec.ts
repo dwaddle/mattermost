@@ -257,15 +257,10 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
             })
             .toBe(true);
 
-        const {page} = await pw.testBrowser.login(qualUser);
-        await page.goto('/select_team');
-        await page.waitForLoadState('networkidle');
-
-        const chip = page
-            .locator('.signup-team-dir')
-            .filter({hasText: publicGoverned.display_name})
-            .getByLabel('Recommended based on your attributes');
-
-        await expect(chip).toBeVisible({timeout: 15000});
+        // * The directory marks the governed team as recommended for this user
+        const {app} = await pw.testBrowser.login(qualUser);
+        await app.selectTeamPage.goto();
+        await expect(app.selectTeam.team(publicGoverned).locator).toBeVisible();
+        await expect(app.selectTeam.recommended(publicGoverned).locator).toBeVisible({timeout: 15000});
     });
 });

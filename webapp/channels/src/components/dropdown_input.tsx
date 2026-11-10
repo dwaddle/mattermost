@@ -105,11 +105,12 @@ const makeOption = (testId?: string) => (props: any) => {
     );
 };
 
+// The menu is `<testId>.menu` (none without a testId).
 const makeMenu = (testId?: string) => (props: any) => {
     return (
         <components.Menu
             {...props}
-            innerProps={{...props.innerProps, 'data-testid': testId ? `${testId}.menu` : 'dropdownMenu'}}
+            innerProps={{...props.innerProps, 'data-testid': testId ? `${testId}.menu` : undefined}}
         />
     );
 };

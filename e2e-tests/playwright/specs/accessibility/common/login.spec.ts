@@ -3,73 +3,69 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-test('/login accessibility quick check', async ({pw, axe}) => {
-    // Set up the page not to redirect to the landing page
-    await pw.hasSeenLandingPage();
+import {openLogin} from '../../functional/auth/support';
 
-    // # Go to login page
-    await pw.loginPage.goto();
-    await pw.loginPage.toBeVisible();
+test('/login accessibility quick check', async ({pw, page, axe}) => {
+    // # Go to login page (past the native-app landing page)
+    await openLogin(pw, page);
 
     // # Analyze the page
-    const accessibilityScanResults = await axe.builder(pw.loginPage.page).analyze();
+    const accessibilityScanResults = await axe.builder(page).analyze();
 
     // * Should have no violation
     expect(accessibilityScanResults.violations).toHaveLength(0);
 });
 
-test('/login accessibility tab support', async ({pw}) => {
-    // Set up the page not to redirect to the landing page
-    await pw.hasSeenLandingPage();
-
-    // # Go to login page
-    await pw.loginPage.goto();
-    await pw.loginPage.toBeVisible();
+test('/login accessibility tab support', async ({pw, page}) => {
+    // # Go to login page (past the native-app landing page)
+    const app = await openLogin(pw, page);
+    const {login} = app;
+    const {footer, header} = app.public;
 
     // * Should have focused at login input on page load
-    expect(await pw.loginPage.loginInput).toBeFocused();
+    await expect(login.loginIdTextbox.locator).toBeFocused();
 
     // * Should move focus to password input after tab
-    await pw.loginPage.loginInput.press('Tab');
-    expect(await pw.loginPage.passwordInput).toBeFocused();
+    await login.loginIdTextbox.locator.press('Tab');
+    await expect(login.passwordTextbox.locator).toBeFocused();
 
     // * Should move focus to password toggle button after tab
-    await pw.loginPage.passwordInput.press('Tab');
-    expect(await pw.loginPage.passwordToggleButton).toBeFocused();
+    await login.passwordTextbox.locator.press('Tab');
+    await expect(login.password.toggleButton.locator).toBeFocused();
 
     // * Should move focus to forgot password link after tab
-    await pw.loginPage.passwordToggleButton.press('Tab');
-    expect(await pw.loginPage.forgotPasswordLink).toBeFocused();
+    await login.password.toggleButton.locator.press('Tab');
+    await expect(login.forgotPasswordLink.locator).toBeFocused();
 
-    // * Should move focus to forgot password link after tab
-    await pw.loginPage.forgotPasswordLink.press('Tab');
-    expect(await pw.loginPage.signInButton).toBeFocused();
+    // * Should move focus to sign in button after tab
+    await login.forgotPasswordLink.locator.press('Tab');
+    await expect(login.card.logInButton.locator).toBeFocused();
 
     // * Should move focus to about link after tab
-    await pw.loginPage.signInButton.press('Tab');
-    expect(await pw.loginPage.footer.aboutLink).toBeFocused();
+    await login.card.logInButton.locator.press('Tab');
+    await expect(footer.aboutLink.locator).toBeFocused();
 
     // * Should move focus to privacy policy link after tab
-    await pw.loginPage.footer.aboutLink.press('Tab');
-    expect(await pw.loginPage.footer.privacyPolicyLink).toBeFocused();
+    await footer.aboutLink.locator.press('Tab');
+    await expect(footer.privacyLink.locator).toBeFocused();
 
     // * Should move focus to terms link after tab
-    await pw.loginPage.footer.privacyPolicyLink.press('Tab');
-    expect(await pw.loginPage.footer.termsLink).toBeFocused();
+    await footer.privacyLink.locator.press('Tab');
+    await expect(footer.termsLink.locator).toBeFocused();
 
     // * Should move focus to help link after tab
-    await pw.loginPage.footer.termsLink.press('Tab');
-    expect(await pw.loginPage.footer.helpLink).toBeFocused();
+    await footer.termsLink.locator.press('Tab');
+    await expect(footer.helpLink.locator).toBeFocused();
 
     // # Move focus to login input
-    await pw.loginPage.loginInput.focus();
-    expect(await pw.loginPage.loginInput).toBeFocused();
+    await login.loginIdTextbox.locator.focus();
+    await expect(login.loginIdTextbox.locator).toBeFocused();
 
-    // * Should move focus to login body after shift+tab
-    await pw.loginPage.loginInput.press('Shift+Tab');
-    expect(await pw.loginPage.createAccountLink).toBeFocused();
+    // * Should move focus to the create account link after shift+tab
+    await login.loginIdTextbox.locator.press('Shift+Tab');
+    await expect(login.alternate.actionLink.locator).toBeFocused();
 
-    // * Should move focus to login body after tab
-    await pw.loginPage.createAccountLink.press('Shift+Tab');
-    expect(await pw.loginPage.header.logo).toBeFocused();
+    // * Should move focus to the header logo after shift+tab
+    await login.alternate.actionLink.locator.press('Shift+Tab');
+    await expect(header.logoLink.locator).toBeFocused();
 });

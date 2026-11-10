@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify archived channel icons display correctly for public and private channels in various UI contexts
@@ -37,19 +37,21 @@ test(
         await adminClient.deleteChannel(privateChannel.id);
 
         // # Log in user
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page, channelsPage} = await pw.testBrowser.login(user);
 
         // # Visit town square to ensure we're in a stable state
         await channelsPage.goto(team.name, 'town-square');
         await channelsPage.toBeVisible();
 
         // # Open browse channels modal to show archived channels
-        await page.keyboard.press('Control+K');
-        await page.waitForTimeout(500);
+        await page.keyboard.press('ControlOrMeta+K');
+        const switcher = app.quickSwitchModal;
+        await expect(switcher.searchTextbox.locator).toBeFocused();
 
         // # Type to search for archived channels
         await page.keyboard.type('archive');
-        await page.waitForTimeout(500);
+        // (only the public one is listed: the user isn't a member of the private channel)
+        await expect(switcher.suggestions.item(publicChannel.id).locator).toBeVisible();
 
         // # Hide dynamic content
         await pw.hideDynamicChannelsContent(page);
@@ -94,18 +96,19 @@ test(
         await adminClient.deleteChannel(privateChannel.id);
 
         // # Log in as admin
-        const {page} = await pw.testBrowser.login(adminUser);
+        const {app, page} = await pw.testBrowser.login(adminUser);
+        const channels = app.admin.channels;
 
         // # Navigate to admin console channels list
-        await page.goto('/admin_console/user_management/channels');
-        await page.waitForTimeout(1000);
+        await page.goto(`${generated.AdminConsolePage.path()}/user_management/channels`);
 
         // # Wait for channel list to load
-        await expect(page.locator('.DataGrid')).toBeVisible({timeout: 10000});
+        await expect(channels.searchTextbox.locator).toBeVisible({timeout: 10000});
 
         // # Search for our test channels to bring them into view
-        await page.fill('[data-testid="searchInput"]', 'Admin');
-        await page.waitForTimeout(500);
+        await channels.searchTextbox.locator.fill('Admin');
+        await expect(channels.icon(publicChannel).locator).toBeVisible();
+        await expect(channels.icon(privateChannel).locator).toBeVisible();
 
         // * Verify both archived channels are visible with correct icons
         const testArgs = {page, browserName, viewport};
@@ -136,23 +139,23 @@ test(
         // # Archive the channel
         await adminClient.deleteChannel(privateChannel.id);
 
-        const {page, channelsPage} = await pw.testBrowser.login(adminUser);
+        const {app, page, channelsPage} = await pw.testBrowser.login(adminUser);
 
         // # Visit the archived channel directly
         await channelsPage.goto(team.name, privateChannel.name);
 
         // # Wait for channel header to load (archived channels don't have post-create)
-        await expect(page.locator('.channel-header')).toBeVisible();
+        // (the first load of a new team's channel can be slow on this server)
+        await expect(app.channelHeader.openMenuButton.locator).toBeVisible({timeout: 60000});
 
         // # Verify archived channel message is visible
-        await expect(page.locator('#channelArchivedMessage')).toBeVisible();
+        await expect(app.center.archivedNotice.closeButton.locator).toBeVisible();
 
         // # Hide dynamic content
         await pw.hideDynamicChannelsContent(page);
 
         // # Focus on channel header area for snapshot
-        const headerElement = page.locator('.channel-header');
-        await expect(headerElement).toBeVisible();
+        await expect(app.channelHeader.archivedIconText.locator).toBeVisible();
 
         // * Verify channel header shows archive-lock icon for private archived channel
         const testArgs = {page, browserName, viewport};

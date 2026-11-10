@@ -39,6 +39,7 @@ const abbrevMessages = defineMessages({
 });
 
 export type DayDescriptor = {
+    key: keyof typeof fullNameMessages; // e.g. "monday"
     bit: number;
     fullName: MessageDescriptor; // accessible label, e.g. "Monday"
     shortLabel: MessageDescriptor; // toggle button text, e.g. "M"
@@ -47,13 +48,13 @@ export type DayDescriptor = {
 
 // Ordered by the day-of-week bitmask (Sunday first) so the schedule summary lists days in a stable order.
 export const DAY_DESCRIPTORS: DayDescriptor[] = [
-    {bit: DaysOfWeek.Sunday, fullName: fullNameMessages.sunday, shortLabel: shortLabelMessages.sunday, abbrev: abbrevMessages.sunday},
-    {bit: DaysOfWeek.Monday, fullName: fullNameMessages.monday, shortLabel: shortLabelMessages.monday, abbrev: abbrevMessages.monday},
-    {bit: DaysOfWeek.Tuesday, fullName: fullNameMessages.tuesday, shortLabel: shortLabelMessages.tuesday, abbrev: abbrevMessages.tuesday},
-    {bit: DaysOfWeek.Wednesday, fullName: fullNameMessages.wednesday, shortLabel: shortLabelMessages.wednesday, abbrev: abbrevMessages.wednesday},
-    {bit: DaysOfWeek.Thursday, fullName: fullNameMessages.thursday, shortLabel: shortLabelMessages.thursday, abbrev: abbrevMessages.thursday},
-    {bit: DaysOfWeek.Friday, fullName: fullNameMessages.friday, shortLabel: shortLabelMessages.friday, abbrev: abbrevMessages.friday},
-    {bit: DaysOfWeek.Saturday, fullName: fullNameMessages.saturday, shortLabel: shortLabelMessages.saturday, abbrev: abbrevMessages.saturday},
+    {key: 'sunday', bit: DaysOfWeek.Sunday, fullName: fullNameMessages.sunday, shortLabel: shortLabelMessages.sunday, abbrev: abbrevMessages.sunday},
+    {key: 'monday', bit: DaysOfWeek.Monday, fullName: fullNameMessages.monday, shortLabel: shortLabelMessages.monday, abbrev: abbrevMessages.monday},
+    {key: 'tuesday', bit: DaysOfWeek.Tuesday, fullName: fullNameMessages.tuesday, shortLabel: shortLabelMessages.tuesday, abbrev: abbrevMessages.tuesday},
+    {key: 'wednesday', bit: DaysOfWeek.Wednesday, fullName: fullNameMessages.wednesday, shortLabel: shortLabelMessages.wednesday, abbrev: abbrevMessages.wednesday},
+    {key: 'thursday', bit: DaysOfWeek.Thursday, fullName: fullNameMessages.thursday, shortLabel: shortLabelMessages.thursday, abbrev: abbrevMessages.thursday},
+    {key: 'friday', bit: DaysOfWeek.Friday, fullName: fullNameMessages.friday, shortLabel: shortLabelMessages.friday, abbrev: abbrevMessages.friday},
+    {key: 'saturday', bit: DaysOfWeek.Saturday, fullName: fullNameMessages.saturday, shortLabel: shortLabelMessages.saturday, abbrev: abbrevMessages.saturday},
 ];
 
 // Monday-first ordering for the toggle selector, which is more intuitive for work schedules.

@@ -6,6 +6,7 @@ import React from 'react';
 import {useIntl} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import AICopilotIntroSvg from './ai_copilot_intro_svg';
 
@@ -16,13 +17,19 @@ type Props = {
     // Overrides the default heading, e.g. for the Scheduled tab.
     title?: string;
     className?: string;
+
+    // the empty state's scope: its button is `<testId>.create--button`
+    testId: TestId;
 };
 
-const RecapsEmptyState = ({onCreateClick, disabled, title, className}: Props) => {
+const RecapsEmptyState = ({onCreateClick, disabled, title, className, testId}: Props) => {
     const {formatMessage} = useIntl();
 
     return (
-        <div className={classNames('recaps-placeholder', className)}>
+        <div
+            className={classNames('recaps-placeholder', className)}
+            data-testid={testId}
+        >
             <AICopilotIntroSvg/>
             <h2 className='recaps-placeholder-title'>
                 {title ?? formatMessage({id: 'recaps.placeholder.title', defaultMessage: 'Set up your recap'})}
@@ -32,6 +39,7 @@ const RecapsEmptyState = ({onCreateClick, disabled, title, className}: Props) =>
             </p>
             <Button
                 emphasis='primary'
+                data-testid={`${testId}.create--button`}
                 onClick={onCreateClick}
                 disabled={disabled}
                 title={disabled ? formatMessage({id: 'recaps.addRecap.disabled', defaultMessage: 'Agents Bridge is not enabled'}) : undefined}

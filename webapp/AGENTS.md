@@ -24,6 +24,28 @@ Follow `webapp/STYLE_GUIDE.md` for canonical style, accessibility, and testing s
 - **Standards**: `webapp/STYLE_GUIDE.md`.
 - Always import via the full package name (`@mattermost/compass-ui/...`, `@mattermost/shared/...`), never via relative paths into the package (e.g. `platform/shared/` or `node_modules/@mattermost/compass-ui/`).
 
+## Testids (generated Playwright page objects)
+
+Testids are the contract between the webapp and its end-to-end tests: `@mattermost/test-surface` scans them into `channels/test-surface.json` and generates typed page objects for `@mattermost/playwright-lib`. Details: `platform/test-surface/README.md`.
+
+- **Grammar**: `scope.name:key--role`. Words are `lower_snake_case`; the leading words are the scope (where it lives), the last is the name; runtime data only fills the key of the last word (`` `lhs.channel_list.channel:${channel.name}--link` ``); the role suffix is the element's ARIA role (`--button`, `--menuitem`, `--togglebutton`, `--textbox`, `--tab`…) or `--text` for read-only content; no suffix means a container (`channel_settings_modal.configuration`).
+- **Plain elements** write the full testid. **Shared components** take a `testId` prop typed `TestId` (`import type {TestId} from '@mattermost/shared/utils/test_id';`) and append their role and parts: `<Button testId='channel_settings_modal.archive.archive_channel'/>` renders `…archive_channel--button`; `<GenericModal testId='channel_settings_modal'>` adds `channel_settings_modal.close--button`.
+- **A component used in several places** takes its scope as a prop rather than hard-coding one, so each place gets its own testids (the composer renders `center.post_create.*` and `rhs.post_create.*`).
+- **Plugin slots** (wrappers the webapp renders around plugin UI: channel header buttons, header menu items, settings tabs) are keyed by plugin: `` `channel_header.menu.plugin:${pluginTestKey(item.pluginId)}--menuitem` ``. Their templates are a published contract, `PLUGIN_SLOT_TEST_IDS` in `@mattermost/shared/utils/test_id`; the scan fails if the webapp stops rendering a listed slot or renders a plugin-keyed testid that isn't listed. Treat removing one like removing a published API.
+- Don't build a whole testid from runtime data, don't let `undefined` reach one, and don't reuse a testid for two elements that can render together.
+- After changing testids in a migrated area, run `npm run test-surface && npm run test-surface:generate` in `channels/` and commit the manifest and `e2e-tests/playwright/lib/src/ui/generated` with the change. CI fails while they are stale. `npm run test-surface:watch` keeps them current while you work; `npm run test-surface:install-hooks` adds the pre-commit lint and pre-push check.
+- Migrated areas (errors there, warnings elsewhere) are listed in `channels/test-surface.config.json` (`checks.strictPaths`) and in the `testid-grammar` lint block of `channels/eslint.config.mjs`. Keep the two lists in sync when you migrate an area; then update its unit tests, the hand-written Playwright POM and specs in the same change (no aliases).
+
+Reading a scan error: each one names the file and line, the rule, and the fix:
+
+```
+✗ channels/src/components/sidebar/sidebar_channel/channel_mention_badge.tsx:25  [grammar]
+  "scheduled-post-badge" has the word "scheduled-post-badge", which is not lower_snake_case.
+  Words match [a-z][a-z0-9_]*, e.g. "scheduled_post_badge". Suggested: "scheduled.post.badge".
+```
+
+The rules (`grammar`, `unscoped`, `undefined`, `role-fit`, `aria`, `duplicates`, `key-origin`, `unresolved`, `plugin-slots`, `collisions`) are described in `platform/test-surface/README.md`.
+
 ## Plugin-facing surface on `window.WebappUtils`
 
 **Do not add new top-level `window.*` globals for plugins.** Publish new plugin-facing APIs as sub-namespaces of `window.WebappUtils` instead.

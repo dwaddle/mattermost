@@ -464,6 +464,18 @@ export const AdminUserAttributeSource = {
 } as const;
 export type AdminUserAttributeSource = (typeof AdminUserAttributeSource)[keyof typeof AdminUserAttributeSource];
 
+/** Keys of BrowseChannelsFilter (from channels/src/components/searchable_channel_list.tsx#SearchableChannelList). */
+export const BrowseChannelsFilter = {
+    All: 'All',
+    Archived: 'Archived',
+    Discoverable: 'Discoverable',
+    MyPendingRequests: 'MyPendingRequests',
+    Private: 'Private',
+    Public: 'Public',
+    Recommended: 'Recommended',
+} as const;
+export type BrowseChannelsFilter = (typeof BrowseChannelsFilter)[keyof typeof BrowseChannelsFilter];
+
 /** Keys of CenterAction (from channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView). */
 export const CenterAction = {
     Actions: 'actions',
@@ -572,6 +584,25 @@ export const ChannelSettingsModalTab = {
     PermissionsPolicy: 'permissions_policy',
 } as const;
 export type ChannelSettingsModalTab = (typeof ChannelSettingsModalTab)[keyof typeof ChannelSettingsModalTab];
+
+/** Keys of CreateRecapModalDay (from channels/src/components/create_recap_modal/day_of_week_selector.tsx#DayOfWeekSelector). */
+export const CreateRecapModalDay = {
+    Friday: 'friday',
+    Monday: 'monday',
+    Saturday: 'saturday',
+    Sunday: 'sunday',
+    Thursday: 'thursday',
+    Tuesday: 'tuesday',
+    Wednesday: 'wednesday',
+} as const;
+export type CreateRecapModalDay = (typeof CreateRecapModalDay)[keyof typeof CreateRecapModalDay];
+
+/** Keys of CreateRecapModalType (from channels/src/components/create_recap_modal/recap_configuration.tsx#RecapConfiguration). */
+export const CreateRecapModalType = {
+    AllUnreads: 'all_unreads',
+    Selected: 'selected',
+} as const;
+export type CreateRecapModalType = (typeof CreateRecapModalType)[keyof typeof CreateRecapModalType];
 
 /** Keys of CustomStatusModalDuration (from channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl). */
 export const CustomStatusModalDuration = {
@@ -735,6 +766,28 @@ export const PublicLink = {
     Terms: 'terms',
 } as const;
 export type PublicLink = (typeof PublicLink)[keyof typeof PublicLink];
+
+/** Keys of RecapsAction (from channels/src/components/recaps/recap_menu.tsx#RecapMenu). */
+export const RecapsAction = {
+    MarkChannelRead: 'mark-channel-read',
+    OpenChannel: 'open-channel',
+} as const;
+export type RecapsAction = (typeof RecapsAction)[keyof typeof RecapsAction];
+
+/** Keys of RecapsRecapMenuAction (from channels/src/components/recaps/recap_menu.tsx#RecapMenu). */
+export const RecapsRecapMenuAction = {
+    MarkAllChannelsRead: 'mark-all-channels-read',
+    RegenerateRecap: 'regenerate-recap',
+} as const;
+export type RecapsRecapMenuAction = (typeof RecapsRecapMenuAction)[keyof typeof RecapsRecapMenuAction];
+
+/** Keys of RecapsTab (from channels/src/components/recaps/recaps.tsx#Recaps). */
+export const RecapsTab = {
+    Read: 'read',
+    Scheduled: 'scheduled',
+    Unread: 'unread',
+} as const;
+export type RecapsTab = (typeof RecapsTab)[keyof typeof RecapsTab];
 
 /** Keys of RhsAction (from channels/src/components/properties_card_view/properties_card_view.tsx#PropertiesCardView). */
 export const RhsAction = {

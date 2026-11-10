@@ -6,6 +6,7 @@ import type {ReactNode} from 'react';
 
 import {DotsHorizontalIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -24,12 +25,16 @@ interface RecapMenuProps {
     actions: RecapMenuAction[];
     buttonClassName?: string;
     ariaLabel?: string;
+
+    /** The menu's testid scope: its button is `<testIdScope>.open--button`, an action `<testIdScope>.action:<id>--menuitem`. */
+    testIdScope?: TestIdScope;
 }
 
 export const RecapMenu: React.FC<RecapMenuProps> = ({
     actions,
     buttonClassName,
     ariaLabel = 'Recap options',
+    testIdScope,
 }) => {
     const menuId = `recap-menu-${Math.random().toString(36).substr(2, 9)}`;
     const buttonId = `${menuId}-button`;
@@ -38,6 +43,7 @@ export const RecapMenu: React.FC<RecapMenuProps> = ({
         <Menu.Container
             menuButton={{
                 id: buttonId,
+                dataTestId: testIdScope ? `${testIdScope}.open--button` : undefined,
                 as: RecapMenuTrigger,
                 class: buttonClassName,
                 'aria-label': ariaLabel,
@@ -62,6 +68,7 @@ export const RecapMenu: React.FC<RecapMenuProps> = ({
             {actions.map((action) => (
                 <Menu.Item
                     key={action.id}
+                    data-testid={testIdScope ? `${testIdScope}.action:${action.id}--menuitem` : undefined}
                     leadingElement={action.icon}
                     labels={<span>{action.label}</span>}
                     onClick={action.onClick}

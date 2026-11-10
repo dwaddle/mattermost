@@ -16,7 +16,7 @@ describe('components/HintToast', () => {
             >{'A hint'}</HintToast>,
         );
 
-        await userEvent.click(screen.getByTestId('dismissHintToast'));
+        await userEvent.click(screen.getByTestId('center.post_list.search_hint.dismiss--button'));
 
         expect(dismissHandler).toHaveBeenCalled();
     });

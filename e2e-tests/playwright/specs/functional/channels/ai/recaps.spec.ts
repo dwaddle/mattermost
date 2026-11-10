@@ -11,6 +11,7 @@ import {
     waitForRecapStatus,
     waitForRecordedRequestCount,
 } from './recaps_helpers';
+import {RecapsUi} from './recaps_support';
 
 /**
  * @objective Verify a user can create a selected-channels AI recap and receive the mocked summary without reloading the page
@@ -48,7 +49,8 @@ test('creates selected-channels recap and auto-renders mocked summary', {tag: '@
     );
 
     // # Login as the end user, create the recap through the selected-channels modal flow, and submit it.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
@@ -135,7 +137,8 @@ test('creates all-unreads recap for only unread channels', {tag: '@ai_recaps'}, 
     );
 
     // # Open the all-unreads modal flow and advance directly to the summary step.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
@@ -184,7 +187,8 @@ test('disables recap creation when the bridge is unavailable', {tag: '@ai_recaps
     });
 
     // # Open the recaps page as the end user.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
@@ -228,7 +232,8 @@ test('moves a recap from unread to read when marked read', {tag: '@ai_recaps'}, 
     await createRecapAndWaitForStatus(pw, userClient, recapTitle, [channel.id], agent.id, 'completed');
 
     // # Open the unread recap and mark it as read from the recap card.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
@@ -281,14 +286,14 @@ test('deletes a recap from the recaps page', {tag: '@ai_recaps'}, async ({pw}) =
     await createRecapAndWaitForStatus(pw, userClient, recapTitle, [channel.id], agent.id, 'completed');
 
     // # Open the recap, trigger the delete action, and confirm the delete modal.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
     const recap = recapsPage.getRecap(recapTitle);
     await recap.toBeVisible();
-    await recap.clickDelete();
-    await recapsPage.confirmDelete();
+    await recapsPage.confirmDelete(await recap.clickDelete());
 
     // * Verify the recap disappears from the list and the page returns to the caught-up empty state.
     await recapsPage.expectRecapNotVisible(recapTitle);
@@ -343,14 +348,15 @@ test('regenerates a recap with a new mocked summary', {tag: '@ai_recaps'}, async
         await createRecapAndWaitForStatus(pw, userClient, recapTitle, [channel.id], agent.id, 'completed');
 
         // # Open the recap, confirm the original summary is visible, and trigger regeneration from the recap menu.
-        const {recapsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
+        const recapsPage = new RecapsUi(app);
         await recapsPage.goto(team.name);
         await recapsPage.toBeVisible();
 
         const recap = recapsPage.getRecap(recapTitle);
         await recap.expand();
         await recap.expectText(firstHighlight);
-        await recap.openMenuAction('Regenerate this recap');
+        await recap.openMenuAction('regenerate-recap');
 
         // * Verify the regeneration request is recorded and then renders the regenerated summary.
         await waitForRecordedRequestCount(pw, adminClient, 2);
@@ -402,7 +408,8 @@ test('recovers a failed recap through regeneration', {tag: '@ai_recaps'}, async 
     await createRecapAndWaitForStatus(pw, userClient, recapTitle, [channel.id], agent.id, 'failed');
 
     // # Open the failed recap and trigger regeneration from the recap menu.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
@@ -410,7 +417,7 @@ test('recovers a failed recap through regeneration', {tag: '@ai_recaps'}, async 
     await failedRecap.toBeVisible();
     await failedRecap.expectFailed();
     await expect(failedRecap.markReadButton).not.toBeVisible();
-    await failedRecap.openMenuAction('Regenerate this recap');
+    await failedRecap.openMenuAction('regenerate-recap');
 
     // * Verify the failed recap returns to processing and then recovers into a completed recap.
     await failedRecap.expectProcessing();
@@ -456,16 +463,17 @@ test('executes recap channel card actions', {tag: '@ai_recaps'}, async ({pw}) =>
     await createRecapAndWaitForStatus(pw, userClient, recapTitle, [channel.id], agent.id, 'completed');
 
     // # Open the recap, mark the recap channel as read from the channel card, and then navigate back into the source channel.
-    const {page, recapsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
     const recap = recapsPage.getRecap(recapTitle);
     await recap.expand();
 
-    const recapChannelCard = recap.getChannelCard(channel.display_name);
+    const recapChannelCard = await recap.getChannelCard(channel);
     await recapChannelCard.toBeVisible();
-    await recapChannelCard.openMenuAction('Mark this channel as read');
+    await recapChannelCard.openMenuAction('mark-channel-read');
 
     // * Verify the recap channel read action clears the unread count for the summarized channel.
     await pw.waitUntil(

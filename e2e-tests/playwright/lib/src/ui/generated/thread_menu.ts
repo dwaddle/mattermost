@@ -9,6 +9,7 @@ import type {Locator, Page} from '@playwright/test';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {JoinPrivateChannelModal} from './join_private_channel_modal';
 
 /** Scope `thread_menu`. */
 export class ThreadMenu extends Scope {
@@ -79,7 +80,7 @@ export class ThreadMenu extends Scope {
     /**
      * `thread_menu.open_in_new_window--menuitem` — ThreadMenu (channels/src/components/threading/global_threads/thread_menu/thread_menu.tsx)
      * Renders only when !(!thread || !post) and !isThreadPopoutWindow(team, threadId).
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
@@ -114,8 +115,10 @@ export class ThreadMenu extends Scope {
         });
     }
 
-    async clickOpenInNewWindowMenuItem(): Promise<void> {
+    /** Clicks openInNewWindowMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickOpenInNewWindowMenuItem(): Promise<JoinPrivateChannelModal> {
         await this.openInNewWindowMenuItem.click();
+        return new JoinPrivateChannelModal(this.page, 'join_private_channel_modal');
     }
 
     /**

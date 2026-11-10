@@ -5,6 +5,10 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify switching teams preserves direct messages and each team's last channel, while team badges distinguish mentions from ordinary unread messages.
+ *
+ * Written on the generated page objects: the team sidebar's buttons and badges by team id, the team menu button,
+ * the sidebar's channel links by name, and the posts by id. The team buttons' accessible names ("… team, 2 mentions")
+ * are on the link that wraps the testid'd element, so the badges are checked instead.
  */
 test(
     'MM-T433 MM-T437 MM-T438 switches teams and displays multi-team mentions and unreads',
@@ -29,37 +33,43 @@ test(
         await userClient.createPost({channel_id: secondDm.id, message: ':('});
 
         // # Open both DMs on the first team, ending on the second DM, then switch to the second team
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, `@${sharedUser.username}`);
-        await channelsPage.toBeVisible();
-        await channelsPage.goto(team.name, `@${firstTeamUser.username}`);
-        await channelsPage.toBeVisible();
-        await channelsPage.switchToTeamByDisplayName(secondTeam.display_name);
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, path: 'messages', channel: `@${sharedUser.username}`});
+        await app.channelsPage.goto({team, path: 'messages', channel: `@${firstTeamUser.username}`});
+        const firstTeamButton = app.teamSidebar.team(team.id);
+        const secondTeamButton = app.teamSidebar.team(secondTeam.id);
+        await secondTeamButton.locator.click();
 
         // * Verify the second team opens at the top of its channel list and both DMs remain available
         await expect
             .poll(() => page.url(), {timeout: pw.duration.ten_sec})
             .toContain(`/${secondTeam.name}/channels/town-square`);
-        await expect(channelsPage.sidebarLeft.teamMenuButton).toContainText(secondTeam.display_name);
-        await expect(channelsPage.sidebarLeft.item(sharedUser.username)).toBeVisible();
-        await expect(channelsPage.sidebarLeft.item(firstTeamUser.username)).toBeVisible();
+        await expect(app.lhs.header.openTeamMenuButton.locator).toContainText(secondTeam.display_name);
+        await expect(app.lhs.channelList.channel(firstDm).link.locator).toBeVisible();
+        await expect(app.lhs.channelList.channel(secondDm).link.locator).toBeVisible();
 
         // # Post in Off-Topic on the second team, then switch back to the first team
-        await channelsPage.sidebarLeft.goToItem('off-topic');
-        await channelsPage.postMessage('Hello World');
-        await (await channelsPage.getLastPost()).toContainText('Hello World');
-        await channelsPage.switchToTeamByDisplayName(team.display_name);
+        const secondTeamOffTopic = await adminClient.getChannelByName(secondTeam.id, 'off-topic');
+        await app.lhs.channelList.channel(secondTeamOffTopic).clickLink();
+        await app.center.postCreate.fillMessageTextbox('Hello World');
+        await app.center.postCreate.clickSendButton();
+        await expect.poll(async () => (await app.center.postList.postKeys()).length).toBeGreaterThan(0);
+        const lastId = (await app.center.postList.postKeys()).at(-1)!;
+        await expect(app.center.postList.post({id: lastId}).messageText.locator).toHaveText('Hello World');
+        await firstTeamButton.locator.click();
 
         // * Verify team data does not cross-contaminate and the first team's last DM is restored
-        await channelsPage.sidebarLeft.assertItemRead('off-topic');
-        await expect(channelsPage.sidebarLeft.item(sharedUser.username)).toBeVisible();
-        await expect(channelsPage.sidebarLeft.item(firstTeamUser.username)).toBeVisible();
+        const firstTeamOffTopic = await adminClient.getChannelByName(team.id, 'off-topic');
+        await expect(app.lhs.channelList.channel(firstTeamOffTopic).link.locator).not.toHaveAccessibleName(
+            / (unread|\d+ mentions?)$/,
+        );
+        await expect(app.lhs.channelList.channel(firstDm).link.locator).toBeVisible();
+        await expect(app.lhs.channelList.channel(secondDm).link.locator).toBeVisible();
         await expect
             .poll(() => page.url(), {timeout: pw.duration.ten_sec})
             .toContain(`/${team.name}/messages/@${firstTeamUser.username}`);
 
         // # Have the shared user mention the test user twice in the second team's Off-Topic channel
-        const secondTeamOffTopic = await adminClient.getChannelByName(secondTeam.id, 'off-topic');
         await sharedUserClient.createPost({
             channel_id: secondTeamOffTopic.id,
             message: `@${user.username} first mention`,
@@ -69,24 +79,26 @@ test(
             message: `@${user.username} second mention`,
         });
 
-        // * Verify the second team's semantic label reports two mentions
-        await channelsPage.toHaveTeamMentionCount(secondTeam.display_name, 2);
+        // * Verify the second team's badge reports two mentions
+        await expect(secondTeamButton.mentionsText.locator).toHaveText('2');
 
         // # Switch to the second team to read its mentions
-        await channelsPage.switchToTeamByDisplayName(secondTeam.display_name);
-        await channelsPage.sidebarLeft.goToItem('off-topic');
+        await secondTeamButton.locator.click();
+        await app.lhs.channelList.channel(secondTeamOffTopic).clickLink();
 
         // * Verify the second team's mention badge clears
-        await channelsPage.toHaveTeamNoUnread(secondTeam.display_name);
+        await expect(secondTeamButton.mentionsText.locator).not.toBeVisible();
+        await expect(secondTeamButton.unreadText.locator).not.toBeVisible();
 
         // # Have the shared user post an ordinary message on the first team while it is in the background
-        const firstTeamOffTopic = await adminClient.getChannelByName(team.id, 'off-topic');
         await sharedUserClient.createPost({
             channel_id: firstTeamOffTopic.id,
             message: 'Hey all',
         });
 
         // * Verify the first team reports unread activity without a mention count
-        await channelsPage.toHaveTeamUnread(team.display_name, team.id);
+        await expect(firstTeamButton.unreadText.locator).toBeVisible();
+        await expect(firstTeamButton.unreadText.locator).toHaveText('');
+        await expect(firstTeamButton.mentionsText.locator).not.toBeVisible();
     },
 );

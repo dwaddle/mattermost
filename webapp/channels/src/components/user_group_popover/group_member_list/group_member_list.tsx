@@ -172,6 +172,7 @@ const GroupMemberList = (props: Props) => {
                     style={style}
                     key={user.id}
                     role='listitem'
+                    data-testid={`user_group_popover.member:${user.id}--listitem`}
                 >
                     <ProfilePopover
                         userId={user.id}
@@ -205,6 +206,7 @@ const GroupMemberList = (props: Props) => {
                                     {id: 'group_member_list.sendMessageButton', defaultMessage: 'Send message to {user}'},
                                     {user: name})}
                                 onClick={() => showDirectChannel(user)}
+                                data-testid='user_group_popover.member.message--button'
                             >
                                 <i
                                     className='icon icon-send'

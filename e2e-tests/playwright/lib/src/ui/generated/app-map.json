@@ -144,6 +144,8 @@
                 "admin.sidebar.header.menu",
                 "admin.sidebar.header.menu.switch_teams_menu",
                 "admin.sidebar.header.menu.switch_teams_menu.paper",
+                "announcement_bar.admin",
+                "announcement_bar.single_channel_guest_limit",
                 "backstage.navbar",
                 "classification_banner.bottom",
                 "classification_banner.top",
@@ -180,6 +182,10 @@
                 }
             ],
             "scopes": [
+                "bookmark_menu",
+                "bookmarks_menu",
+                "bookmarks_menu.bookmark",
+                "bookmarks_menu.bookmark.icon",
                 "center.archived_notice",
                 "center.channel_banner",
                 "center.composer",
@@ -263,6 +269,9 @@
                 "center.post_list.post.thread_footer",
                 "center.post_list.post.thread_footer.participants",
                 "center.post_list.post.translation_unavailable",
+                "channel_bookmarks",
+                "channel_bookmarks.bookmark",
+                "channel_bookmarks.bookmark.icon",
                 "channel_header",
                 "channel_header.attributes",
                 "channel_header.attributes.overflow_popover",
@@ -535,7 +544,12 @@
                 "search.team_selector.menu.filter.field",
                 "search.team_selector.menu.your_teams",
                 "send_post_options",
-                "send_post_options.menu"
+                "send_post_options.menu",
+                "tour_tip",
+                "tour_tip.header",
+                "user_group_popover",
+                "user_group_popover.member",
+                "user_group_popover.search"
             ]
         },
         {
@@ -561,6 +575,10 @@
                 }
             ],
             "scopes": [
+                "bookmark_menu",
+                "bookmarks_menu",
+                "bookmarks_menu.bookmark",
+                "bookmarks_menu.bookmark.icon",
                 "center.archived_notice",
                 "center.channel_banner",
                 "center.composer",
@@ -576,6 +594,9 @@
                 "center.post_create.message.suggestions.loading",
                 "center.post_create.scheduled_post_indicator",
                 "center.post_create.scheduled_post_indicator.icon",
+                "channel_bookmarks",
+                "channel_bookmarks.bookmark",
+                "channel_bookmarks.bookmark.icon",
                 "channel_header",
                 "channel_header.attributes",
                 "channel_header.attributes.overflow_popover",
@@ -633,7 +654,12 @@
                 "rhs.post_create.scheduled_post_indicator",
                 "rhs.post_create.scheduled_post_indicator.icon",
                 "send_post_options",
-                "send_post_options.menu"
+                "send_post_options.menu",
+                "tour_tip",
+                "tour_tip.header",
+                "user_group_popover",
+                "user_group_popover.member",
+                "user_group_popover.search"
             ]
         },
         {
@@ -664,7 +690,15 @@
             "getter": "createTeamPage",
             "path": "/create_team",
             "params": [],
-            "scopes": ["signup.header"]
+            "scopes": [
+                "announcement_bar.admin",
+                "announcement_bar.single_channel_guest_limit",
+                "create_team",
+                "create_team.form",
+                "create_team.name",
+                "create_team.name.field",
+                "signup.header"
+            ]
         },
         {
             "class": "DesktopAuthTokenPage",
@@ -831,7 +865,7 @@
             "getter": "preparingWorkspacePage",
             "path": "/preparing-workspace",
             "params": [],
-            "scopes": []
+            "scopes": ["preparing_workspace.invite", "preparing_workspace.organization"]
         },
         {
             "class": "RecapsPage",
@@ -843,7 +877,26 @@
                     "entity": "Team.name"
                 }
             ],
-            "scopes": []
+            "scopes": [
+                "recaps",
+                "recaps.caught_up",
+                "recaps.placeholder",
+                "recaps.recap",
+                "recaps.recap.channel",
+                "recaps.recap.channel.actions",
+                "recaps.recap.channel.menu",
+                "recaps.recap.delete_modal",
+                "recaps.recap.header",
+                "recaps.recap.header.title",
+                "recaps.recap.menu",
+                "recaps.scheduled",
+                "recaps.scheduled.delete_modal",
+                "recaps.scheduled.empty",
+                "recaps.scheduled.recap",
+                "recaps.scheduled.recap.menu",
+                "recaps.scheduled.recap.title",
+                "recaps.title"
+            ]
         },
         {
             "class": "RhsPopoutPage",
@@ -874,7 +927,12 @@
             "getter": "selectTeamPage",
             "path": "/select_team",
             "params": [],
-            "scopes": ["signup.header"]
+            "scopes": [
+                "announcement_bar.admin",
+                "announcement_bar.single_channel_guest_limit",
+                "select_team",
+                "signup.header"
+            ]
         },
         {
             "class": "ShouldVerifyEmailPage",
@@ -925,6 +983,7 @@
                 "channel_header.menu.move_to_menu",
                 "direct_messages_modal",
                 "direct_messages_modal.list",
+                "direct_messages_modal.list.group",
                 "direct_messages_modal.list.results",
                 "direct_messages_modal.list.results.live_region",
                 "global_header.account_menu",
@@ -945,7 +1004,9 @@
                 "profile_popover",
                 "profile_popover.actions",
                 "profile_popover.url_icon",
-                "reset_status_modal"
+                "reset_status_modal",
+                "tour_tip",
+                "tour_tip.header"
             ]
         },
         {
@@ -953,7 +1014,11 @@
             "getter": "termsOfServicePage",
             "path": "/terms_of_service",
             "params": [],
-            "scopes": ["terms_of_service.terms"]
+            "scopes": [
+                "announcement_bar.admin",
+                "announcement_bar.single_channel_guest_limit",
+                "terms_of_service.terms"
+            ]
         },
         {
             "class": "ThreadPopoutPage",
@@ -1265,7 +1330,12 @@
                 "thread_menu",
                 "threads.pane",
                 "threads.pane.attributes",
-                "threads.pane.attributes.overflow_popover"
+                "threads.pane.attributes.overflow_popover",
+                "tour_tip",
+                "tour_tip.header",
+                "user_group_popover",
+                "user_group_popover.member",
+                "user_group_popover.search"
             ]
         },
         {
@@ -1582,7 +1652,12 @@
                 "threads.pane",
                 "threads.pane.attributes",
                 "threads.pane.attributes.overflow_popover",
-                "threads.tabs"
+                "threads.tabs",
+                "tour_tip",
+                "tour_tip.header",
+                "user_group_popover",
+                "user_group_popover.member",
+                "user_group_popover.search"
             ]
         }
     ],
@@ -1770,7 +1845,26 @@
         {
             "scope": "add_users_to_group_modal",
             "class": "AddUsersToGroupModal",
-            "elements": []
+            "container": "channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx#AddUsersToGroupModal",
+            "elements": [
+                {
+                    "testId": "add_users_to_group_modal.back--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx#AddUsersToGroupModal"
+                },
+                {
+                    "testId": "add_users_to_group_modal.close--button",
+                    "role": "button",
+                    "source": "channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx#AddUsersToGroupModal"
+                }
+            ]
         },
         {
             "scope": "add_users_to_group_modal.users",
@@ -1782,11 +1876,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "ViewUserGroupModal"
-                        },
-                        {
-                            "kind": "modal",
-                            "target": "ViewUserGroupModal"
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
                         }
                     ],
                     "renderedWhen": ["this.props.saveButtonPosition === 'bottom'"],
@@ -1837,11 +1928,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "ViewUserGroupModal"
-                        },
-                        {
-                            "kind": "modal",
-                            "target": "ViewUserGroupModal"
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
                         }
                     ],
                     "effects": ["AddGroupMembers", "CreateGroup"],
@@ -1856,7 +1944,7 @@
         },
         {
             "scope": "add_users_to_group_modal.users.results",
-            "class": "Results",
+            "class": "UsersResults",
             "container": "channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList",
             "elements": [
                 {
@@ -1879,6 +1967,12 @@
                     "role": "text",
                     "renderedWhen": ["!this.props.loading", "!(options == null || options.length === 0)"],
                     "source": "channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList"
+                },
+                {
+                    "testId": "add_users_to_group_modal.users.results.user:{key}",
+                    "role": null,
+                    "key": "Pick<UserProfile, 'id'>",
+                    "source": "channels/src/components/add_user_to_group_multiselect/multiselect_option/multiselect_option.tsx#MultiSelectOption"
                 }
             ]
         },
@@ -10788,7 +10882,7 @@
         },
         {
             "scope": "admin.sidebar.filter",
-            "class": "AdminSidebarFilter",
+            "class": "QuickInput",
             "elements": [
                 {
                     "testId": "admin.sidebar.filter.clear--button",
@@ -10839,7 +10933,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "AboutBuildModal"
+                            "target": "AboutBuildModal",
+                            "scope": "about_build_modal"
                         }
                     ],
                     "renderedWhen": ["me"],
@@ -13823,6 +13918,66 @@
             ]
         },
         {
+            "scope": "announcement_bar",
+            "class": "AnnouncementBar",
+            "elements": []
+        },
+        {
+            "scope": "announcement_bar.admin",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.admin.close--link",
+                    "role": "link",
+                    "renderedWhen": [
+                        "this.props.config?.EnableBanner === 'true' && this.props.config.BannerText?.trim()",
+                        "this.props.message",
+                        "this.props.showCloseButton",
+                        "!dismissed"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.admin.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "this.props.config?.EnableBanner === 'true' && this.props.config.BannerText?.trim()",
+                        "this.props.message",
+                        "!dismissed"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.single_channel_guest_limit",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.single_channel_guest_limit.close--link",
+                    "role": "link",
+                    "effects": ["UpdatePreferences"],
+                    "renderedWhen": [
+                        "this.props.message",
+                        "this.props.showCloseButton",
+                        "!(!props.userIsAdmin || isDismissed || isEntrySku || !guestAccountsEnabled || singleChannelGuestLimit === 0 || singleChannelGuestCount <= singleChannelGuestLimit)"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.single_channel_guest_limit.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "this.props.message",
+                        "!(!props.userIsAdmin || isDismissed || isEntrySku || !guestAccountsEnabled || singleChannelGuestLimit === 0 || singleChannelGuestCount <= singleChannelGuestLimit)"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
             "scope": "app_bar",
             "class": "AppBar",
             "container": "channels/src/components/app_bar/app_bar.tsx#AppBar",
@@ -14121,6 +14276,292 @@
             ]
         },
         {
+            "scope": "bookmark_delete_modal",
+            "class": "BookmarkDeleteModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "bookmark_delete_modal.cancel--button",
+                    "role": "button",
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "bookmark_delete_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "bookmark_delete_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["DeleteChannelBookmark"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                }
+            ]
+        },
+        {
+            "scope": "bookmark_menu",
+            "class": "BookmarkMenu",
+            "elements": [
+                {
+                    "testId": "bookmark_menu.copy_file_link--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "GetPublicLinkModal"
+                        }
+                    ],
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": ["bookmark.type === 'file' && canGetPublicLink"],
+                    "source": "channels/src/components/channel_bookmarks/bookmark_dot_menu.tsx#BookmarkItemDotMenu"
+                },
+                {
+                    "testId": "bookmark_menu.copy_link--menuitem",
+                    "role": "menuitem",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": ["bookmarkHasLinkUrl(bookmark)"],
+                    "source": "channels/src/components/channel_bookmarks/bookmark_dot_menu.tsx#BookmarkItemDotMenu"
+                },
+                {
+                    "testId": "bookmark_menu.delete--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "BookmarkDeleteModal",
+                            "scope": "bookmark_delete_modal",
+                            "dialogOps": ["DeleteChannelBookmark"]
+                        }
+                    ],
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": ["canDelete"],
+                    "source": "channels/src/components/channel_bookmarks/bookmark_dot_menu.tsx#BookmarkItemDotMenu"
+                },
+                {
+                    "testId": "bookmark_menu.download--menuitem",
+                    "role": "menuitem",
+                    "renderedWhen": [
+                        "bookmark.type === 'file' && (bookmark?.file_id && getFile(state, bookmark.file_id)) || undefined"
+                    ],
+                    "source": "channels/src/components/channel_bookmarks/bookmark_dot_menu.tsx#BookmarkItemDotMenu"
+                },
+                {
+                    "testId": "bookmark_menu.edit--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ChannelBookmarkCreateModal",
+                            "scope": "bookmark_modal",
+                            "dialogOps": ["UpdateChannelBookmark"]
+                        }
+                    ],
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": ["canEdit"],
+                    "source": "channels/src/components/channel_bookmarks/bookmark_dot_menu.tsx#BookmarkItemDotMenu"
+                },
+                {
+                    "testId": "bookmark_menu.open--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url.slice(siteURL.length)"
+                        }
+                    ],
+                    "effects": [],
+                    "unknownEffects": true,
+                    "source": "channels/src/components/channel_bookmarks/bookmark_dot_menu.tsx#BookmarkItemDotMenu"
+                }
+            ]
+        },
+        {
+            "scope": "bookmark_modal",
+            "class": "BookmarkModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "bookmark_modal.cancel--button",
+                    "role": "button",
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "bookmark_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "bookmark_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["CreateChannelBookmark", "UpdateChannelBookmark"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "bookmark_modal.emoji--button",
+                    "role": "button",
+                    "source": "channels/src/components/channel_bookmarks/create_modal_name_input.tsx#CreateModalNameInput"
+                },
+                {
+                    "testId": "bookmark_modal.file--button",
+                    "role": "button",
+                    "effects": ["UploadFile"],
+                    "renderedWhen": ["!(type === 'link')"],
+                    "source": "channels/src/components/channel_bookmarks/channel_bookmarks_create_modal.tsx#ChannelBookmarkCreateModal"
+                },
+                {
+                    "testId": "bookmark_modal.icon",
+                    "role": null,
+                    "source": "channels/src/components/channel_bookmarks/bookmark_icon.tsx#BookmarkIcon"
+                },
+                {
+                    "testId": "bookmark_modal.link--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["type === 'link'"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "bookmark_modal.remove_emoji--button",
+                    "role": "button",
+                    "source": "channels/src/components/channel_bookmarks/create_modal_name_input.tsx#CreateModalNameInput"
+                },
+                {
+                    "testId": "bookmark_modal.title--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "bookmark_modal.link",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "bookmark_modal.link.field",
+                    "role": null,
+                    "renderedWhen": ["type === 'link'"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "bookmark_modal.link.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["type === 'link'"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "bookmark_modal.link.message--text",
+                    "role": "text",
+                    "renderedWhen": ["type === 'link'"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "bookmarks_menu",
+            "class": "BookmarksMenu",
+            "elements": [
+                {
+                    "testId": "bookmarks_menu.add_link--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ChannelBookmarkCreateModal",
+                            "scope": "bookmark_modal",
+                            "dialogOps": ["CreateChannelBookmark"]
+                        }
+                    ],
+                    "renderedWhen": ["!(!hasOverflow && (!canAdd || limitReached))", "canAdd", "hasBookmarks"],
+                    "source": "channels/src/components/channel_bookmarks/bookmarks_bar_menu.tsx#BookmarksBarMenu"
+                },
+                {
+                    "testId": "bookmarks_menu.attach_file--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ChannelBookmarkCreateModal",
+                            "scope": "bookmark_modal",
+                            "dialogOps": ["CreateChannelBookmark"]
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(!hasOverflow && (!canAdd || limitReached))",
+                        "canAdd",
+                        "canUploadFiles",
+                        "hasBookmarks"
+                    ],
+                    "source": "channels/src/components/channel_bookmarks/bookmarks_bar_menu.tsx#BookmarksBarMenu"
+                }
+            ]
+        },
+        {
+            "scope": "bookmarks_menu.bookmark",
+            "class": "BookmarksMenuBookmark",
+            "elements": [
+                {
+                    "testId": "bookmarks_menu.bookmark.icon",
+                    "role": null,
+                    "source": "channels/src/components/channel_bookmarks/bookmark_icon.tsx#BookmarkIcon"
+                },
+                {
+                    "testId": "bookmarks_menu.bookmark.open_menu--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "channelBookmarksDotMenuDropdown",
+                            "scope": "bookmark_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "bookmarks_menu.bookmark:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<ChannelBookmark, 'id'>",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url.slice(siteURL.length)"
+                        }
+                    ],
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!(!hasOverflow && (!canAdd || limitReached))", "hasOverflow", "bookmark"],
+                    "source": "channels/src/components/channel_bookmarks/overflow_bookmark_item.tsx#OverflowBookmarkItem"
+                }
+            ]
+        },
+        {
             "scope": "bot_token_delete_modal",
             "class": "BotTokenDeleteModal",
             "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
@@ -14199,6 +14640,213 @@
                     "role": "text",
                     "renderedWhen": ["maxLifetimeDays > 0", "this.isUserOwnedBot()"],
                     "source": "channels/src/components/common/token_expiry_picker/token_expiry_picker.tsx#TokenExpiryPicker"
+                }
+            ]
+        },
+        {
+            "scope": "browse_channels",
+            "class": "BrowseChannels",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "browse_channels.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "browse_channels.create_channel--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "NewChannelModal",
+                            "scope": "new_channel_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/browse_channels/browse_channels.tsx#BrowseChannels"
+                },
+                {
+                    "testId": "browse_channels.hide_archived--checkbox",
+                    "role": "checkbox",
+                    "effects": ["GetChannelsMemberCount", "SearchAllChannels"],
+                    "renderedWhen": ["!this.state.loading", "!(this.props.filter === Filter.Archived)"],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.hide_joined--checkbox",
+                    "role": "checkbox",
+                    "effects": ["GetChannelsMemberCount", "SearchAllChannels"],
+                    "renderedWhen": ["!this.state.loading"],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.loading",
+                    "role": null,
+                    "renderedWhen": ["this.state.loading"],
+                    "source": "channels/src/components/loading_screen.tsx#LoadingScreen"
+                },
+                {
+                    "testId": "browse_channels.search--textbox",
+                    "role": "textbox",
+                    "effects": ["GetChannelsMemberCount", "SearchAllChannels"],
+                    "renderedWhen": ["!this.state.loading"],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.type_filter--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "browseChannelsDropdown",
+                            "scope": "browse_channels.type_filter_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                }
+            ]
+        },
+        {
+            "scope": "browse_channels.list",
+            "class": "BrowseChannelsList",
+            "elements": []
+        },
+        {
+            "scope": "browse_channels.list.channel",
+            "class": "BrowseChannelsListChannel",
+            "elements": [
+                {
+                    "testId": "browse_channels.list.channel.discoverable--text",
+                    "role": "text",
+                    "renderedWhen": ["isDiscoverable"],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.list.channel.join--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "getRelativeChannelURL(teamName!, channel.name)"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelMember",
+                        "GetChannelsMemberCount",
+                        "GetPropertyValues",
+                        "GetRolesByNames"
+                    ],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.list.channel.member_count--text",
+                    "role": "text",
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.list.channel.request--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "RequestJoinChannelModal",
+                            "scope": "request_join_channel_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.list.channel.view--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "getRelativeChannelURL(teamName!, channel.name)"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelMember",
+                        "GetChannelsMemberCount",
+                        "GetPropertyValues",
+                        "GetRolesByNames"
+                    ],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.list.channel.withdraw--button",
+                    "role": "button",
+                    "effects": ["WithdrawMyChannelJoinRequest"],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                },
+                {
+                    "testId": "browse_channels.list.channel:{key}",
+                    "role": null,
+                    "key": "Pick<Channel, 'name'>",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "RequestJoinChannelModal",
+                            "scope": "request_join_channel_modal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "getRelativeChannelURL(teamName!, channel.name)"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelMember",
+                        "GetChannelsMemberCount",
+                        "GetPropertyValues",
+                        "GetRolesByNames"
+                    ],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
+                }
+            ]
+        },
+        {
+            "scope": "browse_channels.no_results",
+            "class": "BrowseChannelsNoResults",
+            "elements": [
+                {
+                    "testId": "browse_channels.no_results.create_channel--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "NewChannelModal",
+                            "scope": "new_channel_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/browse_channels/browse_channels.tsx#BrowseChannels"
+                }
+            ]
+        },
+        {
+            "scope": "browse_channels.type_filter_menu",
+            "class": "BrowseChannelsTypeFilterMenu",
+            "elements": [
+                {
+                    "testId": "browse_channels.type_filter_menu.filter:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "\"All\" | \"Archived\" | \"Discoverable\" | \"MyPendingRequests\" | \"Private\" | \"Public\" | \"Recommended\"",
+                    "effects": ["GetChannelsMemberCount", "SearchAllChannels"],
+                    "renderedWhen": ["!this.state.loading"],
+                    "source": "channels/src/components/searchable_channel_list.tsx#SearchableChannelList"
                 }
             ]
         },
@@ -14364,7 +15012,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -14519,7 +15168,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -14640,7 +15290,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -14953,7 +15604,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -15404,6 +16056,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -16093,6 +16746,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -16687,6 +17341,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -17162,6 +17817,19 @@
             ]
         },
         {
+            "scope": "center.post_list.search_hint",
+            "class": "CenterPostListSearchHint",
+            "container": "channels/src/components/hint-toast/hint_toast.tsx#HintToast",
+            "elements": [
+                {
+                    "testId": "center.post_list.search_hint.dismiss--button",
+                    "role": "button",
+                    "renderedWhen": ["showSearchHintToast"],
+                    "source": "channels/src/components/hint-toast/hint_toast.tsx#HintToast"
+                }
+            ]
+        },
+        {
             "scope": "center.post_list.toast",
             "class": "Toast",
             "elements": [
@@ -17405,6 +18073,80 @@
             ]
         },
         {
+            "scope": "channel_bookmarks",
+            "class": "ChannelBookmarks",
+            "container": "channels/src/components/channel_bookmarks/channel_bookmarks.tsx#ChannelBookmarks",
+            "elements": [
+                {
+                    "testId": "channel_bookmarks.open_menu--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "channelBookmarksBarMenuDropdown",
+                            "scope": "bookmarks_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": ["!(!hasOverflow && (!canAdd || limitReached))"],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                }
+            ]
+        },
+        {
+            "scope": "channel_bookmarks.bookmark",
+            "class": "ChannelBookmarksBookmark",
+            "elements": [
+                {
+                    "testId": "channel_bookmarks.bookmark.icon",
+                    "role": null,
+                    "source": "channels/src/components/channel_bookmarks/bookmark_icon.tsx#BookmarkIcon"
+                },
+                {
+                    "testId": "channel_bookmarks.bookmark.open--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "effects": [],
+                    "unknownEffects": true,
+                    "source": "channels/src/components/channel_bookmarks/bookmark_item_content.tsx#BookmarkItemContent"
+                },
+                {
+                    "testId": "channel_bookmarks.bookmark.open_menu--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "channelBookmarksDotMenuDropdown",
+                            "scope": "bookmark_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "channel_bookmarks.bookmark:{key}",
+                    "role": null,
+                    "key": "Pick<ChannelBookmark, 'id'>",
+                    "renderedWhen": ["hasBookmarks", "bookmark"],
+                    "source": "channels/src/components/channel_bookmarks/bookmarks_bar_item.tsx#BookmarksBarItem"
+                }
+            ]
+        },
+        {
             "scope": "channel_header",
             "class": "ChannelHeader",
             "elements": [
@@ -17440,6 +18182,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -17510,6 +18253,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -17775,7 +18519,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "DisableAutotranslationModal"
+                            "target": "DisableAutotranslationModal",
+                            "scope": "disable_autotranslation_modal"
                         }
                     ],
                     "effects": ["UpdateChannelMemberAutotranslationMe"],
@@ -17908,7 +18653,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "ChannelGroupsManageModal"
+                            "target": "ChannelGroupsManageModal",
+                            "scope": "channel_groups_manage_modal"
                         }
                     ],
                     "renderedWhen": ["!isArchived && !isDefault", "isGroupConstrained && isLicensedForLDAPGroups"],
@@ -18050,6 +18796,7 @@
                         {
                             "kind": "modal",
                             "target": "ChannelBookmarkCreateModal",
+                            "scope": "bookmark_modal",
                             "dialogOps": ["CreateChannelBookmark"]
                         }
                     ],
@@ -18069,6 +18816,7 @@
                         {
                             "kind": "modal",
                             "target": "ChannelBookmarkCreateModal",
+                            "scope": "bookmark_modal",
                             "dialogOps": ["CreateChannelBookmark"]
                         }
                     ],
@@ -20809,9 +21557,338 @@
             ]
         },
         {
+            "scope": "create_recap_modal",
+            "class": "CreateRecapModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "create_recap_modal.agent--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "create_recap_modal.agent.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "create_recap_modal.channel:{key}",
+                    "role": null,
+                    "key": "Pick<Channel, 'id'>",
+                    "source": "channels/src/components/create_recap_modal/channel_selector.tsx#ChannelSelector"
+                },
+                {
+                    "testId": "create_recap_modal.channel_search--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_recap_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "create_recap_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`${normalizedTeamUrl}/recaps?tab=scheduled`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${normalizedTeamUrl}/recaps`"
+                        }
+                    ],
+                    "effects": ["CreateRecap", "CreateScheduledRecap", "GetRecapLimitStatus", "UpdateScheduledRecap"],
+                    "source": "channels/src/components/create_recap_modal/create_recap_modal.tsx#CreateRecapModal"
+                },
+                {
+                    "testId": "create_recap_modal.name--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/create_recap_modal/recap_configuration.tsx#RecapConfiguration"
+                },
+                {
+                    "testId": "create_recap_modal.previous--button",
+                    "role": "button",
+                    "renderedWhen": ["currentStep > 1"],
+                    "source": "channels/src/components/create_recap_modal/create_recap_modal.tsx#CreateRecapModal"
+                },
+                {
+                    "testId": "create_recap_modal.run_once--switch",
+                    "role": "switch",
+                    "source": "channels/src/components/create_recap_modal/recap_configuration.tsx#RecapConfiguration"
+                },
+                {
+                    "testId": "create_recap_modal.type:{key}--button",
+                    "role": "button",
+                    "key": "\"all_unreads\" | \"selected\"",
+                    "source": "channels/src/components/create_recap_modal/recap_configuration.tsx#RecapConfiguration"
+                }
+            ]
+        },
+        {
+            "scope": "create_recap_modal.agent",
+            "class": "CreateRecapModalAgent",
+            "elements": []
+        },
+        {
+            "scope": "create_recap_modal.agent.menu",
+            "class": "CreateRecapModalAgentMenu",
+            "elements": [
+                {
+                    "testId": "create_recap_modal.agent.menu.agent:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<Agent, 'id'>",
+                    "source": "channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown"
+                }
+            ]
+        },
+        {
+            "scope": "create_recap_modal.channel_search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "create_recap_modal.channel_search.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_recap_modal.channel_search.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_recap_modal.channel_search.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "create_recap_modal.schedule",
+            "class": "CreateRecapModalSchedule",
+            "elements": [
+                {
+                    "testId": "create_recap_modal.schedule.day:{key}--togglebutton",
+                    "role": "togglebutton",
+                    "key": "\"friday\" | \"monday\" | \"saturday\" | \"sunday\" | \"thursday\" | \"tuesday\" | \"wednesday\"",
+                    "source": "channels/src/components/create_recap_modal/day_of_week_selector.tsx#DayOfWeekSelector"
+                }
+            ]
+        },
+        {
+            "scope": "create_recap_modal.schedule.time_of_day",
+            "class": "DropdownInput",
+            "container": "channels/src/components/dropdown_input.tsx#DropdownInput",
+            "elements": []
+        },
+        {
+            "scope": "create_recap_modal.schedule.time_of_day.menu",
+            "class": "DropdownInputMenu",
+            "container": "channels/src/components/dropdown_input.tsx#makeMenu",
+            "elements": [
+                {
+                    "testId": "create_recap_modal.schedule.time_of_day.menu.option:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "source": "channels/src/components/dropdown_input.tsx#makeOption"
+                }
+            ]
+        },
+        {
+            "scope": "create_recap_modal.schedule.time_period",
+            "class": "DropdownInput",
+            "container": "channels/src/components/dropdown_input.tsx#DropdownInput",
+            "elements": []
+        },
+        {
+            "scope": "create_recap_modal.schedule.time_period.menu",
+            "class": "DropdownInputMenu",
+            "container": "channels/src/components/dropdown_input.tsx#makeMenu",
+            "elements": [
+                {
+                    "testId": "create_recap_modal.schedule.time_period.menu.option:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "source": "channels/src/components/dropdown_input.tsx#makeOption"
+                }
+            ]
+        },
+        {
+            "scope": "create_recap_modal.summary",
+            "class": "CreateRecapModalSummary",
+            "elements": [
+                {
+                    "testId": "create_recap_modal.summary.channel:{key}",
+                    "role": null,
+                    "key": "Pick<Channel, 'id'>",
+                    "renderedWhen": ["runOnce"],
+                    "source": "channels/src/components/create_recap_modal/channel_summary.tsx#ChannelSummary"
+                }
+            ]
+        },
+        {
+            "scope": "create_team",
+            "class": "CreateTeam",
+            "elements": [
+                {
+                    "testId": "create_team.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/create_team/' + state.wizard"
+                        }
+                    ],
+                    "renderedWhen": ["step === 'team_url'"],
+                    "source": "channels/src/components/create_team/components/create_team_form/team_url_step.tsx#TeamUrlStep"
+                },
+                {
+                    "testId": "create_team.finish--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/' + data.name + '/channels/' + Constants.DEFAULT_CHANNEL"
+                        }
+                    ],
+                    "effects": ["CreateTeam", "GetRolesByNames", "TeamExists"],
+                    "renderedWhen": ["step === 'team_url'"],
+                    "source": "channels/src/components/create_team/components/create_team_form/team_url_step.tsx#TeamUrlStep"
+                },
+                {
+                    "testId": "create_team.form",
+                    "role": null,
+                    "source": "channels/src/components/create_team/create_team.tsx#CreateTeam"
+                },
+                {
+                    "testId": "create_team.name--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_team.name_error--alert",
+                    "role": "alert",
+                    "renderedWhen": ["nameError"],
+                    "source": "channels/src/components/create_team/components/create_team_form/display_name_step.tsx#DisplayNameStep"
+                },
+                {
+                    "testId": "create_team.next--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/' + data.name + '/channels/' + Constants.DEFAULT_CHANNEL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "'/create_team/' + state.wizard"
+                        }
+                    ],
+                    "effects": ["CreateTeam", "GetRolesByNames"],
+                    "source": "channels/src/components/create_team/components/create_team_form/display_name_step.tsx#DisplayNameStep"
+                },
+                {
+                    "testId": "create_team.url--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["step === 'team_url'"],
+                    "source": "channels/src/components/create_team/components/create_team_form/team_url_step.tsx#TeamUrlStep"
+                },
+                {
+                    "testId": "create_team.url_error--alert",
+                    "role": "alert",
+                    "renderedWhen": ["step === 'team_url'", "nameError"],
+                    "source": "channels/src/components/create_team/components/create_team_form/team_url_step.tsx#TeamUrlStep"
+                }
+            ]
+        },
+        {
+            "scope": "create_team.name",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "create_team.name.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_team.name.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_team.name.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "create_user_groups_modal",
             "class": "CreateUserGroupsModal",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "create_user_groups_modal.mention--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_user_groups_modal.name--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "create_user_groups_modal.mention",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "create_user_groups_modal.mention.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_user_groups_modal.mention.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_user_groups_modal.mention.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "create_user_groups_modal.name",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "create_user_groups_modal.name.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_user_groups_modal.name.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "create_user_groups_modal.name.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
         },
         {
             "scope": "create_user_groups_modal.users",
@@ -20868,11 +21945,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "ViewUserGroupModal"
-                        },
-                        {
-                            "kind": "modal",
-                            "target": "ViewUserGroupModal"
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
                         }
                     ],
                     "effects": ["AddGroupMembers", "CreateGroup"],
@@ -20887,7 +21961,7 @@
         },
         {
             "scope": "create_user_groups_modal.users.results",
-            "class": "Results",
+            "class": "UsersResults",
             "container": "channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList",
             "elements": [
                 {
@@ -20910,6 +21984,12 @@
                     "role": "text",
                     "renderedWhen": ["!this.props.loading", "!(options == null || options.length === 0)"],
                     "source": "channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList"
+                },
+                {
+                    "testId": "create_user_groups_modal.users.results.user:{key}",
+                    "role": null,
+                    "key": "Pick<UserProfile, 'id'>",
+                    "source": "channels/src/components/add_user_to_group_multiselect/multiselect_option/multiselect_option.tsx#MultiSelectOption"
                 }
             ]
         },
@@ -21108,7 +22188,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -21491,7 +22572,21 @@
         {
             "scope": "direct_messages_modal",
             "class": "DirectMessagesModal",
-            "elements": []
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "direct_messages_modal.close--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "this.exitToChannel"
+                        }
+                    ],
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                }
+            ]
         },
         {
             "scope": "direct_messages_modal.list",
@@ -21565,6 +22660,36 @@
                     "testId": "direct_messages_modal.list.search--combobox",
                     "role": "combobox",
                     "source": "channels/src/components/multiselect/multiselect.tsx#MultiSelect"
+                },
+                {
+                    "testId": "direct_messages_modal.list.user:{key}",
+                    "role": null,
+                    "key": "Pick<UserProfile, 'id'>",
+                    "source": "channels/src/components/more_direct_channels/list_item/list_item.tsx#ListItem"
+                }
+            ]
+        },
+        {
+            "scope": "direct_messages_modal.list.group",
+            "class": "DirectMessagesModalListGroup",
+            "elements": [
+                {
+                    "testId": "direct_messages_modal.list.group.member_count--text",
+                    "role": "text",
+                    "renderedWhen": ["isGroupChannel(option)"],
+                    "source": "channels/src/components/more_direct_channels/list_item/list_item.tsx#GMDetails"
+                },
+                {
+                    "testId": "direct_messages_modal.list.group.name--text",
+                    "role": "text",
+                    "renderedWhen": ["isGroupChannel(option)"],
+                    "source": "channels/src/components/more_direct_channels/list_item/list_item.tsx#GMDetails"
+                },
+                {
+                    "testId": "direct_messages_modal.list.group:{key}",
+                    "role": null,
+                    "key": "Pick<Channel, 'id'>",
+                    "source": "channels/src/components/more_direct_channels/list_item/list_item.tsx#ListItem"
                 }
             ]
         },
@@ -21593,6 +22718,53 @@
                     "role": "text",
                     "renderedWhen": ["!this.props.loading", "!(options == null || options.length === 0)"],
                     "source": "channels/src/components/multiselect/multiselect_list.tsx#MultiSelectList"
+                }
+            ]
+        },
+        {
+            "scope": "disable_autotranslation_modal",
+            "class": "DisableAutotranslationModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "disable_autotranslation_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "disable_autotranslation_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "disable_autotranslation_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "UpdateChannelMemberAutotranslationMe",
+                        "UpdatePreferences",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
                 }
             ]
         },
@@ -22591,6 +23763,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -23308,6 +24481,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -23975,7 +25149,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         }
                     ],
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -24015,7 +25190,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "AboutBuildModal"
+                            "target": "AboutBuildModal",
+                            "scope": "about_build_modal"
                         }
                     ],
                     "source": "channels/src/components/global_header/left_controls/switch_product_menu/switch_product_about_menuitem.tsx#ProductSwitcherAboutMenuItem"
@@ -24106,7 +25282,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "UserGroupsModal"
+                            "target": "UserGroupsModal",
+                            "scope": "user_groups_modal"
                         }
                     ],
                     "renderedWhen": ["isMenuItemVisible"],
@@ -25466,6 +26643,96 @@
             ]
         },
         {
+            "scope": "join_private_channel_modal",
+            "class": "JoinPrivateChannelModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "join_private_channel_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "join_private_channel_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "join_private_channel_modal.confirm--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "keyboard_shortcuts_modal",
+            "class": "KeyboardShortcutsModal",
+            "container": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal",
+            "elements": [
+                {
+                    "testId": "keyboard_shortcuts_modal.body",
+                    "role": null,
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.browser_input",
+                    "role": null,
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.calls_expanded",
+                    "role": null,
+                    "renderedWhen": ["callsEnabled"],
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.calls_global",
+                    "role": null,
+                    "renderedWhen": ["callsEnabled"],
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.calls_widget",
+                    "role": null,
+                    "renderedWhen": ["callsEnabled"],
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.close--button",
+                    "role": "button",
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.files",
+                    "role": null,
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.message_compose",
+                    "role": null,
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.message_formatting",
+                    "role": null,
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.message_input",
+                    "role": null,
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                },
+                {
+                    "testId": "keyboard_shortcuts_modal.message_search",
+                    "role": null,
+                    "source": "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx#KeyboardShortcutsModal"
+                }
+            ]
+        },
+        {
             "scope": "latex",
             "class": "Latex",
             "elements": []
@@ -25603,7 +26870,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "BrowseChannels"
+                            "target": "BrowseChannels",
+                            "scope": "browse_channels"
                         }
                     ],
                     "renderedWhen": [
@@ -25653,7 +26921,7 @@
                         {
                             "kind": "modal",
                             "target": "CreateUserGroupsModal",
-                            "scope": "create_user_groups_modal.users"
+                            "scope": "create_user_groups_modal"
                         }
                     ],
                     "renderedWhen": [
@@ -26149,7 +27417,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "TeamGroupsManageModal"
+                            "target": "TeamGroupsManageModal",
+                            "scope": "team_groups_manage_modal"
                         }
                     ],
                     "renderedWhen": [
@@ -27046,7 +28315,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -27201,7 +28471,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -27322,7 +28593,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -27635,7 +28907,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -27799,6 +29072,341 @@
                     "role": null,
                     "renderedWhen": ["priority", "hasPrioritySet && !rootId"],
                     "source": "channels/src/components/post_priority/post_priority_label.tsx#PriorityLabel"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal",
+            "class": "MoveThreadModal",
+            "elements": []
+        },
+        {
+            "scope": "move_thread_modal.preview",
+            "class": "PostMessagePreview",
+            "container": "channels/src/components/post_view/post_message_preview/post_message_preview.tsx#PostMessagePreview",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.preview.message--text",
+                    "role": "text",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
+                            "dialogOps": ["RemoveTeamMember"]
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/error?type=${ErrorPageTypes.POST_NOT_FOUND}&returnTo=${returnTo}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "linkAttribute.value"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "postURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "returnTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "teamUrl + '/channels/' + channelMentionAttribute.value"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "AddTeamMember",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMember",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersForUserMe",
+                        "GetChannelStats",
+                        "GetChannelsForTeamForUserMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPost",
+                        "GetPostInfo",
+                        "GetPostThread",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "GetTeam",
+                        "GetTeamByName",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences"
+                    ],
+                    "renderedWhen": ["previewPost"],
+                    "source": "channels/src/components/post_view/post_message_view/post_message_view.tsx#PostMessageView"
+                },
+                {
+                    "testId": "move_thread_modal.preview.priority_label",
+                    "role": null,
+                    "renderedWhen": ["previewPost", "previewPost.metadata?.priority && isPostPriorityEnabled"],
+                    "source": "channels/src/components/post_priority/post_priority_label.tsx#PriorityLabel"
+                },
+                {
+                    "testId": "move_thread_modal.preview.redacted_files",
+                    "role": null,
+                    "renderedWhen": ["previewPost", "props.permissionPoliciesEnabled && redactedFileCount > 0"],
+                    "source": "channels/src/components/post_view/redacted_files_placeholder/index.tsx#RedactedFilesPlaceholder"
+                },
+                {
+                    "testId": "move_thread_modal.preview.translation--button",
+                    "role": "button",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'ready'",
+                        "previewPost",
+                        "isChannelAutotranslated"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                },
+                {
+                    "testId": "move_thread_modal.preview.translation_unavailable",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(postType !== '')",
+                        "translationState === 'unavailable'",
+                        "previewPost",
+                        "isChannelAutotranslated"
+                    ],
+                    "source": "channels/src/components/post/post_header_translate_icon.tsx#PostHeaderTranslateIcon"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal.preview.attachments",
+            "class": "Attachments",
+            "container": "channels/src/components/file_attachment_list/file_attachment_list.tsx#FileAttachmentList",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.preview.attachments.file:{key}--button",
+                    "role": "button",
+                    "key": "Pick<FileInfo, 'id'>",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "!isInPermalink && !props.firstFileRejected && !hasDeletedFile && !isEditHistory",
+                        "(isMulti || isSingleVideo) && allMedia",
+                        "!(tiles.length === 0)",
+                        "previewPost"
+                    ],
+                    "source": "channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx#ImageTile"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal.preview.attachments.file_card",
+            "class": "AttachmentsFileCard",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.preview.attachments.file_card.more_actions--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "Menu",
+                            "scope": "move_thread_modal.preview.attachments.file_card.menu"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "isMenuVisible",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "move_thread_modal.preview.attachments.file_card.thumbnail--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!compactDisplay",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                },
+                {
+                    "testId": "move_thread_modal.preview.attachments.file_card:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/file_attachment/file_attachment.tsx#FileAttachment"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal.preview.attachments.file_card.menu",
+            "class": "AttachmentsFileCardMenu",
+            "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.preview.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "PluginKey",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)",
+                        "(previewPost.file_ids && previewPost.file_ids.length > 0) || (previewPost.filenames && previewPost.filenames.length > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "move_thread_modal.preview.attachments.file_card.menu.public_link--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "GetPublicLinkModal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "enablePublicLink",
+                        "!(fileInfos.length === 0)",
+                        "sortedFileInfos && sortedFileInfos.length > 0",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal.preview.attachments.image",
+            "class": "AttachmentsImage",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.preview.attachments.image.name",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "move_thread_modal.preview.attachments.image.picture--img",
+                    "role": "img",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "FilePreviewModal",
+                            "scope": "file_preview_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                },
+                {
+                    "testId": "move_thread_modal.preview.attachments.image.toggle--button",
+                    "role": "button",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                },
+                {
+                    "testId": "move_thread_modal.preview.attachments.image:{key}",
+                    "role": null,
+                    "key": "Pick<FileInfo, 'id'>",
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/single_image_view/single_image_view.tsx#SingleImageView"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal.preview.attachments.image.picture",
+            "class": "Picture",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.preview.attachments.image.picture.frame",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(fileInfos.length === 0)",
+                        "fileInfos && fileInfos.length === 1 && !props.firstFileRejected",
+                        "fileType === FileTypes.IMAGE || (fileType === FileTypes.SVG && enableSVGs)",
+                        "previewPost",
+                        "!(props.permissionPoliciesEnabled && redactedFileCount > 0)"
+                    ],
+                    "source": "channels/src/components/size_aware_image.tsx#SizeAwareImage"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal.preview.message",
+            "class": "ShowMore",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.preview.message.show_more--button",
+                    "role": "button",
+                    "renderedWhen": ["previewPost", "isOverflow"],
+                    "source": "channels/src/components/post_view/show_more/show_more.tsx#ShowMore"
                 }
             ]
         },
@@ -28358,7 +29966,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -28574,7 +30183,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -28729,7 +30339,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -28850,7 +30461,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -29163,7 +30775,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -29675,6 +31288,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -30118,7 +31732,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "MoveThreadModal"
+                            "target": "MoveThreadModal",
+                            "scope": "move_thread_modal"
                         }
                     ],
                     "renderedWhen": ["showMove"],
@@ -30286,7 +31901,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -30441,7 +32057,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -30562,7 +32179,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -30875,7 +32493,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -31296,7 +32915,8 @@
                     "opens": [
                         {
                             "kind": "modal",
-                            "target": "RequestJoinChannelModal"
+                            "target": "RequestJoinChannelModal",
+                            "scope": "request_join_channel_modal"
                         },
                         {
                             "kind": "page",
@@ -31377,6 +32997,446 @@
                         "!isItemLoaded(item)"
                     ],
                     "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
+                }
+            ]
+        },
+        {
+            "scope": "recaps",
+            "class": "Recaps",
+            "elements": [
+                {
+                    "testId": "recaps.add--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "CreateRecapModal",
+                            "scope": "create_recap_modal"
+                        }
+                    ],
+                    "renderedWhen": ["activeTab === 'scheduled' || !hasNoRecaps"],
+                    "source": "channels/src/components/recaps/recaps.tsx#Recaps"
+                },
+                {
+                    "testId": "recaps.caught_up",
+                    "role": null,
+                    "renderedWhen": ["!(activeTab === 'scheduled')", "!hasNoRecaps", "recaps.length === 0"],
+                    "source": "channels/src/components/recaps/recaps_list.tsx#RecapsList"
+                },
+                {
+                    "testId": "recaps.processing:{key}",
+                    "role": null,
+                    "key": "Pick<Recap, 'id'>",
+                    "renderedWhen": ["isProcessing"],
+                    "source": "channels/src/components/recaps/recap_processing.tsx#RecapProcessing"
+                },
+                {
+                    "testId": "recaps.tab:{key}--button",
+                    "role": "button",
+                    "key": "\"read\" | \"scheduled\" | \"unread\"",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "newUrl"
+                        }
+                    ],
+                    "source": "channels/src/components/recaps/recaps.tsx#Recaps"
+                },
+                {
+                    "testId": "recaps.title",
+                    "role": null,
+                    "source": "channels/src/components/recaps/recaps.tsx#Recaps"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.placeholder",
+            "class": "RecapsEmptyState",
+            "container": "channels/src/components/recaps/recaps_empty_state.tsx#RecapsEmptyState",
+            "elements": [
+                {
+                    "testId": "recaps.placeholder.create--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "CreateRecapModal",
+                            "scope": "create_recap_modal"
+                        }
+                    ],
+                    "renderedWhen": ["!(activeTab === 'scheduled')", "hasNoRecaps"],
+                    "source": "channels/src/components/recaps/recaps_empty_state.tsx#RecapsEmptyState"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.recap",
+            "class": "RecapsRecap",
+            "elements": [
+                {
+                    "testId": "recaps.recap.delete--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ConfirmModal",
+                            "scope": "recaps.recap.delete_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/recaps/recap_item.tsx#RecapItem"
+                },
+                {
+                    "testId": "recaps.recap.mark_read--button",
+                    "role": "button",
+                    "effects": ["MarkRecapAsRead"],
+                    "renderedWhen": ["!isFailed && recap.read_at === 0"],
+                    "source": "channels/src/components/recaps/recap_item.tsx#RecapItem"
+                },
+                {
+                    "testId": "recaps.recap:{key}",
+                    "role": null,
+                    "key": "Pick<Recap, 'id'>",
+                    "source": "channels/src/components/recaps/recap_item.tsx#RecapItem"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.recap.channel",
+            "class": "RecapsRecapChannel",
+            "elements": [
+                {
+                    "testId": "recaps.recap.channel.actions",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(!hasHighlights && !hasActionItems)",
+                        "!isFailed && isExpanded && recap.channels && recap.channels.length > 0"
+                    ],
+                    "source": "channels/src/components/recaps/recap_channel_card.tsx#RecapChannelCard"
+                },
+                {
+                    "testId": "recaps.recap.channel.collapse--button",
+                    "role": "button",
+                    "renderedWhen": [
+                        "!(!hasHighlights && !hasActionItems)",
+                        "!isFailed && isExpanded && recap.channels && recap.channels.length > 0"
+                    ],
+                    "source": "channels/src/components/recaps/recap_channel_card.tsx#RecapChannelCard"
+                },
+                {
+                    "testId": "recaps.recap.channel.open--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${gmChannel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/messages/@${channel.name}`"
+                        }
+                    ],
+                    "effects": ["CreateDirectChannel", "GetPropertyValues", "GetRolesByNames", "UpdatePreferences"],
+                    "renderedWhen": [
+                        "!(!hasHighlights && !hasActionItems)",
+                        "!isFailed && isExpanded && recap.channels && recap.channels.length > 0"
+                    ],
+                    "source": "channels/src/components/recaps/recap_channel_card.tsx#RecapChannelCard"
+                },
+                {
+                    "testId": "recaps.recap.channel:{key}",
+                    "role": null,
+                    "key": "Pick<RecapChannel, 'channel_id'>",
+                    "renderedWhen": [
+                        "!(!hasHighlights && !hasActionItems)",
+                        "!isFailed && isExpanded && recap.channels && recap.channels.length > 0"
+                    ],
+                    "source": "channels/src/components/recaps/recap_channel_card.tsx#RecapChannelCard"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.recap.channel.menu",
+            "class": "Menu",
+            "elements": [
+                {
+                    "testId": "recaps.recap.channel.menu.action:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "\"mark-channel-read\" | \"open-channel\"",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${gmChannel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/messages/@${channel.name}`"
+                        }
+                    ],
+                    "effects": [
+                        "CreateDirectChannel",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "MarkChannelsReadForUserMe",
+                        "RegenerateRecap",
+                        "UpdatePreferences"
+                    ],
+                    "renderedWhen": ["!(!hasHighlights && !hasActionItems)"],
+                    "source": "channels/src/components/recaps/recap_menu.tsx#RecapMenu"
+                },
+                {
+                    "testId": "recaps.recap.channel.menu.open--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "recaps.recap.channel.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": ["!(!hasHighlights && !hasActionItems)"],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.recap.delete_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "recaps.recap.delete_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "recaps.recap.delete_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "recaps.recap.delete_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["DeleteRecap"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.recap.header",
+            "class": "RecapsRecapHeader",
+            "container": "channels/src/components/recaps/recap_item.tsx#RecapItem",
+            "elements": [
+                {
+                    "testId": "recaps.recap.header.title",
+                    "role": null,
+                    "source": "channels/src/components/recaps/recap_item.tsx#RecapItem"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.recap.menu",
+            "class": "Menu",
+            "elements": [
+                {
+                    "testId": "recaps.recap.menu.action:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "\"mark-all-channels-read\" | \"regenerate-recap\"",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${gmChannel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/messages/@${channel.name}`"
+                        }
+                    ],
+                    "effects": [
+                        "CreateDirectChannel",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "MarkChannelsReadForUserMe",
+                        "RegenerateRecap",
+                        "UpdatePreferences"
+                    ],
+                    "renderedWhen": ["menuActions.length > 0"],
+                    "source": "channels/src/components/recaps/recap_menu.tsx#RecapMenu"
+                },
+                {
+                    "testId": "recaps.recap.menu.open--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "recaps.recap.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": ["menuActions.length > 0"],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.scheduled",
+            "class": "RecapsScheduled",
+            "elements": []
+        },
+        {
+            "scope": "recaps.scheduled.delete_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "recaps.scheduled.delete_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "recaps.scheduled.delete_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "recaps.scheduled.delete_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["DeleteScheduledRecap"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.scheduled.empty",
+            "class": "RecapsEmptyState",
+            "container": "channels/src/components/recaps/recaps_empty_state.tsx#RecapsEmptyState",
+            "elements": [
+                {
+                    "testId": "recaps.scheduled.empty.create--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "CreateRecapModal",
+                            "scope": "create_recap_modal"
+                        }
+                    ],
+                    "renderedWhen": ["scheduledRecaps.length === 0"],
+                    "source": "channels/src/components/recaps/recaps_empty_state.tsx#RecapsEmptyState"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.scheduled.recap",
+            "class": "RecapsScheduledRecap",
+            "elements": [
+                {
+                    "testId": "recaps.scheduled.recap.enable--switch",
+                    "role": "switch",
+                    "effects": ["PauseScheduledRecap", "ResumeScheduledRecap"],
+                    "source": "channels/src/components/recaps/scheduled_recap_item.tsx#ScheduledRecapItem"
+                },
+                {
+                    "testId": "recaps.scheduled.recap.open_menu--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "recaps.scheduled.recap.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "recaps.scheduled.recap.schedule--text",
+                    "role": "text",
+                    "source": "channels/src/components/recaps/scheduled_recap_item.tsx#ScheduledRecapItem"
+                },
+                {
+                    "testId": "recaps.scheduled.recap.title",
+                    "role": null,
+                    "source": "channels/src/components/recaps/scheduled_recap_item.tsx#ScheduledRecapItem"
+                },
+                {
+                    "testId": "recaps.scheduled.recap:{key}",
+                    "role": null,
+                    "key": "Pick<ScheduledRecap, 'id'>",
+                    "source": "channels/src/components/recaps/scheduled_recap_item.tsx#ScheduledRecapItem"
+                }
+            ]
+        },
+        {
+            "scope": "recaps.scheduled.recap.menu",
+            "class": "RecapsScheduledRecapMenu",
+            "elements": [
+                {
+                    "testId": "recaps.scheduled.recap.menu.delete--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ConfirmModal",
+                            "scope": "recaps.scheduled.delete_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/recaps/scheduled_recap_item.tsx#ScheduledRecapItem"
+                },
+                {
+                    "testId": "recaps.scheduled.recap.menu.edit--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "CreateRecapModal",
+                            "scope": "create_recap_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/recaps/scheduled_recap_item.tsx#ScheduledRecapItem"
                 }
             ]
         },
@@ -31477,6 +33537,36 @@
                     "role": "textbox",
                     "renderedWhen": ["showURLEditor", "isEditing"],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "request_join_channel_modal",
+            "class": "RequestJoinChannelModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "request_join_channel_modal.cancel--button",
+                    "role": "button",
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "request_join_channel_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "request_join_channel_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "getRelativeChannelURL(teamName, channel.name)"
+                        }
+                    ],
+                    "effects": ["RequestJoinChannel"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
                 }
             ]
         },
@@ -31601,6 +33691,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -32516,6 +34607,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -32932,7 +35024,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -33087,7 +35180,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -33208,7 +35302,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -33521,7 +35616,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -33821,6 +35917,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -34036,6 +36133,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -34725,6 +36823,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -35319,6 +37418,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -36206,6 +38306,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -36895,6 +38996,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -37489,6 +39591,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -38282,6 +40385,44 @@
             ]
         },
         {
+            "scope": "select_team",
+            "class": "SelectTeam",
+            "elements": [
+                {
+                    "testId": "select_team.recommended:{key}--text",
+                    "role": "text",
+                    "key": "Pick<Team, 'id'>",
+                    "renderedWhen": [
+                        "team.recommended",
+                        "!this.state.loadingTeamId",
+                        "!this.state.error",
+                        "!currentUserIsGuest",
+                        "canJoinBasedOnType && !listableTeam.group_constrained"
+                    ],
+                    "source": "channels/src/components/select_team/components/select_team_item.tsx#SelectTeamItem"
+                },
+                {
+                    "testId": "select_team.team:{key}--link",
+                    "role": "link",
+                    "key": "Pick<Team, 'id'>",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/${team.name}/channels/${Constants.DEFAULT_CHANNEL}`"
+                        }
+                    ],
+                    "effects": ["AddTeamMember", "GetTeam"],
+                    "renderedWhen": [
+                        "!this.state.loadingTeamId",
+                        "!this.state.error",
+                        "!currentUserIsGuest",
+                        "canJoinBasedOnType && !listableTeam.group_constrained"
+                    ],
+                    "source": "channels/src/components/select_team/components/select_team_item.tsx#SelectTeamItem"
+                }
+            ]
+        },
+        {
             "scope": "send_draft_modal",
             "class": "SendDraftModal",
             "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
@@ -38316,7 +40457,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -38511,7 +40653,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -38631,7 +40774,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -38751,7 +40895,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -38874,7 +41019,8 @@
                         },
                         {
                             "kind": "modal",
-                            "target": "KeyboardShortcutsModal"
+                            "target": "KeyboardShortcutsModal",
+                            "scope": "keyboard_shortcuts_modal"
                         },
                         {
                             "kind": "modal",
@@ -40043,6 +42189,31 @@
                     "testId": "should_verify_email.title--text",
                     "role": "text",
                     "source": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+                }
+            ]
+        },
+        {
+            "scope": "show_translation_modal",
+            "class": "ShowTranslationModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "show_translation_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["getPost(state, postId)", "showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "show_translation_modal.original",
+                    "role": null,
+                    "renderedWhen": ["getPost(state, postId)"],
+                    "source": "channels/src/components/show_translation_modal/show_translation_modal.tsx#ShowTranslationModal"
+                },
+                {
+                    "testId": "show_translation_modal.translated",
+                    "role": null,
+                    "renderedWhen": ["getPost(state, postId)"],
+                    "source": "channels/src/components/show_translation_modal/show_translation_modal.tsx#ShowTranslationModal"
                 }
             ]
         },
@@ -42225,6 +44396,67 @@
             ]
         },
         {
+            "scope": "team_sidebar",
+            "class": "TeamSidebar",
+            "elements": []
+        },
+        {
+            "scope": "team_sidebar.team",
+            "class": "TeamSidebarTeam",
+            "elements": [
+                {
+                    "testId": "team_sidebar.team.icon--img",
+                    "role": "img",
+                    "renderedWhen": [
+                        "!(currentProduct && !currentProduct.showTeamSidebar && !productRailShown)",
+                        "typeof content === 'string'",
+                        "teamIconUrl"
+                    ],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                },
+                {
+                    "testId": "team_sidebar.team.initials--img",
+                    "role": "img",
+                    "renderedWhen": [
+                        "!(currentProduct && !currentProduct.showTeamSidebar && !productRailShown)",
+                        "typeof content === 'string'",
+                        "!teamIconUrl"
+                    ],
+                    "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                },
+                {
+                    "testId": "team_sidebar.team.mentions--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!teamClass",
+                        "mentions && isNotCreateTeamButton",
+                        "!(currentProduct && !currentProduct.showTeamSidebar && !productRailShown)"
+                    ],
+                    "source": "channels/src/components/team_sidebar/components/team_button.tsx#TeamButton"
+                },
+                {
+                    "testId": "team_sidebar.team.unread--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!teamClass",
+                        "unread && !otherProps.isInProduct",
+                        "!(currentProduct && !currentProduct.showTeamSidebar && !productRailShown)"
+                    ],
+                    "source": "channels/src/components/team_sidebar/components/team_button.tsx#TeamButton"
+                },
+                {
+                    "testId": "team_sidebar.team:{key}",
+                    "role": null,
+                    "key": "string",
+                    "renderedWhen": [
+                        "isDraggable",
+                        "!(currentProduct && !currentProduct.showTeamSidebar && !productRailShown)"
+                    ],
+                    "source": "channels/src/components/team_sidebar/components/team_button.tsx#TeamButton"
+                }
+            ]
+        },
+        {
             "scope": "thread_menu",
             "class": "ThreadMenu",
             "elements": [
@@ -42260,6 +44492,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -42415,6 +44648,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -42572,6 +44806,7 @@
                         {
                             "kind": "modal",
                             "target": "JoinPrivateChannelModal",
+                            "scope": "join_private_channel_modal",
                             "dialogOps": ["RemoveTeamMember"]
                         },
                         {
@@ -42671,6 +44906,323 @@
                     "role": "tab",
                     "renderedWhen": ["!(isLoading || isEmptyList)"],
                     "source": "channels/src/components/threading/global_threads/thread_list/thread_list.tsx#ThreadList"
+                }
+            ]
+        },
+        {
+            "scope": "update_user_group_modal",
+            "class": "UpdateUserGroupModal",
+            "elements": [
+                {
+                    "testId": "update_user_group_modal.back--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/update_user_group_modal/update_user_group_modal.tsx#UpdateUserGroupModal"
+                },
+                {
+                    "testId": "update_user_group_modal.mention--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "update_user_group_modal.name--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "update_user_group_modal.save--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
+                        }
+                    ],
+                    "effects": ["PatchGroup"],
+                    "source": "channels/src/components/save_button.tsx#SaveButton"
+                }
+            ]
+        },
+        {
+            "scope": "update_user_group_modal.mention",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "update_user_group_modal.mention.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "update_user_group_modal.mention.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "update_user_group_modal.mention.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "update_user_group_modal.name",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "update_user_group_modal.name.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "update_user_group_modal.name.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "update_user_group_modal.name.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "user_group_popover",
+            "class": "UserGroupPopover",
+            "container": "channels/src/components/user_group_popover/user_group_popover.tsx#UserGroupPopover",
+            "elements": [
+                {
+                    "testId": "user_group_popover.close--button",
+                    "role": "button",
+                    "renderedWhen": ["isMounted"],
+                    "source": "channels/src/components/user_group_popover/user_group_popover.tsx#UserGroupPopover"
+                },
+                {
+                    "testId": "user_group_popover.open_group--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
+                        }
+                    ],
+                    "renderedWhen": ["isMounted"],
+                    "source": "channels/src/components/user_group_popover/user_group_popover.tsx#UserGroupPopover"
+                },
+                {
+                    "testId": "user_group_popover.search--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["group.member_count > 10", "isMounted"],
+                    "source": "channels/src/components/user_group_popover/user_group_popover.tsx#UserGroupPopover"
+                }
+            ]
+        },
+        {
+            "scope": "user_group_popover.member",
+            "class": "UserGroupPopoverMember",
+            "elements": [
+                {
+                    "testId": "user_group_popover.member.message--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/messages/@${user.username}`"
+                        }
+                    ],
+                    "effects": ["CreateDirectChannel", "GetPropertyValues", "GetRolesByNames", "UpdatePreferences"],
+                    "renderedWhen": ["isUserLoaded(index)"],
+                    "source": "channels/src/components/user_group_popover/group_member_list/group_member_list.tsx#GroupMemberList"
+                },
+                {
+                    "testId": "user_group_popover.member:{key}--listitem",
+                    "role": "listitem",
+                    "key": "Pick<UserProfile, 'id'>",
+                    "renderedWhen": ["isUserLoaded(index)"],
+                    "source": "channels/src/components/user_group_popover/group_member_list/group_member_list.tsx#GroupMemberList"
+                }
+            ]
+        },
+        {
+            "scope": "user_group_popover.search",
+            "class": "QuickInput",
+            "elements": [
+                {
+                    "testId": "user_group_popover.search.clear--button",
+                    "role": "button",
+                    "renderedWhen": ["showClearButton", "group.member_count > 10"],
+                    "source": "channels/src/components/quick_input/quick_input.tsx#QuickInput"
+                }
+            ]
+        },
+        {
+            "scope": "user_groups_modal",
+            "class": "UserGroupsModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "user_groups_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "user_groups_modal.create--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "CreateUserGroupsModal",
+                            "scope": "create_user_groups_modal"
+                        }
+                    ],
+                    "renderedWhen": ["props.canCreateCustomGroups"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_modal.tsx#UserGroupsModal"
+                },
+                {
+                    "testId": "user_groups_modal.filter--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "groupsFilterDropdownMenu",
+                            "scope": "user_groups_modal.filter_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "user_groups_modal.search--textbox",
+                    "role": "textbox",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "user_groups_modal.filter_menu",
+            "class": "UserGroupsModalFilterMenu",
+            "elements": [
+                {
+                    "testId": "user_groups_modal.filter_menu.all--menuitem",
+                    "role": "menuitem",
+                    "effects": ["GetGroups"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_filter/user_groups_filter.tsx#UserGroupsFilter"
+                },
+                {
+                    "testId": "user_groups_modal.filter_menu.archived--menuitem",
+                    "role": "menuitem",
+                    "effects": ["GetGroups"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_filter/user_groups_filter.tsx#UserGroupsFilter"
+                },
+                {
+                    "testId": "user_groups_modal.filter_menu.my--menuitem",
+                    "role": "menuitem",
+                    "effects": ["GetGroups"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_filter/user_groups_filter.tsx#UserGroupsFilter"
+                }
+            ]
+        },
+        {
+            "scope": "user_groups_modal.group",
+            "class": "UserGroupsModalGroup",
+            "elements": [
+                {
+                    "testId": "user_groups_modal.group.menu--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "group-actions-menu",
+                            "scope": "user_groups_modal.group_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": ["isItemLoaded(index)"],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "user_groups_modal.group:{key}--button",
+                    "role": "button",
+                    "key": "Pick<Group, 'id'>",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
+                        }
+                    ],
+                    "renderedWhen": ["isItemLoaded(index)"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_list/user_groups_list.tsx#UserGroupsList"
+                }
+            ]
+        },
+        {
+            "scope": "user_groups_modal.group_menu",
+            "class": "UserGroupsModalGroupMenu",
+            "elements": [
+                {
+                    "testId": "user_groups_modal.group_menu.archive--menuitem",
+                    "role": "menuitem",
+                    "effects": ["DeleteGroup"],
+                    "renderedWhen": ["isItemLoaded(index)", "groupPermissionsMap[group.id].can_delete"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_list/user_groups_list.tsx#UserGroupsList"
+                },
+                {
+                    "testId": "user_groups_modal.group_menu.restore--menuitem",
+                    "role": "menuitem",
+                    "effects": ["RestoreGroup"],
+                    "renderedWhen": ["isItemLoaded(index)", "groupPermissionsMap[group.id].can_restore"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_list/user_groups_list.tsx#UserGroupsList"
+                },
+                {
+                    "testId": "user_groups_modal.group_menu.view--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ViewUserGroupModal",
+                            "scope": "view_user_group_modal"
+                        }
+                    ],
+                    "renderedWhen": ["isItemLoaded(index)"],
+                    "source": "channels/src/components/user_groups_modal/user_groups_list/user_groups_list.tsx#UserGroupsList"
+                }
+            ]
+        },
+        {
+            "scope": "user_groups_modal.search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "user_groups_modal.search.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "user_groups_modal.search.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "user_groups_modal.search.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         },
@@ -42901,6 +45453,167 @@
                     "key": "string",
                     "renderedWhen": ["!this.props.loading", "!(rows.length === 0)"],
                     "source": "channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow"
+                }
+            ]
+        },
+        {
+            "scope": "view_user_group_modal",
+            "class": "ViewUserGroupModal",
+            "container": "channels/src/components/view_user_group_modal/view_user_group_modal.tsx#ViewUserGroupModal",
+            "elements": [
+                {
+                    "testId": "view_user_group_modal.add_people--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AddUsersToGroupModal",
+                            "scope": "add_users_to_group_modal"
+                        }
+                    ],
+                    "renderedWhen": ["permissionToJoinGroup"],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_modal_header/view_user_group_modal_header.tsx#ViewUserGroupModalHeader"
+                },
+                {
+                    "testId": "view_user_group_modal.back--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "UserGroupsModal",
+                            "scope": "user_groups_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_modal_header/view_user_group_modal_header.tsx#ViewUserGroupModalHeader"
+                },
+                {
+                    "testId": "view_user_group_modal.close--button",
+                    "role": "button",
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_modal_header/view_user_group_modal_header.tsx#ViewUserGroupModalHeader"
+                },
+                {
+                    "testId": "view_user_group_modal.menu--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "details-group-actions-menu",
+                            "scope": "view_user_group_modal.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "view_user_group_modal.restore--button",
+                    "role": "button",
+                    "effects": ["RestoreGroup"],
+                    "renderedWhen": ["permissionToRestoreGroup"],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_modal_header/view_user_group_modal_header.tsx#ViewUserGroupModalHeader"
+                },
+                {
+                    "testId": "view_user_group_modal.search--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["!((users.length === 0 && !searchTerm && !loading) || !group)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "view_user_group_modal.member",
+            "class": "ViewUserGroupModalMember",
+            "elements": [
+                {
+                    "testId": "view_user_group_modal.member.remove--button",
+                    "role": "button",
+                    "effects": ["DeleteGroupMembers"],
+                    "renderedWhen": [
+                        "!isSyncableSource(group.source.toLowerCase()) && props.permissionToLeaveGroup",
+                        "!((users.length === 0 && !searchTerm && !loading) || !group)"
+                    ],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_list_item/view_user_group_list_item.tsx#ViewUserGroupListItem"
+                },
+                {
+                    "testId": "view_user_group_modal.member:{key}",
+                    "role": null,
+                    "key": "Pick<UserProfile, 'id'>",
+                    "renderedWhen": ["!((users.length === 0 && !searchTerm && !loading) || !group)"],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_list_item/view_user_group_list_item.tsx#ViewUserGroupListItem"
+                }
+            ]
+        },
+        {
+            "scope": "view_user_group_modal.menu",
+            "class": "ViewUserGroupModalMenu",
+            "elements": [
+                {
+                    "testId": "view_user_group_modal.menu.archive--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "UserGroupsModal",
+                            "scope": "user_groups_modal"
+                        }
+                    ],
+                    "effects": ["DeleteGroup"],
+                    "renderedWhen": ["props.permissionToArchiveGroup", "group && showSubMenu()"],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_header_sub_menu/view_user_group_header_sub_menu.tsx#ViewUserGroupHeaderSubMenu"
+                },
+                {
+                    "testId": "view_user_group_modal.menu.edit--menuitem",
+                    "role": "menuitem",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "UpdateUserGroupModal",
+                            "scope": "update_user_group_modal"
+                        }
+                    ],
+                    "renderedWhen": ["props.permissionToEditGroup", "group && showSubMenu()"],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_header_sub_menu/view_user_group_header_sub_menu.tsx#ViewUserGroupHeaderSubMenu"
+                },
+                {
+                    "testId": "view_user_group_modal.menu.join--menuitem",
+                    "role": "menuitem",
+                    "effects": ["AddGroupMembers"],
+                    "renderedWhen": ["props.permissionToJoinGroup && !isGroupMember", "group && showSubMenu()"],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_header_sub_menu/view_user_group_header_sub_menu.tsx#ViewUserGroupHeaderSubMenu"
+                },
+                {
+                    "testId": "view_user_group_modal.menu.leave--menuitem",
+                    "role": "menuitem",
+                    "effects": ["DeleteGroupMembers"],
+                    "renderedWhen": ["props.permissionToLeaveGroup && isGroupMember", "group && showSubMenu()"],
+                    "source": "channels/src/components/view_user_group_modal/view_user_group_header_sub_menu/view_user_group_header_sub_menu.tsx#ViewUserGroupHeaderSubMenu"
+                }
+            ]
+        },
+        {
+            "scope": "view_user_group_modal.search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "view_user_group_modal.search.field",
+                    "role": null,
+                    "renderedWhen": ["!((users.length === 0 && !searchTerm && !loading) || !group)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "view_user_group_modal.search.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!((users.length === 0 && !searchTerm && !loading) || !group)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "view_user_group_modal.search.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!((users.length === 0 && !searchTerm && !loading) || !group)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         }
@@ -43161,6 +45874,12 @@
             "body": "ServerChannel"
         },
         {
+            "op": "CreateChannelBookmark",
+            "method": "POST",
+            "path": "/api/v4/channels/{channel_id}/bookmarks",
+            "body": "ChannelBookmark"
+        },
+        {
             "op": "CreateDataRetentionPolicy",
             "method": "POST",
             "path": "/api/v4/data_retention/policies",
@@ -43215,6 +45934,12 @@
             "body": "PropertyField"
         },
         {
+            "op": "CreateRecap",
+            "method": "POST",
+            "path": "/api/v4/recaps",
+            "body": "Recap"
+        },
+        {
             "op": "CreateRemoteCluster",
             "method": "POST",
             "path": "/api/v4/remotecluster",
@@ -43225,6 +45950,12 @@
             "method": "POST",
             "path": "/api/v4/posts/schedule",
             "body": "ScheduledPost"
+        },
+        {
+            "op": "CreateScheduledRecap",
+            "method": "POST",
+            "path": "/api/v4/scheduled_recaps",
+            "body": "ScheduledRecap"
         },
         {
             "op": "CreateScheme",
@@ -43275,6 +46006,12 @@
             "body": "StatusOK"
         },
         {
+            "op": "DeleteChannelBookmark",
+            "method": "DELETE",
+            "path": "/api/v4/channels/{channel_id}/bookmarks/{bookmark_id}",
+            "body": "ChannelBookmark"
+        },
+        {
             "op": "DeleteCommand",
             "method": "DELETE",
             "path": "/api/v4/commands/{command_id}",
@@ -43291,6 +46028,18 @@
             "method": "DELETE",
             "path": "/api/v4/emoji/{emoji_id}",
             "body": "StatusOK"
+        },
+        {
+            "op": "DeleteGroup",
+            "method": "DELETE",
+            "path": "/api/v4/groups/{group_id}",
+            "body": "Group"
+        },
+        {
+            "op": "DeleteGroupMembers",
+            "method": "DELETE",
+            "path": "/api/v4/groups/{group_id}/members",
+            "body": "GroupMember[]"
         },
         {
             "op": "DeleteIncomingWebhook",
@@ -43341,10 +46090,22 @@
             "body": "StatusOK"
         },
         {
+            "op": "DeleteRecap",
+            "method": "DELETE",
+            "path": "/api/v4/recaps/{recap_id}",
+            "body": "StatusOK"
+        },
+        {
             "op": "DeleteScheduledPost",
             "method": "DELETE",
             "path": "/api/v4/posts/schedule/{scheduled_post_id}",
             "body": "ScheduledPost"
+        },
+        {
+            "op": "DeleteScheduledRecap",
+            "method": "DELETE",
+            "path": "/api/v4/scheduled_recaps/{scheduled_recap_id}",
+            "body": "void"
         },
         {
             "op": "DeleteScheme",
@@ -43689,6 +46450,12 @@
             "body": null
         },
         {
+            "op": "GetRecapLimitStatus",
+            "method": "GET",
+            "path": "/api/v4/recaps/limit_status",
+            "body": "RecapLimitStatus"
+        },
+        {
             "op": "GetRolesByNames",
             "method": "POST",
             "path": "/api/v4/roles/names",
@@ -43929,6 +46696,18 @@
             "body": "ChannelViewResponse"
         },
         {
+            "op": "MarkRecapAsRead",
+            "method": "POST",
+            "path": "/api/v4/recaps/{recap_id}/read",
+            "body": "Recap"
+        },
+        {
+            "op": "MoveThread",
+            "method": "POST",
+            "path": "/api/v4/posts/{post_id}/move",
+            "body": "StatusOK"
+        },
+        {
             "op": "PatchCPAField",
             "method": "PATCH",
             "path": "/api/v4/custom_profile_attributes/fields/{field_id}",
@@ -44085,6 +46864,12 @@
             "body": "OAuthApp"
         },
         {
+            "op": "RegenerateRecap",
+            "method": "POST",
+            "path": "/api/v4/recaps/{recap_id}/regenerate",
+            "body": "Recap"
+        },
+        {
             "op": "RegenerateTeamInviteId",
             "method": "POST",
             "path": "/api/v4/teams/{team_id}/regenerate_invite_id",
@@ -44133,10 +46918,22 @@
             "body": "StatusOK"
         },
         {
+            "op": "RequestJoinChannel",
+            "method": "POST",
+            "path": "/api/v4/channels/{channelId}/join_request",
+            "body": "ChannelJoinRequest | ChannelJoinRequestApprovalResponse"
+        },
+        {
             "op": "RestoreChannel",
             "method": "POST",
             "path": "/api/v4/channels/{channel_id}/restore",
             "body": "ServerChannel"
+        },
+        {
+            "op": "RestoreGroup",
+            "method": "POST",
+            "path": "/api/v4/groups/{group_id}/restore",
+            "body": "Group"
         },
         {
             "op": "RestorePostVersion",
@@ -44307,6 +47104,12 @@
             "body": "AuthChangeResponse"
         },
         {
+            "op": "TeamExists",
+            "method": "GET",
+            "path": "/api/v4/teams/name/{team_name}/exists",
+            "body": null
+        },
+        {
             "op": "TeamMembersMinusGroupMembers",
             "method": "GET",
             "path": "/api/v4/teams/{team_id}/members_minus_group_members",
@@ -44371,6 +47174,12 @@
             "method": "PUT",
             "path": "/api/v4/content_flagging/config",
             "body": null
+        },
+        {
+            "op": "UpdateChannelBookmark",
+            "method": "PATCH",
+            "path": "/api/v4/channels/{channel_id}/bookmarks/{bookmark_id}",
+            "body": "UpdateChannelBookmarkResponse"
         },
         {
             "op": "UpdateChannelMemberAutotranslationMe",
@@ -44449,6 +47258,12 @@
             "method": "PUT",
             "path": "/api/v4/posts/schedule/{scheduled_post_id}",
             "body": "ScheduledPost"
+        },
+        {
+            "op": "UpdateScheduledRecap",
+            "method": "PUT",
+            "path": "/api/v4/scheduled_recaps/{scheduled_recap_id}",
+            "body": "ScheduledRecap"
         },
         {
             "op": "UpdateSidebarCategoriesForTeamForUser",

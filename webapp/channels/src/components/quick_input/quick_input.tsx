@@ -43,7 +43,7 @@ export type Props = {
      */
     clearClassName?: string;
 
-    /** The clear button renders `${clearTestId}--button`; hosts that don't pass one yet (the user group popover's search, until the user groups area) keep the legacy `input-clear`. */
+    /** The clear button renders `${clearTestId}--button` (else no testid). */
     clearTestId?: TestId;
 
     /**
@@ -170,7 +170,7 @@ export const QuickInput = React.memo(({
             {showClearButton && (
                 <WithTooltip title={clearableTooltipText || defaultClearableTooltipText}>
                     <button
-                        data-testid={clearTestId ? `${clearTestId}--button` : 'input-clear'}
+                        data-testid={clearTestId ? `${clearTestId}--button` : undefined}
                         className={classNames(clearClassName, 'input-clear visible')}
                         onClick={onClear}
                     >

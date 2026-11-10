@@ -1,7 +1,9 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test} from '@mattermost/playwright-lib';
+import {expect, test} from '@mattermost/playwright-lib';
+
+import {openLogin} from '../../functional/auth/support';
 
 /**
  * @objective Capture visual snapshots of the signup email page in normal and error states
@@ -15,17 +17,17 @@ test(
 
         // # Navigate to login page
         const {adminClient} = await pw.getAdminClient();
-        await pw.loginPage.goto();
-        await pw.loginPage.toBeVisible();
+        const app = await openLogin(pw, page);
 
         // # Click on create account link
-        await pw.loginPage.createAccountLink.click();
+        await app.login.alternate.clickActionLink();
 
         // * Verify redirection to signup page
-        await pw.signupPage.toBeVisible();
+        const card = app.signup.card;
+        await expect(card.emailTextbox.locator).toBeVisible();
 
         // # Remove focus from email input by clicking elsewhere
-        await pw.signupPage.title.click();
+        await card.titleText.locator.click();
 
         // # Get license information to determine snapshot suffix
         const license = await adminClient.getClientLicenseOld();
@@ -37,13 +39,14 @@ test(
 
         // # Attempt to create account with invalid credentials
         const invalidUser = {email: 'invalid', username: 'a', password: 'b'};
-        await pw.signupPage.create(invalidUser, false);
+        await card.fill({...invalidUser, terms: true});
+        await card.clickCreateAccountButton();
 
         // * Verify error messages appear for each field
-        await pw.signupPage.emailError.waitFor();
-        await pw.signupPage.usernameError.waitFor();
-        await pw.signupPage.passwordError.waitFor();
-        await pw.waitForAnimationEnd(pw.signupPage.bodyCard);
+        await expect(card.email.messageAlert.locator).toBeVisible();
+        await expect(card.username.messageAlert.locator).toBeVisible();
+        await expect(card.password.messageAlert.locator).toBeVisible();
+        await pw.waitForAnimationEnd(card.locator);
 
         // * Verify visual appearance of signup page with errors
         await pw.matchSnapshot({...testInfo, title: `${testInfo.title} error ${editionSuffix}`}, testArgs);

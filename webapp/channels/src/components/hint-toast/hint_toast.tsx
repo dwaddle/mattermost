@@ -7,7 +7,7 @@ import CloseIcon from 'components/widgets/icons/close_icon';
 
 import './hint_toast.scss';
 
-export const HINT_TOAST_TESTID = 'hint-toast';
+export const HINT_TOAST_TESTID = 'center.post_list.search_hint';
 
 type Props = {
     children: React.ReactNode;
@@ -34,7 +34,7 @@ export const HintToast: React.FC<Props> = ({children, onDismiss}: Props) => {
             <div
                 className='hint-toast__dismiss'
                 onClick={handleDismiss}
-                data-testid='dismissHintToast'
+                data-testid={`${HINT_TOAST_TESTID}.dismiss--button`}
             >
                 <CloseIcon
                     className='close-btn'

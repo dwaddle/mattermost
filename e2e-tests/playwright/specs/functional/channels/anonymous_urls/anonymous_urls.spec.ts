@@ -2,8 +2,21 @@
 // See LICENSE.txt for license information.
 
 import type {Channel} from '@mattermost/types/channels';
+import type {Team} from '@mattermost/types/teams';
 
-import {expect, getAdminClient, test, duration} from '@mattermost/playwright-lib';
+import {expect, generated, getAdminClient, test, type App} from '@mattermost/playwright-lib';
+
+// Written on the generated page objects: the System Console's Users and Teams setting and Save, the sidebar's "+" menu
+// and the new channel dialog (name, URL section, Create / Cancel), the team menu and the create-team form (name, Next,
+// URL, Finish), Channel Settings' and Team Settings' info tabs, the channel header, the channel switcher's results by
+// channel id, the search box and results by post id with their Jump link, the post list, and the channel header's
+// plugin actions (Calls).
+
+declare module '@mattermost/playwright-lib' {
+    interface PluginKeys {
+        com_mattermost_calls: true;
+    }
+}
 
 const OBFUSCATED_SLUG_RE = /^[a-z0-9]{26}$/;
 
@@ -28,21 +41,54 @@ function expectReadableSlug(slug: string, expectedSlug?: string) {
     expect(slug).not.toMatch(OBFUSCATED_SLUG_RE);
 }
 
-async function createChannelFromUI(channelsPage: any, displayName: string) {
-    const newChannelModal = await channelsPage.openNewChannelModal();
-    await newChannelModal.fillDisplayName(displayName);
-    await newChannelModal.create();
-    await channelsPage.toBeVisible();
+/** Opens the channel (default: the team's town square; `@user` or a group channel name for messages). */
+async function goto(app: App, team: Pick<Team, 'name'> | string, channel = 'town-square') {
+    const path = channel.startsWith('@') || /^[a-z0-9]{40}$/.test(channel) ? 'messages' : 'channels';
+    await app.channelsPage.goto({team, channel, path});
 }
 
-async function createTeamFromUI(channelsPage: any, displayName: string) {
-    const createTeamForm = await channelsPage.openCreateTeamForm();
-    await createTeamForm.fillTeamName(displayName);
-    await createTeamForm.submitDisplayName();
-    await channelsPage.toBeVisible();
+/** Logs the user in on the team's town square (their first team when none is given). */
+async function login(pw: any, user: any, team?: Pick<Team, 'name'>) {
+    const {app} = await pw.testBrowser.login(user);
+    if (team) {
+        await goto(app, team);
+    } else {
+        await app.page.goto('/');
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
+    }
+    return app as App;
 }
 
-async function getChannelByDisplayName(adminClient: any, teamId: string, displayName: string) {
+/** Opens the new channel dialog from the sidebar's "+" menu. */
+async function openNewChannelModal(app: App) {
+    const modal = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickCreateChannelMenuItem();
+    await expect(modal.nameTextbox.locator).toBeVisible();
+    return modal;
+}
+
+async function createChannelFromUI(app: App, displayName: string) {
+    const modal = await openNewChannelModal(app);
+    await modal.fillNameTextbox(displayName);
+    await modal.clickConfirmButton();
+    await expect(modal.nameTextbox.locator).not.toBeVisible();
+    await expect(app.channelHeader.openMenuButton.locator).toContainText(displayName);
+}
+
+/** Opens the create-team form from the team menu. */
+async function openCreateTeamForm(app: App) {
+    await (await app.lhs.header.clickOpenTeamMenuButton()).clickCreateTeamMenuItem();
+    await expect(app.createTeam.nameTextbox.locator).toBeVisible();
+    return app.createTeam;
+}
+
+async function createTeamFromUI(app: App, displayName: string) {
+    const form = await openCreateTeamForm(app);
+    await form.fillNameTextbox(displayName);
+    await form.clickNextButton();
+    await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
+}
+
+async function getChannelByDisplayName(adminClient: any, teamId: string, displayName: string): Promise<Channel> {
     const channels = await adminClient.getChannels(teamId);
     const channel = channels.find((candidate: any) => candidate.display_name === displayName);
 
@@ -51,7 +97,7 @@ async function getChannelByDisplayName(adminClient: any, teamId: string, display
     return channel!;
 }
 
-async function getTeamByDisplayName(adminClient: any, displayName: string) {
+async function getTeamByDisplayName(adminClient: any, displayName: string): Promise<Team> {
     const teams = await adminClient.getMyTeams();
     const team = teams.find((candidate: any) => candidate.display_name === displayName);
 
@@ -61,7 +107,7 @@ async function getTeamByDisplayName(adminClient: any, displayName: string) {
 }
 
 async function createAnonymousUrlChannel(
-    channelsPage: any,
+    app: App,
     adminClient: any,
     teamName: string,
     teamId: string,
@@ -86,14 +132,50 @@ async function createAnonymousUrlChannel(
     // the server (the modal open + fill + submit adds ~200–500 ms of latency).
     await setAnonymousUrls(adminClient, true);
 
-    await createChannelFromUI(channelsPage, displayName);
-    await channelsPage.centerView.header.toHaveTitle(displayName);
+    await createChannelFromUI(app, displayName);
 
     const channel = await getChannelByDisplayName(adminClient, teamId, displayName);
     expectObfuscatedSlug(channel.name);
-    await expect(channelsPage.page).toHaveURL(new RegExp(`/${teamName}/channels/${channel.name}$`));
+    await expect(app.page).toHaveURL(new RegExp(`/${teamName}/channels/${channel.name}$`));
 
     return channel;
+}
+
+/** Posts a message from the center composer and returns its post id. */
+async function postMessage(app: App, message: string) {
+    const {postCreate, postList} = app.center;
+    await postCreate.fillMessageTextbox(message);
+    await postCreate.clickSendButton();
+    await expect
+        .poll(async () => {
+            const id = (await postList.postKeys()).at(-1);
+            return id ? postList.post({id}).messageText.locator.textContent() : '';
+        })
+        .toContain(message);
+    return (await postList.postKeys()).at(-1)!;
+}
+
+/** Finds a channel with the channel switcher (Ctrl/Cmd+K) and opens it. */
+async function switchTo(app: App, search: string, channel: Pick<Channel, 'id'>) {
+    await app.center.postCreate.messageTextbox.locator.press('ControlOrMeta+K');
+    await app.quickSwitchModal.searchTextbox.fill(search);
+    const result = app.quickSwitchModal.suggestions.item(channel.id).locator;
+    await expect(result).toBeVisible();
+    return result;
+}
+
+/** The System Console's anonymous URLs setting (Site Configuration > Users and Teams). */
+async function openAnonymousUrlsSetting(app: App) {
+    await app.page.goto(`${generated.AdminConsolePage.path()}/site_config/users_and_teams`);
+    const setting = app.admin.setting('PrivacySettings.UseAnonymousURLs');
+    await expect(setting.trueRadio.locator).toBeVisible();
+    return setting;
+}
+
+/** Saves the System Console page and waits for the button to settle back to "Save". */
+async function saveConsole(app: App) {
+    await app.admin.clickSaveButton();
+    await expect(app.admin.saveButton.locator).toHaveText('Save');
 }
 
 test.describe('Anonymous URLs', () => {
@@ -122,32 +204,22 @@ test.describe('Anonymous URLs', () => {
                 'Skipping test - server does not have enterprise advanced license',
             );
 
-            // # Log in as admin
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-
-            // # Visit System Console
-            await systemConsolePage.goto();
-            await systemConsolePage.toBeVisible();
-
-            // # Navigate to Users and Teams
-            await systemConsolePage.sidebar.siteConfiguration.usersAndTeams.click();
-            await systemConsolePage.usersAndTeams.toBeVisible();
-
-            // * Verify the anonymous URLs radio group is visible
-            await systemConsolePage.usersAndTeams.useAnonymousURLs.toBeVisible();
+            // # Log in as admin and open Users and Teams
+            const {app} = await pw.testBrowser.login(adminUser);
+            let setting = await openAnonymousUrlsSetting(app);
 
             // * Verify the setting is initially false
-            await systemConsolePage.usersAndTeams.useAnonymousURLs.toBeFalse();
+            await expect(setting.falseRadio.locator).toBeChecked();
+            await expect(setting.trueRadio.locator).not.toBeChecked();
 
             // # Enable anonymous URLs by clicking the True radio
-            await systemConsolePage.usersAndTeams.useAnonymousURLs.selectTrue();
+            await setting.trueRadio.locator.check();
 
             // * Verify it is now true
-            await systemConsolePage.usersAndTeams.useAnonymousURLs.toBeTrue();
+            await expect(setting.trueRadio.locator).toBeChecked();
 
             // # Save settings
-            await systemConsolePage.usersAndTeams.save();
-            await pw.waitUntil(async () => (await systemConsolePage.usersAndTeams.saveButton.textContent()) === 'Save');
+            await saveConsole(app);
             await expect
                 .poll(async () => (await adminClient.getConfig()).PrivacySettings?.UseAnonymousURLs === true, {
                     timeout: duration.half_min,
@@ -156,8 +228,8 @@ test.describe('Anonymous URLs', () => {
                 .toBe(true);
 
             // # Navigate away and come back
-            await systemConsolePage.gotoNotificationsSettings();
-            await systemConsolePage.notifications.toBeVisible();
+            await app.page.goto(`${generated.AdminConsolePage.path()}/environment/notifications`);
+            await expect(setting.trueRadio.locator).not.toBeVisible();
 
             // Re-apply guard: a concurrent initSetup() → updateConfig(defaultConfig) may have
             // reset PrivacySettings.UseAnonymousURLs=false while we were navigating away.
@@ -170,26 +242,14 @@ test.describe('Anonymous URLs', () => {
                 })
                 .toBe(true);
 
-            await systemConsolePage.sidebar.siteConfiguration.usersAndTeams.click();
-            await systemConsolePage.usersAndTeams.toBeVisible();
-
-            // Re-apply one more time after the page renders and confirm, so the radio reads the
-            // fresh config (a WebSocket CONFIG_CHANGED event from a concurrent initSetup() can
-            // reset the in-memory Redux state between the poll above and the page rendering).
-            await adminClient.patchConfig({PrivacySettings: {UseAnonymousURLs: true}});
-            await expect
-                .poll(async () => (await adminClient.getConfig()).PrivacySettings?.UseAnonymousURLs === true, {
-                    intervals: [500, 1000],
-                })
-                .toBe(true);
+            setting = await openAnonymousUrlsSetting(app);
 
             // * Verify the setting is still enabled
-            await systemConsolePage.usersAndTeams.useAnonymousURLs.toBeTrue();
+            await expect(setting.trueRadio.locator).toBeChecked();
 
             // # Reset to false for cleanup
-            await systemConsolePage.usersAndTeams.useAnonymousURLs.selectFalse();
-            await systemConsolePage.usersAndTeams.save();
-            await pw.waitUntil(async () => (await systemConsolePage.usersAndTeams.saveButton.textContent()) === 'Save');
+            await setting.falseRadio.locator.check();
+            await saveConsole(app);
         },
     );
 
@@ -224,40 +284,30 @@ test.describe('Anonymous URLs', () => {
                 )
                 .toBe(true);
 
-            // # Log in and go to channels — navigate to the team explicitly so the
-            // # webapp loads its config after UseAnonymousURLs is already true
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
-
-            // Re-apply anonymous URLs immediately before the UI interaction: a
-            // concurrent initSetup() → patchConfig(defaultConfig) resets
-            // UseAnonymousURLs: false between the initial setAnonymousUrls call and here.
+            // # Log in and open the new channel dialog
+            const app = await login(pw, adminUser, team);
             await setAnonymousUrls(adminClient, true);
+            const modal = await openNewChannelModal(app);
 
-            // # Open new channel modal
-            await channelsPage.sidebarLeft.browseOrCreateChannelButton.click();
-            await page.locator('#createNewChannelMenuItem').click();
-            await channelsPage.newChannelModal.toBeVisible();
+            // # Fill in a display name
+            await modal.fillNameTextbox('Anonymous Test Channel');
 
-            // # Fill in a channel name
-            await channelsPage.newChannelModal.fillDisplayName('Anonymous Test Channel');
-
-            // * Verify the URL editor section is not visible (wait for client config to apply)
+            // * The URL section stays hidden
+            await expect(modal.nameTextbox.locator).toHaveValue('Anonymous Test Channel');
             await expect
-                .poll(async () => !(await channelsPage.newChannelModal.urlSection.isVisible()), {
-                    timeout: duration.half_min,
+                .poll(async () => !(await modal.url.labelText.locator.isVisible()), {
+                    timeout: 30000,
                     intervals: [500, 1500],
                 })
                 .toBe(true);
 
-            // # Cancel modal
-            await channelsPage.newChannelModal.cancel();
+            await modal.clickCancelButton();
+            await expect(modal.nameTextbox.locator).not.toBeVisible();
         },
     );
 
     /**
-     * @objective Verify that a channel created with anonymous URLs enabled has an obfuscated slug that does not match the display name
+     * @objective Verify that a channel created with anonymous URLs enabled gets an obfuscated URL slug
      *
      * @precondition
      * Server must have an Enterprise Advanced license
@@ -266,7 +316,7 @@ test.describe('Anonymous URLs', () => {
         'creates channel with obfuscated URL slug when anonymous URLs enabled',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup
+            // # Initialize setup and enable anonymous URLs
             const {adminUser, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
             const license = await adminClient.getClientLicenseOld();
             test.skip(
@@ -276,53 +326,31 @@ test.describe('Anonymous URLs', () => {
 
             await setAnonymousUrls(adminClient, true);
 
-            // # Add admin to the test team so they can create channels there
             await adminClient.addToTeam(team.id, adminUser.id);
 
-            // # Log in and go to the test team
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
-
-            // # Create a new channel via UI
+            // # Create a channel through the UI
+            const app = await login(pw, adminUser, team);
             const channelDisplayName = 'Obfuscated Channel ' + Date.now();
-            await channelsPage.sidebarLeft.browseOrCreateChannelButton.click();
-            await page.locator('#createNewChannelMenuItem').click();
-            await channelsPage.newChannelModal.toBeVisible();
-            await channelsPage.newChannelModal.fillDisplayName(channelDisplayName);
+            const modal = await openNewChannelModal(app);
+            await modal.fillNameTextbox(channelDisplayName);
             await setAnonymousUrls(adminClient, true);
-            await channelsPage.newChannelModal.create();
+            await modal.clickConfirmButton();
+            await expect(app.channelHeader.openMenuButton.locator).toContainText(channelDisplayName);
 
-            // # Wait for channel to be created and navigated to
-            await expect(app.center.composer.locator).toBeVisible();
+            // * The channel's URL slug is obfuscated, not derived from its name
+            const createdChannel = await getChannelByDisplayName(adminClient, team.id, channelDisplayName);
 
-            // # Fetch the team's channels until the newly created one shows, by display name
-            let createdChannel: Channel | undefined;
-            await expect
-                .poll(
-                    async () => {
-                        const allChannels = await adminClient.getChannels(team.id);
-                        createdChannel = allChannels.find((ch) => ch.display_name === channelDisplayName);
-                        return createdChannel;
-                    },
-                    {message: 'the channel created through the UI is on the server'},
-                )
-                .toBeDefined();
-
-            // * Verify the slug does not match a cleaned version of the display name
             const humanReadableSlug = channelDisplayName.toLowerCase().replace(/\s+/g, '-');
-            expect(createdChannel!.name).not.toBe(humanReadableSlug);
+            expect(createdChannel.name).not.toBe(humanReadableSlug);
 
-            // * Verify the slug looks like a model.NewId (26 chars, alphanumeric)
-            expect(createdChannel!.name).toMatch(/^[a-z0-9]{26}$/);
+            expect(createdChannel.name).toMatch(/^[a-z0-9]{26}$/);
 
-            // * Verify display name is preserved
-            expect(createdChannel!.display_name).toBe(channelDisplayName);
+            expect(createdChannel.display_name).toBe(channelDisplayName);
         },
     );
 
     /**
-     * @objective Verify that the channel URL editor is visible when creating a new channel with anonymous URLs disabled (default)
+     * @objective Verify that the channel URL editor is shown when creating a new channel with anonymous URLs disabled
      */
     test(
         'shows channel URL editor when creating new channel with anonymous URLs disabled',
@@ -331,29 +359,23 @@ test.describe('Anonymous URLs', () => {
             // # Initialize setup
             const {adminUser} = await pw.initSetup({withDefaultProfileImage: false});
 
-            // # Log in and go to channels
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto();
-            await expect(app.center.composer.locator).toBeVisible();
+            // # Open the new channel dialog
+            const app = await login(pw, adminUser);
+            const modal = await openNewChannelModal(app);
 
-            // # Open new channel modal
-            await channelsPage.sidebarLeft.browseOrCreateChannelButton.click();
-            await page.locator('#createNewChannelMenuItem').click();
-            await channelsPage.newChannelModal.toBeVisible();
+            // # Fill in a display name
+            await modal.fillNameTextbox('Test Channel URL');
 
-            // # Type a display name to trigger URL generation
-            await channelsPage.newChannelModal.fillDisplayName('Test Channel URL');
+            // * The URL section shows
+            await expect(modal.url.labelText.locator).toBeVisible();
 
-            // * Verify the URL editor section is visible
-            await expect(channelsPage.newChannelModal.urlSection).toBeVisible();
-
-            // # Cancel modal
-            await channelsPage.newChannelModal.cancel();
+            await modal.clickCancelButton();
+            await expect(modal.nameTextbox.locator).not.toBeVisible();
         },
     );
 
     /**
-     * @objective Verify that the team URL step is skipped when creating a team with anonymous URLs enabled and the team is created directly after entering display name
+     * @objective Verify that the team URL step is skipped when creating a team with anonymous URLs enabled
      *
      * @precondition
      * Server must have an Enterprise Advanced license
@@ -362,7 +384,7 @@ test.describe('Anonymous URLs', () => {
         'skips team URL step when creating team with anonymous URLs enabled',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup
+            // # Initialize setup and enable anonymous URLs
             const {adminUser, adminClient} = await pw.initSetup({withDefaultProfileImage: false});
             const license = await adminClient.getClientLicenseOld();
             test.skip(
@@ -372,48 +394,29 @@ test.describe('Anonymous URLs', () => {
 
             await setAnonymousUrls(adminClient, true);
 
-            // # Log in and go to channels
-            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto();
-            await expect(app.center.composer.locator).toBeVisible();
-
-            // Re-apply anonymous URLs immediately before the UI interaction: a
-            // concurrent initSetup() → patchConfig(defaultConfig) resets
-            // UseAnonymousURLs: false between the initial setAnonymousUrls call and here.
+            const app = await login(pw, adminUser);
             await setAnonymousUrls(adminClient, true);
 
-            // # Open team menu and click Create a team
-            await channelsPage.sidebarLeft.teamMenuButton.click();
-            await channelsPage.teamMenu.toBeVisible();
-            await channelsPage.teamMenu.clickCreateTeam();
+            // # Open the create-team form
+            const form = await openCreateTeamForm(app);
 
-            // # Wait for create team form
-            await channelsPage.createTeamForm.toBeVisible();
+            // * The name step's button creates the team (no URL step follows)
+            await expect(form.nextButton.locator).toContainText('Create');
 
-            // * Verify the display name input is visible
-            await expect(channelsPage.createTeamForm.teamNameInput).toBeVisible();
-
-            // * Verify the submit button text says "Create" because team creation stays on a single step
-            await expect(channelsPage.createTeamForm.teamNameSubmitButton).toContainText('Create');
-
-            // # Enter team name and submit
+            // # Create the team
             const teamName = 'Anonymous Team ' + Date.now();
-            await channelsPage.createTeamForm.fillTeamName(teamName);
-            await channelsPage.createTeamForm.submitDisplayName();
+            await form.fillNameTextbox(teamName);
+            await form.clickNextButton();
+            await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
 
-            // * Verify the team is created and user is redirected (no URL step shown)
-            await expect(app.center.composer.locator).toBeVisible();
-
-            // # Verify the team has an obfuscated slug
-            const teams = await adminClient.getMyTeams();
-            const createdTeam = teams.find((t) => t.display_name === teamName);
-            expect(createdTeam).toBeDefined();
-            expect(createdTeam!.name).toMatch(/^[a-z0-9]{26}$/);
+            // * The team got an obfuscated URL slug
+            const createdTeam = await getTeamByDisplayName(adminClient, teamName);
+            expect(createdTeam.name).toMatch(/^[a-z0-9]{26}$/);
         },
     );
 
     /**
-     * @objective Verify that the team URL step is shown when creating a team with anonymous URLs disabled (default)
+     * @objective Verify that the team URL step is shown when creating a team with anonymous URLs disabled
      */
     test(
         'shows team URL step when creating team with anonymous URLs disabled',
@@ -422,94 +425,86 @@ test.describe('Anonymous URLs', () => {
             // # Initialize setup
             const {adminUser} = await pw.initSetup({withDefaultProfileImage: false});
 
-            // # Log in and go to channels
-            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto();
-            await expect(app.center.composer.locator).toBeVisible();
+            // # Open the create-team form
+            const app = await login(pw, adminUser);
+            const form = await openCreateTeamForm(app);
 
-            // # Open team menu and click Create a team
-            await channelsPage.sidebarLeft.teamMenuButton.click();
-            await channelsPage.teamMenu.toBeVisible();
-            await channelsPage.teamMenu.clickCreateTeam();
+            // * The name step leads to a next step
+            await expect(form.nextButton.locator).toContainText('Next');
 
-            // # Wait for create team form
-            await channelsPage.createTeamForm.toBeVisible();
+            // # Fill in the name and go on
+            await form.fillNameTextbox('Test Team URL Step');
+            await form.clickNextButton();
 
-            // * Verify the submit button says "Next" on the first step because the team URL step follows
-            await expect(channelsPage.createTeamForm.teamNameSubmitButton).toContainText('Next');
-
-            // # Enter team name and click Next
-            await channelsPage.createTeamForm.fillTeamName('Test Team URL Step');
-            await channelsPage.createTeamForm.submitDisplayName();
-
-            // * Verify the team URL step is now visible
-            await expect(channelsPage.createTeamForm.teamURLInput).toBeVisible();
-            await expect(channelsPage.createTeamForm.teamURLSubmitButton).toBeVisible();
-            await expect(channelsPage.createTeamForm.teamURLSubmitButton).toContainText('Finish');
+            // * The URL step shows, finishing the form
+            await expect(form.urlTextbox.locator).toBeVisible();
+            await expect(form.finishButton.locator).toBeVisible();
+            await expect(form.finishButton.locator).toContainText('Finish');
         },
     );
 
     /**
-     * @objective Verify that an archived channel created with anonymous URLs keeps its obfuscated route and becomes usable again after unarchiving.
+     * @objective Verify that archiving and unarchiving an anonymous URL channel keeps its route
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test(
         'preserves archived anonymous channel routes and restores channel access after unarchive',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup and enable anonymous URLs
             const {adminUser, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await setAnonymousUrls(adminClient, true);
             await adminClient.addToTeam(team.id, adminUser.id);
 
-            // # Log in as admin and create a channel with an obfuscated slug
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
+            const app = await login(pw, adminUser, team);
 
-            // # Re-apply config in case a concurrent shard reset it during login/navigation
             await setAnonymousUrls(adminClient, true);
 
+            // # Create a channel with an obfuscated slug
             const channelDisplayName = `Archived Anonymous ${pw.random.id()}`;
-            await createChannelFromUI(channelsPage, channelDisplayName);
+            await createChannelFromUI(app, channelDisplayName);
 
             const createdChannel = await getChannelByDisplayName(adminClient, team.id, channelDisplayName);
             expectObfuscatedSlug(createdChannel.name);
 
-            // # Archive the channel and preserve the anonymous URL slug
+            // # Archive and unarchive it
             await adminClient.deleteChannel(createdChannel.id);
             const archivedChannel = await adminClient.getChannel(createdChannel.id);
 
-            // * Verify archiving does not rotate the anonymous URL route slug
+            // * The slug survives both
             expect(archivedChannel.name).toBe(createdChannel.name);
 
-            // # Restore the archived channel and verify the anonymous URL slug is preserved
             const restoredChannel = await adminClient.unarchiveChannel(createdChannel.id);
             expect(restoredChannel.name).toBe(createdChannel.name);
 
-            // # Open the restored channel again from the sidebar
-            await page.reload();
-            await channelsPage.sidebarLeft.goToItem(createdChannel.name);
+            // # Open it from the sidebar
+            await app.page.reload();
+            await app.lhs.channelList.channel(createdChannel).clickLink();
 
-            // * Verify the restored channel still uses the original anonymous URL route
-            await channelsPage.centerView.header.toHaveTitle(channelDisplayName);
-            await expect(page).toHavePath(`/${team.name}/channels/${createdChannel.name}`);
+            // * The channel opens on its original route
+            await expect(app.channelHeader.openMenuButton.locator).toContainText(channelDisplayName);
+            await expect(app.page).toHavePath(`/${team.name}/channels/${createdChannel.name}`);
         },
     );
 
     /**
-     * @objective Verify that enabling anonymous URLs does not rewrite existing readable slugs and only affects channels and teams created afterward.
+     * @objective Verify that enabling anonymous URLs leaves existing readable routes alone and obfuscates only new
+     * channels and teams
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test(
         'keeps existing readable routes unchanged and obfuscates only newly created channels and teams',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup with anonymous URLs disabled by default
             const {adminUser, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await adminClient.addToTeam(team.id, adminUser.id);
 
-            // # Create a legacy channel and team before enabling anonymous URLs
+            // # Create a channel and a team with readable slugs before enabling anonymous URLs
             const legacyChannelSlug = `legacy-channel-${pw.random.id()}`;
             const legacyChannelDisplayName = `Legacy Channel ${pw.random.id()}`;
             const legacyChannel = await adminClient.createChannel({
@@ -530,67 +525,66 @@ test.describe('Anonymous URLs', () => {
             expectReadableSlug(legacyChannel.name, legacyChannelSlug);
             expectReadableSlug(legacyTeam.name, legacyTeamSlug);
 
-            // # Enable anonymous URLs after the legacy channel and team already exist
+            // # Enable anonymous URLs
             await setAnonymousUrls(adminClient, true);
 
+            // * The existing slugs are unchanged
             const legacyChannelAfterToggle = await adminClient.getChannel(legacyChannel.id);
             const legacyTeamAfterToggle = await adminClient.getTeam(legacyTeam.id);
 
-            // * Verify the pre-existing slugs remain readable and unchanged
             expectReadableSlug(legacyChannelAfterToggle.name, legacyChannelSlug);
             expectReadableSlug(legacyTeamAfterToggle.name, legacyTeamSlug);
 
-            // # Log in and verify the original readable channel route still works
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: legacyChannelSlug});
-            await expect(page).toHavePath(`/${team.name}/channels/${legacyChannelSlug}`);
+            // * The legacy channel still opens on its readable route
+            const {app} = await pw.testBrowser.login(adminUser);
+            await goto(app, team, legacyChannelSlug);
+            await expect(app.page).toHavePath(`/${team.name}/channels/${legacyChannelSlug}`);
 
-            // # Create a new channel after the anonymous URL toggle.
-            // Re-apply config immediately before the UI action: a concurrent initSetup()
-            // on another shard can reset UseAnonymousURLs between the patch above and here.
+            // # Create a new channel
             const anonymousChannelDisplayName = `Anonymous Channel ${pw.random.id()}`;
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
+            await goto(app, team);
             await setAnonymousUrls(adminClient, true);
             await pw.waitUntil(async () => {
                 const cfg = await adminClient.getConfig();
                 return (cfg as any).PrivacySettings?.UseAnonymousURLs === true;
             });
-            await createChannelFromUI(channelsPage, anonymousChannelDisplayName);
+            await createChannelFromUI(app, anonymousChannelDisplayName);
 
+            // * It gets an obfuscated slug and route
             const anonymousChannel = await getChannelByDisplayName(adminClient, team.id, anonymousChannelDisplayName);
 
-            // * Verify only the new channel receives an obfuscated slug
             expectObfuscatedSlug(anonymousChannel.name);
-            await expect(page).toHavePath(`/${team.name}/channels/${anonymousChannel.name}`);
+            await expect(app.page).toHavePath(`/${team.name}/channels/${anonymousChannel.name}`);
 
-            // # Create a new team after the anonymous URL toggle.
-            // Re-apply again: team creation is a separate UI flow and config may have drifted.
+            // # Create a new team
             const anonymousTeamDisplayName = `Anonymous Team ${pw.random.id()}`;
             await setAnonymousUrls(adminClient, true);
-            await createTeamFromUI(channelsPage, anonymousTeamDisplayName);
+            await createTeamFromUI(app, anonymousTeamDisplayName);
 
+            // * It gets an obfuscated slug and route
             const anonymousTeam = await getTeamByDisplayName(adminClient, anonymousTeamDisplayName);
 
-            // * Verify only the new team receives an obfuscated slug
             expectObfuscatedSlug(anonymousTeam.name);
-            await expect(page).toHaveURL(new RegExp(`/${anonymousTeam.name}/`));
+            await expect(app.page).toHaveURL(new RegExp(`/${anonymousTeam.name}/`));
         },
     );
 
     /**
-     * @objective Verify that direct and group messages continue using message routes and are excluded from anonymous URL slug obfuscation.
+     * @objective Verify that direct and group message routes stay readable with anonymous URLs enabled
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test(
         'keeps direct and group message routes readable when anonymous URLs are enabled',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup, create message participants, and enable anonymous URLs
             const {adminUser, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await setAnonymousUrls(adminClient, true);
             await adminClient.addToTeam(team.id, adminUser.id);
 
+            // # Create a direct and a group message with a post in each
             const secondUser = await pw.createNewUserProfile(adminClient, {prefix: 'anonymousurlsdm'});
             const thirdUser = await pw.createNewUserProfile(adminClient, {prefix: 'anonymousurlsgm'});
             await adminClient.addToTeam(team.id, secondUser.id);
@@ -601,10 +595,10 @@ test.describe('Anonymous URLs', () => {
 
             const dmMessage = `Anonymous URL DM ${pw.random.id()}`;
             const gmMessage = `Anonymous URL GM ${pw.random.id()}`;
-            await adminClient.createPost({channel_id: dmChannel.id, message: dmMessage});
-            await adminClient.createPost({channel_id: gmChannel.id, message: gmMessage});
+            const dmPost = await adminClient.createPost({channel_id: dmChannel.id, message: dmMessage});
+            const gmPost = await adminClient.createPost({channel_id: gmChannel.id, message: gmMessage});
 
-            // * Verify DM and GM channel identifiers are not replaced with obfuscated slugs
+            // * Their names stay readable
             expect(dmChannel.type).toBe('D');
             expect(gmChannel.type).toBe('G');
             expectReadableSlug(dmChannel.name);
@@ -612,350 +606,311 @@ test.describe('Anonymous URLs', () => {
             expect(dmChannel.name).toContain(adminUser.id);
             expect(dmChannel.name).toContain(secondUser.id);
 
-            // # Log in as admin and open the DM route
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: `@${secondUser.username}`, path: 'messages'});
+            // * The direct message opens on its readable route, with its post
+            const {app} = await pw.testBrowser.login(adminUser);
+            await goto(app, team, `@${secondUser.username}`);
 
-            // * Verify the DM still uses the standard message route
-            await expect(page).toHavePath(`/${team.name}/messages/@${secondUser.username}`);
-            await channelsPage.centerView.waitUntilLastPostContains(dmMessage);
+            await expect(app.page).toHavePath(`/${team.name}/messages/@${secondUser.username}`);
+            await expect(app.center.postList.post(dmPost).messageText.locator).toContainText(dmMessage);
 
-            // # Open the GM route
-            await channelsPage.gotoMessage(team.name, gmChannel.name);
-            await expect(app.center.composer.locator).toBeVisible();
+            // * And so does the group message
+            await goto(app, team, gmChannel.name);
 
-            // * Verify the GM still uses the standard message route
-            await expect(page).toHavePath(`/${team.name}/messages/${gmChannel.name}`);
-            await channelsPage.centerView.waitUntilLastPostContains(gmMessage);
+            await expect(app.page).toHavePath(`/${team.name}/messages/${gmChannel.name}`);
+            await expect(app.center.postList.post(gmPost).messageText.locator).toContainText(gmMessage);
         },
     );
 
     /**
-     * @objective Verify that renaming an anonymous URL channel changes the display name without rewriting its obfuscated channel slug.
+     * @objective Verify that renaming an anonymous URL channel keeps its obfuscated route
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test(
         'renames an anonymous URL channel without changing its obfuscated route',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup and create an anonymous URL channel
             const {adminUser, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await setAnonymousUrls(adminClient, true);
             await adminClient.addToTeam(team.id, adminUser.id);
 
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
+            const app = await login(pw, adminUser, team);
 
+            // # Create a channel with an obfuscated slug
             const originalDisplayName = `Original Channel ${pw.random.id()}`;
-            // Re-apply guard: concurrent initSetup() may reset UseAnonymousURLs before channel creation
             await setAnonymousUrls(adminClient, true);
             await pw.waitUntil(async () => {
                 const cfg = await adminClient.getConfig();
                 return (cfg as any).PrivacySettings?.UseAnonymousURLs === true;
             });
-            await createChannelFromUI(channelsPage, originalDisplayName);
+            await createChannelFromUI(app, originalDisplayName);
 
             const createdChannel = await getChannelByDisplayName(adminClient, team.id, originalDisplayName);
             const originalSlug = createdChannel.name;
             expectObfuscatedSlug(originalSlug);
 
-            // # Rename the channel from channel settings
+            // # Rename it in Channel Settings
             const renamedDisplayName = `Renamed Channel ${pw.random.id()}`;
-            const channelSettingsModal = await channelsPage.openChannelSettings();
-            const infoTab = await channelSettingsModal.openInfoTab();
-            await infoTab.updateName(renamedDisplayName);
-            await channelSettingsModal.save();
+            const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+            await settings.info.fillNameTextbox(renamedDisplayName);
+            await settings.savePanel.clickSaveButton();
 
             await pw.waitUntil(
                 async () => (await adminClient.getChannel(createdChannel.id)).display_name === renamedDisplayName,
             );
-            await channelSettingsModal.close();
+            await settings.clickCloseButton();
+            await expect(settings.info.nameTextbox.locator).not.toBeVisible();
 
+            // * The slug is unchanged
             const renamedChannel = await adminClient.getChannel(createdChannel.id);
 
-            // * Verify the channel name changes without rotating the anonymous URL slug
             expect(renamedChannel.display_name).toBe(renamedDisplayName);
             expect(renamedChannel.name).toBe(originalSlug);
             expectObfuscatedSlug(renamedChannel.name);
 
-            // # Reopen the channel using its original obfuscated route
-            await channelsPage.goto(team.name, originalSlug);
-            await expect(app.center.composer.locator).toBeVisible();
+            // * The original route opens the renamed channel
+            await goto(app, team, originalSlug);
 
-            // * Verify the obfuscated route still resolves to the renamed channel
-            await expect(page).toHavePath(`/${team.name}/channels/${originalSlug}`);
-            await channelsPage.centerView.header.toHaveTitle(renamedDisplayName);
+            await expect(app.page).toHavePath(`/${team.name}/channels/${originalSlug}`);
+            await expect(app.channelHeader.openMenuButton.locator).toContainText(renamedDisplayName);
         },
     );
 
     /**
-     * @objective Verify that renaming an anonymous URL team changes the display name without rewriting its obfuscated team slug.
+     * @objective Verify that renaming an anonymous URL team keeps its obfuscated route
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test(
         'renames an anonymous URL team without changing its obfuscated route',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup and enable anonymous URLs
             const {adminUser, adminClient} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await setAnonymousUrls(adminClient, true);
 
-            // # Log in as admin and create a team with an obfuscated slug
-            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto();
-            await expect(app.center.composer.locator).toBeVisible();
+            const app = await login(pw, adminUser);
 
+            // # Create a team with an obfuscated slug
             const originalTeamDisplayName = `Original Team ${pw.random.id()}`;
-            // Re-apply guard: concurrent initSetup() may reset UseAnonymousURLs: false
-            // between the initial setAnonymousUrls call above and the team creation UI flow.
             await setAnonymousUrls(adminClient, true);
-            await createTeamFromUI(channelsPage, originalTeamDisplayName);
+            await createTeamFromUI(app, originalTeamDisplayName);
 
             const createdTeam = await getTeamByDisplayName(adminClient, originalTeamDisplayName);
             const originalTeamSlug = createdTeam.name;
             expectObfuscatedSlug(originalTeamSlug);
 
-            // # Rename the team from team settings
+            // # Rename it in Team Settings
             const renamedTeamDisplayName = `Renamed Team ${pw.random.id()}`;
-            const teamSettingsModal = await channelsPage.openTeamSettings();
-            const infoTab = await teamSettingsModal.openInfoTab();
-            await infoTab.updateName(renamedTeamDisplayName);
-            await teamSettingsModal.save();
+            let teamSettings = await (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
+            await teamSettings.info.fillNameTextbox(renamedTeamDisplayName);
+            await teamSettings.savePanel.clickSaveButton();
 
             await pw.waitUntil(
                 async () => (await adminClient.getTeam(createdTeam.id)).display_name === renamedTeamDisplayName,
             );
-            await teamSettingsModal.close();
+            await teamSettings.clickCloseButton();
+            await expect(teamSettings.info.nameTextbox.locator).not.toBeVisible();
 
+            // * The slug is unchanged
             const renamedTeam = await adminClient.getTeam(createdTeam.id);
 
-            // * Verify the team name changes without rotating the anonymous URL slug
             expect(renamedTeam.display_name).toBe(renamedTeamDisplayName);
             expect(renamedTeam.name).toBe(originalTeamSlug);
             expectObfuscatedSlug(renamedTeam.name);
 
-            // # Reopen the team using its original obfuscated route
-            await app.teamPage.goto({team: originalTeamSlug});
-            await expect(app.center.composer.locator).toBeVisible();
+            // * The original route opens the team, with its new name
+            await goto(app, originalTeamSlug);
 
-            // * Verify the obfuscated team route still resolves to the renamed team
-            await expect(page).toHaveURL(new RegExp(`/${originalTeamSlug}/`));
+            await expect(app.page).toHaveURL(new RegExp(`/${originalTeamSlug}/`));
 
-            const reopenedTeamSettings = await channelsPage.openTeamSettings();
-            await expect(reopenedTeamSettings.infoSettings.nameInput).toHaveValue(renamedTeamDisplayName);
-            await reopenedTeamSettings.close();
+            teamSettings = await (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
+            await expect(teamSettings.info.nameTextbox.locator).toHaveValue(renamedTeamDisplayName);
+            await teamSettings.clickCloseButton();
+            await expect(teamSettings.info.nameTextbox.locator).not.toBeVisible();
         },
     );
 
     /**
-     * @objective Verify that post permalinks created in anonymous URL channels continue to resolve after the feature is turned off.
+     * @objective Verify that permalinks to an anonymous URL channel open it, before and after disabling anonymous URLs
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test(
         'opens anonymous channel permalinks before and after disabling anonymous URLs',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup and enable anonymous URLs
             const {adminClient, team, user} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await setAnonymousUrls(adminClient, true);
 
-            // # Log in and create an anonymous URL channel
-            const {channelsPage, app, page} = await pw.testBrowser.login(user);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
+            const app = await login(pw, user, team);
 
+            // # Create a channel and post in it
             const displayName = `Permalink Channel ${pw.random.id()}`;
-            const channel = await createAnonymousUrlChannel(channelsPage, adminClient, team.name, team.id, displayName);
+            const channel = await createAnonymousUrlChannel(app, adminClient, team.name, team.id, displayName);
 
-            // # Publish a post that will be opened via permalink
             const message = `Anonymous permalink message ${pw.random.id()}`;
-            await channelsPage.postMessage(message);
-
-            const lastPost = await channelsPage.getLastPost();
-            const postId = await lastPost.getId();
+            const postId = await postMessage(app, message);
             const permalink = `/${team.name}/pl/${postId}`;
 
-            // # Open the permalink while anonymous URLs are enabled
-            await page.goto(permalink);
+            // # Open the post's permalink
+            await app.page.goto(permalink);
 
-            // * Verify the permalink resolves to the channel's obfuscated route
-            await channelsPage.centerView.header.toHaveTitle(displayName);
-            await expect(page).toHavePath(`/${team.name}/channels/${channel.name}`);
-            await channelsPage.centerView.waitUntilPostWithIdContains(postId, message);
+            // * It opens the channel on its obfuscated route, showing the post
+            await expect(app.channelHeader.openMenuButton.locator).toContainText(displayName);
+            await expect(app.page).toHavePath(`/${team.name}/channels/${channel.name}`);
+            await expect(app.center.postList.post({id: postId}).messageText.locator).toContainText(message);
 
-            // # Disable anonymous URLs and reopen the same permalink
+            // # Disable anonymous URLs and open the permalink again
             await setAnonymousUrls(adminClient, false);
-            await page.goto(permalink);
+            await app.page.goto(permalink);
 
-            // * Verify the permalink still resolves to the existing obfuscated route
-            await channelsPage.centerView.header.toHaveTitle(displayName);
-            await expect(page).toHavePath(`/${team.name}/channels/${channel.name}`);
-            await channelsPage.centerView.waitUntilPostWithIdContains(postId, message);
+            // * It still opens the same route
+            await expect(app.channelHeader.openMenuButton.locator).toContainText(displayName);
+            await expect(app.page).toHavePath(`/${team.name}/channels/${channel.name}`);
+            await expect(app.center.postList.post({id: postId}).messageText.locator).toContainText(message);
         },
     );
 
     /**
-     * @objective Verify that channel search finds anonymous URL channels by display name and navigates to their obfuscated routes.
+     * @objective Verify that the channel switcher finds channels with obfuscated URLs
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test('channel search finds channels with obfuscated URLs', {tag: '@anonymous_urls'}, async ({pw}) => {
-        // # Initialize setup and enable anonymous URLs
-        const {adminClient, team, user, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
+        const {adminClient, team, user} = await pw.initSetup({withDefaultProfileImage: false});
         await skipIfNoAdvancedLicense(adminClient);
         await setAnonymousUrls(adminClient, true);
 
-        // # Log in and navigate to the test team so the webapp loads config with
-        // # UseAnonymousURLs already true; explicit addToTeam guards against race resets
         await adminClient.addToTeam(team.id, user.id);
-        const {channelsPage, app, page} = await pw.testBrowser.login(user);
-        await app.teamPage.goto({team});
-        await expect(app.center.composer.locator).toBeVisible();
+        const app = await login(pw, user, team);
 
-        // # Re-apply config immediately before channel creation to guard against
-        // # concurrent shard initSetup calls resetting UseAnonymousURLs to false
         await setAnonymousUrls(adminClient, true);
 
+        // # Create three channels
         const createdChannels = [];
         for (let i = 1; i <= 3; i++) {
             const displayName = `Search Test Channel ${i} ${pw.random.id()}`;
-            const channel = await createAnonymousUrlChannel(channelsPage, adminClient, team.name, team.id, displayName);
+            const channel = await createAnonymousUrlChannel(app, adminClient, team.name, team.id, displayName);
             createdChannels.push({channel, displayName});
         }
 
         const targetChannel = createdChannels[0];
 
-        // # Open Find Channels and search by display name
-        await app.channelsPage.goto({team, channel: townSquare});
-        await channelsPage.sidebarLeft.findChannelButton.click();
-        await channelsPage.findChannelsModal.toBeVisible();
-        await channelsPage.findChannelsModal.input.fill(targetChannel.displayName.substring(0, 15));
+        // # Search for the first from town square
+        await goto(app, team);
+        const result = await switchTo(app, targetChannel.displayName.substring(0, 15), targetChannel.channel);
 
-        // * Verify the anonymous URL channel appears in results
-        const result = channelsPage.findChannelsModal.getResult(targetChannel.channel);
-        await expect(result).toBeVisible();
+        // * It is found by name, and opens on its obfuscated route
         await expect(result).toContainText(targetChannel.displayName);
+        await result.click();
 
-        // # Select the matching anonymous URL channel
-        await channelsPage.findChannelsModal.selectChannel(targetChannel.channel);
-
-        // * Verify navigation lands on the obfuscated route
-        await channelsPage.centerView.header.toHaveTitle(targetChannel.displayName);
-        await expect(page).toHavePath(`/${team.name}/channels/${targetChannel.channel.name}`);
+        await expect(app.channelHeader.openMenuButton.locator).toContainText(targetChannel.displayName);
+        await expect(app.page).toHavePath(`/${team.name}/channels/${targetChannel.channel.name}`);
     });
 
     /**
-     * @objective Verify that post search results navigate back to the correct anonymous URL channel route.
+     * @objective Verify that jumping from a post search result opens the anonymous URL channel
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test('navigates post search results back to anonymous URL channels', {tag: '@anonymous_urls'}, async ({pw}) => {
-        // # Initialize setup and enable anonymous URLs
-        const {adminClient, team, user, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
+        const {adminClient, team, user} = await pw.initSetup({withDefaultProfileImage: false});
         await skipIfNoAdvancedLicense(adminClient);
         await setAnonymousUrls(adminClient, true);
 
-        // # Log in and create an anonymous URL channel with a searchable post
-        const {channelsPage, app, page} = await pw.testBrowser.login(user);
-        await app.teamPage.goto({team});
-        await expect(app.center.composer.locator).toBeVisible();
+        const app = await login(pw, user, team);
 
+        // # Create a channel and post a searchable message
         const displayName = `Search Channel ${pw.random.id()}`;
-        const channel = await createAnonymousUrlChannel(channelsPage, adminClient, team.name, team.id, displayName);
+        const channel = await createAnonymousUrlChannel(app, adminClient, team.name, team.id, displayName);
         const message = `AnonymousSearchableMessage${pw.random.id()}`;
-        await channelsPage.postMessage(message);
+        const postId = await postMessage(app, message);
 
-        const lastPost = await channelsPage.getLastPost();
-        const postId = await lastPost.getId();
+        // # Search for it from town square
+        await goto(app, team);
+        await app.globalHeader.search.clickOpenButton();
+        await app.searchBox.inputSearchbox.locator.fill(message);
+        await app.searchBox.inputSearchbox.locator.press('Enter');
 
-        // # Open message search from another channel
-        await app.channelsPage.goto({team, channel: townSquare});
-        await channelsPage.globalHeader.openSearch();
-        await channelsPage.searchBox.searchInput.fill(message);
-        await channelsPage.searchBox.searchInput.press('Enter');
+        const result = app.search.results.post({id: postId});
+        await expect(result.messageText.locator).toContainText(message);
 
-        const searchItem = page.getByTestId(/^search\.results\.(post|file):/).first();
+        // # Jump to it
+        await result.locator.hover();
+        await result.menu.clickJumpLink();
 
-        // * Verify the post appears in results
-        await expect(searchItem).toContainText(message, {timeout: duration.half_min});
-
-        // # Jump from the search result back to the anonymous URL channel
-        await searchItem.getByRole('link', {name: 'Jump'}).click();
-
-        // * Verify navigation returns to the anonymous URL route and highlights the expected post
-        await channelsPage.centerView.header.toHaveTitle(displayName);
-        await expect(page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}`));
-        await channelsPage.centerView.waitUntilPostWithIdContains(postId, message);
+        // * The channel opens on its obfuscated route, showing the post
+        await expect(app.channelHeader.openMenuButton.locator).toContainText(displayName);
+        await expect(app.page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}`));
+        await expect(app.center.postList.post({id: postId}).messageText.locator).toContainText(message);
     });
 
     /**
-     * @objective Verify that anonymous URLs preserve edge-case channel display names while keeping channels discoverable and fully usable.
+     * @objective Verify that channels with unicode and emoji names get anonymous URLs and stay findable
+     *
+     * @precondition
+     * Server must have an Enterprise Advanced license
      */
     test(
         'creates anonymous URL channels from unicode and emoji display names and keeps them discoverable',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup and enable anonymous URLs
-            const {user, adminClient, team, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
+            const {user, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await setAnonymousUrls(adminClient, true);
 
-            // # Log in and open the test team
-            const {channelsPage, app, page} = await pw.testBrowser.login(user);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
+            const app = await login(pw, user, team);
 
-            // # Create channels with edge-case display names
+            // # Create a channel from each name and post in it
             const channelTemplates = ['Design review 🚀', 'Roadmap 中文', 'Support & Ops عربى'];
             const createdChannels = [];
 
             for (const template of channelTemplates) {
                 const displayName = `${template} ${pw.random.id().slice(0, 6)}`;
-                const channel = await createAnonymousUrlChannel(
-                    channelsPage,
-                    adminClient,
-                    team.name,
-                    team.id,
-                    displayName,
-                );
+                const channel = await createAnonymousUrlChannel(app, adminClient, team.name, team.id, displayName);
 
                 createdChannels.push({channel, displayName});
 
-                // # Post in the new anonymous URL channel
                 const message = `anonymous-url edge case ${displayName}`;
-                await channelsPage.postMessage(message);
+                const postId = await postMessage(app, message);
 
-                // * Verify the channel keeps the exact display name and remains usable
-                const lastPost = await channelsPage.getLastPost();
-                await expect(lastPost.body).toContainText(message);
-                await channelsPage.centerView.header.toHaveTitle(displayName);
-                await expect(page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}$`));
+                // * The post shows in the channel, on its obfuscated route
+                await expect(app.center.postList.post({id: postId}).messageText.locator).toContainText(message);
+                await expect(app.channelHeader.openMenuButton.locator).toContainText(displayName);
+                await expect(app.page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}$`));
             }
 
+            // # Find the second with the channel switcher
             const searchableChannel = createdChannels[1];
 
-            // # Reopen the channel from Find Channels using its display name
-            await app.channelsPage.goto({team, channel: townSquare});
-            await channelsPage.sidebarLeft.findChannelButton.click();
-            await channelsPage.findChannelsModal.toBeVisible();
-            await channelsPage.findChannelsModal.input.fill(searchableChannel.displayName);
+            await goto(app, team);
+            const result = await switchTo(app, searchableChannel.displayName, searchableChannel.channel);
+            await result.click();
 
-            // * Verify search results use the display name and navigate back to the obfuscated slug
-            await expect(channelsPage.findChannelsModal.getResult(searchableChannel.channel)).toBeVisible();
-            await channelsPage.findChannelsModal.selectChannel(searchableChannel.channel);
-            await channelsPage.centerView.header.toHaveTitle(searchableChannel.displayName);
-            await expect(page).toHaveURL(new RegExp(`/${team.name}/channels/${searchableChannel.channel.name}$`));
+            // * It opens on its obfuscated route
+            await expect(app.channelHeader.openMenuButton.locator).toContainText(searchableChannel.displayName);
+            await expect(app.page).toHaveURL(new RegExp(`/${team.name}/channels/${searchableChannel.channel.name}$`));
         },
     );
 
     /**
-     * @objective Verify that anonymous URL channels with special-character names still expose the Calls entry point after direct navigation.
+     * @objective Verify that the Calls entry point works in anonymous URL channels with special-character names
      *
      * @precondition
-     * Calls plugin must be installed in the test environment.
+     * Server must have an Enterprise Advanced license and the Calls plugin
      */
     test(
         'shows calls entry point in anonymous URL channels with special-character names and preserves the obfuscated route',
         {tag: '@anonymous_urls'},
         async ({pw}) => {
-            // # Initialize setup and validate Calls prerequisites
             const {adminUser, adminClient, team, user} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
 
@@ -970,34 +925,33 @@ test.describe('Anonymous URLs', () => {
             await setAnonymousUrls(adminClient, true);
             await adminClient.addToTeam(team.id, adminUser.id);
 
-            // # Create an anonymous URL channel with a special-character display name
-            const {channelsPage, app} = await pw.testBrowser.login(user);
-            await app.teamPage.goto({team});
-            await expect(app.center.composer.locator).toBeVisible();
+            // # Create a channel with a special-character name
+            const app = await login(pw, user, team);
 
             const displayName = `Calls & Planning 🚀 ${pw.random.id().slice(0, 6)}`;
-            const channel = await createAnonymousUrlChannel(channelsPage, adminClient, team.name, team.id, displayName);
+            const channel = await createAnonymousUrlChannel(app, adminClient, team.name, team.id, displayName);
             await adminClient.addToChannel(adminUser.id, channel.id);
 
-            // * Verify the current anonymous URL channel shows the Calls entry point
-            await channelsPage.centerView.header.toHaveTitle(displayName);
-            await expect(channelsPage.centerView.header.callButton).toBeVisible();
+            // * The Calls button shows
+            await expect(app.channelHeader.openMenuButton.locator).toContainText(displayName);
+            await expect(app.channelHeader.pluginActions.action('com_mattermost_calls').locator).toBeVisible();
 
-            // # Open the anonymous URL directly as another member
-            const {channelsPage: otherChannelsPage, app: otherApp, page} = await pw.testBrowser.login(adminUser);
-            await otherApp.channelsPage.goto({team, channel: channel.name});
+            // # Open the channel as another member
+            const {app: other} = await pw.testBrowser.login(adminUser);
+            await goto(other, team, channel.name);
 
-            // * Verify direct navigation keeps the obfuscated slug and still exposes Calls
-            await otherChannelsPage.centerView.header.toHaveTitle(displayName);
-            await expect(page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}$`));
-            await expect(otherChannelsPage.centerView.header.callButton).toBeVisible();
+            // * It opens on its obfuscated route, with the Calls button
+            await expect(other.channelHeader.openMenuButton.locator).toContainText(displayName);
+            await expect(other.page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}$`));
+            const callButton = other.channelHeader.pluginActions.action('com_mattermost_calls');
+            await expect(callButton.locator).toBeVisible();
 
-            // # Open the Calls entry point from the anonymous URL channel
-            await otherChannelsPage.centerView.header.openCalls();
+            // # Start a call
+            await callButton.click();
 
-            // * Verify opening Calls does not break the anonymous URL route context
-            await otherChannelsPage.centerView.header.toHaveTitle(displayName);
-            await expect(page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}`));
+            // * The channel and its route stay as they were
+            await expect(other.channelHeader.openMenuButton.locator).toContainText(displayName);
+            await expect(other.page).toHaveURL(new RegExp(`/${team.name}/channels/${channel.name}`));
         },
     );
 });

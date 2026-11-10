@@ -108,7 +108,7 @@ export default class ChannelsPage {
         this.imagePreviewModal = new components.ImagePreviewModal(
             page.getByRole('dialog').filter({has: page.getByAltText('preview url image')}),
         );
-        this.createTeamForm = new CreateTeamForm(page.getByTestId('create-team-form'));
+        this.createTeamForm = new CreateTeamForm(page.getByTestId('create_team.form'));
         this.deletePostModal = new components.DeletePostModal(page.locator('#deletePostModal'));
         this.findChannelsModal = new components.FindChannelsModal(page.getByRole('dialog', {name: 'Find Channels'}));
         this.newChannelModal = new NewChannelModal(page.getByRole('dialog', {name: 'Create a new channel'}));
@@ -124,11 +124,11 @@ export default class ChannelsPage {
         );
         this.searchResultsPanel = new components.SearchResultsPanel(page.locator('#searchContainer'));
         this.marketplaceModal = new components.MarketplaceModal(page.getByRole('dialog', {name: 'App Marketplace'}));
-        this.channelBookmarksBar = new components.ChannelBookmarksBar(page.getByTestId('channel-bookmarks-container'));
+        this.channelBookmarksBar = new components.ChannelBookmarksBar(page.getByTestId('channel_bookmarks'));
         this.bookmarkCreateModal = new components.ChannelBookmarksCreateModal(
             page.getByRole('dialog', {name: 'Add a bookmark'}),
         );
-        this.userGroupsModal = new components.UserGroupsModal(page.locator('#userGroupsModal'));
+        this.userGroupsModal = new components.UserGroupsModal(page.getByTestId('user_groups_modal'));
         this.leaveTeamModal = new components.LeaveTeamModal(page.getByRole('dialog', {name: 'Leave the team?'}));
 
         // Menus
@@ -463,8 +463,11 @@ export default class ChannelsPage {
     async toHaveTeamUnread(teamDisplayName: string, teamId: string) {
         const teamButton = this.getTeamButton(teamDisplayName);
         await expect(teamButton).toHaveAccessibleName(`${teamDisplayName.toLowerCase()} team unread`);
-        await expect(teamButton.getByTestId(`team-badge-${teamId}`)).toBeVisible();
-        await expect(teamButton.getByTestId(`team-badge-${teamId}`)).toHaveText('');
+        const badge = this.page
+            .getByTestId(`team_sidebar.team:${teamId}`)
+            .getByTestId('team_sidebar.team.unread--text');
+        await expect(badge).toBeVisible();
+        await expect(badge).toHaveText('');
     }
 
     /**

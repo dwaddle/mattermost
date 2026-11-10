@@ -13,6 +13,7 @@ import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
 import {DeletePostModal} from './delete_post_modal';
 import {FlagPostModal} from './flag_post_modal';
 import {ForwardPostModal} from './forward_post_modal';
+import {MoveThreadModal} from './move_thread_modal';
 import type {PostDotMenuOption} from './sets';
 
 /** Scope `post_dot_menu`. */
@@ -203,7 +204,7 @@ export class PostDotMenu extends Scope {
     /**
      * `post_dot_menu.move_thread--menuitem` — DotMenuClass (channels/src/components/dot_menu/dot_menu.tsx)
      * Renders only when showMove.
-     * Opens modal MoveThreadModal.
+     * Opens modal MoveThreadModal (`move_thread_modal`).
      */
     get moveThreadMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.move_thread--menuitem`), {
@@ -215,8 +216,10 @@ export class PostDotMenu extends Scope {
         });
     }
 
-    async clickMoveThreadMenuItem(): Promise<void> {
+    /** Clicks moveThreadMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickMoveThreadMenuItem(): Promise<MoveThreadModal> {
         await this.moveThreadMenuItem.click();
+        return new MoveThreadModal(this.page, 'move_thread_modal');
     }
 
     /**

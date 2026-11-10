@@ -17,9 +17,9 @@ export default class UserGroupsModal {
     constructor(container: Locator) {
         this.container = container;
 
-        this.createGroupButton = container.getByRole('button', {name: 'Create Group'});
-        this.searchInput = container.getByTestId('searchInput');
-        this.filterButton = container.locator('#groupsFilterDropdown');
+        this.createGroupButton = container.getByTestId('user_groups_modal.create--button');
+        this.searchInput = container.getByTestId('user_groups_modal.search--textbox');
+        this.filterButton = container.getByTestId('user_groups_modal.filter--button');
     }
 
     async toBeVisible() {
@@ -30,7 +30,9 @@ export default class UserGroupsModal {
      * Locates a group row by its display name.
      */
     getGroup(displayName: string): Locator {
-        return this.container.getByRole('button', {name: `${displayName} group`, exact: true});
+        return this.container
+            .getByTestId(/^user_groups_modal\.group:/)
+            .filter({has: this.container.page().getByText(displayName, {exact: true})});
     }
 
     async openGroup(displayName: string) {
@@ -42,6 +44,6 @@ export default class UserGroupsModal {
      */
     async filterArchived() {
         await this.filterButton.click();
-        await this.container.page().getByRole('menuitem', {name: 'Archived Groups'}).click();
+        await this.container.page().getByTestId('user_groups_modal.filter_menu.archived--menuitem').click();
     }
 }

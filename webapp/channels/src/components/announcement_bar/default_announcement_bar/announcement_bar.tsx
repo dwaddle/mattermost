@@ -8,6 +8,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import FormattedMarkdownMessage from 'components/formatted_markdown_message';
 
@@ -18,6 +19,9 @@ import './default_announcement_bar.scss';
 
 type Props = {
     id?: string;
+
+    // The bar is `<testId>` (else its legacy `id`), its message `<testId>.message--text`, its close link `<testId>.close--link`.
+    testId?: TestId;
     showCloseButton: boolean;
     className?: string;
     color: string;
@@ -165,6 +169,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
                 <a
                     href='#'
                     className='announcement-bar__close'
+                    data-testid={this.props.testId ? `${this.props.testId}.close--link` : undefined}
                     style={linkStyle}
                     onClick={this.handleClose}
                 >
@@ -190,6 +195,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
             <span
                 ref={this.messageRef}
                 onMouseEnter={this.enableToolTipIfNeeded}
+                data-testid={this.props.testId ? `${this.props.testId}.message--text` : undefined}
             >
                 {message}
             </span>
@@ -241,7 +247,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
                 style={barStyle}
                 // eslint-disable-next-line react/no-unknown-property
                 css={{gridArea: 'announcement'}}
-                data-testid={this.props.id}
+                data-testid={this.props.testId ?? this.props.id}
             >
                 {barContent}
                 {closeButton}

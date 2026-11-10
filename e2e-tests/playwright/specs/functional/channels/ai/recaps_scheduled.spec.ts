@@ -3,6 +3,7 @@
 
 import {expect, test} from './ai_bridge_fixture';
 import {createUnreadChannelFixture, setupRecapBridge} from './recaps_helpers';
+import {RecapsUi} from './recaps_support';
 
 const MONDAY = 1 << 1;
 const WEDNESDAY = 1 << 3;
@@ -35,7 +36,8 @@ test('creates and manages a scheduled recap', {tag: '@ai_recaps'}, async ({pw}) 
     );
 
     // # Create a selected-channel scheduled recap through the modal flow.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
@@ -48,7 +50,7 @@ test('creates and manages a scheduled recap', {tag: '@ai_recaps'}, async ({pw}) 
     await createRecapModal.selectChannel(channel.display_name);
     await createRecapModal.clickNext();
     await createRecapModal.expectScheduleConfigurationVisible();
-    await createRecapModal.selectScheduleDay('M');
+    await createRecapModal.selectScheduleDay('monday');
     await createRecapModal.createSchedule();
 
     // * Verify the scheduled recap is listed with stable schedule structure and active state.
@@ -191,7 +193,8 @@ test('edits a scheduled recap through the options menu', {tag: '@ai_recaps'}, as
     });
 
     // # Open the Scheduled tab and launch the edit modal from the recap's Options menu.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
     await recapsPage.switchToScheduled();
@@ -208,7 +211,7 @@ test('edits a scheduled recap through the options menu', {tag: '@ai_recaps'}, as
     await editModal.expectChannelSelectorVisible();
     await editModal.clickNext();
     await editModal.expectScheduleConfigurationVisible();
-    await editModal.selectScheduleDay('W');
+    await editModal.selectScheduleDay('wednesday');
     await editModal.saveChanges();
 
     // * Verify the list reflects the new title and the dropped original title, and shows the added day.
@@ -282,15 +285,15 @@ test('deletes a scheduled recap through the options menu', {tag: '@ai_recaps'}, 
     });
 
     // # Open the Scheduled tab, trigger Delete from the Options menu, and confirm the dialog.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
     await recapsPage.switchToScheduled();
 
     const scheduledRecap = recapsPage.getScheduledRecap(recapTitle);
     await scheduledRecap.toBeVisible();
-    await scheduledRecap.deleteViaMenu();
-    await recapsPage.confirmDelete();
+    await recapsPage.confirmDelete(await scheduledRecap.deleteViaMenu());
 
     // * Verify the recap disappears from the list and the empty state returns.
     await recapsPage.expectScheduledRecapNotVisible(recapTitle);
@@ -317,7 +320,8 @@ test('shows the scheduled empty state for a user with no scheduled recaps', {tag
     });
 
     // # Open the recaps page and switch to the Scheduled tab.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
     await recapsPage.switchToScheduled();
@@ -358,7 +362,8 @@ test('creates an all-unreads scheduled recap through the modal', {tag: '@ai_reca
     );
 
     // # Open the modal, choose all-unreads mode, and advance directly to the schedule step.
-    const {recapsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
+    const recapsPage = new RecapsUi(app);
     await recapsPage.goto(team.name);
     await recapsPage.toBeVisible();
 
@@ -370,7 +375,7 @@ test('creates an all-unreads scheduled recap through the modal', {tag: '@ai_reca
     // * Verify the all-unreads flow skips the channel selector and lands on schedule configuration.
     await createRecapModal.expectChannelSelectorHidden();
     await createRecapModal.expectScheduleConfigurationVisible();
-    await createRecapModal.selectScheduleDay('M');
+    await createRecapModal.selectScheduleDay('monday');
     await createRecapModal.createSchedule();
 
     // * Verify the scheduled recap is listed.

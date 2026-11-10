@@ -19,7 +19,7 @@ export default class AboutBuildModal {
     constructor(container: Locator) {
         this.container = container;
 
-        this.versionInfo = container.getByTestId('aboutModalVersionInfo');
+        this.versionInfo = container.getByTestId('about_build_modal.version--text');
         this.hashInfo = container.locator('.about-modal__hash');
         this.closeButton = container.getByRole('button', {name: 'Close'});
     }

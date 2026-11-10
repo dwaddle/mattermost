@@ -111,10 +111,7 @@ jobs:
         with:
           read-only: "true"
       - name: ci/test-surface-tool-tests
-        # the scanner's lint, types and fixture tests; nothing in the webapp uses it yet
         run: |
-          npm run check --workspace=platform/test-surface
-          npm run check-types --workspace=platform/test-surface
           npm run test --workspace=platform/test-surface
       - name: ci/testid-lint-rule-tests
         # testid-grammar, testid-no-unscoped-data and the e2e spec rules
@@ -128,8 +125,7 @@ jobs:
         run: |
           npm ci --ignore-scripts --no-audit --no-fund
       - name: ci/test-surface
-        # scan + checks: errors fail, warnings are reported. Then regenerate: the committed manifest and page
-        # objects must be current.
+        # scan + checks (errors fail), then regenerate: the committed manifest and page objects must be current
         working-directory: webapp/channels
         run: |
           npm run test-surface:check

@@ -44,6 +44,8 @@
             "channels/src/components/actions_menu/",
             "channels/src/components/add_groups_to_channel_modal/",
             "channels/src/components/add_groups_to_team_modal/",
+            "channels/src/components/add_user_to_group_multiselect/",
+            "channels/src/components/add_users_to_group_modal/",
             "channels/src/components/add_users_to_team_modal/",
             "channels/src/components/admin_console/access_control",
             "channels/src/components/admin_console/access_control/modals/simulate_access/",
@@ -85,17 +87,22 @@
             "channels/src/components/advanced_text_editor/send_button/scheduled_post_custom_time_modal/",
             "channels/src/components/advanced_text_editor/send_button/send_post_options/",
             "channels/src/components/analytics/",
+            "channels/src/components/announcement_bar/announcement_bar_controller.tsx",
+            "channels/src/components/announcement_bar/default_announcement_bar/",
+            "channels/src/components/announcement_bar/text_dismissable_bar.tsx",
             "channels/src/components/app_bar/app_bar.tsx",
             "channels/src/components/app_bar/app_bar_plugin_component.tsx",
             "channels/src/components/apps_form/",
             "channels/src/components/at_mention",
             "channels/src/components/backstage/components/backstage_navbar.tsx",
             "channels/src/components/block_renderer/",
+            "channels/src/components/browse_channels/",
             "channels/src/components/burn_on_read/",
             "channels/src/components/burn_on_read_confirmation_modal/",
             "channels/src/components/category_selector/category_selector.tsx",
             "channels/src/components/channel_attributes",
             "channels/src/components/channel_banner/",
+            "channels/src/components/channel_bookmarks/",
             "channels/src/components/channel_header/",
             "channels/src/components/channel_header/channel_header_text.tsx",
             "channels/src/components/channel_header/channel_header_text_popover.tsx",
@@ -117,10 +124,14 @@
             "channels/src/components/common/select_text_input/select_text_input.tsx",
             "channels/src/components/common/token_expiry_picker/",
             "channels/src/components/copy_text.tsx",
+            "channels/src/components/create_recap_modal/",
+            "channels/src/components/create_team/",
+            "channels/src/components/create_user_groups_modal/",
             "channels/src/components/custom_status/",
             "channels/src/components/date_time_picker_modal/",
             "channels/src/components/delete_channel_modal/delete_channel_modal.tsx",
             "channels/src/components/delete_post_modal/delete_post_modal.tsx",
+            "channels/src/components/disable_autotranslation_modal.tsx",
             "channels/src/components/discard_changes_modal.tsx",
             "channels/src/components/dot_menu/dot_menu.tsx",
             "channels/src/components/dot_menu/post_reminder_submenu.tsx",
@@ -148,6 +159,7 @@
             "channels/src/components/header_footer_route/",
             "channels/src/components/header_footer_route/content_layouts/",
             "channels/src/components/header_footer_template/",
+            "channels/src/components/hint-toast/",
             "channels/src/components/integrations/bots/add_bot/",
             "channels/src/components/integrations/bots/bot.tsx",
             "channels/src/components/integrations/bots/bot_create_warnings_banner.tsx",
@@ -160,6 +172,8 @@
             "channels/src/components/integrations/integration_option.tsx",
             "channels/src/components/integrations/integrations.tsx",
             "channels/src/components/invitation_modal/",
+            "channels/src/components/join_private_channel_modal.tsx",
+            "channels/src/components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal.tsx",
             "channels/src/components/latex_block/",
             "channels/src/components/latex_inline/",
             "channels/src/components/leave_channel_modal/",
@@ -174,6 +188,7 @@
             "channels/src/components/message_with_additional_content.tsx",
             "channels/src/components/mobile_channel_header/show_search_button/show_search_button.tsx",
             "channels/src/components/mobile_sidebar_right/",
+            "channels/src/components/more_direct_channels/",
             "channels/src/components/multiselect/",
             "channels/src/components/new_channel_modal/new_channel_modal.tsx",
             "channels/src/components/new_replies_banner/",
@@ -216,7 +231,9 @@
             "channels/src/components/properties_card_view/",
             "channels/src/components/property_fields/user_attribute_fields/",
             "channels/src/components/quick_switch_modal",
+            "channels/src/components/recaps/",
             "channels/src/components/remove_flagged_message_confirmation_modal/",
+            "channels/src/components/request_join_channel_modal/request_join_channel_modal.tsx",
             "channels/src/components/rhs_header_post/",
             "channels/src/components/scroll_to_bottom_toast/",
             "channels/src/components/search/search.tsx",
@@ -226,11 +243,14 @@
             "channels/src/components/search_results/post_search_results_item.tsx",
             "channels/src/components/search_results/search_results.tsx",
             "channels/src/components/search_results_header/",
+            "channels/src/components/searchable_channel_list.tsx",
             "channels/src/components/searchable_user_list/",
+            "channels/src/components/select_team/components/select_team_item.tsx",
             "channels/src/components/setting_item_max.tsx",
             "channels/src/components/setting_item_min.tsx",
             "channels/src/components/setting_picture.tsx",
             "channels/src/components/should_verify_email/",
+            "channels/src/components/show_translation_modal/",
             "channels/src/components/sidebar/channel_filter/",
             "channels/src/components/sidebar/channel_navigator/",
             "channels/src/components/sidebar/sidebar_category/",
@@ -255,11 +275,15 @@
             "channels/src/components/team_settings/team_info_tab/",
             "channels/src/components/team_settings/team_membership_tab/team_membership_tab.tsx",
             "channels/src/components/team_settings_modal/team_settings_modal.tsx",
+            "channels/src/components/team_sidebar/",
             "channels/src/components/threading/",
             "channels/src/components/toast/",
             "channels/src/components/toast_wrapper/",
             "channels/src/components/toggle_modal_button.tsx",
+            "channels/src/components/update_user_group_modal/",
             "channels/src/components/user_account_menu/",
+            "channels/src/components/user_group_popover/",
+            "channels/src/components/user_groups_modal/",
             "channels/src/components/user_list.tsx",
             "channels/src/components/user_list_row/",
             "channels/src/components/user_settings/",
@@ -268,6 +292,7 @@
             "channels/src/components/user_settings/display/user_settings_theme/user_settings_theme.tsx",
             "channels/src/components/user_settings/plugin/",
             "channels/src/components/user_settings/security/user_access_token_section/",
+            "channels/src/components/view_user_group_modal/",
             "channels/src/components/widgets/admin_console/admin_header.tsx",
             "channels/src/components/widgets/inputs/url_input/",
             "channels/src/components/widgets/inputs/users_emails_input.tsx",
@@ -744,10 +769,9 @@
             "ready": null,
             "reason": "a development page with no testids."
         },
-        "CreateTeamPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves CreateTeam to the grammar names one."
-        },
+        "CreateTeamPage": [
+            "create_team.form"
+        ],
         "DesktopAuthTokenPage": {
             "ready": null,
             "reason": "hands the login over to the desktop app and redirects."
@@ -798,14 +822,13 @@
             "ready": null,
             "reason": "only routes to a popout below it (channel, thread, RHS, help)."
         },
-        "PreparingWorkspacePage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves PreparingWorkspace to the grammar names one."
-        },
-        "RecapsPage": {
-            "ready": null,
-            "reason": "no ready testid yet: the PR that moves Recaps to the grammar names one."
-        },
+        "PreparingWorkspacePage": [
+            "preparing_workspace.organization.continue--button",
+            "preparing_workspace.invite.copy_link--button"
+        ],
+        "RecapsPage": [
+            "recaps.title"
+        ],
         "RhsPopoutPage": {
             "ready": null,
             "reason": "renders no testid of its own yet."
@@ -932,6 +955,13 @@
                     "UploadFile"
                 ],
                 "reason": "the attach menu's Your computer opens the same file chooser as the attach button: a raw XMLHttpRequest per file."
+            },
+            {
+                "testId": "bookmark_modal.file--button",
+                "ops": [
+                    "UploadFile"
+                ],
+                "reason": "the bookmark's file goes up through uploadFile (actions/file_actions.ts), a raw XMLHttpRequest the scan can't follow."
             }
         ]
     }

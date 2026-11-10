@@ -30,7 +30,8 @@ type Props = {
     defaultMessage?: React.ReactNode;
     extraClasses?: string;
 
-    testId?: TestId;
+    /** Renders `<testId>--button`. */
+    testId: TestId;
 };
 
 function mapSize(size?: SharedSize | CompassButtonSize): CompassButtonSize | undefined {
@@ -67,7 +68,7 @@ const SaveButton: React.FC<Props> = ({
     return (
         <Button
             type='submit'
-            data-testid={testId ? `${testId}--button` : 'saveSetting'}
+            data-testid={`${testId}--button`}
             id='saveSetting'
             emphasis={emphasis}
             size={mapSize(size)}

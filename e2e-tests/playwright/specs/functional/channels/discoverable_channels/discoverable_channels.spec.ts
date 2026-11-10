@@ -1,6 +1,9 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {Client4} from '@mattermost/client';
+import type {Channel} from '@mattermost/types/channels';
+
 import {expect, test} from '@mattermost/playwright-lib';
 
 /**
@@ -8,9 +11,13 @@ import {expect, test} from '@mattermost/playwright-lib';
  * (MM-68764). They only run when the DiscoverableChannels feature flag is
  * enabled on the server (e.g. MM_FEATUREFLAGS_DiscoverableChannels=true);
  * otherwise they self-skip.
+ *
+ * Written on the generated page objects: Browse Channels (rows keyed by channel name, with Request to join and
+ * Withdraw), the channel switcher (results keyed by channel id), and the Request to Join and Join Private Channel
+ * dialogs.
  */
 
-async function createDiscoverableChannel(adminClient: any, teamId: string) {
+async function createDiscoverableChannel(adminClient: Client4, teamId: string): Promise<Channel> {
     const suffix = Date.now();
     return adminClient.createChannel({
         team_id: teamId,
@@ -18,7 +25,7 @@ async function createDiscoverableChannel(adminClient: any, teamId: string) {
         display_name: `Discoverable Private ${suffix}`,
         type: 'P',
         discoverable: true,
-    });
+    } as Channel);
 }
 
 /**
@@ -38,32 +45,30 @@ test.fixme(
         const channel = await createDiscoverableChannel(adminClient, team.id);
 
         // # Log in as the non-member user and open Browse Channels
-        const {channelsPage, app, page} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: townSquare});
-
-        const dialog = await channelsPage.openBrowseChannelsModal();
-        await dialog.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
+        const browse = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickBrowseChannelsMenuItem();
 
         // # Find the discoverable channel
-        await dialog.fillSearchInput(channel.display_name);
-        await dialog.toBeDoneLoading();
+        await browse.searchTextbox.fill(channel.display_name);
+        const row = browse.list.channel(channel);
 
         // * The row offers "Request to join" rather than a Join button
-        await dialog.toHaveRequestToJoinButton(channel.display_name);
+        await expect(row.requestButton.locator).toBeVisible();
+        await expect(row.joinButton.locator).toHaveCount(0);
 
         // # Request to join and confirm in the modal
-        await dialog.clickRequestToJoin(channel.display_name);
-        await expect(page.getByRole('button', {name: 'Send Request'})).toBeVisible();
-        await page.getByRole('button', {name: 'Send Request'}).click();
+        const requestModal = await row.clickRequestButton();
+        await requestModal.clickConfirmButton();
 
         // * The row flips to the pending "Withdraw" state
-        await dialog.toHaveWithdrawButton(channel.display_name);
+        await expect(row.withdrawButton.locator).toBeVisible();
 
         // # Withdraw the request
-        await dialog.clickWithdraw(channel.display_name);
+        await row.clickWithdrawButton();
 
         // * The row returns to the "Request to join" state
-        await dialog.toHaveRequestToJoinButton(channel.display_name);
+        await expect(row.requestButton.locator).toBeVisible();
     },
 );
 
@@ -78,23 +83,21 @@ test(
         const channel = await createDiscoverableChannel(adminClient, team.id);
 
         // # Log in as the non-member user
-        const {channelsPage, app, page} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: townSquare});
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        // # Open Find Channels (Cmd/Ctrl+K) and locate the discoverable channel
-        await channelsPage.sidebarLeft.findChannelButton.click();
-        await channelsPage.findChannelsModal.toBeVisible();
-        await channelsPage.findChannelsModal.input.fill(channel.display_name);
-
-        const result = channelsPage.findChannelsModal.getResult(channel);
-        await expect(result).toBeVisible();
+        // # Open Find Channels and locate the discoverable channel
+        const switcher = await app.lhs.header.clickFindChannelsButton();
+        await switcher.searchTextbox.fill(channel.display_name);
+        const result = switcher.suggestions.item(channel.id);
+        await expect(result.locator).toBeVisible();
 
         // # Select the discoverable channel
-        await channelsPage.findChannelsModal.selectChannel(channel);
+        await result.locator.click();
 
         // * The Request to Join modal opens instead of the legacy private-channel join
         // confirmation, and no "Join private channel" dialog is shown.
-        await expect(page.getByRole('button', {name: 'Send Request'})).toBeVisible();
-        await expect(page.getByText('Are you sure you wish to join')).toHaveCount(0);
+        await expect(app.requestJoinChannelModal.confirmButton.locator).toBeVisible();
+        await expect(app.joinPrivateChannelModal.locator).toHaveCount(0);
     },
 );

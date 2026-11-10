@@ -20,8 +20,8 @@ export default class ChannelBookmarksCreateModal {
     constructor(container: Locator) {
         this.container = container;
 
-        this.linkInput = container.getByTestId('linkInput');
-        this.titleInput = container.getByTestId('titleInput');
+        this.linkInput = container.getByTestId('bookmark_modal.link--textbox');
+        this.titleInput = container.getByTestId('bookmark_modal.title--textbox');
         this.addButton = container.getByRole('button', {name: 'Add bookmark'});
         this.saveButton = container.getByRole('button', {name: 'Save bookmark'});
         this.cancelButton = container.getByRole('button', {name: 'Cancel'});

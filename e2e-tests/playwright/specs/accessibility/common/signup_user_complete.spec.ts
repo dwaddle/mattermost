@@ -3,101 +3,100 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-test('/signup_user_complete accessibility quick check', async ({pw, axe}) => {
-    // Set up the page not to redirect to the landing page
-    await pw.hasSeenLandingPage();
+import {openSignup} from '../../functional/auth/support';
 
-    // # Go to reset password page
-    await pw.signupPage.goto();
-    await pw.signupPage.toBeVisible();
+test('/signup_user_complete accessibility quick check', async ({pw, page, axe}) => {
+    // # Go to the signup page (past the native-app landing page)
+    const app = await openSignup(pw, page);
+    await expect(app.signup.card.emailTextbox.locator).toBeVisible();
 
     // # Analyze the page
     const accessibilityScanResults = await axe
-        .builder(pw.signupPage.page, {disableColorContrast: true, disableLinkInTextBlock: true})
+        .builder(page, {disableColorContrast: true, disableLinkInTextBlock: true})
         .analyze();
 
     // * Should have no violation
     expect(accessibilityScanResults.violations).toHaveLength(0);
 });
 
-test('/signup_user_complete accessibility tab support', async ({pw}, testInfo) => {
-    // Set up the page not to redirect to the landing page
-    await pw.hasSeenLandingPage();
-
-    // # Go to reset password page
-    await pw.signupPage.goto();
-    await pw.signupPage.toBeVisible();
+test('/signup_user_complete accessibility tab support', async ({pw, page}, testInfo) => {
+    // # Go to the signup page (past the native-app landing page)
+    const app = await openSignup(pw, page);
+    const {card} = app.signup;
+    const {footer, header} = app.public;
+    await expect(card.emailTextbox.locator).toBeVisible();
 
     // * Should have focused at email input on page load
-    expect(await pw.signupPage.emailInput).toBeFocused();
+    await expect(card.emailTextbox.locator).toBeFocused();
 
     // * Should move focus to username input after tab
-    await pw.signupPage.emailInput.press('Tab');
-    expect(await pw.signupPage.usernameInput).toBeFocused();
+    await card.emailTextbox.locator.press('Tab');
+    await expect(card.usernameTextbox.locator).toBeFocused();
 
     // * Should move focus to password input after tab
-    await pw.signupPage.usernameInput.press('Tab');
-    expect(await pw.signupPage.passwordInput).toBeFocused();
+    await card.usernameTextbox.locator.press('Tab');
+    await expect(card.passwordTextbox.locator).toBeFocused();
 
     // * Should move focus to password toggle button after tab
-    await pw.signupPage.passwordInput.press('Tab');
-    expect(await pw.signupPage.passwordToggleButton).toBeFocused();
+    await card.passwordTextbox.locator.press('Tab');
+    await expect(card.password.toggleButton.locator).toBeFocused();
 
     // * Should move focus to terms and privacy checkbox after tab
-    await pw.signupPage.passwordToggleButton.press('Tab');
-    expect(await pw.signupPage.termsAndPrivacyCheckBox).toBeFocused();
+    await card.password.toggleButton.locator.press('Tab');
+    await expect(card.termsCheckbox.locator).toBeFocused();
 
     // * Should move focus to acceptable use policy link after tab
-    await pw.signupPage.termsAndPrivacyCheckBox.press('Tab');
-    expect(await pw.signupPage.termsAndPrivacyAcceptableUsePolicyLink).toBeFocused();
+    await card.termsCheckbox.locator.press('Tab');
+    await expect(card.acceptableUsePolicyLink.locator).toBeFocused();
 
     // * Should move focus to privacy policy link after tab
-    await pw.signupPage.termsAndPrivacyAcceptableUsePolicyLink.press('Tab');
-    expect(await pw.signupPage.termsAndPrivacyPrivacyPolicyLink).toBeFocused();
+    await card.acceptableUsePolicyLink.locator.press('Tab');
+    await expect(card.privacyPolicyLink.locator).toBeFocused();
 
     // * Should move focus to about link after tab (skips disabled create account button)
-    await pw.signupPage.termsAndPrivacyPrivacyPolicyLink.press('Tab');
-    expect(await pw.signupPage.footer.aboutLink).toBeFocused();
+    await card.privacyPolicyLink.locator.press('Tab');
+    await expect(footer.aboutLink.locator).toBeFocused();
 
     // * Should move focus to privacy policy link after tab
-    await pw.signupPage.footer.aboutLink.press('Tab');
-    expect(await pw.signupPage.footer.privacyPolicyLink).toBeFocused();
+    await footer.aboutLink.locator.press('Tab');
+    await expect(footer.privacyLink.locator).toBeFocused();
 
     // * Should move focus to terms link after tab
-    await pw.signupPage.footer.privacyPolicyLink.press('Tab');
-    expect(await pw.signupPage.footer.termsLink).toBeFocused();
+    await footer.privacyLink.locator.press('Tab');
+    await expect(footer.termsLink.locator).toBeFocused();
 
     // * Should move focus to help link after tab
-    await pw.signupPage.footer.termsLink.press('Tab');
-    expect(await pw.signupPage.footer.helpLink).toBeFocused();
+    await footer.termsLink.locator.press('Tab');
+    await expect(footer.helpLink.locator).toBeFocused();
 
     // # Move focus to email input
-    await pw.signupPage.emailInput.focus();
-    expect(await pw.signupPage.emailInput).toBeFocused();
+    await card.emailTextbox.locator.focus();
+    await expect(card.emailTextbox.locator).toBeFocused();
 
+    const loginLink = app.signup.alternate.actionLink.locator;
     if (testInfo.project.name === 'ipad') {
         // * Should move focus to header back button after shift+tab
-        await pw.signupPage.bodyCard.press('Shift+Tab');
-        expect(await pw.signupPage.header.backButton).toBeFocused();
+        await card.locator.press('Shift+Tab');
+        await expect(header.backLink.locator).toBeFocused();
 
         // * Should move focus to log in link after shift+tab
-        await pw.signupPage.header.backButton.press('Shift+Tab');
-        expect(await pw.signupPage.loginLink).toBeFocused();
+        await header.backLink.locator.press('Shift+Tab');
+        await expect(loginLink).toBeFocused();
 
         // * Should move focus to header logo after shift+tab
-        await pw.signupPage.loginLink.press('Shift+Tab');
-        expect(await pw.signupPage.header.logo).toBeFocused();
+        await loginLink.press('Shift+Tab');
+        await expect(header.logoLink.locator).toBeFocused();
     } else {
         // * Should move focus to log in link after shift+tab
-        await pw.signupPage.bodyCard.press('Shift+Tab');
-        expect(await pw.signupPage.loginLink).toBeFocused();
+        await card.locator.press('Shift+Tab');
+        await expect(loginLink).toBeFocused();
 
         // * Should move focus to header back button after shift+tab
-        await pw.signupPage.loginLink.press('Shift+Tab');
-        expect(await pw.signupPage.header.backButton).toBeFocused();
+        await loginLink.press('Shift+Tab');
+        await expect(header.backLink.locator).toBeFocused();
 
         // * Should move focus to header logo after shift+tab
-        await pw.signupPage.header.backButton.press('Shift+Tab');
-        expect(await pw.signupPage.header.logo).toBeFocused();
+        await header.backLink.locator.press('Shift+Tab');
+        await expect(header.logoLink.locator).toBeFocused();
     }
 });

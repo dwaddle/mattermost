@@ -5,6 +5,7 @@ import React, {useCallback, useMemo} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CheckIcon, ChevronDownIcon} from '@mattermost/compass-icons/components';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Agent} from '@mattermost/types/agents';
 
 import {Client4} from 'mattermost-redux/client';
@@ -25,6 +26,10 @@ type Props = {
     // When inside a GenericModal, we need to communicate with the parent to set enforceFocus off when this menu is open
     // Otherwise the underlying mui popover and GenericModal will exhaust the call stack trying to set focus when this closes
     onMenuToggle?: (isOpen: boolean) => void;
+
+    // The button is `<testIdScope>--button`, the options `<testIdScope>.menu.agent:<bot id>--menuitem`;
+    // without it, the options keep the legacy `agent-option-<bot id>`.
+    testIdScope?: TestId;
 };
 
 const AgentDropdown = ({
@@ -35,6 +40,7 @@ const AgentDropdown = ({
     disabled = false,
     showLabel = false,
     onMenuToggle,
+    testIdScope,
 }: Props) => {
     const {formatMessage} = useIntl();
 
@@ -64,6 +70,7 @@ const AgentDropdown = ({
 
     const menuButtonConfig = useMemo(() => ({
         id: 'agent-dropdown-button',
+        dataTestId: testIdScope ? `${testIdScope}--button` : undefined,
         'aria-label': formatMessage({id: 'agent.buttonAriaLabel', defaultMessage: 'Agent selector'}),
         disabled,
         class: 'agent-dropdown-button',
@@ -73,7 +80,7 @@ const AgentDropdown = ({
                 <ChevronDownIcon size={12}/>
             </>
         ),
-    }), [formatMessage, disabled, displayName]);
+    }), [formatMessage, disabled, displayName, testIdScope]);
 
     const menuHeaderElement = useMemo(() => (
         <div className='agent-dropdown-menu-header'>
@@ -102,7 +109,7 @@ const AgentDropdown = ({
                         <Menu.Item
                             key={bot.id}
                             id={`agent-option-${bot.id}`}
-                            data-testid={`agent-option-${bot.id}`}
+                            data-testid={testIdScope ? `${testIdScope}.menu.agent:${bot.id}--menuitem` : `agent-option-${bot.id}`}
                             leadingElement={
                                 <Avatar
                                     url={getBotAvatarUrl(bot.id)}

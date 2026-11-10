@@ -6,6 +6,7 @@ import {Modal} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Group} from '@mattermost/types/groups';
 
 import LoadingScreen from 'components/loading_screen';
@@ -13,6 +14,11 @@ import LoadingScreen from 'components/loading_screen';
 export const DEFAULT_NUM_PER_PAGE = 50;
 
 type Props = {
+
+    /**
+     * testId: the modal's testid.
+     */
+    testId: TestIdScope;
 
     /**
      * titleText (optional) a string to show at the top bar of the modal.
@@ -185,6 +191,7 @@ export default class ListModal extends React.PureComponent<Props, State> {
             <div>
                 <Modal
                     dialogClassName='a11y__modal more-modal more-modal--action'
+                    data-testid={this.props.testId}
                     show={this.state.show}
                     onHide={this.handleHide}
                     onExited={this.handleExit}

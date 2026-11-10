@@ -17,10 +17,10 @@ export default class DirectChannelsModal {
     constructor(container: Locator) {
         this.container = container;
 
-        this.goButton = container.getByRole('button', {name: 'Go'});
+        this.goButton = container.getByTestId('direct_messages_modal.list.save--button');
         this.results = container.getByTestId('direct_messages_modal.list.results');
         this.searchInput = container.getByRole('combobox', {name: 'Search for people'});
-        this.memberLimitHelpText = container.locator('#multiSelectHelpMemberInfo');
+        this.memberLimitHelpText = container.getByTestId('direct_messages_modal.list.help--text');
         this.newConversationWarning = container.getByText(
             "This will start a new conversation. If you're adding a lot of people, consider creating a private channel instead.",
         );
@@ -34,7 +34,7 @@ export default class DirectChannelsModal {
         await this.fillSearchInput(user.username);
 
         // This may fail if there's too many group channels containing the provided user
-        const row = this.results.getByTestId('direct-message-row').getByText(`@${user.username}`, {exact: false});
+        const row = this.results.getByTestId(`direct_messages_modal.list.user:${user.id}`);
 
         await row.click();
 
@@ -64,9 +64,7 @@ export default class DirectChannelsModal {
     }
 
     async toHaveNResults(count: number) {
-        await expect(
-            this.results.locator('[data-testid="direct-message-row"], [data-testid="group-message-row"]'),
-        ).toHaveCount(count);
+        await expect(this.results.locator('[data-testid^="direct_messages_modal.list."]')).toHaveCount(count);
     }
 
     /**
@@ -101,9 +99,7 @@ export default class DirectChannelsModal {
     }
 
     async toHaveUserAsNthResult(user: UserProfile, index: number) {
-        const row = this.results
-            .locator('[data-testid="direct-message-row"], [data-testid="group-message-row"]')
-            .nth(index);
+        const row = this.results.locator('[data-testid^="direct_messages_modal.list."]').nth(index);
 
         await expect(row).toContainText(`@${user.username}`);
     }

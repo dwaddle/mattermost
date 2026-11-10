@@ -295,7 +295,7 @@ export class CreateUserGroupsModal extends React.PureComponent<Props, State> {
                                 placeholder={defineMessage({id: 'user_groups_modal.name', defaultMessage: 'Name'})}
                                 onChange={this.updateNameState}
                                 value={this.state.name}
-                                data-testid='nameInput'
+                                testId='create_user_groups_modal.name'
                                 maxLength={64}
                                 autoFocus={true}
                                 required={true}
@@ -309,7 +309,7 @@ export class CreateUserGroupsModal extends React.PureComponent<Props, State> {
                                 onChange={this.updateMentionState}
                                 value={this.state.mention}
                                 maxLength={64}
-                                data-testid='mentionInput'
+                                testId='create_user_groups_modal.mention'
                                 required={true}
                                 customMessage={{type: ItemStatus.ERROR, value: this.state.mentionInputErrorText}}
                             />

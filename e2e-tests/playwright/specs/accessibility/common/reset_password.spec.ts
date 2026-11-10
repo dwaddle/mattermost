@@ -1,61 +1,65 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import type {Page} from '@playwright/test';
 
-test('/reset_password accessibility quick check', async ({pw, axe}) => {
+import {App, expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
+
+/** Opens the reset password page (past the native-app landing page). */
+async function openResetPassword(pw: PlaywrightExtended, page: Page) {
     // Set up the page not to redirect to the landing page
     await pw.hasSeenLandingPage();
 
     // # Go to reset password page
-    await pw.resetPasswordPage.goto();
-    await pw.resetPasswordPage.toBeVisible();
+    const app = new App(page);
+    await app.passwordResetSendLinkPage.goto();
+    await expect(app.passwordReset.emailTextbox.locator).toBeVisible();
+    return app;
+}
+
+test('/reset_password accessibility quick check', async ({pw, page, axe}) => {
+    await openResetPassword(pw, page);
 
     // # Analyze the page
-    const accessibilityScanResults = await axe
-        .builder(pw.resetPasswordPage.page, {disableColorContrast: true})
-        .analyze();
+    const accessibilityScanResults = await axe.builder(page, {disableColorContrast: true}).analyze();
 
     // * Should have no violation
     expect(accessibilityScanResults.violations).toHaveLength(0);
 });
 
-test('/reset_password accessibility tab support', async ({pw}) => {
-    // Set up the page not to redirect to the landing page
-    await pw.hasSeenLandingPage();
-
-    // # Go to reset password page
-    await pw.resetPasswordPage.goto();
-    await pw.resetPasswordPage.toBeVisible();
+test('/reset_password accessibility tab support', async ({pw, page}) => {
+    const app = await openResetPassword(pw, page);
+    const {passwordReset} = app;
+    const {footer} = app.public;
 
     // * Should have focused at email input on page load
-    expect(await pw.resetPasswordPage.emailInput).toBeFocused();
+    await expect(passwordReset.emailTextbox.locator).toBeFocused();
 
     // * Should move focus to reset button after tab
-    await pw.resetPasswordPage.emailInput.press('Tab');
-    expect(await pw.resetPasswordPage.resetButton).toBeFocused();
+    await passwordReset.emailTextbox.locator.press('Tab');
+    await expect(passwordReset.sendButton.locator).toBeFocused();
 
     // * Should move focus to about link after tab
-    await pw.resetPasswordPage.resetButton.press('Tab');
-    expect(await pw.resetPasswordPage.footer.aboutLink).toBeFocused();
+    await passwordReset.sendButton.locator.press('Tab');
+    await expect(footer.aboutLink.locator).toBeFocused();
 
     // * Should move focus to privacy policy link after tab
-    await pw.resetPasswordPage.footer.aboutLink.press('Tab');
-    expect(await pw.resetPasswordPage.footer.privacyPolicyLink).toBeFocused();
+    await footer.aboutLink.locator.press('Tab');
+    await expect(footer.privacyLink.locator).toBeFocused();
 
     // * Should move focus to terms link after tab
-    await pw.resetPasswordPage.footer.privacyPolicyLink.press('Tab');
-    expect(await pw.resetPasswordPage.footer.termsLink).toBeFocused();
+    await footer.privacyLink.locator.press('Tab');
+    await expect(footer.termsLink.locator).toBeFocused();
 
     // * Should move focus to help link after tab
-    await pw.resetPasswordPage.footer.termsLink.press('Tab');
-    expect(await pw.resetPasswordPage.footer.helpLink).toBeFocused();
+    await footer.termsLink.locator.press('Tab');
+    await expect(footer.helpLink.locator).toBeFocused();
 
     // # Move focus to email input
-    await pw.resetPasswordPage.emailInput.focus();
-    expect(await pw.resetPasswordPage.emailInput).toBeFocused();
+    await passwordReset.emailTextbox.locator.focus();
+    await expect(passwordReset.emailTextbox.locator).toBeFocused();
 
     // * Should move focus to back button after shift+tab
-    await pw.resetPasswordPage.emailInput.press('Shift+Tab');
-    expect(await pw.resetPasswordPage.header.backButton).toBeFocused();
+    await passwordReset.emailTextbox.locator.press('Shift+Tab');
+    await expect(passwordReset.backLink.locator).toBeFocused();
 });

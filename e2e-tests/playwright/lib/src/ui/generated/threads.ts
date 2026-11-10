@@ -9,6 +9,7 @@ import type {Locator, Page} from '@playwright/test';
 import {Scope, drivers, textTestKey} from '../../aria';
 
 import {Api} from './api';
+import {JoinPrivateChannelModal} from './join_private_channel_modal';
 import {OverflowPopover} from './shared';
 import {ThreadMenu} from './thread_menu';
 
@@ -221,7 +222,7 @@ export class ThreadsListThread extends Scope {
     /**
      * `threads.list.thread.preview` — ThreadItem (channels/src/components/threading/global_threads/thread_item/thread_item.tsx)
      * Renders only when !(!thread || !post).
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      */
@@ -362,7 +363,7 @@ export class ThreadsPane extends Scope {
     /**
      * `threads.pane.popout--button` — PopoutButton (channels/src/components/popout_button.tsx)
      * Renders only when canPopout().
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
@@ -397,8 +398,10 @@ export class ThreadsPane extends Scope {
         });
     }
 
-    async clickPopoutButton(): Promise<void> {
+    /** Clicks popoutButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickPopoutButton(): Promise<JoinPrivateChannelModal> {
         await this.popoutButton.click();
+        return new JoinPrivateChannelModal(this.page, 'join_private_channel_modal');
     }
 
     /**

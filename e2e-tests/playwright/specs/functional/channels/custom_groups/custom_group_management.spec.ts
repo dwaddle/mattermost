@@ -5,6 +5,9 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a custom user group can be archived, viewed under the archived filter, and restored.
+ *
+ * Written on the generated page objects: the group list's rows are keyed by group id, and each step returns the
+ * dialog it opens.
  */
 test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();
@@ -19,28 +22,33 @@ test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async (
         user_ids: [user.id],
     });
 
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {app, channelsPage} = await pw.testBrowser.login(user);
     await channelsPage.goto(team.name, 'town-square');
     await channelsPage.toBeVisible();
-    const groupModal = channelsPage.getViewUserGroupModal(group.display_name);
 
     // # Open the User Groups modal from the product menu
-    await channelsPage.globalHeader.openUserGroups();
-    await channelsPage.userGroupsModal.toBeVisible();
+    const productMenu = await app.globalHeader.clickProductMenuButton();
+    let groups = await productMenu.clickUserGroupsMenuItem();
+    await expect(groups.locator).toBeVisible();
 
-    // # Open the group and archive it
-    await channelsPage.userGroupsModal.openGroup(group.display_name);
-    await groupModal.archive();
+    // # Find the group (a long-lived server lists many) and archive it
+    await groups.fillSearchTextbox(group.display_name);
+    let groupModal = await groups.group(group).clickButton();
+    const actions = await groupModal.clickMenuButton();
+    groups = await actions.clickArchiveMenuItem();
 
     // # Filter the list to archived groups and open the archived group
-    await channelsPage.userGroupsModal.filterArchived();
-    await channelsPage.userGroupsModal.openGroup(group.display_name);
+    const filter = await groups.clickFilterButton();
+    await filter.clickArchivedMenuItem();
+    await groups.fillSearchTextbox(group.display_name);
+    groupModal = await groups.group(group).clickButton();
 
     // # Restore the group
-    await groupModal.restore();
+    await groupModal.clickRestoreButton();
 
-    // * Verify the group is restored (member management is available again)
-    await expect(groupModal.addPeopleButton).toBeVisible();
+    // * The group is restored: member management is available again, and the server agrees
+    await expect(groupModal.addPeopleButton.locator).toBeVisible();
+    await expect.poll(async () => (await userClient.getGroup(group.id)).delete_at).toBe(0);
 });
 
 /**
@@ -98,7 +106,7 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
         user_ids: members.map((member) => member.id),
     });
 
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page, channelsPage} = await pw.testBrowser.login(user);
     await channelsPage.goto(team.name, 'town-square');
     await channelsPage.toBeVisible();
 
@@ -130,18 +138,18 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
     await expect(addGroupMembers).toBeVisible();
 
     // # Hover the shortcut. Its tooltip renders in a portal outside the dialog, where the open modal
-    // # keeps it out of the accessibility tree, so match on its class rather than its role.
+    // # keeps it out of the accessibility tree, and tooltips carry no testids yet; while it shows, it is the
+    // # only place the members' usernames appear.
     await addGroupMembers.hover();
 
     // * Verify the tooltip names every member of the group
-    const tooltip = page.locator('.tooltipContainer').filter({hasText: members[0].username});
     for (const member of members) {
-        await expect(tooltip).toContainText(member.username);
+        await expect(page.getByText(member.username)).toBeVisible();
     }
 
     // # Select the whole group and add it to the channel
     await addGroupMembers.click();
-    await addPeopleToChannelModal.container.getByRole('button', {name: 'Add'}).click();
+    await app.channelInviteModal.users.clickSaveButton();
 
     // * Verify every member of the group joined the channel
     await channelsPage.centerView.waitUntilLastPostContains('added to the channel');

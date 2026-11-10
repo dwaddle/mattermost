@@ -5,21 +5,42 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {Channel} from '@mattermost/types/channels';
+import type {UserProfile} from '@mattermost/types/users';
 
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {Results} from './shared';
 
+/** The read-only parts of a `direct_messages_modal.list.group` item. */
+export type DirectMessagesModalListGroupRow = {
+    memberCount: string | null;
+    name: string | null;
+};
 /** Scope `direct_messages_modal`. */
 export class DirectMessagesModal extends Scope {
     constructor(page: Page, scope = 'direct_messages_modal', root?: Locator) {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    /**
+     * `direct_messages_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     * Goes to this.exitToChannel.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
     }
 
     get list(): DirectMessagesModalList {
@@ -189,6 +210,50 @@ export class DirectMessagesModalList extends Scope {
     }
 
     /**
+     * `direct_messages_modal.list.user:{key}` — ListItem (channels/src/components/more_direct_channels/list_item/list_item.tsx)
+     */
+    user(user: Pick<UserProfile, 'id'>) {
+        return drivers.container(this.byTestId(`${this.scope}.user:${user.id}`), {
+            testId: `${this.scope}.user:${user.id}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/more_direct_channels/list_item/list_item.tsx#ListItem',
+        });
+    }
+
+    /** Every `direct_messages_modal.list.user:{key}` in the scope. */
+    get userItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.user:`, '');
+    }
+
+    /** The keys of every `direct_messages_modal.list.user:{key}` in the scope, in document order. */
+    userKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.user:`, '');
+    }
+
+    /**
+     * `direct_messages_modal.list.group:{key}` — ListItem (channels/src/components/more_direct_channels/list_item/list_item.tsx)
+     */
+    group(group: Pick<Channel, 'id'>): DirectMessagesModalListGroup {
+        return new DirectMessagesModalListGroup(
+            this.page,
+            `${this.scope}.group`,
+            this.byTestId(`${this.scope}.group:${group.id}`),
+        );
+    }
+
+    /** Every `direct_messages_modal.list.group:{key}` in the scope. */
+    get groupItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.group:`, '');
+    }
+
+    /** The keys of every `direct_messages_modal.list.group:{key}` in the scope, in document order. */
+    groupKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.group:`, '');
+    }
+
+    /**
      * `direct_messages_modal.list.results` — MultiSelectList (channels/src/components/multiselect/multiselect_list.tsx)
      * Renders only when !this.props.loading and !(options == null || options.length === 0).
      */
@@ -207,5 +272,101 @@ export class DirectMessagesModalList extends Scope {
                 source: 'channels/src/components/multiselect/multiselect.tsx#MultiSelect',
             }),
         );
+    }
+
+    /** Every `direct_messages_modal.list.user:{key}` in the scope as a list by key, for the list matchers: `expect(x.userList).toHaveKeys([…])`. */
+    get userList() {
+        return this.keyedList(`${this.scope}.user:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.user:${key}`), {
+                testId: `${this.scope}.user:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/more_direct_channels/list_item/list_item.tsx#ListItem',
+            }),
+        );
+    }
+
+    /** Every `direct_messages_modal.list.group:{key}` in the scope as a list by key, for the list matchers: `expect(x.groupList).toHaveKeys([…])`. */
+    get groupList() {
+        return this.keyedList(
+            `${this.scope}.group:`,
+            '',
+            (key: string) =>
+                new DirectMessagesModalListGroup(
+                    this.page,
+                    `${this.scope}.group`,
+                    this.byTestId(`${this.scope}.group:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `direct_messages_modal.list.group`. */
+export class DirectMessagesModalListGroup extends Scope {
+    constructor(page: Page, scope = 'direct_messages_modal.list.group', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `direct_messages_modal.list.group:{key}` — ListItem (channels/src/components/more_direct_channels/list_item/list_item.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'direct_messages_modal.list.group:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/more_direct_channels/list_item/list_item.tsx#ListItem',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `direct_messages_modal.list.group.member_count--text` — GMDetails (channels/src/components/more_direct_channels/list_item/list_item.tsx)
+     * Renders only when isGroupChannel(option).
+     */
+    get memberCountText() {
+        return drivers.text(this.byTestId(`${this.scope}.member_count--text`), {
+            testId: `${this.scope}.member_count--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/more_direct_channels/list_item/list_item.tsx#GMDetails',
+        });
+    }
+
+    getMemberCountText(): Promise<string> {
+        return this.memberCountText.text();
+    }
+
+    /**
+     * `direct_messages_modal.list.group.name--text` — GMDetails (channels/src/components/more_direct_channels/list_item/list_item.tsx)
+     * Renders only when isGroupChannel(option).
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/more_direct_channels/list_item/list_item.tsx#GMDetails',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<DirectMessagesModalListGroupRow> {
+        return {
+            memberCount: await this.memberCountText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+        };
     }
 }

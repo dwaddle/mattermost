@@ -6,9 +6,10 @@
 
 import type {Locator, Page} from '@playwright/test';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
 import {Users} from './shared';
+import {ViewUserGroupModal} from './view_user_group_modal';
 
 /** Scope `add_users_to_group_modal`. */
 export class AddUsersToGroupModal extends Scope {
@@ -16,9 +17,41 @@ export class AddUsersToGroupModal extends Scope {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    /**
+     * `add_users_to_group_modal.back--button` — AddUsersToGroupModal (channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx)
+     * Opens modal ViewUserGroupModal (`view_user_group_modal`).
+     */
+    get backButton() {
+        return drivers.button(this.byTestId(`${this.scope}.back--button`), {
+            testId: `${this.scope}.back--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx#AddUsersToGroupModal',
+        });
+    }
+
+    /** Clicks backButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickBackButton(): Promise<ViewUserGroupModal> {
+        await this.backButton.click();
+        return new ViewUserGroupModal(this.page, 'view_user_group_modal');
+    }
+
+    /**
+     * `add_users_to_group_modal.close--button` — AddUsersToGroupModal (channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx)
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/add_users_to_group_modal/add_users_to_group_modal.tsx#AddUsersToGroupModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
     }
 
     get users(): Users {

@@ -17,7 +17,7 @@ class CreateRecapModal {
         this.container = page.locator('#createRecapModal');
         this.titleInput = this.container.locator('#recap-name-input');
         this.channelSearchInput = this.container.getByPlaceholder('Search and select channels');
-        this.runOnceSwitch = new Switch(this.container, 'run-once-toggle-button');
+        this.runOnceSwitch = new Switch(this.container, 'create_recap_modal.run_once--switch');
     }
 
     async toBeVisible() {
@@ -75,7 +75,7 @@ class CreateRecapModal {
     }
 
     getChannelOption(channelName: string) {
-        return this.container.getByTestId('channel-selector-item').filter({hasText: channelName});
+        return this.container.getByTestId(/^create_recap_modal\.channel:/).filter({hasText: channelName});
     }
 
     async selectChannel(channelName: string) {
@@ -88,7 +88,7 @@ class CreateRecapModal {
     async expectSummaryChannels(channelNames: string[]) {
         for (const channelName of channelNames) {
             await expect(
-                this.container.getByTestId('summary-channel-item').filter({hasText: channelName}),
+                this.container.getByTestId(/^create_recap_modal\.summary\.channel:/).filter({hasText: channelName}),
             ).toBeVisible();
         }
     }
@@ -130,11 +130,11 @@ class RecapChannelCard {
         private readonly page: Page,
         readonly container: Locator,
     ) {
-        this.channelButton = container.getByTestId('recap-channel-name-tag');
-        this.collapseButton = container.getByTestId('recap-channel-collapse-button');
+        this.channelButton = container.getByTestId('recaps.recap.channel.open--button');
+        this.collapseButton = container.getByTestId('recaps.recap.channel.collapse--button');
         // Scope to header actions so we do not match the parent recap-channel-header (role="button").
         this.menuButton = container
-            .getByTestId('recap-channel-header-actions')
+            .getByTestId('recaps.recap.channel.actions')
             .getByRole('button', {name: /Options for /});
     }
 
@@ -170,9 +170,9 @@ class RecapItem {
         private readonly page: Page,
         readonly container: Locator,
     ) {
-        this.header = container.getByTestId('recap-item-header');
+        this.header = container.getByTestId('recaps.recap.header');
         this.markReadButton = container.getByRole('button', {name: 'Mark read'});
-        this.deleteButton = container.getByTestId('recap-delete-button');
+        this.deleteButton = container.getByTestId('recaps.recap.delete--button');
         this.menuButton = this.header.getByRole('button', {name: /Options for /});
     }
 
@@ -222,7 +222,10 @@ class RecapItem {
     getChannelCard(channelName: string) {
         return new RecapChannelCard(
             this.page,
-            this.container.getByTestId('recap-channel-card').filter({hasText: channelName}).first(),
+            this.container
+                .getByTestId(/^recaps\.recap\.channel:/)
+                .filter({hasText: channelName})
+                .first(),
         );
     }
 }
@@ -410,8 +413,8 @@ export default class RecapsPage {
         return new RecapItem(
             this.page,
             this.page
-                .getByTestId('recap-item')
-                .or(this.page.getByTestId('recap-processing'))
+                .getByTestId(/^recaps\.recap:/)
+                .or(this.page.getByTestId(/^recaps\.processing:/))
                 .filter({
                     has: this.page.getByRole('heading', {name: title, exact: true}),
                 })

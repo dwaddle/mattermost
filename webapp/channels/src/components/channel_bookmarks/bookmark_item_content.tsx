@@ -8,6 +8,7 @@ import {Link, useHistory} from 'react-router-dom';
 import styled, {css} from 'styled-components';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelBookmark} from '@mattermost/types/channel_bookmarks';
 import type {FileInfo} from '@mattermost/types/files';
 import type {Post} from '@mattermost/types/posts';
@@ -37,11 +38,13 @@ import {bookmarkHasLinkUrl, shouldOpenBookmarkInNewTab} from './utils';
  * @param bookmark - The bookmark to render
  * @param disableLinks - When true, href is undefined (e.g. during drag)
  * @param onNavigate - Optional callback fired after link click or file preview open
+ * @param testIdScope - The item's scope, without its key; the icon is `<testIdScope>.icon`
  */
 export const useBookmarkLink = (
     bookmark: ChannelBookmark,
     disableLinks: boolean,
     onNavigate?: () => void,
+    testIdScope?: TestId,
 ) => {
     const linkRef = useRef<HTMLAnchorElement>(null);
     const dispatch = useDispatch();
@@ -118,6 +121,7 @@ export const useBookmarkLink = (
             emoji={bookmark.emoji}
             imageUrl={bookmark.image_url}
             fileInfo={fileInfo}
+            testId={testIdScope ? `${testIdScope}.icon` : undefined}
         />
     );
 
@@ -148,6 +152,7 @@ export const useBookmarkLink = (
 
 interface BookmarkItemContentProps {
     bookmark: ChannelBookmark;
+    testIdScope?: TestId;
     disableInteractions: boolean;
     keyboardReorderProps?: {
         tabIndex: number;
@@ -155,8 +160,8 @@ interface BookmarkItemContentProps {
     };
 }
 
-const BookmarkItemContent = ({bookmark, disableInteractions, keyboardReorderProps}: BookmarkItemContentProps) => {
-    const {href, onClick, linkRef, isFile, icon, displayName, open} = useBookmarkLink(bookmark, disableInteractions);
+const BookmarkItemContent = ({bookmark, testIdScope, disableInteractions, keyboardReorderProps}: BookmarkItemContentProps) => {
+    const {href, onClick, linkRef, isFile, icon, displayName, open} = useBookmarkLink(bookmark, disableInteractions, undefined, testIdScope);
     const [isLabelOverflowing, labelRef] = useTextOverflow();
 
     const chip = (
@@ -168,6 +173,7 @@ const BookmarkItemContent = ({bookmark, disableInteractions, keyboardReorderProp
                 isFile={isFile}
                 draggable={false}
                 role='link'
+                data-testid={testIdScope ? `${testIdScope}.open--link` : undefined}
                 tabIndex={keyboardReorderProps?.tabIndex}
                 onKeyDown={keyboardReorderProps?.onKeyDown}
             >
@@ -177,6 +183,7 @@ const BookmarkItemContent = ({bookmark, disableInteractions, keyboardReorderProp
             <BookmarkItemDotMenu
                 bookmark={bookmark}
                 open={open}
+                testIdScope={testIdScope}
             />
         </Chip>
     );

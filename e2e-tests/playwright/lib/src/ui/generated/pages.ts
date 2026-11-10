@@ -309,9 +309,10 @@ export class CreateTeamPage {
         return buildPath(CreateTeamPage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves CreateTeam to the grammar names one). */
+    /** Navigates here and waits until `create_team.form` shows. */
     async goto(): Promise<void> {
         await this.page.goto(CreateTeamPage.path());
+        await this.page.getByTestId('create_team.form').waitFor();
     }
 }
 
@@ -709,9 +710,14 @@ export class PreparingWorkspacePage {
         return buildPath(PreparingWorkspacePage.route, {});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves PreparingWorkspace to the grammar names one). */
+    /** Navigates here and waits until `preparing_workspace.organization.continue--button` or `preparing_workspace.invite.copy_link--button` shows. */
     async goto(): Promise<void> {
         await this.page.goto(PreparingWorkspacePage.path());
+        await this.page
+            .getByTestId('preparing_workspace.organization.continue--button')
+            .or(this.page.getByTestId('preparing_workspace.invite.copy_link--button'))
+            .first()
+            .waitFor();
     }
 }
 
@@ -737,9 +743,10 @@ export class RecapsPage {
         return buildPath(RecapsPage.route, {team: keyOf(params.team, 'name')});
     }
 
-    /** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (no ready testid yet: the PR that moves Recaps to the grammar names one). */
+    /** Navigates here and waits until `recaps.title` shows. */
     async goto(params: RecapsPageParams): Promise<void> {
         await this.page.goto(RecapsPage.path(params));
+        await this.page.getByTestId('recaps.title').waitFor();
     }
 }
 

@@ -11,10 +11,12 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {AddGroupsToChannelModal} from './add_groups_to_channel_modal';
+import {BookmarkModalForCreateChannelBookmark} from './bookmark_modal';
 import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {ChannelSettingsModal} from './channel_settings_modal';
 import {ConvertGmToChannelModal} from './convert_gm_to_channel_modal';
 import {DeleteChannelModal} from './delete_channel_modal';
+import {DisableAutotranslationModal} from './disable_autotranslation_modal';
 import {EditChannelHeaderModal} from './edit_channel_header_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {RhsChannelInfo, RhsChannelMembers} from './rhs';
@@ -91,7 +93,7 @@ export class ChannelHeader extends Scope {
     /**
      * `channel_header.description` — ChannelHeaderTextPopover (channels/src/components/channel_header/channel_header_text_popover.tsx)
      * Renders only when hasHeaderText.
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      */
@@ -136,7 +138,7 @@ export class ChannelHeader extends Scope {
     /**
      * `channel_header.description_popover--tooltip` — ChannelHeaderTextPopover (channels/src/components/channel_header/channel_header_text_popover.tsx)
      * Renders only when hasHeaderText and isMounted.
-     * Opens modal JoinPrivateChannelModal.
+     * Opens modal JoinPrivateChannelModal (`join_private_channel_modal`).
      * Goes to `/error?type=${ErrorPageTypes.CLOUD_ARCHIVED}&returnTo=${re… (ErrorPage).
      * Goes to `/error?type=${ErrorPageTypes.PERMALINK_NOT_FOUND}&returnTo… (ErrorPage).
      */
@@ -427,7 +429,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.autotranslation--menuitem` — Autotranslation (channels/src/components/channel_header_menu/menu_items/autotranslation.tsx)
      * Renders only when isChannelAutotranslated.
-     * Opens modal DisableAutotranslationModal.
+     * Opens modal DisableAutotranslationModal (`disable_autotranslation_modal`).
      */
     get autotranslationMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.autotranslation--menuitem`), {
@@ -439,8 +441,10 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickAutotranslationMenuItem(): Promise<void> {
+    /** Clicks autotranslationMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAutotranslationMenuItem(): Promise<DisableAutotranslationModal> {
         await this.autotranslationMenuItem.click();
+        return new DisableAutotranslationModal(this.page, 'disable_autotranslation_modal');
     }
 
     /**
@@ -589,7 +593,7 @@ export class ChannelHeaderMenu extends Scope {
     /**
      * `channel_header.menu.manage_groups--menuitem` — Groups (channels/src/components/channel_header_menu/menu_items/groups.tsx)
      * Renders only when !isArchived && !isDefault and isGroupConstrained && isLicensedForLDAPGroups.
-     * Opens modal ChannelGroupsManageModal.
+     * Opens modal ChannelGroupsManageModal (`channel_groups_manage_modal`).
      */
     get manageGroupsMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.manage_groups--menuitem`), {
@@ -881,7 +885,7 @@ export class ChannelHeaderMenuBookmarks extends Scope {
     /**
      * `channel_header.menu.bookmarks.add_link--menuitem` — ChannelBookmarksSubmenu (channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx)
      * Renders only when !isGuest(user.roles) && isChannelBookmarksEnabled and !isArchived && !isGuest(user.roles) && isChannelBookmarksEnabled and !isArchived.
-     * Opens modal ChannelBookmarkCreateModal.
+     * Opens modal ChannelBookmarkCreateModal (`bookmark_modal`).
      */
     get addLinkMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.add_link--menuitem`), {
@@ -893,14 +897,16 @@ export class ChannelHeaderMenuBookmarks extends Scope {
         });
     }
 
-    async clickAddLinkMenuItem(): Promise<void> {
+    /** Clicks addLinkMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAddLinkMenuItem(): Promise<BookmarkModalForCreateChannelBookmark> {
         await this.addLinkMenuItem.click();
+        return new BookmarkModalForCreateChannelBookmark(this.page, 'bookmark_modal');
     }
 
     /**
      * `channel_header.menu.bookmarks.attach_file--menuitem` — ChannelBookmarksSubmenu (channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx)
      * Renders only when !isGuest(user.roles) && isChannelBookmarksEnabled and !isArchived && !isGuest(user.roles) && isChannelBookmarksEnabled and !isArchived.
-     * Opens modal ChannelBookmarkCreateModal.
+     * Opens modal ChannelBookmarkCreateModal (`bookmark_modal`).
      */
     get attachFileMenuItem() {
         return drivers.menuitem(this.byTestId(`${this.scope}.attach_file--menuitem`), {
@@ -912,8 +918,10 @@ export class ChannelHeaderMenuBookmarks extends Scope {
         });
     }
 
-    async clickAttachFileMenuItem(): Promise<void> {
+    /** Clicks attachFileMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAttachFileMenuItem(): Promise<BookmarkModalForCreateChannelBookmark> {
         await this.attachFileMenuItem.click();
+        return new BookmarkModalForCreateChannelBookmark(this.page, 'bookmark_modal');
     }
 
     /**

@@ -37,7 +37,7 @@ type Props = {
     /** react-intl helper object */
     intl: IntlShape;
 
-    /** The icon's path: `.icon--img` or `.initials--img`; hosts that don't pass one yet (the team sidebar, content flagging's reviewers and the permission schemes' team list) keep the legacy `teamIconImage` and `teamIconInitial`. */
+    /** The icon's path: `.icon--img` or `.initials--img`; without it, no testid. */
     testIdScope?: TestId;
 };
 
@@ -62,7 +62,7 @@ export class TeamIcon extends React.PureComponent<Props> {
             if (teamIconUrl) {
                 icon = (
                     <div
-                        data-testid={testIdScope ? `${testIdScope}.icon--img` : 'teamIconImage'}
+                        data-testid={testIdScope ? `${testIdScope}.icon--img` : undefined}
                         className={`TeamIcon__image TeamIcon__${size}`}
                         aria-label={
                             formatMessage({
@@ -79,7 +79,7 @@ export class TeamIcon extends React.PureComponent<Props> {
             } else {
                 icon = (
                     <div
-                        data-testid={testIdScope ? `${testIdScope}.initials--img` : 'teamIconInitial'}
+                        data-testid={testIdScope ? `${testIdScope}.initials--img` : undefined}
                         className={`TeamIcon__initials TeamIcon__initials__${size}`}
                         aria-label={
                             formatMessage({

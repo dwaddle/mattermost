@@ -220,6 +220,14 @@ export class CenterPostList extends Scope {
     }
 
     /**
+     * `center.post_list.search_hint` — HintToast (channels/src/components/hint-toast/hint_toast.tsx)
+     * Renders only when showSearchHintToast.
+     */
+    get searchHint(): CenterPostListSearchHint {
+        return new CenterPostListSearchHint(this.page, `${this.scope}.search_hint`, this.root);
+    }
+
+    /**
      * `center.post_list.toast:{key}` — Toast (channels/src/components/toast/toast.tsx)
      */
     toast(toast: CenterToast): Toast {
@@ -431,6 +439,31 @@ export class CenterPostListScrollToBottom extends Scope {
             effects: [],
             unknownEffects: false,
             source: 'channels/src/components/scroll_to_bottom_toast/scroll_to_bottom_toast.tsx#ScrollToBottomToast',
+        });
+    }
+
+    async clickDismissButton(): Promise<void> {
+        await this.dismissButton.click();
+    }
+}
+
+/** Scope `center.post_list.search_hint`. */
+export class CenterPostListSearchHint extends Scope {
+    constructor(page: Page, scope = 'center.post_list.search_hint', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `center.post_list.search_hint.dismiss--button` — HintToast (channels/src/components/hint-toast/hint_toast.tsx)
+     * Renders only when showSearchHintToast.
+     */
+    get dismissButton() {
+        return drivers.button(this.byTestId(`${this.scope}.dismiss--button`), {
+            testId: `${this.scope}.dismiss--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/hint-toast/hint_toast.tsx#HintToast',
         });
     }
 

@@ -10,24 +10,26 @@ import {expect, test} from '@mattermost/playwright-lib';
  * an "Add a link" action, even when the channel has no bookmarks yet.
  *
  * MM-T5601 covers the same behavior as MM-T5600 and is covered by this test.
+ *
+ * Written on the generated page objects: the channel menu's bookmarks submenu and the bar's bookmarks
+ * (keyed by bookmark id) come from `app`.
  */
 test('MM-T5600 MM-T5601 shows the Bookmarks Bar option in the channel menu', {tag: '@channels'}, async ({pw}) => {
     const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Open the channel menu
-    const channelMenu = await channelsPage.openChannelMenu();
+    const menu = await app.channelHeader.clickOpenMenuButton();
 
-    // * Verify the Bookmarks Bar option is available
-    await expect(channelMenu.bookmarksBar).toBeVisible();
+    // * The Bookmarks Bar option is available
+    await expect(menu.bookmarksMenuItem.locator).toBeVisible();
 
     // # Open the Bookmarks Bar submenu
-    await channelMenu.openBookmarksSubmenu();
+    await menu.bookmarksMenuItem.locator.hover();
 
-    // * Verify the "Add a link" action is available
-    await expect(channelMenu.addBookmarkLink).toBeVisible();
+    // * The "Add a link" action is available
+    await expect(menu.bookmarks.addLinkMenuItem.locator).toBeVisible();
 });
 
 /**
@@ -35,23 +37,25 @@ test('MM-T5600 MM-T5601 shows the Bookmarks Bar option in the channel menu', {ta
  * in the channel bookmarks bar.
  */
 test('MM-T5602 adds a link bookmark to the channel bookmarks bar', {tag: '@channels'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
     // # Open the Bookmarks Bar submenu from the channel menu and choose "Add a link"
-    const channelMenu = await channelsPage.openChannelMenu();
-    await channelMenu.openBookmarksSubmenu();
-    await channelMenu.addBookmarkLink.click();
+    const menu = await app.channelHeader.clickOpenMenuButton();
+    await menu.bookmarksMenuItem.locator.hover();
+    const dialog = await menu.bookmarks.clickAddLinkMenuItem();
 
     // # Enter a link and add the bookmark
-    await channelsPage.bookmarkCreateModal.toBeVisible();
-    await channelsPage.bookmarkCreateModal.addLink('https://www.mattermost.com');
+    await dialog.fillLinkTextbox('https://www.mattermost.com');
+    await dialog.clickConfirmButton();
 
-    // * Verify the bookmark appears in the channel bookmarks bar
-    await channelsPage.channelBookmarksBar.toBeVisible();
-    await expect(channelsPage.channelBookmarksBar.getBookmark(/mattermost/i)).toBeVisible();
+    // * The server has the bookmark, and it appears in the channel bookmarks bar
+    await expect.poll(async () => (await userClient.getChannelBookmarks(channel.id)).length).toBe(1);
+    const [bookmark] = await userClient.getChannelBookmarks(channel.id);
+    expect(bookmark.link_url).toMatch(/mattermost\.com/);
+    await expect(app.channelBookmarks.bookmark(bookmark).openLink.locator).toBeVisible();
 });
 
 /**
@@ -59,24 +63,25 @@ test('MM-T5602 adds a link bookmark to the channel bookmarks bar', {tag: '@chann
  * in the channel bookmarks bar.
  */
 test('MM-T5603 adds a file bookmark to the channel bookmarks bar', {tag: '@channels'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {user, team, userClient} = await pw.initSetup();
+    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel});
 
     // # Open the Bookmarks Bar submenu and choose "Attach a file", selecting a file
-    const channelMenu = await channelsPage.openChannelMenu();
-    await channelMenu.openBookmarksSubmenu();
+    const menu = await app.channelHeader.clickOpenMenuButton();
+    await menu.bookmarksMenuItem.locator.hover();
     const fileChooserPromise = page.waitForEvent('filechooser');
-    await channelMenu.addBookmarkFile.click();
+    const dialog = await menu.bookmarks.clickAttachFileMenuItem();
     const fileChooser = await fileChooserPromise;
     await fileChooser.setFiles(path.resolve('asset/mattermost-icon_128x128.png'));
 
     // # Confirm the file bookmark
-    await channelsPage.bookmarkCreateModal.toBeVisible();
-    await channelsPage.bookmarkCreateModal.addButton.click();
+    await dialog.clickConfirmButton();
 
-    // * Verify the file bookmark appears in the channel bookmarks bar
-    await channelsPage.channelBookmarksBar.toBeVisible();
-    await expect(channelsPage.channelBookmarksBar.getBookmark(/mattermost-icon/i)).toBeVisible();
+    // * The server has a file bookmark, and it appears in the channel bookmarks bar
+    await expect.poll(async () => (await userClient.getChannelBookmarks(channel.id)).length).toBe(1);
+    const [bookmark] = await userClient.getChannelBookmarks(channel.id);
+    expect(bookmark.type).toBe('file');
+    await expect(app.channelBookmarks.bookmark(bookmark).openLink.locator).toContainText(/mattermost-icon/i);
 });

@@ -194,7 +194,9 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
         // → strict, so for_directory hiding applies to the admin too.
         const governed = await adminClient.createTeam({
             name: `team-${pw.random.id()}`,
-            display_name: `Governed ${pw.random.id()}`,
+            // a leading 0 sorts it into the directory's first page (30 teams, then infinite scroll), so its absence
+            // there means hidden, not merely not loaded yet
+            display_name: `0 Governed ${pw.random.id()}`,
             type: 'O',
             allow_open_invite: false,
             email: `${pw.random.id()}@example.com`,
@@ -213,11 +215,18 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
 
         const base = adminClient.getBaseRoute();
         const headers = {Authorization: `Bearer ${adminClient.getToken()}`};
+        // Every page, not just the first: a long-lived server can hold more than 200 teams, and the governed team
+        // is the newest, so it can land past page 0
         const listDirectoryTeamIds = async (forDirectory: boolean): Promise<string[]> => {
-            const url = `${base}/teams?page=0&per_page=200${forDirectory ? '&for_directory=true' : ''}`;
-            const resp = await fetch(url, {headers});
-            const teams = (await resp.json()) as Team[];
-            return teams.map((t) => t.id);
+            const ids: string[] = [];
+            for (let page = 0; ; page++) {
+                const url = `${base}/teams?page=${page}&per_page=200${forDirectory ? '&for_directory=true' : ''}`;
+                const batch = (await (await fetch(url, {headers})).json()) as Team[];
+                if (batch.length === 0) {
+                    return ids;
+                }
+                ids.push(...batch.map((t) => t.id));
+            }
         };
 
         // The assignment becomes visible through a materialized attribute view and a
@@ -245,12 +254,23 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
         // is still complete.
         expect(await listDirectoryTeamIds(false)).toContain(governed.id);
 
-        // UI: with the backend confirmed above, the team-selection directory hides it
-        // for the admin too.
-        const adminSession = await pw.testBrowser.login(adminUser);
-        await adminSession.page.goto('/select_team');
-        await adminSession.page.waitForLoadState('networkidle');
-        await expect(adminSession.page.getByText(governed.display_name, {exact: false})).toHaveCount(0);
+        // # A team like it with no policy, which the directory should still list
+        const ungoverned = await adminClient.createTeam({
+            name: `team-${pw.random.id()}`,
+            display_name: `0 Ungoverned ${pw.random.id()}`,
+            type: 'O',
+            allow_open_invite: false,
+            email: `${pw.random.id()}@example.com`,
+        } as any);
+        createdTeamIds.push(ungoverned.id);
+        await adminClient.removeFromTeam(ungoverned.id, adminUser.id);
+
+        // * UI: with the backend confirmed above, the team-selection directory lists the ungoverned team and hides
+        // the governed one for the admin too
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.selectTeamPage.goto();
+        await expect(app.selectTeam.team(ungoverned).locator).toBeVisible();
+        await expect(app.selectTeam.team(governed).locator).toHaveCount(0);
     });
 
     test('MM-68846-T3 - keeps a public governed team visible to a non-qualifying user (advisory mode)', async ({

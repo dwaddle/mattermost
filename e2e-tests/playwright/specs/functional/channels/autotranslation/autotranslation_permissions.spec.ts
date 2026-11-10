@@ -1,17 +1,14 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {SystemConsolePage} from '@mattermost/playwright-lib';
 import {
-    Api,
-    closeChannelSettings,
     enableAutotranslationConfig,
     disableAutotranslationConfig,
+    generated,
     hasAutotranslationLicense,
     expect,
-    openChannelSettings,
-    settle,
     test,
+    type App,
 } from '@mattermost/playwright-lib';
 
 test(
@@ -31,16 +28,10 @@ test(
         // The Edit Scheme link stays disabled until the permissions migration finishes
         await pw.ensurePhase2MigrationCompleted();
 
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await systemConsolePage.goto();
-        await systemConsolePage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await gotoSystemSchemePage(app);
 
-        await gotoSystemSchemePage(systemConsolePage);
-
-        const scheme = systemConsolePage.permissionsSystemScheme;
-        await scheme.toBeVisible();
-
-        await scheme.expectManageChannelAutoTranslationChecked(scheme.channelAdministratorsSection);
+        await expectManageChannelAutoTranslationChecked(app, 'channel_admin');
     },
 );
 
@@ -61,16 +52,10 @@ test(
         // The Edit Scheme link stays disabled until the permissions migration finishes
         await pw.ensurePhase2MigrationCompleted();
 
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await systemConsolePage.goto();
-        await systemConsolePage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await gotoSystemSchemePage(app);
 
-        await gotoSystemSchemePage(systemConsolePage);
-
-        const scheme = systemConsolePage.permissionsSystemScheme;
-        await scheme.toBeVisible();
-
-        await scheme.expectManageChannelAutoTranslationChecked(scheme.systemAdministratorsSection);
+        await expectManageChannelAutoTranslationChecked(app, 'system_admin');
     },
 );
 
@@ -105,8 +90,9 @@ test.describe('autotranslation configuration tests', () => {
                 await adminClient.addToTeam(team.id, peerUser.id);
                 await adminClient.createDirectChannel([user.id, peerUser.id]);
 
-                const {app} = await pw.testBrowser.login(user);
-                await app.channelsPage.goto({team, path: 'messages', channel: `@${peerUser.username}`});
+                const {app, channelsPage} = await pw.testBrowser.login(user);
+                await channelsPage.goto(team.name, `@${peerUser.username}`);
+                await channelsPage.toBeVisible();
 
                 const menu = await app.channelHeader.clickOpenMenuButton();
                 if (shouldShowEditHeader) {
@@ -167,8 +153,9 @@ test.describe('autotranslation configuration tests', () => {
                 await adminClient.addToTeam(team.id, peerUser.id);
                 await adminClient.createDirectChannel([user.id, peerUser.id]);
 
-                const {app} = await pw.testBrowser.login(user);
-                await app.channelsPage.goto({team, path: 'messages', channel: `@${peerUser.username}`});
+                const {app, channelsPage} = await pw.testBrowser.login(user);
+                await channelsPage.goto(team.name, `@${peerUser.username}`);
+                await channelsPage.toBeVisible();
 
                 const menu = await app.channelHeader.clickOpenMenuButton();
                 await expect(menu.editHeaderMenuItem.locator).toBeVisible();
@@ -203,18 +190,18 @@ test.describe('autotranslation configuration tests', () => {
             await adminClient.addToTeam(team.id, otherUser.id);
             const dmChannel = await adminClient.createDirectChannel([user.id, otherUser.id]);
 
-            const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, path: 'messages', channel: `@${otherUser.username}`});
+            const {app, channelsPage} = await pw.testBrowser.login(user);
+            await channelsPage.goto(team.name, `@${otherUser.username}`);
+            await channelsPage.toBeVisible();
 
             const settings = await openChannelSettings(app);
 
             const newHeader = `DM header ${pw.random.id()}`;
             await settings.info.fillHeaderTextbox(newHeader);
-            const saved = await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
-            expect(saved.header).toBe(newHeader);
-            await closeChannelSettings(settings);
+            await settings.savePanel.clickSaveButton();
+            await settings.clickCloseButton();
 
-            expect((await adminClient.getChannel(dmChannel.id)).header).toBe(newHeader);
+            await expect.poll(async () => (await adminClient.getChannel(dmChannel.id)).header).toBe(newHeader);
         },
     );
 
@@ -247,18 +234,15 @@ test.describe('autotranslation configuration tests', () => {
             });
             await adminClient.addToChannel(user.id, created.id);
 
-            const {channelsPage, app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: channelName});
+            const {app, channelsPage} = await pw.testBrowser.login(user);
+            await channelsPage.goto(team.name, channelName);
+            await channelsPage.toBeVisible();
 
-            const channelSettingsModal = await channelsPage.openChannelSettings();
-            const configTabVisible = await channelSettingsModal.configurationTab.isVisible();
+            const settings = await openChannelSettings(app);
+            const configTabVisible = await settings.tabs.configurationTab.locator.isVisible();
             if (configTabVisible) {
-                const configurationTab = await channelSettingsModal.openConfigurationTab();
-                await expect(
-                    configurationTab.container.getByTestId(
-                        'channel_settings_modal.configuration.autotranslation--switch',
-                    ),
-                ).not.toBeVisible();
+                await settings.tabs.configurationTab.select();
+                await expect(settings.configuration.autotranslationSwitch.locator).not.toBeVisible();
             }
 
             // Restore autotranslation to disabled via patchConfig (race-safe)
@@ -267,10 +251,30 @@ test.describe('autotranslation configuration tests', () => {
     );
 });
 
-async function gotoSystemSchemePage(systemConsolePage: SystemConsolePage) {
-    await systemConsolePage.sidebar.userManagement.permissions.click();
-    await systemConsolePage.page.waitForURL(/\/admin_console\/user_management\/permissions/);
+/** Opens the System Scheme page under System Console > Permissions. */
+async function gotoSystemSchemePage(app: App) {
+    await app.page.goto(generated.AdminConsolePage.path() + '/user_management/permissions/system_scheme');
+    await expect(app.admin.permissions.rowItems.first()).toBeVisible();
+}
 
-    await systemConsolePage.page.getByRole('link', {name: 'Edit Scheme'}).click();
-    await systemConsolePage.page.waitForURL(/\/admin_console\/user_management\/permissions\/system_scheme/);
+/**
+ * Checks "Manage Channel Auto Translation" is checked (ON) for a role: its rows (public and private channels) are the
+ * ones keyed `<role>-…-manage_<type>_channel_auto_translation`.
+ */
+async function expectManageChannelAutoTranslationChecked(app: App, role: string) {
+    const {permissions} = app.admin;
+    const keys = (await permissions.rowKeys()).filter(
+        (k) => k.startsWith(`${role}-`) && k.endsWith('_channel_auto_translation'),
+    );
+    expect(keys.length).toBeGreaterThan(0);
+    for (const key of keys) {
+        await expect(permissions.row(key).checkbox.checked.locator).toBeVisible();
+    }
+}
+
+/** Opens Channel Settings from the channel header menu. */
+async function openChannelSettings(app: App) {
+    const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
+    await expect(settings.tabs.infoTab.locator).toBeVisible();
+    return settings;
 }
