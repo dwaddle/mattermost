@@ -351,7 +351,8 @@ export function opMatcher(ops: OpenApiOp[]): (verb: string, p: string) => OpenAp
     };
 }
 
-const pascal = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+/** `getMe` -> `GetMe`: an operation id for a client method the spec doesn't have. */
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /** Client method name -> operations it can call (one per route found in it). */
 export class Operations {
@@ -386,7 +387,7 @@ export class Operations {
                     matched++;
                 }
                 const body = bodies.get(name) ?? null;
-                const opId = m ? m.opId : pascal(name);
+                const opId = m ? m.opId : capitalize(name);
                 const existing = this.byId.get(opId);
                 const op: Operation = existing ?? {
                     opId,

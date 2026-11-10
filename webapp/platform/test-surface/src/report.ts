@@ -4,7 +4,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import {escapeRegExp} from './ast.ts';
 import {cmp} from './compare.ts';
+import {KEY_PLACEHOLDER} from './grammar.ts';
 import type {Diagnostic, Manifest} from './manifest_types.ts';
 import type {ScanResult, ScanStats} from './scan.ts';
 
@@ -92,16 +94,25 @@ export function writeReports(dir: string, result: ScanResult, diagnostics: Diagn
 }
 
 /**
+ * The testids a template renders, as a regular expression (`{key}` is one or more characters). Null for a template
+ * that is mostly runtime data, so it would match nearly anything: one that starts with its key, or whose literal text
+ * is shorter than `minLiteral`.
+ */
+export function templateMatcher(template: string, {minLiteral = 0} = {}): RegExp | null {
+    const literals = template.split(KEY_PLACEHOLDER);
+    if (literals.length > 1 && (!literals[0] || literals.join('').length < minLiteral)) {
+        return null;
+    }
+    return new RegExp('^' + literals.map(escapeRegExp).join('.+') + '$');
+}
+
+/**
  * Testids that unit tests query but no template in the manifest produces. An absence check on one
  * (`expect(queryByTestId('x')).not.toBeInTheDocument()`) can't fail: the usual trace of a rename
  * that missed a test. Testids a mock in the same test file renders are left out.
  */
 export function unrenderedTestIds(manifest: Manifest, files: Array<{path: string; text: string}>): Array<{testId: string; files: string[]}> {
-    // templates that are only runtime data (`{key}`) would match anything
-    const patterns = manifest.elements.
-        map((e) => e.template).
-        filter((t) => !t.startsWith('{key}')).
-        map((t) => new RegExp('^' + t.split('{key}').map(escapeRegExp).join('.+') + '$'));
+    const patterns = manifest.elements.map((e) => templateMatcher(e.template)).filter((p): p is RegExp => p !== null);
     const found = new Map<string, Set<string>>();
     const query = /(?:get|query|find)(?:All)?ByTestId\(\s*['"]([^'"]+)['"]\s*\)|\[data-testid="([^"]+)"\]/g;
     for (const f of files) {
@@ -117,8 +128,4 @@ export function unrenderedTestIds(manifest: Manifest, files: Array<{path: string
         }
     }
     return [...found.entries()].sort((a, b) => cmp(a[0], b[0])).map(([testId, fs2]) => ({testId, files: [...fs2].sort()}));
-}
-
-function escapeRegExp(s: string): string {
-    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

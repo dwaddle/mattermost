@@ -114,6 +114,11 @@ export function typeText(checker: ts.TypeChecker, t: ts.Type, flags = ts.TypeFor
     return checker.typeToString(t, undefined, flags);
 }
 
+/** `s` as a regular expression that matches it literally. */
+export function escapeRegExp(s: string): string {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /** A node's source on one line (whitespace runs collapsed), whole: for identity, where `shortText` is for display. */
 export function oneLine(n: ts.Node): string {
     return n.getText().replace(/\s+/g, ' ');

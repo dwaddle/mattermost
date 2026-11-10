@@ -6,6 +6,7 @@ import ts from 'typescript';
 import {attrValue, isJsxTag, jsxAttr, returnsOf, strip, type JsxTag} from './ast.ts';
 import type {PageParamConfig} from './config.ts';
 import {componentName} from './effects.ts';
+import {pascal} from './generate/names.ts';
 import type {Loc, Page} from './manifest_types.ts';
 import type {CodeNode, ProgramIndex} from './program_index.ts';
 import type {Resolver} from './values.ts';
@@ -138,8 +139,6 @@ function firstJsx(e: ts.Node): JsxTag | null {
     visit(e);
     return found;
 }
-
-const pascal = (s: string) => s.split(/[^A-Za-z0-9]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join('');
 
 /** Manifest pages: one per route path, named after the component it renders (or the config's name for it). */
 export function buildPages(

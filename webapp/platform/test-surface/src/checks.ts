@@ -3,6 +3,7 @@
 
 import ts from 'typescript';
 
+import {escapeRegExp} from './ast.ts';
 import {cmp} from './compare.ts';
 import type {AllowEntry, PluginConfig} from './config.ts';
 import {isGrammarError, toWord} from './grammar.ts';
@@ -495,8 +496,4 @@ export function memberCollisions(elements: Element[], nameOf: (e: Element) => st
         names.set(n, e);
     }
     return out;
-}
-
-function escapeRegExp(s: string): string {
-    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

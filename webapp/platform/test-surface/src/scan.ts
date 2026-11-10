@@ -8,6 +8,7 @@ import {cmp} from './compare.ts';
 import {Conditions} from './conditions.ts';
 import {relativeToRoot, type Config} from './config.ts';
 import {componentName, emptyEffects, mergeEffects, Tracer, withDialogOps, type Effects} from './effects.ts';
+import {pascal} from './generate/names.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId, type GrammarError, type ParsedTestId} from './grammar.ts';
 import {readVersioned} from './input.ts';
 import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type PluginInfo, type PluginSlot, type RenderCondition, type TestPart} from './manifest_types.ts';
@@ -1637,8 +1638,6 @@ function addForms(elements: Element[]) {
         }
     }
 }
-
-const pascal = (s: string) => s.split(/[^A-Za-z0-9]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join('');
 
 /** Fixed key sets: one per keyed element with known key values (all of them, or the known part of an open key), named after its top scope and name. */
 function fixedSets(elements: Element[]) {

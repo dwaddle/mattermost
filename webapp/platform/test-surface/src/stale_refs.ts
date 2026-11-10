@@ -4,10 +4,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import {escapeRegExp} from './ast.ts';
 import {relativeToRoot, type Config} from './config.ts';
+import {KEY_PLACEHOLDER} from './grammar.ts';
 import type {Diagnostic, Manifest} from './manifest_types.ts';
-
-const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+import {templateMatcher} from './report.ts';
 
 /** The code files under `roots`, skipping dependencies, build output and generated page objects. */
 function codeFiles(roots: string[]): string[] {
@@ -43,11 +44,14 @@ export function staleReferences(manifest: Manifest, config: Config): Diagnostic[
     if (!sr) {
         return [];
     }
-    const usable = manifest.elements.filter((e) => !e.template.includes('{key}') || e.template.replace(/\{key\}/g, '').length >= 8);
+    const usable = manifest.elements.flatMap((e) => {
+        const pattern = templateMatcher(e.template, {minLiteral: 8});
+        return pattern ? [{template: e.template, pattern}] : [];
+    });
 
     // sample keys of a few shapes, so a regex query like `time:\d{4}--menuitem` can match a keyed template
-    const concrete = usable.flatMap((e) => (e.template.includes('{key}') ? ['x1', '0900', '0', '1', 'a_b'].map((k) => e.template.replace(/\{key\}/g, k)) : [e.template]));
-    const patterns = usable.map((e) => new RegExp('^' + esc(e.template).replace(/\\\{key\\\}/g, '.*') + '$'));
+    const concrete = usable.flatMap((e) => (e.template.includes(KEY_PLACEHOLDER) ? ['x1', '0900', '0', '1', 'a_b'].map((k) => e.template.split(KEY_PLACEHOLDER).join(k)) : [e.template]));
+    const patterns = usable.map((e) => e.pattern);
     const matchesSome = (probe: RegExp, lit?: string) => (lit !== undefined && patterns.some((t) => t.test(lit))) || concrete.some((c) => probe.test(c));
 
     const out: Diagnostic[] = [];
@@ -67,7 +71,7 @@ export function staleReferences(manifest: Manifest, config: Config): Diagnostic[
                 shown = lit;
 
                 // a template literal's ${…} can be anything
-                const body = esc(lit).replace(/\\\$\\\{[^}]*\\\}/g, '.*');
+                const body = escapeRegExp(lit).replace(/\\\$\\\{[^}]*\\\}/g, '.*');
 
                 // `^=` is a prefix, `$=` a suffix, `*=` a substring
                 const probe = new RegExp((op === '$' || op === '*' ? '' : '^') + body + (op === '^' || op === '*' ? '' : '$'));
