@@ -83,8 +83,7 @@ test.describe('state-setting drivers check the new state', () => {
         await bold.setPressed(true);
         await expect(bold).toBePressed();
 
-        // the old name, as generated code calls it
-        await bold.press(false);
+        await bold.setPressed(false);
         await expect(bold).not.toBePressed();
 
         // a key press, like every driver

@@ -187,17 +187,6 @@ export class TogglebuttonDriver<M extends Meta = Meta> extends Driver<M> {
         });
     }
 
-    /**
-     * `press(key)` presses a key, like every driver. `press(on: boolean)` is the old name of `setPressed(on)`, kept
-     * while generated code calls it.
-     */
-    override press(key: string): Promise<void>;
-    /** @deprecated use `setPressed(on)` */
-    override press(on?: boolean): Promise<void>;
-    override press(keyOrOn: string | boolean = true): Promise<void> {
-        return typeof keyOrOn === 'string' ? super.press(keyOrOn) : this.setPressed(keyOrOn);
-    }
-
     turnOn(): Promise<void> {
         return this.setPressed(true);
     }

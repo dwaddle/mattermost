@@ -73,7 +73,7 @@ export async function actionTests() {
     await text.focus();
     await text.blur();
 
-    // a toggle button sets its state; press() presses a key (press(on) is the deprecated setPressed)
+    // a toggle button sets its state; press() presses a key
     const toggle = drivers.togglebutton(page.locator('x'), {
         ...meta,
         role: 'togglebutton',
@@ -82,6 +82,7 @@ export async function actionTests() {
     });
     await toggle.setPressed(true);
     await toggle.press('Enter');
+    // @ts-expect-error press() takes a key: setPressed(on) sets the state
     await toggle.press(false);
 
     const group = drivers.radiogroup(page.locator('x'), {

@@ -24,7 +24,6 @@ export {
     suggestionTestKey,
     textTestKey,
     withElement,
-    type AdminSettingId,
     type AdminSettingIds,
     type AdminSettingKey,
     type AdminSettingPath,
