@@ -9,7 +9,7 @@ import {fileURLToPath} from 'node:url';
 
 import {scanProject} from '../src/cli.ts';
 import {loadConfig} from '../src/config.ts';
-import {goldenNumbers} from '../src/report.ts';
+import {goldenCeilings, goldenNumbers} from '../src/report.ts';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const goldenFile = path.join(here, '..', 'golden.json');
@@ -17,11 +17,16 @@ const goldenFile = path.join(here, '..', 'golden.json');
 // eslint-disable-next-line no-process-env
 const enabled = Boolean(process.env.TEST_SURFACE_GOLDEN);
 
-// Scans the real webapp: resolution and tracing coverage may not drop below the recorded numbers.
+type Golden = Record<string, number> & {ceilings?: Record<string, number>};
+
+// Scans the real webapp: resolution and tracing coverage may not drop below the recorded numbers, and the counts
+// under `ceilings` (values cut at a cap) may not rise above theirs.
 test('golden numbers on the webapp', {skip: !enabled && 'set TEST_SURFACE_GOLDEN=1 (scans the whole webapp)'}, () => {
     const {result} = scanProject(loadConfig(path.join(here, '..', '..', '..', 'channels', 'test-surface.config.json')));
     const now = goldenNumbers(result.stats);
-    const recorded = JSON.parse(fs.readFileSync(goldenFile, 'utf8')) as Record<string, number>;
-    const drops = Object.entries(recorded).filter(([k, v]) => (now[k] ?? 0) < v).map(([k, v]) => `${k}: ${now[k]} < ${v}`);
-    assert.deepEqual(drops, [], `coverage dropped:\n  ${drops.join('\n  ')}\nIf this is intended, update golden.json.`);
+    const {ceilings = {}, ...floors} = JSON.parse(fs.readFileSync(goldenFile, 'utf8')) as Golden;
+    const drops = Object.entries(floors).filter(([k, v]) => (now[k] ?? 0) < v).map(([k, v]) => `${k}: ${now[k]} < ${v}`);
+    const above = goldenCeilings(result.stats);
+    const rises = Object.entries(ceilings).filter(([k, v]) => (above[k] ?? 0) > v).map(([k, v]) => `${k}: ${above[k]} > ${v}`);
+    assert.deepEqual([...drops, ...rises], [], `coverage dropped or a ceiling was passed:\n  ${[...drops, ...rises].join('\n  ')}\nIf this is intended, update golden.json.`);
 });

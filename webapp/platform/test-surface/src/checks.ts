@@ -8,6 +8,7 @@ import type {AllowEntry, PluginConfig} from './config.ts';
 import {isGrammarError, toWord} from './grammar.ts';
 import type {Diagnostic, Element, Loc, Manifest} from './manifest_types.ts';
 import {isUnscoped, readHostSlots, type Emission, type ScanResult, type Site} from './scan.ts';
+import {MAX_VALUES, templateOf, TOO_MANY_VALUES} from './values.ts';
 
 export type CheckOptions = {
 
@@ -155,9 +156,13 @@ function checkSites(sites: Site[], push: Push, strictAt: (at: Loc, t?: string) =
         if (s.forwarded) {
             continue;
         }
+        const shown = s.values.map(templateOf).find((t): t is string => t !== null) ?? s.expr?.getText() ?? '';
         for (const v of s.values) {
             const via = v.via?.length ? ` (via ${v.via[0]})` : '';
-            if (v.k === 'unres' || v.k === 'computed') {
+            if (v.k === 'unres' && v.why === TOO_MANY_VALUES) {
+                // eslint-disable-next-line no-template-curly-in-string
+                push('truncated', strictAt(s.at), s.at, `"${shown}" can take more than ${MAX_VALUES} values${via}; the rest are left out (${v.at}).`, 'Key the testid by one value (`:${id}`) instead of a product of lists, or split it into separate testids.');
+            } else if (v.k === 'unres' || v.k === 'computed') {
                 // eslint-disable-next-line no-template-curly-in-string
                 push('unresolved', false, s.at, `testid value can't be read statically${via}: ${v.k === 'unres' ? v.why : 'computed'} at ${v.at}.`, 'Build the testid from literals and `:${key}` data, or pass a literal down.');
             } else if (isUnscoped(v)) {

@@ -105,6 +105,13 @@
     "fix": "Use --link, or render an element with role button."
   },
   {
+    "rule": "truncated",
+    "severity": "error",
+    "at": "src/cap.tsx:13",
+    "message": "\"checks.cap.cell:r01_c01--text\" can take more than 256 values; the rest are left out (src/cap.tsx:13).",
+    "fix": "Key the testid by one value (`:${id}`) instead of a product of lists, or split it into separate testids."
+  },
+  {
     "rule": "key-origin",
     "severity": "warning",
     "at": "src/format.ts:13",

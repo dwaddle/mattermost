@@ -21,7 +21,7 @@ import {reachableFiles} from './reachability.ts';
 import {Roles} from './roles.ts';
 import {Operations} from './routes.ts';
 import {StoreGates, type Gate} from './store_gates.ts';
-import {assignmentsOf, concat, gapsOf, lit, pushesOf, Resolver, templateOf, type Gap, type Value} from './values.ts';
+import {assignmentsOf, concat, gapsOf, isTruncated, lit, MAX_VALUES, pushesOf, Resolver, templateOf, TOO_MANY_VALUES, type Gap, type Value} from './values.ts';
 
 export type SiteKind = 'dom' | 'component' | 'object' | 'part' | 'html';
 
@@ -1329,7 +1329,14 @@ export class Scanner {
             page.ready = ready;
         }
         for (const [o, expr] of navigations) {
-            const page = pageOf(this.R.resolve(expr), pages);
+            const vals = this.R.resolve(expr);
+            const cut = vals.find((v) => v.k === 'unres' && v.why === TOO_MANY_VALUES);
+            if (cut?.k === 'unres') {
+                // some targets were left out: the page can't be told from the rest
+                this.diag('truncated', 'warning', o.at, `A navigation to ${o.target} can go to more than ${MAX_VALUES} paths (${cut.at}); the scan keeps only some, so its page is unknown.`, 'Build the path from fewer lists, or navigate through a route helper with typed params.');
+                continue;
+            }
+            const page = pageOf(vals, pages);
             if (page) {
                 o.page = page;
             }
@@ -1481,6 +1488,10 @@ export class Scanner {
             elementsWithUnknownEffects: elements.filter((e) => e.effects?.unknown).length,
             elementsWithOpens: elements.filter((e) => e.opens?.length).length,
             elementsWithConditions: elements.filter((e) => e.renderedWhen?.length).length,
+
+            // testid sites and navigations whose values were cut at a cap (`truncated` diagnostics)
+            truncatedTestIdSites: sites.filter((s) => s.values.some(isTruncated)).length,
+            truncatedValues: this.R.truncatedAt.size,
             ...this.ops.stats,
         };
     }

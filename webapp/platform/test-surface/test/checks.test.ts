@@ -123,3 +123,10 @@ test('checks: a plugin slot template starting with `*.` matches it under any sco
     assert.ok(!slotMatches('*.file_card.menu.plugin:{key}--button', 'center.file_card.menu.public_link--button'));
     assert.ok(slotMatches('lhs.team_menu.plugin:{key}--menuitem', 'lhs.team_menu.plugin:{key}--menuitem'));
 });
+
+test('checks: a template past the value cap is reported (an error under strict paths), not silently cut', () => {
+    const d = diags('truncated');
+    assert.equal(d.length, 1, d.join('\n'));
+    assert.match(d[0], /^error src\/cap\.tsx:\d+ "checks\.cap\.cell:r01_c01--text" can take more than 256 values/);
+    assert.equal(out().result.stats.truncatedTestIdSites, 1);
+});

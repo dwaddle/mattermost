@@ -72,13 +72,23 @@ type PropAt =
 // Each prop hop costs a few steps (a conditional, a template, a prop read). A post's scope reaches a file tile in a
 // spillage report's post preview through about ten components, which needs more than 32.
 const MAX_DEPTH = 48;
-const MAX_VALUES = 256;
+export const MAX_VALUES = 256;
 
 /** Values gathered across a component's usages: linear in the number of usages, so the bound is much higher. */
 const MAX_USAGE_VALUES = 8192;
 const LIST_METHODS = ['map', 'forEach', 'filter', 'flatMap', 'find', 'some', 'every'];
 
 export const lit = (s: string, via?: Loc[]): Value => (via ? {k: 'lit', s, via} : {k: 'lit', s});
+
+/** Why a value stands for the ones left out past a cap: what was kept is only part of what the expression can be. */
+export const TOO_MANY_VALUES = 'too-many-values';
+
+type Unresolved = Value & {k: 'unres'};
+
+/** The values past a cap, which `concat` leaves out: never silently, so checks can say the set is incomplete. */
+const truncated = (at = ''): Unresolved => ({k: 'unres', why: TOO_MANY_VALUES, at});
+
+export const isTruncated = (v: Value): boolean => v.k === 'unres' && v.why === TOO_MANY_VALUES;
 
 /**
  * Resolves expressions to the strings they can produce, following props to every usage
@@ -1189,6 +1199,7 @@ export class Resolver {
             const vals = this.onlyFrom(comp, u, this.atUsage(comp, u, propPath, depth, seen));
             out.push(...tagged(vals, this.ix.where(node)));
             if (out.length > MAX_USAGE_VALUES) {
+                out.push(truncated(this.ix.where(comp)));
                 break;
             }
         }
@@ -1356,12 +1367,12 @@ export class Resolver {
                 acc = concat(acc, this.resolveOrGap(span.expression, depth, seen, env));
                 acc = concat(acc, [lit(span.literal.text)]);
             }
-            return acc;
+            return this.locateTruncation(acc, x);
         }
         if (ts.isBinaryExpression(x)) {
             const op = x.operatorToken.kind;
             if (op === ts.SyntaxKind.PlusToken) {
-                return concat(this.resolveOrGap(x.left, depth, seen, env), this.resolveOrGap(x.right, depth, seen, env));
+                return this.locateTruncation(concat(this.resolveOrGap(x.left, depth, seen, env), this.resolveOrGap(x.right, depth, seen, env)), x);
             }
             if (op === ts.SyntaxKind.BarBarToken || op === ts.SyntaxKind.QuestionQuestionToken) {
                 let left = this.resolve(x.left, depth + 1, seen, env);
@@ -1472,6 +1483,19 @@ export class Resolver {
         // nothing more precise: the declared type's literals (as const members, literal unions)
         return this.literalsFromType(x) ?? [this.unres('runtime-value', x)];
     }
+
+    /** Where the expression whose values were cut at a cap is (`concat` doesn't know), counted once per place. */
+    private locateTruncation(vals: Value[], x: ts.Expression): Value[] {
+        if (!vals.some((v) => v.k === 'unres' && v.why === TOO_MANY_VALUES && !v.at)) {
+            return vals;
+        }
+        const at = this.ix.where(x);
+        this.truncatedAt.add(at);
+        return vals.map((v) => (v.k === 'unres' && v.why === TOO_MANY_VALUES && !v.at ? truncated(at) : v));
+    }
+
+    /** Expressions whose values were cut at a cap. */
+    readonly truncatedAt = new Set<Loc>();
 
     private resolveIdentifier(x: ts.Identifier, depth: number, seen: Set<ts.Node>, env: Env | null): Value[] | null {
         const sym = this.symbolOf(x);
@@ -1813,7 +1837,10 @@ function partsOf(v: Value): Part[] {
     return v.k === 'pat' ? v.parts : [];
 }
 
-/** Cartesian concatenation; provenance of both sides is kept (left first). */
+/**
+ * Cartesian concatenation; provenance of both sides is kept (left first). Past the cap the rest are left out, and a
+ * `too-many-values` value stands for them.
+ */
 export function concat(a: Value[], b: Value[]): Value[] {
     const out: Value[] = [];
 
@@ -1853,6 +1880,7 @@ export function concat(a: Value[], b: Value[]): Value[] {
             }
             out.push(v);
             if (out.length > cap) {
+                out.push(truncated());
                 return out;
             }
         }

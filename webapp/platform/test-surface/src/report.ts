@@ -39,6 +39,14 @@ export function goldenNumbers(stats: ScanStats): Record<string, number> {
     };
 }
 
+/** Counts the golden-numbers check holds down (they may only go down): `golden.json` `ceilings`. */
+export function goldenCeilings(stats: ScanStats): Record<string, number> {
+    const n = (k: string) => (typeof stats[k] === 'number' ? stats[k] as number : 0);
+    return {
+        truncatedTestIdSites: n('truncatedTestIdSites'),
+    };
+}
+
 export function summary(result: ScanResult, diagnostics: Diagnostic[]): string {
     const s = result.stats;
     const n = (k: string) => (typeof s[k] === 'number' ? s[k] as number : 0);
@@ -73,7 +81,7 @@ export function writeReports(dir: string, result: ScanResult, diagnostics: Diagn
     fs.mkdirSync(dir, {recursive: true});
     const write = (name: string, lines: string[]) => fs.writeFileSync(path.join(dir, name), lines.join('\n') + '\n');
     write('summary.txt', [summary(result, diagnostics)]);
-    write('golden.json', [JSON.stringify(goldenNumbers(result.stats), null, 2)]);
+    write('golden.json', [JSON.stringify({...goldenNumbers(result.stats), ceilings: goldenCeilings(result.stats)}, null, 2)]);
     write('unknown_effects.txt', result.unknownEffects.map((u) => `${u.at}  ${u.template}\n    ${u.calls.join('\n    ')}`));
     write('spec_gaps.txt', result.specGaps.map((g) => `${g.client}: ${g.verb} ${g.path}`));
     write('unrendered_test_ids.txt', unrendered.map((u) => `${u.testId}\n    ${u.files.join('\n    ')}`));
