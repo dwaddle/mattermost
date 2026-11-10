@@ -7,8 +7,15 @@ import type {Aria, AriaRole} from './roles.ts';
 
 export type {Aria, AriaRole};
 
-/** Repo-relative location, "channels/src/…/file.tsx:51". */
+/**
+ * Where something is, repo-relative. Inside the scan it is exact, `channels/src/…/file.tsx:51:9`; the committed
+ * manifest names the component instead, `channels/src/…/file.tsx#PostComponent` (`SourceRef`), so an edit that
+ * moves lines changes no committed file (`test-surface where <testid>` prints the exact places).
+ */
 export type Loc = string;
+
+/** `channels/src/…/file.tsx#Component`, or the file alone for module-level code (see `Loc`). */
+export type SourceRef = string;
 
 /**
  * What fills a testid's key: a fixed `set` of literals, an `entity` field (`channel.name`), a `plugin` id
@@ -85,7 +92,7 @@ export type ConditionKind = 'prop' | 'local state' | 'permission' | 'license/con
  * A condition an element renders under: as written (negated in an else arm or after an early return), explained
  * (`useSelector` results inlined), and what it depends on (`viaLocal`: through a local value derived from it).
  */
-export type RenderCondition = {expr: string; explained: string; kind: ConditionKind; viaLocal?: true; at: Loc};
+export type RenderCondition = {expr: string; explained: string; kind: ConditionKind; viaLocal?: true; at?: Loc};
 
 export type Element = {
 
@@ -157,7 +164,7 @@ export type TestPart = {
 
     /** The callback props the part's click calls (`onClose`): the part's effects are those props' at the usage. */
     handlers?: string[];
-    at: Loc;
+    at: SourceRef;
 };
 
 /** What a component library publishes for the webapp's scan: per exported component, its parts and pass-through role. */
@@ -166,7 +173,7 @@ export type TestParts = {
     package: string;
     packageVersion: string;
     testIdProp: string;
-    components: Record<string, {at: Loc; role: AriaRole | null; parts: TestPart[]}>;
+    components: Record<string, {at: SourceRef; role: AriaRole | null; parts: TestPart[]}>;
 };
 
 /** A host-owned plugin slot from the published contract: its testid template (`{key}` = plugin key). */
@@ -202,8 +209,8 @@ export type Diagnostic = {
     waived?: {by: 'allow' | 'strict-exception'; reason: string};
 };
 
-/** The manifest format this version writes and reads (`Manifest.version`). */
-export const MANIFEST_VERSION = 1;
+/** The manifest format this version writes and reads (`Manifest.version`): 2 names places by `SourceRef`, holds no diagnostics. */
+export const MANIFEST_VERSION = 2;
 
 /** The `app-map.json` format the generator writes and plugin mode reads (its `version`). */
 export const APP_MAP_VERSION = 1;

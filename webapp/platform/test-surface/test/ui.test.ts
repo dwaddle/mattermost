@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {test} from 'node:test';
 
-import {element, FIXTURES, matchSnapshot, scanFixture} from './helpers.ts';
+import {element, exact, FIXTURES, matchSnapshot, scanFixture} from './helpers.ts';
 
 import {scanProject} from '../src/cli.ts';
 import {loadConfig} from '../src/config.ts';
@@ -144,7 +144,7 @@ test('ui: a page\'s ready elements come from pageReady; a scope prefix or anothe
 });
 
 test('ui: a class component reached through another class\'s static, behind a HOC, keeps its usage\'s testid', () => {
-    assert.deepEqual(element(out(), 'static_items.more--button').instances.map((i) => i.via), [['src/statics.tsx:31']]);
+    assert.deepEqual(exact(out(), 'static_items.more--button').instances.map((i) => i.via), [['src/statics.tsx:31:13']]);
 });
 
 test('ui: a menu whose items are held in variables still binds its trigger to their scope', () => {
@@ -178,7 +178,7 @@ test('ui: a styled-components tag has the role of the element it renders', () =>
 
 test('ui: styled(StyledTag) keeps the inner element; styled(Component) passes the usage props to the component', () => {
     assert.equal(element(out(), 'header.big_close--button').aria.role, 'button');
-    assert.deepEqual(element(out(), 'header.note').instances.map((i) => i.via), [['src/menu.tsx:175']]);
+    assert.deepEqual(exact(out(), 'header.note').instances.map((i) => i.via), [['src/menu.tsx:175:13']]);
     assert.ok(!out().diagnostics.some((d) => d.message.includes('big_close') || d.message.includes('header.note')), JSON.stringify(out().diagnostics.filter((d) => d.at.includes('menu.tsx'))));
 });
 

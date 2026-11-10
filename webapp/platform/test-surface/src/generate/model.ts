@@ -21,7 +21,7 @@ function appWrapper(group: ScopeNode[]): string | undefined {
             if (i.via.length < 2) {
                 return undefined;
             }
-            files.add(i.via[0].replace(/:\d+$/, ''));
+            files.add(i.via[0].split('#')[0]);
         }
     }
     if (files.size !== 1) {

@@ -17,6 +17,9 @@ export type DialogRef = {kind: 'object'; node: ts.ObjectLiteralExpression} | {ki
 
 export type Loc = string;
 
+/** Where something is, as the manifest names it: `channels/src/…/file.tsx#Component`, or the file alone. */
+export type SourceRef = string;
+
 /** `React.createElement(Comp, props)`: a usage whose attributes are an object. */
 export type CallUsage = {kind: 'call'; call: ts.CallExpression; props: ts.Expression | undefined};
 
@@ -185,10 +188,41 @@ export class ProgramIndex {
         return path.relative(this.config.root, file).split(path.sep).join('/');
     }
 
+    /**
+     * Where a node is, exactly: `file:line:column`. Used inside the scan only (keys, usage chains, diagnostics);
+     * the manifest names places by `ref()`, which doesn't change when a line is added above.
+     */
     where(n: ts.Node): Loc {
         const sf = n.getSourceFile();
-        const {line} = sf.getLineAndCharacterOfPosition(n.getStart(sf));
-        return `${this.rel(sf.fileName)}:${line + 1}`;
+        const {line, character} = sf.getLineAndCharacterOfPosition(n.getStart(sf));
+        const loc = `${this.rel(sf.fileName)}:${line + 1}:${character + 1}`;
+        if (!this.refs.has(loc)) {
+            this.refs.set(loc, this.ref(n));
+        }
+        return loc;
+    }
+
+    private readonly refs = new Map<Loc, SourceRef>();
+
+    /** The `file#Component` a location `where()` returned is in (the file alone for a location not in the program). */
+    refOf(loc: Loc): SourceRef {
+        return this.refs.get(loc) ?? fileOfLoc(loc);
+    }
+
+    /**
+     * Where a node is, as the manifest names it: `file#Name`, the top-level component, class or function it is in
+     * (the declaration's name, through HOC wrappers: `const X = memo(() => …)` is `X`), or the file alone for module-level
+     * code that isn't in one.
+     */
+    ref(n: ts.Node): SourceRef {
+        const sf = n.getSourceFile();
+        const file = this.rel(sf.fileName);
+        let top: ts.Node = n;
+        while (top.parent && !ts.isSourceFile(top.parent)) {
+            top = top.parent;
+        }
+        const name = topLevelName(top);
+        return name ? `${file}#${name}` : file;
     }
 
     // ---- symbol -> code node --------------------------------------------------------
@@ -482,6 +516,31 @@ export class ProgramIndex {
         const comp = this.unwrapExpr(target);
         return comp ? {comp, dispatch: conn.arguments[1] ?? null, call: conn} : null;
     }
+}
+
+/** `channels/src/a.tsx:12:5` -> `channels/src/a.tsx`. */
+export function fileOfLoc(loc: Loc): string {
+    return loc.replace(/(:\d+)+$/, '');
+}
+
+/**
+ * The name of a top-level statement that declares code: a function, a class, or a variable holding one (directly or
+ * through a call such as `memo(…)` or `connect(…)(…)`); `default` for an anonymous default export. Null for anything
+ * else (a constant list, an import).
+ */
+function topLevelName(st: ts.Node): string | null {
+    if ((ts.isFunctionDeclaration(st) || ts.isClassDeclaration(st))) {
+        return st.name?.text ?? 'default';
+    }
+    if (ts.isVariableStatement(st)) {
+        const d = st.declarationList.declarations[0];
+        const holdsCode = (e: ts.Node | undefined): boolean => Boolean(e) && (isFunctionLike(e) || ts.isClassExpression(e!) || (ts.isCallExpression(e!) && (e!.arguments.some(holdsCode) || holdsCode(e!.expression))) || ((ts.isParenthesizedExpression(e!) || ts.isAsExpression(e!)) && holdsCode(e!.expression)));
+        return d && ts.isIdentifier(d.name) && holdsCode(d.initializer) ? d.name.text : null;
+    }
+    if (ts.isExportAssignment(st)) {
+        return 'default';
+    }
+    return null;
 }
 
 /** `styled(X)(...)`, `styled(X, opts)(...)`, `styled.div(...)`: the root of the callee chain is `styled`. */

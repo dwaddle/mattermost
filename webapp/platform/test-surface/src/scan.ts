@@ -4,7 +4,7 @@
 import ts from 'typescript';
 
 import {attrValue, exprName, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, oneLine, propName, returnsOf, strip, tagName, type FunctionLike, type JsxTag} from './ast.ts';
-import {cmp} from './compare.ts';
+import {cmp, cmpLoc, cmpLocs} from './compare.ts';
 import {Conditions} from './conditions.ts';
 import {relativeToRoot, type Config} from './config.ts';
 import {componentName, emptyEffects, mergeEffects, Tracer, withDialogOps, type Effects} from './effects.ts';
@@ -17,7 +17,8 @@ import {pageOf} from './navigation.ts';
 import {buildPages, discoverRoutes} from './pages.ts';
 import {loadPublishedParts, publishedComponent, type PublishedParts} from './parts.ts';
 import type {LoadedProgram} from './program.ts';
-import {isCallUsage, ProgramIndex, usageNode, type CodeNode, type Usage} from './program_index.ts';
+import {fileOfLoc, isCallUsage, ProgramIndex, usageNode, type CodeNode, type Usage} from './program_index.ts';
+import {publish} from './publish.ts';
 import {reachableFiles} from './reachability.ts';
 import {ROLE_TABLE} from './role_table.ts';
 import {asWritten, Roles, type AriaRole} from './roles.ts';
@@ -80,7 +81,12 @@ export type Emission = {
 export type ScanStats = Record<string, number | Record<string, number>>;
 
 export type ScanResult = {
+
+    /** The manifest with exact locations (`file:line:column`), which checks and `test-surface where` read. */
     manifest: Manifest;
+
+    /** The manifest as committed: places named `file#Component` (`publish`). */
+    published: Manifest;
     stats: ScanStats;
     sites: Site[];
     emissions: Emission[];
@@ -749,7 +755,7 @@ export class Scanner {
      */
     private markUnreachable(elements: Element[]) {
         const files = new Set([...reachableFiles(this.ix.program, this.config.entries)].map((f) => this.ix.rel(f)));
-        const live = (loc: Loc) => files.has(loc.replace(/:\d+$/, ''));
+        const live = (loc: Loc) => files.has(fileOfLoc(loc));
         for (const el of elements) {
             const sites = [el.component.at, ...(el.alsoAt ?? [])];
             if (!sites.some(live) || !el.instances.some((i) => i.via.every(live))) {
@@ -1102,7 +1108,7 @@ export class Scanner {
         const menuUsages = new Map<string, JsxTag>();
         const navigations = new Map<Open, ts.Expression>();
         for (const [template, list] of byTemplate) {
-            list.sort((a, b) => cmp(a.site.at, b.site.at) || cmp(a.via.join(','), b.via.join(',')));
+            list.sort((a, b) => cmpLoc(a.site.at, b.site.at) || cmpLocs(a.via, b.via));
             const first = list[0];
             const parsed = first.parsed;
             const valid = !isGrammarError(parsed);
@@ -1182,7 +1188,7 @@ export class Scanner {
                 component: {name: first.site.ownerName, at: first.site.at},
                 instances: [...instances.values()].
                     map((i) => ({via: i.via, ...(i.keySet.size ? {keySet: [...i.keySet].sort()} : {})})).
-                    sort((a, b) => cmp(a.via.join(','), b.via.join(','))),
+                    sort((a, b) => cmpLocs(a.via, b.via)),
                 aria: {...aria, state: [...new Set(aria.state)].sort()},
             };
             if (sitesAt.length > 1) {
@@ -1203,7 +1209,7 @@ export class Scanner {
             }
             const conds = siteConds.reduce((all, here) => new Map([...all].filter(([k]) => here.has(k))));
             if (conds.size) {
-                el.renderedWhen = [...conds.values()].sort((a, b) => cmp(a.at, b.at) || cmp(a.expr, b.expr));
+                el.renderedWhen = [...conds.values()].sort((a, b) => cmpLoc(a.at ?? '', b.at ?? '') || cmp(a.expr, b.expr));
             }
             elements.push(el);
         }
@@ -1215,7 +1221,7 @@ export class Scanner {
         const components = [...opTargets.entries()].map(([name, node]) => {
             const scopes = [...this.scopesOf(node)].sort();
             return {name, at: this.ix.where(node), scopes};
-        }).sort((a, b) => cmp(a.name, b.name) || cmp(a.at, b.at));
+        }).sort((a, b) => cmp(a.name, b.name) || cmpLoc(a.at, b.at));
 
         // a component's own scopes (decided in its body) name it; without any, it has no name of its own (a scope
         // nested inside it, like a popover in its textbox, would be the wrong page object to return)
@@ -1386,7 +1392,8 @@ export class Scanner {
             const u = this.usageByLoc.get(loc);
             return u ? usageAnchor(u) : undefined;
         };
-        return {manifest, stats: this.stats(sites, emissions, elements), sites, emissions, unknownEffects, specGaps, usageNodeAt, urlVersion: this.config.client?.urlVersion ?? null, diagnostics: this.diagnostics};
+        const published = publish(manifest, (loc) => this.ix.refOf(loc));
+        return {manifest, published, stats: this.stats(sites, emissions, elements), sites, emissions, unknownEffects, specGaps, usageNodeAt, urlVersion: this.config.client?.urlVersion ?? null, diagnostics: this.diagnostics};
     }
 
     /** The published slot contract: `export const X = {slot: 'template with {plugin}', …} as const`, and the registry methods that fill each slot. */
@@ -1470,7 +1477,7 @@ export class Scanner {
         for (const sf of this.ix.files) {
             visit(sf);
         }
-        return {id: plugin.id, key: plugin.key, slotsUsed: slotsUsed.sort((a, b) => cmp(a.at, b.at))};
+        return {id: plugin.id, key: plugin.key, slotsUsed: slotsUsed.sort((a, b) => cmpLoc(a.at, b.at))};
     }
 
     private stats(sites: Site[], emissions: Emission[], elements: Element[]): ScanStats {
@@ -1526,7 +1533,7 @@ export class Scanner {
 export const isUnscoped = (v: Value) => v.k === 'pat' && v.parts.length === 1 && typeof v.parts[0] !== 'string';
 
 /** `channels/src/a.tsx:12` -> `channels/src/a.tsx`. */
-const fileOf = (at: Loc) => at.replace(/:\d+$/, '');
+const fileOf = fileOfLoc;
 
 function usageAnchor(u: Usage): ts.Node {
     return isCallUsage(u) ? u.call : elementOf(u);

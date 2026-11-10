@@ -125,7 +125,7 @@ test('checks: diagnostics about a testid carry its template, key and usage chain
 test('checks: a testid written in markup text is a site; one in a selector string is not', () => {
     const el = element(out(), 'checks.markup.highlight--text');
     assert.equal(el.aria.role, null);
-    assert.equal(el.component.at, 'src/format.ts:3');
+    assert.equal(el.component.at, 'src/format.ts#highlight');
     assert.ok(!out().manifest.elements.some((e) => e.template.includes('not_a_site')));
     const keyed = element(out(), 'checks.markup.mention:{key}--link');
     assert.equal(keyed.aria.role, 'link', 'a keyed testid in a template with substitutions');
@@ -146,7 +146,7 @@ test('checks: a plugin slot template starting with `*.` matches it under any sco
 test('checks: a template past the value cap is reported (an error under strict paths), not silently cut', () => {
     const d = diags('truncated');
     assert.equal(d.length, 1, d.join('\n'));
-    assert.match(d[0], /^error src\/cap\.tsx:\d+ "checks\.cap\.cell:r01_c01--text" can take more than 256 values/);
+    assert.match(d[0], /^error src\/cap\.tsx:\d+:\d+ "checks\.cap\.cell:r01_c01--text" can take more than 256 values/);
     assert.equal(out().result.stats.truncatedTestIdSites, 1);
 });
 

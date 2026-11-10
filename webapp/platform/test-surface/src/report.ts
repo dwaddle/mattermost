@@ -98,6 +98,10 @@ export function writeReports(dir: string, result: ScanResult, diagnostics: Diagn
 
     // every diagnostic, warnings included, for CI to keep as an artifact (the manifest doesn't hold them)
     write('diagnostics.json', [JSON.stringify(diagnostics, null, 2)]);
+
+    // the exact places behind the manifest's `file#Component` names
+    const locations = Object.fromEntries(result.manifest.elements.map((e) => [e.template, {at: [e.component.at, ...(e.alsoAt ?? [])], via: [...new Set(e.instances.map((i) => i.via.join(' < ')).filter(Boolean))]}]));
+    write('locations.json', [JSON.stringify(locations, null, 2)]);
     write('unknown_effects.txt', result.unknownEffects.map((u) => `${u.at}  ${u.template}\n    ${u.calls.join('\n    ')}`));
     write('spec_gaps.txt', result.specGaps.map((g) => `${g.client}: ${g.verb} ${g.path}`));
     write('unrendered_test_ids.txt', unrendered.map((u) => `${u.testId}\n    ${u.files.join('\n    ')}`));

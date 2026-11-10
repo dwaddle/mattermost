@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "generatedFrom": {
     "tsconfig": "tsconfig.json",
     "scope": [
@@ -18,7 +18,7 @@
       "role": "text",
       "component": {
         "name": "Builder",
-        "at": "src/app.tsx:66"
+        "at": "src/app.tsx#Builder"
       },
       "instances": [
         {
@@ -42,7 +42,7 @@
       "role": "text",
       "component": {
         "name": "Builder",
-        "at": "src/app.tsx:66"
+        "at": "src/app.tsx#Builder"
       },
       "instances": [
         {
@@ -71,17 +71,17 @@
       "role": "text",
       "component": {
         "name": "ChainLeaf",
-        "at": "src/dynamic.tsx:130"
+        "at": "src/dynamic.tsx#ChainLeaf"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:133",
-            "src/dynamic.tsx:136",
-            "src/dynamic.tsx:139",
-            "src/dynamic.tsx:142",
-            "src/dynamic.tsx:145",
-            "src/dynamic.tsx:148"
+            "src/dynamic.tsx#ChainE",
+            "src/dynamic.tsx#ChainD",
+            "src/dynamic.tsx#ChainC",
+            "src/dynamic.tsx#ChainB",
+            "src/dynamic.tsx#ChainA",
+            "src/dynamic.tsx#Chain"
           ]
         }
       ],
@@ -99,7 +99,7 @@
       "role": null,
       "component": {
         "name": "App",
-        "at": "src/app.tsx:48"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -124,7 +124,7 @@
       "role": "text",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:46"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -149,7 +149,7 @@
       "role": "text",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:45"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -173,7 +173,7 @@
       "role": "link",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:43"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -204,7 +204,7 @@
       "role": "radio",
       "component": {
         "name": "Choices",
-        "at": "src/app.tsx:114"
+        "at": "src/app.tsx#Choices"
       },
       "instances": [
         {
@@ -241,7 +241,7 @@
       "role": "button",
       "component": {
         "name": "ClearOptions",
-        "at": "src/dynamic.tsx:221"
+        "at": "src/dynamic.tsx#ClearOptions"
       },
       "instances": [
         {
@@ -278,7 +278,7 @@
       "role": "button",
       "component": {
         "name": "Colliding",
-        "at": "src/dynamic.tsx:43"
+        "at": "src/dynamic.tsx#Colliding"
       },
       "instances": [
         {
@@ -303,7 +303,7 @@
       "role": "text",
       "component": {
         "name": "Colliding",
-        "at": "src/dynamic.tsx:44"
+        "at": "src/dynamic.tsx#Colliding"
       },
       "instances": [
         {
@@ -327,12 +327,12 @@
       "role": null,
       "component": {
         "name": "TabsInner",
-        "at": "src/dynamic.tsx:51"
+        "at": "src/dynamic.tsx#TabsInner"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:57"
+            "src/dynamic.tsx#TabsUsers"
           ]
         }
       ],
@@ -353,12 +353,12 @@
       "role": null,
       "component": {
         "name": "TabsInner",
-        "at": "src/dynamic.tsx:51"
+        "at": "src/dynamic.tsx#TabsInner"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:58"
+            "src/dynamic.tsx#TabsUsers"
           ]
         }
       ],
@@ -379,12 +379,12 @@
       "role": "text",
       "component": {
         "name": "Deep",
-        "at": "src/leaf.tsx:10"
+        "at": "src/leaf.tsx#Deep"
       },
       "instances": [
         {
           "via": [
-            "src/app.tsx:28"
+            "src/app.tsx#App"
           ]
         }
       ],
@@ -405,12 +405,12 @@
       "role": "checkbox",
       "component": {
         "name": "Field",
-        "at": "src/defaults.tsx:7"
+        "at": "src/defaults.tsx#Field"
       },
       "instances": [
         {
           "via": [
-            "src/defaults.tsx:10"
+            "src/defaults.tsx#DefaultFields"
           ]
         }
       ],
@@ -431,12 +431,12 @@
       "role": "text",
       "component": {
         "name": "DefinedPanel",
-        "at": "src/dynamic.tsx:233"
+        "at": "src/dynamic.tsx#DefinedPanel"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:241"
+            "src/dynamic.tsx#DefinitionRenderer"
           ],
           "keySet": [
             "only"
@@ -468,12 +468,12 @@
       "role": "text",
       "component": {
         "name": "Label",
-        "at": "src/dynamic.tsx:8"
+        "at": "src/dynamic.tsx#Label"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:21"
+            "src/dynamic.tsx#Created"
           ]
         }
       ],
@@ -495,12 +495,12 @@
       "role": "textbox",
       "component": {
         "name": "Plain",
-        "at": "src/dynamic.tsx:12"
+        "at": "src/dynamic.tsx#Plain"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:27"
+            "src/dynamic.tsx#Editor"
           ]
         }
       ],
@@ -527,12 +527,12 @@
       "role": "textbox",
       "component": {
         "name": "Rich",
-        "at": "src/dynamic.tsx:16"
+        "at": "src/dynamic.tsx#Rich"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:27"
+            "src/dynamic.tsx#Editor"
           ]
         }
       ],
@@ -558,12 +558,12 @@
       "role": "text",
       "component": {
         "name": "Label",
-        "at": "src/dynamic.tsx:8"
+        "at": "src/dynamic.tsx#Label"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:32"
+            "src/dynamic.tsx#Slot"
           ]
         }
       ],
@@ -584,12 +584,12 @@
       "role": "text",
       "component": {
         "name": "Fallback",
-        "at": "src/leaf.tsx:28"
+        "at": "src/leaf.tsx#Fallback"
       },
       "instances": [
         {
           "via": [
-            "src/leaf.tsx:38"
+            "src/leaf.tsx#FallbackUses"
           ]
         }
       ],
@@ -610,12 +610,12 @@
       "role": "text",
       "component": {
         "name": "Fallback",
-        "at": "src/leaf.tsx:28"
+        "at": "src/leaf.tsx#Fallback"
       },
       "instances": [
         {
           "via": [
-            "src/leaf.tsx:34"
+            "src/leaf.tsx#FallbackUses"
           ]
         }
       ],
@@ -636,12 +636,12 @@
       "role": null,
       "component": {
         "name": "Grid",
-        "at": "src/grid.tsx:12"
+        "at": "src/grid.tsx#Grid"
       },
       "instances": [
         {
           "via": [
-            "src/grid.tsx:22"
+            "src/grid.tsx#FixedGrid"
           ],
           "keySet": [
             "a",
@@ -675,7 +675,7 @@
       "role": "link",
       "component": {
         "name": "Found",
-        "at": "src/dynamic.tsx:75"
+        "at": "src/dynamic.tsx#Found"
       },
       "instances": [
         {
@@ -699,8 +699,7 @@
           "expr": "found",
           "explained": "found",
           "kind": "prop",
-          "viaLocal": true,
-          "at": "src/dynamic.tsx:69"
+          "viaLocal": true
         }
       ]
     },
@@ -715,7 +714,7 @@
       "role": "button",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:33"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -739,12 +738,12 @@
       "role": null,
       "component": {
         "name": "Keyed",
-        "at": "src/dynamic.tsx:194"
+        "at": "src/dynamic.tsx#Keyed"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:200"
+            "src/dynamic.tsx#KeyedUses"
           ],
           "keySet": [
             "one"
@@ -776,12 +775,12 @@
       "role": null,
       "component": {
         "name": "Keyed",
-        "at": "src/dynamic.tsx:194"
+        "at": "src/dynamic.tsx#Keyed"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:199"
+            "src/dynamic.tsx#KeyedUses"
           ]
         }
       ],
@@ -802,12 +801,12 @@
       "role": "button",
       "component": {
         "name": "Leaf",
-        "at": "src/leaf.tsx:5"
+        "at": "src/leaf.tsx#Leaf"
       },
       "instances": [
         {
           "via": [
-            "src/app.tsx:22"
+            "src/app.tsx#App"
           ]
         }
       ],
@@ -828,12 +827,12 @@
       "role": "button",
       "component": {
         "name": "Leaf",
-        "at": "src/leaf.tsx:5"
+        "at": "src/leaf.tsx#Leaf"
       },
       "instances": [
         {
           "via": [
-            "src/app.tsx:21"
+            "src/app.tsx#App"
           ]
         }
       ],
@@ -854,7 +853,7 @@
       "role": "text",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:31"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -878,7 +877,7 @@
       "role": "text",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:31"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -902,7 +901,7 @@
       "role": "text",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:30"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -928,14 +927,14 @@
       "role": "text",
       "component": {
         "name": "Message",
-        "at": "src/recursive.tsx:37"
+        "at": "src/recursive.tsx#Message"
       },
       "instances": [
         {
           "via": [
-            "src/recursive.tsx:44",
-            "src/recursive.tsx:38",
-            "src/recursive.tsx:49"
+            "src/recursive.tsx#Quote",
+            "src/recursive.tsx#Message",
+            "src/recursive.tsx#MessageHost"
           ]
         }
       ],
@@ -948,8 +947,7 @@
         {
           "expr": "quoted",
           "explained": "quoted",
-          "kind": "prop",
-          "at": "src/recursive.tsx:38"
+          "kind": "prop"
         }
       ]
     },
@@ -964,12 +962,12 @@
       "role": "text",
       "component": {
         "name": "Message",
-        "at": "src/recursive.tsx:37"
+        "at": "src/recursive.tsx#Message"
       },
       "instances": [
         {
           "via": [
-            "src/recursive.tsx:49"
+            "src/recursive.tsx#MessageHost"
           ]
         }
       ],
@@ -990,12 +988,12 @@
       "role": "link",
       "component": {
         "name": "MixedRow",
-        "at": "src/dynamic.tsx:101"
+        "at": "src/dynamic.tsx#MixedRow"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:106"
+            "src/dynamic.tsx#Mixed"
           ]
         }
       ],
@@ -1023,13 +1021,13 @@
       "role": "button",
       "component": {
         "name": "NarrowButton",
-        "at": "src/dynamic.tsx:153"
+        "at": "src/dynamic.tsx#NarrowButton"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:159",
-            "src/dynamic.tsx:183"
+            "src/dynamic.tsx#NarrowList",
+            "src/dynamic.tsx#NarrowUsers"
           ]
         }
       ],
@@ -1054,12 +1052,12 @@
       "role": null,
       "component": {
         "name": "NarrowSection",
-        "at": "src/dynamic.tsx:169"
+        "at": "src/dynamic.tsx#NarrowSection"
       },
       "instances": [
         {
           "via": [
-            "src/dynamic.tsx:174"
+            "src/dynamic.tsx#NarrowSections"
           ],
           "keySet": [
             "0"
@@ -1091,7 +1089,7 @@
       "role": "text",
       "component": {
         "name": "Paired",
-        "at": "src/dynamic.tsx:123"
+        "at": "src/dynamic.tsx#Paired"
       },
       "instances": [
         {
@@ -1115,7 +1113,7 @@
       "role": "text",
       "component": {
         "name": "Paired",
-        "at": "src/dynamic.tsx:123"
+        "at": "src/dynamic.tsx#Paired"
       },
       "instances": [
         {
@@ -1139,7 +1137,7 @@
       "role": "link",
       "component": {
         "name": "Paired",
-        "at": "src/dynamic.tsx:121"
+        "at": "src/dynamic.tsx#Paired"
       },
       "instances": [
         {
@@ -1174,7 +1172,7 @@
       "role": "link",
       "component": {
         "name": "Paired",
-        "at": "src/dynamic.tsx:121"
+        "at": "src/dynamic.tsx#Paired"
       },
       "instances": [
         {
@@ -1209,12 +1207,12 @@
       "role": "button",
       "component": {
         "name": "(anonymous)",
-        "at": "src/leaf.tsx:20"
+        "at": "src/leaf.tsx#Panel"
       },
       "instances": [
         {
           "via": [
-            "src/app.tsx:29"
+            "src/app.tsx#App"
           ]
         }
       ],
@@ -1235,7 +1233,7 @@
       "role": "button",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:32"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -1259,12 +1257,12 @@
       "role": null,
       "component": {
         "name": "OptionView",
-        "at": "src/option_view.tsx:12"
+        "at": "src/option_view.tsx#OptionView"
       },
       "instances": [
         {
           "via": [
-            "src/option_view.tsx:20"
+            "src/option_view.tsx#Option"
           ]
         }
       ],
@@ -1289,17 +1287,17 @@
       "role": null,
       "component": {
         "name": "OptionView",
-        "at": "src/option_view.tsx:12"
+        "at": "src/option_view.tsx#OptionView"
       },
       "instances": [
         {
           "via": [
-            "src/option_view.tsx:20"
+            "src/option_view.tsx#Option"
           ]
         },
         {
           "via": [
-            "src/option_view.tsx:30"
+            "src/option_view.tsx#SingleValue"
           ]
         }
       ],
@@ -1320,7 +1318,7 @@
       "role": null,
       "component": {
         "name": "Previews",
-        "at": "src/dynamic.tsx:88"
+        "at": "src/dynamic.tsx#Previews"
       },
       "instances": [
         {
@@ -1351,12 +1349,12 @@
       "role": null,
       "component": {
         "name": "Grid",
-        "at": "src/grid.tsx:12"
+        "at": "src/grid.tsx#Grid"
       },
       "instances": [
         {
           "via": [
-            "src/grid.tsx:34"
+            "src/grid.tsx#PushedGrid"
           ]
         }
       ],
@@ -1381,12 +1379,12 @@
       "role": "text",
       "component": {
         "name": "Row",
-        "at": "src/app.tsx:60"
+        "at": "src/app.tsx#Row"
       },
       "instances": [
         {
           "via": [
-            "src/app.tsx:50"
+            "src/app.tsx#App"
           ]
         }
       ],
@@ -1411,7 +1409,7 @@
       "role": "radio",
       "component": {
         "name": "Sections",
-        "at": "src/app.tsx:83"
+        "at": "src/app.tsx#Sections"
       },
       "instances": [
         {
@@ -1430,10 +1428,6 @@
         "native": true,
         "state": []
       },
-      "alsoAt": [
-        "src/app.tsx:87",
-        "src/app.tsx:92"
-      ],
       "key": {
         "kind": "set",
         "type": "\"auto\" | \"compact\" | \"full\" | \"off\" | \"on\"",
@@ -1458,7 +1452,7 @@
       "role": "textbox",
       "component": {
         "name": "Row",
-        "at": "src/settings.tsx:15"
+        "at": "src/settings.tsx#Row"
       },
       "instances": [
         {
@@ -1481,32 +1475,32 @@
       "role": null,
       "component": {
         "name": "Row",
-        "at": "src/settings.tsx:12"
+        "at": "src/settings.tsx#Row"
       },
       "instances": [
         {
           "via": [
-            "src/settings.tsx:23"
+            "src/settings.tsx#AttributeSettings"
           ]
         },
         {
           "via": [
-            "src/settings.tsx:33"
+            "src/settings.tsx#LocalToggle"
           ]
         },
         {
           "via": [
-            "src/settings.tsx:55"
+            "src/settings.tsx#PageButtonRow"
           ]
         },
         {
           "via": [
-            "src/settings.tsx:80"
+            "src/settings.tsx#SiteUrl"
           ]
         },
         {
           "via": [
-            "src/settings.tsx:96"
+            "src/settings.tsx#renderText"
           ]
         }
       ],
@@ -1538,12 +1532,12 @@
       "role": "button",
       "component": {
         "name": "Leaf",
-        "at": "src/leaf.tsx:5"
+        "at": "src/leaf.tsx#Leaf"
       },
       "instances": [
         {
           "via": [
-            "src/app.tsx:23"
+            "src/app.tsx#App"
           ]
         }
       ],
@@ -1564,7 +1558,7 @@
       "role": "link",
       "component": {
         "name": "App",
-        "at": "src/app.tsx:38"
+        "at": "src/app.tsx#App"
       },
       "instances": [
         {
@@ -1601,18 +1595,18 @@
       "role": "button",
       "component": {
         "name": "Branch",
-        "at": "src/recursive.tsx:9"
+        "at": "src/recursive.tsx#Branch"
       },
       "instances": [
         {
           "via": [
-            "src/recursive.tsx:11",
-            "src/recursive.tsx:24"
+            "src/recursive.tsx#Branch",
+            "src/recursive.tsx#TreeHost"
           ]
         },
         {
           "via": [
-            "src/recursive.tsx:24"
+            "src/recursive.tsx#TreeHost"
           ]
         }
       ],
@@ -1637,13 +1631,13 @@
       "role": "button",
       "component": {
         "name": "Leaf",
-        "at": "src/leaf.tsx:5"
+        "at": "src/leaf.tsx#Leaf"
       },
       "instances": [
         {
           "via": [
-            "src/leaf.tsx:15",
-            "src/app.tsx:24"
+            "src/leaf.tsx#Wrapper",
+            "src/app.tsx#App"
           ]
         }
       ],
@@ -1661,21 +1655,21 @@
         "no",
         "yes"
       ],
-      "source": "src/app.tsx:114"
+      "source": "src/app.tsx#Choices"
     },
     {
       "name": "ValuesDraft",
       "values": [
         "drft"
       ],
-      "source": "src/dynamic.tsx:121"
+      "source": "src/dynamic.tsx#Paired"
     },
     {
       "name": "ValuesItem",
       "values": [
         "one"
       ],
-      "source": "src/dynamic.tsx:194"
+      "source": "src/dynamic.tsx#Keyed"
     },
     {
       "name": "ValuesOption",
@@ -1684,14 +1678,14 @@
         "hour",
         "none"
       ],
-      "source": "src/dynamic.tsx:221"
+      "source": "src/dynamic.tsx#ClearOptions"
     },
     {
       "name": "ValuesPanel",
       "values": [
         "only"
       ],
-      "source": "src/dynamic.tsx:233"
+      "source": "src/dynamic.tsx#DefinedPanel"
     },
     {
       "name": "ValuesRow",
@@ -1699,21 +1693,21 @@
         "a",
         "b"
       ],
-      "source": "src/grid.tsx:12"
+      "source": "src/grid.tsx#Grid"
     },
     {
       "name": "ValuesScheduled",
       "values": [
         "sched"
       ],
-      "source": "src/dynamic.tsx:121"
+      "source": "src/dynamic.tsx#Paired"
     },
     {
       "name": "ValuesSection",
       "values": [
         "0"
       ],
-      "source": "src/dynamic.tsx:169"
+      "source": "src/dynamic.tsx#NarrowSection"
     },
     {
       "name": "ValuesSectionsOption",
@@ -1724,7 +1718,7 @@
         "off",
         "on"
       ],
-      "source": "src/app.tsx:83"
+      "source": "src/app.tsx#Sections"
     },
     {
       "name": "ValuesTab",
@@ -1732,7 +1726,7 @@
         "info",
         "members"
       ],
-      "source": "src/app.tsx:38"
+      "source": "src/app.tsx#App"
     }
   ],
   "operations": [],

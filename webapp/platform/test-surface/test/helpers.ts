@@ -36,6 +36,13 @@ export function matchSnapshot(name: string, file: string, value: unknown) {
     assert.equal(text, fs.readFileSync(p, 'utf8'), `snapshot ${name}/${file} differs (UPDATE_SNAPSHOTS=1 to accept)`);
 }
 
+/** Element lookup by template, in the scan's own manifest: exact locations (`file:line:column`), not `file#Component`. */
+export function exact(out: ScanOutput, template: string) {
+    const el = out.result.manifest.elements.find((e) => e.template === template);
+    assert.ok(el, `no element ${template}`);
+    return el;
+}
+
 /** Element lookup by template. */
 export function element(out: ScanOutput, template: string) {
     const el = out.manifest.elements.find((e) => e.template === template);

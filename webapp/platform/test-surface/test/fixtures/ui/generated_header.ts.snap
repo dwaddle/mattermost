@@ -36,10 +36,10 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.big_close--button` (src/menu.tsx:172)
+     * `header.big_close--button` — StyledWrappers (src/menu.tsx)
      */
     get bigCloseButton() {
-        return drivers.button(this.byTestId(`${this.scope}.big_close--button`), {testId: `${this.scope}.big_close--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:172'});
+        return drivers.button(this.byTestId(`${this.scope}.big_close--button`), {testId: `${this.scope}.big_close--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#StyledWrappers'});
     }
 
     async clickBigCloseButton(): Promise<void> {
@@ -47,10 +47,10 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.close--button` (src/menu.tsx:114)
+     * `header.close--button` — Closer (src/menu.tsx)
      */
     get closeButton() {
-        return drivers.button(this.byTestId(`${this.scope}.close--button`), {testId: `${this.scope}.close--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:114'});
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {testId: `${this.scope}.close--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#Closer'});
     }
 
     async clickCloseButton(): Promise<void> {
@@ -58,19 +58,19 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.current_channel--option` (src/header.tsx:65)
+     * `header.current_channel--option` — Header (src/header.tsx)
      * Renders only when channelId.
      */
     get currentChannelOption() {
-        return drivers.option(this.byTestId(`${this.scope}.current_channel--option`), {testId: `${this.scope}.current_channel--option`, role: 'option', effects: [], unknownEffects: false, source: 'src/header.tsx:65'});
+        return drivers.option(this.byTestId(`${this.scope}.current_channel--option`), {testId: `${this.scope}.current_channel--option`, role: 'option', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /**
-     * `header.dismiss--button` (src/two_sites.tsx:11)
+     * `header.dismiss--button` — TwoSites (src/two_sites.tsx)
      * Renders only when open.
      */
     get dismissButton() {
-        return drivers.button(this.byTestId(`${this.scope}.dismiss--button`), {testId: `${this.scope}.dismiss--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/two_sites.tsx:11'});
+        return drivers.button(this.byTestId(`${this.scope}.dismiss--button`), {testId: `${this.scope}.dismiss--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/two_sites.tsx#TwoSites'});
     }
 
     async clickDismissButton(): Promise<void> {
@@ -78,13 +78,13 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.either--button` (src/modals.tsx:42)
+     * `header.either--button` — TestIdToggleModalButton (src/modals.tsx)
      * Renders only when channelId.
      * Opens modal LeaveModal (`leave_modal`).
      * Opens modal SettingsModal (`settings_modal`).
      */
     get eitherButton() {
-        return drivers.button(this.byTestId(`${this.scope}.either--button`), {testId: `${this.scope}.either--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/modals.tsx:42'});
+        return drivers.button(this.byTestId(`${this.scope}.either--button`), {testId: `${this.scope}.either--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/modals.tsx#TestIdToggleModalButton'});
     }
 
     /** Clicks eitherButton, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
@@ -97,12 +97,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.external--link` (src/header.tsx:95)
+     * `header.external--link` — Header (src/header.tsx)
      * Renders only when channelId.
      * Goes to externalUrl.
      */
     get externalLink() {
-        return drivers.link(this.byTestId(`${this.scope}.external--link`), {testId: `${this.scope}.external--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx:95'});
+        return drivers.link(this.byTestId(`${this.scope}.external--link`), {testId: `${this.scope}.external--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     async clickExternalLink(): Promise<void> {
@@ -110,12 +110,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.faq--link` (src/header.tsx:91)
+     * `header.faq--link` — Header (src/header.tsx)
      * Renders only when channelId.
      * Goes to '/help/faq?from=header' (HelpPage).
      */
     get faqLink() {
-        return drivers.link(this.byTestId(`${this.scope}.faq--link`), {testId: `${this.scope}.faq--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx:91'});
+        return drivers.link(this.byTestId(`${this.scope}.faq--link`), {testId: `${this.scope}.faq--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks faqLink and returns the page it goes to; the page object is returned at once, with no wait. */
@@ -125,10 +125,10 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.follow--button` (src/two_sites.tsx:24)
+     * `header.follow--button` — Follow (src/two_sites.tsx)
      */
     get followButton() {
-        return drivers.button(this.byTestId(`${this.scope}.follow--button`), {testId: `${this.scope}.follow--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/two_sites.tsx:24'});
+        return drivers.button(this.byTestId(`${this.scope}.follow--button`), {testId: `${this.scope}.follow--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/two_sites.tsx#Follow'});
     }
 
     async clickFollowButton(): Promise<void> {
@@ -136,11 +136,11 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.follow_icon--togglebutton` (src/two_sites.tsx:20)
+     * `header.follow_icon--togglebutton` — Follow (src/two_sites.tsx)
      * Renders only when iconOnly.
      */
     get followIconToggleButton() {
-        return drivers.togglebutton(this.byTestId(`${this.scope}.follow_icon--togglebutton`), {testId: `${this.scope}.follow_icon--togglebutton`, role: 'togglebutton', effects: [], unknownEffects: false, source: 'src/two_sites.tsx:20'});
+        return drivers.togglebutton(this.byTestId(`${this.scope}.follow_icon--togglebutton`), {testId: `${this.scope}.follow_icon--togglebutton`, role: 'togglebutton', effects: [], unknownEffects: false, source: 'src/two_sites.tsx#Follow'});
     }
 
     async setFollowIconToggleButton(on: boolean): Promise<void> {
@@ -148,13 +148,13 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.guide--button` (src/header.tsx:98)
+     * `header.guide--button` — Header (src/header.tsx)
      * Renders only when channelId.
      * Goes to '/help/mobile' (HelpPage).
      * Opens popover InfoPopover (`info_popover`).
      */
     get guideButton() {
-        return drivers.button(this.byTestId(`${this.scope}.guide--button`), {testId: `${this.scope}.guide--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/header.tsx:98'});
+        return drivers.button(this.byTestId(`${this.scope}.guide--button`), {testId: `${this.scope}.guide--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks guideButton and returns what it opens (popover); the page object is returned at once, with no wait. */
@@ -164,13 +164,13 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.help--link` (src/header.tsx:80)
+     * `header.help--link` — Header (src/header.tsx)
      * Renders only when channelId.
      * Renders only when !isMobile.
      * Goes to '/help' (HelpPage).
      */
     get helpLink() {
-        return drivers.link(this.byTestId(`${this.scope}.help--link`), {testId: `${this.scope}.help--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx:80'});
+        return drivers.link(this.byTestId(`${this.scope}.help--link`), {testId: `${this.scope}.help--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks helpLink and returns the page it goes to; the page object is returned at once, with no wait. */
@@ -180,12 +180,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.home--link` (src/header.tsx:87)
+     * `header.home--link` — Header (src/header.tsx)
      * Renders only when channelId.
      * Goes to `/${teamName}/channels/town-square` (ChannelsPage).
      */
     get homeLink() {
-        return drivers.link(this.byTestId(`${this.scope}.home--link`), {testId: `${this.scope}.home--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx:87'});
+        return drivers.link(this.byTestId(`${this.scope}.home--link`), {testId: `${this.scope}.home--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks homeLink and returns the page it goes to; the page object is returned at once, with no wait. */
@@ -195,13 +195,13 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.info--button` (src/header.tsx:74)
+     * `header.info--button` — Header (src/header.tsx)
      * Renders only when channelId.
      * Renders only when isMobile.
      * Opens popover InfoPopover (`info_popover`).
      */
     get infoButton() {
-        return drivers.button(this.byTestId(`${this.scope}.info--button`), {testId: `${this.scope}.info--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/header.tsx:74'});
+        return drivers.button(this.byTestId(`${this.scope}.info--button`), {testId: `${this.scope}.info--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks infoButton and returns what it opens (popover); the page object is returned at once, with no wait. */
@@ -211,19 +211,19 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.label` (src/menu.tsx:107)
+     * `header.label` — Chips (src/menu.tsx)
      */
     get label() {
-        return drivers.container(this.byTestId(`${this.scope}.label`), {testId: `${this.scope}.label`, role: null, effects: [], unknownEffects: false, source: 'src/menu.tsx:107'});
+        return drivers.container(this.byTestId(`${this.scope}.label`), {testId: `${this.scope}.label`, role: null, effects: [], unknownEffects: false, source: 'src/menu.tsx#Chips'});
     }
 
     /**
-     * `header.lazy--button` (src/header.tsx:55)
+     * `header.lazy--button` — Header (src/header.tsx)
      * Renders only when channelId.
      * Opens modal LazyModalImpl (`lazy_modal`).
      */
     get lazyButton() {
-        return drivers.button(this.byTestId(`${this.scope}.lazy--button`), {testId: `${this.scope}.lazy--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/header.tsx:55'});
+        return drivers.button(this.byTestId(`${this.scope}.lazy--button`), {testId: `${this.scope}.lazy--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks lazyButton and returns what it opens (modal); the page object is returned at once, with no wait. */
@@ -233,11 +233,11 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.long_paths--button` (src/long_paths.tsx:9)
+     * `header.long_paths--button` — LongPaths (src/long_paths.tsx)
      * Goes to '/help/a-rather-long-path-segment/that-runs-past-sixty-char….
      */
     get longPathsButton() {
-        return drivers.button(this.byTestId(`${this.scope}.long_paths--button`), {testId: `${this.scope}.long_paths--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/long_paths.tsx:9'});
+        return drivers.button(this.byTestId(`${this.scope}.long_paths--button`), {testId: `${this.scope}.long_paths--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/long_paths.tsx#LongPaths'});
     }
 
     async clickLongPathsButton(): Promise<void> {
@@ -245,19 +245,19 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.note` (src/menu.tsx:164)
+     * `header.note` — NoteBase (src/menu.tsx)
      */
     get note() {
-        return drivers.container(this.byTestId(`${this.scope}.note`), {testId: `${this.scope}.note`, role: null, effects: [], unknownEffects: false, source: 'src/menu.tsx:164'});
+        return drivers.container(this.byTestId(`${this.scope}.note`), {testId: `${this.scope}.note`, role: null, effects: [], unknownEffects: false, source: 'src/menu.tsx#NoteBase'});
     }
 
     /**
-     * `header.off_topic--link` (src/header.tsx:19)
+     * `header.off_topic--link` — ChannelLink (src/header.tsx)
      * Renders only when channelId.
      * Goes to url (ChannelsPage).
      */
     get offTopicLink() {
-        return drivers.link(this.byTestId(`${this.scope}.off_topic--link`), {testId: `${this.scope}.off_topic--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx:19'});
+        return drivers.link(this.byTestId(`${this.scope}.off_topic--link`), {testId: `${this.scope}.off_topic--link`, role: 'link', effects: [], unknownEffects: false, source: 'src/header.tsx#ChannelLink'});
     }
 
     /** Clicks offTopicLink and returns the page it goes to; the page object is returned at once, with no wait. */
@@ -267,12 +267,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.open_add_menu--button` (src/menu.tsx:25)
+     * `header.open_add_menu--button` — Menu (src/menu.tsx)
      * Opens menu addMenu (`add_menu`).
      * Opens modal MenuModal (`menu_modal`).
      */
     get openAddMenuButton() {
-        return drivers.button(this.byTestId(`${this.scope}.open_add_menu--button`), {testId: `${this.scope}.open_add_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:25'});
+        return drivers.button(this.byTestId(`${this.scope}.open_add_menu--button`), {testId: `${this.scope}.open_add_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#Menu'});
     }
 
     /** Clicks openAddMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
@@ -282,12 +282,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.open_field_menu--button` (src/menu.tsx:25)
+     * `header.open_field_menu--button` — Menu (src/menu.tsx)
      * Opens menu fieldMenu (`field_menu`).
      * Opens modal MenuModal (`menu_modal`).
      */
     get openFieldMenuButton() {
-        return drivers.button(this.byTestId(`${this.scope}.open_field_menu--button`), {testId: `${this.scope}.open_field_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:25'});
+        return drivers.button(this.byTestId(`${this.scope}.open_field_menu--button`), {testId: `${this.scope}.open_field_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#Menu'});
     }
 
     /** Clicks openFieldMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
@@ -297,13 +297,13 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.open_menu--button` (src/menu.tsx:25)
+     * `header.open_menu--button` — Menu (src/menu.tsx)
      * Renders only when channelId.
      * Opens menu headerMenu (`header.menu`).
      * Opens modal MenuModal (`menu_modal`).
      */
     get openMenuButton() {
-        return drivers.button(this.byTestId(`${this.scope}.open_menu--button`), {testId: `${this.scope}.open_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:25'});
+        return drivers.button(this.byTestId(`${this.scope}.open_menu--button`), {testId: `${this.scope}.open_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#Menu'});
     }
 
     /** Clicks openMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
@@ -313,12 +313,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.open_role_menu--button` (src/menu.tsx:25)
+     * `header.open_role_menu--button` — Menu (src/menu.tsx)
      * Opens menu roleMenu (`role_menu`).
      * Opens modal MenuModal (`menu_modal`).
      */
     get openRoleMenuButton() {
-        return drivers.button(this.byTestId(`${this.scope}.open_role_menu--button`), {testId: `${this.scope}.open_role_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:25'});
+        return drivers.button(this.byTestId(`${this.scope}.open_role_menu--button`), {testId: `${this.scope}.open_role_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#Menu'});
     }
 
     /** Clicks openRoleMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
@@ -328,12 +328,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.open_sort_menu--button` (src/menu.tsx:25)
+     * `header.open_sort_menu--button` — Menu (src/menu.tsx)
      * Opens menu sortMenu (`sort_menu`).
      * Opens modal MenuModal (`menu_modal`).
      */
     get openSortMenuButton() {
-        return drivers.button(this.byTestId(`${this.scope}.open_sort_menu--button`), {testId: `${this.scope}.open_sort_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:25'});
+        return drivers.button(this.byTestId(`${this.scope}.open_sort_menu--button`), {testId: `${this.scope}.open_sort_menu--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#Menu'});
     }
 
     /** Clicks openSortMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
@@ -343,10 +343,10 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.pick--button` (src/menu.tsx:104)
+     * `header.pick--button` — Chips (src/menu.tsx)
      */
     get pickButton() {
-        return drivers.button(this.byTestId(`${this.scope}.pick--button`), {testId: `${this.scope}.pick--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx:104'});
+        return drivers.button(this.byTestId(`${this.scope}.pick--button`), {testId: `${this.scope}.pick--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/menu.tsx#Chips'});
     }
 
     async clickPickButton(): Promise<void> {
@@ -354,10 +354,10 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.search--textbox` (src/two_sites.tsx:47)
+     * `header.search--textbox` — QuickSearch (src/two_sites.tsx)
      */
     get searchTextbox() {
-        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {testId: `${this.scope}.search--textbox`, role: 'textbox', effects: [], unknownEffects: false, source: 'src/two_sites.tsx:47'});
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {testId: `${this.scope}.search--textbox`, role: 'textbox', effects: [], unknownEffects: false, source: 'src/two_sites.tsx#QuickSearch'});
     }
 
     async fillSearchTextbox(value: string): Promise<void> {
@@ -365,12 +365,12 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.settings--button` (src/modals.tsx:42)
+     * `header.settings--button` — TestIdToggleModalButton (src/modals.tsx)
      * Renders only when channelId.
      * Opens modal SettingsModal (`settings_modal`).
      */
     get settingsButton() {
-        return drivers.button(this.byTestId(`${this.scope}.settings--button`), {testId: `${this.scope}.settings--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/modals.tsx:42'});
+        return drivers.button(this.byTestId(`${this.scope}.settings--button`), {testId: `${this.scope}.settings--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/modals.tsx#TestIdToggleModalButton'});
     }
 
     /** Clicks settingsButton and returns what it opens (modal); the page object is returned at once, with no wait. */
@@ -380,10 +380,10 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.status--textbox` (src/two_sites.tsx:92)
+     * `header.status--textbox` — StatusText (src/two_sites.tsx)
      */
     get statusTextbox() {
-        return drivers.textbox(this.byTestId(`${this.scope}.status--textbox`), {testId: `${this.scope}.status--textbox`, role: 'textbox', effects: [], unknownEffects: false, source: 'src/two_sites.tsx:92'});
+        return drivers.textbox(this.byTestId(`${this.scope}.status--textbox`), {testId: `${this.scope}.status--textbox`, role: 'textbox', effects: [], unknownEffects: false, source: 'src/two_sites.tsx#StatusText'});
     }
 
     async fillStatusTextbox(value: string): Promise<void> {
@@ -391,10 +391,10 @@ export class Header extends Scope {
     }
 
     /**
-     * `header.status_clear--button` (src/two_sites.tsx:77)
+     * `header.status_clear--button` — QuickMemo (src/two_sites.tsx)
      */
     get statusClearButton() {
-        return drivers.button(this.byTestId(`${this.scope}.status_clear--button`), {testId: `${this.scope}.status_clear--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/two_sites.tsx:77'});
+        return drivers.button(this.byTestId(`${this.scope}.status_clear--button`), {testId: `${this.scope}.status_clear--button`, role: 'button', effects: [], unknownEffects: false, source: 'src/two_sites.tsx#QuickMemo'});
     }
 
     async clickStatusClearButton(): Promise<void> {
@@ -443,12 +443,12 @@ export class HeaderMenu extends Scope {
     }
 
     /**
-     * `header.menu.leave--menuitem` (src/header.tsx:45)
+     * `header.menu.leave--menuitem` — Header (src/header.tsx)
      * Renders only when channelId.
      * Opens modal LeaveModal (`leave_modal`).
      */
     get leaveMenuItem() {
-        return drivers.menuitem(this.byTestId(`${this.scope}.leave--menuitem`), {testId: `${this.scope}.leave--menuitem`, role: 'menuitem', effects: [], unknownEffects: false, source: 'src/header.tsx:45'});
+        return drivers.menuitem(this.byTestId(`${this.scope}.leave--menuitem`), {testId: `${this.scope}.leave--menuitem`, role: 'menuitem', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks leaveMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
@@ -458,11 +458,11 @@ export class HeaderMenu extends Scope {
     }
 
     /**
-     * `header.menu.mute--menuitem` (src/header.tsx:50)
+     * `header.menu.mute--menuitem` — Header (src/header.tsx)
      * Renders only when channelId.
      */
     get muteMenuItem() {
-        return drivers.menuitem(this.byTestId(`${this.scope}.mute--menuitem`), {testId: `${this.scope}.mute--menuitem`, role: 'menuitem', effects: [], unknownEffects: false, source: 'src/header.tsx:50'});
+        return drivers.menuitem(this.byTestId(`${this.scope}.mute--menuitem`), {testId: `${this.scope}.mute--menuitem`, role: 'menuitem', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     async clickMuteMenuItem(): Promise<void> {
@@ -470,13 +470,13 @@ export class HeaderMenu extends Scope {
     }
 
     /**
-     * `header.menu.settings--menuitem` (src/header.tsx:40)
+     * `header.menu.settings--menuitem` — Header (src/header.tsx)
      * Renders only when channelId.
      * Renders only when canManage(state, channelId).
      * Opens modal SettingsModal (`settings_modal`).
      */
     get settingsMenuItem() {
-        return drivers.menuitem(this.byTestId(`${this.scope}.settings--menuitem`), {testId: `${this.scope}.settings--menuitem`, role: 'menuitem', effects: [], unknownEffects: false, source: 'src/header.tsx:40'});
+        return drivers.menuitem(this.byTestId(`${this.scope}.settings--menuitem`), {testId: `${this.scope}.settings--menuitem`, role: 'menuitem', effects: [], unknownEffects: false, source: 'src/header.tsx#Header'});
     }
 
     /** Clicks settingsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */

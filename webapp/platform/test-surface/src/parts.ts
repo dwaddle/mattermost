@@ -66,7 +66,7 @@ export class LibraryParts {
             const parts = this.partsOf(node);
             const role = this.rootRole(node);
             if (parts.length || role) {
-                components[name] = {at: this.ix.where(node), role, parts};
+                components[name] = {at: this.ix.ref(node), role, parts};
             }
         }
         return {version: TEST_PARTS_VERSION, package: pkg.name, packageVersion: pkg.version, testIdProp: this.testIdProp, components};
@@ -264,7 +264,7 @@ export class LibraryParts {
 
         // the root part takes the usage's handlers; a built-in part only the props its click calls
         const handlers = call.suffix.startsWith('--') || call.suffix === '' ? [] : [...this.handlersOf(tag, comp)].sort();
-        return {suffix: call.suffix, role, ...(call.key ? {key: call.key} : {}), ...(when ? {when} : {}), ...(handlers.length ? {handlers} : {}), at};
+        return {suffix: call.suffix, role, ...(call.key ? {key: call.key} : {}), ...(when ? {when} : {}), ...(handlers.length ? {handlers} : {}), at: this.ix.ref(tag)};
     }
 
     /** The callback props the element's click calls: `onClick={onClose}`, `onClick={() => onDismiss?.()}`, through local functions. */

@@ -12,7 +12,7 @@ import {findConfig, loadConfig, relativeToRoot, type Config} from './config.ts';
 import {readVersioned} from './input.ts';
 import {MANIFEST_VERSION, type Diagnostic, type Manifest} from './manifest_types.ts';
 import {loadProgram} from './program.ts';
-import {formatDiagnostic, manifestText, summary, unrenderedTestIds, writeIfChanged, writeReports} from './report.ts';
+import {formatDiagnostic, manifestText, summary, templateMatcher, unrenderedTestIds, writeIfChanged, writeReports} from './report.ts';
 import {Scanner, type ScanResult} from './scan.ts';
 import {staleReferences} from './stale_refs.ts';
 
@@ -26,6 +26,8 @@ Commands:
   watch      Keep the program warm and rescan + regenerate when files change.
   parts      Library mode: write test-parts.json (the testids each component derives from testId).
   install-hooks  Opt-in git hooks for this config: pre-commit lints, scans and regenerates; pre-push re-checks.
+  where <testid> Scan and print the exact places (file:line:column) that render a testid or template, and the
+                 usage chains it comes through: the manifest names only the component (file#Component).
 
 Options:
   --config <path>   test-surface.config.json (default: nearest at or above cwd, or channels/)
@@ -40,7 +42,7 @@ export function scanProject(config: Config): ScanOutput {
     const scanner = new Scanner(loaded, config);
     const result = scanner.scan();
     const diagnostics = runChecks(result, {...config.checks, plugin: config.plugin, configAt: relativeToRoot(config, config.configPath)});
-    return {result, manifest: result.manifest, diagnostics};
+    return {result, manifest: result.published, diagnostics};
 }
 
 export async function main(argv: string[]): Promise<number> {
@@ -102,6 +104,28 @@ export async function main(argv: string[]): Promise<number> {
             }
         }
         return errors ? 1 : 0;
+    }
+    case 'where': {
+        const query = positionals[1];
+        if (!query) {
+            console.log(USAGE);
+            return 1;
+        }
+        const {result} = scanProject(config);
+        const found = result.manifest.elements.filter((e) => e.template === query || templateMatcher(e.template)?.test(query));
+        for (const e of found) {
+            console.log(e.template);
+            for (const at of [e.component.at, ...(e.alsoAt ?? [])]) {
+                console.log(`  rendered at ${at}`);
+            }
+            for (const via of new Set(e.instances.filter((i) => i.via.length).map((i) => i.via.join(' < ')))) {
+                console.log(`  through ${via}`);
+            }
+        }
+        if (!found.length) {
+            console.log(`No testid in the scan matches "${query}".`);
+        }
+        return found.length ? 0 : 1;
     }
     case 'generate': {
         const {generate} = await import('./generate/index.ts');

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "generatedFrom": {
     "tsconfig": "tsconfig.json",
     "scope": [
@@ -17,7 +17,7 @@
       "role": "menuitem",
       "component": {
         "name": "AddMenu",
-        "at": "src/menu.tsx:52"
+        "at": "src/menu.tsx#AddMenu"
       },
       "instances": [
         {
@@ -40,7 +40,7 @@
       "role": "menuitem",
       "component": {
         "name": "AddMenu",
-        "at": "src/menu.tsx:50"
+        "at": "src/menu.tsx#AddMenu"
       },
       "instances": [
         {
@@ -56,8 +56,7 @@
         {
           "expr": "canCreate",
           "explained": "canCreate",
-          "kind": "permission",
-          "at": "src/menu.tsx:49"
+          "kind": "permission"
         }
       ]
     },
@@ -69,7 +68,7 @@
       "role": null,
       "component": {
         "name": "AddMenu",
-        "at": "src/menu.tsx:60"
+        "at": "src/menu.tsx#AddMenu"
       },
       "instances": [
         {
@@ -92,7 +91,7 @@
       "role": "togglebutton",
       "component": {
         "name": "Banner",
-        "at": "src/header.tsx:123"
+        "at": "src/header.tsx#Banner"
       },
       "instances": [
         {
@@ -110,7 +109,7 @@
         {
           "kind": "modal",
           "target": "LeaveModal",
-          "at": "src/header.tsx:126",
+          "at": "src/header.tsx#Banner",
           "scope": "leave_modal"
         }
       ]
@@ -125,7 +124,7 @@
       "role": null,
       "component": {
         "name": "UrlRow",
-        "at": "src/modals.tsx:106"
+        "at": "src/modals.tsx#UrlRow"
       },
       "instances": [
         {
@@ -149,12 +148,12 @@
       "role": "button",
       "component": {
         "name": "CopyIcon",
-        "at": "src/modals.tsx:95"
+        "at": "src/modals.tsx#CopyIcon"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:107"
+            "src/modals.tsx#UrlRow"
           ]
         }
       ],
@@ -175,12 +174,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/header.tsx:163"
+            "src/header.tsx#Bar"
           ]
         }
       ],
@@ -193,13 +192,13 @@
         {
           "kind": "menu",
           "target": "barMenu",
-          "at": "src/header.tsx:163",
+          "at": "src/header.tsx#Bar",
           "scope": "bar.menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -216,7 +215,7 @@
       "role": "menuitem",
       "component": {
         "name": "Bar",
-        "at": "src/header.tsx:167"
+        "at": "src/header.tsx#Bar"
       },
       "instances": [
         {
@@ -240,7 +239,7 @@
       "role": "menuitem",
       "component": {
         "name": "Bar",
-        "at": "src/header.tsx:168"
+        "at": "src/header.tsx#Bar"
       },
       "instances": [
         {
@@ -263,7 +262,7 @@
       "role": "menuitem",
       "component": {
         "name": "renderField",
-        "at": "src/menu.tsx:239"
+        "at": "src/menu.tsx#FieldMenu"
       },
       "instances": [
         {
@@ -290,12 +289,12 @@
       "role": "button",
       "component": {
         "name": "SharedButton",
-        "at": "src/modals.tsx:54"
+        "at": "src/modals.tsx#SharedButton"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:62"
+            "src/modals.tsx#Footer"
           ]
         }
       ],
@@ -315,7 +314,7 @@
       "role": "button",
       "component": {
         "name": "Footer",
-        "at": "src/header.tsx:146"
+        "at": "src/header.tsx#Footer"
       },
       "instances": [
         {
@@ -331,7 +330,7 @@
         {
           "kind": "modal",
           "target": "LeaveModal",
-          "at": "src/header.tsx:138",
+          "at": "src/header.tsx#Footer",
           "scope": "leave_modal"
         }
       ]
@@ -346,7 +345,7 @@
       "role": "button",
       "component": {
         "name": "NoteOpener",
-        "at": "src/modals.tsx:87"
+        "at": "src/modals.tsx#NoteOpener"
       },
       "instances": [
         {
@@ -362,7 +361,7 @@
         {
           "kind": "modal",
           "target": "NoteModal",
-          "at": "src/modals.tsx:88",
+          "at": "src/modals.tsx#NoteOpener",
           "scope": "note_modal"
         }
       ]
@@ -377,12 +376,12 @@
       "role": "button",
       "component": {
         "name": "SharedButton",
-        "at": "src/modals.tsx:54"
+        "at": "src/modals.tsx#SharedButton"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:61"
+            "src/modals.tsx#Footer"
           ]
         }
       ],
@@ -402,7 +401,7 @@
       "role": null,
       "component": {
         "name": "TokenRow",
-        "at": "src/modals.tsx:99"
+        "at": "src/modals.tsx#TokenRow"
       },
       "instances": [
         {
@@ -426,12 +425,12 @@
       "role": "button",
       "component": {
         "name": "CopyIcon",
-        "at": "src/modals.tsx:95"
+        "at": "src/modals.tsx#CopyIcon"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:100"
+            "src/modals.tsx#TokenRow"
           ]
         }
       ],
@@ -451,7 +450,7 @@
       "role": "button",
       "component": {
         "name": "StyledWrappers",
-        "at": "src/menu.tsx:172"
+        "at": "src/menu.tsx#StyledWrappers"
       },
       "instances": [
         {
@@ -467,7 +466,7 @@
         "ops": [],
         "unknown": false,
         "delegated": [
-          "src/menu.tsx:173"
+          "src/menu.tsx#StyledWrappers"
         ]
       }
     },
@@ -481,7 +480,7 @@
       "role": "button",
       "component": {
         "name": "Closer",
-        "at": "src/menu.tsx:114"
+        "at": "src/menu.tsx#Closer"
       },
       "instances": [
         {
@@ -497,7 +496,7 @@
         "ops": [],
         "unknown": false,
         "delegated": [
-          "src/menu.tsx:115"
+          "src/menu.tsx#Closer"
         ]
       }
     },
@@ -511,7 +510,7 @@
       "role": "option",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:65"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -529,8 +528,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -544,7 +542,7 @@
       "role": "button",
       "component": {
         "name": "TwoSites",
-        "at": "src/two_sites.tsx:11"
+        "at": "src/two_sites.tsx#TwoSites"
       },
       "instances": [
         {
@@ -556,15 +554,11 @@
         "native": true,
         "state": []
       },
-      "alsoAt": [
-        "src/two_sites.tsx:9"
-      ],
       "renderedWhen": [
         {
           "expr": "open",
           "explained": "open",
-          "kind": "prop",
-          "at": "src/two_sites.tsx:5"
+          "kind": "prop"
         }
       ]
     },
@@ -578,12 +572,12 @@
       "role": "button",
       "component": {
         "name": "TestIdToggleModalButton",
-        "at": "src/modals.tsx:42"
+        "at": "src/modals.tsx#TestIdToggleModalButton"
       },
       "instances": [
         {
           "via": [
-            "src/header.tsx:68"
+            "src/header.tsx#Header"
           ]
         }
       ],
@@ -596,13 +590,13 @@
         {
           "kind": "modal",
           "target": "LeaveModal",
-          "at": "src/modals.tsx:40",
+          "at": "src/modals.tsx#TestIdToggleModalButton",
           "scope": "leave_modal"
         },
         {
           "kind": "modal",
           "target": "SettingsModal",
-          "at": "src/modals.tsx:40",
+          "at": "src/modals.tsx#TestIdToggleModalButton",
           "scope": "settings_modal"
         }
       ],
@@ -610,8 +604,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -625,7 +618,7 @@
       "role": "link",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:95"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -641,15 +634,14 @@
         {
           "kind": "page",
           "target": "externalUrl",
-          "at": "src/header.tsx:95"
+          "at": "src/header.tsx#Header"
         }
       ],
       "renderedWhen": [
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -663,7 +655,7 @@
       "role": "link",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:91"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -679,7 +671,7 @@
         {
           "kind": "page",
           "target": "'/help/faq?from=header'",
-          "at": "src/header.tsx:91",
+          "at": "src/header.tsx#Header",
           "page": "HelpPage"
         }
       ],
@@ -687,8 +679,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -702,12 +693,12 @@
       "role": "button",
       "component": {
         "name": "Follow",
-        "at": "src/two_sites.tsx:24"
+        "at": "src/two_sites.tsx#Follow"
       },
       "instances": [
         {
           "via": [
-            "src/two_sites.tsx:30"
+            "src/two_sites.tsx#Follows"
           ]
         }
       ],
@@ -727,12 +718,12 @@
       "role": "togglebutton",
       "component": {
         "name": "Follow",
-        "at": "src/two_sites.tsx:20"
+        "at": "src/two_sites.tsx#Follow"
       },
       "instances": [
         {
           "via": [
-            "src/two_sites.tsx:31"
+            "src/two_sites.tsx#Follows"
           ]
         }
       ],
@@ -747,8 +738,7 @@
         {
           "expr": "iconOnly",
           "explained": "iconOnly",
-          "kind": "prop",
-          "at": "src/two_sites.tsx:16"
+          "kind": "prop"
         }
       ],
       "form": {
@@ -767,7 +757,7 @@
       "role": "button",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:98"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -783,14 +773,14 @@
         {
           "kind": "page",
           "target": "'/help/mobile'",
-          "at": "src/header.tsx:98",
+          "at": "src/header.tsx#Header",
           "conditional": true,
           "page": "HelpPage"
         },
         {
           "kind": "popover",
           "target": "InfoPopover",
-          "at": "src/header.tsx:84",
+          "at": "src/header.tsx#Header",
           "scope": "info_popover"
         }
       ],
@@ -798,8 +788,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -813,7 +802,7 @@
       "role": "link",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:80"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -829,7 +818,7 @@
         {
           "kind": "page",
           "target": "'/help'",
-          "at": "src/header.tsx:80",
+          "at": "src/header.tsx#Header",
           "page": "HelpPage"
         }
       ],
@@ -837,14 +826,12 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         },
         {
           "expr": "!isMobile",
           "explained": "!isMobile",
-          "kind": "layout",
-          "at": "src/header.tsx:72"
+          "kind": "layout"
         }
       ]
     },
@@ -858,7 +845,7 @@
       "role": "link",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:87"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -874,7 +861,7 @@
         {
           "kind": "page",
           "target": "`/${teamName}/channels/town-square`",
-          "at": "src/header.tsx:87",
+          "at": "src/header.tsx#Header",
           "page": "ChannelsPage"
         }
       ],
@@ -882,8 +869,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -897,7 +883,7 @@
       "role": "button",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:74"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -913,7 +899,7 @@
         {
           "kind": "popover",
           "target": "InfoPopover",
-          "at": "src/header.tsx:84",
+          "at": "src/header.tsx#Header",
           "scope": "info_popover"
         }
       ],
@@ -921,14 +907,12 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         },
         {
           "expr": "isMobile",
           "explained": "isMobile",
-          "kind": "layout",
-          "at": "src/header.tsx:72"
+          "kind": "layout"
         }
       ]
     },
@@ -942,7 +926,7 @@
       "role": null,
       "component": {
         "name": "Chips",
-        "at": "src/menu.tsx:107"
+        "at": "src/menu.tsx#Chips"
       },
       "instances": [
         {
@@ -965,7 +949,7 @@
       "role": "button",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:55"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -981,7 +965,7 @@
         {
           "kind": "modal",
           "target": "LazyModalImpl",
-          "at": "src/header.tsx:53",
+          "at": "src/header.tsx#Header",
           "scope": "lazy_modal"
         }
       ],
@@ -989,8 +973,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -1004,7 +987,7 @@
       "role": "button",
       "component": {
         "name": "LongPaths",
-        "at": "src/long_paths.tsx:9"
+        "at": "src/long_paths.tsx#LongPaths"
       },
       "instances": [
         {
@@ -1020,13 +1003,13 @@
         {
           "kind": "page",
           "target": "'/help/a-rather-long-path-segment/that-runs-past-sixty-characters/first'",
-          "at": "src/long_paths.tsx:9",
+          "at": "src/long_paths.tsx#LongPaths",
           "conditional": true
         },
         {
           "kind": "page",
           "target": "'/help/a-rather-long-path-segment/that-runs-past-sixty-characters/second'",
-          "at": "src/long_paths.tsx:9"
+          "at": "src/long_paths.tsx#LongPaths"
         }
       ]
     },
@@ -1041,7 +1024,7 @@
       "role": "menuitem",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:45"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -1057,7 +1040,7 @@
         {
           "kind": "modal",
           "target": "LeaveModal",
-          "at": "src/header.tsx:8",
+          "at": "src/header.tsx",
           "scope": "leave_modal"
         }
       ],
@@ -1065,8 +1048,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -1081,7 +1063,7 @@
       "role": "menuitem",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:50"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -1097,8 +1079,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -1113,7 +1094,7 @@
       "role": "menuitem",
       "component": {
         "name": "Header",
-        "at": "src/header.tsx:40"
+        "at": "src/header.tsx#Header"
       },
       "instances": [
         {
@@ -1129,7 +1110,7 @@
         {
           "kind": "modal",
           "target": "SettingsModal",
-          "at": "src/header.tsx:41",
+          "at": "src/header.tsx#Header",
           "scope": "settings_modal"
         }
       ],
@@ -1137,14 +1118,12 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         },
         {
           "expr": "canAccess",
           "explained": "canManage(state, channelId)",
-          "kind": "permission",
-          "at": "src/header.tsx:38"
+          "kind": "permission"
         }
       ]
     },
@@ -1158,12 +1137,12 @@
       "role": null,
       "component": {
         "name": "NoteBase",
-        "at": "src/menu.tsx:164"
+        "at": "src/menu.tsx#NoteBase"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:175"
+            "src/menu.tsx#StyledWrappers"
           ]
         }
       ],
@@ -1183,12 +1162,12 @@
       "role": "link",
       "component": {
         "name": "ChannelLink",
-        "at": "src/header.tsx:19"
+        "at": "src/header.tsx#ChannelLink"
       },
       "instances": [
         {
           "via": [
-            "src/header.tsx:107"
+            "src/header.tsx#Header"
           ]
         }
       ],
@@ -1201,7 +1180,7 @@
         {
           "kind": "page",
           "target": "url",
-          "at": "src/header.tsx:19",
+          "at": "src/header.tsx#ChannelLink",
           "page": "ChannelsPage"
         }
       ],
@@ -1209,8 +1188,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -1224,12 +1202,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:54"
+            "src/menu.tsx#AddMenu"
           ]
         }
       ],
@@ -1242,13 +1220,13 @@
         {
           "kind": "menu",
           "target": "addMenu",
-          "at": "src/menu.tsx:54",
+          "at": "src/menu.tsx#AddMenu",
           "scope": "add_menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -1264,12 +1242,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:243"
+            "src/menu.tsx#FieldMenu"
           ]
         }
       ],
@@ -1282,13 +1260,13 @@
         {
           "kind": "menu",
           "target": "fieldMenu",
-          "at": "src/menu.tsx:243",
+          "at": "src/menu.tsx#FieldMenu",
           "scope": "field_menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -1304,12 +1282,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/header.tsx:34"
+            "src/header.tsx#Header"
           ]
         }
       ],
@@ -1322,13 +1300,13 @@
         {
           "kind": "menu",
           "target": "headerMenu",
-          "at": "src/header.tsx:34",
+          "at": "src/header.tsx#Header",
           "scope": "header.menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -1337,8 +1315,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -1352,12 +1329,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:70"
+            "src/menu.tsx#RoleMenu"
           ]
         }
       ],
@@ -1370,13 +1347,13 @@
         {
           "kind": "menu",
           "target": "roleMenu",
-          "at": "src/menu.tsx:70",
+          "at": "src/menu.tsx#RoleMenu",
           "scope": "role_menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -1392,12 +1369,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:150"
+            "src/menu.tsx#SortMenu"
           ]
         }
       ],
@@ -1410,13 +1387,13 @@
         {
           "kind": "menu",
           "target": "sortMenu",
-          "at": "src/menu.tsx:150",
+          "at": "src/menu.tsx#SortMenu",
           "scope": "sort_menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -1432,7 +1409,7 @@
       "role": "button",
       "component": {
         "name": "Chips",
-        "at": "src/menu.tsx:104"
+        "at": "src/menu.tsx#Chips"
       },
       "instances": [
         {
@@ -1448,7 +1425,7 @@
         "ops": [],
         "unknown": false,
         "delegated": [
-          "src/menu.tsx:105"
+          "src/menu.tsx#Chips"
         ]
       }
     },
@@ -1462,7 +1439,7 @@
       "role": "textbox",
       "component": {
         "name": "QuickSearch",
-        "at": "src/two_sites.tsx:47"
+        "at": "src/two_sites.tsx#QuickSearch"
       },
       "instances": [
         {
@@ -1490,12 +1467,12 @@
       "role": "button",
       "component": {
         "name": "TestIdToggleModalButton",
-        "at": "src/modals.tsx:42"
+        "at": "src/modals.tsx#TestIdToggleModalButton"
       },
       "instances": [
         {
           "via": [
-            "src/header.tsx:57"
+            "src/header.tsx#Header"
           ]
         }
       ],
@@ -1508,7 +1485,7 @@
         {
           "kind": "modal",
           "target": "SettingsModal",
-          "at": "src/modals.tsx:40",
+          "at": "src/modals.tsx#TestIdToggleModalButton",
           "scope": "settings_modal"
         }
       ],
@@ -1516,8 +1493,7 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         }
       ]
     },
@@ -1531,7 +1507,7 @@
       "role": "textbox",
       "component": {
         "name": "StatusText",
-        "at": "src/two_sites.tsx:92"
+        "at": "src/two_sites.tsx#StatusText"
       },
       "instances": [
         {
@@ -1559,13 +1535,13 @@
       "role": "button",
       "component": {
         "name": "QuickMemo",
-        "at": "src/two_sites.tsx:77"
+        "at": "src/two_sites.tsx#QuickMemo"
       },
       "instances": [
         {
           "via": [
-            "src/two_sites.tsx:82",
-            "src/two_sites.tsx:90"
+            "src/two_sites.tsx#QuickForwarded",
+            "src/two_sites.tsx#StatusText"
           ]
         }
       ],
@@ -1585,7 +1561,7 @@
       "role": "text",
       "component": {
         "name": "InfoPopover",
-        "at": "src/modals.tsx:23"
+        "at": "src/modals.tsx#InfoPopover"
       },
       "instances": [
         {
@@ -1601,14 +1577,12 @@
         {
           "expr": "channelId",
           "explained": "channelId",
-          "kind": "prop",
-          "at": "src/header.tsx:29"
+          "kind": "prop"
         },
         {
           "expr": "showInfo",
           "explained": "showInfo",
-          "kind": "local state",
-          "at": "src/header.tsx:84"
+          "kind": "local state"
         }
       ]
     },
@@ -1622,7 +1596,7 @@
       "role": "button",
       "component": {
         "name": "LazyModalImpl",
-        "at": "src/lazy_modal.tsx:2"
+        "at": "src/lazy_modal.tsx#LazyModalImpl"
       },
       "instances": [
         {
@@ -1645,7 +1619,7 @@
       "role": "button",
       "component": {
         "name": "LeaveModal",
-        "at": "src/modals.tsx:19"
+        "at": "src/modals.tsx#LeaveModal"
       },
       "instances": [
         {
@@ -1661,14 +1635,7 @@
         {
           "expr": "this.state.showLeave",
           "explained": "this.state.showLeave",
-          "kind": "local state",
-          "at": "src/header.tsx:126"
-        },
-        {
-          "expr": "this.state.showLeave",
-          "explained": "this.state.showLeave",
-          "kind": "local state",
-          "at": "src/header.tsx:137"
+          "kind": "local state"
         }
       ]
     },
@@ -1683,12 +1650,12 @@
       "role": "menuitem",
       "component": {
         "name": "ActionsList",
-        "at": "src/menu.tsx:262"
+        "at": "src/menu.tsx#ActionsList"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:274"
+            "src/menu.tsx#ActionHosts"
           ],
           "keySet": [
             "archive",
@@ -1722,13 +1689,13 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:255",
-            "src/menu.tsx:274"
+            "src/menu.tsx#ActionsList",
+            "src/menu.tsx#ActionHosts"
           ]
         }
       ],
@@ -1741,13 +1708,13 @@
         {
           "kind": "menu",
           "target": "actionsMenu",
-          "at": "src/menu.tsx:255",
+          "at": "src/menu.tsx#ActionsList",
           "scope": "left.actions"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -1765,12 +1732,12 @@
       "role": "menuitem",
       "component": {
         "name": "ScopedPicker",
-        "at": "src/menu.tsx:190"
+        "at": "src/menu.tsx#ScopedPicker"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:200"
+            "src/menu.tsx#PickerHosts"
           ]
         }
       ],
@@ -1795,13 +1762,13 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:183",
-            "src/menu.tsx:200"
+            "src/menu.tsx#ScopedPicker",
+            "src/menu.tsx#PickerHosts"
           ]
         }
       ],
@@ -1814,13 +1781,13 @@
         {
           "kind": "menu",
           "target": "scopedPickerMenu",
-          "at": "src/menu.tsx:183",
+          "at": "src/menu.tsx#ScopedPicker",
           "scope": "left.picker.menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -1836,7 +1803,7 @@
       "role": null,
       "component": {
         "name": "MentionPopover",
-        "at": "src/modals.tsx:72"
+        "at": "src/modals.tsx#MentionPopover"
       },
       "instances": [
         {
@@ -1859,7 +1826,7 @@
       "role": "text",
       "component": {
         "name": "MentionPopover",
-        "at": "src/modals.tsx:71"
+        "at": "src/modals.tsx#MentionPopover"
       },
       "instances": [
         {
@@ -1880,7 +1847,7 @@
       "role": null,
       "component": {
         "name": "MenuModal",
-        "at": "src/menu.tsx:12"
+        "at": "src/menu.tsx#MenuModal"
       },
       "instances": [
         {
@@ -1903,7 +1870,7 @@
       "role": null,
       "component": {
         "name": "MenuModal",
-        "at": "src/menu.tsx:13"
+        "at": "src/menu.tsx#MenuModal"
       },
       "instances": [
         {
@@ -1924,7 +1891,7 @@
       "role": null,
       "component": {
         "name": "NoteModal",
-        "at": "src/modals.tsx:78"
+        "at": "src/modals.tsx#NoteModal"
       },
       "instances": [
         {
@@ -1947,7 +1914,7 @@
       "role": "button",
       "component": {
         "name": "NoteModal",
-        "at": "src/modals.tsx:79"
+        "at": "src/modals.tsx#NoteModal"
       },
       "instances": [
         {
@@ -1971,12 +1938,12 @@
       "role": "menuitem",
       "component": {
         "name": "ActionsList",
-        "at": "src/menu.tsx:262"
+        "at": "src/menu.tsx#ActionsList"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:278"
+            "src/menu.tsx#ActionHosts"
           ],
           "keySet": [
             "pin"
@@ -2008,13 +1975,13 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:255",
-            "src/menu.tsx:278"
+            "src/menu.tsx#ActionsList",
+            "src/menu.tsx#ActionHosts"
           ]
         }
       ],
@@ -2027,13 +1994,13 @@
         {
           "kind": "menu",
           "target": "actionsMenu",
-          "at": "src/menu.tsx:255",
+          "at": "src/menu.tsx#ActionsList",
           "scope": "right.actions"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -2051,12 +2018,12 @@
       "role": "menuitem",
       "component": {
         "name": "ScopedPicker",
-        "at": "src/menu.tsx:190"
+        "at": "src/menu.tsx#ScopedPicker"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:204"
+            "src/menu.tsx#PickerHosts"
           ]
         }
       ],
@@ -2081,13 +2048,13 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:183",
-            "src/menu.tsx:204"
+            "src/menu.tsx#ScopedPicker",
+            "src/menu.tsx#PickerHosts"
           ]
         }
       ],
@@ -2100,13 +2067,13 @@
         {
           "kind": "menu",
           "target": "scopedPickerMenu",
-          "at": "src/menu.tsx:183",
+          "at": "src/menu.tsx#ScopedPicker",
           "scope": "right.picker.menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -2122,7 +2089,7 @@
       "role": "menuitem",
       "component": {
         "name": "RoleMenu",
-        "at": "src/menu.tsx:67"
+        "at": "src/menu.tsx#RoleMenu"
       },
       "instances": [
         {
@@ -2145,7 +2112,7 @@
       "role": "menuitem",
       "component": {
         "name": "RoleMenu",
-        "at": "src/menu.tsx:68"
+        "at": "src/menu.tsx#RoleMenu"
       },
       "instances": [
         {
@@ -2168,12 +2135,12 @@
       "role": null,
       "component": {
         "name": "ConfirmModal",
-        "at": "src/modals.tsx:117"
+        "at": "src/modals.tsx#ConfirmModal"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:144"
+            "src/modals.tsx#SaveBar"
           ]
         }
       ],
@@ -2186,8 +2153,7 @@
         {
           "expr": "showConfirm",
           "explained": "showConfirm",
-          "kind": "local state",
-          "at": "src/modals.tsx:143"
+          "kind": "local state"
         }
       ]
     },
@@ -2202,12 +2168,12 @@
       "role": "button",
       "component": {
         "name": "ConfirmModal",
-        "at": "src/modals.tsx:120"
+        "at": "src/modals.tsx#ConfirmModal"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:144"
+            "src/modals.tsx#SaveBar"
           ]
         }
       ],
@@ -2220,8 +2186,7 @@
         {
           "expr": "showConfirm",
           "explained": "showConfirm",
-          "kind": "local state",
-          "at": "src/modals.tsx:143"
+          "kind": "local state"
         }
       ]
     },
@@ -2235,12 +2200,12 @@
       "role": null,
       "component": {
         "name": "ConfirmModal",
-        "at": "src/modals.tsx:117"
+        "at": "src/modals.tsx#ConfirmModal"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:138"
+            "src/modals.tsx#SaveBar"
           ]
         }
       ],
@@ -2253,8 +2218,7 @@
         {
           "expr": "showRefused",
           "explained": "showRefused",
-          "kind": "local state",
-          "at": "src/modals.tsx:137"
+          "kind": "local state"
         }
       ]
     },
@@ -2269,12 +2233,12 @@
       "role": "button",
       "component": {
         "name": "ConfirmModal",
-        "at": "src/modals.tsx:120"
+        "at": "src/modals.tsx#ConfirmModal"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:138"
+            "src/modals.tsx#SaveBar"
           ]
         }
       ],
@@ -2287,8 +2251,7 @@
         {
           "expr": "showRefused",
           "explained": "showRefused",
-          "kind": "local state",
-          "at": "src/modals.tsx:137"
+          "kind": "local state"
         }
       ]
     },
@@ -2302,7 +2265,7 @@
       "role": "button",
       "component": {
         "name": "SaveBar",
-        "at": "src/modals.tsx:134"
+        "at": "src/modals.tsx#SaveBar"
       },
       "instances": [
         {
@@ -2318,13 +2281,13 @@
         {
           "kind": "modal",
           "target": "ConfirmModal",
-          "at": "src/modals.tsx:138",
+          "at": "src/modals.tsx#SaveBar",
           "scope": "save_bar.refused_modal"
         },
         {
           "kind": "modal",
           "target": "ConfirmModal",
-          "at": "src/modals.tsx:144",
+          "at": "src/modals.tsx#SaveBar",
           "scope": "save_bar.confirm_modal"
         }
       ]
@@ -2339,7 +2302,7 @@
       "role": "button",
       "component": {
         "name": "SettingsModal",
-        "at": "src/modals.tsx:11"
+        "at": "src/modals.tsx#SettingsModal"
       },
       "instances": [
         {
@@ -2362,7 +2325,7 @@
       "role": null,
       "component": {
         "name": "InfoPanel",
-        "at": "src/panels.tsx:17"
+        "at": "src/panels.tsx#InfoPanel"
       },
       "instances": [
         {
@@ -2378,8 +2341,7 @@
         {
           "expr": "this.props.isInfo",
           "explained": "this.props.isInfo",
-          "kind": "prop",
-          "at": "src/panels.tsx:30"
+          "kind": "prop"
         }
       ]
     },
@@ -2394,7 +2356,7 @@
       "role": "button",
       "component": {
         "name": "InfoPanel",
-        "at": "src/panels.tsx:18"
+        "at": "src/panels.tsx#InfoPanel"
       },
       "instances": [
         {
@@ -2410,8 +2372,7 @@
         {
           "expr": "this.props.isInfo",
           "explained": "this.props.isInfo",
-          "kind": "prop",
-          "at": "src/panels.tsx:30"
+          "kind": "prop"
         }
       ]
     },
@@ -2425,7 +2386,7 @@
       "role": null,
       "component": {
         "name": "MembersPanel",
-        "at": "src/panels.tsx:24"
+        "at": "src/panels.tsx#MembersPanel"
       },
       "instances": [
         {
@@ -2441,14 +2402,12 @@
         {
           "expr": "!this.props.isInfo",
           "explained": "!this.props.isInfo",
-          "kind": "prop",
-          "at": "src/panels.tsx:30"
+          "kind": "prop"
         },
         {
           "expr": "this.props.isMembers",
           "explained": "this.props.isMembers",
-          "kind": "prop",
-          "at": "src/panels.tsx:32"
+          "kind": "prop"
         }
       ]
     },
@@ -2462,7 +2421,7 @@
       "role": "menuitem",
       "component": {
         "name": "SortMenu",
-        "at": "src/menu.tsx:145"
+        "at": "src/menu.tsx#SortMenu"
       },
       "instances": [
         {
@@ -2489,12 +2448,12 @@
       "role": "button",
       "component": {
         "name": "SubItem",
-        "at": "src/statics.tsx:7"
+        "at": "src/statics.tsx#SubItem"
       },
       "instances": [
         {
           "via": [
-            "src/statics.tsx:31"
+            "src/statics.tsx#StaticItems"
           ]
         }
       ],
@@ -2515,7 +2474,7 @@
       "role": "menuitem",
       "component": {
         "name": "renderTeam",
-        "at": "src/menu.tsx:125"
+        "at": "src/menu.tsx#TeamPicker"
       },
       "instances": [
         {
@@ -2542,12 +2501,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:129"
+            "src/menu.tsx#TeamPicker"
           ]
         }
       ],
@@ -2560,13 +2519,13 @@
         {
           "kind": "menu",
           "target": "teamPickerMenu",
-          "at": "src/menu.tsx:129",
+          "at": "src/menu.tsx#TeamPicker",
           "scope": "team_picker.menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -2582,7 +2541,7 @@
       "role": "button",
       "component": {
         "name": "Tip",
-        "at": "src/header.tsx:157"
+        "at": "src/header.tsx#Tip"
       },
       "instances": [
         {
@@ -2605,7 +2564,7 @@
       "role": "button",
       "component": {
         "name": "PanelButtons",
-        "at": "src/panels.tsx:61"
+        "at": "src/panels.tsx#PanelButtons"
       },
       "instances": [
         {
@@ -2628,7 +2587,7 @@
       "role": "button",
       "component": {
         "name": "PanelButtons",
-        "at": "src/panels.tsx:57"
+        "at": "src/panels.tsx#PanelButtons"
       },
       "instances": [
         {
@@ -2644,7 +2603,7 @@
         {
           "kind": "panel",
           "target": "InfoPanel",
-          "at": "src/panels.tsx:31",
+          "at": "src/panels.tsx#Sidebar",
           "scope": "side.info"
         }
       ]
@@ -2660,7 +2619,7 @@
       "role": "menuitem",
       "component": {
         "name": "TwinMenus",
-        "at": "src/menu.tsx:220"
+        "at": "src/menu.tsx#TwinMenus"
       },
       "instances": [
         {
@@ -2676,8 +2635,7 @@
         {
           "expr": "compact",
           "explained": "compact",
-          "kind": "prop",
-          "at": "src/menu.tsx:214"
+          "kind": "prop"
         }
       ]
     },
@@ -2691,17 +2649,12 @@
       "role": "button",
       "component": {
         "name": "Menu",
-        "at": "src/menu.tsx:25"
+        "at": "src/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "src/menu.tsx:216"
-          ]
-        },
-        {
-          "via": [
-            "src/menu.tsx:225"
+            "src/menu.tsx#TwinMenus"
           ]
         }
       ],
@@ -2714,19 +2667,19 @@
         {
           "kind": "menu",
           "target": "menu",
-          "at": "src/menu.tsx:216",
+          "at": "src/menu.tsx#TwinMenus",
           "scope": "twin.compact_menu"
         },
         {
           "kind": "menu",
           "target": "menu",
-          "at": "src/menu.tsx:225",
+          "at": "src/menu.tsx#TwinMenus",
           "scope": "twin.full_menu"
         },
         {
           "kind": "modal",
           "target": "MenuModal",
-          "at": "src/menu.tsx:27",
+          "at": "src/menu.tsx#Menu",
           "menuForm": true,
           "scope": "menu_modal"
         }
@@ -2743,7 +2696,7 @@
       "role": "menuitem",
       "component": {
         "name": "TwinMenus",
-        "at": "src/menu.tsx:229"
+        "at": "src/menu.tsx#TwinMenus"
       },
       "instances": [
         {
@@ -2764,14 +2717,14 @@
         "archive",
         "mute"
       ],
-      "source": "src/menu.tsx:262"
+      "source": "src/menu.tsx#ActionsList"
     },
     {
       "name": "RightAction",
       "values": [
         "pin"
       ],
-      "source": "src/menu.tsx:262"
+      "source": "src/menu.tsx#ActionsList"
     }
   ],
   "operations": [],
@@ -2824,7 +2777,7 @@
       ],
       "component": {
         "name": "ChannelController",
-        "at": "src/routes.tsx:9"
+        "at": "src/routes.tsx#ChannelController"
       },
       "ready": [
         "header.label",
@@ -2846,7 +2799,7 @@
       ],
       "component": {
         "name": "HelpController",
-        "at": "src/routes.tsx:18"
+        "at": "src/routes.tsx#HelpController"
       }
     }
   ],
@@ -2854,7 +2807,7 @@
   "components": [
     {
       "name": "ConfirmModal",
-      "at": "src/modals.tsx:113",
+      "at": "src/modals.tsx#ConfirmModal",
       "scopes": [
         "save_bar",
         "save_bar.confirm_modal",
@@ -2863,7 +2816,7 @@
     },
     {
       "name": "InfoPanel",
-      "at": "src/panels.tsx:15",
+      "at": "src/panels.tsx#InfoPanel",
       "scopes": [
         "side",
         "side.info"
@@ -2871,35 +2824,35 @@
     },
     {
       "name": "InfoPopover",
-      "at": "src/modals.tsx:22",
+      "at": "src/modals.tsx#InfoPopover",
       "scopes": [
         "info_popover"
       ]
     },
     {
       "name": "LazyModalImpl",
-      "at": "src/lazy_modal.tsx:1",
+      "at": "src/lazy_modal.tsx#LazyModalImpl",
       "scopes": [
         "lazy_modal"
       ]
     },
     {
       "name": "LeaveModal",
-      "at": "src/modals.tsx:18",
+      "at": "src/modals.tsx#LeaveModal",
       "scopes": [
         "leave_modal"
       ]
     },
     {
       "name": "MenuModal",
-      "at": "src/menu.tsx:10",
+      "at": "src/menu.tsx#MenuModal",
       "scopes": [
         "menu_modal"
       ]
     },
     {
       "name": "NoteModal",
-      "at": "src/modals.tsx:76",
+      "at": "src/modals.tsx#NoteModal",
       "scopes": [
         "mention_popover",
         "note_modal"
@@ -2907,7 +2860,7 @@
     },
     {
       "name": "SettingsModal",
-      "at": "src/modals.tsx:7",
+      "at": "src/modals.tsx#SettingsModal",
       "scopes": [
         "settings_modal"
       ]

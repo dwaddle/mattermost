@@ -5,7 +5,7 @@ import ts from 'typescript';
 
 import {TEST_ID_ROLES, type TestIdRole} from '@mattermost/types/test_id';
 
-import {cmp} from './compare.ts';
+import {cmp, cmpLoc} from './compare.ts';
 import type {AllowEntry, PluginConfig} from './config.ts';
 import {isGrammarError, KEY_PLACEHOLDER, toWord} from './grammar.ts';
 import {MAX_TEMPLATE_VALUES} from './limits.ts';
@@ -81,7 +81,7 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
             seen.add(k);
             return true;
         }).
-        sort((a, b) => cmp(a.at, b.at) || cmp(a.rule, b.rule) || cmp(a.message, b.message));
+        sort((a, b) => cmpLoc(a.at, b.at) || cmp(a.rule, b.rule) || cmp(a.message, b.message));
 }
 
 /** What a diagnostic is about, beside where: the testid template, its literal key, the usage chain it came through. */

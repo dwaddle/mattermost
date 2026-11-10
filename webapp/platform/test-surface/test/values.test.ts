@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {element, matchSnapshot, scanFixture} from './helpers.ts';
+import {element, exact, matchSnapshot, scanFixture} from './helpers.ts';
 
 const out = () => scanFixture('values');
 
@@ -13,14 +13,15 @@ test('values: manifest snapshot', () => {
 });
 
 test('values: props path with destructuring default, at each usage', () => {
-    const given = element(out(), 'values.leaf.given--button');
-    assert.deepEqual(given.instances.map((i) => i.via), [['src/app.tsx:21']]);
+    assert.deepEqual(exact(out(), 'values.leaf.given--button').instances.map((i) => i.via), [['src/app.tsx:21:13']]);
+    assert.deepEqual(element(out(), 'values.leaf.given--button').instances.map((i) => i.via), [['src/app.tsx#App']]);
     element(out(), 'values.leaf.default--button');
 });
 
 test('values: spreads of local objects and rest props', () => {
-    assert.deepEqual(element(out(), 'values.spread.local--button').instances[0].via, ['src/app.tsx:23']);
-    assert.deepEqual(element(out(), 'values.wrapper.inner--button').instances[0].via, ['src/leaf.tsx:15', 'src/app.tsx:24']);
+    assert.deepEqual(exact(out(), 'values.spread.local--button').instances[0].via, ['src/app.tsx:23:13']);
+    assert.deepEqual(exact(out(), 'values.wrapper.inner--button').instances[0].via, ['src/leaf.tsx:15:12', 'src/app.tsx:24:13']);
+    assert.deepEqual(element(out(), 'values.wrapper.inner--button').instances[0].via, ['src/leaf.tsx#Wrapper', 'src/app.tsx#App']);
 });
 
 test('values: props.a.b through an object literal, this.props in an arrow class property', () => {
@@ -70,7 +71,8 @@ test('values: React.createElement, tags held in variables, and components passed
 
 test('values: a component set on a typed definition and rendered through a lookup table gets its prop defaults', () => {
     const panel = element(out(), 'values.defined.panel:{key}--text');
-    assert.deepEqual(panel.instances.map((i) => i.via), [['src/dynamic.tsx:241']]);
+    assert.deepEqual(exact(out(), 'values.defined.panel:{key}--text').instances.map((i) => i.via), [['src/dynamic.tsx:241:16']]);
+    assert.deepEqual(panel.instances.map((i) => i.via), [['src/dynamic.tsx#DefinitionRenderer']]);
     assert.deepEqual(panel.key?.values, ['only']);
 });
 
@@ -126,8 +128,11 @@ test('values: a constant reached through a default-exported object of constants'
 
 test('values: a flag spread through from a component with no static usage can be off (a gap is not truthy)', () => {
     // `<OptionView {...data}/>` in a react-select Option: isSingleValue is unknown there, so both arms render
-    assert.deepEqual(element(out(), 'values.picker.option:{key}').instances.map((i) => i.via), [['src/option_view.tsx:20']]);
-    assert.deepEqual(element(out(), 'values.picker.selected').instances.map((i) => i.via), [['src/option_view.tsx:20'], ['src/option_view.tsx:30']]);
+    assert.deepEqual(exact(out(), 'values.picker.option:{key}').instances.map((i) => i.via), [['src/option_view.tsx:20:9']]);
+    assert.deepEqual(exact(out(), 'values.picker.selected').instances.map((i) => i.via), [['src/option_view.tsx:20:9'], ['src/option_view.tsx:30:9']]);
+
+    // the committed manifest names the component each usage is in
+    assert.deepEqual(element(out(), 'values.picker.selected').instances.map((i) => i.via), [['src/option_view.tsx#Option'], ['src/option_view.tsx#SingleValue']]);
 });
 
 test('values: `a || fallback` keys: the empty member of a set takes the fallback', () => {

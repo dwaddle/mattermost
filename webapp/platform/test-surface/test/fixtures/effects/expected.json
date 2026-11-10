@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "generatedFrom": {
     "tsconfig": "tsconfig.json",
     "scope": [
@@ -19,12 +19,12 @@
       "role": "button",
       "component": {
         "name": "AreaBase",
-        "at": "src/modals.tsx:76"
+        "at": "src/modals.tsx#AreaBase"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:84"
+            "src/modals.tsx#About"
           ]
         }
       ],
@@ -53,12 +53,12 @@
       "role": "button",
       "component": {
         "name": "DeleteRowLink",
-        "at": "src/modals.tsx:157"
+        "at": "src/modals.tsx#DeleteRowLink"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:164"
+            "src/modals.tsx#ChannelRows"
           ]
         }
       ],
@@ -71,7 +71,7 @@
         {
           "kind": "modal",
           "target": "ConfirmDialogRedux",
-          "at": "src/modals.tsx:153",
+          "at": "src/modals.tsx#DeleteRowLink",
           "dialogOps": [
             "PatchChannel"
           ],
@@ -90,7 +90,7 @@
       "role": "button",
       "component": {
         "name": "SavePage",
-        "at": "src/buttons.tsx:148"
+        "at": "src/buttons.tsx#SavePage"
       },
       "instances": [
         {
@@ -121,7 +121,7 @@
       "role": "button",
       "component": {
         "name": "Cycles",
-        "at": "src/cycles.tsx:19"
+        "at": "src/cycles.tsx#Cycles"
       },
       "instances": [
         {
@@ -153,7 +153,7 @@
       "role": "button",
       "component": {
         "name": "Cycles",
-        "at": "src/cycles.tsx:23"
+        "at": "src/cycles.tsx#Cycles"
       },
       "instances": [
         {
@@ -185,13 +185,13 @@
       "role": "button",
       "component": {
         "name": "ConfirmDialog",
-        "at": "src/modals.tsx:22"
+        "at": "src/modals.tsx#ConfirmDialog"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:29",
-            "src/modals.tsx:41"
+            "src/modals.tsx#ConfirmDialogRedux",
+            "src/modals.tsx#DeleteHookLink"
           ]
         }
       ],
@@ -219,13 +219,13 @@
       "role": "button",
       "component": {
         "name": "ConfirmDialog",
-        "at": "src/modals.tsx:22"
+        "at": "src/modals.tsx#ConfirmDialog"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:29",
-            "src/modals.tsx:153"
+            "src/modals.tsx#ConfirmDialogRedux",
+            "src/modals.tsx#DeleteRowLink"
           ]
         }
       ],
@@ -253,7 +253,7 @@
       "role": "link",
       "component": {
         "name": "FileLink",
-        "at": "src/modals.tsx:120"
+        "at": "src/modals.tsx#FileLink"
       },
       "instances": [
         {
@@ -269,7 +269,7 @@
         {
           "kind": "modal",
           "target": "FilePreview",
-          "at": "src/modals.tsx:107"
+          "at": "src/modals.tsx#useOpener"
         }
       ]
     },
@@ -284,7 +284,7 @@
       "role": "button",
       "component": {
         "name": "FlagForm",
-        "at": "src/buttons.tsx:190"
+        "at": "src/buttons.tsx#FlagForm"
       },
       "instances": [
         {
@@ -315,7 +315,7 @@
       "role": "textbox",
       "component": {
         "name": "FlagForm",
-        "at": "src/buttons.tsx:186"
+        "at": "src/buttons.tsx#FlagForm"
       },
       "instances": [
         {
@@ -339,7 +339,7 @@
       "role": "button",
       "component": {
         "name": "Panel",
-        "at": "src/buttons.tsx:70"
+        "at": "src/buttons.tsx#Panel"
       },
       "instances": [
         {
@@ -363,7 +363,7 @@
       "role": "button",
       "component": {
         "name": "Panel",
-        "at": "src/buttons.tsx:67"
+        "at": "src/buttons.tsx#Panel"
       },
       "instances": [
         {
@@ -394,7 +394,7 @@
       "role": "button",
       "component": {
         "name": "GrantLink",
-        "at": "src/modals.tsx:142"
+        "at": "src/modals.tsx#GrantLink"
       },
       "instances": [
         {
@@ -410,7 +410,7 @@
         {
           "kind": "modal",
           "target": "GrantModal",
-          "at": "src/modals.tsx:143",
+          "at": "src/modals.tsx#GrantLink",
           "scope": "effects.graph.grant_modal"
         }
       ]
@@ -426,7 +426,7 @@
       "role": null,
       "component": {
         "name": "GrantModal",
-        "at": "src/modals.tsx:130"
+        "at": "src/modals.tsx#GrantModal"
       },
       "instances": [
         {
@@ -451,7 +451,7 @@
       "role": "button",
       "component": {
         "name": "GrantModal",
-        "at": "src/modals.tsx:132"
+        "at": "src/modals.tsx#GrantModal"
       },
       "instances": [
         {
@@ -475,12 +475,12 @@
       "role": "textbox",
       "component": {
         "name": "renderInput",
-        "at": "src/buttons.tsx:203"
+        "at": "src/buttons.tsx#HelperInput"
       },
       "instances": [
         {
           "via": [
-            "src/buttons.tsx:213"
+            "src/buttons.tsx#HelperInputs"
           ]
         }
       ],
@@ -508,12 +508,12 @@
       "role": "textbox",
       "component": {
         "name": "renderInput",
-        "at": "src/buttons.tsx:203"
+        "at": "src/buttons.tsx#HelperInput"
       },
       "instances": [
         {
           "via": [
-            "src/buttons.tsx:217"
+            "src/buttons.tsx#HelperInputs"
           ]
         }
       ],
@@ -541,7 +541,7 @@
       "role": "button",
       "component": {
         "name": "DeleteHookLink",
-        "at": "src/modals.tsx:52"
+        "at": "src/modals.tsx#DeleteHookLink"
       },
       "instances": [
         {
@@ -557,7 +557,7 @@
         {
           "kind": "modal",
           "target": "ConfirmDialogRedux",
-          "at": "src/modals.tsx:41",
+          "at": "src/modals.tsx#DeleteHookLink",
           "dialogOps": [
             "PatchChannel"
           ],
@@ -576,12 +576,12 @@
       "role": "button",
       "component": {
         "name": "ActionButton",
-        "at": "src/buttons.tsx:32"
+        "at": "src/buttons.tsx#ActionButton"
       },
       "instances": [
         {
           "via": [
-            "src/buttons.tsx:48"
+            "src/buttons.tsx#Panel"
           ]
         }
       ],
@@ -608,7 +608,7 @@
       "role": "button",
       "component": {
         "name": "LeaveLink",
-        "at": "src/modals.tsx:61"
+        "at": "src/modals.tsx#LeaveLink"
       },
       "instances": [
         {
@@ -624,7 +624,7 @@
         {
           "kind": "modal",
           "target": "ConfirmDialogRedux",
-          "at": "src/modals.tsx:62",
+          "at": "src/modals.tsx#LeaveLink",
           "dialogOps": [
             "GetUser"
           ],
@@ -643,13 +643,13 @@
       "role": "button",
       "component": {
         "name": "ConfirmDialog",
-        "at": "src/modals.tsx:22"
+        "at": "src/modals.tsx#ConfirmDialog"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:29",
-            "src/modals.tsx:62"
+            "src/modals.tsx#ConfirmDialogRedux",
+            "src/modals.tsx#LeaveLink"
           ]
         }
       ],
@@ -677,12 +677,12 @@
       "role": "button",
       "component": {
         "name": "ActionButton",
-        "at": "src/buttons.tsx:32"
+        "at": "src/buttons.tsx#ActionButton"
       },
       "instances": [
         {
           "via": [
-            "src/buttons.tsx:44"
+            "src/buttons.tsx#Panel"
           ]
         }
       ],
@@ -711,13 +711,13 @@
       "role": "button",
       "component": {
         "name": "ActionButton",
-        "at": "src/buttons.tsx:32"
+        "at": "src/buttons.tsx#ActionButton"
       },
       "instances": [
         {
           "via": [
-            "src/buttons.tsx:87",
-            "src/buttons.tsx:99"
+            "src/buttons.tsx#Dialog",
+            "src/buttons.tsx#Dialogs"
           ]
         }
       ],
@@ -746,12 +746,12 @@
       "role": "button",
       "component": {
         "name": "DeleteRowLink",
-        "at": "src/modals.tsx:157"
+        "at": "src/modals.tsx#DeleteRowLink"
       },
       "instances": [
         {
           "via": [
-            "src/modals.tsx:172"
+            "src/modals.tsx#MeRows"
           ]
         }
       ],
@@ -764,7 +764,7 @@
         {
           "kind": "modal",
           "target": "ConfirmDialogRedux",
-          "at": "src/modals.tsx:153",
+          "at": "src/modals.tsx#DeleteRowLink",
           "dialogOps": [
             "GetUser"
           ],
@@ -783,7 +783,7 @@
       "role": "button",
       "component": {
         "name": "Panel",
-        "at": "src/buttons.tsx:59"
+        "at": "src/buttons.tsx#Panel"
       },
       "instances": [
         {
@@ -799,7 +799,7 @@
         "ops": [],
         "unknown": false,
         "delegated": [
-          "src/buttons.tsx:60"
+          "src/buttons.tsx#Panel"
         ]
       }
     },
@@ -814,7 +814,7 @@
       "role": "button",
       "component": {
         "name": "Panel",
-        "at": "src/buttons.tsx:63"
+        "at": "src/buttons.tsx#Panel"
       },
       "instances": [
         {
@@ -843,7 +843,7 @@
       "role": "button",
       "component": {
         "name": "Panel",
-        "at": "src/buttons.tsx:53"
+        "at": "src/buttons.tsx#Panel"
       },
       "instances": [
         {
@@ -874,7 +874,7 @@
       "role": "button",
       "component": {
         "name": "SaveButton",
-        "at": "src/buttons.tsx:17"
+        "at": "src/buttons.tsx#SaveButton"
       },
       "instances": [
         {
@@ -906,13 +906,13 @@
       "role": "button",
       "component": {
         "name": "ActionButton",
-        "at": "src/buttons.tsx:32"
+        "at": "src/buttons.tsx#ActionButton"
       },
       "instances": [
         {
           "via": [
-            "src/buttons.tsx:87",
-            "src/buttons.tsx:103"
+            "src/buttons.tsx#Dialog",
+            "src/buttons.tsx#Dialogs"
           ]
         }
       ],
@@ -939,7 +939,7 @@
       "role": "button",
       "component": {
         "name": "Reaction",
-        "at": "src/buttons.tsx:121"
+        "at": "src/buttons.tsx#Reaction"
       },
       "instances": [
         {
@@ -970,7 +970,7 @@
       "role": "button",
       "component": {
         "name": "Registry",
-        "at": "src/registry.tsx:19"
+        "at": "src/registry.tsx#Registry"
       },
       "instances": [
         {
@@ -999,7 +999,7 @@
       "role": "button",
       "component": {
         "name": "Registry",
-        "at": "src/registry.tsx:24"
+        "at": "src/registry.tsx#Registry"
       },
       "instances": [
         {
@@ -1022,7 +1022,7 @@
       "role": "button",
       "component": {
         "name": "RestoreButton",
-        "at": "src/buttons.tsx:133"
+        "at": "src/buttons.tsx#RestoreButton"
       },
       "instances": [
         {
@@ -1088,7 +1088,7 @@
   "components": [
     {
       "name": "ConfirmDialogRedux",
-      "at": "src/modals.tsx:27",
+      "at": "src/modals.tsx#ConfirmDialogRedux",
       "scopes": [
         "effects.delete_hook_modal",
         "effects.delete_row_modal",
@@ -1097,12 +1097,12 @@
     },
     {
       "name": "FilePreview",
-      "at": "src/modals.tsx:101",
+      "at": "src/modals.tsx#FilePreview",
       "scopes": []
     },
     {
       "name": "GrantModal",
-      "at": "src/modals.tsx:128",
+      "at": "src/modals.tsx#GrantModal",
       "scopes": [
         "effects.graph",
         "effects.graph.grant_modal"

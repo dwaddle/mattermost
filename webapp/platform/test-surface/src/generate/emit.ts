@@ -196,8 +196,14 @@ function testIdExpr(node: ScopeNode, template: string, keyExpr?: string): string
     return keyExpr ? '`' + rel + '`' : `'${rel}'`;
 }
 
+/** Where an element comes from, for a doc comment: `PostComponent (channels/src/…/post_component.tsx)`. */
+export function sourceText(ref: string): string {
+    const [file, name] = ref.split('#');
+    return name ? `${name} (${file})` : file;
+}
+
 function doc(e: Element, extra: string[] = [], node?: ScopeNode): string {
-    const lines = [`\`${e.template}\` (${e.component.at})`];
+    const lines = [`\`${e.template}\` — ${sourceText(e.component.at)}`];
     const seen = new Set<string>();
     for (const c of e.renderedWhen ?? []) {
         const text = c.explained.length > 110 ? c.explained.slice(0, 109) + '…' : c.explained;
