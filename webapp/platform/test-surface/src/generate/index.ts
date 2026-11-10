@@ -51,6 +51,11 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     const pluginScope = plugin ? `plugins.${plugin.key}` : null;
     const elements = pluginScope ? generated(manifest, [], [pluginScope]) : generated(manifest, config.checks.strictPaths, config.generateScopes);
     const model = buildModel(elements, {dropWords: plugin ? 1 : 0, reservedNames: manifest.sets.map((x) => x.name)});
+
+    // a key set holding "undefined" is a value the scan lost, not a key a test can pass
+    for (const e of elements.filter((x) => x.key?.values?.includes('undefined'))) {
+        diagnostics.push({rule: 'generate', severity: 'error', at: e.component.at, message: `"${e.template}" is keyed by a set holding "undefined" (${e.key!.set ?? e.key!.type}): the scan lost the key's value, so the generated method would take a key no element has.`, fix: 'Make sure the key is always set where the testid renders (the `undefined` check points at it), or fix the scan.', template: e.template});
+    }
     const sources = new Map<string, string>();
     const variants = modalVariants(manifest, model);
 

@@ -1548,6 +1548,36 @@
       }
     },
     {
+      "template": "values.spread_after.area:{key}",
+      "grammar": true,
+      "scope": [
+        "values",
+        "spread_after"
+      ],
+      "name": "area",
+      "role": null,
+      "component": {
+        "name": "AreaAccordion",
+        "at": "src/spread_after.tsx#AreaAccordion"
+      },
+      "instances": [
+        {
+          "via": [
+            "src/spread_after.tsx#FindingGroups"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
       "template": "values.tabs.tab:{key}--link",
       "grammar": true,
       "scope": [

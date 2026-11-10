@@ -332,3 +332,12 @@ test('generate: unformatted output (no prettier next to it) is an error in CI, a
     }
     /* eslint-enable no-process-env */
 });
+
+test('generate: a key set holding "undefined" is an error, not a method that takes it', async () => {
+    const config = loadConfig(path.join(FIXTURES, 'ui', 'test-surface.config.json'));
+    config.output.generated = fs.mkdtempSync(path.join(os.tmpdir(), 'test-surface-gen-'));
+    config.i18n = null;
+    const lost: Element = {template: 'area.list.item:{key}', grammar: true, scope: ['area', 'list'], name: 'item', role: null, key: {kind: 'set', set: 'AreaItem', type: '"undefined"', values: ['undefined']}, component: {name: 'X', at: 'src/x.tsx#X'}, instances: [{via: []}], aria: {role: null, native: false, state: []}};
+    const {diagnostics} = await generate({...scanFixture('ui').manifest, elements: [lost], sets: [], pages: [], pluginSlots: []}, config);
+    assert.deepEqual(diagnostics.filter((d) => d.severity === 'error').map((d) => d.template), ['area.list.item:{key}']);
+});

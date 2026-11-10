@@ -167,3 +167,8 @@ test('values: a component that renders itself through another one unrolls once t
     element(out(), 'values.message.text--text');
     element(out(), 'values.message.quote.post.text--text');
 });
+
+test('values: a rest spread after an attribute overrides it only when its type can carry the prop', () => {
+    const e = element(out(), 'values.spread_after.area:{key}');
+    assert.deepEqual({kind: e.key?.kind, values: e.key?.values}, {kind: 'string', values: undefined});
+});

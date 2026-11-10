@@ -205,8 +205,8 @@ function checkEmissions(emissions: Emission[], pushAt: Push, strictAt: (at: Loc,
         if (isUnscoped(e.value)) {
             continue;
         }
-        if ((/(^|[^A-Za-z])undefined([^A-Za-z]|$)/).test(e.template)) {
-            push('undefined', strict, at, `"${e.template}" can render the text "undefined"${e.via.length ? ` (via ${e.via[0]})` : ''}.`, 'Make sure the value is always set, or render no testid when it is missing.');
+        if ((/(^|[^A-Za-z])undefined([^A-Za-z]|$)/).test(e.template) || e.key === 'undefined') {
+            push('undefined', strict, at, `"${e.template}" can render the text "undefined"${e.key === 'undefined' ? ' as its key' : ''}${e.via.length ? ` (via ${e.via[0]})` : ''}.`, 'Make sure the value is always set, or render no testid when it is missing.');
         }
         if (isGrammarError(e.parsed)) {
             const suggestion = suggest(e.template, e.landing.aria.role);

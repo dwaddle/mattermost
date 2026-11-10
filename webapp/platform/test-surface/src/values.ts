@@ -1064,6 +1064,13 @@ export class Resolver {
 
     /** `{...props}` / `{...rest}` / `{...{a: 1}}` / `{...local}`. Null if the spread can't carry the prop. */
     private throughSpread(spread: ts.Expression, propPath: string[], seen: Set<ts.Node>): PropAt | null {
+        // `{...rest}` after `area={area}` doesn't override it when rest's type has no `area`: the rest of the props after
+        // destructuring is typed exactly (JSX takes the last attribute or spread that carries the prop). A props object
+        // passed in whole (`{...data}` from a library) may carry more than its type says.
+        const obj0 = strip(spread) as ts.Expression;
+        if (this.restPropsOf(obj0) && !this.mayCarry(spread, propPath[0])) {
+            return null;
+        }
         const pp = this.propsPath(spread);
         if (pp && pp.comp && !seen.has(pp.comp)) {
             return {kind: 'up', comp: pp.comp, path: [...pp.path, ...propPath]};
@@ -1094,11 +1101,31 @@ export class Resolver {
         }
 
         // a spread of a typed object that has no such property can't carry it
-        const t = this.checker.getTypeAtLocation(spread);
-        if (!(t.flags & ts.TypeFlags.Any) && !t.getProperty(propPath[0]) && !this.checker.getIndexInfoOfType(t, ts.IndexKind.String)) {
+        if (!this.mayCarry(spread, propPath[0])) {
             return null;
         }
         return {kind: 'unknown', node: spread};
+    }
+
+    /**
+     * Whether a spread can carry a prop: unless its type is a known object type with no such property (and no string
+     * index), any member of a union having it, it may. A hyphenated prop (`data-testid`, `aria-label`) always may: JSX
+     * passes those to any component without its props type declaring them.
+     */
+    private mayCarry(spread: ts.Expression, prop: string): boolean {
+        if (prop.includes('-')) {
+            return true;
+        }
+        const t = this.checker.getTypeAtLocation(spread);
+
+        // `{...(cond && {x})}`: a falsy member spreads nothing
+        const nothing = ts.TypeFlags.Undefined | ts.TypeFlags.Null | ts.TypeFlags.BooleanLike | ts.TypeFlags.Void | ts.TypeFlags.Never;
+        const members = (t.isUnion() ? t.types : [t]).filter((m) => !(m.flags & nothing));
+        const known = (m: ts.Type) => Boolean(m.flags & ts.TypeFlags.Object) || m.isIntersection();
+        if (!members.every(known)) {
+            return true;
+        }
+        return members.some((m) => m.getProperty(prop) || this.checker.getIndexInfoOfType(m, ts.IndexKind.String));
     }
 
     /** The `dialogProps` expression of a modal reference. */
