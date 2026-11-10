@@ -13,12 +13,15 @@ export {
     drivers,
     effect,
     formatMessage,
+    KeyedList,
+    keyOfTestId,
     msg,
     registerPluginSurface,
     Scope,
     suggestionTestKey,
     withElement,
     type BodyOf,
+    type ContentFilter,
     type PathParamsOf,
 
     // the drivers' types, so a plugin's generated package (its getters return them) can emit declarations
@@ -45,6 +48,7 @@ export {
     type PluginKeys,
 } from './aria';
 export {settle, settleAll, SettleError, type SettleOptions} from './settle';
+export * from './flows';
 export type {ExtendedFixtures} from './test_fixture';
 export {testConfig, TESTCONTAINERS_SERVICE_NAMES, SERVER_DEPLOYMENTS} from './test_config';
 export type {TestContainersServiceName, ServerDeployment} from './test_config';

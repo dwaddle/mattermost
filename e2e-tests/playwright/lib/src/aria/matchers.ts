@@ -9,7 +9,7 @@ import {expect as subpathExpect} from '../expect';
 import {Driver, elementLine} from './drivers';
 import type {Meta} from './effects';
 import {formatMessage, type Message, type ParamsOf} from './msg';
-import {Scope} from './scope';
+import {KeyedList, Scope} from './scope';
 
 type HasLocator = Driver | Scope | Locator;
 type Options = {timeout?: number};
@@ -122,7 +122,92 @@ export const expect = subpathExpect.extend({
             options,
         );
     },
+
+    /** The list shows exactly these keys (in this order unless `ordered: false`); retries until it does. */
+    async toHaveKeys<K extends string>(
+        this: ExpectMatcherState,
+        received: KeyedList<K, unknown>,
+        expected: readonly K[],
+        options?: Options & {ordered?: boolean},
+    ) {
+        const ordered = options?.ordered ?? true;
+        const norm = (keys: readonly string[]) => (ordered ? [...keys] : [...keys].sort());
+        return keyPoll.call(
+            this,
+            'toHaveKeys',
+            received,
+            async (keys) => norm(keys),
+            (p) => p.toEqual(norm(expected)),
+            options,
+        );
+    },
+
+    /** The list shows at least these keys (in any order); retries until it does. */
+    async toContainKeys<K extends string>(
+        this: ExpectMatcherState,
+        received: KeyedList<K, unknown>,
+        expected: readonly K[],
+        options?: Options,
+    ) {
+        return keyPoll.call(
+            this,
+            'toContainKeys',
+            received,
+            async (keys) => keys,
+            (p) => p.toEqual(baseExpect.arrayContaining([...expected])),
+            options,
+        );
+    },
+
+    /** The list shows this many items; retries until it does. */
+    async toHaveKeyCount(
+        this: ExpectMatcherState,
+        received: KeyedList<string, unknown>,
+        count: number,
+        options?: Options,
+    ) {
+        return keyPoll.call(
+            this,
+            'toHaveKeyCount',
+            received,
+            async (keys) => keys.length,
+            (p) => p.toBe(count),
+            options,
+        );
+    },
 });
+
+/** A list matcher: polls the list's keys (mapped by `read`) until `check` passes. */
+async function keyPoll<T>(
+    this: ExpectMatcherState,
+    name: string,
+    received: KeyedList<any, unknown>,
+    read: (keys: string[]) => Promise<T>,
+    check: (poll: any) => Promise<unknown>,
+    options?: Options,
+) {
+    if (!(received instanceof KeyedList)) {
+        throw new Error(`${name}: expected a KeyedList (a page object's list of keyed items), got ${String(received)}`);
+    }
+    const poll = baseExpect.poll(async () => read(await received.keys()), {timeout: options?.timeout ?? this.timeout});
+    try {
+        await check(this.isNot ? poll.not : poll);
+        return {pass: !this.isNot, name, message: () => `${name}: ${received.label}`};
+    } catch (e) {
+        let keys = '';
+        try {
+            keys = (await received.keys()).join(', ');
+        } catch {
+            // the page is gone: the poll's own message says what it last saw
+        }
+        return {
+            pass: this.isNot,
+            name,
+            message: () =>
+                `${name}: ${received.label}${this.isNot ? ' (not)' : ''}; keys now: [${keys}]\n${(e as Error).message}`,
+        };
+    }
+}
 
 async function attribute(
     this: ExpectMatcherState,
