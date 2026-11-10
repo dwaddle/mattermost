@@ -3,6 +3,7 @@
 
 import type {TestIdRole} from '@mattermost/types/test_id';
 
+import {KEY_PLACEHOLDER} from '../grammar.ts';
 import {ROLE_TABLE} from '../role_table.ts';
 
 /** `join_leave_messages` -> `joinLeaveMessages` */
@@ -47,7 +48,7 @@ export function pageGetter(cls: string): string {
  * from the first placeholder to the last, that the caller passes whole.
  */
 export function splitAtKey(template: string): [string, string] {
-    const first = template.indexOf('{key}');
-    const last = template.lastIndexOf('{key}');
-    return [template.slice(0, first), template.slice(last + '{key}'.length)];
+    const first = template.indexOf(KEY_PLACEHOLDER);
+    const last = template.lastIndexOf(KEY_PLACEHOLDER);
+    return [template.slice(0, first), template.slice(last + KEY_PLACEHOLDER.length)];
 }

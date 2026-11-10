@@ -5,8 +5,12 @@ import path from 'node:path';
 
 import ts from 'typescript';
 
+import {TEST_KEY_BRANDS} from '@mattermost/types/test_id';
+
 import {calleeName, isFunctionLike, propName, returnsOf, shortText, strip, typeText, type FunctionLike} from './ast.ts';
+import {KEY_PLACEHOLDER} from './grammar.ts';
 import {MAX_ARRAY_SPREAD_DEPTH, MAX_HELPER_RETURNS, MAX_OBJECT_KEYS_DEPTH, MAX_PARAM_OBJECT_DEPTH, MAX_RESOLVE_DEPTH, MAX_TEMPLATE_VALUES, MAX_USAGE_VALUES} from './limits.ts';
+import type {KeyKind} from './manifest_types.ts';
 import {usageAttrs, usageNode, type CodeNode, type Loc, type ProgramIndex, type Usage} from './program_index.ts';
 
 /** Runtime data that fills a slot of a testid. */
@@ -16,7 +20,7 @@ export type Gap = {
      * number; set = a union of string literals; entity = a field of a type from the entity dirs;
      * plugin = a plugin id as a key (`PluginTestKey`); string = anything else
      */
-    kind: 'number' | 'set' | 'entity' | 'plugin' | 'setting' | 'suggestion' | 'string';
+    kind: KeyKind;
     type: string;
     expr: string;
     entity?: string;
@@ -227,11 +231,11 @@ export class Resolver {
             info.kind = 'plugin';
             return;
         }
-        if (t?.aliasSymbol?.getName() === 'SettingTestKey') {
+        if (t?.aliasSymbol?.getName() === TEST_KEY_BRANDS.setting) {
             info.kind = 'setting';
             return;
         }
-        if (t?.aliasSymbol?.getName() === 'SuggestionTestKey') {
+        if (t?.aliasSymbol?.getName() === TEST_KEY_BRANDS.suggestion) {
             info.kind = 'suggestion';
             return;
         }
@@ -1456,10 +1460,10 @@ export class Resolver {
         if (ts.isCallExpression(x)) {
             // a normalized key (`pluginTestKey(id)`, `settingTestKey(path)`) is the key itself: a typed, never-empty gap
             const brand = this.checker.getTypeAtLocation(x).aliasSymbol?.getName();
-            if (brand === 'SettingTestKey') {
+            if (brand === TEST_KEY_BRANDS.setting) {
                 return [this.settingGap(x, depth, seen, env)];
             }
-            if (brand === PLUGIN_KEY_TYPE || brand === 'SuggestionTestKey') {
+            if (brand === TEST_KEY_BRANDS.plugin || brand === TEST_KEY_BRANDS.suggestion) {
                 return [this.gapFor(x)];
             }
             const r = this.resolveCall(x, depth, seen, env);
@@ -1888,7 +1892,7 @@ export function templateOf(v: Value): string | null {
         return v.s;
     }
     if (v.k === 'pat') {
-        return v.parts.map((p) => (typeof p === 'string' ? p : '{key}')).join('');
+        return v.parts.map((p) => (typeof p === 'string' ? p : KEY_PLACEHOLDER)).join('');
     }
     return null;
 }
@@ -1897,11 +1901,9 @@ export function gapsOf(v: Value): Gap[] {
     return v.k === 'pat' ? v.parts.filter((p): p is {gap: Gap} => typeof p !== 'string').map((p) => p.gap) : [];
 }
 
-/** `PluginTestKey` from `@mattermost/shared/utils/test_id`: a plugin id normalized for a testid key. */
-export const PLUGIN_KEY_TYPE = 'PluginTestKey';
-
+/** `PluginTestKey` from `@mattermost/types/test_id`: a plugin id normalized for a testid key. */
 function isPluginKey(t: ts.Type | null): boolean {
-    return t?.aliasSymbol?.getName() === PLUGIN_KEY_TYPE;
+    return t?.aliasSymbol?.getName() === TEST_KEY_BRANDS.plugin;
 }
 
 /** The interface or type alias a property is declared in (`type FileInfo = {id: string}` -> `FileInfo`). */

@@ -5,21 +5,9 @@ import ts from 'typescript';
 
 import {isFunctionLike, nameOfFunction, shortText} from './ast.ts';
 import {MAX_CONDITION_INLINE_DEPTH} from './limits.ts';
-import type {Loc, ProgramIndex} from './program_index.ts';
+import type {ConditionKind, RenderCondition} from './manifest_types.ts';
+import type {ProgramIndex} from './program_index.ts';
 import type {Resolver} from './values.ts';
-
-export type ConditionKind = 'prop' | 'local state' | 'permission' | 'license/config/flag' | 'layout' | 'store selector' | 'other';
-
-export type RenderCondition = {
-
-    /** The condition as written (negated when the element is in the else arm or after an early return). */
-    expr: string;
-
-    /** The same condition with useSelector results inlined. */
-    explained: string;
-    kind: string;
-    at: Loc;
-};
 
 type RawCondition = {expr: ts.Expression; negate: boolean; at: ts.Node};
 
@@ -77,12 +65,16 @@ export class Conditions {
     }
 
     of(el: ts.Node): RenderCondition[] {
-        return this.raw(el).filter((c) => !this.isNullGuard(c)).map((c) => ({
-            expr: this.text(c, false),
-            explained: this.text(c, true),
-            kind: this.classify(c.expr),
-            at: this.ix.where(c.at),
-        }));
+        return this.raw(el).filter((c) => !this.isNullGuard(c)).map((c) => {
+            const {kind, viaLocal} = this.classify(c.expr);
+            return {
+                expr: this.text(c, false),
+                explained: this.text(c, true),
+                kind,
+                ...(viaLocal ? {viaLocal} : {}),
+                at: this.ix.where(c.at),
+            };
+        });
     }
 
     /** `channel && <X/>`: a guard that an object is loaded, not a condition worth documenting. */
@@ -135,29 +127,26 @@ export class Conditions {
         return simple ? `!${text}` : `!(${text})`;
     }
 
-    classify(expr: ts.Expression, depth = 0): string {
+    /** What a condition depends on; `viaLocal` when only a local value derived from it says (`const show = canDelete && …`). */
+    classify(expr: ts.Expression, depth = 0): {kind: ConditionKind; viaLocal?: true} {
         const k = this.classifyDirect(expr);
         if (k !== 'other' || depth > MAX_CONDITION_INLINE_DEPTH) {
-            return k;
+            return {kind: k};
         }
 
         // inline local derived values: const showDelete = canDelete && !isSystemMessage
-        const kinds: string[] = [];
+        const kinds: ConditionKind[] = [];
         for (const id of identifiers(expr)) {
             const d = this.ix.checker.getSymbolAtLocation(id)?.valueDeclaration;
             if (d && ts.isVariableDeclaration(d) && d.initializer && !(/^use(State|Selector)/).test(d.initializer.getText())) {
-                kinds.push(this.classify(d.initializer, depth + 1));
+                kinds.push(this.classify(d.initializer, depth + 1).kind);
             }
             if (ts.isPropertyAccessExpression(id.parent) && (/^this\.state\./).test(id.parent.getText())) {
                 kinds.push('local state');
             }
         }
-        for (const o of ORDER) {
-            if (kinds.some((x) => x === o || x === o + ' (via local value)')) {
-                return o + ' (via local value)';
-            }
-        }
-        return 'other';
+        const found = ORDER.find((o) => kinds.includes(o));
+        return found ? {kind: found, viaLocal: true} : {kind: 'other'};
     }
 
     private classifyDirect(expr: ts.Expression): ConditionKind {

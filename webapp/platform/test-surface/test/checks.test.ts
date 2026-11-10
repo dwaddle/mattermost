@@ -78,7 +78,7 @@ test('checks: the plugin slot contract and the rendered slots agree both ways', 
 });
 
 test('checks: a reviewed allow entry turns that error into a warning with its reason; a stale entry is reported', () => {
-    const base = {strictScopes: [], strictPaths: ['src/'], strictKeys: false};
+    const base = {strictScopes: [], strictPaths: ['src/'], strictKeys: false, configAt: 'test-surface.config.json'};
     const ds = runChecks(out().result, {...base, allow: [{rule: 'aria', template: 'checks.panel.clickable', reason: 'reviewed'}, {rule: 'aria', template: 'checks.gone', reason: 'old'}]});
     const d = ds.find((x) => x.rule === 'aria' && x.message.includes('checks.panel.clickable'));
     assert.equal(d?.severity, 'warning');
@@ -88,18 +88,18 @@ test('checks: a reviewed allow entry turns that error into a warning with its re
 
 test('checks: an allow entry for a keyed template covers its per-value diagnostics', () => {
     const r = out().result;
-    const keyed = {rule: 'duplicates', severity: 'error' as const, at: 'src/x.tsx:1', message: '"checks.section:{key}=email" is also used by src/y.tsx:2.'};
+    const keyed = {rule: 'duplicates' as const, severity: 'error' as const, at: 'src/x.tsx:1', message: '"checks.section:{key}=email" is also used by src/y.tsx:2.'};
     const result = {...r, sites: [], emissions: [], manifest: {...r.manifest, elements: [], pluginSlots: [], diagnostics: [keyed]}};
-    const ds = runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, allow: [{rule: 'duplicates', template: 'checks.section:{key}', reason: 'exclusive'}]});
+    const ds = runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, configAt: 'test-surface.config.json', allow: [{rule: 'duplicates', template: 'checks.section:{key}', reason: 'exclusive'}]});
     assert.equal(ds.find((d) => d.rule === 'duplicates')?.severity, 'warning');
     assert.ok(!ds.some((d) => d.rule === 'allow'), JSON.stringify(ds));
 });
 
 test('checks: an allow entry starting with `*.` covers the template under any scope', () => {
     const r = out().result;
-    const at = (scope: string) => ({rule: 'aria', severity: 'error' as const, at: 'src/x.tsx:1', message: `<a> with testid "${scope}.file.remove--button" handles input but has no ARIA role.`});
+    const at = (scope: string) => ({rule: 'aria' as const, severity: 'error' as const, at: 'src/x.tsx:1', message: `<a> with testid "${scope}.file.remove--button" handles input but has no ARIA role.`});
     const result = {...r, sites: [], emissions: [], manifest: {...r.manifest, elements: [], pluginSlots: [], diagnostics: [at('center.post_create.file_previews'), at('rhs.post_create.file_previews'), {...at('other'), message: '<a> with testid "x.file.remove--buttons" handles input.'}]}};
-    const ds = runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, allow: [{rule: 'aria', template: '*.file_previews.file.remove--button', reason: 'reviewed'}]});
+    const ds = runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, configAt: 'test-surface.config.json', allow: [{rule: 'aria', template: '*.file_previews.file.remove--button', reason: 'reviewed'}]});
     assert.deepEqual(ds.filter((d) => d.rule === 'aria').map((d) => d.severity), ['warning', 'warning', 'error']);
 });
 

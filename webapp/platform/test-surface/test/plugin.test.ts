@@ -14,7 +14,7 @@ import {loadConfig} from '../src/config.ts';
 import {generate} from '../src/generate/index.ts';
 
 const config = () => loadConfig(path.join(FIXTURES, 'plugin', 'test-surface.config.json'));
-const diagnostics = () => runChecks(scanFixture('plugin').result, {...config().checks, plugin: config().plugin});
+const diagnostics = () => runChecks(scanFixture('plugin').result, {...config().checks, plugin: config().plugin, configAt: 'test-surface.config.json'});
 
 test('plugin: the key comes from plugin.json; registry calls list the host slots they fill', () => {
     const plugin = scanFixture('plugin').manifest.plugin!;

@@ -39,7 +39,7 @@ export function scanProject(config: Config): ScanOutput {
     const loaded = loadProgram(config);
     const scanner = new Scanner(loaded, config);
     const result = scanner.scan();
-    const diagnostics = runChecks(result, {...config.checks, plugin: config.plugin});
+    const diagnostics = runChecks(result, {...config.checks, plugin: config.plugin, configAt: relativeToRoot(config, config.configPath)});
     const manifest = {...result.manifest, diagnostics};
     return {result, manifest, diagnostics};
 }

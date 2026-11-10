@@ -8,9 +8,9 @@ import type {TestIdRole} from '@mattermost/types/test_id';
 import {escapeRegExp} from './ast.ts';
 import {cmp} from './compare.ts';
 import type {AllowEntry, PluginConfig} from './config.ts';
-import {isGrammarError, toWord} from './grammar.ts';
+import {isGrammarError, KEY_PLACEHOLDER, toWord} from './grammar.ts';
 import {MAX_TEMPLATE_VALUES} from './limits.ts';
-import type {AriaRole, Diagnostic, Element, Loc, Manifest} from './manifest_types.ts';
+import type {AriaRole, Diagnostic, Element, Loc, Manifest, RuleName} from './manifest_types.ts';
 import {isAriaRole} from './roles.ts';
 import {isUnscoped, readHostSlots, type Emission, type ScanResult, type Site} from './scan.ts';
 import {templateOf, TOO_MANY_VALUES} from './values.ts';
@@ -31,6 +31,9 @@ export type CheckOptions = {
 
     /** Plugin mode: the plugin's key and the host versions it supports. */
     plugin?: PluginConfig | null;
+
+    /** Where config entries are reported (the config file, relative to the root). */
+    configAt: string;
 };
 
 /** The roles an element may have for a suffix besides the suffix itself (a `--button` may be a toggle button…). */
@@ -48,7 +51,7 @@ const NON_INTERACTIVE = new Set<AriaRole | null>([null, 'none', 'presentation', 
 export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] {
     const out: Diagnostic[] = [...result.manifest.diagnostics];
     const strictAt = (at: Loc, template?: string) => opts.strictPaths.some((p) => at.startsWith(p)) || (template !== undefined && opts.strictScopes.some((s) => template.startsWith(s)));
-    const push = (rule: string, strict: boolean, at: Loc, message: string, fix?: string) => {
+    const push: Push = (rule, strict, at, message, fix) => {
         out.push({rule, severity: strict ? 'error' : 'warning', at, message, ...(fix ? {fix} : {})});
     };
 
@@ -62,9 +65,9 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
         }
     }
     if (opts.plugin) {
-        checkPlugin(result.manifest, push, strictAt, opts.plugin);
+        checkPlugin(result.manifest, push, strictAt, opts.plugin, opts.configAt);
     }
-    applyAllow(out, opts.allow ?? []);
+    applyAllow(out, opts.allow ?? [], opts.configAt);
 
     const seen = new Set<string>();
     return out.
@@ -79,10 +82,10 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
         sort((a, b) => cmp(a.at, b.at) || cmp(a.rule, b.rule) || cmp(a.message, b.message));
 }
 
-type Push = (rule: string, strict: boolean, at: Loc, message: string, fix?: string) => void;
+type Push = (rule: RuleName, strict: boolean, at: Loc, message: string, fix?: string) => void;
 
 /** `checks.allow`: matching errors become warnings with the reason; an entry that matches nothing is reported, so the list can't go stale. */
-function applyAllow(out: Diagnostic[], allow: AllowEntry[]) {
+function applyAllow(out: Diagnostic[], allow: AllowEntry[], configAt: string) {
     for (const a of allow) {
         let used = false;
         for (const d of out) {
@@ -98,7 +101,7 @@ function applyAllow(out: Diagnostic[], allow: AllowEntry[]) {
             }
         }
         if (!used) {
-            out.push({rule: 'allow', severity: 'warning', at: 'test-surface.config.json', message: `checks.allow entry for "${a.template}" (${a.rule}) no longer matches anything.`, fix: 'Remove it.'});
+            out.push({rule: 'allow', severity: 'warning', at: configAt, message: `checks.allow entry for "${a.template}" (${a.rule}) no longer matches anything.`, fix: 'Remove it.'});
         }
     }
 }
@@ -135,7 +138,7 @@ function checkPluginSlots(manifest: Manifest, push: Push) {
  * Plugin mode: the plugin's testids live under `plugins.<key>` (host slots carry the host's testids), and
  * every host version it supports still renders the slots its registry calls fill (always errors).
  */
-function checkPlugin(manifest: Manifest, push: Push, strictAt: (at: Loc, t?: string) => boolean, plugin: PluginConfig) {
+function checkPlugin(manifest: Manifest, push: Push, strictAt: (at: Loc, t?: string) => boolean, plugin: PluginConfig, configAt: string) {
     const scope = `plugins.${plugin.key}`;
     for (const e of manifest.elements) {
         if (e.grammar && e.template !== scope && !e.template.startsWith(scope + '.')) {
@@ -143,14 +146,14 @@ function checkPlugin(manifest: Manifest, push: Push, strictAt: (at: Loc, t?: str
         }
     }
     for (const host of plugin.hosts) {
-        const read = readHostSlots(host.appMap);
+        const read = readHostSlots(host.appMap, configAt);
         if ('diagnostic' in read) {
             push('input', true, read.diagnostic.at, read.diagnostic.message, read.diagnostic.fix);
             continue;
         }
         const slots = new Set(read.slots.map((s) => s.slot));
         if (!slots.size) {
-            push('plugin-compat', true, 'test-surface.config.json', `Host ${host.name}: no plugin slots in ${host.appMap}.`, 'Point plugin.hosts at the app-map.json the host version\'s generated page objects ship.');
+            push('plugin-compat', true, configAt, `Host ${host.name}: no plugin slots in ${host.appMap}.`, 'Point plugin.hosts at the app-map.json the host version\'s generated page objects ship.');
             continue;
         }
         for (const used of manifest.plugin?.slotsUsed ?? []) {
@@ -245,16 +248,16 @@ function roleSuffixFor(role: string | null): string | null {
 
 /** A grammar-conforming suggestion for a legacy testid. */
 export function suggest(template: string, role: AriaRole | null): string | null {
-    const [path] = template.split('{key}');
+    const [path] = template.split(KEY_PLACEHOLDER);
     const words = path.split(/[.\-:]+|__/).map(toWord).filter(Boolean);
     if (!words.length) {
         return null;
     }
-    const hasKey = template.includes('{key}');
+    const hasKey = template.includes(KEY_PLACEHOLDER);
     const scope = words.length > 1 ? words.slice(0, -1).join('.') : '<scope>';
     const name = words[words.length - 1];
     const r = role && !NON_INTERACTIVE.has(role) ? `--${role}` : '';
-    return `${scope}.${name}${hasKey ? ':{key}' : ''}${r}`;
+    return `${scope}.${name}${hasKey ? `:${KEY_PLACEHOLDER}` : ''}${r}`;
 }
 
 /**

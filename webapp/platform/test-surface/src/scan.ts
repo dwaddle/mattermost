@@ -12,7 +12,7 @@ import {pascal} from './generate/names.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId, type GrammarError, type ParsedTestId} from './grammar.ts';
 import {readVersioned} from './input.ts';
 import {MAX_CONDITION_USAGES, MAX_LANDING_HOPS, MAX_SCOPE_DEPTH, MAX_SCOPE_PATH, MAX_TEMPLATE_VALUES} from './limits.ts';
-import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type PluginInfo, type PluginSlot, type RenderCondition, type TestPart} from './manifest_types.ts';
+import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type PluginInfo, type PluginSlot, type RenderCondition, type RuleName, type TestPart} from './manifest_types.ts';
 import {pageOf} from './navigation.ts';
 import {buildPages, discoverRoutes} from './pages.ts';
 import {loadPublishedParts, publishedComponent, type PublishedParts} from './parts.ts';
@@ -143,7 +143,7 @@ export class Scanner {
         Object.assign(this.timings, loaded.timings);
     }
 
-    private diag(rule: string, severity: Diagnostic['severity'], at: Loc, message: string, fix?: string) {
+    private diag(rule: RuleName, severity: Diagnostic['severity'], at: Loc, message: string, fix?: string) {
         this.diagnostics.push({rule, severity, at, message, ...(fix ? {fix} : {})});
     }
 
@@ -1442,7 +1442,7 @@ export class Scanner {
         const plugin = this.config.plugin!;
         const slotsByMethod = new Map<string, Set<string>>();
         for (const host of plugin.hosts) {
-            const read = readHostSlots(host.appMap);
+            const read = readHostSlots(host.appMap, relativeToRoot(this.config, this.config.configPath));
 
             // (an unreadable host map is reported by the plugin-compat check)
             for (const s of 'slots' in read ? read.slots : []) {
@@ -1756,7 +1756,7 @@ function alwaysReturns(st: ts.Statement): boolean {
 export type HostSlot = {slot: string; testId: string; registry?: string[]};
 
 /** The plugin slots a host's `app-map.json` publishes, or why it can't be read (missing, corrupt, another format version). */
-export function readHostSlots(appMap: string): {slots: HostSlot[]} | {diagnostic: Diagnostic} {
-    const read = readVersioned<{version: number; pluginSlots?: HostSlot[]}>(appMap, APP_MAP_VERSION, `Host app-map.json ${appMap}`, 'test-surface.config.json');
+export function readHostSlots(appMap: string, configAt: string): {slots: HostSlot[]} | {diagnostic: Diagnostic} {
+    const read = readVersioned<{version: number; pluginSlots?: HostSlot[]}>(appMap, APP_MAP_VERSION, `Host app-map.json ${appMap}`, configAt);
     return 'value' in read ? {slots: read.value.pluginSlots ?? []} : read;
 }

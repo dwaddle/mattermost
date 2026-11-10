@@ -5,13 +5,14 @@ import ts from 'typescript';
 
 import {calleeName, isFunctionLike, isJsxTag, nameOfFunction, oneLine, propName, returnsOf, shortText, strip, type FunctionLike} from './ast.ts';
 import {MAX_CALLEE_DEPTH} from './limits.ts';
+import type {OpenKind} from './manifest_types.ts';
 import type {CodeNode, Loc, ProgramIndex} from './program_index.ts';
 import {compatible} from './roles.ts';
 import type {Operations} from './routes.ts';
 import {constKey, isValuePosition} from './store_gates.ts';
 import {assignmentsOf, type Resolver, type Source} from './values.ts';
 
-export type Opened = {kind: 'modal' | 'popover' | 'page' | 'menu' | 'panel'; node: CodeNode | null; target: string; at: Loc; dialogOps?: string[]};
+export type Opened = {kind: OpenKind; node: CodeNode | null; target: string; at: Loc; dialogOps?: string[]};
 
 /**
  * A navigation: its target expression (resolved to a route later), the target as written (whole, on one line), and

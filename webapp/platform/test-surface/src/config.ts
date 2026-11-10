@@ -174,6 +174,9 @@ export type PluginConfig = {
     hosts: Array<{name: string; appMap: string}>;
 };
 
+/** The config's file name: `findConfig` looks for it; diagnostics about config entries are reported at its path (`configPath`). */
+export const CONFIG_FILE = 'test-surface.config.json';
+
 /** DOM methods a handler calls on elements it can't see the type of (refs): focus and scrolling send nothing. */
 export const DEFAULT_PURE_CALLS = ['focus', 'blur', 'select', 'scrollIntoView', 'scrollTo'];
 
@@ -194,7 +197,7 @@ export function loadConfig(configPath: string): Config {
     return resolveConfig(raw, dir, abs);
 }
 
-export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.join(dir, 'test-surface.config.json')): Config {
+export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.join(dir, CONFIG_FILE)): Config {
     const root = path.resolve(dir, raw.root);
     const fromDir = (p: string) => path.resolve(dir, p);
     return {
@@ -254,13 +257,13 @@ export function findConfig(explicit: string | undefined, cwd = process.cwd()): s
         return path.resolve(cwd, explicit);
     }
     for (let d = cwd; ; d = path.dirname(d)) {
-        for (const candidate of [path.join(d, 'test-surface.config.json'), path.join(d, 'channels', 'test-surface.config.json')]) {
+        for (const candidate of [path.join(d, CONFIG_FILE), path.join(d, 'channels', CONFIG_FILE)]) {
             if (fs.existsSync(candidate)) {
                 return candidate;
             }
         }
         if (path.dirname(d) === d) {
-            throw new Error('No test-surface.config.json found. Pass --config <path>.');
+            throw new Error(`No ${CONFIG_FILE} found. Pass --config <path>.`);
         }
     }
 }

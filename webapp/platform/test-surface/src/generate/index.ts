@@ -88,7 +88,7 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     const reexports = modules.map((m) => `export * from './${m}';`).join('\n');
     const root = pluginScope ? model.byScope.get(pluginScope)?.cls : undefined;
     if (plugin && !root) {
-        diagnostics.push({rule: 'generate', severity: 'error', at: 'test-surface.config.json', message: `No testids under "${pluginScope}": nothing to generate for ${plugin.id}.`, fix: `Give the plugin's UI testids under "${pluginScope}."`});
+        diagnostics.push({rule: 'generate', severity: 'error', at: relativeToRoot(config, config.configPath), message: `No testids under "${pluginScope}": nothing to generate for ${plugin.id}.`, fix: `Give the plugin's UI testids under "${pluginScope}."`});
     }
     sources.set('index.ts', plugin && root ? `${out.header}\n${pluginIndex(plugin, runtime, root.name, root.file, reexports)}` : `${out.header}\n${reexports}\n`);
 

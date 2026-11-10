@@ -162,6 +162,19 @@ export function isTestIdProblem(p: TestIdParts | TestIdProblem): p is TestIdProb
 }
 
 /**
+ * The key types the test-surface scanner recognizes by their type's name (a key built with `pluginTestKey()` is a
+ * plugin key, and so on), so renaming one of them must rename it here too: `satisfies` holds the names to the types
+ * declared below.
+ */
+export const TEST_KEY_BRANDS = {
+    plugin: 'PluginTestKey',
+    setting: 'SettingTestKey',
+    suggestion: 'SuggestionTestKey',
+} as const satisfies Record<string, keyof TestKeyTypes>;
+
+type TestKeyTypes = {PluginTestKey: PluginTestKey; SettingTestKey: SettingTestKey; SuggestionTestKey: SuggestionTestKey};
+
+/**
  * A plugin id as a testid key: `com.mattermost.calls` -> `com_mattermost_calls` (keys can't contain
  * `.`, `:` or `--`). The scanner types keys of this type as the plugin keys of installed test packages.
  */

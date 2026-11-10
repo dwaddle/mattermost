@@ -7,7 +7,7 @@ import type {ClassModel, Model, ScopeNode} from './model.ts';
 import {camel, memberName, pageGetter, pascal, propKey, roleWord, splitAtKey} from './names.ts';
 
 import {cmp} from '../compare.ts';
-import {isGrammarError, parseTestId, type ParsedTestId} from '../grammar.ts';
+import {isGrammarError, KEY_PLACEHOLDER, parseTestId, type ParsedTestId} from '../grammar.ts';
 import type {Diagnostic, Element, KeyInfo, Manifest, Page} from '../manifest_types.ts';
 import {driverFor, ROLE_TABLE} from '../role_table.ts';
 
@@ -186,7 +186,7 @@ function varying(ctx: Ctx, cls: ClassModel): Set<Element> {
 function testIdExpr(node: ScopeNode, template: string, keyExpr?: string): string {
     const base = node.path.join('.');
     let rel = base ? template.slice(base.length) : template;
-    if (keyExpr && rel.includes('{key}')) {
+    if (keyExpr && rel.includes(KEY_PLACEHOLDER)) {
         const [before, after] = splitAtKey(rel);
         rel = before + '${' + keyExpr + '}' + after;
     }

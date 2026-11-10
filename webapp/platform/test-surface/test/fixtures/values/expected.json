@@ -698,7 +698,8 @@
         {
           "expr": "found",
           "explained": "found",
-          "kind": "prop (via local value)",
+          "kind": "prop",
+          "viaLocal": true,
           "at": "src/dynamic.tsx:69"
         }
       ]

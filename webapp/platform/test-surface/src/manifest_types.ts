@@ -10,8 +10,15 @@ export type {Aria, AriaRole};
 /** Repo-relative location, "channels/src/…/file.tsx:51". */
 export type Loc = string;
 
+/**
+ * What fills a testid's key: a fixed `set` of literals, an `entity` field (`channel.name`), a `plugin` id
+ * (`pluginTestKey`), a config `setting` path (`settingTestKey`), an autocomplete `suggestion` term
+ * (`suggestionTestKey`), a `number`, or any `string`.
+ */
+export type KeyKind = 'set' | 'entity' | 'plugin' | 'setting' | 'suggestion' | 'string' | 'number';
+
 export type KeyInfo = {
-    kind: 'set' | 'entity' | 'plugin' | 'setting' | 'suggestion' | 'string' | 'number';
+    kind: KeyKind;
 
     /** Name of the fixed set in `Manifest.sets` (kind "set"). */
     set?: string;
@@ -35,8 +42,11 @@ export type Instance = {
     keySet?: string[];
 };
 
+/** What a click opens: a modal, a menu, a popover, another page, or a panel the store shows. */
+export type OpenKind = 'modal' | 'menu' | 'popover' | 'page' | 'panel';
+
 export type Open = {
-    kind: 'modal' | 'menu' | 'popover' | 'page' | 'panel';
+    kind: OpenKind;
     target: string;
     at: Loc;
 
@@ -68,7 +78,14 @@ export type ElementEffects = {
     delegated: Loc[];
 };
 
-export type RenderCondition = {expr: string; explained: string; kind: string; at: Loc};
+/** What a render condition depends on. */
+export type ConditionKind = 'prop' | 'local state' | 'permission' | 'license/config/flag' | 'layout' | 'store selector' | 'other';
+
+/**
+ * A condition an element renders under: as written (negated in an else arm or after an early return), explained
+ * (`useSelector` results inlined), and what it depends on (`viaLocal`: through a local value derived from it).
+ */
+export type RenderCondition = {expr: string; explained: string; kind: ConditionKind; viaLocal?: true; at: Loc};
 
 export type Element = {
 
@@ -162,7 +179,12 @@ export type PluginInfo = {
     slotsUsed: Array<{method: string; slots: string[]; at: Loc}>;
 };
 
-export type Diagnostic = {rule: string; severity: 'error' | 'warning'; at: Loc; message: string; fix?: string};
+/** Every rule a diagnostic can come from (README "Reading a scan error" says what each checks). */
+export type RuleName = 'grammar' | 'unscoped' | 'undefined' | 'role-fit' | 'aria' | 'duplicates' | 'key-origin' | 'unresolved' | 'truncated' |
+    'unreachable' | 'plugin-slots' | 'plugin-scope' | 'plugin-compat' | 'pages' | 'input' | 'allow' | 'stale-reference' | 'collisions' |
+    'generate' | 'parts';
+
+export type Diagnostic = {rule: RuleName; severity: 'error' | 'warning'; at: Loc; message: string; fix?: string};
 
 /** The manifest format this version writes and reads (`Manifest.version`). */
 export const MANIFEST_VERSION = 1;
