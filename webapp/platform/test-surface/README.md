@@ -12,9 +12,10 @@ Each is `test-surface <command>` (the package's bin) run from `webapp/channels`;
 npm run test-surface                # scan + checks, writes test-surface.json
 npm run test-surface:generate       # writes e2e-tests/playwright/lib/src/ui/generated from the manifest
 npm run test-surface:check          # scan + checks; exit 1 on errors or a stale manifest (CI)
-npm run test-surface:report         # also writes reports/ (unknown effects, spec gaps, diagnostics by rule, unrendered test ids)
+npm run test-surface:report         # also writes reports/ (unknown effects, spec gaps, diagnostics, exact locations, unrendered test ids)
 npm run test-surface:watch          # keeps a language service warm, rescans and regenerates (about 10 s per change, against 30 s cold)
-npm run test-surface:install-hooks  # opt-in git hooks: pre-commit lints testids, regenerates and adds the output to the commit; pre-push re-checks
+npm run test-surface:install-hooks  # opt-in git hooks: pre-commit lints staged testids; pre-push scans, checks and regenerates
+npx test-surface where <testid>     # the exact places (file:line:column) that render a testid or template, and its usage chains
 ```
 
 Library mode, for a component library (compass-ui runs it as `npm run generate:test-parts`):
@@ -25,7 +26,7 @@ test-surface parts --config packages/compass-ui/test-surface.config.json   # wri
 
 CI (`check-test-surface` in `.github/workflows/webapp-ci.yml`) runs the tool's tests, `check`, regenerates, fails if the committed manifest or generated page objects differ, and runs the golden-numbers check.
 
-The tool runs from TypeScript source on Node 24 (native type stripping), so it has no build step. A whole-webapp program needs a bigger heap than Node's default: the bin reruns itself with `--max-old-space-size=8192` unless you set a size.
+The tool runs from TypeScript source on Node 24 (native type stripping), so it has no build step. A whole-webapp program needs a bigger heap than Node's default: the bin reruns itself with `--max-old-space-size=4096` unless you set a size (a scan and generate peak at about 2.5 GB of heap, watch mode near 3 GB).
 
 A whole-webapp scan takes about 30 s on a laptop (Apple M-series), half of it building the TypeScript program and about 10 s the analysis; it peaks at about 2.6 GB resident. Watch mode rescans a change in about 10 s.
 
@@ -34,18 +35,19 @@ A whole-webapp scan takes about 30 s on a laptop (Apple M-series), half of it bu
 `scope.name:key--role`, defined once (syntax, roles and key helpers) in [`@mattermost/types/test_id`](../types/src/test_id.ts):
 
 - Every testid has a scope: `center.post_create.send--button`, not `SendMessageButton`.
+- Components build testids with literals, or with `part()` / `keyed()` / `pluginSlotTestId()` from `@mattermost/shared/utils/test_id`, which the scan reads as templates from their literal arguments (`part(scope, 'row', {key: user.id}, 'button')` is `<scope>.row:{key}--button`).
 - Runtime data only fills the key of the last word: `` `lhs.channel_list.channel:${channel.name}--link` ``.
 - The role suffix is the element's ARIA role (`--button`, `--switch`, `--tab`, `--menuitem`, `--textbox`…), or `--text` for read-only content. No suffix means a container.
 
 ## Reading a scan error
 
 ```
-✗ channels/src/components/sidebar/sidebar_channel.tsx:52  [role-fit]
+✗ channels/src/components/sidebar/sidebar_channel.tsx:52:17  [role-fit]
   "lhs.channel_list.channel.unread_badge--button" is on a <span> with no ARIA role.
   Render a native button or add role='button' (and its state attributes); for read-only content use --text.
 ```
 
-Every diagnostic names the file and line, the rule, and the fix. Rules:
+Every diagnostic names the file, line and column, the rule, and the fix. Diagnostics aren't stored in the manifest: `check` prints them, `report` writes them to `reports/` (by rule, and all of them in `diagnostics.json` for CI to keep). Rules:
 
 | Rule | What it checks |
 |---|---|
@@ -54,7 +56,7 @@ Every diagnostic names the file and line, the rule, and the fix. Rules:
 | `role-fit` | the suffix matches the element's ARIA role (native, explicit `role=`, or what the component renders) |
 | `aria` | an element that handles input has an ARIA role |
 | `duplicates` | the same testid twice only in mutually exclusive branches of one component, with the same role |
-| `key-origin` | keys come from a fixed set, an entity field (`channel.name`) or a typed value |
+| `key-origin` | keys come from a fixed set, an id-like entity field (`channel.name`; `checks.keyFields` lists the pattern and reviewed others) or a typed value |
 | `unresolved` | the testid can be read statically |
 | `truncated` | a testid (or navigation target) built from lists has at most 256 values; past that the scan would keep only some (`limits.ts`) |
 | `unreachable` | the testid is in code the app's entries load (config `entries`), not only in dead code or tests |
@@ -66,7 +68,7 @@ Every diagnostic names the file and line, the rule, and the fix. Rules:
 | `stale-reference` | (warnings, not stored) e2e code queries only testids the app renders (`staleReferences` in the config) |
 | `collisions` | (generator) two testids in one scope don't produce the same member name |
 
-Where checks are errors rather than warnings is set in `channels/test-surface.config.json` (`checks.strictScopes`, `checks.strictPaths`): migrated areas are strict, the rest of the webapp reports warnings until it is migrated. After a rename, `reports/unrendered_test_ids.txt` lists testids unit tests query that no template produces (mocks in the same file excluded): an absence check on one can never fail. A reviewed exception goes in `checks.allow` (`{"rule", "template", "reason"}`): that error becomes a warning carrying the reason, and an entry that stops matching is reported so the list doesn't go stale.
+Where checks are errors rather than warnings is set in `channels/test-surface.config.json` (`checks.strictScopes`, `checks.strictPaths`): migrated areas are strict, the rest of the webapp reports warnings until it is migrated. After a rename, `reports/unrendered_test_ids.txt` lists testids unit tests query that no template produces (mocks in the same file excluded): an absence check on one can never fail. A reviewed exception goes in `checks.allow` (`{"rule", "template", "reason"}`, matched on the diagnostic's rule and template, never its wording; `*.` covers the template under any scope): that error becomes a warning carrying the reason, and an entry that stops matching is reported so the list doesn't go stale. The golden-numbers check (`golden.json`) keeps coverage from dropping, and, once it lists them, the warnings per rule from growing.
 
 ## How it works
 
@@ -89,6 +91,8 @@ Where checks are errors rather than warnings is set in `channels/test-surface.co
 | `report.ts` | The manifest's text, the summary, `report`'s files, the golden numbers. |
 | `input.ts` | Reads the files another run wrote (versioned), and the `input` diagnostics. |
 | `limits.ts` | How far the analysis follows code, each limit with its reason. |
+| `role_table.ts` | One row per testid role (driver, member word, form verbs, value type); the scanner and the generator derive every role table from it. |
+| `publish.ts` | Turns the scan's exact locations into the committed manifest's `file#Component` names. |
 | `parts.ts`, `parts_cli.ts` | Library mode (below), and loading the parts a library publishes. |
 | `watch.ts` | Watch mode: incremental program + index, rescan, regenerate. |
 | `cli.ts`, `config.ts`, `hooks.ts` | The commands, the config file, the opt-in git hooks. |
@@ -136,7 +140,13 @@ A plugin repo runs the same CLI with a `plugin` section in its config:
 
 - The plugin's testids live under `plugins.<key>`, its id normalized (`com.mattermost.calls` → `plugins.com_mattermost_calls.widget.leave--button`). Rule `plugin-scope` reports others.
 - Its registry calls say which host slots it uses: each host's `app-map.json` lists its plugin slots with the registry methods that fill them (`PLUGIN_SLOT_REGISTRY_METHODS` in `@mattermost/shared/utils/test_id`), so `registerChannelHeaderMenuAction()` uses `channel_header_menu_item`. Rule `plugin-compat` fails when a host version in `hosts` doesn't render a slot the plugin uses. List one entry per supported server version (the `app-map.json` its `@mattermost/playwright-lib` ships).
-- `generate` writes a package rooted at the plugin's class (`ComMattermostCalls`, its subtree named from the key on) that imports the runtime from `@mattermost/playwright-lib`, registers itself (`registerPluginSurface`) and adds itself to `Plugins` and its key to `PluginKeys` by declaration merging. Importing the package is enough: `app.plugins.comMattermostCalls.widget.clickLeaveButton()`, and host slots accept the key (`app.channelHeader.menu.plugin('com_mattermost_calls')`).
+- Registry calls are calls on the registry's type (`plugin.registryType`, default `PluginRegistry`).
+- Plugin keys are `pluginTestKey(id)`: ids that differ only in punctuation (`com.foo-bar`, `com.foo_bar`) share a key. Changing the encoding would rename published slot testids, so it stays; don't publish two such plugins.
+- `generate` writes a package rooted at the plugin's class (`ComMattermostCalls`, its subtree named from the key on) that imports the runtime from `@mattermost/playwright-lib`, registers itself (`registerPluginSurface`) and adds itself to `Plugins` and its key to `PluginKeys` by declaration merging. Importing the package is enough: `app.plugins.comMattermostCalls.widget.clickLeaveButton()`, and host slots accept the key (`app.channelHeader.menu.plugin('com_mattermost_calls')`). Its `index.ts` declares `GENERATOR_API`, checked against the runtime's `RuntimeApiCheck`, so a package generated for another runtime API fails to compile.
+
+## The manifest
+
+`test-surface.json` (format version 2) names where things come from by component, never by line: `channels/src/components/post/post_component.tsx#PostComponent`, or the file alone for module-level code. An edit that doesn't change a testid changes no committed file; `test-surface where <testid>` and `reports/locations.json` give the exact places. `generatedFrom.libraries` records the component libraries the scan read, with their installed versions. The manifest and the generated page objects are marked generated: on a merge conflict take either side and rerun the scan and the generator.
 
 ## Where things live
 
@@ -147,7 +157,7 @@ The manifest is the contract: the scanner writes it from the webapp's source, th
 | Scanner, checks, CLI, watch | `src/*.ts` | the webapp: it runs on the webapp's TypeScript program and its rules are the webapp's |
 | Grammar | defined once in `@mattermost/types/test_id` (roles, words, the parser, the key helpers); the scanner (`src/grammar.ts`), the lint rules in `@mattermost/eslint-plugin` and the Playwright runtime import it, each wording its own messages; components import it through `@mattermost/shared/utils/test_id` | the webapp |
 | Manifest | `webapp/channels/test-surface.json` (committed, CI-checked) | the change that moved the testids |
-| Generator | `src/generate` (imports only the manifest types, the grammar, the config and `src/compare.ts` from the rest of the package) | the e2e tests: its output is the API specs are written against |
+| Generator | `src/generate` (imports only the manifest types, the grammar, the role table, the config and `src/compare.ts` from the rest of the package) | the e2e tests: its output is the API specs are written against |
 | Generated page objects | `e2e-tests/playwright/lib/src/ui/generated` (committed, never edited) | the e2e tests |
 | Runtime | `e2e-tests/playwright/lib/src/aria` | the e2e tests |
 
@@ -158,7 +168,7 @@ Scanner and generator ship as one package so a plugin repo runs one CLI (`scan`,
 ```sh
 npm test                 # fixture projects under test/fixtures/<case>/ (tiny tsconfig + .tsx + expected snapshot)
 UPDATE_SNAPSHOTS=1 npm test
-npm run test:golden      # scans the real webapp; fails if coverage drops below golden.json
+npm run test:golden      # scans the real webapp; fails if coverage drops below golden.json, or a ceiling there is passed
 ```
 
 To add a resolver or tracer case, add files to a fixture (or a new fixture with its own `test-surface.config.json`), assert on the element in the matching `*.test.ts`, and accept the snapshot.
