@@ -1,6 +1,6 @@
 import React from 'react';
 
-type Registry = {
+type PluginRegistry = {
     registerChannelHeaderMenuAction: (text: string, action: () => void) => string;
     registerUserSettings: (setting: {id: string}) => void;
     registerGlobalComponent: (component: React.ComponentType) => string;
@@ -20,10 +20,14 @@ export function Widget({onLeave}: {onLeave: () => void}) {
     );
 }
 
+// an object of the plugin's own with a method named like a registry's: not a slot it uses
+const menu = {registerChannelHeaderMenuAction: (text: string) => text};
+
 export default class Plugin {
-    initialize(registry: Registry) {
+    initialize(registry: PluginRegistry) {
         registry.registerChannelHeaderMenuAction('Demo', () => null);
         registry.registerUserSettings({id: 'demo'});
         registry.registerGlobalComponent(() => null);
+        menu.registerChannelHeaderMenuAction('not a slot');
     }
 }

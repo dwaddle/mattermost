@@ -341,3 +341,8 @@ test('generate: a key set holding "undefined" is an error, not a method that tak
     const {diagnostics} = await generate({...scanFixture('ui').manifest, elements: [lost], sets: [], pages: [], pluginSlots: []}, config);
     assert.deepEqual(diagnostics.filter((d) => d.severity === 'error').map((d) => d.template), ['area.list.item:{key}']);
 });
+
+test('generate: the index records the runtime API version the page objects are written against, checked when compiled', async () => {
+    const {read} = await generateFixture('ui');
+    assert.match(read('index.ts'), /import type \{RuntimeApiCheck\} from '@mattermost\/playwright-lib';\n[\s\S]*export const GENERATOR_API = \d+;\nexport type GeneratorApiCheck = RuntimeApiCheck<typeof GENERATOR_API>;/);
+});

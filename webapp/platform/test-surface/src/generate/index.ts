@@ -95,7 +95,7 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     if (plugin && !root) {
         diagnostics.push({rule: 'generate', severity: 'error', at: relativeToRoot(config, config.configPath), message: `No testids under "${pluginScope}": nothing to generate for ${plugin.id}.`, fix: `Give the plugin's UI testids under "${pluginScope}."`});
     }
-    sources.set('index.ts', plugin && root ? `${out.header}\n${pluginIndex(plugin, runtime, root.name, root.file, reexports)}` : `${out.header}\n${reexports}\n`);
+    sources.set('index.ts', plugin && root ? `${out.header}\n${pluginIndex(plugin, runtime, root.name, root.file, reexports)}` : `${out.header}\n${apiCheck(runtime)}\n${reexports}\n`);
 
     // unformatted output differs from what CI committed: an error there, a warning on a machine without the install
     const prettier = await loadPrettier(outDir);
@@ -146,6 +146,23 @@ export async function generate(manifest: Manifest, config: Config): Promise<Gene
     return {files, changed, diagnostics};
 }
 
+/**
+ * The version of the runtime API (`@mattermost/playwright-lib`'s aria module: drivers, `Scope`, `effect`, plugin
+ * registration) the generated code is written against. Bump it with the runtime's `RUNTIME_API` when generated
+ * code changes what it needs from the runtime.
+ */
+export const GENERATOR_API = 1;
+
+/** Generated code compiles only against a runtime of the API version it was generated for (`RuntimeApiCheck`). */
+function apiCheck(runtime: string): string {
+    return `import type {RuntimeApiCheck} from '${runtime}';
+
+/** The runtime API these page objects were generated against: they compile only against a runtime of that version. */
+export const GENERATOR_API = ${GENERATOR_API};
+export type GeneratorApiCheck = RuntimeApiCheck<typeof GENERATOR_API>;
+`;
+}
+
 /** Every generated file's header: the manifest it comes from (relative to the config's root) and how to regenerate it. */
 function header(config: Config): string {
     const manifest = relativeToRoot(config, config.output.manifest);
@@ -172,11 +189,15 @@ export function runtimeImport(runtime: string, outDir: string): string {
  */
 function pluginIndex(plugin: NonNullable<Config['plugin']>, runtime: string, rootClass: string, rootFile: string, reexports: string): string {
     const name = rootClass.charAt(0).toLowerCase() + rootClass.slice(1);
-    return `import {registerPluginSurface} from '${runtime}';
+    return `import {registerPluginSurface, type RuntimeApiCheck} from '${runtime}';
 
 import {${rootClass}} from './${rootFile}';
 
 ${reexports}
+
+/** The runtime API this package was generated against: it compiles only against a host runtime of that version. */
+export const GENERATOR_API = ${GENERATOR_API};
+export type GeneratorApiCheck = RuntimeApiCheck<typeof GENERATOR_API>;
 
 /** \`app.plugins.${name}\`: ${plugin.id}'s UI. */
 registerPluginSurface('${name}', (page) => new ${rootClass}(page));

@@ -122,7 +122,13 @@ export type ConfigFile = {
      * Its testids live under `plugins.<plugin key>`, its registry calls say which host slots it uses, and
      * `generate` writes a test package that adds the plugin to `app.plugins`.
      */
-    plugin?: {manifest: string; hosts?: Array<{name: string; appMap: string}>};
+    plugin?: {
+        manifest: string;
+        hosts?: Array<{name: string; appMap: string}>;
+
+        /** The type of the registry `initialize` gets (default `PluginRegistry`): only calls on it fill host slots. */
+        registryType?: string;
+    };
 };
 
 export type AllowEntry = {rule: string; template: string; reason: string};
@@ -178,6 +184,9 @@ export type Config = {
 
 export type PluginConfig = {
     id: string;
+
+    /** The registry's type name: a call is a registry call when its receiver has this type. */
+    registryType: string;
 
     /** The plugin's id normalized for a testid key (`com_mattermost_calls`); its testids live under `plugins.<key>`. */
     key: string;
@@ -257,6 +266,7 @@ function resolvePlugin(raw: NonNullable<ConfigFile['plugin']>, root: string): Pl
     }
     return {
         id: manifest.id,
+        registryType: raw.registryType ?? 'PluginRegistry',
         key: pluginTestKey(manifest.id),
         hosts: (raw.hosts ?? []).map((h) => ({name: h.name, appMap: path.resolve(root, h.appMap)})),
     };

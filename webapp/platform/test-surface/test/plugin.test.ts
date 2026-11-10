@@ -41,6 +41,7 @@ test('plugin: generate writes a package that registers the plugin with app.plugi
     assert.deepEqual(fs.readdirSync(out).sort(), ['app-map.json', 'com_example_demo.ts', 'index.ts']);
     const index = fs.readFileSync(path.join(out, 'index.ts'), 'utf8');
     assert.match(index, /registerPluginSurface\('comExampleDemo', \(page\) => new ComExampleDemo\(page\)\);/);
+    assert.match(index, /export const GENERATOR_API = \d+;\nexport type GeneratorApiCheck = RuntimeApiCheck<typeof GENERATOR_API>;/);
     assert.match(index, /interface Plugins \{\s+comExampleDemo: ComExampleDemo;/);
     assert.match(index, /interface PluginKeys \{\s+com_example_demo: true;/);
     const classes = fs.readFileSync(path.join(out, 'com_example_demo.ts'), 'utf8');

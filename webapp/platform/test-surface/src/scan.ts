@@ -1480,10 +1480,16 @@ export class Scanner {
             }
         }
         const slotsUsed: PluginInfo['slotsUsed'] = [];
+
+        // a registry call is a call on the registry's type (an untyped registry counts: nothing better is known)
+        const onRegistry = (receiver: ts.Expression) => {
+            const t = this.ix.checker.getNonNullableType(this.ix.checker.getTypeAtLocation(receiver));
+            return Boolean(t.flags & ts.TypeFlags.Any) || (t.aliasSymbol ?? t.getSymbol())?.getName() === plugin.registryType;
+        };
         const visit = (n: ts.Node) => {
             if (ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression)) {
                 const slots = slotsByMethod.get(n.expression.name.text);
-                if (slots) {
+                if (slots && onRegistry(n.expression.expression)) {
                     slotsUsed.push({method: n.expression.name.text, slots: [...slots].sort(), at: this.ix.where(n)});
                 }
             }
