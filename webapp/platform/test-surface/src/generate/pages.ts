@@ -44,7 +44,7 @@ function paramDoc(p: PageParam): string {
 /** The browser's load event comes before a single-page app is up: `goto` waits for the page's ready element too. */
 function gotoDoc(page: Page): string {
     if (!page.ready?.length) {
-        return '/** Navigates here and returns once the browser reports the page loaded (no `pageReady` element is configured). */';
+        return `/** Navigates here and returns once the browser reports the page loaded: there is nothing to wait for (${(page.noReady ?? 'no pageReady entry').replace(/\*\//g, '*\\/').replace(/\.$/, '')}). */`;
     }
     return `/** Navigates here and waits until ${page.ready.map((r) => `\`${r}\``).join(' or ')} shows. */`;
 }
@@ -57,7 +57,10 @@ function readyWait(page: Page): string {
     return `\n        await ${locators[0]}${locators.slice(1).map((l) => `.or(${l})`).join('')}.waitFor();`;
 }
 
-/** Pages whose class names clash, or whose params a test couldn't name, are left out with a diagnostic. */
+/**
+ * Pages whose class names clash are left out with a diagnostic. A page with no `pageReady` entry is an error: its `goto`
+ * would return before the app is up, unlike the others.
+ */
 export function usablePages(manifest: Manifest, diagnostics: Diagnostic[]): Page[] {
     const seen = new Map<string, Page>();
     const out: Page[] = [];
@@ -66,6 +69,9 @@ export function usablePages(manifest: Manifest, diagnostics: Diagnostic[]): Page
         if (prev) {
             diagnostics.push({rule: 'collisions', severity: 'error', at: page.component.at, message: `Page class ${page.class} is generated for both ${prev.path} and ${page.path}.`, fix: 'Name one of them in pageNames in test-surface.config.json.'});
             continue;
+        }
+        if (!page.ready?.length && !page.noReady) {
+            diagnostics.push({rule: 'pages', severity: 'error', at: page.component.at, message: `Page ${page.class} (${page.path}) has no pageReady entry, so its goto() wouldn't wait for the app.`, fix: `Add "${page.class}" to pageReady in test-surface.config.json: the testids that show it is up, or {"ready": null, "reason": …} when it has none (it redirects, or renders no testid yet).`});
         }
         seen.set(page.class, page);
         out.push(page);

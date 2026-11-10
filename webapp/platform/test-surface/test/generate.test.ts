@@ -157,9 +157,9 @@ test('generate: pages with typed params, entity keys, defaults for fixed sets, a
     assert.match(pages, /path: params\.path \?\? 'channels'/);
     assert.match(pages, /static path\(params: HelpPageParams = \{\}\): string/);
 
-    // goto waits for the page's ready scope (pageReady); a page without one returns on the load event
+    // goto waits for the page's ready scope (pageReady); a page with nothing to wait for says why, and returns on the load event
     assert.match(pages, /waits until `header.label` or `banner.url` shows\. \*\/\n {4}async goto\(params: ChannelsPageParams\): Promise<void> \{\n {8}await this\.page\.goto\(ChannelsPage\.path\(params\)\);\n {8}await this\.page\.getByTestId\('header\.label'\)\.or\(this\.page\.getByTestId\('banner\.url'\)\)\.waitFor\(\);\n {4}\}/);
-    assert.match(pages, /no `pageReady` element is configured\)\. \*\/\n {4}async goto\(params: HelpPageParams = \{\}\): Promise<void> \{\n {8}await this\.page\.goto\(HelpPage\.path\(params\)\);\n {4}\}/);
+    assert.match(pages, /there is nothing to wait for \(the help pages render no testid yet\)\. \*\/\n {4}async goto\(params: HelpPageParams = \{\}\): Promise<void> \{\n {8}await this\.page\.goto\(HelpPage\.path\(params\)\);\n {4}\}/);
     assert.match(read('app.ts'), /get channelsPage\(\): ChannelsPage \{\n {8}return new ChannelsPage\(this\.page\);/);
 });
 
@@ -377,4 +377,13 @@ test('generate: a scope rendered inside another one\'s element gets an accessor 
 
     // what a click opens renders in a portal: no accessor on the opener's scope
     assert.doesNotMatch(read('header.ts'), /get settingsModal\(\)/);
+});
+
+test('generate: a page with no pageReady entry is an error, so every goto() either waits or says why it can\'t', async () => {
+    const manifest = scanFixture('ui').manifest;
+    const pages = manifest.pages.map((p) => (p.class === 'HelpPage' ? {...p, noReady: undefined} : p));
+    const config = loadConfig(path.join(FIXTURES, 'ui', 'test-surface.config.json'));
+    config.output.generated = fs.mkdtempSync(path.join(os.tmpdir(), 'test-surface-gen-'));
+    const {diagnostics} = await generate({...manifest, pages}, config);
+    assert.ok(diagnostics.some((d) => d.rule === 'pages' && d.severity === 'error' && d.message.includes('HelpPage')));
 });

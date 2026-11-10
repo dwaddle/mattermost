@@ -107,8 +107,10 @@ export type ConfigFile = {
     /**
      * What shows a page is up, by page class: its `goto` waits for the first of these testids to be visible
      * (`{"ChannelsPage": ["center.composer", "center.archived_notice"]}`). Each must be an element the page renders.
+     * A page with nothing to wait for (it redirects, or shows no testid yet) says why:
+     * `{"TeamPage": {"ready": null, "reason": "redirects to the team's default channel"}}`. Every page needs an entry.
      */
-    pageReady?: Record<string, string[]>;
+    pageReady?: Record<string, PageReady>;
 
     /**
      * The published plugin slot contract: a `const` object of slot name -> testid template with `{plugin}`
@@ -155,6 +157,9 @@ export type LibraryRef = string | {package: string; parts: string};
 
 export type PageParamConfig = {as?: string; entity: string; field: string; module: string};
 
+/** A page's ready testids, or `{ready: null, reason}` for a page with nothing to wait for. */
+export type PageReady = string[] | {ready: null; reason: string};
+
 export type Config = {
     configPath: string;
     root: string;
@@ -185,7 +190,7 @@ export type Config = {
     checks: {strictScopes: string[]; strictPaths: string[]; strictKeys: boolean; allow: AllowEntry[]; keyFields: {pattern: RegExp; allow: KeyFieldAllow[]}};
     pageNames: Record<string, string>;
     pageParams: Record<string, PageParamConfig>;
-    pageReady: Record<string, string[]>;
+    pageReady: Record<string, PageReady>;
     pluginSlots: {file: string; export: string; registryExport?: string} | null;
     plugin: PluginConfig | null;
 };

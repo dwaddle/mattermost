@@ -62,7 +62,7 @@ Every diagnostic names the file, line and column, the rule, and the fix. Diagnos
 | `unreachable` | the testid is in code the app's entries load (config `entries`), not only in dead code or tests |
 | `plugin-slots` | the published plugin slot contract (`pluginSlots` in the config: `PLUGIN_SLOT_TEST_IDS`) and the plugin-keyed testids the webapp renders agree, both ways; always errors |
 | `plugin-scope`, `plugin-compat` | (plugin mode) the plugin's testids are under `plugins.<key>`; every supported host renders the slots its registry calls fill |
-| `pages` | `pageReady` names pages and elements that exist |
+| `pages` | `pageReady` names pages and elements that exist; (generator) every page has an entry |
 | `input` | the files the tool reads (OpenAPI yaml, a library's `test-parts.json`, a host's `app-map.json`, the manifest) exist, parse and are of the format version it reads; a configured library is installed |
 | `allow` | every `checks.allow` entry still matches something |
 | `stale-reference` | (warnings, not stored) e2e code queries only testids the app renders (`staleReferences` in the config) |
@@ -83,7 +83,7 @@ Where checks are errors rather than warnings is set in `channels/test-surface.co
 | `effects.ts` | Handler → call graph → `Client4` operations, opened modals/popovers/menus, navigation. Follows `connect`/`bindActionCreators`, props callbacks per instance, hooks, IIFEs, factories; skips catch blocks and error logging. A call through data is an unknown effect unless it returns a plain value or is a known harmless method (`effects.pureCalls`). A request the scan can't see (an upload through a raw `XMLHttpRequest`) is declared in the config, by testid, with why (`effects.declared`: `{"testId", "ops", "reason"}`); an entry that names no element is reported. |
 | `store_gates.ts` | UI the store shows: a constant a click dispatches that a component's render condition compares against (the panel a button opens). |
 | `navigation.ts` | Which page a navigation target goes to, matched against the route table. |
-| `pages.ts` | The route table: every `<…Route path>` (paths through constants and template literals; `component` or `render`), the component it renders, its params, and the scopes rendered under it. Page names and entity-typed params come from `pageNames` / `pageParams` in the config. `pageReady` names, per page, the elements whose showing means the app is up; the generated `goto` waits for one of them, since the load event comes before a single-page app has rendered. |
+| `pages.ts` | The route table: every `<…Route path>` (paths through constants and template literals; `component` or `render`), the component it renders, its params, and the scopes rendered under it. Page names and entity-typed params come from `pageNames` / `pageParams` in the config. `pageReady` names, per page, the elements whose showing means the app is up; the generated `goto` waits for one of them, since the load event comes before a single-page app has rendered. Every page needs an entry: a page with nothing to wait for (it redirects, or renders no testid yet) gives `{"ready": null, "reason": …}`, and `generate` fails on a page with none. |
 | `reachability.ts` | The files the app's entries import (config `entries`), for `unreachable`. |
 | `scan.ts` | Finds every emission point, follows component-level testids to where they land, groups values into manifest elements. |
 | `checks.ts` | The rules above. |

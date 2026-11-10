@@ -1387,12 +1387,21 @@ export class Scanner {
 
         t = Date.now();
         const pages = buildPages(discoverRoutes(this.ix, this.R), this.ix, (n) => this.scopesRenderedBy(n), this.config.pageNames, this.config.pageParams);
-        for (const [cls, ready] of Object.entries(this.config.pageReady)) {
+        for (const [cls, entry] of Object.entries(this.config.pageReady)) {
             const page = pages.find((p) => p.class === cls);
             if (!page) {
                 this.diag('pages', 'error', relativeToRoot(this.config, this.config.configPath), `pageReady names ${cls}, which isn't a page.`);
                 continue;
             }
+            if (!Array.isArray(entry)) {
+                if (!entry.reason) {
+                    this.diag('pages', 'error', relativeToRoot(this.config, this.config.configPath), `pageReady for ${cls} has no ready testid and no reason.`, 'Name a testid the page renders, or say why it has none (`{"ready": null, "reason": …}`).');
+                    continue;
+                }
+                page.noReady = entry.reason;
+                continue;
+            }
+            const ready = entry;
 
             // an element of its own (a scope can be only a prefix), rendered under the page
             const missing = ready.filter((r) => !elements.some((e) => e.template === r && !e.key && (page.scopes.includes(r) || page.scopes.includes(e.scope.join('.')))));
