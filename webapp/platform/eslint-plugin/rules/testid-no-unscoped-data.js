@@ -3,60 +3,44 @@
 
 /* eslint-disable no-template-curly-in-string -- messages and cases quote template-literal syntax */
 
-import {testIdTarget, testIdValueNode} from './testid-grammar.js';
+import {
+    constInit,
+    helperName,
+    isPassThroughName,
+    isStringLiteral,
+    OPTIONS_SCHEMA,
+    propKinds,
+    testIdKind,
+    testIdValueNode,
+    unwrapCasts,
+    valueLeaves,
+} from './testid-utils.js';
 
-// A testid passed down from a parent prop is fine (`data-testid={props.testId}`); one made entirely of
-// runtime data is not (`data-testid={setting.key}`): its scope and name must be literal in the source.
-const PASS_THROUGH = /(^|\.)(\w*test[_-]?id\w*|id)$/i;
+// A testid passed down from a testid prop or scope is fine (`data-testid={props.testId}`), and so is one built with
+// the testid helpers (`part(testIdScope, 'close', 'button')`); one made entirely of runtime data is not
+// (`data-testid={setting.key}`, `data-testid={props.id}`): its scope and name must be literal in the source. Every
+// branch that can render is checked.
 
-function nameOf(expr) {
-    if (expr.type === 'Identifier') {
-        return expr.name;
-    }
-    if (expr.type === 'MemberExpression' && !expr.computed && expr.property.type === 'Identifier') {
-        const obj = nameOf(expr.object);
-        return obj ? `${obj}.${expr.property.name}` : expr.property.name;
-    }
-    if (expr.type === 'MemberExpression' && expr.computed && expr.property.type === 'Literal') {
-        return String(expr.property.value);
-    }
-    return null;
-}
-
-function hasLiteralPart(expr) {
-    switch (expr.type) {
+function hasLiteralPart(context, leaf) {
+    switch (leaf.type) {
     case 'Literal':
-        return typeof expr.value === 'string' || expr.value === null;
+        return typeof leaf.value === 'string' || leaf.value === null;
     case 'TemplateLiteral':
-        return expr.quasis.some((q) => (q.value.cooked ?? q.value.raw).length > 0);
-    case 'ConditionalExpression':
-        return hasLiteralPart(expr.consequent) || hasLiteralPart(expr.alternate);
-    case 'LogicalExpression':
-        return hasLiteralPart(expr.right) || hasLiteralPart(expr.left);
+        return leaf.quasis.some((q) => (q.value.cooked ?? q.value.raw).length > 0);
     case 'BinaryExpression':
-        return hasLiteralPart(expr.left) || hasLiteralPart(expr.right);
-    case 'Identifier':
-        return expr.name === 'undefined';
-    case 'TSAsExpression':
-    case 'TSNonNullExpression':
-        return hasLiteralPart(expr.expression);
+        return hasLiteralPart(context, leaf.left) || hasLiteralPart(context, leaf.right);
+    case 'Identifier': {
+        if (leaf.name === 'undefined') {
+            return true;
+        }
+        const init = unwrapCasts(constInit(context, leaf));
+        return Boolean(init && (isStringLiteral(init) || init.type === 'TemplateLiteral') && hasLiteralPart(context, init));
+    }
+    case 'CallExpression':
+        return helperName(context, leaf) !== null;
     default:
         return false;
     }
-}
-
-function isPassThrough(expr) {
-    if (expr.type === 'TSAsExpression' || expr.type === 'TSNonNullExpression') {
-        return isPassThrough(expr.expression);
-    }
-    if (expr.type === 'ConditionalExpression') {
-        return (isPassThrough(expr.consequent) || hasLiteralPart(expr.consequent)) && (isPassThrough(expr.alternate) || hasLiteralPart(expr.alternate));
-    }
-    if (expr.type === 'LogicalExpression') {
-        return isPassThrough(expr.left) || isPassThrough(expr.right);
-    }
-    const name = nameOf(expr);
-    return Boolean(name && PASS_THROUGH.test(name));
 }
 
 export default {
@@ -65,22 +49,26 @@ export default {
         docs: {
             description: 'Disallow testids made entirely of runtime data; the scope and name must be literal',
         },
-        schema: [],
+        schema: OPTIONS_SCHEMA,
     },
     create: (context) => {
+        const kindOf = propKinds(context.options[0]);
         const check = (node) => {
-            const target = testIdTarget(node);
-            if (!target || !target.withRole) {
+            if (!testIdKind(node, kindOf)) {
                 return;
             }
             const value = testIdValueNode(node);
-            if (!value || hasLiteralPart(value) || isPassThrough(value)) {
+            if (!value) {
                 return;
             }
-            context.report({
-                node: value,
-                message: 'testid is made entirely of runtime data. Write the scope and name as literals and put the data in the key: `scope.name:${value}--role`.',
-            });
+            for (const leaf of valueLeaves(value)) {
+                if (!hasLiteralPart(context, leaf) && !isPassThroughName(leaf)) {
+                    context.report({
+                        node: leaf,
+                        message: 'testid is made entirely of runtime data. Write the scope and name as literals and put the data in the key (`scope.name:${value}--role`, or part()/keyed()), or pass it down from a prop named testId/testIdScope.',
+                    });
+                }
+            }
         };
         return {
             JSXAttribute: check,
