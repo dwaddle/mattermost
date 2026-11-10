@@ -268,6 +268,7 @@ export class ProgramIndex {
             for (const decl of [...(sym.declarations ?? []), ...(s.declarations ?? [])]) {
                 mine.add(decl.getSourceFile());
             }
+
             // an overloaded function's first declarations are signatures: the one with a body is the function
             const d = s.declarations?.find((x) => (ts.isFunctionDeclaration(x) || ts.isMethodDeclaration(x)) && x.body) ?? s.declarations?.[0];
             r = d ? this.resolveDeclToNode(d, seen) : null;

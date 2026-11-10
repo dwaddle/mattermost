@@ -1902,7 +1902,10 @@
         "role": null,
         "native": false,
         "state": []
-      }
+      },
+      "renders": [
+        "mention_popover"
+      ]
     },
     {
       "template": "note_modal.save--button",

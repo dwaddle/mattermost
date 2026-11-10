@@ -1083,6 +1083,35 @@ export class Scanner {
     }
 
     /**
+     * A container's or keyed item's `renders`: the top-level scopes (one word) rendered inside its element, at any of
+     * its emissions, other than its own and those something opens (a portal renders those outside it).
+     */
+    private addNestedScopes(elements: Element[], byTemplate: Map<string, Emission[]>) {
+        const opened = new Set(elements.flatMap((e) => (e.opens ?? []).map((o) => o.scope).filter((x): x is string => Boolean(x))));
+        for (const el of elements) {
+            if (!el.grammar || (el.role && !el.key)) {
+                continue;
+            }
+            const own = el.scope[0] ?? el.name;
+            const inside = new Set<string>();
+            for (const e of byTemplate.get(el.template) ?? []) {
+                const tag = e.landing.tag ?? e.site.tag;
+                if (!tag) {
+                    continue;
+                }
+                for (const s of this.scopesRenderedBy(elementOf(tag))) {
+                    if (!s.includes('.') && s !== own && !opened.has(s)) {
+                        inside.add(s);
+                    }
+                }
+            }
+            if (inside.size) {
+                el.renders = [...inside].sort(cmp);
+            }
+        }
+    }
+
+    /**
      * `effects.declared`: requests the scan can't see an element send (an upload through a raw XMLHttpRequest), added
      * to its effects. An entry naming no element is reported, like an allow entry that stopped matching; one naming an
      * operation that neither a client method nor the OpenAPI spec has is an error.
@@ -1353,6 +1382,7 @@ export class Scanner {
                 delete el.opens;
             }
         }
+        this.addNestedScopes(elements, byTemplate);
         this.timings.scopes = Date.now() - t;
 
         t = Date.now();

@@ -368,3 +368,13 @@ test('generate: a text-keyed item takes the text and builds its key at runtime',
     assert.match(code, /import \{Scope, drivers, textTestKey\} from '@mattermost\/playwright-lib';/);
     assert.match(code, /option\(option: string\) \{\s*return drivers\.option\(this\.byTestId\(`\$\{this\.scope\}\.option:\$\{textTestKey\(option\)\}--option`\)/);
 });
+
+test('generate: a scope rendered inside another one\'s element gets an accessor there, rooted at that element', async () => {
+    const {read} = await generateFixture('ui');
+    const note = read('note_modal.ts');
+    assert.match(note, /import \{MentionPopover\} from '\.\/mention_popover';/);
+    assert.match(note, /get mentionPopover\(\): MentionPopover \{\n {8}return MentionPopover\.within\(this\.locator\);/);
+
+    // what a click opens renders in a portal: no accessor on the opener's scope
+    assert.doesNotMatch(read('header.ts'), /get settingsModal\(\)/);
+});

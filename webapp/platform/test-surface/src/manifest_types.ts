@@ -117,6 +117,13 @@ export type Element = {
     effects?: ElementEffects;
     renderedWhen?: RenderCondition[];
 
+    /**
+     * For a container or a keyed item: the top-level scopes rendered inside its element (`markdown` in a post), so the
+     * generated class has an accessor for each. Scopes something opens (modals, menus, popovers) are left out: they
+     * render in a portal, outside it.
+     */
+    renders?: string[];
+
     /** Every place it renders is in a file the app's entries never import (config `entries`). Not generated. */
     unreachable?: true;
     form?: {scope: string; field: string; valueType: string};

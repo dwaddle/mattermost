@@ -318,12 +318,13 @@ class Members {
     }
 
     /** Members added after all others, and only when their name is free (`xList` beside `x(key)`). */
-    readonly late: Array<{name: string; source: string; code: string}> = [];
+    readonly late: Array<{name: string; source: string; code: string; use?: () => void}> = [];
 
     addLate() {
         for (const l of this.late) {
             if (!this.has(l.name)) {
                 this.add(l.name, l.source, l.code);
+                l.use?.();
             }
         }
     }
@@ -651,6 +652,30 @@ function row(node: ScopeNode, cls: ClassModel, m: Members, extraTypes: string[])
     m.add('read', node.path.join('.'), `/** Reads the item's read-only parts (\`null\` where one isn't rendered). */\nasync read(): Promise<${type}> {\n    return {\n${texts.map((e) => `        ${propKey(camel(e.name))}: await this.${getterOf(e)}.textIfPresent(),`).join('\n')}\n    };\n}`);
 }
 
+/**
+ * Accessors for the top-level scopes rendered inside this class's element (`post.markdown` for a post's message): the
+ * other class, rooted at this element. For a class mounted at several scopes, only the scopes every mount renders.
+ * Added last, and only where the name is free.
+ */
+function nestedScopes(ctx: Ctx, cls: ClassModel, m: Members) {
+    const owners = cls.mounts.map((n) => n.item ?? n.container);
+    if (owners.some((e) => !e?.renders?.length)) {
+        return;
+    }
+    const all = owners.map((e) => new Set(e!.renders));
+    const here = cls.node.path.join('.');
+    for (const scope of [...all[0]].filter((x) => all.every((a) => a.has(x))).sort(cmp)) {
+        const target = ctx.model.byScope.get(scope);
+        const other = target?.cls;
+        if (!target || !other || other.shared || target.item || other === cls || here === scope || here.startsWith(scope + '.')) {
+            continue;
+        }
+        const name = memberName(camel(scope));
+        const use = () => ctx.imports.useClass(other, ctx.file);
+        m.late.push({name, source: here, use, code: `/** \`${scope}\` rendered inside this element. */\nget ${name}(): ${other.name} {\n    return ${other.name}.within(this.locator);\n}`});
+    }
+}
+
 /** Source of one class. */
 export function emitClass(ctx: Ctx, cls: ClassModel): {code: string; types: string[]} {
     const node = cls.node;
@@ -671,6 +696,7 @@ export function emitClass(ctx: Ctx, cls: ClassModel): {code: string; types: stri
     for (const [word, child] of [...node.children.entries()].sort((a, b) => cmp(a[0], b[0]))) {
         childScope(ctx, node, word, child, m);
     }
+    nestedScopes(ctx, cls, m);
     form(node, cls, m, types);
     row(node, cls, m, types);
     m.addLate();
