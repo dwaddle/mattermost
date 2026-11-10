@@ -111,6 +111,70 @@
       }
     },
     {
+      "template": "effects.cycle.ping--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "cycle"
+      ],
+      "name": "ping",
+      "role": "button",
+      "component": {
+        "name": "Cycles",
+        "at": "src/cycles.tsx:19"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser",
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.cycle.pong--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "cycle"
+      ],
+      "name": "pong",
+      "role": "button",
+      "component": {
+        "name": "Cycles",
+        "at": "src/cycles.tsx:23"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetUser",
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": []
+      }
+    },
+    {
       "template": "effects.delete_hook_modal.confirm--button",
       "grammar": true,
       "scope": [

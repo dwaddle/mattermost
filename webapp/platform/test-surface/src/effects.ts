@@ -76,6 +76,9 @@ const INJECTED_PROPS = ['intl', 'history', 'location', 'match', 'dispatch', 'the
 const BUILTIN = /^(map|filter|forEach|reduce|some|every|find|findIndex|includes|indexOf|join|split|trim|toLowerCase|toUpperCase|startsWith|endsWith|replace|slice|concat|push|pop|shift|unshift|splice|keys|values|entries|has|get|set|add|delete|then|catch|finally|preventDefault|stopPropagation|focus|blur|select|toString|test|match|assign|freeze|stringify|parse|log|warn|error|resolve|reject|all|setTimeout|clearTimeout|requestAnimationFrame|current|scrollIntoView|getBoundingClientRect|contains|closest|querySelector|getAttribute|setAttribute|bind|call|apply)$/;
 const PURE_TYPE = /^(JSX\.Element|ReactNode|React\.ReactNode|React\.JSX\.Element|Element)/;
 
+/** The callee depth limit cut a lookup short: nothing computed above it is complete. */
+const DEPTH_CUT = Symbol('depth cut');
+
 /**
  * Traces a handler through the call graph to the client requests it can fire, the modals it
  * opens and where it navigates. connect/bindActionCreators, props callbacks, hooks, IIFEs,
@@ -93,7 +96,18 @@ export class Tracer {
     private flags: Map<ts.Symbol, boolean> | null = null;
     private readonly flagMemo = new Map<ts.Node, Map<string, Effects>>();
     private readonly ctMemo = new Map<ts.Node, Targets>();
+    private readonly ctInProgress = new Set<ts.Node>();
     private ctDepth = 0;
+
+    /** Callee lookups cut short (a cycle, or past the depth limit): a lookup that saw one below it isn't memoized. */
+    private ctCuts = 0;
+
+    /**
+     * Per effects computation in progress (innermost last): the targets a cycle cut it short at. A result cut at a
+     * target still in progress outside it is incomplete and isn't memoized (`DEPTH_CUT`: cut by the callee depth limit,
+     * which taints everything above it).
+     */
+    private readonly taint: Array<Set<Target | typeof DEPTH_CUT>> = [];
 
     constructor(ix: ProgramIndex, R: Resolver, ops: Operations) {
         this.ix = ix;
@@ -198,17 +212,48 @@ export class Tracer {
         if (memo) {
             return memo;
         }
-        if (this.ctDepth > 12) {
+        if (this.ctInProgress.has(c) || this.ctDepth > 12) {
+            this.ctCuts++;
+            this.taint[this.taint.length - 1]?.add(DEPTH_CUT);
             return {targets: [], dynamic: true};
         }
+        const cutsBefore = this.ctCuts;
         this.ctDepth++;
+        this.ctInProgress.add(c);
         try {
             const r = this.calleeTargetsInner(c);
-            this.ctMemo.set(c, r);
+            if (this.ctCuts === cutsBefore) {
+                this.ctMemo.set(c, r);
+            }
             return r;
         } finally {
+            this.ctInProgress.delete(c);
             this.ctDepth--;
         }
+    }
+
+    /** A cycle reached `t` while it is still being computed: what is computed now lacks `t`'s effects. */
+    private cutAt(t: Target) {
+        this.taint[this.taint.length - 1]?.add(t);
+    }
+
+    /**
+     * Computes `target`'s effects, and whether the result is complete: no cycle cut it short at a target still in
+     * progress outside it (a cut at `target` itself is its own fixpoint). An incomplete result passes its cuts up to the caller.
+     */
+    private tracked(target: Target, fn: () => Effects): {value: Effects; complete: boolean} {
+        const mine = new Set<Target | typeof DEPTH_CUT>();
+        this.taint.push(mine);
+        let value: Effects;
+        try {
+            value = fn();
+        } finally {
+            this.taint.pop();
+            mine.delete(target);
+            const parent = this.taint[this.taint.length - 1];
+            mine.forEach((t) => parent?.add(t));
+        }
+        return {value, complete: mine.size === 0};
     }
 
     private calleeTargetsInner(c0: ts.Expression): Targets {
@@ -466,17 +511,21 @@ export class Tracer {
             return memo;
         }
         if (this.inProgress.has(f)) {
+            this.cutAt(f);
             return emptyEffects();
         }
         const prevFlags = this.flags;
         this.flags = bound;
         this.inProgress.add(f);
         try {
-            const acc = this.effectsOfExpr(f.body);
-            const m = this.flagMemo.get(f) ?? new Map<string, Effects>();
-            m.set(key, acc);
-            this.flagMemo.set(f, m);
-            return acc;
+            const body = f.body;
+            const {value, complete} = this.tracked(f, () => this.effectsOfExpr(body));
+            if (complete) {
+                const m = this.flagMemo.get(f) ?? new Map<string, Effects>();
+                m.set(key, value);
+                this.flagMemo.set(f, m);
+            }
+            return value;
         } finally {
             this.inProgress.delete(f);
             this.flags = prevFlags;
@@ -521,20 +570,26 @@ export class Tracer {
             return memo;
         }
         if (this.inProgress.has(fn)) {
+            this.cutAt(fn);
             return emptyEffects();
         }
         this.inProgress.add(fn);
         const body = (fn as FunctionLike).body ?? fn;
-        const acc = this.effectsOfExpr(body);
-        this.inProgress.delete(fn);
-        if (local) {
-            const m = this.instanceMemo.get(fn) ?? new Map<string, Effects>();
-            m.set(instanceKey, acc);
-            this.instanceMemo.set(fn, m);
-        } else {
-            this.memo.set(fn, acc);
+        let result: {value: Effects; complete: boolean};
+        try {
+            result = this.tracked(fn, () => this.effectsOfExpr(body));
+        } finally {
+            this.inProgress.delete(fn);
         }
-        return acc;
+        const {value, complete} = result;
+        if (complete && local) {
+            const m = this.instanceMemo.get(fn) ?? new Map<string, Effects>();
+            m.set(instanceKey, value);
+            this.instanceMemo.set(fn, m);
+        } else if (complete) {
+            this.memo.set(fn, value);
+        }
+        return value;
     }
 
     private isLibTarget(t: Target): boolean {

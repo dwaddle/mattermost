@@ -110,3 +110,8 @@ test('effects: a branch on a boolean parameter the call leaves false (its defaul
     assert.equal(element(out(), 'effects.flags.name--textbox').effects, undefined);
     assert.deepEqual(ops('effects.flags.apply--button'), ['PatchChannel']);
 });
+
+test('effects: a result a cycle cut short is not reused: each end of a cycle fires both requests', () => {
+    assert.deepEqual(ops('effects.cycle.ping--button'), ['GetUser', 'PatchChannel']);
+    assert.deepEqual(ops('effects.cycle.pong--button'), ['GetUser', 'PatchChannel']);
+});
