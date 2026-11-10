@@ -82,3 +82,11 @@ export function toWord(s: string): string {
         toLowerCase().
         replace(/^([0-9])/, 'n$1');
 }
+
+/**
+ * Whether a config entry's template names an element's: the same template, or under any scope for one starting with
+ * `*.` (`checks.allow`, `effects.declared`).
+ */
+export function allowCovers(entryTemplate: string, template: string): boolean {
+    return entryTemplate.startsWith('*.') ? template.endsWith(entryTemplate.slice(1)) : template === entryTemplate;
+}

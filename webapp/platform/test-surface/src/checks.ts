@@ -7,7 +7,7 @@ import {TEST_ID_ROLES, type TestIdRole} from '@mattermost/types/test_id';
 
 import {cmp, cmpLoc} from './compare.ts';
 import type {AllowEntry, KeyFieldAllow, PluginConfig} from './config.ts';
-import {isGrammarError, KEY_PLACEHOLDER, toWord} from './grammar.ts';
+import {allowCovers, isGrammarError, KEY_PLACEHOLDER, toWord} from './grammar.ts';
 import {MAX_TEMPLATE_VALUES} from './limits.ts';
 import type {AriaRole, Diagnostic, Element, Loc, Manifest, RuleName} from './manifest_types.ts';
 import {isAriaRole} from './roles.ts';
@@ -95,11 +95,6 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
 type About = {template?: string; key?: string | null; via?: Loc[]};
 
 type Push = (rule: RuleName, strict: boolean, at: Loc, message: string, fix?: string, about?: About) => void;
-
-/** Whether an allow entry's template names a diagnostic's: the same template, or under any scope for one starting with `*.`. */
-export function allowCovers(allowTemplate: string, template: string): boolean {
-    return allowTemplate.startsWith('*.') ? template.endsWith(allowTemplate.slice(1)) : template === allowTemplate;
-}
 
 /**
  * `checks.allow`: matching errors become warnings carrying the reason; an entry that matches nothing is reported, so

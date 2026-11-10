@@ -138,6 +138,10 @@ test('effects: meForm puts `me` where the client hard-codes it for a placeholder
 test('effects: effects.declared adds a request the scan can\'t see, by testid; a stale entry or an unknown operation is reported', () => {
     assert.deepEqual(ops('effects.file--link'), ['PostLog']);
     assert.deepEqual(ops('effects.graph.grant--button'), ['GetUser']);
+
+    // `*.` covers the template under any scope
+    assert.ok(ops('effects.channels.row.delete--button').includes('PostLog'));
+    assert.ok(ops('effects.me_rows.row.delete--button').includes('PostLog'));
     const byId = new Map(out().manifest.operations.map((o) => [o.opId, o]));
     assert.equal(byId.get('PostLog')?.verb, 'POST');
     assert.deepEqual(byId.get('GetUser'), {opId: 'GetUser', verb: 'GET', path: '/api/v4/users/{user_id}', body: null, inSpec: true});

@@ -10,7 +10,8 @@
             {"testId": "effects.file--link", "ops": ["PostLog"], "reason": "a client method's operation"},
             {"testId": "effects.graph.grant--button", "ops": ["GetUser"], "reason": "an OpenAPI operation no client method calls"},
             {"testId": "effects.gone--button", "ops": ["PatchChannel"], "reason": "names no element"},
-            {"testId": "effects.graph.grant--button", "ops": ["NoSuchOp"], "reason": "names no operation"}
+            {"testId": "effects.graph.grant--button", "ops": ["NoSuchOp"], "reason": "names no operation"},
+            {"testId": "*.row.delete--button", "ops": ["PostLog"], "reason": "the delete button under any scope"}
         ]
     },
     "output": {"manifest": "test-surface.json"}

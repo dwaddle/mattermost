@@ -11,7 +11,7 @@ import {Conditions} from './conditions.ts';
 import {relativeToRoot, type Config} from './config.ts';
 import {componentName, emptyEffects, mergeEffects, Tracer, withDialogOps, type Effects} from './effects.ts';
 import {pascal} from './generate/names.ts';
-import {isGrammarError, KEY_PLACEHOLDER, parseTestId, type GrammarError, type ParsedTestId} from './grammar.ts';
+import {allowCovers, isGrammarError, KEY_PLACEHOLDER, parseTestId, type GrammarError, type ParsedTestId} from './grammar.ts';
 import {readVersioned} from './input.ts';
 import {MAX_CONDITION_USAGES, MAX_LANDING_HOPS, MAX_SCOPE_DEPTH, MAX_SCOPE_PATH, MAX_TEMPLATE_VALUES} from './limits.ts';
 import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type Page, type PluginInfo, type PluginSlot, type RenderCondition, type RuleName, type TestPart} from './manifest_types.ts';
@@ -1160,24 +1160,31 @@ export class Scanner {
     private addDeclaredEffects(elements: Element[]) {
         const at = relativeToRoot(this.config, this.config.configPath);
         for (const d of this.config.effects.declared) {
-            const el = elements.find((e) => e.template === d.testId);
-            if (!el) {
+            // `*.` covers the template under any scope, as in checks.allow (`*.attach--button` at every composer)
+            const matches = elements.filter((e) => allowCovers(d.testId, e.template));
+            if (!matches.length) {
                 this.diag('allow', 'warning', at, `effects.declared entry for "${d.testId}" matches no element.`, 'Remove it, or name the testid as it is now.');
                 continue;
             }
-            for (const id of d.ops) {
-                if (!this.ops.byId.has(id)) {
-                    const spec = this.ops.specOps.find((o) => o.opId === id);
-                    if (!spec) {
-                        this.diag('input', 'error', at, `effects.declared names ${id} for "${d.testId}", which is neither a client method's operation nor in the OpenAPI spec.`, 'Name the OpenAPI operation id.');
-                        continue;
-                    }
-                    this.ops.byId.set(id, {opId: id, verb: spec.verb, path: spec.path, body: null, schema: spec.schema, inSpec: true, client: ''});
-                }
-                const fx = el.effects ?? {ops: [], unknown: false, delegated: []};
-                fx.ops = [...new Set([...fx.ops, id])].sort();
-                el.effects = fx;
+            for (const el of matches) {
+                this.declareEffects(el, d.ops, d.testId, at);
             }
+        }
+    }
+
+    private declareEffects(el: Element, ops: string[], testId: string, at: Loc) {
+        for (const id of ops) {
+            if (!this.ops.byId.has(id)) {
+                const spec = this.ops.specOps.find((o) => o.opId === id);
+                if (!spec) {
+                    this.diag('input', 'error', at, `effects.declared names ${id} for "${testId}", which is neither a client method's operation nor in the OpenAPI spec.`, 'Name the OpenAPI operation id.');
+                    continue;
+                }
+                this.ops.byId.set(id, {opId: id, verb: spec.verb, path: spec.path, body: null, schema: spec.schema, inSpec: true, client: ''});
+            }
+            const fx = el.effects ?? {ops: [], unknown: false, delegated: []};
+            fx.ops = [...new Set([...fx.ops, id])].sort();
+            el.effects = fx;
         }
     }
 
