@@ -184,7 +184,23 @@ export type RuleName = 'grammar' | 'unscoped' | 'undefined' | 'role-fit' | 'aria
     'unreachable' | 'plugin-slots' | 'plugin-scope' | 'plugin-compat' | 'pages' | 'input' | 'allow' | 'stale-reference' | 'collisions' |
     'generate' | 'parts';
 
-export type Diagnostic = {rule: RuleName; severity: 'error' | 'warning'; at: Loc; message: string; fix?: string};
+export type Diagnostic = {
+    rule: RuleName;
+    severity: 'error' | 'warning';
+    at: Loc;
+    message: string;
+    fix?: string;
+
+    /** The testid template it is about, and the literal key of a keyed one: what `checks.allow` entries match. */
+    template?: string;
+    key?: string;
+
+    /** The usage chain the testid's value came through, innermost first. */
+    via?: Loc[];
+
+    /** A reviewed exception made this a warning: an `allow` entry, or a strict path's exception. */
+    waived?: {by: 'allow' | 'strict-exception'; reason: string};
+};
 
 /** The manifest format this version writes and reads (`Manifest.version`). */
 export const MANIFEST_VERSION = 1;

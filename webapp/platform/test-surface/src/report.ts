@@ -75,7 +75,8 @@ export function summary(result: ScanResult, diagnostics: Diagnostic[]): string {
 /** One diagnostic as printed: where, the rule, what is wrong, and how to fix it. */
 export function formatDiagnostic(d: Diagnostic): string {
     const mark = d.severity === 'error' ? '✗' : '!';
-    return `${mark} ${d.at}  [${d.rule}]\n  ${d.message}${d.fix ? `\n  ${d.fix}` : ''}`;
+    const waived = d.waived ? ` ${d.waived.by === 'allow' ? 'Allowed' : 'Not strict'}: ${d.waived.reason}` : '';
+    return `${mark} ${d.at}  [${d.rule}]\n  ${d.message}${waived}${d.fix ? `\n  ${d.fix}` : ''}`;
 }
 
 /** Report files for people: unknown effects, spec gaps, a11y gaps, unresolved/unscoped testids, duplicates, everything else. */

@@ -7,6 +7,9 @@ import {test} from 'node:test';
 import {element, matchSnapshot, scanFixture} from './helpers.ts';
 
 import {roleSuffixFor, runChecks, slotMatches} from '../src/checks.ts';
+import type {AllowEntry} from '../src/config.ts';
+import type {Diagnostic} from '../src/manifest_types.ts';
+import {formatDiagnostic} from '../src/report.ts';
 
 const out = () => scanFixture('checks');
 const diags = (rule: string) => out().diagnostics.filter((d) => d.rule === rule).map((d) => `${d.severity} ${d.at} ${d.message}`);
@@ -80,27 +83,43 @@ test('checks: the plugin slot contract and the rendered slots agree both ways', 
 test('checks: a reviewed allow entry turns that error into a warning with its reason; a stale entry is reported', () => {
     const base = {strictScopes: [], strictPaths: ['src/'], strictKeys: false, configAt: 'test-surface.config.json'};
     const ds = runChecks(out().result, {...base, allow: [{rule: 'aria', template: 'checks.panel.clickable', reason: 'reviewed'}, {rule: 'aria', template: 'checks.gone', reason: 'old'}]});
-    const d = ds.find((x) => x.rule === 'aria' && x.message.includes('checks.panel.clickable'));
+    const d = ds.find((x) => x.rule === 'aria' && x.template === 'checks.panel.clickable');
     assert.equal(d?.severity, 'warning');
-    assert.match(d!.message, /Allowed: reviewed$/);
+    assert.deepEqual(d?.waived, {by: 'allow', reason: 'reviewed'});
+    assert.match(formatDiagnostic(d!), /handles input but has no ARIA role\. Allowed: reviewed\n/);
     assert.ok(ds.some((x) => x.rule === 'allow' && x.message.includes('"checks.gone"')));
 });
 
-test('checks: an allow entry for a keyed template covers its per-value diagnostics', () => {
+const checked = (diagnostics: Diagnostic[], allow: AllowEntry[]) => {
     const r = out().result;
-    const keyed = {rule: 'duplicates' as const, severity: 'error' as const, at: 'src/x.tsx:1', message: '"checks.section:{key}=email" is also used by src/y.tsx:2.'};
-    const result = {...r, sites: [], emissions: [], manifest: {...r.manifest, elements: [], pluginSlots: [], diagnostics: [keyed]}};
-    const ds = runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, configAt: 'test-surface.config.json', allow: [{rule: 'duplicates', template: 'checks.section:{key}', reason: 'exclusive'}]});
+    const result = {...r, sites: [], emissions: [], manifest: {...r.manifest, elements: [], pluginSlots: [], diagnostics}};
+    return runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, configAt: 'test-surface.config.json', allow});
+};
+
+test('checks: an allow entry for a keyed template covers its per-value diagnostics', () => {
+    const keyed: Diagnostic = {rule: 'duplicates', severity: 'error', at: 'src/x.tsx:1', message: '"checks.section:{key}=email" is also used by src/y.tsx:2.', template: 'checks.section:{key}', key: 'email'};
+    const ds = checked([keyed], [{rule: 'duplicates', template: 'checks.section:{key}', reason: 'exclusive'}]);
     assert.equal(ds.find((d) => d.rule === 'duplicates')?.severity, 'warning');
     assert.ok(!ds.some((d) => d.rule === 'allow'), JSON.stringify(ds));
 });
 
 test('checks: an allow entry starting with `*.` covers the template under any scope', () => {
-    const r = out().result;
-    const at = (scope: string) => ({rule: 'aria' as const, severity: 'error' as const, at: 'src/x.tsx:1', message: `<a> with testid "${scope}.file.remove--button" handles input but has no ARIA role.`});
-    const result = {...r, sites: [], emissions: [], manifest: {...r.manifest, elements: [], pluginSlots: [], diagnostics: [at('center.post_create.file_previews'), at('rhs.post_create.file_previews'), {...at('other'), message: '<a> with testid "x.file.remove--buttons" handles input.'}]}};
-    const ds = runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, configAt: 'test-surface.config.json', allow: [{rule: 'aria', template: '*.file_previews.file.remove--button', reason: 'reviewed'}]});
+    const at = (template: string): Diagnostic => ({rule: 'aria', severity: 'error', at: 'src/x.tsx:1', message: `<a> with testid "${template}" handles input but has no ARIA role.`, template});
+    const ds = checked([at('center.post_create.file_previews.file.remove--button'), at('rhs.post_create.file_previews.file.remove--button'), at('x.file.remove--buttons')], [{rule: 'aria', template: '*.file_previews.file.remove--button', reason: 'reviewed'}]);
     assert.deepEqual(ds.filter((d) => d.rule === 'aria').map((d) => d.severity), ['warning', 'warning', 'error']);
+});
+
+test('checks: an allow entry matches the diagnostic\'s rule and template, whatever its message says', () => {
+    const reworded: Diagnostic = {rule: 'aria', severity: 'error', at: 'src/x.tsx:1', message: 'This clickable element needs a role.', template: 'checks.panel.clickable'};
+    const elsewhere: Diagnostic = {rule: 'aria', severity: 'error', at: 'src/x.tsx:2', message: 'Unlike "checks.panel.clickable", this one needs a role.', template: 'checks.panel.other'};
+    const ds = checked([reworded, elsewhere], [{rule: 'aria', template: 'checks.panel.clickable', reason: 'reviewed'}]);
+    assert.deepEqual(ds.filter((d) => d.rule === 'aria').map((d) => `${d.template} ${d.severity}`), ['checks.panel.clickable warning', 'checks.panel.other error']);
+});
+
+test('checks: diagnostics about a testid carry its template, key and usage chain as fields', () => {
+    const d = out().diagnostics.find((x) => x.rule === 'duplicates' && x.template === 'checks.panel.twice--text');
+    assert.equal(d?.template, 'checks.panel.twice--text');
+    assert.ok(out().diagnostics.filter((x) => x.rule !== 'allow' && x.rule !== 'plugin-slots').every((x) => x.template !== undefined || x.rule === 'unresolved' || x.rule === 'unscoped' || x.rule === 'pages' || x.rule === 'input'));
 });
 
 test('checks: a testid written in markup text is a site; one in a selector string is not', () => {

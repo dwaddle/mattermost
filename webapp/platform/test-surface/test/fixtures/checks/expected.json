@@ -4,146 +4,175 @@
     "severity": "error",
     "at": "src/a.tsx:10",
     "message": "\"checks.panel.ok--button\" is on a <span> with no ARIA role.",
-    "fix": "Render a native button or add role='button' (and its state attributes); for read-only content use --text."
+    "fix": "Render a native button or add role='button' (and its state attributes); for read-only content use --text.",
+    "template": "checks.panel.ok--button"
   },
   {
     "rule": "duplicates",
     "severity": "error",
     "at": "src/a.tsx:11",
     "message": "\"checks.panel.twice--text\" is also used by src/a.tsx:12, and both can render together.",
-    "fix": "Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`)."
+    "fix": "Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`).",
+    "template": "checks.panel.twice--text"
   },
   {
     "rule": "duplicates",
     "severity": "error",
     "at": "src/a.tsx:13",
     "message": "\"checks.shared.label--text\" is also used by src/b.tsx:6.",
-    "fix": "Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`)."
+    "fix": "Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`).",
+    "template": "checks.shared.label--text"
   },
   {
     "rule": "role-fit",
     "severity": "error",
     "at": "src/a.tsx:14",
     "message": "\"checks.panel.save--button\" is on a <div> with no ARIA role.",
-    "fix": "Render a native button or add role='button' (and its state attributes); for read-only content use --text."
+    "fix": "Render a native button or add role='button' (and its state attributes); for read-only content use --text.",
+    "template": "checks.panel.save--button"
   },
   {
     "rule": "role-fit",
     "severity": "error",
     "at": "src/a.tsx:15",
     "message": "\"checks.panel.plain\" has no role suffix but is a button.",
-    "fix": "Add --button."
+    "fix": "Add --button.",
+    "template": "checks.panel.plain"
   },
   {
     "rule": "unscoped",
     "severity": "error",
     "at": "src/a.tsx:170",
     "message": "\"checks_control\" has no scope.",
-    "fix": "Prefix it with where it lives, e.g. \"area.checks_control--button\". Suggested: \"<scope>.checks_control--button\"."
+    "fix": "Prefix it with where it lives, e.g. \"area.checks_control--button\". Suggested: \"<scope>.checks_control--button\".",
+    "template": "checks_control"
   },
   {
     "rule": "aria",
     "severity": "error",
     "at": "src/a.tsx:21",
     "message": "<div> with testid \"checks.panel.clickable\" handles input but has no ARIA role.",
-    "fix": "Render a native control (button, a[href], input) or add role= with its state attributes."
+    "fix": "Render a native control (button, a[href], input) or add role= with its state attributes.",
+    "template": "checks.panel.clickable"
   },
   {
     "rule": "grammar",
     "severity": "error",
     "at": "src/a.tsx:24",
     "message": "\"checks.panel.item_{key}--text\" has runtime data outside the key.",
-    "fix": "Only the last word may carry runtime data, after \":\" (`name:${value}`). Suggested: \"checks.panel.item:{key}\"."
+    "fix": "Only the last word may carry runtime data, after \":\" (`name:${value}`). Suggested: \"checks.panel.item:{key}\".",
+    "template": "checks.panel.item_{key}--text",
+    "via": [
+      "src/b.tsx:8"
+    ]
   },
   {
     "rule": "undefined",
     "severity": "error",
     "at": "src/a.tsx:24",
     "message": "\"checks.panel.item_undefined--text\" can render the text \"undefined\" (via src/b.tsx:7).",
-    "fix": "Make sure the value is always set, or render no testid when it is missing."
+    "fix": "Make sure the value is always set, or render no testid when it is missing.",
+    "template": "checks.panel.item_undefined--text",
+    "via": [
+      "src/b.tsx:7"
+    ]
   },
   {
     "rule": "unscoped",
     "severity": "error",
     "at": "src/a.tsx:25",
     "message": "testid is made entirely of runtime data (via src/b.tsx:8).",
-    "fix": "Write the scope and name as literals; runtime data may only fill the key: `scope.name:${value}`."
+    "fix": "Write the scope and name as literals; runtime data may only fill the key: `scope.name:${value}`.",
+    "via": [
+      "src/b.tsx:8"
+    ]
   },
   {
     "rule": "grammar",
     "severity": "error",
     "at": "src/a.tsx:26",
     "message": "\"LegacyName\" has the word \"LegacyName\", which is not lower_snake_case.",
-    "fix": "Words match [a-z][a-z0-9_]*, e.g. \"legacy_name\". Suggested: \"<scope>.legacy_name\"."
+    "fix": "Words match [a-z][a-z0-9_]*, e.g. \"legacy_name\". Suggested: \"<scope>.legacy_name\".",
+    "template": "LegacyName"
   },
   {
     "rule": "duplicates",
     "severity": "error",
     "at": "src/a.tsx:5",
     "message": "\"checks.panel.ok--button\" is used in exclusive branches with different roles (button at src/a.tsx:5, null at src/a.tsx:10).",
-    "fix": "Use the same element kind in both branches, or give them different names."
+    "fix": "Use the same element kind in both branches, or give them different names.",
+    "template": "checks.panel.ok--button"
   },
   {
     "rule": "duplicates",
     "severity": "error",
     "at": "src/a.tsx:80",
     "message": "\"checks.pair.item--text\" is also used by src/a.tsx:84, and both can render together.",
-    "fix": "Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`)."
+    "fix": "Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`).",
+    "template": "checks.pair.item--text"
   },
   {
     "rule": "duplicates",
     "severity": "error",
     "at": "src/a.tsx:9",
     "message": "\"checks.panel.go--button\" is used in exclusive branches with different roles (button at src/a.tsx:9, link at src/a.tsx:9).",
-    "fix": "Use the same element kind in both branches, or give them different names."
+    "fix": "Use the same element kind in both branches, or give them different names.",
+    "template": "checks.panel.go--button"
   },
   {
     "rule": "role-fit",
     "severity": "error",
     "at": "src/a.tsx:9",
     "message": "\"checks.panel.go--button\" is on a link (<a>).",
-    "fix": "Use --link, or render an element with role button."
+    "fix": "Use --link, or render an element with role button.",
+    "template": "checks.panel.go--button"
   },
   {
     "rule": "truncated",
     "severity": "error",
     "at": "src/cap.tsx:13",
     "message": "\"checks.cap.cell:r01_c01--text\" can take more than 256 values; the rest are left out (src/cap.tsx:13).",
-    "fix": "Key the testid by one value (`:${id}`) instead of a product of lists, or split it into separate testids."
+    "fix": "Key the testid by one value (`:${id}`) instead of a product of lists, or split it into separate testids.",
+    "template": "checks.cap.cell:r01_c01--text"
   },
   {
     "rule": "key-origin",
     "severity": "warning",
     "at": "src/format.ts:13",
     "message": "key of \"checks.markup.mention:{key}--link\" is an open string (name: string).",
-    "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+    "template": "checks.markup.mention:{key}--link"
   },
   {
     "rule": "plugin-slots",
     "severity": "error",
     "at": "src/plugin_slots.tsx:11",
     "message": "Plugin slot \"gone\" (checks.plugins.removed:{key}--button) is in the published contract, but the webapp no longer renders it.",
-    "fix": "Render the slot's testid again, or remove it from the contract (a breaking change for plugin test packages)."
+    "fix": "Render the slot's testid again, or remove it from the contract (a breaking change for plugin test packages).",
+    "template": "checks.plugins.removed:{key}--button"
   },
   {
     "rule": "key-origin",
     "severity": "warning",
     "at": "src/plugin_slots.tsx:21",
     "message": "key of \"checks.plugins.by_name:{key}--button\" is an open string (p.name: string).",
-    "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+    "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+    "template": "checks.plugins.by_name:{key}--button"
   },
   {
     "rule": "plugin-slots",
     "severity": "error",
     "at": "src/plugin_slots.tsx:21",
     "message": "Plugin slot \"unkeyed\" (checks.plugins.by_name:{key}--button) must be keyed by pluginTestKey(pluginId), but its key is a string (string).",
-    "fix": "Render the key with pluginTestKey() from @mattermost/shared/utils/test_id."
+    "fix": "Render the key with pluginTestKey() from @mattermost/shared/utils/test_id.",
+    "template": "checks.plugins.by_name:{key}--button"
   },
   {
     "rule": "plugin-slots",
     "severity": "error",
     "at": "src/plugin_slots.tsx:22",
     "message": "\"checks.plugins.extra:{key}--button\" is keyed by plugin but isn't in the published plugin slot contract.",
-    "fix": "Add it to PLUGIN_SLOT_TEST_IDS in @mattermost/shared/utils/test_id."
+    "fix": "Add it to PLUGIN_SLOT_TEST_IDS in @mattermost/shared/utils/test_id.",
+    "template": "checks.plugins.extra:{key}--button"
   }
 ]

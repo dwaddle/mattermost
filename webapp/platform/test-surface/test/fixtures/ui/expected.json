@@ -2919,63 +2919,81 @@
       "severity": "warning",
       "at": "src/header.tsx:19",
       "message": "\"header.off_topic--link\" is on a <Link> with no ARIA role.",
-      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text.",
+      "template": "header.off_topic--link",
+      "via": [
+        "src/header.tsx:107"
+      ]
     },
     {
       "rule": "role-fit",
       "severity": "warning",
       "at": "src/header.tsx:87",
       "message": "\"header.home--link\" is on a <Link> with no ARIA role.",
-      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text.",
+      "template": "header.home--link"
     },
     {
       "rule": "role-fit",
       "severity": "warning",
       "at": "src/header.tsx:91",
       "message": "\"header.faq--link\" is on a <NavLink> with no ARIA role.",
-      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text.",
+      "template": "header.faq--link"
     },
     {
       "rule": "role-fit",
       "severity": "warning",
       "at": "src/header.tsx:95",
       "message": "\"header.external--link\" is on a <Link> with no ARIA role.",
-      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text."
+      "fix": "Render a native link or add role='link' (and its state attributes); for read-only content use --text.",
+      "template": "header.external--link"
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/menu.tsx:125",
       "message": "key of \"team_picker.menu.team:{key}--menuitem\" is an open string (t: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "team_picker.menu.team:{key}--menuitem"
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/menu.tsx:145",
       "message": "key of \"sort_menu.field:{key}--menuitem\" is an open string (f: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "sort_menu.field:{key}--menuitem"
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/menu.tsx:190",
       "message": "key of \"left.picker.menu.team:{key}--menuitem\" is an open string (t: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "left.picker.menu.team:{key}--menuitem",
+      "via": [
+        "src/menu.tsx:200"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/menu.tsx:190",
       "message": "key of \"right.picker.menu.team:{key}--menuitem\" is an open string (t: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "right.picker.menu.team:{key}--menuitem",
+      "via": [
+        "src/menu.tsx:204"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/menu.tsx:239",
       "message": "key of \"field_menu.field:{key}--menuitem\" is an open string (field.id: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "field_menu.field:{key}--menuitem"
     }
   ]
 }

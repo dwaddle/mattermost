@@ -5,7 +5,6 @@ import ts from 'typescript';
 
 import {TEST_ID_ROLES, type TestIdRole} from '@mattermost/types/test_id';
 
-import {escapeRegExp} from './ast.ts';
 import {cmp} from './compare.ts';
 import type {AllowEntry, PluginConfig} from './config.ts';
 import {isGrammarError, KEY_PLACEHOLDER, toWord} from './grammar.ts';
@@ -53,8 +52,9 @@ const NON_INTERACTIVE = new Set<AriaRole | null>([null, 'none', 'presentation', 
 export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] {
     const out: Diagnostic[] = [...result.manifest.diagnostics];
     const strictAt = (at: Loc, template?: string) => opts.strictPaths.some((p) => at.startsWith(p)) || (template !== undefined && opts.strictScopes.some((s) => template.startsWith(s)));
-    const push: Push = (rule, strict, at, message, fix) => {
-        out.push({rule, severity: strict ? 'error' : 'warning', at, message, ...(fix ? {fix} : {})});
+    const push: Push = (rule, strict, at, message, fix, about = {}) => {
+        const {template, key, via} = about;
+        out.push({rule, severity: strict ? 'error' : 'warning', at, message, ...(fix ? {fix} : {}), ...(template === undefined ? {} : {template}), ...(key ? {key} : {}), ...(via?.length ? {via} : {})});
     };
 
     checkSites(result.sites, push, strictAt);
@@ -63,7 +63,7 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
     checkPluginSlots(result.manifest, push);
     for (const el of result.manifest.elements) {
         if (el.unreachable) {
-            push('unreachable', strictAt(el.component.at, el.template), el.component.at, `"${el.template}" is in code the app never loads: no file on its path is imported from the entries (dead code, or used only by tests).`, 'Delete the code, or render it from the app.');
+            push('unreachable', strictAt(el.component.at, el.template), el.component.at, `"${el.template}" is in code the app never loads: no file on its path is imported from the entries (dead code, or used only by tests).`, 'Delete the code, or render it from the app.', {template: el.template, via: el.instances.flatMap((i) => i.via)});
         }
     }
     if (opts.plugin) {
@@ -84,21 +84,30 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
         sort((a, b) => cmp(a.at, b.at) || cmp(a.rule, b.rule) || cmp(a.message, b.message));
 }
 
-type Push = (rule: RuleName, strict: boolean, at: Loc, message: string, fix?: string) => void;
+/** What a diagnostic is about, beside where: the testid template, its literal key, the usage chain it came through. */
+type About = {template?: string; key?: string | null; via?: Loc[]};
 
-/** `checks.allow`: matching errors become warnings with the reason; an entry that matches nothing is reported, so the list can't go stale. */
+type Push = (rule: RuleName, strict: boolean, at: Loc, message: string, fix?: string, about?: About) => void;
+
+/** Whether an allow entry's template names a diagnostic's: the same template, or under any scope for one starting with `*.`. */
+export function allowCovers(allowTemplate: string, template: string): boolean {
+    return allowTemplate.startsWith('*.') ? template.endsWith(allowTemplate.slice(1)) : template === allowTemplate;
+}
+
+/**
+ * `checks.allow`: matching errors become warnings carrying the reason; an entry that matches nothing is reported, so
+ * the list can't go stale. An entry matches on the diagnostic's rule and template (a keyed template covers each of
+ * its keys), never on its wording.
+ */
 function applyAllow(out: Diagnostic[], allow: AllowEntry[], configAt: string) {
     for (const a of allow) {
         let used = false;
         for (const d of out) {
-            // a keyed template also covers its per-value variants (`"settings.section:{key}=email"`), and a
-            // template starting with `*.` covers it under any scope (a shared component's part in every location)
-            const matches = a.template.startsWith('*.') ? new RegExp(`"[^"]*${escapeRegExp(a.template.slice(1))}(=[^"]*)?"`).test(d.message) : d.message.includes(`"${a.template}"`) || d.message.includes(`"${a.template}=`);
-            if (d.rule === a.rule && matches) {
+            if (d.rule === a.rule && d.template !== undefined && allowCovers(a.template, d.template)) {
                 used = true;
                 if (d.severity === 'error') {
                     d.severity = 'warning';
-                    d.message += ` Allowed: ${a.reason}`;
+                    d.waived = {by: 'allow', reason: a.reason};
                 }
             }
         }
@@ -121,17 +130,17 @@ function checkPluginSlots(manifest: Manifest, push: Push) {
     for (const s of manifest.pluginSlots) {
         const rendered = manifest.elements.filter((e) => slotMatches(s.template, e.template));
         if (!rendered.length) {
-            push('plugin-slots', true, s.at, `Plugin slot "${s.slot}" (${s.template}) is in the published contract, but the webapp no longer renders it.`, 'Render the slot\'s testid again, or remove it from the contract (a breaking change for plugin test packages).');
+            push('plugin-slots', true, s.at, `Plugin slot "${s.slot}" (${s.template}) is in the published contract, but the webapp no longer renders it.`, 'Render the slot\'s testid again, or remove it from the contract (a breaking change for plugin test packages).', {template: s.template});
         }
         for (const e of rendered) {
             if (e.key?.kind !== 'plugin') {
-                push('plugin-slots', true, e.component.at, `Plugin slot "${s.slot}" (${e.template}) must be keyed by pluginTestKey(pluginId), but its key is ${e.key ? `a ${e.key.kind} (${e.key.type})` : 'missing'}.`, 'Render the key with pluginTestKey() from @mattermost/shared/utils/test_id.');
+                push('plugin-slots', true, e.component.at, `Plugin slot "${s.slot}" (${e.template}) must be keyed by pluginTestKey(pluginId), but its key is ${e.key ? `a ${e.key.kind} (${e.key.type})` : 'missing'}.`, 'Render the key with pluginTestKey() from @mattermost/shared/utils/test_id.', {template: e.template});
             }
         }
     }
     for (const e of manifest.elements) {
         if (e.key?.kind === 'plugin' && !manifest.pluginSlots.some((s) => slotMatches(s.template, e.template))) {
-            push('plugin-slots', true, e.component.at, `"${e.template}" is keyed by plugin but isn't in the published plugin slot contract.`, 'Add it to PLUGIN_SLOT_TEST_IDS in @mattermost/shared/utils/test_id.');
+            push('plugin-slots', true, e.component.at, `"${e.template}" is keyed by plugin but isn't in the published plugin slot contract.`, 'Add it to PLUGIN_SLOT_TEST_IDS in @mattermost/shared/utils/test_id.', {template: e.template});
         }
     }
 }
@@ -144,7 +153,7 @@ function checkPlugin(manifest: Manifest, push: Push, strictAt: (at: Loc, t?: str
     const scope = `plugins.${plugin.key}`;
     for (const e of manifest.elements) {
         if (e.grammar && e.template !== scope && !e.template.startsWith(scope + '.')) {
-            push('plugin-scope', strictAt(e.component.at, e.template), e.component.at, `"${e.template}" is outside the plugin's scope "${scope}".`, `Prefix it: "${scope}.${e.template}".`);
+            push('plugin-scope', strictAt(e.component.at, e.template), e.component.at, `"${e.template}" is outside the plugin's scope "${scope}".`, `Prefix it: "${scope}.${e.template}".`, {template: e.template});
         }
     }
     for (const host of plugin.hosts) {
@@ -176,22 +185,23 @@ function checkSites(sites: Site[], push: Push, strictAt: (at: Loc, t?: string) =
             const via = v.via?.length ? ` (via ${v.via[0]})` : '';
             if (v.k === 'unres' && v.why === TOO_MANY_VALUES) {
                 // eslint-disable-next-line no-template-curly-in-string
-                push('truncated', strictAt(s.at), s.at, `"${shown}" can take more than ${MAX_TEMPLATE_VALUES} values${via}; the rest are left out (${v.at}).`, 'Key the testid by one value (`:${id}`) instead of a product of lists, or split it into separate testids.');
+                push('truncated', strictAt(s.at), s.at, `"${shown}" can take more than ${MAX_TEMPLATE_VALUES} values${via}; the rest are left out (${v.at}).`, 'Key the testid by one value (`:${id}`) instead of a product of lists, or split it into separate testids.', {template: shown, via: v.via});
             } else if (v.k === 'unres' || v.k === 'computed') {
                 // eslint-disable-next-line no-template-curly-in-string
-                push('unresolved', false, s.at, `testid value can't be read statically${via}: ${v.k === 'unres' ? v.why : 'computed'} at ${v.at}.`, 'Build the testid from literals and `:${key}` data, or pass a literal down.');
+                push('unresolved', false, s.at, `testid value can't be read statically${via}: ${v.k === 'unres' ? v.why : 'computed'} at ${v.at}.`, 'Build the testid from literals and `:${key}` data, or pass a literal down.', {via: v.via});
             } else if (isUnscoped(v)) {
                 // eslint-disable-next-line no-template-curly-in-string
-                push('unscoped', strictAt(s.at), s.at, `testid is made entirely of runtime data${via}.`, 'Write the scope and name as literals; runtime data may only fill the key: `scope.name:${value}`.');
+                push('unscoped', strictAt(s.at), s.at, `testid is made entirely of runtime data${via}.`, 'Write the scope and name as literals; runtime data may only fill the key: `scope.name:${value}`.', {via: v.via});
             }
         }
     }
 }
 
-function checkEmissions(emissions: Emission[], push: Push, strictAt: (at: Loc, t?: string) => boolean, opts: CheckOptions) {
+function checkEmissions(emissions: Emission[], pushAt: Push, strictAt: (at: Loc, t?: string) => boolean, opts: CheckOptions) {
     for (const e of emissions) {
         const at = e.site.at;
         const strict = strictAt(at, e.template);
+        const push: Push = (rule, isStrict, where, message, fix) => pushAt(rule, isStrict, where, message, fix, {template: e.template, key: e.key, via: e.via});
         if (isUnscoped(e.value)) {
             continue;
         }
@@ -382,11 +392,11 @@ function checkDuplicates(emissions: Emission[], push: Push, strictAt: (at: Loc, 
                 const sameFile = a.site.node.getSourceFile() === b.site.node.getSourceFile();
                 if (exclusiveAlongChains(a, b, usageNodeAt)) {
                     if (a.landing.tag && b.landing.tag && a.landing.aria.role !== b.landing.aria.role && grammar) {
-                        push('duplicates', strictAt(a.site.at, k) || strictAt(b.site.at, k), a.site.at, `"${k}" is used in exclusive branches with different roles (${a.landing.aria.role} at ${a.site.at}, ${b.landing.aria.role} at ${b.site.at}).`, 'Use the same element kind in both branches, or give them different names.');
+                        push('duplicates', strictAt(a.site.at, k) || strictAt(b.site.at, k), a.site.at, `"${k}" is used in exclusive branches with different roles (${a.landing.aria.role} at ${a.site.at}, ${b.landing.aria.role} at ${b.site.at}).`, 'Use the same element kind in both branches, or give them different names.', {template: a.template, key: a.key, via: a.via});
                     }
                     continue;
                 }
-                push('duplicates', strictAt(a.site.at, k) || strictAt(b.site.at, k), a.site.at, `"${k}" is also used by ${b.site.at}${sameFile ? ', and both can render together' : ''}.`, 'Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`).');
+                push('duplicates', strictAt(a.site.at, k) || strictAt(b.site.at, k), a.site.at, `"${k}" is also used by ${b.site.at}${sameFile ? ', and both can render together' : ''}.`, 'Give each element its own name, or scope them (`modal_a.save--button`, `modal_b.save--button`).', {template: a.template, key: a.key, via: a.via});
             }
         }
     }
@@ -509,7 +519,7 @@ export function memberCollisions(elements: Element[], nameOf: (e: Element) => st
         const n = nameOf(e);
         const prev = names.get(n);
         if (prev && prev.template !== e.template) {
-            out.push({rule: 'collisions', severity: 'error', at: e.component.at, message: `"${e.template}" and "${prev.template}" (${prev.component.at}) both generate ${s}.${n}.`, fix: 'Rename one of them.'});
+            out.push({rule: 'collisions', severity: 'error', at: e.component.at, message: `"${e.template}" and "${prev.template}" (${prev.component.at}) both generate ${s}.${n}.`, fix: 'Rename one of them.', template: e.template});
         }
         names.set(n, e);
     }

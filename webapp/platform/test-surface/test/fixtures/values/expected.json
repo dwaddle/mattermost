@@ -1745,56 +1745,87 @@
       "severity": "warning",
       "at": "src/app.tsx:48",
       "message": "\"values.channel.{key}\" has runtime data outside the key.",
-      "fix": "Only the last word may carry runtime data, after \":\" (`name:${value}`). Suggested: \"values.channel:{key}\"."
+      "fix": "Only the last word may carry runtime data, after \":\" (`name:${value}`). Suggested: \"values.channel:{key}\".",
+      "template": "values.channel.{key}"
     },
     {
       "rule": "role-fit",
       "severity": "warning",
       "at": "src/defaults.tsx:7",
       "message": "\"values.defaults.mute--checkbox\" is on a textbox (<input>).",
-      "fix": "Use --textbox, or render an element with role checkbox."
+      "fix": "Use --textbox, or render an element with role checkbox.",
+      "template": "values.defaults.mute--checkbox",
+      "via": [
+        "src/defaults.tsx:10"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/dynamic.tsx:153",
       "message": "key of \"values.narrow.plugin:{key}--button\" is an open string (o.plugin: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "values.narrow.plugin:{key}--button",
+      "via": [
+        "src/dynamic.tsx:159",
+        "src/dynamic.tsx:183"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/grid.tsx:12",
       "message": "key of \"values.pushed_grid.row:{key}\" is an open string (name: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "values.pushed_grid.row:{key}",
+      "via": [
+        "src/grid.tsx:34"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/grid.tsx:12",
       "message": "key of \"values.pushed_grid.row:{key}\" is an open string (row.testKey ?? String(index): string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "values.pushed_grid.row:{key}",
+      "via": [
+        "src/grid.tsx:34"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/option_view.tsx:12",
       "message": "key of \"values.picker.option:{key}\" is an open string (details.id: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "values.picker.option:{key}",
+      "via": [
+        "src/option_view.tsx:20"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/recursive.tsx:9",
       "message": "key of \"values.tree.action:{key}--button\" is an open string (child.id: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "values.tree.action:{key}--button",
+      "via": [
+        "src/recursive.tsx:11",
+        "src/recursive.tsx:24"
+      ]
     },
     {
       "rule": "key-origin",
       "severity": "warning",
       "at": "src/recursive.tsx:9",
       "message": "key of \"values.tree.action:{key}--button\" is an open string (tree.id: string).",
-      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it."
+      "fix": "Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.",
+      "template": "values.tree.action:{key}--button",
+      "via": [
+        "src/recursive.tsx:24"
+      ]
     }
   ]
 }
