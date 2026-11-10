@@ -17,7 +17,14 @@ export {
 export {expect} from './matchers';
 export {formatMessage, msg, type Message, type ParamsOf} from './msg';
 export {buildPath, keyOf} from './pages';
-export {pluginSurfaces, registerPluginSurface, type PluginKey, type PluginKeys} from './plugins';
+export {
+    pluginKey,
+    pluginSurfaces,
+    registerPluginSurface,
+    type PluginKey,
+    type PluginKeyOf,
+    type PluginKeys,
+} from './plugins';
 export {settingTestKey, suggestionTestKey, type AdminSettingPath} from './settings';
 export {KeyedList, keyOfTestId, Scope, type ContentFilter} from './scope';
 export {settle, settleAll, SettleError, type SettleOptions} from './settle';

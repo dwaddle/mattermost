@@ -16,6 +16,7 @@ export {
     KeyedList,
     keyOfTestId,
     msg,
+    pluginKey,
     registerPluginSurface,
     Scope,
     suggestionTestKey,
@@ -23,6 +24,7 @@ export {
     type BodyOf,
     type ContentFilter,
     type PathParamsOf,
+    type PluginKeyOf,
 
     // the drivers' types, so a plugin's generated package (its getters return them) can emit declarations
     type ButtonDriver,
@@ -77,7 +79,15 @@ export {pasteHtml} from './paste';
 // react-day-picker, a library calendar with no testids of its own: its days by date, and month navigation
 export {getDayPickerDayCell, goToDisplayedMonth} from './ui/components/day_picker';
 export {duration, getRandomId, wait, newTestPassword} from './util';
-export {LicenseSkus, appsPluginId, callsPluginId, demoPluginId, demoPluginUrl, playbooksPluginId} from './constant';
+export {
+    LicenseSkus,
+    aiPluginId,
+    appsPluginId,
+    callsPluginId,
+    demoPluginId,
+    demoPluginUrl,
+    playbooksPluginId,
+} from './constant';
 
 export {
     getAdminClient,
