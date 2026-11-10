@@ -10,8 +10,9 @@ const HOOKS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../hoo
 const MARKER = '# test-surface hook';
 
 /**
- * Installs the opt-in git hooks (pre-commit, pre-push) for one config: they read its paths, so the same hooks
- * serve the webapp and a plugin repo. Existing hooks are kept: ours run first and then call them.
+ * Installs the opt-in git hooks for one config: pre-commit lints the staged testids, pre-push scans, checks and
+ * regenerates. They read the config's paths, so the same hooks serve the webapp and a plugin repo. Existing hooks
+ * are kept: ours run first and then call them.
  */
 export function installHooks(configPath: string, log: (s: string) => void): void {
     const hooksDir = execFileSync('git', ['rev-parse', '--git-path', 'hooks'], {cwd: path.dirname(configPath), encoding: 'utf8'}).trim();

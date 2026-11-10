@@ -20,7 +20,7 @@
     "check-types": "tsc -p tsconfig.json",
     "test": "node --test --test-reporter=spec test/*.test.ts",
     "scan": "node ./bin/test-surface.mjs scan",
-    "test:golden": "TEST_SURFACE_GOLDEN=1 node --max-old-space-size=8192 --test test/golden.test.ts"
+    "test:golden": "TEST_SURFACE_GOLDEN=1 node --max-old-space-size=4096 --test test/golden.test.ts"
   },
   "dependencies": {
     "@mattermost/types": "*",

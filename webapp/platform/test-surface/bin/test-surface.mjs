@@ -7,11 +7,12 @@
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
-// a whole-webapp program needs more than Node's default heap: rerun with 8 GB unless the caller chose a size
+// a whole-webapp program needs more than Node's default heap: rerun with 4 GB unless the caller chose a size (a
+// whole-webapp scan and generate peak at about 2.5 GB of heap; watch mode, which keeps the program, at about 3 GB)
 const sized = (args) => args.some((a) => a.startsWith('--max-old-space-size'));
 // eslint-disable-next-line no-process-env -- a size set through NODE_OPTIONS wins too
 if (!sized(process.execArgv) && !sized((process.env.NODE_OPTIONS ?? '').split(/\s+/))) {
-    const res = spawnSync(process.execPath, ['--max-old-space-size=8192', ...process.execArgv, fileURLToPath(import.meta.url), ...process.argv.slice(2)], {stdio: 'inherit'});
+    const res = spawnSync(process.execPath, ['--max-old-space-size=4096', ...process.execArgv, fileURLToPath(import.meta.url), ...process.argv.slice(2)], {stdio: 'inherit'});
     process.exitCode = res.status ?? 1;
 } else {
     const {main} = await import('../src/cli.ts');

@@ -25,7 +25,8 @@ Commands:
   generate   Generate the typed Playwright page objects from test-surface.json (reads only the manifest).
   watch      Keep the program warm and rescan + regenerate when files change.
   parts      Library mode: write test-parts.json (the testids each component derives from testId).
-  install-hooks  Opt-in git hooks for this config: pre-commit lints, scans and regenerates; pre-push re-checks.
+  install-hooks  Opt-in git hooks for this config: pre-commit lints staged testids; pre-push scans, checks and
+                 regenerates (and stops when the working tree has edits the push doesn't).
   where <testid> Scan and print the exact places (file:line:column) that render a testid or template, and the
                  usage chains it comes through: the manifest names only the component (file#Component).
 
