@@ -92,7 +92,7 @@ export type ConfigFile = {
     staleReferences?: {roots: string[]; allow?: Array<{testid: string; file?: string; reason: string}>};
 
     /** Where checks are errors rather than warnings (the migrated area grows over time). */
-    checks?: {strictScopes?: string[]; strictPaths?: string[]; strictKeys?: boolean; allow?: AllowEntry[]};
+    checks?: {strictScopes?: string[]; strictPaths?: string[]; strictKeys?: boolean; allow?: AllowEntry[]; keyFields?: KeyFieldsConfig};
 
     /** Page class names for route components (`{"ChannelIdentifierRouter": "ChannelsPage"}`); default `<Component>Page`. */
     pageNames?: Record<string, string>;
@@ -127,6 +127,16 @@ export type ConfigFile = {
 
 export type AllowEntry = {rule: string; template: string; reason: string};
 
+/**
+ * Which entity fields may key a testid without review (`checks.keyFields`): `pattern` matches the field's name (by
+ * default id-like fields); `allow` lists reviewed others (`{"entity": "AppSelectOption", "field": "value", "reason": …}`).
+ */
+export type KeyFieldsConfig = {pattern?: string; allow?: KeyFieldAllow[]};
+export type KeyFieldAllow = {entity: string; field: string; reason: string};
+
+/** Id-like fields: an id, a unique name, or a foreign key (`channel_id`, `channelId`). A field like `text` can change with the language. */
+export const DEFAULT_KEY_FIELDS = '^(id|name|username|[a-z_]+_id|[a-z]+Id)$';
+
 export type LibraryRef = string | {package: string; parts: string};
 
 export type PageParamConfig = {as?: string; entity: string; field: string; module: string};
@@ -158,7 +168,7 @@ export type Config = {
     generateScopes: string[] | null;
     entries: string[];
     staleReferences: {roots: string[]; allow: Array<{testid: string; file?: string; reason: string}>} | null;
-    checks: {strictScopes: string[]; strictPaths: string[]; strictKeys: boolean; allow: AllowEntry[]};
+    checks: {strictScopes: string[]; strictPaths: string[]; strictKeys: boolean; allow: AllowEntry[]; keyFields: {pattern: RegExp; allow: KeyFieldAllow[]}};
     pageNames: Record<string, string>;
     pageParams: Record<string, PageParamConfig>;
     pageReady: Record<string, string[]>;
@@ -230,6 +240,7 @@ export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.jo
             strictPaths: raw.checks?.strictPaths ?? [],
             strictKeys: raw.checks?.strictKeys ?? false,
             allow: raw.checks?.allow ?? [],
+            keyFields: {pattern: new RegExp(raw.checks?.keyFields?.pattern ?? DEFAULT_KEY_FIELDS), allow: raw.checks?.keyFields?.allow ?? []},
         },
         pageNames: raw.pageNames ?? {},
         pageParams: raw.pageParams ?? {},

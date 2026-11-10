@@ -728,6 +728,37 @@
       }
     },
     {
+      "template": "values.key_fields.label:{key}--text",
+      "grammar": true,
+      "scope": [
+        "values",
+        "key_fields"
+      ],
+      "name": "label",
+      "role": "text",
+      "component": {
+        "name": "ChannelLabels",
+        "at": "src/key_fields.tsx#ChannelLabels"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "Channel",
+        "field": "display_name",
+        "module": "@mattermost/types/channels",
+        "type": "Pick<Channel, 'display_name'>"
+      }
+    },
+    {
       "template": "values.keyed.item:{key}",
       "grammar": true,
       "scope": [

@@ -2,9 +2,14 @@
 // See LICENSE.txt for license information.
 
 import assert from 'node:assert/strict';
+import path from 'node:path';
 import {test} from 'node:test';
 
-import {element, exact, matchSnapshot, scanFixture} from './helpers.ts';
+import {element, exact, FIXTURES, matchSnapshot, scanFixture} from './helpers.ts';
+
+import {runChecks} from '../src/checks.ts';
+import {loadConfig} from '../src/config.ts';
+import type {Diagnostic} from '../src/manifest_types.ts';
 
 const out = () => scanFixture('values');
 
@@ -171,4 +176,14 @@ test('values: a component that renders itself through another one unrolls once t
 test('values: a rest spread after an attribute overrides it only when its type can carry the prop', () => {
     const e = element(out(), 'values.spread_after.area:{key}');
     assert.deepEqual({kind: e.key?.kind, values: e.key?.values}, {kind: 'string', values: undefined});
+});
+
+test('values: only id-like entity fields key a testid without review; a reviewed one passes, a stale review is reported', () => {
+    const keyOrigin = (ds: Diagnostic[]) => ds.filter((d) => d.rule === 'key-origin' && d.template === 'values.key_fields.label:{key}--text').map((d) => d.message);
+    assert.deepEqual(keyOrigin(out().diagnostics), ['key of "values.key_fields.label:{key}--text" is Channel.display_name (c.display_name), which isn\'t an id-like field: it may not tell items apart, or may change with the language.']);
+    const config = loadConfig(path.join(FIXTURES, 'values', 'test-surface.config.json'));
+    const allow = [{entity: 'Channel', field: 'display_name', reason: 'reviewed'}, {entity: 'Team', field: 'display_name', reason: 'gone'}];
+    const ds = runChecks(out().result, {...config.checks, keyFields: {...config.checks.keyFields, allow}, configAt: 'test-surface.config.json'});
+    assert.deepEqual(keyOrigin(ds), []);
+    assert.deepEqual(ds.filter((d) => d.rule === 'allow').map((d) => d.message), ['checks.keyFields.allow entry for Team.display_name no longer matches any key.']);
 });

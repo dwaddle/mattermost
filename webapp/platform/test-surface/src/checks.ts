@@ -6,7 +6,7 @@ import ts from 'typescript';
 import {TEST_ID_ROLES, type TestIdRole} from '@mattermost/types/test_id';
 
 import {cmp, cmpLoc} from './compare.ts';
-import type {AllowEntry, PluginConfig} from './config.ts';
+import type {AllowEntry, KeyFieldAllow, PluginConfig} from './config.ts';
 import {isGrammarError, KEY_PLACEHOLDER, toWord} from './grammar.ts';
 import {MAX_TEMPLATE_VALUES} from './limits.ts';
 import type {AriaRole, Diagnostic, Element, Loc, Manifest, RuleName} from './manifest_types.ts';
@@ -27,6 +27,9 @@ export type CheckOptions = {
 
     /** Reviewed exceptions: a rule's error on one testid becomes a warning that carries the reason. */
     allow?: AllowEntry[];
+
+    /** Entity fields that may key a testid: id-like names, and reviewed others. */
+    keyFields?: {pattern: RegExp; allow: KeyFieldAllow[]};
 
     /** Plugin mode: the plugin's key and the host versions it supports. */
     plugin?: PluginConfig | null;
@@ -58,7 +61,11 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
     };
 
     checkSites(result.sites, push, strictAt);
-    checkEmissions(result.emissions, push, strictAt, opts);
+    const usedKeyFields = new Set<KeyFieldAllow>();
+    checkEmissions(result.emissions, push, strictAt, opts, usedKeyFields);
+    for (const a of (opts.keyFields?.allow ?? []).filter((x) => !usedKeyFields.has(x))) {
+        push('allow', false, opts.configAt, `checks.keyFields.allow entry for ${a.entity}.${a.field} no longer matches any key.`, 'Remove it.');
+    }
     checkDuplicates(result.emissions, push, strictAt, result.usageNodeAt);
     checkPluginSlots(result.manifest, push);
     for (const el of result.manifest.elements) {
@@ -197,7 +204,7 @@ function checkSites(sites: Site[], push: Push, strictAt: (at: Loc, t?: string) =
     }
 }
 
-function checkEmissions(emissions: Emission[], pushAt: Push, strictAt: (at: Loc, t?: string) => boolean, opts: CheckOptions) {
+function checkEmissions(emissions: Emission[], pushAt: Push, strictAt: (at: Loc, t?: string) => boolean, opts: CheckOptions, usedKeyFields?: Set<KeyFieldAllow>) {
     for (const e of emissions) {
         const at = e.site.at;
         const strict = strictAt(at, e.template);
@@ -233,6 +240,17 @@ function checkEmissions(emissions: Emission[], pushAt: Push, strictAt: (at: Loc,
         for (const g of (e.value.k === 'pat' ? e.value.parts : [])) {
             if (typeof g !== 'string' && g.gap.kind === 'string') {
                 push('key-origin', opts.strictKeys && strict, at, `key of "${e.template}" is an open string (${g.gap.expr}: ${g.gap.type}).`, 'Key from a fixed set (literal union / as const), an entity field (channel.name), or type it.');
+            }
+
+            // an entity field that isn't id-like (a status's `text`, an option's `value`) may not identify the entity,
+            // or may change with the language: only reviewed ones pass
+            if (typeof g !== 'string' && g.gap.kind === 'entity' && g.gap.entity && g.gap.field && opts.keyFields && !opts.keyFields.pattern.test(g.gap.field)) {
+                const reviewed = opts.keyFields.allow.find((a) => a.entity === g.gap.entity && a.field === g.gap.field);
+                if (reviewed) {
+                    usedKeyFields?.add(reviewed);
+                } else {
+                    push('key-origin', strict, at, `key of "${e.template}" is ${g.gap.entity}.${g.gap.field} (${g.gap.expr}), which isn't an id-like field: it may not tell items apart, or may change with the language.`, `Key by an id-like field (${opts.keyFields.pattern.source}), or add {"entity": "${g.gap.entity}", "field": "${g.gap.field}", "reason": …} to checks.keyFields.allow.`);
+                }
             }
         }
     }
