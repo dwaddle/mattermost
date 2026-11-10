@@ -7,6 +7,12 @@ import noOnlyTestsPlugin from 'eslint-plugin-no-only-tests';
 
 import eslintPlugin from '@mattermost/eslint-plugin';
 
+// Strict files where the testid rules' extended checks (every branch of a testid, such as a `testId ? new : 'legacy'`
+// fallback, and the testid helpers) found what the area-fix wave fixes: there the two rules stay warnings until then.
+const TESTID_LINT_PENDING = [
+    'src/components/user_settings/general/user_settings_general.tsx',
+];
+
 export default defineConfig([
     ...eslintPlugin.configs.react,
     globalIgnores(['./dist']),
@@ -281,6 +287,13 @@ export default defineConfig([
             formatjs: {
                 additionalFunctionNames: ['localizeMessage', 'defineMessage'],
             },
+        },
+    },
+    {
+        files: TESTID_LINT_PENDING,
+        rules: {
+            '@mattermost/testid-grammar': 1,
+            '@mattermost/testid-no-unscoped-data': 1,
         },
     },
 ]);
