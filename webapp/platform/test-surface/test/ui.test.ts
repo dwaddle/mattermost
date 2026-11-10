@@ -135,8 +135,8 @@ test('ui: a page\'s ready elements come from pageReady; a scope prefix or anothe
 
     const config = loadConfig(path.join(FIXTURES, 'ui', 'test-surface.config.json'));
     config.pageReady = {HelpPage: ['header'], NoSuchPage: ['footer']};
-    const {manifest} = scanProject(config);
-    assert.deepEqual(manifest.diagnostics.filter((d) => d.rule === 'pages').map((d) => d.message), [
+    const {manifest, diagnostics} = scanProject(config);
+    assert.deepEqual(diagnostics.filter((d) => d.rule === 'pages').map((d) => d.message), [
         'pageReady for HelpPage names `header`, which the page doesn\'t render as an element.',
         'pageReady names NoSuchPage, which isn\'t a page.',
     ]);

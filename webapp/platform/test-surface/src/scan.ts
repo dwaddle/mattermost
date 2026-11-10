@@ -92,6 +92,9 @@ export type ScanResult = {
 
     /** The REST client's URL prefix (`/api/v4`), for the summary. */
     urlVersion: string | null;
+
+    /** What the scan itself found wrong (unreadable inputs, `pageReady`, truncated navigations); checks add the rest. */
+    diagnostics: Diagnostic[];
 };
 
 /** Roles a bare-word testid (a scope root, `channel_settings_modal`) may land on: it names a container, not a control. */
@@ -1378,13 +1381,12 @@ export class Scanner {
             pluginSlots: this.pluginSlots(),
             ...(this.config.plugin ? {plugin: this.pluginInfo()} : {}),
             components,
-            diagnostics: this.diagnostics,
         };
         const usageNodeAt = (loc: Loc) => {
             const u = this.usageByLoc.get(loc);
             return u ? usageAnchor(u) : undefined;
         };
-        return {manifest, stats: this.stats(sites, emissions, elements), sites, emissions, unknownEffects, specGaps, usageNodeAt, urlVersion: this.config.client?.urlVersion ?? null};
+        return {manifest, stats: this.stats(sites, emissions, elements), sites, emissions, unknownEffects, specGaps, usageNodeAt, urlVersion: this.config.client?.urlVersion ?? null, diagnostics: this.diagnostics};
     }
 
     /** The published slot contract: `export const X = {slot: 'template with {plugin}', …} as const`, and the registry methods that fill each slot. */

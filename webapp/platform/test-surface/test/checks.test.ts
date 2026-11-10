@@ -15,7 +15,7 @@ const out = () => scanFixture('checks');
 const diags = (rule: string) => out().diagnostics.filter((d) => d.rule === rule).map((d) => `${d.severity} ${d.at} ${d.message}`);
 
 test('checks: diagnostics snapshot', () => {
-    matchSnapshot('checks', 'expected.json', out().manifest.diagnostics);
+    matchSnapshot('checks', 'expected.json', out().diagnostics);
 });
 
 test('checks: duplicates: exclusive branches are fine with the same role, not with different roles; concurrent and cross-file are errors', () => {
@@ -92,7 +92,7 @@ test('checks: a reviewed allow entry turns that error into a warning with its re
 
 const checked = (diagnostics: Diagnostic[], allow: AllowEntry[]) => {
     const r = out().result;
-    const result = {...r, sites: [], emissions: [], manifest: {...r.manifest, elements: [], pluginSlots: [], diagnostics}};
+    const result = {...r, sites: [], emissions: [], diagnostics, manifest: {...r.manifest, elements: [], pluginSlots: []}};
     return runChecks(result, {strictScopes: [], strictPaths: [], strictKeys: false, configAt: 'test-surface.config.json', allow});
 };
 

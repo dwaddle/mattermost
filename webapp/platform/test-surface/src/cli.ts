@@ -40,8 +40,7 @@ export function scanProject(config: Config): ScanOutput {
     const scanner = new Scanner(loaded, config);
     const result = scanner.scan();
     const diagnostics = runChecks(result, {...config.checks, plugin: config.plugin, configAt: relativeToRoot(config, config.configPath)});
-    const manifest = {...result.manifest, diagnostics};
-    return {result, manifest, diagnostics};
+    return {result, manifest: result.manifest, diagnostics};
 }
 
 export async function main(argv: string[]): Promise<number> {
@@ -92,7 +91,7 @@ export async function main(argv: string[]): Promise<number> {
         }
         if (cmd === 'report' && config.output.reports) {
             const tests = testFiles(config.include).map((f) => ({path: relativeToRoot(config, f), text: fs.readFileSync(f, 'utf8')}));
-            writeReports(config.output.reports, result, diagnostics, unrenderedTestIds(manifest, tests));
+            writeReports(config.output.reports, result, [...diagnostics, ...stale], unrenderedTestIds(manifest, tests));
             log(`reports in ${relativeToRoot(config, config.output.reports)}`);
         }
         if (cmd === 'check') {

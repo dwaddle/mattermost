@@ -13,5 +13,5 @@ test('callbacks: a render function passed to map by name takes its parameter fro
     for (const t of ['callbacks.fixed:{key}--button', 'callbacks.computed:{key}--button']) {
         assert.ok(templates().includes(t), `${t} in\\n${templates().join('\\n')}`);
     }
-    assert.deepEqual(out().manifest.diagnostics.filter((d) => d.rule === 'unresolved'), []);
+    assert.deepEqual(out().diagnostics.filter((d) => d.rule === 'unresolved'), []);
 });

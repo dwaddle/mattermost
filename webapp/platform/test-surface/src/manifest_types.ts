@@ -224,5 +224,4 @@ export type Manifest = {
 
     /** Components that something opens (modals, popovers), with the testid scopes they render. */
     components: ComponentScopes[];
-    diagnostics: Diagnostic[];
 };

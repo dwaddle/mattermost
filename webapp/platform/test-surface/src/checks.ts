@@ -48,9 +48,9 @@ const isTestIdRole = (role: string): role is TestIdRole => (TEST_ID_ROLES as rea
 /** Roles of content a user doesn't operate: `--text` fits them, and they need no suffix. */
 const NON_INTERACTIVE = new Set<AriaRole | null>([null, 'none', 'presentation', 'text', 'img', 'list', 'listitem', 'heading', 'grid', 'table', 'cell', 'columnheader', 'row', 'gridcell', 'status', 'alert', 'tooltip', 'separator', 'region', 'form', 'navigation', 'dialog', 'alertdialog', 'menu', 'tabpanel', 'progressbar', 'main', 'banner', 'complementary', 'contentinfo', 'log', 'feed', 'group', 'article']);
 
-/** Runs every check over a scan and appends diagnostics to the manifest. Returns them sorted. */
+/** Runs every check over a scan; returns its diagnostics and the scan's own, sorted (they aren't part of the manifest). */
 export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] {
-    const out: Diagnostic[] = [...result.manifest.diagnostics];
+    const out: Diagnostic[] = [...result.diagnostics];
     const strictAt = (at: Loc, template?: string) => opts.strictPaths.some((p) => at.startsWith(p)) || (template !== undefined && opts.strictScopes.some((s) => template.startsWith(s)));
     const push: Push = (rule, strict, at, message, fix, about = {}) => {
         const {template, key, via} = about;
