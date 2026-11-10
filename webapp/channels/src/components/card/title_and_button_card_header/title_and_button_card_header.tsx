@@ -5,8 +5,6 @@ import React from 'react';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {withRole} from '@mattermost/shared/utils/test_id';
-import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type Props = {
     title: React.ReactNode;
@@ -16,8 +14,6 @@ type Props = {
     onClick?: () => void;
     tooltipText?: string;
     destructive?: boolean;
-
-    testId?: TestId;
 };
 
 // This component can be used in the card header
@@ -28,7 +24,6 @@ const TitleAndButtonCardHeader: React.FC<Props> = (props: Props) => {
             emphasis='primary'
             destructive={props.destructive}
             onClick={props.onClick}
-            data-testid={withRole(props.testId, 'button')}
         >
             {props.buttonText}
         </Button>

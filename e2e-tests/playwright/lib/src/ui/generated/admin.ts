@@ -20,6 +20,7 @@ import type {AdminSettingKey, PluginKey} from '../../aria';
 import {Scope, drivers, settingTestKey, textTestKey} from '../../aria';
 
 import {Api} from './api';
+import {AboutBuildModal} from './about_build_modal';
 import {AddUsersToRoleModal} from './add_users_to_role_modal';
 import {AddUsersToTeamModal} from './add_users_to_team_modal';
 import {AttributeModal} from './attribute_modal';
@@ -34,6 +35,7 @@ import {PolicySelectionModal} from './policy_selection_modal';
 import {ResetPasswordModal} from './reset_password_modal';
 import {
     AlertBanner,
+    Calendar,
     Channels,
     Choice,
     ColorInput,
@@ -565,6 +567,10 @@ export class Admin extends Scope {
         return new AdminLdap(this.page, `${this.scope}.ldap`, this.root);
     }
 
+    get ldapGroups(): TopPager {
+        return new TopPager(this.page, `${this.scope}.ldap_groups`, this.root);
+    }
+
     get license(): AdminLicense {
         return new AdminLicense(this.page, `${this.scope}.license`, this.root);
     }
@@ -639,7 +645,6 @@ export class Admin extends Scope {
 
     /**
      * `admin.section:{key}` — SchemaAdminSettings (channels/src/components/admin_console/schema_admin_settings.tsx)
-     * Renders only when schema and !('settings' in schema && schema.settings && !schemaSections) and !this.isSectionHidden(section).
      */
     section(section: string): AdminSection {
         return new AdminSection(this.page, `${this.scope}.section`, this.byTestId(`${this.scope}.section:${section}`));
@@ -5142,7 +5147,7 @@ export class AdminAttributesRow extends Scope {
     }
 }
 
-/** Rendered at `admin.attributes.top_pager`, `admin.board_attributes.top_pager`, `admin.classification.levels.top_pager`, `admin.secure_connection.shared_channels.top_pager`, `admin.session_attributes.top_pager`, `admin.users.table.top_pager`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.attributes.top_pager`, `admin.board_attributes.top_pager`, `admin.classification.levels.top_pager`, `admin.ldap_groups`, `admin.secure_connection.shared_channels.top_pager`, `admin.session_attributes.top_pager`, `admin.users.table.top_pager`: one class, constructed with the scope it is mounted at. */
 export class TopPager extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -5157,7 +5162,7 @@ export class TopPager extends Scope {
         return drivers.button(this.byTestId(`${this.scope}.next--button`), {
             testId: `${this.scope}.next--button`,
             role: 'button',
-            effects: [],
+            effects: [Api.GetLdapGroups],
             unknownEffects: false,
             source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
         });
@@ -5175,7 +5180,7 @@ export class TopPager extends Scope {
         return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
             testId: `${this.scope}.previous--button`,
             role: 'button',
-            effects: [],
+            effects: [Api.GetLdapGroups],
             unknownEffects: false,
             source: 'channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons',
         });
@@ -9404,6 +9409,10 @@ export class AdminGroup extends Scope {
     get teamsAndChannels(): AdminGroupTeamsAndChannels {
         return new AdminGroupTeamsAndChannels(this.page, `${this.scope}.teams_and_channels`, this.root);
     }
+
+    get users(): AdminGroupUsers {
+        return new AdminGroupUsers(this.page, `${this.scope}.users`, this.root);
+    }
 }
 
 /** Scope `admin.group.add_menu`. */
@@ -9596,6 +9605,52 @@ export class AdminGroupTeamsAndChannelsRowRoleMenu extends Scope {
 
     async clickChangeButton(): Promise<void> {
         await this.changeButton.click();
+    }
+}
+
+/** Scope `admin.group.users`. */
+export class AdminGroupUsers extends Scope {
+    constructor(page: Page, scope = 'admin.group.users', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.group.users.next--button` — Button (platform/shared/src/components/button/button.tsx)
+     */
+    get nextButton() {
+        return drivers.button(this.byTestId(`${this.scope}.next--button`), {
+            testId: `${this.scope}.next--button`,
+            role: 'button',
+            effects: [Api.GetUsers],
+            unknownEffects: false,
+            source: 'platform/shared/src/components/button/button.tsx#Button',
+        });
+    }
+
+    async clickNextButton(): Promise<void> {
+        await this.nextButton.click();
+    }
+
+    /**
+     * `admin.group.users.previous--button` — Button (platform/shared/src/components/button/button.tsx)
+     */
+    get previousButton() {
+        return drivers.button(this.byTestId(`${this.scope}.previous--button`), {
+            testId: `${this.scope}.previous--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/shared/src/components/button/button.tsx#Button',
+        });
+    }
+
+    async clickPreviousButton(): Promise<void> {
+        await this.previousButton.click();
     }
 }
 
@@ -13328,7 +13383,6 @@ export class AdminSection extends Scope {
 
     /**
      * `admin.section:{key}` — SchemaAdminSettings (channels/src/components/admin_console/schema_admin_settings.tsx)
-     * Renders only when schema and !('settings' in schema && schema.settings && !schemaSections) and !this.isSectionHidden(section).
      */
     get element() {
         return drivers.container(this.root, {
@@ -13981,8 +14035,8 @@ export class AdminServerLogs extends Scope {
     /**
      * `admin.server_logs.custom_range` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
      */
-    get customRange(): DeleteModal {
-        return new DeleteModal(this.page, `${this.scope}.custom_range`, this.root);
+    get customRange(): AdminServerLogsCustomRange {
+        return new AdminServerLogsCustomRange(this.page, `${this.scope}.custom_range`, this.root);
     }
 
     get duration(): Input {
@@ -14100,6 +14154,106 @@ export class AdminServerLogs extends Scope {
     }
 }
 
+/** Scope `admin.server_logs.custom_range`. */
+export class AdminServerLogsCustomRange extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.custom_range', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.custom_range.cancel--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `admin.server_logs.custom_range.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `admin.server_logs.custom_range.confirm--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
+    }
+
+    get from(): AdminServerLogsCustomRangeFrom {
+        return new AdminServerLogsCustomRangeFrom(this.page, `${this.scope}.from`, this.root);
+    }
+
+    get to(): AdminServerLogsCustomRangeFrom {
+        return new AdminServerLogsCustomRangeFrom(this.page, `${this.scope}.to`, this.root);
+    }
+}
+
+/** Rendered at `admin.server_logs.custom_range.from`, `admin.server_logs.custom_range.to`: one class, constructed with the scope it is mounted at. */
+export class AdminServerLogsCustomRangeFrom extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.server_logs.custom_range.from.date--button` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    get dateButton() {
+        return drivers.button(this.byTestId(`${this.scope}.date--button`), {
+            testId: `${this.scope}.date--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    async clickDateButton(): Promise<void> {
+        await this.dateButton.click();
+    }
+
+    /**
+     * `admin.server_logs.custom_range.from.calendar` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     * Renders only when isPopperOpen.
+     */
+    get calendar(): Calendar {
+        return new Calendar(this.page, `${this.scope}.calendar`, this.root);
+    }
+}
+
 /** Scope `admin.server_logs.duration_menu`. */
 export class AdminServerLogsDurationMenu extends Scope {
     constructor(page: Page, scope = 'admin.server_logs.duration_menu', root?: Locator) {
@@ -14140,9 +14294,9 @@ export class AdminServerLogsDurationMenu extends Scope {
     }
 
     /** Clicks customMenuItemRadio and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickCustomMenuItemRadio(): Promise<DeleteModal> {
+    async clickCustomMenuItemRadio(): Promise<AdminServerLogsCustomRange> {
         await this.customMenuItemRadio.click();
-        return new DeleteModal(this.page, 'admin.server_logs.custom_range');
+        return new AdminServerLogsCustomRange(this.page, 'admin.server_logs.custom_range');
     }
 
     /**
@@ -15801,8 +15955,10 @@ export class AdminSidebarHeaderMenu extends Scope {
         });
     }
 
-    async clickAboutMenuItem(): Promise<void> {
+    /** Clicks aboutMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAboutMenuItem(): Promise<AboutBuildModal> {
         await this.aboutMenuItem.click();
+        return new AboutBuildModal(this.page, 'about_build_modal');
     }
 
     /**

@@ -10,7 +10,7 @@ import type {Channel} from '@mattermost/types/channels';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
-import {Message, PostScope} from './shared';
+import {Message, Notification, PostScope} from './shared';
 
 /** Scope `forward_post_modal`. */
 export class ForwardPostModal extends Scope {
@@ -147,8 +147,8 @@ export class ForwardPostModal extends Scope {
      * `forward_post_modal.notification` — NotificationBox (channels/src/components/notification_box/notification_box.tsx)
      * Renders only when isPrivateConversation.
      */
-    get notification(): ForwardPostModalNotification {
-        return new ForwardPostModalNotification(this.page, `${this.scope}.notification`, this.root);
+    get notification(): Notification {
+        return new Notification(this.page, `${this.scope}.notification`, this.root);
     }
 
     /**
@@ -170,26 +170,5 @@ export class ForwardPostModal extends Scope {
                 source: 'channels/src/components/forward_post_modal/forward_post_channel_select.tsx#FormattedOption',
             }),
         );
-    }
-}
-
-/** Scope `forward_post_modal.notification`. */
-export class ForwardPostModalNotification extends Scope {
-    constructor(page: Page, scope = 'forward_post_modal.notification', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /**
-     * `forward_post_modal.notification.text` — NotificationBox (channels/src/components/notification_box/notification_box.tsx)
-     * Renders only when isPrivateConversation and text.
-     */
-    get text() {
-        return drivers.container(this.byTestId(`${this.scope}.text`), {
-            testId: `${this.scope}.text`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/notification_box/notification_box.tsx#NotificationBox',
-        });
     }
 }

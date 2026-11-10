@@ -8,7 +8,8 @@ import type {Locator, Page} from '@playwright/test';
 
 import {Scope, drivers} from '../../aria';
 
-import {Input, Url} from './shared';
+import {Api} from './api';
+import {DropdownInput, Input, Url} from './shared';
 
 /** Scope `convert_gm_to_channel_modal`. */
 export class ConvertGmToChannelModal extends Scope {
@@ -16,9 +17,39 @@ export class ConvertGmToChannelModal extends Scope {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    /**
+     * `convert_gm_to_channel_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `convert_gm_to_channel_modal.confirm--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [Api.ConvertGroupMessageToChannel],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
     }
 
     /**
@@ -41,6 +72,13 @@ export class ConvertGmToChannelModal extends Scope {
 
     get name(): Input {
         return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+
+    /**
+     * `convert_gm_to_channel_modal.team` — DropdownInput (channels/src/components/dropdown_input.tsx)
+     */
+    get team(): DropdownInput {
+        return new DropdownInput(this.page, `${this.scope}.team`, this.root);
     }
 
     get url(): Url {

@@ -11,7 +11,7 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {ChannelInviteModal} from './channel_invite_modal';
-import {RoleMenu} from './shared';
+import {MenuItemActionImpl} from './shared';
 
 /** The read-only parts of a `channel_members_modal.members.user` item. */
 export type ChannelMembersModalMembersUserRow = {
@@ -271,13 +271,13 @@ export class ChannelMembersModalMembersUser extends Scope {
     }
 
     /** Clicks openRoleMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. */
-    async clickOpenRoleMenuButton(): Promise<RoleMenu> {
+    async clickOpenRoleMenuButton(): Promise<MenuItemActionImpl> {
         await this.openRoleMenuButton.click();
-        return new RoleMenu(this.page, `${this.scope}.role_menu`);
+        return new MenuItemActionImpl(this.page, `${this.scope}.role_menu`);
     }
 
-    get roleMenu(): RoleMenu {
-        return new RoleMenu(this.page, `${this.scope}.role_menu`);
+    get roleMenu(): MenuItemActionImpl {
+        return new MenuItemActionImpl(this.page, `${this.scope}.role_menu`);
     }
 
     /** Reads the item's read-only parts (`null` where one isn't rendered). */

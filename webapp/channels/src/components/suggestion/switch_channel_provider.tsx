@@ -388,7 +388,6 @@ export const SwitchChannelSuggestion = React.forwardRef<HTMLLIElement, Props>(({
         <SuggestionContainer
             ref={ref}
             id={id}
-            data-testid={channel.name}
             item={item}
             {...otherProps}
             aria-labelledby={ids.name}
@@ -398,7 +397,6 @@ export const SwitchChannelSuggestion = React.forwardRef<HTMLLIElement, Props>(({
             <div className='suggestion-list__ellipsis suggestion-list__flex'>
                 <div className='suggestion-list__switch-channel-primary'>
                     <span
-                        data-testid='suggestion-list__main'
                         className='suggestion-list__main'
                     >
                         <WithTooltip

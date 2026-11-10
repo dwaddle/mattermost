@@ -6,9 +6,10 @@
 
 import type {Locator, Page} from '@playwright/test';
 
-import {Scope} from '../../aria';
+import {Scope, drivers} from '../../aria';
 
-import {PostScope} from './shared';
+import {Api} from './api';
+import {Notification, PostScope} from './shared';
 
 /** Scope `move_thread_modal`. */
 export class MoveThreadModal extends Scope {
@@ -16,9 +17,76 @@ export class MoveThreadModal extends Scope {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    /**
+     * `move_thread_modal.cancel--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `move_thread_modal.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `move_thread_modal.confirm--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Goes to `${teamUrl}/${channel.name}`.
+     * Goes to `${teamUrl}/channels/${channel.name}`.
+     * Goes to `${teamUrl}/channels/${gmChannel.name}`.
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [
+                Api.AddChannelMember,
+                Api.CreateDirectChannel,
+                Api.GetChannel,
+                Api.GetChannelByName,
+                Api.GetChannelMember,
+                Api.GetPropertyValues,
+                Api.GetRolesByNames,
+                Api.MoveThread,
+                Api.UpdatePreferences,
+            ],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
+    }
+
+    /**
+     * `move_thread_modal.notification` — NotificationBox (channels/src/components/notification_box/notification_box.tsx)
+     */
+    get notification(): Notification {
+        return new Notification(this.page, `${this.scope}.notification`, this.root);
     }
 
     /**

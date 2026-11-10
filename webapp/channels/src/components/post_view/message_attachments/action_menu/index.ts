@@ -4,6 +4,7 @@
 import {connect} from 'react-redux';
 import type {ConnectedProps} from 'react-redux';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostAction} from '@mattermost/types/integration_actions';
 
 import {secureGetFromRecord} from 'mattermost-redux/utils/post_utils';
@@ -20,6 +21,9 @@ export type OwnProps = {
     postId: string;
     action: PostAction;
     disabled?: boolean;
+
+    /** The post's testid scope; the menu is `<testIdScope>.action_select:<action id>`. */
+    testIdScope?: TestId;
 };
 
 function mapStateToProps(state: GlobalState, ownProps: OwnProps) {

@@ -92,8 +92,11 @@ export type ConfigFile = {
      */
     staleReferences?: {roots: string[]; allow?: Array<{testid: string; file?: string; reason: string}>};
 
-    /** Where checks are errors rather than warnings (the migrated area grows over time). */
-    checks?: {strictScopes?: string[]; strictPaths?: string[]; strictKeys?: boolean; allow?: AllowEntry[]; keyFields?: KeyFieldsConfig};
+    /**
+     * Where checks are errors rather than warnings: `strictPaths` (repo-relative prefixes; `channels/src/` makes the
+     * whole app strict), minus the reviewed `strictExceptions` (files or folders that stay warnings, each with why).
+     */
+    checks?: {strictScopes?: string[]; strictPaths?: string[]; strictExceptions?: StrictException[]; strictKeys?: boolean; allow?: AllowEntry[]; keyFields?: KeyFieldsConfig};
 
     /** Page class names for route components (`{"ChannelIdentifierRouter": "ChannelsPage"}`); default `<Component>Page`. */
     pageNames?: Record<string, string>;
@@ -143,6 +146,9 @@ export type ConfigFile = {
 };
 
 export type AllowEntry = {rule: string; template: string; reason: string};
+
+/** A file or folder (repo-relative prefix) under a strict path whose diagnostics stay warnings, and why. */
+export type StrictException = {path: string; reason: string};
 
 /**
  * `effects.declared`: requests an element sends that the scan can't see, by testid template, with why
@@ -197,7 +203,7 @@ export type Config = {
     generateScopes: string[] | null;
     entries: string[];
     staleReferences: {roots: string[]; allow: Array<{testid: string; file?: string; reason: string}>} | null;
-    checks: {strictScopes: string[]; strictPaths: string[]; strictKeys: boolean; allow: AllowEntry[]; keyFields: {pattern: RegExp; allow: KeyFieldAllow[]}};
+    checks: {strictScopes: string[]; strictPaths: string[]; strictExceptions: StrictException[]; strictKeys: boolean; allow: AllowEntry[]; keyFields: {pattern: RegExp; allow: KeyFieldAllow[]}};
     pageNames: Record<string, string>;
     pageParams: Record<string, PageParamConfig>;
     pageReady: Record<string, PageReady>;
@@ -271,6 +277,7 @@ export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.jo
         checks: {
             strictScopes: raw.checks?.strictScopes ?? [],
             strictPaths: raw.checks?.strictPaths ?? [],
+            strictExceptions: raw.checks?.strictExceptions ?? [],
             strictKeys: raw.checks?.strictKeys ?? false,
             allow: raw.checks?.allow ?? [],
             keyFields: {pattern: new RegExp(raw.checks?.keyFields?.pattern ?? DEFAULT_KEY_FIELDS), allow: raw.checks?.keyFields?.allow ?? []},

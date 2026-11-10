@@ -27,9 +27,9 @@ import {
     ChannelBanner,
     ChannelInfoAttributes,
     Header,
+    MenuItemActionImpl,
     PostCreate,
     PostItem,
-    RoleMenu,
     ShowMore,
     Toast,
 } from './shared';
@@ -839,9 +839,9 @@ export class RhsChannelMembersMember extends Scope {
     }
 
     /** Clicks openRoleMenuButton and returns what it opens (menu); the page object is returned at once, with no wait. */
-    async clickOpenRoleMenuButton(): Promise<RoleMenu> {
+    async clickOpenRoleMenuButton(): Promise<MenuItemActionImpl> {
         await this.openRoleMenuButton.click();
-        return new RoleMenu(this.page, `${this.scope}.role_menu`);
+        return new MenuItemActionImpl(this.page, `${this.scope}.role_menu`);
     }
 
     /**
@@ -871,8 +871,8 @@ export class RhsChannelMembersMember extends Scope {
         });
     }
 
-    get roleMenu(): RoleMenu {
-        return new RoleMenu(this.page, `${this.scope}.role_menu`);
+    get roleMenu(): MenuItemActionImpl {
+        return new MenuItemActionImpl(this.page, `${this.scope}.role_menu`);
     }
 }
 

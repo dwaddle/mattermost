@@ -15,6 +15,8 @@ import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {MarketplaceModal} from './marketplace_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
+import {PostDeletedModal} from './post_deleted_modal';
+import {ResetStatusModal} from './reset_status_modal';
 import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `send_post_options`. */
@@ -142,6 +144,8 @@ export class SendPostOptionsMenu extends Scope {
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
+        postDeletedModal: PostDeletedModal;
+        resetStatusModal: ResetStatusModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.monday9AmMenuItem.click();
@@ -151,6 +155,8 @@ export class SendPostOptionsMenu extends Scope {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
@@ -211,6 +217,8 @@ export class SendPostOptionsMenu extends Scope {
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
+        postDeletedModal: PostDeletedModal;
+        resetStatusModal: ResetStatusModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.nextMonday9AmMenuItem.click();
@@ -220,6 +228,8 @@ export class SendPostOptionsMenu extends Scope {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
@@ -281,6 +291,8 @@ export class SendPostOptionsMenu extends Scope {
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
+        postDeletedModal: PostDeletedModal;
+        resetStatusModal: ResetStatusModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.recentlyUsedCustomTimeMenuItem.click();
@@ -290,6 +302,8 @@ export class SendPostOptionsMenu extends Scope {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
@@ -350,6 +364,8 @@ export class SendPostOptionsMenu extends Scope {
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
+        postDeletedModal: PostDeletedModal;
+        resetStatusModal: ResetStatusModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.tomorrow9AmMenuItem.click();
@@ -359,6 +375,8 @@ export class SendPostOptionsMenu extends Scope {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }

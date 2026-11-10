@@ -38,7 +38,7 @@ type Props = {
     options?: TextFormattingOptions; /* Options specific to text formatting */
     compactDisplay?: boolean; /* Set to render post body compactly */
     isRHS?: boolean; /* Flags if the post_message_view is for the RHS (Reply). */
-    testId?: TestId; /* The message renders `${testId}--text` (else the legacy `post-message-text`), and so does a deleted post's placeholder. */
+    testId?: TestId; /* The message renders `${testId}--text`, and so does a deleted post's placeholder. */
     postTestIdScope?: TestId; /* The post's testid scope: the "Edited" label and a report card render under it. */
     theme: Theme; /* Logged in user's theme */
     pluginPostTypes?: {
@@ -177,7 +177,7 @@ export default class PostMessageView extends React.PureComponent<Props, State> {
                 <div
                     id={id}
                     className='post-message__text'
-                    data-testid={this.props.testId ? `${this.props.testId}--text` : 'post-message-text'}
+                    data-testid={this.props.testId ? `${this.props.testId}--text` : undefined}
                     dir='auto'
                     onClick={this.handleFormattedTextClick}
                 >

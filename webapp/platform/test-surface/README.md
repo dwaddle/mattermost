@@ -65,10 +65,11 @@ Every diagnostic names the file, line and column, the rule, and the fix. Diagnos
 | `pages` | `pageReady` names pages and elements that exist; (generator) every page has an entry |
 | `input` | the files the tool reads (OpenAPI yaml, a library's `test-parts.json`, a host's `app-map.json`, the manifest) exist, parse and are of the format version it reads; a configured library is installed |
 | `allow` | every `checks.allow` entry still matches something |
+| `strict-exceptions` | every `checks.strictExceptions` entry still has something to report |
 | `stale-reference` | (warnings, not stored) e2e code queries only testids the app renders (`staleReferences` in the config) |
 | `collisions` | (generator) two testids in one scope don't produce the same member name |
 
-Where checks are errors rather than warnings is set in `channels/test-surface.config.json` (`checks.strictScopes`, `checks.strictPaths`): migrated areas are strict, the rest of the webapp reports warnings until it is migrated. After a rename, `reports/unrendered_test_ids.txt` lists testids unit tests query that no template produces (mocks in the same file excluded): an absence check on one can never fail. A reviewed exception goes in `checks.allow` (`{"rule", "template", "reason"}`, matched on the diagnostic's rule and template, never its wording; `*.` covers the template under any scope): that error becomes a warning carrying the reason, and an entry that stops matching is reported so the list doesn't go stale. The golden-numbers check (`golden.json`) keeps coverage from dropping, and, once it lists them, the warnings per rule from growing.
+Where checks are errors rather than warnings is set in `channels/test-surface.config.json` (`checks.strictScopes`, `checks.strictPaths`): the whole app is strict (`channels/src/`). A reviewed file or folder that can't be yet goes in `checks.strictExceptions` (`{"path", "reason"}`): what it reports, and what a testid value brings from it into a shared component (its `via`), stays a warning carrying the reason, and an entry with nothing left to report is itself reported. The webapp's lint config reads the same list. After a rename, `reports/unrendered_test_ids.txt` lists testids unit tests query that no template produces (mocks in the same file excluded): an absence check on one can never fail. A reviewed exception goes in `checks.allow` (`{"rule", "template", "reason"}`, matched on the diagnostic's rule and template, never its wording; `*.` covers the template under any scope): that error becomes a warning carrying the reason, and an entry that stops matching is reported so the list doesn't go stale. The golden-numbers check (`golden.json`) keeps coverage from dropping, and, once it lists them, the warnings per rule from growing.
 
 ## How it works
 
@@ -105,7 +106,7 @@ The webapp scan reads it for each package in `libraries` (`channels/test-surface
 
 ### The generator (`src/generate`)
 
-Reads only the manifest (and `en.json` for `Msg`); only elements from migrated areas are generated (`checks.strictPaths`, or `generateScopes`).
+Reads only the manifest (and `en.json` for `Msg`); only elements under strict paths are generated (`checks.strictPaths`, now all of `channels/src`, or `generateScopes`).
 
 | Output | What |
 |---|---|

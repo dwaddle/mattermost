@@ -5,13 +5,12 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
-import type {Agent} from '@mattermost/types/agents';
 import type {Channel} from '@mattermost/types/channels';
 
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
-import {DropdownInput, Input} from './shared';
+import {AgentScope, AgentScopeMenu, DropdownInput, Input} from './shared';
 import type {CreateRecapModalDay, CreateRecapModalType} from './sets';
 
 /** The form fields of `create_recap_modal`. */
@@ -42,9 +41,9 @@ export class CreateRecapModal extends Scope {
     }
 
     /** Clicks agentButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
-    async clickAgentButton(): Promise<CreateRecapModalAgentMenu> {
+    async clickAgentButton(): Promise<AgentScopeMenu> {
         await this.agentButton.click();
-        return new CreateRecapModalAgentMenu(this.page, `${this.scope}.agent.menu`);
+        return new AgentScopeMenu(this.page, `${this.scope}.agent.menu`);
     }
 
     /**
@@ -207,8 +206,8 @@ export class CreateRecapModal extends Scope {
         return this.type('selected');
     }
 
-    get agent(): CreateRecapModalAgent {
-        return new CreateRecapModalAgent(this.page, `${this.scope}.agent`, this.root);
+    get agent(): AgentScope {
+        return new AgentScope(this.page, `${this.scope}.agent`, this.root);
     }
 
     get channelSearch(): Input {
@@ -270,70 +269,6 @@ export class CreateRecapModal extends Scope {
                 effects: [],
                 unknownEffects: false,
                 source: 'channels/src/components/create_recap_modal/recap_configuration.tsx#RecapConfiguration',
-            }),
-        );
-    }
-}
-
-/** Scope `create_recap_modal.agent`. */
-export class CreateRecapModalAgent extends Scope {
-    constructor(page: Page, scope = 'create_recap_modal.agent', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    get menu(): CreateRecapModalAgentMenu {
-        return new CreateRecapModalAgentMenu(this.page, `${this.scope}.menu`);
-    }
-}
-
-/** Scope `create_recap_modal.agent.menu`. */
-export class CreateRecapModalAgentMenu extends Scope {
-    constructor(page: Page, scope = 'create_recap_modal.agent.menu', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `create_recap_modal.agent.menu.agent:{key}--menuitem` — AgentDropdown (channels/src/components/common/agents/agent_dropdown.tsx)
-     */
-    agent(agent: Pick<Agent, 'id'>) {
-        return drivers.menuitem(this.byTestId(`${this.scope}.agent:${agent.id}--menuitem`), {
-            testId: `${this.scope}.agent:${agent.id}--menuitem`,
-            role: 'menuitem',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown',
-        });
-    }
-
-    /** Every `create_recap_modal.agent.menu.agent:{key}--menuitem` in the scope. */
-    get agentItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.agent:`, '--menuitem');
-    }
-
-    /** The keys of every `create_recap_modal.agent.menu.agent:{key}--menuitem` in the scope, in document order. */
-    agentKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.agent:`, '--menuitem');
-    }
-
-    /** Every `create_recap_modal.agent.menu.agent:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.agentList).toHaveKeys([…])`. */
-    get agentList() {
-        return this.keyedList(`${this.scope}.agent:`, '--menuitem', (key: string) =>
-            drivers.menuitem(this.byTestId(`${this.scope}.agent:${key}--menuitem`), {
-                testId: `${this.scope}.agent:${key}--menuitem`,
-                role: 'menuitem',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown',
             }),
         );
     }

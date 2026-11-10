@@ -41,6 +41,10 @@ type Props = {
     listComponent: typeof SuggestionList | typeof ModalSuggestionList;
     listPosition?: AutocompleteListPosition;
 
+    /**
+     * The selector's testid scope: its input is `<testIdScope>.value--textbox`, its suggestion list
+     * `<testIdScope>.suggestions`; with `testKey` the root is `<testIdScope>:<testKey>`. Without it, none.
+     */
     testIdScope?: TestIdScope;
     testKey?: string;
 };
@@ -172,7 +176,7 @@ export default class AutocompleteSelector extends React.PureComponent<Props, Sta
 
         return (
             <div
-                data-testid={testIdScope ? `${testIdScope}:${testKey}` : 'autoCompleteSelector'}
+                data-testid={testIdScope ? `${testIdScope}:${testKey}` : undefined}
                 className='form-group'
             >
                 {labelContent}

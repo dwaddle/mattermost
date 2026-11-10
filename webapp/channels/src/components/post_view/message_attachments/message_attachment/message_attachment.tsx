@@ -163,6 +163,7 @@ export default class MessageAttachment extends React.PureComponent<Props, State>
                         postId={this.props.postId}
                         action={action}
                         disabled={action.disabled}
+                        testIdScope={this.props.testIdScope}
                     />,
                 );
                 break;

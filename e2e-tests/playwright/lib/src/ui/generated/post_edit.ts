@@ -8,17 +8,14 @@ import type {Locator, Page} from '@playwright/test';
 
 import {Scope} from '../../aria';
 
+import {Markdown} from './markdown';
+import {SendPostOptions} from './send_post_options';
 import {PostCreate} from './shared';
 
 /** Scope `post_edit`. */
 export class PostEdit extends Scope {
     constructor(page: Page, scope = 'post_edit', root?: Locator) {
         super(page, scope, root);
-    }
-
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
     /**
@@ -28,5 +25,15 @@ export class PostEdit extends Scope {
      */
     get editor(): PostCreate {
         return new PostCreate(this.page, `${this.scope}.editor`, this.root);
+    }
+
+    /** `markdown` rendered inside this element. */
+    get markdown(): Markdown {
+        return Markdown.within(this.locator);
+    }
+
+    /** `send_post_options` rendered inside this element. */
+    get sendPostOptions(): SendPostOptions {
+        return SendPostOptions.within(this.locator);
     }
 }

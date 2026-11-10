@@ -21,7 +21,7 @@ import {
     DeleteIntegrationModalForDeleteOAuthApp,
     DeleteIntegrationModalForDeleteOutgoingWebhook,
 } from './delete_integration_modal';
-import {AlertBanner, Choice, TokenExpiryPicker} from './shared';
+import {AlertBanner, Choice, ConfirmModal, TokenExpiryPicker} from './shared';
 import type {IntegrationsSource} from './sets';
 
 /** The form fields of `integrations.bot_form`. */
@@ -95,12 +95,32 @@ export class Integrations extends Scope {
         return new IntegrationsConfirm(this.page, `${this.scope}.confirm`, this.root);
     }
 
+    get editCommand(): IntegrationsEditCommand {
+        return new IntegrationsEditCommand(this.page, `${this.scope}.edit_command`, this.root);
+    }
+
+    get editOauthApp(): IntegrationsEditCommand {
+        return new IntegrationsEditCommand(this.page, `${this.scope}.edit_oauth_app`, this.root);
+    }
+
+    get editOauthConnection(): IntegrationsEditCommand {
+        return new IntegrationsEditCommand(this.page, `${this.scope}.edit_oauth_connection`, this.root);
+    }
+
+    get editOutgoingWebhook(): IntegrationsEditCommand {
+        return new IntegrationsEditCommand(this.page, `${this.scope}.edit_outgoing_webhook`, this.root);
+    }
+
     get incomingWebhooks(): IntegrationsIncomingWebhooks {
         return new IntegrationsIncomingWebhooks(this.page, `${this.scope}.incoming_webhooks`, this.root);
     }
 
     get oauthApps(): IntegrationsOauthApps {
         return new IntegrationsOauthApps(this.page, `${this.scope}.oauth_apps`, this.root);
+    }
+
+    get oauthConnectionForm(): IntegrationsOauthConnectionForm {
+        return new IntegrationsOauthConnectionForm(this.page, `${this.scope}.oauth_connection_form`, this.root);
     }
 
     get options(): IntegrationsOptions {
@@ -1604,6 +1624,21 @@ export class IntegrationsConfirm extends Scope {
     }
 }
 
+/** Rendered at `integrations.edit_command`, `integrations.edit_oauth_app`, `integrations.edit_oauth_connection`, `integrations.edit_outgoing_webhook`: one class, constructed with the scope it is mounted at. */
+export class IntegrationsEditCommand extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `integrations.edit_command.confirm_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmModal(): ConfirmModal {
+        return new ConfirmModal(this.page, `${this.scope}.confirm_modal`, this.root);
+    }
+}
+
 /** Scope `integrations.incoming_webhooks`. */
 export class IntegrationsIncomingWebhooks extends Scope {
     constructor(page: Page, scope = 'integrations.incoming_webhooks', root?: Locator) {
@@ -1931,6 +1966,25 @@ export class IntegrationsOauthAppsApp extends Scope {
      */
     get clientSecret(): CopyText {
         return new CopyText(this.page, `${this.scope}.client_secret`, this.root);
+    }
+}
+
+/** Scope `integrations.oauth_connection_form`. */
+export class IntegrationsOauthConnectionForm extends Scope {
+    constructor(page: Page, scope = 'integrations.oauth_connection_form', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `integrations.oauth_connection_form.save_unvalidated_modal` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get saveUnvalidatedModal(): ConfirmModal {
+        return new ConfirmModal(this.page, `${this.scope}.save_unvalidated_modal`, this.root);
     }
 }
 

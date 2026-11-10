@@ -218,7 +218,7 @@ export type PluginInfo = {
 /** Every rule a diagnostic can come from (README "Reading a scan error" says what each checks). */
 export type RuleName = 'grammar' | 'unscoped' | 'undefined' | 'role-fit' | 'aria' | 'duplicates' | 'key-origin' | 'unresolved' | 'truncated' |
     'unreachable' | 'plugin-slots' | 'plugin-scope' | 'plugin-compat' | 'pages' | 'input' | 'allow' | 'stale-reference' | 'collisions' |
-    'generate' | 'parts';
+    'generate' | 'parts' | 'strict-exceptions';
 
 export type Diagnostic = {
     rule: RuleName;

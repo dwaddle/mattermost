@@ -90,6 +90,29 @@ test('checks: a reviewed allow entry turns that error into a warning with its re
     assert.ok(ds.some((x) => x.rule === 'allow' && x.message.includes('"checks.gone"')));
 });
 
+test('checks: a strict exception keeps its path at warnings with the reason; an entry with nothing to report is reported', () => {
+    const base = {strictScopes: [], strictPaths: ['src/'], strictKeys: false, configAt: 'test-surface.config.json'};
+    const strict = runChecks(out().result, base).filter((d) => d.severity === 'error' && d.at.startsWith('src/'));
+    assert.ok(strict.length, 'the fixture has strict errors');
+    const file = strict[0].at.replace(/(:\d+)+$/, '');
+    const ds = runChecks(out().result, {...base, strictExceptions: [{path: file, reason: 'reviewed'}, {path: 'src/gone.tsx', reason: 'old'}]});
+
+    // a duplicate stays an error while its other site is strict
+    const here = ds.filter((d) => d.at.startsWith(file) && d.rule !== 'duplicates');
+    assert.ok(here.length && here.every((d) => d.severity === 'warning' && d.waived?.reason === 'reviewed'), here.map((d) => d.message).join('\n'));
+    assert.equal(ds.filter((d) => d.severity === 'error' && !d.at.startsWith(file)).length, strict.filter((d) => !d.at.startsWith(file)).length);
+    assert.ok(ds.some((d) => d.rule === 'strict-exceptions' && d.message.includes('"src/gone.tsx"')));
+    assert.ok(!ds.some((d) => d.rule === 'strict-exceptions' && d.message.includes(`"${file}"`)));
+});
+
+test('checks: a strict exception also covers what a testid value brings from it into another file', () => {
+    const base = {strictScopes: [], strictPaths: ['src/'], strictKeys: false, configAt: 'test-surface.config.json'};
+    const viaB = (ds: ReturnType<typeof runChecks>) => ds.filter((d) => !d.at.startsWith('src/b.tsx') && d.message.includes('(via src/b.tsx'));
+    assert.ok(viaB(runChecks(out().result, base)).some((d) => d.severity === 'error'), 'the fixture has errors in a.tsx from values that come through b.tsx');
+    const excepted = viaB(runChecks(out().result, {...base, strictExceptions: [{path: 'src/b.tsx', reason: 'reviewed'}]}));
+    assert.ok(excepted.length && excepted.every((d) => d.severity === 'warning' && d.waived?.reason === 'reviewed'), excepted.map((d) => d.message).join('\n'));
+});
+
 const checked = (diagnostics: Diagnostic[], allow: AllowEntry[]) => {
     const r = out().result;
     const result = {...r, sites: [], emissions: [], diagnostics, manifest: {...r.manifest, elements: [], pluginSlots: []}};

@@ -204,9 +204,6 @@ const AtMentionSuggestion = React.forwardRef<HTMLLIElement, SuggestionProps<Item
     return (
         <SuggestionContainer
             ref={ref}
-
-            // the list's testid, when it has one, replaces this one
-            data-testid={`mentionSuggestion_${itemname}`}
             {...props}
             className={classNames({'suggestion-list__item--default-agent': item.isDefaultAgent})}
             aria-labelledby={ids.atMention}
@@ -216,7 +213,6 @@ const AtMentionSuggestion = React.forwardRef<HTMLLIElement, SuggestionProps<Item
             <span className='suggestion-list__ellipsis'>
                 <span
                     id={ids.atMention}
-                    data-testid='suggestion-list__main'
                     className='suggestion-list__main'
                 >
                     {'@' + itemname}

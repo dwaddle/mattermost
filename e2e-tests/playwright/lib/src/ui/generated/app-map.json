@@ -193,6 +193,7 @@
                 "center.post_create.ai_actions",
                 "center.post_create.ai_actions.menu",
                 "center.post_create.ai_actions.rewrite",
+                "center.post_create.ai_actions.rewrite.agent.menu",
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
@@ -203,6 +204,9 @@
                 "center.post_create.scheduled_post_indicator.icon",
                 "center.post_list",
                 "center.post_list.post",
+                "center.post_list.post.action_select",
+                "center.post_list.post.action_select.suggestions",
+                "center.post_list.post.action_select.suggestions.loading",
                 "center.post_list.post.attachments",
                 "center.post_list.post.attachments.file_card",
                 "center.post_list.post.attachments.file_card.menu",
@@ -230,6 +234,9 @@
                 "center.post_list.post.attributes_unavailable",
                 "center.post_list.post.avatar",
                 "center.post_list.post.avatar.status",
+                "center.post_list.post.binding_select",
+                "center.post_list.post.binding_select.suggestions",
+                "center.post_list.post.binding_select.suggestions.loading",
                 "center.post_list.post.blocks",
                 "center.post_list.post.body",
                 "center.post_list.post.collapsible",
@@ -306,6 +313,7 @@
                 "modal.post_create.ai_actions",
                 "modal.post_create.ai_actions.menu",
                 "modal.post_create.ai_actions.rewrite",
+                "modal.post_create.ai_actions.rewrite.agent.menu",
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
@@ -317,6 +325,7 @@
                 "plugin.post_create.ai_actions",
                 "plugin.post_create.ai_actions.menu",
                 "plugin.post_create.ai_actions.rewrite",
+                "plugin.post_create.ai_actions.rewrite.agent.menu",
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
@@ -349,6 +358,7 @@
                 "post_edit.editor.ai_actions",
                 "post_edit.editor.ai_actions.menu",
                 "post_edit.editor.ai_actions.rewrite",
+                "post_edit.editor.ai_actions.rewrite.agent.menu",
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
@@ -394,6 +404,7 @@
                 "rhs.post_create.ai_actions",
                 "rhs.post_create.ai_actions.menu",
                 "rhs.post_create.ai_actions.rewrite",
+                "rhs.post_create.ai_actions.rewrite.agent.menu",
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
@@ -413,6 +424,9 @@
                 "rhs.thread.header.attributes.overflow_popover",
                 "rhs.thread.new_messages",
                 "rhs.thread.post",
+                "rhs.thread.post.action_select",
+                "rhs.thread.post.action_select.suggestions",
+                "rhs.thread.post.action_select.suggestions.loading",
                 "rhs.thread.post.attachments",
                 "rhs.thread.post.attachments.file_card",
                 "rhs.thread.post.attachments.file_card.menu",
@@ -440,6 +454,9 @@
                 "rhs.thread.post.attributes_unavailable",
                 "rhs.thread.post.avatar",
                 "rhs.thread.post.avatar.status",
+                "rhs.thread.post.binding_select",
+                "rhs.thread.post.binding_select.suggestions",
+                "rhs.thread.post.binding_select.suggestions.loading",
                 "rhs.thread.post.blocks",
                 "rhs.thread.post.body",
                 "rhs.thread.post.collapsible",
@@ -511,6 +528,9 @@
                 "search.results.file",
                 "search.results.file.menu",
                 "search.results.post",
+                "search.results.post.action_select",
+                "search.results.post.action_select.suggestions",
+                "search.results.post.action_select.suggestions.loading",
                 "search.results.post.attachments",
                 "search.results.post.attachments.file_card",
                 "search.results.post.attachments.file_card.menu",
@@ -538,6 +558,9 @@
                 "search.results.post.attributes_unavailable",
                 "search.results.post.avatar",
                 "search.results.post.avatar.status",
+                "search.results.post.binding_select",
+                "search.results.post.binding_select.suggestions",
+                "search.results.post.binding_select.suggestions.loading",
                 "search.results.post.blocks",
                 "search.results.post.body",
                 "search.results.post.collapsible",
@@ -604,6 +627,7 @@
                 "search.team_selector.menu.your_teams",
                 "send_post_options",
                 "send_post_options.menu",
+                "shared_user.icon",
                 "tour_tip",
                 "tour_tip.header",
                 "user_group_popover",
@@ -645,6 +669,7 @@
                 "center.post_create.ai_actions",
                 "center.post_create.ai_actions.menu",
                 "center.post_create.ai_actions.rewrite",
+                "center.post_create.ai_actions.rewrite.agent.menu",
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
@@ -670,6 +695,7 @@
                 "modal.post_create.ai_actions",
                 "modal.post_create.ai_actions.menu",
                 "modal.post_create.ai_actions.rewrite",
+                "modal.post_create.ai_actions.rewrite.agent.menu",
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
@@ -681,6 +707,7 @@
                 "plugin.post_create.ai_actions",
                 "plugin.post_create.ai_actions.menu",
                 "plugin.post_create.ai_actions.rewrite",
+                "plugin.post_create.ai_actions.rewrite.agent.menu",
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
@@ -691,6 +718,7 @@
                 "post_edit.editor.ai_actions",
                 "post_edit.editor.ai_actions.menu",
                 "post_edit.editor.ai_actions.rewrite",
+                "post_edit.editor.ai_actions.rewrite.agent.menu",
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
@@ -704,6 +732,7 @@
                 "rhs.post_create.ai_actions",
                 "rhs.post_create.ai_actions.menu",
                 "rhs.post_create.ai_actions.rewrite",
+                "rhs.post_create.ai_actions.rewrite.agent.menu",
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
@@ -714,6 +743,7 @@
                 "rhs.post_create.scheduled_post_indicator.icon",
                 "send_post_options",
                 "send_post_options.menu",
+                "shared_user.icon",
                 "tour_tip",
                 "tour_tip.header",
                 "user_group_popover",
@@ -1065,6 +1095,7 @@
                 "profile_popover.url_icon",
                 "quote_selection",
                 "reset_status_modal",
+                "shared_user.icon",
                 "tour_tip",
                 "tour_tip.header"
             ]
@@ -1098,6 +1129,7 @@
                 "center.post_create.ai_actions",
                 "center.post_create.ai_actions.menu",
                 "center.post_create.ai_actions.rewrite",
+                "center.post_create.ai_actions.rewrite.agent.menu",
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
@@ -1108,6 +1140,9 @@
                 "center.post_create.scheduled_post_indicator.icon",
                 "center.post_list",
                 "center.post_list.post",
+                "center.post_list.post.action_select",
+                "center.post_list.post.action_select.suggestions",
+                "center.post_list.post.action_select.suggestions.loading",
                 "center.post_list.post.attachments",
                 "center.post_list.post.attachments.file_card",
                 "center.post_list.post.attachments.file_card.menu",
@@ -1135,6 +1170,9 @@
                 "center.post_list.post.attributes_unavailable",
                 "center.post_list.post.avatar",
                 "center.post_list.post.avatar.status",
+                "center.post_list.post.binding_select",
+                "center.post_list.post.binding_select.suggestions",
+                "center.post_list.post.binding_select.suggestions.loading",
                 "center.post_list.post.blocks",
                 "center.post_list.post.body",
                 "center.post_list.post.collapsible",
@@ -1198,6 +1236,7 @@
                 "modal.post_create.ai_actions",
                 "modal.post_create.ai_actions.menu",
                 "modal.post_create.ai_actions.rewrite",
+                "modal.post_create.ai_actions.rewrite.agent.menu",
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
@@ -1209,6 +1248,7 @@
                 "plugin.post_create.ai_actions",
                 "plugin.post_create.ai_actions.menu",
                 "plugin.post_create.ai_actions.rewrite",
+                "plugin.post_create.ai_actions.rewrite.agent.menu",
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
@@ -1241,6 +1281,7 @@
                 "post_edit.editor.ai_actions",
                 "post_edit.editor.ai_actions.menu",
                 "post_edit.editor.ai_actions.rewrite",
+                "post_edit.editor.ai_actions.rewrite.agent.menu",
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
@@ -1254,6 +1295,7 @@
                 "rhs.post_create.ai_actions",
                 "rhs.post_create.ai_actions.menu",
                 "rhs.post_create.ai_actions.rewrite",
+                "rhs.post_create.ai_actions.rewrite.agent.menu",
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
@@ -1270,6 +1312,9 @@
                 "rhs.thread.date_separator",
                 "rhs.thread.new_messages",
                 "rhs.thread.post",
+                "rhs.thread.post.action_select",
+                "rhs.thread.post.action_select.suggestions",
+                "rhs.thread.post.action_select.suggestions.loading",
                 "rhs.thread.post.attachments",
                 "rhs.thread.post.attachments.file_card",
                 "rhs.thread.post.attachments.file_card.menu",
@@ -1297,6 +1342,9 @@
                 "rhs.thread.post.attributes_unavailable",
                 "rhs.thread.post.avatar",
                 "rhs.thread.post.avatar.status",
+                "rhs.thread.post.binding_select",
+                "rhs.thread.post.binding_select.suggestions",
+                "rhs.thread.post.binding_select.suggestions.loading",
                 "rhs.thread.post.blocks",
                 "rhs.thread.post.body",
                 "rhs.thread.post.collapsible",
@@ -1359,6 +1407,9 @@
                 "rhs.thread.toast",
                 "search.results",
                 "search.results.post",
+                "search.results.post.action_select",
+                "search.results.post.action_select.suggestions",
+                "search.results.post.action_select.suggestions.loading",
                 "search.results.post.attachments",
                 "search.results.post.attachments.file_card",
                 "search.results.post.attachments.file_card.menu",
@@ -1386,6 +1437,9 @@
                 "search.results.post.attributes_unavailable",
                 "search.results.post.avatar",
                 "search.results.post.avatar.status",
+                "search.results.post.binding_select",
+                "search.results.post.binding_select.suggestions",
+                "search.results.post.binding_select.suggestions.loading",
                 "search.results.post.blocks",
                 "search.results.post.body",
                 "search.results.post.collapsible",
@@ -1446,6 +1500,7 @@
                 "search.results.post.translation_unavailable",
                 "send_post_options",
                 "send_post_options.menu",
+                "shared_user.icon",
                 "thread_menu",
                 "threads.pane",
                 "threads.pane.attributes",
@@ -1476,6 +1531,7 @@
                 "center.post_create.ai_actions",
                 "center.post_create.ai_actions.menu",
                 "center.post_create.ai_actions.rewrite",
+                "center.post_create.ai_actions.rewrite.agent.menu",
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
@@ -1486,6 +1542,9 @@
                 "center.post_create.scheduled_post_indicator.icon",
                 "center.post_list",
                 "center.post_list.post",
+                "center.post_list.post.action_select",
+                "center.post_list.post.action_select.suggestions",
+                "center.post_list.post.action_select.suggestions.loading",
                 "center.post_list.post.attachments",
                 "center.post_list.post.attachments.file_card",
                 "center.post_list.post.attachments.file_card.menu",
@@ -1513,6 +1572,9 @@
                 "center.post_list.post.attributes_unavailable",
                 "center.post_list.post.avatar",
                 "center.post_list.post.avatar.status",
+                "center.post_list.post.binding_select",
+                "center.post_list.post.binding_select.suggestions",
+                "center.post_list.post.binding_select.suggestions.loading",
                 "center.post_list.post.blocks",
                 "center.post_list.post.body",
                 "center.post_list.post.collapsible",
@@ -1576,6 +1638,7 @@
                 "modal.post_create.ai_actions",
                 "modal.post_create.ai_actions.menu",
                 "modal.post_create.ai_actions.rewrite",
+                "modal.post_create.ai_actions.rewrite.agent.menu",
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
@@ -1587,6 +1650,7 @@
                 "plugin.post_create.ai_actions",
                 "plugin.post_create.ai_actions.menu",
                 "plugin.post_create.ai_actions.rewrite",
+                "plugin.post_create.ai_actions.rewrite.agent.menu",
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
@@ -1619,6 +1683,7 @@
                 "post_edit.editor.ai_actions",
                 "post_edit.editor.ai_actions.menu",
                 "post_edit.editor.ai_actions.rewrite",
+                "post_edit.editor.ai_actions.rewrite.agent.menu",
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
@@ -1632,6 +1697,7 @@
                 "rhs.post_create.ai_actions",
                 "rhs.post_create.ai_actions.menu",
                 "rhs.post_create.ai_actions.rewrite",
+                "rhs.post_create.ai_actions.rewrite.agent.menu",
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
@@ -1648,6 +1714,9 @@
                 "rhs.thread.date_separator",
                 "rhs.thread.new_messages",
                 "rhs.thread.post",
+                "rhs.thread.post.action_select",
+                "rhs.thread.post.action_select.suggestions",
+                "rhs.thread.post.action_select.suggestions.loading",
                 "rhs.thread.post.attachments",
                 "rhs.thread.post.attachments.file_card",
                 "rhs.thread.post.attachments.file_card.menu",
@@ -1675,6 +1744,9 @@
                 "rhs.thread.post.attributes_unavailable",
                 "rhs.thread.post.avatar",
                 "rhs.thread.post.avatar.status",
+                "rhs.thread.post.binding_select",
+                "rhs.thread.post.binding_select.suggestions",
+                "rhs.thread.post.binding_select.suggestions.loading",
                 "rhs.thread.post.blocks",
                 "rhs.thread.post.body",
                 "rhs.thread.post.collapsible",
@@ -1737,6 +1809,9 @@
                 "rhs.thread.toast",
                 "search.results",
                 "search.results.post",
+                "search.results.post.action_select",
+                "search.results.post.action_select.suggestions",
+                "search.results.post.action_select.suggestions.loading",
                 "search.results.post.attachments",
                 "search.results.post.attachments.file_card",
                 "search.results.post.attachments.file_card.menu",
@@ -1764,6 +1839,9 @@
                 "search.results.post.attributes_unavailable",
                 "search.results.post.avatar",
                 "search.results.post.avatar.status",
+                "search.results.post.binding_select",
+                "search.results.post.binding_select.suggestions",
+                "search.results.post.binding_select.suggestions.loading",
                 "search.results.post.blocks",
                 "search.results.post.body",
                 "search.results.post.collapsible",
@@ -1824,6 +1902,7 @@
                 "search.results.post.translation_unavailable",
                 "send_post_options",
                 "send_post_options.menu",
+                "shared_user.icon",
                 "thread_menu",
                 "threads",
                 "threads.list",
@@ -1840,6 +1919,54 @@
         }
     ],
     "scopes": [
+        {
+            "scope": "about_build_modal",
+            "class": "AboutBuildModal",
+            "elements": [
+                {
+                    "testId": "about_build_modal.version--text",
+                    "role": "text",
+                    "source": "channels/src/components/about_build_modal/about_build_modal.tsx#AboutBuildModal"
+                }
+            ]
+        },
+        {
+            "scope": "access_history_modal",
+            "class": "AccessHistoryModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "access_history_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "access_history_modal.loading",
+                    "role": null,
+                    "renderedWhen": ["userAudits.length === 0"],
+                    "source": "channels/src/components/loading_screen.tsx#LoadingScreen"
+                }
+            ]
+        },
+        {
+            "scope": "add_emoji",
+            "class": "AddEmoji",
+            "elements": [
+                {
+                    "testId": "add_emoji.save--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "'/' + team.name + '/emoji'"
+                        }
+                    ],
+                    "effects": ["CreateEmoji"],
+                    "source": "channels/src/components/emoji/add_emoji/add_emoji.tsx#AddEmoji"
+                }
+            ]
+        },
         {
             "scope": "add_groups_to_channel_modal",
             "class": "AddGroupsToChannelModal",
@@ -7729,6 +7856,23 @@
             ]
         },
         {
+            "scope": "admin.group.users",
+            "class": "AdminGroupUsers",
+            "elements": [
+                {
+                    "testId": "admin.group.users.next--button",
+                    "role": "button",
+                    "effects": ["GetUsers"],
+                    "source": "platform/shared/src/components/button/button.tsx#Button"
+                },
+                {
+                    "testId": "admin.group.users.previous--button",
+                    "role": "button",
+                    "source": "platform/shared/src/components/button/button.tsx#Button"
+                }
+            ]
+        },
+        {
             "scope": "admin.groups",
             "class": "AdminGroups",
             "elements": [
@@ -8106,6 +8250,26 @@
                     "role": "button",
                     "key": "AdminSettingPath | \"AIRecapSettings.DefaultLimits.CooldownMinutes\" | \"AIRecapSettings.DefaultLimits.MaxChannelsPerRecap\" | \"AIRecapSettings.DefaultLimits.MaxPostsPerDay\" | \"AIRecapSettings.DefaultLimits.MaxPostsPerRecap\" | \"AIRecapSettings.DefaultLimits.MaxRecapsPerDay\" | \"AIRecapSettings.DefaultLimits.MaxScheduledRecaps\" | \"AIRecapSettings.DefaultLimits.MaxTokensPerRecap\" | \"AccessControlPolicyJobs\" | \"AnnouncementBannerFeatureDiscovery\" | \"AttributeBasedAccessControlFeatureDiscovery\" | \"AutoTranslationSettings\" | \"CacheSettings.RedisEnableTLS\" | \"CacheSettings.RedisTLSCA\" | \"CacheSettings.RedisTLSClientCert\" | \"CacheSettings.RedisTLSClientKey\" | \"CacheSettings.RedisTLSSkipVerify\" | \"ClassificationMarkingsFeatureDiscovery\" | \"ComplianceExportFeatureDiscovery\" | \"CustomBrandImage\" | \"CustomTermsOfServiceFeatureDiscovery\" | \"DataRetentionFeatureDiscovery\" | \"DataSpillageFeatureDiscovery\" | \"GitLabFeatureDiscovery\" | \"GitLabSettings.Url\" | \"GroupsFeatureDiscovery\" | \"GuestAccessFeatureDiscovery\" | \"InvalidateEmailInvitesButton\" | \"LDAPFeatureDiscovery\" | \"LdapSettings.AdditionalFilters\" | \"LdapSettings.CustomProfileAttributes\" | \"LdapSettings.TestAttributes\" | \"LdapSettings.TestConnection\" | \"LdapSettings.TestFilters\" | \"LdapSettings.TestGroupAttributes\" | \"LocalizationSettings\" | \"MobileSecurityFeatureDiscovery\" | \"OpenIDFeatureDiscovery\" | \"OpenIdConvert\" | \"OpenIdSettings.CustomProfileAttributes\" | \"PermissionPolicyListPanel\" | \"PolicyListPanel\" | \"PurgeButton\" | \"ReloadConfigButton\" | \"RevokeNonCompliantTokensButton\" | \"SAMLFeatureDiscovery\" | \"SamlSettings.CustomProfileAttributes\" | \"SessionAttributesFeatureDiscovery\" | \"SystemRolesFeatureDiscovery\" | \"TestFileStoreConnection\" | \"TestSiteURL\" | \"TestSmtpConnection\" | \"UserAttributesFeatureDiscovery\" | \"auto-translation-discovery\" | \"getSamlMetadataFromIDPButton\" | \"oauthType\" | \"openidType\"",
                     "source": "channels/src/components/admin_console/ldap_wizard/ldap_expandable_setting.tsx#LDAPExpandableSetting"
+                }
+            ]
+        },
+        {
+            "scope": "admin.ldap_groups",
+            "class": "TopPager",
+            "elements": [
+                {
+                    "testId": "admin.ldap_groups.next--button",
+                    "role": "button",
+                    "effects": ["GetLdapGroups"],
+                    "renderedWhen": ["total > 0"],
+                    "source": "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+                },
+                {
+                    "testId": "admin.ldap_groups.previous--button",
+                    "role": "button",
+                    "effects": ["GetLdapGroups"],
+                    "renderedWhen": ["total > 0"],
+                    "source": "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
                 }
             ]
         },
@@ -9911,11 +10075,6 @@
                     "testId": "admin.section:{key}",
                     "role": null,
                     "key": "string",
-                    "renderedWhen": [
-                        "schema",
-                        "!('settings' in schema && schema.settings && !schemaSections)",
-                        "!this.isSectionHidden(section)"
-                    ],
                     "source": "channels/src/components/admin_console/schema_admin_settings.tsx#SchemaAdminSettings"
                 }
             ]
@@ -10277,7 +10436,7 @@
         },
         {
             "scope": "admin.server_logs.custom_range",
-            "class": "DeleteModal",
+            "class": "AdminServerLogsCustomRange",
             "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
             "elements": [
                 {
@@ -10295,6 +10454,74 @@
                     "testId": "admin.server_logs.custom_range.confirm--button",
                     "role": "button",
                     "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                }
+            ]
+        },
+        {
+            "scope": "admin.server_logs.custom_range.from",
+            "class": "AdminServerLogsCustomRangeFrom",
+            "elements": [
+                {
+                    "testId": "admin.server_logs.custom_range.from.date--button",
+                    "role": "button",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                }
+            ]
+        },
+        {
+            "scope": "admin.server_logs.custom_range.from.calendar",
+            "class": "Calendar",
+            "container": "channels/src/components/date_picker/date_picker.tsx#DatePicker",
+            "elements": [
+                {
+                    "testId": "admin.server_logs.custom_range.from.calendar.day:{key}--text",
+                    "role": "text",
+                    "key": "string",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "admin.server_logs.custom_range.from.calendar.next_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "admin.server_logs.custom_range.from.calendar.previous_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                }
+            ]
+        },
+        {
+            "scope": "admin.server_logs.custom_range.to",
+            "class": "AdminServerLogsCustomRangeFrom",
+            "elements": [
+                {
+                    "testId": "admin.server_logs.custom_range.to.date--button",
+                    "role": "button",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                }
+            ]
+        },
+        {
+            "scope": "admin.server_logs.custom_range.to.calendar",
+            "class": "Calendar",
+            "container": "channels/src/components/date_picker/date_picker.tsx#DatePicker",
+            "elements": [
+                {
+                    "testId": "admin.server_logs.custom_range.to.calendar.day:{key}--text",
+                    "role": "text",
+                    "key": "string",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "admin.server_logs.custom_range.to.calendar.next_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "admin.server_logs.custom_range.to.calendar.previous_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
                 }
             ]
         },
@@ -14436,6 +14663,18 @@
             ]
         },
         {
+            "scope": "audit_table",
+            "class": "AuditTable",
+            "elements": [
+                {
+                    "testId": "audit_table.body",
+                    "role": null,
+                    "renderedWhen": ["!(userAudits.length === 0)", "!isLoadingAudits"],
+                    "source": "channels/src/components/audit_table/audit_table.tsx#AuditTable"
+                }
+            ]
+        },
+        {
             "scope": "backstage",
             "class": "Backstage",
             "elements": []
@@ -15614,6 +15853,29 @@
             "class": "PostCreateAiActionsRewrite",
             "elements": [
                 {
+                    "testId": "center.post_create.ai_actions.rewrite.agent--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "center.post_create.ai_actions.rewrite.agent.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
                     "testId": "center.post_create.ai_actions.rewrite.prompt--textbox",
                     "role": "textbox",
                     "renderedWhen": [
@@ -15623,6 +15885,30 @@
                         "!isProcessing"
                     ],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_create.ai_actions.rewrite.agent",
+            "class": "AgentScope",
+            "elements": []
+        },
+        {
+            "scope": "center.post_create.ai_actions.rewrite.agent.menu",
+            "class": "AgentScopeMenu",
+            "elements": [
+                {
+                    "testId": "center.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<Agent, 'id'>",
+                    "renderedWhen": [
+                        "hasAIActionsMenu",
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown"
                 }
             ]
         },
@@ -16383,6 +16669,68 @@
             ]
         },
         {
+            "scope": "center.post_list.post.action_select",
+            "class": "PostItemActionSelect",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.action_select.value--textbox",
+                    "role": "textbox",
+                    "effects": ["DoPostAction"],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!(!action.id || !action.name)"],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                },
+                {
+                    "testId": "center.post_list.post.action_select:{key}",
+                    "role": null,
+                    "key": "Pick<PostAction, 'id'>",
+                    "renderedWhen": ["!(!action.id || !action.name)"],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.action_select.suggestions",
+            "class": "Suggestions",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.action_select.suggestions.group:{key}",
+                    "role": null,
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "'groups' in results"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#GroupedSuggestionsGroup"
+                },
+                {
+                    "testId": "center.post_list.post.action_select.suggestions.item:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "testId"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#SuggestionListContents"
+                },
+                {
+                    "testId": "center.post_list.post.action_select.suggestions.loading",
+                    "role": null,
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "!isItemLoaded(item)"
+                    ],
+                    "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
+                }
+            ]
+        },
+        {
             "scope": "center.post_list.post.attachments",
             "class": "Attachments",
             "container": "channels/src/components/file_attachment_list/file_attachment_list.tsx#FileAttachmentList",
@@ -17031,6 +17379,107 @@
                     "role": null,
                     "renderedWhen": ["!hideProfilePicture && hideProfileCase", "status"],
                     "source": "channels/src/components/status_icon.tsx#StatusIcon"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.binding_select",
+            "class": "PostItemActionSelect",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.binding_select.value--textbox",
+                    "role": "textbox",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "UpdatePreferences",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "this.props.embed.app_id",
+                        "this.props.embed.bindings",
+                        "!(!bindings || !bindings.length)",
+                        "binding.bindings && binding.bindings.length > 0",
+                        "this.nOptions"
+                    ],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                },
+                {
+                    "testId": "center.post_list.post.binding_select:{key}",
+                    "role": null,
+                    "key": "Pick<AppBinding, 'location'>",
+                    "renderedWhen": [
+                        "this.props.embed.app_id",
+                        "this.props.embed.bindings",
+                        "!(!bindings || !bindings.length)",
+                        "binding.bindings && binding.bindings.length > 0",
+                        "this.nOptions"
+                    ],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                }
+            ]
+        },
+        {
+            "scope": "center.post_list.post.binding_select.suggestions",
+            "class": "Suggestions",
+            "elements": [
+                {
+                    "testId": "center.post_list.post.binding_select.suggestions.group:{key}",
+                    "role": null,
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "'groups' in results"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#GroupedSuggestionsGroup"
+                },
+                {
+                    "testId": "center.post_list.post.binding_select.suggestions.item:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "testId"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#SuggestionListContents"
+                },
+                {
+                    "testId": "center.post_list.post.binding_select.suggestions.loading",
+                    "role": null,
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "!isItemLoaded(item)"
+                    ],
+                    "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
                 }
             ]
         },
@@ -17739,7 +18188,7 @@
         },
         {
             "scope": "center.post_list.post.select",
-            "class": "PostItemSelect",
+            "class": "PostItemActionSelect",
             "elements": [
                 {
                     "testId": "center.post_list.post.select.value--textbox",
@@ -18763,6 +19212,65 @@
                     "key": "Pick<ChannelBookmark, 'id'>",
                     "renderedWhen": ["hasBookmarks", "bookmark"],
                     "source": "channels/src/components/channel_bookmarks/bookmarks_bar_item.tsx#BookmarksBarItem"
+                }
+            ]
+        },
+        {
+            "scope": "channel_groups_manage_modal",
+            "class": "ChannelGroupsManageModal",
+            "container": "channels/src/components/list_modal.tsx#ListModal",
+            "elements": []
+        },
+        {
+            "scope": "channel_groups_manage_modal.group",
+            "class": "ChannelGroupsManageModalGroup",
+            "elements": [
+                {
+                    "testId": "channel_groups_manage_modal.group.name--text",
+                    "role": "text",
+                    "source": "channels/src/components/channel_groups_manage_modal/channel_groups_manage_modal.tsx#ChannelGroupsManageModal"
+                },
+                {
+                    "testId": "channel_groups_manage_modal.group.role--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "Menu",
+                            "scope": "channel_groups_manage_modal.group.role_menu"
+                        }
+                    ],
+                    "source": "channels/src/components/channel_groups_manage_modal/channel_groups_manage_modal.tsx#ChannelGroupsManageModal"
+                },
+                {
+                    "testId": "channel_groups_manage_modal.group:{key}",
+                    "role": null,
+                    "key": "Pick<Group, 'id'>",
+                    "source": "channels/src/components/channel_groups_manage_modal/channel_groups_manage_modal.tsx#ChannelGroupsManageModal"
+                }
+            ]
+        },
+        {
+            "scope": "channel_groups_manage_modal.group.role_menu",
+            "class": "RoleMenu",
+            "elements": [
+                {
+                    "testId": "channel_groups_manage_modal.group.role_menu.make_admins--button",
+                    "role": "button",
+                    "effects": ["GetChannelMemberMe", "PatchGroupSyncable"],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "channel_groups_manage_modal.group.role_menu.make_members--button",
+                    "role": "button",
+                    "effects": ["GetChannelMemberMe", "PatchGroupSyncable"],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "channel_groups_manage_modal.group.role_menu.remove--button",
+                    "role": "button",
+                    "effects": ["UnlinkGroupSyncable"],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 }
             ]
         },
@@ -19816,7 +20324,7 @@
         },
         {
             "scope": "channel_members_modal.members.user.role_menu",
-            "class": "RoleMenu",
+            "class": "MenuItemActionImpl",
             "elements": [
                 {
                     "testId": "channel_members_modal.members.user.role_menu.leave--button",
@@ -22081,9 +22589,59 @@
             ]
         },
         {
+            "scope": "cloud_preview",
+            "class": "CloudPreview",
+            "elements": [
+                {
+                    "testId": "cloud_preview.fab",
+                    "role": null,
+                    "renderedWhen": ["!(!isCloud || !isCloudPreview)", "!contentLoading", "shouldShowFAB"],
+                    "source": "channels/src/components/cloud_preview_modal/cloud_preview_modal_controller.tsx#CloudPreviewModal"
+                }
+            ]
+        },
+        {
+            "scope": "cloud_preview_modal",
+            "class": "CloudPreviewModal",
+            "elements": [
+                {
+                    "testId": "cloud_preview_modal.pagination",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(!isCloud || !isCloudPreview)",
+                        "!contentLoading",
+                        "!(activeContentData.length === 0)"
+                    ],
+                    "source": "channels/src/components/cloud_preview_modal/preview_modal_content_controller.tsx#PreviewModalController"
+                },
+                {
+                    "testId": "cloud_preview_modal.video",
+                    "role": null,
+                    "renderedWhen": [
+                        "content.videoUrl",
+                        "content.videoUrl.endsWith('.mp4') || content.videoUrl.endsWith('.webm') || content.videoUrl.endsWith('.mov')"
+                    ],
+                    "source": "channels/src/components/cloud_preview_modal/preview_modal_content.tsx#PreviewModalContent"
+                }
+            ]
+        },
+        {
             "scope": "convert_gm_to_channel_modal",
             "class": "ConvertGmToChannelModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
             "elements": [
+                {
+                    "testId": "convert_gm_to_channel_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "convert_gm_to_channel_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["ConvertGroupMessageToChannel"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
                 {
                     "testId": "convert_gm_to_channel_modal.name--textbox",
                     "role": "textbox",
@@ -22113,6 +22671,25 @@
                     "role": "text",
                     "renderedWhen": ["!(!showLoader && Object.keys(commonTeamsById).length === 0)", "!showLoader"],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "convert_gm_to_channel_modal.team",
+            "class": "DropdownInput",
+            "container": "channels/src/components/dropdown_input.tsx#DropdownInput",
+            "elements": []
+        },
+        {
+            "scope": "convert_gm_to_channel_modal.team.menu",
+            "class": "DropdownInputMenu",
+            "container": "channels/src/components/dropdown_input.tsx#makeMenu",
+            "elements": [
+                {
+                    "testId": "convert_gm_to_channel_modal.team.menu.option:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "source": "channels/src/components/dropdown_input.tsx#makeOption"
                 }
             ]
         },
@@ -22257,12 +22834,12 @@
         },
         {
             "scope": "create_recap_modal.agent",
-            "class": "CreateRecapModalAgent",
+            "class": "AgentScope",
             "elements": []
         },
         {
             "scope": "create_recap_modal.agent.menu",
-            "class": "CreateRecapModalAgentMenu",
+            "class": "AgentScopeMenu",
             "elements": [
                 {
                     "testId": "create_recap_modal.agent.menu.agent:{key}--menuitem",
@@ -22680,7 +23257,7 @@
         },
         {
             "scope": "custom_status_modal.expiry.custom",
-            "class": "CustomStatusModalExpiryCustom",
+            "class": "When",
             "elements": [
                 {
                     "testId": "custom_status_modal.expiry.custom.date--button",
@@ -22921,7 +23498,7 @@
         },
         {
             "scope": "date_time_picker_modal.when",
-            "class": "CustomStatusModalExpiryCustom",
+            "class": "When",
             "elements": [
                 {
                     "testId": "date_time_picker_modal.when.date--button",
@@ -23410,6 +23987,90 @@
                     "role": "button",
                     "renderedWhen": ["!hideConfirm"],
                     "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "dnd_custom_time_picker_modal",
+            "class": "DndCustomTimePickerModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "dnd_custom_time_picker_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "dnd_custom_time_picker_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["UpdateUserStatus"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                }
+            ]
+        },
+        {
+            "scope": "dnd_custom_time_picker_modal.when",
+            "class": "When",
+            "elements": [
+                {
+                    "testId": "dnd_custom_time_picker_modal.when.date--button",
+                    "role": "button",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "dnd_custom_time_picker_modal.when.time--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "expiryTimeMenu",
+                            "scope": "dnd_custom_time_picker_modal.when.time_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": ["!manualTimeEntry"],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                }
+            ]
+        },
+        {
+            "scope": "dnd_custom_time_picker_modal.when.calendar",
+            "class": "Calendar",
+            "container": "channels/src/components/date_picker/date_picker.tsx#DatePicker",
+            "elements": [
+                {
+                    "testId": "dnd_custom_time_picker_modal.when.calendar.day:{key}--text",
+                    "role": "text",
+                    "key": "string",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "dnd_custom_time_picker_modal.when.calendar.next_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "dnd_custom_time_picker_modal.when.calendar.previous_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                }
+            ]
+        },
+        {
+            "scope": "dnd_custom_time_picker_modal.when.time_menu",
+            "class": "TimeMenu",
+            "elements": [
+                {
+                    "testId": "dnd_custom_time_picker_modal.when.time_menu.time:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "string",
+                    "renderedWhen": ["!manualTimeEntry"],
+                    "source": "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer"
                 }
             ]
         },
@@ -24092,6 +24753,23 @@
             ]
         },
         {
+            "scope": "emoji_list",
+            "class": "EmojiList",
+            "elements": [
+                {
+                    "testId": "emoji_list.next--button",
+                    "role": "button",
+                    "effects": ["GetEmojiList", "GetUsersByIds"],
+                    "renderedWhen": [
+                        "!this.state.loading",
+                        "!(this.props.emojiIds.length === 0 || (searchEmojis && searchEmojis.length === 0))",
+                        "this.state.missingPages"
+                    ],
+                    "source": "channels/src/components/save_button.tsx#SaveButton"
+                }
+            ]
+        },
+        {
             "scope": "emoji_picker",
             "class": "EmojiPicker",
             "elements": [
@@ -24191,6 +24869,18 @@
                         "fileType === FileTypes.IMAGE || fileType === FileTypes.SVG"
                     ],
                     "source": "channels/src/components/file_preview_modal/image_preview.tsx#ImagePreview"
+                },
+                {
+                    "testId": "file_preview_modal.pdf",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(this.props.fileInfos.length < 1 || this.props.fileInfos.length - 1 < this.state.imageIndex)",
+                        "this.state.loaded[this.state.imageIndex]",
+                        "!(fileType === FileTypes.IMAGE || fileType === FileTypes.SVG)",
+                        "!(fileType === FileTypes.VIDEO || fileType === FileTypes.AUDIO)",
+                        "fileType === FileTypes.PDF"
+                    ],
+                    "source": "channels/src/components/pdf_preview.tsx#PDFPreview"
                 },
                 {
                     "testId": "file_preview_modal.zoom_bar",
@@ -25078,7 +25768,7 @@
         },
         {
             "scope": "forward_post_modal.notification",
-            "class": "ForwardPostModalNotification",
+            "class": "Notification",
             "container": "channels/src/components/notification_box/notification_box.tsx#NotificationBox",
             "elements": [
                 {
@@ -26583,6 +27273,154 @@
             ]
         },
         {
+            "scope": "integrations.edit_command",
+            "class": "IntegrationsEditCommand",
+            "elements": []
+        },
+        {
+            "scope": "integrations.edit_command.confirm_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "integrations.edit_command.confirm_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "integrations.edit_command.confirm_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "integrations.edit_command.confirm_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/${this.props.team.name}/integrations/commands`"
+                        }
+                    ],
+                    "effects": ["UpdateCommand"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "integrations.edit_oauth_app",
+            "class": "IntegrationsEditCommand",
+            "elements": []
+        },
+        {
+            "scope": "integrations.edit_oauth_app.confirm_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "integrations.edit_oauth_app.confirm_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "integrations.edit_oauth_app.confirm_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "integrations.edit_oauth_app.confirm_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/${this.props.team.name}/integrations/oauth2-apps`"
+                        }
+                    ],
+                    "effects": ["UpdateOAuthApp"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "integrations.edit_oauth_connection",
+            "class": "IntegrationsEditCommand",
+            "elements": []
+        },
+        {
+            "scope": "integrations.edit_oauth_connection.confirm_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "integrations.edit_oauth_connection.confirm_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "integrations.edit_oauth_connection.confirm_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "integrations.edit_oauth_connection.confirm_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/${props.team.name}/integrations/outgoing-oauth2-connections`"
+                        }
+                    ],
+                    "effects": ["UpdateOutgoingOAuthConnection"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
+            "scope": "integrations.edit_outgoing_webhook",
+            "class": "IntegrationsEditCommand",
+            "elements": []
+        },
+        {
+            "scope": "integrations.edit_outgoing_webhook.confirm_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "integrations.edit_outgoing_webhook.confirm_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "integrations.edit_outgoing_webhook.confirm_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "integrations.edit_outgoing_webhook.confirm_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/${this.props.team.name}/integrations/outgoing_webhooks`"
+                        }
+                    ],
+                    "effects": ["UpdateOutgoingWebhook"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                }
+            ]
+        },
+        {
             "scope": "integrations.incoming_webhooks",
             "class": "IntegrationsIncomingWebhooks",
             "elements": []
@@ -26757,6 +27595,57 @@
                         "!(this.state.clientSecret === FAKE_SECRET)"
                     ],
                     "source": "channels/src/components/copy_text.tsx#CopyText"
+                }
+            ]
+        },
+        {
+            "scope": "integrations.oauth_connection_form",
+            "class": "IntegrationsOauthConnectionForm",
+            "elements": []
+        },
+        {
+            "scope": "integrations.oauth_connection_form.save_unvalidated_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "integrations.oauth_connection_form.save_unvalidated_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "integrations.oauth_connection_form.save_unvalidated_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "integrations.oauth_connection_form.save_unvalidated_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ConfirmModal",
+                            "scope": "integrations.oauth_connection_form.save_unvalidated_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ConfirmModal",
+                            "scope": "integrations.edit_oauth_connection.confirm_modal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/${props.team.name}/integrations/outgoing-oauth2-connections`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`/${team.name}/integrations/confirm?type=outgoing-oauth2-connections&id=${data.id}`"
+                        }
+                    ],
+                    "effects": ["CreateOutgoingOAuthConnection", "UpdateOutgoingOAuthConnection"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
                 }
             ]
         },
@@ -29359,6 +30248,29 @@
             "class": "PostCreateAiActionsRewrite",
             "elements": [
                 {
+                    "testId": "modal.post_create.ai_actions.rewrite.agent--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "modal.post_create.ai_actions.rewrite.agent.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
                     "testId": "modal.post_create.ai_actions.rewrite.prompt--textbox",
                     "role": "textbox",
                     "renderedWhen": [
@@ -29368,6 +30280,30 @@
                         "!isProcessing"
                     ],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "modal.post_create.ai_actions.rewrite.agent",
+            "class": "AgentScope",
+            "elements": []
+        },
+        {
+            "scope": "modal.post_create.ai_actions.rewrite.agent.menu",
+            "class": "AgentScopeMenu",
+            "elements": [
+                {
+                    "testId": "modal.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<Agent, 'id'>",
+                    "renderedWhen": [
+                        "hasAIActionsMenu",
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown"
                 }
             ]
         },
@@ -29698,7 +30634,67 @@
         {
             "scope": "move_thread_modal",
             "class": "MoveThreadModal",
-            "elements": []
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.cancel--button",
+                    "role": "button",
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "move_thread_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "move_thread_modal.confirm--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${gmChannel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/messages/@${channel.name}`"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "CreateDirectChannel",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelMember",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "MoveThread",
+                        "UpdatePreferences"
+                    ],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                }
+            ]
+        },
+        {
+            "scope": "move_thread_modal.notification",
+            "class": "Notification",
+            "container": "channels/src/components/notification_box/notification_box.tsx#NotificationBox",
+            "elements": [
+                {
+                    "testId": "move_thread_modal.notification.text",
+                    "role": null,
+                    "renderedWhen": ["text"],
+                    "source": "channels/src/components/notification_box/notification_box.tsx#NotificationBox"
+                }
+            ]
         },
         {
             "scope": "move_thread_modal.preview",
@@ -31227,6 +32223,29 @@
             "class": "PostCreateAiActionsRewrite",
             "elements": [
                 {
+                    "testId": "plugin.post_create.ai_actions.rewrite.agent--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "plugin.post_create.ai_actions.rewrite.agent.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
                     "testId": "plugin.post_create.ai_actions.rewrite.prompt--textbox",
                     "role": "textbox",
                     "renderedWhen": [
@@ -31236,6 +32255,30 @@
                         "!isProcessing"
                     ],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "plugin.post_create.ai_actions.rewrite.agent",
+            "class": "AgentScope",
+            "elements": []
+        },
+        {
+            "scope": "plugin.post_create.ai_actions.rewrite.agent.menu",
+            "class": "AgentScopeMenu",
+            "elements": [
+                {
+                    "testId": "plugin.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<Agent, 'id'>",
+                    "renderedWhen": [
+                        "hasAIActionsMenu",
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown"
                 }
             ]
         },
@@ -32427,6 +33470,18 @@
             ]
         },
         {
+            "scope": "post_deleted_modal",
+            "class": "PostDeletedModal",
+            "container": "channels/src/components/post_deleted_modal.tsx#PostDeletedModal",
+            "elements": [
+                {
+                    "testId": "post_deleted_modal.ok--button",
+                    "role": "button",
+                    "source": "channels/src/components/post_deleted_modal.tsx#PostDeletedModal"
+                }
+            ]
+        },
+        {
             "scope": "post_dot_menu",
             "class": "PostDotMenu",
             "container": "channels/src/components/menu/menu.tsx#Menu",
@@ -32619,6 +33674,7 @@
         {
             "scope": "post_edit",
             "class": "PostEdit",
+            "container": "channels/src/components/edit_post/edit_post.tsx#EditPost",
             "elements": []
         },
         {
@@ -33115,6 +34171,29 @@
             "class": "PostCreateAiActionsRewrite",
             "elements": [
                 {
+                    "testId": "post_edit.editor.ai_actions.rewrite.agent--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "post_edit.editor.ai_actions.rewrite.agent.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
                     "testId": "post_edit.editor.ai_actions.rewrite.prompt--textbox",
                     "role": "textbox",
                     "renderedWhen": [
@@ -33124,6 +34203,30 @@
                         "!isProcessing"
                     ],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "post_edit.editor.ai_actions.rewrite.agent",
+            "class": "AgentScope",
+            "elements": []
+        },
+        {
+            "scope": "post_edit.editor.ai_actions.rewrite.agent.menu",
+            "class": "AgentScopeMenu",
+            "elements": [
+                {
+                    "testId": "post_edit.editor.ai_actions.rewrite.agent.menu.agent:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<Agent, 'id'>",
+                    "renderedWhen": [
+                        "hasAIActionsMenu",
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown"
                 }
             ]
         },
@@ -33519,6 +34622,46 @@
                     "unknownEffects": true,
                     "renderedWhen": ["!rootId && isPostPriorityEnabled"],
                     "source": "channels/src/components/post_priority/post_priority_picker.tsx#PostPriorityPicker"
+                }
+            ]
+        },
+        {
+            "scope": "preparing_workspace",
+            "class": "PreparingWorkspace",
+            "elements": []
+        },
+        {
+            "scope": "preparing_workspace.invite",
+            "class": "PreparingWorkspaceInvite",
+            "elements": [
+                {
+                    "testId": "preparing_workspace.invite.copy_link--button",
+                    "role": "button",
+                    "source": "channels/src/components/preparing_workspace/invite_members_link.tsx#InviteMembersLink"
+                },
+                {
+                    "testId": "preparing_workspace.invite.link--textbox",
+                    "role": "textbox",
+                    "renderedWhen": ["inputAndButtonStyle"],
+                    "source": "channels/src/components/preparing_workspace/invite_members_link.tsx#InviteMembersLink"
+                }
+            ]
+        },
+        {
+            "scope": "preparing_workspace.organization",
+            "class": "PreparingWorkspaceOrganization",
+            "elements": [
+                {
+                    "testId": "preparing_workspace.organization.continue--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "popover",
+                            "target": "OrganizationStatus"
+                        }
+                    ],
+                    "effects": ["CreateTeam", "GetRolesByNames", "UpdateTeam"],
+                    "source": "channels/src/components/preparing_workspace/organization.tsx#Organization"
                 }
             ]
         },
@@ -34277,11 +35420,29 @@
         {
             "scope": "rename_channel_modal",
             "class": "RenameChannelModal",
+            "container": "channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal",
             "elements": [
+                {
+                    "testId": "rename_channel_modal.cancel--button",
+                    "role": "button",
+                    "source": "channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal"
+                },
                 {
                     "testId": "rename_channel_modal.name--textbox",
                     "role": "textbox",
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "rename_channel_modal.save--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "path"
+                        }
+                    ],
+                    "effects": ["PatchChannel"],
+                    "source": "channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal"
                 }
             ]
         },
@@ -34455,6 +35616,40 @@
                     "role": "text",
                     "renderedWhen": ["user"],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "reset_status_modal",
+            "class": "ResetStatusModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "reset_status_modal.cancel--button",
+                    "role": "button",
+                    "effects": ["UpdatePreferences"],
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "reset_status_modal.close--button",
+                    "role": "button",
+                    "effects": ["UpdatePreferences"],
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "reset_status_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["UpdatePreferences", "UpdateUserStatus"],
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "reset_status_modal.dont_show_again--checkbox",
+                    "role": "checkbox",
+                    "renderedWhen": ["showCheckbox"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
                 }
             ]
         },
@@ -35310,7 +36505,7 @@
         },
         {
             "scope": "rhs.channel_members.member.role_menu",
-            "class": "RoleMenu",
+            "class": "MenuItemActionImpl",
             "elements": [
                 {
                     "testId": "rhs.channel_members.member.role_menu.leave--button",
@@ -36250,6 +37445,29 @@
             "class": "PostCreateAiActionsRewrite",
             "elements": [
                 {
+                    "testId": "rhs.post_create.ai_actions.rewrite.agent--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "rhs.post_create.ai_actions.rewrite.agent.menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": [
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
                     "testId": "rhs.post_create.ai_actions.rewrite.prompt--textbox",
                     "role": "textbox",
                     "renderedWhen": [
@@ -36259,6 +37477,30 @@
                         "!isProcessing"
                     ],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.post_create.ai_actions.rewrite.agent",
+            "class": "AgentScope",
+            "elements": []
+        },
+        {
+            "scope": "rhs.post_create.ai_actions.rewrite.agent.menu",
+            "class": "AgentScopeMenu",
+            "elements": [
+                {
+                    "testId": "rhs.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "Pick<Agent, 'id'>",
+                    "renderedWhen": [
+                        "hasAIActionsMenu",
+                        "hasItems",
+                        "hasActiveSubmenu && isMenuOpen",
+                        "isRewriteSubmenu && rewriteMenuProps",
+                        "!isProcessing && agents && agents.length > 0"
+                    ],
+                    "source": "channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown"
                 }
             ]
         },
@@ -37084,6 +38326,68 @@
             ]
         },
         {
+            "scope": "rhs.thread.post.action_select",
+            "class": "PostItemActionSelect",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.action_select.value--textbox",
+                    "role": "textbox",
+                    "effects": ["DoPostAction"],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!(!action.id || !action.name)"],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                },
+                {
+                    "testId": "rhs.thread.post.action_select:{key}",
+                    "role": null,
+                    "key": "Pick<PostAction, 'id'>",
+                    "renderedWhen": ["!(!action.id || !action.name)"],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.action_select.suggestions",
+            "class": "Suggestions",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.action_select.suggestions.group:{key}",
+                    "role": null,
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "'groups' in results"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#GroupedSuggestionsGroup"
+                },
+                {
+                    "testId": "rhs.thread.post.action_select.suggestions.item:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "testId"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#SuggestionListContents"
+                },
+                {
+                    "testId": "rhs.thread.post.action_select.suggestions.loading",
+                    "role": null,
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "!isItemLoaded(item)"
+                    ],
+                    "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
+                }
+            ]
+        },
+        {
             "scope": "rhs.thread.post.attachments",
             "class": "Attachments",
             "container": "channels/src/components/file_attachment_list/file_attachment_list.tsx#FileAttachmentList",
@@ -37732,6 +39036,107 @@
                     "role": null,
                     "renderedWhen": ["!hideProfilePicture && hideProfileCase", "status"],
                     "source": "channels/src/components/status_icon.tsx#StatusIcon"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.binding_select",
+            "class": "PostItemActionSelect",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.binding_select.value--textbox",
+                    "role": "textbox",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "UpdatePreferences",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "this.props.embed.app_id",
+                        "this.props.embed.bindings",
+                        "!(!bindings || !bindings.length)",
+                        "binding.bindings && binding.bindings.length > 0",
+                        "this.nOptions"
+                    ],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                },
+                {
+                    "testId": "rhs.thread.post.binding_select:{key}",
+                    "role": null,
+                    "key": "Pick<AppBinding, 'location'>",
+                    "renderedWhen": [
+                        "this.props.embed.app_id",
+                        "this.props.embed.bindings",
+                        "!(!bindings || !bindings.length)",
+                        "binding.bindings && binding.bindings.length > 0",
+                        "this.nOptions"
+                    ],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.thread.post.binding_select.suggestions",
+            "class": "Suggestions",
+            "elements": [
+                {
+                    "testId": "rhs.thread.post.binding_select.suggestions.group:{key}",
+                    "role": null,
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "'groups' in results"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#GroupedSuggestionsGroup"
+                },
+                {
+                    "testId": "rhs.thread.post.binding_select.suggestions.item:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "testId"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#SuggestionListContents"
+                },
+                {
+                    "testId": "rhs.thread.post.binding_select.suggestions.loading",
+                    "role": null,
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "!isItemLoaded(item)"
+                    ],
+                    "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
                 }
             ]
         },
@@ -38440,7 +39845,7 @@
         },
         {
             "scope": "rhs.thread.post.select",
-            "class": "PostItemSelect",
+            "class": "PostItemActionSelect",
             "elements": [
                 {
                     "testId": "rhs.thread.post.select.value--textbox",
@@ -39699,6 +41104,68 @@
             ]
         },
         {
+            "scope": "search.results.post.action_select",
+            "class": "PostItemActionSelect",
+            "elements": [
+                {
+                    "testId": "search.results.post.action_select.value--textbox",
+                    "role": "textbox",
+                    "effects": ["DoPostAction"],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!(!action.id || !action.name)"],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                },
+                {
+                    "testId": "search.results.post.action_select:{key}",
+                    "role": null,
+                    "key": "Pick<PostAction, 'id'>",
+                    "renderedWhen": ["!(!action.id || !action.name)"],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.action_select.suggestions",
+            "class": "Suggestions",
+            "elements": [
+                {
+                    "testId": "search.results.post.action_select.suggestions.group:{key}",
+                    "role": null,
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "'groups' in results"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#GroupedSuggestionsGroup"
+                },
+                {
+                    "testId": "search.results.post.action_select.suggestions.item:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "testId"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#SuggestionListContents"
+                },
+                {
+                    "testId": "search.results.post.action_select.suggestions.loading",
+                    "role": null,
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "!isItemLoaded(item)"
+                    ],
+                    "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
+                }
+            ]
+        },
+        {
             "scope": "search.results.post.attachments",
             "class": "Attachments",
             "container": "channels/src/components/file_attachment_list/file_attachment_list.tsx#FileAttachmentList",
@@ -40347,6 +41814,107 @@
                     "role": null,
                     "renderedWhen": ["!hideProfilePicture && hideProfileCase", "status"],
                     "source": "channels/src/components/status_icon.tsx#StatusIcon"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.binding_select",
+            "class": "PostItemActionSelect",
+            "elements": [
+                {
+                    "testId": "search.results.post.binding_select.value--textbox",
+                    "role": "textbox",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetEmojisByNames",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "UpdatePreferences",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "this.props.embed.app_id",
+                        "this.props.embed.bindings",
+                        "!(!bindings || !bindings.length)",
+                        "binding.bindings && binding.bindings.length > 0",
+                        "this.nOptions"
+                    ],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                },
+                {
+                    "testId": "search.results.post.binding_select:{key}",
+                    "role": null,
+                    "key": "Pick<AppBinding, 'location'>",
+                    "renderedWhen": [
+                        "this.props.embed.app_id",
+                        "this.props.embed.bindings",
+                        "!(!bindings || !bindings.length)",
+                        "binding.bindings && binding.bindings.length > 0",
+                        "this.nOptions"
+                    ],
+                    "source": "channels/src/components/autocomplete_selector.tsx#AutocompleteSelector"
+                }
+            ]
+        },
+        {
+            "scope": "search.results.post.binding_select.suggestions",
+            "class": "Suggestions",
+            "elements": [
+                {
+                    "testId": "search.results.post.binding_select.suggestions.group:{key}",
+                    "role": null,
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "'groups' in results"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#GroupedSuggestionsGroup"
+                },
+                {
+                    "testId": "search.results.post.binding_select.suggestions.item:{key}--option",
+                    "role": "option",
+                    "key": "string",
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "testId"
+                    ],
+                    "source": "channels/src/components/suggestion/suggestion_list_contents.tsx#SuggestionListContents"
+                },
+                {
+                    "testId": "search.results.post.binding_select.suggestions.loading",
+                    "role": null,
+                    "renderedWhen": [
+                        "showList && this.state.presentationType === 'text' && SuggestionListComponent",
+                        "!(!this.props.open || this.props.cleared)",
+                        "hasResults(this.props.results)",
+                        "!isItemLoaded(item)"
+                    ],
+                    "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
                 }
             ]
         },
@@ -41055,7 +42623,7 @@
         },
         {
             "scope": "search.results.post.select",
-            "class": "PostItemSelect",
+            "class": "PostItemActionSelect",
             "elements": [
                 {
                     "testId": "search.results.post.select.value--textbox",
@@ -43230,6 +44798,24 @@
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 },
                 {
+                    "testId": "settings.section.graph--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "admin"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "renderedWhen": ["active", "!isReadOnly"],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
                     "testId": "settings.section.keyword:{key}--checkbox",
                     "role": "checkbox",
                     "key": "\"channel_wide\" | \"custom\" | \"first_name\" | \"username\"",
@@ -43841,6 +45427,17 @@
             ]
         },
         {
+            "scope": "shared_user",
+            "class": "SharedUser",
+            "elements": [
+                {
+                    "testId": "shared_user.icon",
+                    "role": null,
+                    "source": "channels/src/components/shared_user_indicator.tsx#SharedUserIndicator"
+                }
+            ]
+        },
+        {
             "scope": "should_verify_email",
             "class": "ShouldVerifyEmail",
             "elements": [
@@ -44173,6 +45770,111 @@
                     "role": "text",
                     "renderedWhen": ["!enableSignUpWithEmail && !enableExternalSignup"],
                     "source": "channels/src/components/header_footer_route/content_layouts/column.tsx#Column"
+                }
+            ]
+        },
+        {
+            "scope": "submenu_modal",
+            "class": "SubmenuModal",
+            "elements": [
+                {
+                    "testId": "submenu_modal.body",
+                    "role": null,
+                    "source": "channels/src/components/widgets/menu/menu_modals/submenu_modal/submenu_modal.tsx#SubMenuModal"
+                }
+            ]
+        },
+        {
+            "scope": "team_groups_manage_modal",
+            "class": "TeamGroupsManageModal",
+            "container": "channels/src/components/list_modal.tsx#ListModal",
+            "elements": []
+        },
+        {
+            "scope": "team_groups_manage_modal.group",
+            "class": "TeamGroupsManageModalGroup",
+            "elements": [
+                {
+                    "testId": "team_groups_manage_modal.group.name--text",
+                    "role": "text",
+                    "source": "channels/src/components/team_groups_manage_modal/team_groups_manage_modal.tsx#TeamGroupsManageModal"
+                },
+                {
+                    "testId": "team_groups_manage_modal.group.role--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "Menu",
+                            "scope": "team_groups_manage_modal.group.role_menu"
+                        }
+                    ],
+                    "source": "channels/src/components/team_groups_manage_modal/team_groups_manage_modal.tsx#TeamGroupsManageModal"
+                },
+                {
+                    "testId": "team_groups_manage_modal.group:{key}",
+                    "role": null,
+                    "key": "Pick<Group, 'id'>",
+                    "source": "channels/src/components/team_groups_manage_modal/team_groups_manage_modal.tsx#TeamGroupsManageModal"
+                }
+            ]
+        },
+        {
+            "scope": "team_groups_manage_modal.group.role_menu",
+            "class": "RoleMenu",
+            "elements": [
+                {
+                    "testId": "team_groups_manage_modal.group.role_menu.make_admins--button",
+                    "role": "button",
+                    "effects": ["GetRolesByNames", "GetTeamMembersForUserMe", "PatchGroupSyncable"],
+                    "unknownEffects": true,
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "team_groups_manage_modal.group.role_menu.make_members--button",
+                    "role": "button",
+                    "effects": ["GetRolesByNames", "GetTeamMembersForUserMe", "PatchGroupSyncable"],
+                    "unknownEffects": true,
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                },
+                {
+                    "testId": "team_groups_manage_modal.group.role_menu.remove--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "ListModal",
+                            "scope": "team_groups_manage_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+                }
+            ]
+        },
+        {
+            "scope": "team_groups_manage_modal.remove_group_modal",
+            "class": "ConfirmModal",
+            "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
+            "elements": [
+                {
+                    "testId": "team_groups_manage_modal.remove_group_modal.cancel--button",
+                    "role": "button",
+                    "renderedWhen": ["!hideCancel"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
+                },
+                {
+                    "testId": "team_groups_manage_modal.remove_group_modal.close--button",
+                    "role": "button",
+                    "renderedWhen": ["showHeader", "showCloseButton"],
+                    "source": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+                },
+                {
+                    "testId": "team_groups_manage_modal.remove_group_modal.confirm--button",
+                    "role": "button",
+                    "effects": ["UnlinkGroupSyncable"],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!hideConfirm"],
+                    "source": "channels/src/components/confirm_modal.tsx#ConfirmModal"
                 }
             ]
         },
@@ -46139,6 +47841,17 @@
                         "!(currentProduct && !currentProduct.showTeamSidebar && !productRailShown)"
                     ],
                     "source": "channels/src/components/team_sidebar/components/team_button.tsx#TeamButton"
+                }
+            ]
+        },
+        {
+            "scope": "terms_of_service",
+            "class": "TermsOfService",
+            "elements": [
+                {
+                    "testId": "terms_of_service.terms",
+                    "role": null,
+                    "source": "channels/src/components/terms_of_service/terms_of_service.tsx#TermsOfService"
                 }
             ]
         },

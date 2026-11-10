@@ -9,7 +9,7 @@ import type {Locator, Page} from '@playwright/test';
 import {Scope, drivers, textTestKey} from '../../aria';
 
 import {Api} from './api';
-import {CustomStatusModalExpiryCustom} from './shared';
+import {When} from './shared';
 import type {CustomStatusModalDuration, CustomStatusModalSuggestion} from './sets';
 
 /** Scope `custom_status_modal`. */
@@ -248,8 +248,8 @@ export class CustomStatusModalExpiry extends Scope {
         await this.openButton.click();
     }
 
-    get custom(): CustomStatusModalExpiryCustom {
-        return new CustomStatusModalExpiryCustom(this.page, `${this.scope}.custom`, this.root);
+    get custom(): When {
+        return new When(this.page, `${this.scope}.custom`, this.root);
     }
 
     /**

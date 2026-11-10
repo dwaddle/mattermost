@@ -12,6 +12,7 @@ import {Scope, drivers} from '../../aria';
 import {Api} from './api';
 import {AddGroupsToChannelModal} from './add_groups_to_channel_modal';
 import {BookmarkModalForCreateChannelBookmark} from './bookmark_modal';
+import {ChannelGroupsManageModal} from './channel_groups_manage_modal';
 import {ChannelNotificationsModal} from './channel_notifications_modal';
 import {ChannelSettingsModal} from './channel_settings_modal';
 import {ConvertGmToChannelModal} from './convert_gm_to_channel_modal';
@@ -605,8 +606,10 @@ export class ChannelHeaderMenu extends Scope {
         });
     }
 
-    async clickManageGroupsMenuItem(): Promise<void> {
+    /** Clicks manageGroupsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickManageGroupsMenuItem(): Promise<ChannelGroupsManageModal> {
         await this.manageGroupsMenuItem.click();
+        return new ChannelGroupsManageModal(this.page, 'channel_groups_manage_modal');
     }
 
     /**

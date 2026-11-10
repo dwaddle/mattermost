@@ -3,6 +3,7 @@
 
 import React, {memo} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AppBinding} from '@mattermost/types/apps';
 import type {Post} from '@mattermost/types/posts';
 
@@ -27,12 +28,15 @@ type Props = {
      */
     options?: Partial<TextFormattingOptions>;
 
+    /** The post's testid scope; a select binding is `<testIdScope>.binding_select:<location>`. */
+    testIdScope?: TestId;
 };
 
 const EmbeddedBindings = ({
     embeds,
     post,
     options,
+    testIdScope,
 }: Props) => (
     <div
         id={`messageAttachmentList_${post.id}`}
@@ -44,6 +48,7 @@ const EmbeddedBindings = ({
                 post={post}
                 key={'att_' + i}
                 options={options}
+                testIdScope={testIdScope}
             />
         ))}
     </div>

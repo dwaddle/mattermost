@@ -197,6 +197,7 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                         <EmbeddedBindings
                             embeds={appEmbeds}
                             post={this.props.post}
+                            testIdScope={this.props.testIdScope}
                         />
                     </>
                 );

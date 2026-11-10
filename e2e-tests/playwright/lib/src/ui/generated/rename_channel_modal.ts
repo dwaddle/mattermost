@@ -8,6 +8,7 @@ import type {Locator, Page} from '@playwright/test';
 
 import {Scope, drivers} from '../../aria';
 
+import {Api} from './api';
 import {Input, Url} from './shared';
 
 /** Scope `rename_channel_modal`. */
@@ -16,9 +17,21 @@ export class RenameChannelModal extends Scope {
         super(page, scope, root);
     }
 
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    /**
+     * `rename_channel_modal.cancel--button` — RenameChannelModal (channels/src/components/rename_channel_modal/rename_channel_modal.tsx)
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
     }
 
     /**
@@ -36,6 +49,24 @@ export class RenameChannelModal extends Scope {
 
     async fillNameTextbox(value: string): Promise<void> {
         await this.nameTextbox.fill(value);
+    }
+
+    /**
+     * `rename_channel_modal.save--button` — RenameChannelModal (channels/src/components/rename_channel_modal/rename_channel_modal.tsx)
+     * Goes to path (ChannelsPage).
+     */
+    get saveButton() {
+        return drivers.button(this.byTestId(`${this.scope}.save--button`), {
+            testId: `${this.scope}.save--button`,
+            role: 'button',
+            effects: [Api.PatchChannel],
+            unknownEffects: false,
+            source: 'channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal',
+        });
+    }
+
+    async clickSaveButton(): Promise<void> {
+        await this.saveButton.click();
     }
 
     get name(): Input {

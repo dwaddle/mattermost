@@ -20,6 +20,7 @@ type Props = {
     children: React.ReactNode;
     'data-testid'?: string;
 
+    // The panel's parts: `.description--text`, `.body` (without it, none). Unkeyed when the panel is keyed.
     testIdScope?: TestIdScope;
 };
 
@@ -47,7 +48,7 @@ const AdminSectionPanel: React.FC<Props> = ({
                 className='AdminSectionPanel'
                 data-testid={dataTestId}
             >
-                <div data-testid={testIdScope ? `${testIdScope}.body` : 'admin-section-panel-body'}>
+                <div data-testid={testIdScope ? `${testIdScope}.body` : undefined}>
                     {children}
                 </div>
             </div>
@@ -71,7 +72,7 @@ const AdminSectionPanel: React.FC<Props> = ({
             titleTestId={descriptionTestId && !titleDescriptor ? descriptionTestId : undefined}
             subtitleTestId={descriptionTestId && titleDescriptor ? descriptionTestId : undefined}
         >
-            <div data-testid={testIdScope ? `${testIdScope}.body` : 'admin-section-panel-body'}>
+            <div data-testid={testIdScope ? `${testIdScope}.body` : undefined}>
                 {children}
             </div>
         </AdminPanel>

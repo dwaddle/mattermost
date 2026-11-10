@@ -27,7 +27,7 @@ export default class SearchBox {
         this.filesButton = container.getByRole('button', {name: 'Files'});
         this.searchInput = container.getByLabel('Search messages');
         this.searchBoxClose = container.getByTestId('search_box.close--button');
-        this.selectedSuggestion = container.getByRole('option', {selected: true}).getByTestId('suggestion-list__main');
+        this.selectedSuggestion = container.getByRole('option', {selected: true}).locator('.suggestion-list__main');
         this.searchHints = container.locator('#searchHints');
         this.clearButton = container.getByTestId('search_box.clear--button');
         this.teamSelector = new SearchTeamSelector(container.getByTestId('search_box.team_selector'));
@@ -57,7 +57,7 @@ export default class SearchBox {
     }
 
     getSelectedSuggestion() {
-        return this.searchHints.getByTestId('suggestion-selected');
+        return this.searchHints.getByRole('option', {selected: true});
     }
 
     async selectSuggestionMatching(text: string) {

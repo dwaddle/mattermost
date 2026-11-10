@@ -24,6 +24,7 @@ import {NewChannelModal} from './new_channel_modal';
 import {ChannelsPage, CreateTeamPage, DraftsPage, SelectTeamPage} from './pages';
 import {QuickSwitchModal} from './quick_switch_modal';
 import {MoveToMenu} from './shared';
+import {TeamGroupsManageModal} from './team_groups_manage_modal';
 import {TeamMembersModal} from './team_members_modal';
 import {TeamSettingsModal} from './team_settings_modal';
 
@@ -1101,8 +1102,10 @@ export class LhsTeamMenu extends Scope {
         });
     }
 
-    async clickManageGroupsMenuItem(): Promise<void> {
+    /** Clicks manageGroupsMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickManageGroupsMenuItem(): Promise<TeamGroupsManageModal> {
         await this.manageGroupsMenuItem.click();
+        return new TeamGroupsManageModal(this.page, 'team_groups_manage_modal');
     }
 
     /**

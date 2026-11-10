@@ -5,9 +5,12 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator} from '@playwright/test';
+import type {Agent} from '@mattermost/types/agents';
+import type {AppBinding} from '@mattermost/types/apps';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {FileInfo} from '@mattermost/types/files';
 import type {Group} from '@mattermost/types/groups';
+import type {PostAction} from '@mattermost/types/integration_actions';
 import type {MmStaticSelectBlock} from '@mattermost/types/mm_blocks';
 import type {PropertyField} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
@@ -33,8 +36,10 @@ import {Markdown} from './markdown';
 import {MarketplaceModal} from './marketplace_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
 import {ScheduledPostsPage} from './pages';
+import {PostDeletedModal} from './post_deleted_modal';
 import {PostDotMenu} from './post_dot_menu';
 import {RemoveSharingModal} from './remove_sharing_modal';
+import {ResetStatusModal} from './reset_status_modal';
 import {RhsChannelInfo} from './rhs';
 import {SendPostOptions} from './send_post_options';
 import {UserSettingsModal} from './user_settings_modal';
@@ -518,7 +523,7 @@ export class UsersResults extends Scope {
     }
 }
 
-/** Rendered at `admin.accept_invite_modal.destination_team`, `admin.classification.global_banner_level`, `admin.classification.preset`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `create_recap_modal.schedule.time_of_day`, `create_recap_modal.schedule.time_period`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.accept_invite_modal.destination_team`, `admin.classification.global_banner_level`, `admin.classification.preset`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `convert_gm_to_channel_modal.team`, `create_recap_modal.schedule.time_of_day`, `create_recap_modal.schedule.time_period`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
 export class DropdownInput extends Scope {
     /**
      * `admin.accept_invite_modal.destination_team.menu` — makeMenu (channels/src/components/dropdown_input.tsx)
@@ -529,7 +534,7 @@ export class DropdownInput extends Scope {
     }
 }
 
-/** Rendered at `admin.accept_invite_modal.destination_team.menu`, `admin.classification.global_banner_level.menu`, `admin.classification.preset.menu`, `admin.secure_connection.destination_team.menu`, `admin.users.filters.role.menu`, `admin.users.filters.status.menu`, `channel_settings_modal.configuration.classification_level.menu`, `create_recap_modal.schedule.time_of_day.menu`, `create_recap_modal.schedule.time_period.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.accept_invite_modal.destination_team.menu`, `admin.classification.global_banner_level.menu`, `admin.classification.preset.menu`, `admin.secure_connection.destination_team.menu`, `admin.users.filters.role.menu`, `admin.users.filters.status.menu`, `channel_settings_modal.configuration.classification_level.menu`, `convert_gm_to_channel_modal.team.menu`, `create_recap_modal.schedule.time_of_day.menu`, `create_recap_modal.schedule.time_period.menu`, `new_channel_modal.classification_level.menu`: one class, constructed with the scope it is mounted at. */
 export class DropdownInputMenu extends Scope {
     /**
      * `admin.accept_invite_modal.destination_team.menu.option:{key}--option` — makeOption (channels/src/components/dropdown_input.tsx)
@@ -675,7 +680,7 @@ export class Policies extends Scope {
     }
 }
 
-/** Rendered at `admin.access_control.policies.delete_modal`, `admin.access_control.policy.delete_modal`, `admin.attribute.graph.delete_modal`, `admin.attribute.graph.grant_modal`, `admin.attribute.remove_applies_to_modal`, `admin.attributes.delete_modal`, `admin.board_attributes.delete_modal`, `admin.classification.remove_channel_modal`, `admin.server_logs.custom_range`, `admin.session_attributes.disable_modal`, `policy_selection_modal.policies.delete_modal`, `team_settings_modal.access_policies.policies.delete_modal`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.access_control.policies.delete_modal`, `admin.access_control.policy.delete_modal`, `admin.attribute.graph.delete_modal`, `admin.attribute.graph.grant_modal`, `admin.attribute.remove_applies_to_modal`, `admin.attributes.delete_modal`, `admin.board_attributes.delete_modal`, `admin.classification.remove_channel_modal`, `admin.session_attributes.disable_modal`, `policy_selection_modal.policies.delete_modal`, `team_settings_modal.access_policies.policies.delete_modal`: one class, constructed with the scope it is mounted at. */
 export class DeleteModal extends Scope {
     /**
      * `admin.access_control.policies.delete_modal.cancel--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
@@ -1913,7 +1918,7 @@ export class AlertBanner extends Scope {
     }
 }
 
-/** Rendered at `admin.channel.archive_modal`, `admin.classification.switch_preset_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.remove_policy_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `marketplace_modal.update_confirm_modal`, `recaps.recap.delete_modal`, `recaps.scheduled.delete_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`, `team_settings_modal.membership.confirm_modal`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `admin.channel.archive_modal`, `admin.classification.switch_preset_modal`, `admin.convert_and_remove_modal`, `admin.convert_modal`, `admin.group.remove_team_or_channel_modal`, `admin.guest_access.disable_guests_modal`, `admin.guest_access.disable_magic_link_modal`, `admin.permission_schemes.delete_modal`, `admin.permissions.reset_defaults_modal`, `admin.plugin.remove_modal`, `admin.plugins.remove_modal`, `admin.remove_members_modal`, `admin.revoke_non_compliant_tokens_modal`, `admin.team.archive_modal`, `admin.team.remove_policy_modal`, `admin.team.save_confirm_modal`, `admin.user.deactivate_modal`, `admin.user.save_changes_modal`, `admin.users.revoke_all_sessions_modal`, `integrations.edit_command.confirm_modal`, `integrations.edit_oauth_app.confirm_modal`, `integrations.edit_oauth_connection.confirm_modal`, `integrations.edit_outgoing_webhook.confirm_modal`, `integrations.oauth_connection_form.save_unvalidated_modal`, `marketplace_modal.update_confirm_modal`, `recaps.recap.delete_modal`, `recaps.scheduled.delete_modal`, `settings.access_tokens.confirm_modal`, `settings.discard_changes`, `team_groups_manage_modal.remove_group_modal`, `team_members_modal.demote_modal`, `team_selector_modal.confirm_modal`, `team_settings_modal.access.mode_flip_modal`, `team_settings_modal.membership.confirm_modal`: one class, constructed with the scope it is mounted at. */
 export class ConfirmModal extends Scope {
     /**
      * `admin.channel.archive_modal.cancel--button` — ConfirmModal (channels/src/components/confirm_modal.tsx)
@@ -1967,6 +1972,7 @@ export class ConfirmModal extends Scope {
                 Api.AssignAccessControlPolicyToChannels,
                 Api.CreateAccessControlPolicy,
                 Api.CreateJob,
+                Api.CreateOutgoingOAuthConnection,
                 Api.DeleteAccessControlPolicy,
                 Api.DeleteChannel,
                 Api.DeleteRecap,
@@ -2004,6 +2010,10 @@ export class ConfirmModal extends Scope {
                 Api.UnlinkGroupSyncable,
                 Api.UpdateChannelMemberSchemeRoles,
                 Api.UpdateChannelPrivacy,
+                Api.UpdateCommand,
+                Api.UpdateOAuthApp,
+                Api.UpdateOutgoingOAuthConnection,
+                Api.UpdateOutgoingWebhook,
                 Api.UpdateTeamMemberSchemeRoles,
                 Api.UpdateUserActive,
                 Api.UpdateUserAuth,
@@ -2210,6 +2220,71 @@ export class DataGridRow extends Scope {
                 effects: [],
                 unknownEffects: false,
                 source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
+        );
+    }
+}
+
+/** Rendered at `admin.server_logs.custom_range.from.calendar`, `admin.server_logs.custom_range.to.calendar`, `apps_form.field.calendar`, `custom_status_modal.expiry.custom.calendar`, `date_time_picker_modal.when.calendar`, `dnd_custom_time_picker_modal.when.calendar`: one class, constructed with the scope it is mounted at. */
+export class Calendar extends Scope {
+    /**
+     * `admin.server_logs.custom_range.from.calendar.day:{key}--text` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    day(day: string) {
+        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
+            testId: `${this.scope}.day:${day}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `admin.server_logs.custom_range.from.calendar.day:{key}--text` in the scope. */
+    get dayItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
+    }
+
+    /** The keys of every `admin.server_logs.custom_range.from.calendar.day:{key}--text` in the scope, in document order. */
+    dayKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.day:`, '--text');
+    }
+
+    /**
+     * `admin.server_logs.custom_range.from.calendar.next_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    get nextMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.next_month`), {
+            testId: `${this.scope}.next_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /**
+     * `admin.server_logs.custom_range.from.calendar.previous_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    get previousMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.previous_month`), {
+            testId: `${this.scope}.previous_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `admin.server_logs.custom_range.from.calendar.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
+    get dayList() {
+        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
+            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
+                testId: `${this.scope}.day:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
             }),
         );
     }
@@ -2509,72 +2584,7 @@ export class Choice extends Scope {
     }
 }
 
-/** Rendered at `apps_form.field.calendar`, `custom_status_modal.expiry.custom.calendar`, `date_time_picker_modal.when.calendar`: one class, constructed with the scope it is mounted at. */
-export class Calendar extends Scope {
-    /**
-     * `apps_form.field.calendar.day:{key}--text` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     */
-    day(day: string) {
-        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
-            testId: `${this.scope}.day:${day}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /** Every `apps_form.field.calendar.day:{key}--text` in the scope. */
-    get dayItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
-    }
-
-    /** The keys of every `apps_form.field.calendar.day:{key}--text` in the scope, in document order. */
-    dayKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.day:`, '--text');
-    }
-
-    /**
-     * `apps_form.field.calendar.next_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     */
-    get nextMonth() {
-        return drivers.container(this.byTestId(`${this.scope}.next_month`), {
-            testId: `${this.scope}.next_month`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /**
-     * `apps_form.field.calendar.previous_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     */
-    get previousMonth() {
-        return drivers.container(this.byTestId(`${this.scope}.previous_month`), {
-            testId: `${this.scope}.previous_month`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /** Every `apps_form.field.calendar.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
-    get dayList() {
-        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
-                testId: `${this.scope}.day:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-            }),
-        );
-    }
-}
-
-/** Rendered at `apps_form.field.time_menu`, `custom_status_modal.expiry.custom.time_menu`, `date_time_picker_modal.when.time_menu`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `apps_form.field.time_menu`, `custom_status_modal.expiry.custom.time_menu`, `date_time_picker_modal.when.time_menu`, `dnd_custom_time_picker_modal.when.time_menu`: one class, constructed with the scope it is mounted at. */
 export class TimeMenu extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -2932,6 +2942,8 @@ export class PostCreate extends Scope {
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
+        postDeletedModal: PostDeletedModal;
+        resetStatusModal: ResetStatusModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.saveButton.click();
@@ -2942,6 +2954,8 @@ export class PostCreate extends Scope {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
@@ -3003,6 +3017,8 @@ export class PostCreate extends Scope {
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
+        postDeletedModal: PostDeletedModal;
+        resetStatusModal: ResetStatusModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.sendButton.click();
@@ -3012,6 +3028,8 @@ export class PostCreate extends Scope {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
@@ -3141,6 +3159,28 @@ export class PostCreateAiActionsRewrite extends Scope {
     }
 
     /**
+     * `center.post_create.ai_actions.rewrite.agent--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when hasItems and hasActiveSubmenu && isMenuOpen and isRewriteSubmenu && rewriteMenuProps.
+     * Opens menu menu (`center.post_create.ai_actions.rewrite.agent.menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get agentButton() {
+        return drivers.button(this.byTestId(`${this.scope}.agent--button`), {
+            testId: `${this.scope}.agent--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks agentButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickAgentButton(): Promise<AgentScopeMenu> {
+        await this.agentButton.click();
+        return new AgentScopeMenu(this.page, `${this.scope}.agent.menu`);
+    }
+
+    /**
      * `center.post_create.ai_actions.rewrite.prompt--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
      * Renders only when hasItems and hasActiveSubmenu && isMenuOpen and isRewriteSubmenu && rewriteMenuProps.
      */
@@ -3158,8 +3198,69 @@ export class PostCreateAiActionsRewrite extends Scope {
         await this.promptTextbox.fill(value);
     }
 
+    get agent(): AgentScope {
+        return new AgentScope(this.page, `${this.scope}.agent`, this.root);
+    }
+
     get prompt(): Input {
         return new Input(this.page, `${this.scope}.prompt`, this.root);
+    }
+}
+
+/** Rendered at `center.post_create.ai_actions.rewrite.agent`, `create_recap_modal.agent`, `modal.post_create.ai_actions.rewrite.agent`, `plugin.post_create.ai_actions.rewrite.agent`, `post_edit.editor.ai_actions.rewrite.agent`, `rhs.post_create.ai_actions.rewrite.agent`: one class, constructed with the scope it is mounted at. */
+export class AgentScope extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    get menu(): AgentScopeMenu {
+        return new AgentScopeMenu(this.page, `${this.scope}.menu`);
+    }
+}
+
+/** Rendered at `center.post_create.ai_actions.rewrite.agent.menu`, `create_recap_modal.agent.menu`, `modal.post_create.ai_actions.rewrite.agent.menu`, `plugin.post_create.ai_actions.rewrite.agent.menu`, `post_edit.editor.ai_actions.rewrite.agent.menu`, `rhs.post_create.ai_actions.rewrite.agent.menu`: one class, constructed with the scope it is mounted at. */
+export class AgentScopeMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `center.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem` — AgentDropdown (channels/src/components/common/agents/agent_dropdown.tsx)
+     * Renders only when hasAIActionsMenu and hasItems and hasActiveSubmenu && isMenuOpen.
+     */
+    agent(agent: Pick<Agent, 'id'>) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.agent:${agent.id}--menuitem`), {
+            testId: `${this.scope}.agent:${agent.id}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown',
+        });
+    }
+
+    /** Every `center.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem` in the scope. */
+    get agentItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.agent:`, '--menuitem');
+    }
+
+    /** The keys of every `center.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem` in the scope, in document order. */
+    agentKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.agent:`, '--menuitem');
+    }
+
+    /** Every `center.post_create.ai_actions.rewrite.agent.menu.agent:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.agentList).toHaveKeys([…])`. */
+    get agentList() {
+        return this.keyedList(`${this.scope}.agent:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.agent:${key}--menuitem`), {
+                testId: `${this.scope}.agent:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/common/agents/agent_dropdown.tsx#AgentDropdown',
+            }),
+        );
     }
 }
 
@@ -3463,7 +3564,7 @@ export class Message extends Scope {
     }
 }
 
-/** Rendered at `center.post_create.message.suggestions`, `center.post_list.post.select.suggestions`, `channel_settings_modal.configuration.banner_text.suggestions`, `channel_settings_modal.info.header.suggestions`, `channel_settings_modal.info.purpose.suggestions`, `drafts.scheduled.post.editor.suggestions`, `edit_channel_header_modal.header.suggestions`, `flag_post_modal.comment.suggestions`, `flagged_message_modal.form.comment.suggestions`, `forward_post_modal.comment.suggestions`, `modal.post_create.message.suggestions`, `new_channel_modal.classification_banner_text.suggestions`, `plugin.post_create.message.suggestions`, `post_edit.editor.message.suggestions`, `quick_switch_modal.suggestions`, `rhs.post_create.message.suggestions`, `rhs.thread.post.select.suggestions`, `search.results.post.select.suggestions`, `search_box.suggestions`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `center.post_create.message.suggestions`, `center.post_list.post.action_select.suggestions`, `center.post_list.post.binding_select.suggestions`, `center.post_list.post.select.suggestions`, `channel_settings_modal.configuration.banner_text.suggestions`, `channel_settings_modal.info.header.suggestions`, `channel_settings_modal.info.purpose.suggestions`, `drafts.scheduled.post.editor.suggestions`, `edit_channel_header_modal.header.suggestions`, `flag_post_modal.comment.suggestions`, `flagged_message_modal.form.comment.suggestions`, `forward_post_modal.comment.suggestions`, `modal.post_create.message.suggestions`, `new_channel_modal.classification_banner_text.suggestions`, `plugin.post_create.message.suggestions`, `post_edit.editor.message.suggestions`, `quick_switch_modal.suggestions`, `rhs.post_create.message.suggestions`, `rhs.thread.post.action_select.suggestions`, `rhs.thread.post.binding_select.suggestions`, `rhs.thread.post.select.suggestions`, `search.results.post.action_select.suggestions`, `search.results.post.binding_select.suggestions`, `search.results.post.select.suggestions`, `search_box.suggestions`: one class, constructed with the scope it is mounted at. */
 export class Suggestions extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
@@ -4071,6 +4172,28 @@ export class PostItem extends Scope {
     }
 
     /**
+     * `center.post_list.post.action_select:{key}` — AutocompleteSelector (channels/src/components/autocomplete_selector.tsx)
+     * Renders only when !(!action.id || !action.name).
+     */
+    actionSelect(actionSelect: Pick<PostAction, 'id'>): PostItemActionSelect {
+        return new PostItemActionSelect(
+            this.page,
+            `${this.scope}.action_select`,
+            this.byTestId(`${this.scope}.action_select:${actionSelect.id}`),
+        );
+    }
+
+    /** Every `center.post_list.post.action_select:{key}` in the scope. */
+    get actionSelectItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.action_select:`, '');
+    }
+
+    /** The keys of every `center.post_list.post.action_select:{key}` in the scope, in document order. */
+    actionSelectKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.action_select:`, '');
+    }
+
+    /**
      * `center.post_list.post.attachments` — FileAttachmentList (channels/src/components/file_attachment_list/file_attachment_list.tsx)
      * Renders only when !(fileInfos.length === 0) and showFileAttachments.
      */
@@ -4100,6 +4223,28 @@ export class PostItem extends Scope {
      */
     get avatar(): Avatar {
         return new Avatar(this.page, `${this.scope}.avatar`, this.root);
+    }
+
+    /**
+     * `center.post_list.post.binding_select:{key}` — AutocompleteSelector (channels/src/components/autocomplete_selector.tsx)
+     * Renders only when this.props.embed.app_id and this.props.embed.bindings and !(!bindings || !bindings.length).
+     */
+    bindingSelect(bindingSelect: Pick<AppBinding, 'location'>): PostItemActionSelect {
+        return new PostItemActionSelect(
+            this.page,
+            `${this.scope}.binding_select`,
+            this.byTestId(`${this.scope}.binding_select:${bindingSelect.location}`),
+        );
+    }
+
+    /** Every `center.post_list.post.binding_select:{key}` in the scope. */
+    get bindingSelectItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.binding_select:`, '');
+    }
+
+    /** The keys of every `center.post_list.post.binding_select:{key}` in the scope, in document order. */
+    bindingSelectKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.binding_select:`, '');
     }
 
     /**
@@ -4158,8 +4303,8 @@ export class PostItem extends Scope {
      * `center.post_list.post.select:{key}` — AutocompleteSelector (channels/src/components/autocomplete_selector.tsx)
      * Renders only when !(!block.content || block.content.length === 0) and isValid.
      */
-    select(select: Pick<MmStaticSelectBlock, 'action_id'>): PostItemSelect {
-        return new PostItemSelect(
+    select(select: Pick<MmStaticSelectBlock, 'action_id'>): PostItemActionSelect {
+        return new PostItemActionSelect(
             this.page,
             `${this.scope}.select`,
             this.byTestId(`${this.scope}.select:${select.action_id}`),
@@ -4215,13 +4360,45 @@ export class PostItem extends Scope {
         );
     }
 
+    /** Every `center.post_list.post.action_select:{key}` in the scope as a list by key, for the list matchers: `expect(x.actionSelectList).toHaveKeys([…])`. */
+    get actionSelectList() {
+        return this.keyedList(
+            `${this.scope}.action_select:`,
+            '',
+            (key: string) =>
+                new PostItemActionSelect(
+                    this.page,
+                    `${this.scope}.action_select`,
+                    this.byTestId(`${this.scope}.action_select:${key}`),
+                ),
+        );
+    }
+
+    /** Every `center.post_list.post.binding_select:{key}` in the scope as a list by key, for the list matchers: `expect(x.bindingSelectList).toHaveKeys([…])`. */
+    get bindingSelectList() {
+        return this.keyedList(
+            `${this.scope}.binding_select:`,
+            '',
+            (key: string) =>
+                new PostItemActionSelect(
+                    this.page,
+                    `${this.scope}.binding_select`,
+                    this.byTestId(`${this.scope}.binding_select:${key}`),
+                ),
+        );
+    }
+
     /** Every `center.post_list.post.select:{key}` in the scope as a list by key, for the list matchers: `expect(x.selectList).toHaveKeys([…])`. */
     get selectList() {
         return this.keyedList(
             `${this.scope}.select:`,
             '',
             (key: string) =>
-                new PostItemSelect(this.page, `${this.scope}.select`, this.byTestId(`${this.scope}.select:${key}`)),
+                new PostItemActionSelect(
+                    this.page,
+                    `${this.scope}.select`,
+                    this.byTestId(`${this.scope}.select:${key}`),
+                ),
         );
     }
 
@@ -4233,6 +4410,65 @@ export class PostItem extends Scope {
     /** `send_post_options` rendered inside this element. */
     get sendPostOptions(): SendPostOptions {
         return SendPostOptions.within(this.locator);
+    }
+}
+
+/** Rendered at `center.post_list.post.action_select`, `center.post_list.post.binding_select`, `center.post_list.post.select`, `rhs.thread.post.action_select`, `rhs.thread.post.binding_select`, `rhs.thread.post.select`, `search.results.post.action_select`, `search.results.post.binding_select`, `search.results.post.select`: one class, constructed with the scope it is mounted at. */
+export class PostItemActionSelect extends Scope {
+    /**
+     * `center.post_list.post.action_select:{key}` — AutocompleteSelector (channels/src/components/autocomplete_selector.tsx)
+     * Renders only when !(!action.id || !action.name).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'center.post_list.post.action_select:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/autocomplete_selector.tsx#AutocompleteSelector',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `center.post_list.post.action_select.value--textbox` — AutocompleteSelector (channels/src/components/autocomplete_selector.tsx)
+     * Renders only when !(!action.id || !action.name).
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get valueTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
+            testId: `${this.scope}.value--textbox`,
+            role: 'textbox',
+            effects: [
+                Api.DoPostAction,
+                Api.GetChannel,
+                Api.GetChannelMemberMe,
+                Api.GetEmojisByNames,
+                Api.GetGroupsByNames,
+                Api.GetPostThread,
+                Api.GetRolesByNames,
+                Api.GetUsersByGroupChannelIds,
+                Api.GetUsersByIds,
+                Api.GetUsersByUsernames,
+                Api.GetUsersStatusesByIds,
+                Api.UpdatePreferences,
+                Api.ViewChannelMe,
+            ],
+            unknownEffects: true,
+            source: 'channels/src/components/autocomplete_selector.tsx#AutocompleteSelector',
+        });
+    }
+
+    async fillValueTextbox(value: string): Promise<void> {
+        await this.valueTextbox.fill(value);
+    }
+
+    get suggestions(): Suggestions {
+        return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
     }
 }
 
@@ -5430,53 +5666,6 @@ export class PostItemReactions extends Scope {
     }
 }
 
-/** Rendered at `center.post_list.post.select`, `rhs.thread.post.select`, `search.results.post.select`: one class, constructed with the scope it is mounted at. */
-export class PostItemSelect extends Scope {
-    /**
-     * `center.post_list.post.select:{key}` — AutocompleteSelector (channels/src/components/autocomplete_selector.tsx)
-     * Renders only when !(!block.content || block.content.length === 0) and isValid.
-     */
-    get element() {
-        return drivers.container(this.root, {
-            testId: 'center.post_list.post.select:{key}',
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/autocomplete_selector.tsx#AutocompleteSelector',
-        });
-    }
-
-    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
-    override get locator(): Locator {
-        return this.root;
-    }
-
-    /**
-     * `center.post_list.post.select.value--textbox` — AutocompleteSelector (channels/src/components/autocomplete_selector.tsx)
-     * Renders only when !(!block.content || block.content.length === 0) and isValid.
-     * Goes to goToLocation.
-     * Goes to goToLocation.substring(siteURL.length).
-     * Calls through data (registries, plugin hooks): pass `wait` to settle.
-     */
-    get valueTextbox() {
-        return drivers.textbox(this.byTestId(`${this.scope}.value--textbox`), {
-            testId: `${this.scope}.value--textbox`,
-            role: 'textbox',
-            effects: [Api.DoPostAction],
-            unknownEffects: true,
-            source: 'channels/src/components/autocomplete_selector.tsx#AutocompleteSelector',
-        });
-    }
-
-    async fillValueTextbox(value: string): Promise<void> {
-        await this.valueTextbox.fill(value);
-    }
-
-    get suggestions(): Suggestions {
-        return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
-    }
-}
-
 /** Rendered at `center.post_list.post.spillage_report`, `rhs.thread.post.spillage_report`, `search.results.post.spillage_report`: one class, constructed with the scope it is mounted at. */
 export class PostItemSpillageReport extends Scope {
     /**
@@ -6262,6 +6451,65 @@ export class SearchableUserListUser extends Scope {
     }
 }
 
+/** Rendered at `channel_groups_manage_modal.group.role_menu`, `team_groups_manage_modal.group.role_menu`: one class, constructed with the scope it is mounted at. */
+export class RoleMenu extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `channel_groups_manage_modal.group.role_menu.make_admins--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     */
+    get makeAdminsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.make_admins--button`), {
+            testId: `${this.scope}.make_admins--button`,
+            role: 'button',
+            effects: [Api.GetChannelMemberMe, Api.GetRolesByNames, Api.GetTeamMembersForUserMe, Api.PatchGroupSyncable],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    async clickMakeAdminsButton(): Promise<void> {
+        await this.makeAdminsButton.click();
+    }
+
+    /**
+     * `channel_groups_manage_modal.group.role_menu.make_members--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     */
+    get makeMembersButton() {
+        return drivers.button(this.byTestId(`${this.scope}.make_members--button`), {
+            testId: `${this.scope}.make_members--button`,
+            role: 'button',
+            effects: [Api.GetChannelMemberMe, Api.GetRolesByNames, Api.GetTeamMembersForUserMe, Api.PatchGroupSyncable],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    async clickMakeMembersButton(): Promise<void> {
+        await this.makeMembersButton.click();
+    }
+
+    /**
+     * `channel_groups_manage_modal.group.role_menu.remove--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [Api.UnlinkGroupSyncable],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+}
+
 /** Rendered at `channel_header.attributes`, `rhs.thread.header.attributes`: one class, constructed with the scope it is mounted at. */
 export class Attributes extends Scope {
     /**
@@ -6575,7 +6823,7 @@ export class Results extends Scope {
 }
 
 /** Rendered at `channel_members_modal.members.user.role_menu`, `rhs.channel_members.member.role_menu`: one class, constructed with the scope it is mounted at. */
-export class RoleMenu extends Scope {
+export class MenuItemActionImpl extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
@@ -7535,8 +7783,8 @@ export class Tabs extends Scope {
     }
 }
 
-/** Rendered at `custom_status_modal.expiry.custom`, `date_time_picker_modal.when`: one class, constructed with the scope it is mounted at. */
-export class CustomStatusModalExpiryCustom extends Scope {
+/** Rendered at `custom_status_modal.expiry.custom`, `date_time_picker_modal.when`, `dnd_custom_time_picker_modal.when`: one class, constructed with the scope it is mounted at. */
+export class When extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
@@ -7592,6 +7840,23 @@ export class CustomStatusModalExpiryCustom extends Scope {
 
     get timeMenu(): TimeMenu {
         return new TimeMenu(this.page, `${this.scope}.time_menu`);
+    }
+}
+
+/** Rendered at `forward_post_modal.notification`, `move_thread_modal.notification`: one class, constructed with the scope it is mounted at. */
+export class Notification extends Scope {
+    /**
+     * `forward_post_modal.notification.text` — NotificationBox (channels/src/components/notification_box/notification_box.tsx)
+     * Renders only when isPrivateConversation and text.
+     */
+    get text() {
+        return drivers.container(this.byTestId(`${this.scope}.text`), {
+            testId: `${this.scope}.text`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/notification_box/notification_box.tsx#NotificationBox',
+        });
     }
 }
 

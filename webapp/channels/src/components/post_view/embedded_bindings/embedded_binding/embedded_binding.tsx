@@ -4,6 +4,7 @@
 import React from 'react';
 import type {CSSProperties, JSX} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AppBinding} from '@mattermost/types/apps';
 import type {Post} from '@mattermost/types/posts';
 
@@ -36,6 +37,9 @@ type Props = {
      * Options specific to text formatting
      */
     options?: Partial<TextFormattingOptions>;
+
+    /** The post's testid scope; a select binding is `<testIdScope>.binding_select:<location>`. */
+    testIdScope?: TestId;
 
     currentRelativeTeamUrl: string;
 };
@@ -109,6 +113,7 @@ export default class EmbeddedBinding extends React.PureComponent<Props, State> {
                         key={binding.location}
                         post={this.props.post}
                         binding={binding}
+                        testIdScope={this.props.testIdScope}
                     />,
                 );
                 return;

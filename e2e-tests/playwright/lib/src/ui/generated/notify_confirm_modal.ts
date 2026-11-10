@@ -12,6 +12,7 @@ import {Api} from './api';
 import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {MarketplaceModal} from './marketplace_modal';
+import {PostDeletedModal} from './post_deleted_modal';
 import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `notify_confirm_modal`. */
@@ -108,6 +109,7 @@ export class NotifyConfirmModal extends Scope {
         keyboardShortcutsModal: KeyboardShortcutsModal;
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
+        postDeletedModal: PostDeletedModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.confirmButton.click();
@@ -115,6 +117,7 @@ export class NotifyConfirmModal extends Scope {
             keyboardShortcutsModal: new KeyboardShortcutsModal(this.page, 'keyboard_shortcuts_modal'),
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }

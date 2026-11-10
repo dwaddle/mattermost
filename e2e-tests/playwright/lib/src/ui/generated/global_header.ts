@@ -10,10 +10,13 @@ import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {AboutBuildModal} from './about_build_modal';
 import {CustomStatusModal} from './custom_status_modal';
+import {DndCustomTimePickerModal} from './dnd_custom_time_picker_modal';
 import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {MarketplaceModal} from './marketplace_modal';
 import {AdminConsolePage, IntegrationsPage} from './pages';
+import {ResetStatusModal} from './reset_status_modal';
 import {UserGroupsModal} from './user_groups_modal';
 import {UserSettingsModal} from './user_settings_modal';
 
@@ -209,8 +212,10 @@ export class GlobalHeaderAccountMenu extends Scope {
         });
     }
 
-    async clickAwayMenuItem(): Promise<void> {
+    /** Clicks awayMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAwayMenuItem(): Promise<ResetStatusModal> {
         await this.awayMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -303,8 +308,10 @@ export class GlobalHeaderAccountMenu extends Scope {
         });
     }
 
-    async clickOfflineMenuItem(): Promise<void> {
+    /** Clicks offlineMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickOfflineMenuItem(): Promise<ResetStatusModal> {
         await this.offlineMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -321,8 +328,10 @@ export class GlobalHeaderAccountMenu extends Scope {
         });
     }
 
-    async clickOnlineMenuItem(): Promise<void> {
+    /** Clicks onlineMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickOnlineMenuItem(): Promise<ResetStatusModal> {
         await this.onlineMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -340,8 +349,10 @@ export class GlobalHeaderAccountMenu extends Scope {
         });
     }
 
-    async clickOutOfOfficeMenuItem(): Promise<void> {
+    /** Clicks outOfOfficeMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickOutOfOfficeMenuItem(): Promise<ResetStatusModal> {
         await this.outOfOfficeMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -416,8 +427,16 @@ export class GlobalHeaderAccountMenuDndMenu extends Scope {
         });
     }
 
-    async clickCustomMenuItem(): Promise<void> {
+    /** Clicks customMenuItem, which opens one of several modals depending on the case: a page object for each, returned at once with no wait; use the one this case opens. */
+    async clickCustomMenuItem(): Promise<{
+        dndCustomTimePickerModal: DndCustomTimePickerModal;
+        resetStatusModal: ResetStatusModal;
+    }> {
         await this.customMenuItem.click();
+        return {
+            dndCustomTimePickerModal: new DndCustomTimePickerModal(this.page, 'dnd_custom_time_picker_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
+        };
     }
 
     /**
@@ -434,8 +453,10 @@ export class GlobalHeaderAccountMenuDndMenu extends Scope {
         });
     }
 
-    async clickDoNotClearMenuItem(): Promise<void> {
+    /** Clicks doNotClearMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDoNotClearMenuItem(): Promise<ResetStatusModal> {
         await this.doNotClearMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -452,8 +473,10 @@ export class GlobalHeaderAccountMenuDndMenu extends Scope {
         });
     }
 
-    async clickOneHourMenuItem(): Promise<void> {
+    /** Clicks oneHourMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickOneHourMenuItem(): Promise<ResetStatusModal> {
         await this.oneHourMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -470,8 +493,10 @@ export class GlobalHeaderAccountMenuDndMenu extends Scope {
         });
     }
 
-    async clickThirtyMinutesMenuItem(): Promise<void> {
+    /** Clicks thirtyMinutesMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickThirtyMinutesMenuItem(): Promise<ResetStatusModal> {
         await this.thirtyMinutesMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -488,8 +513,10 @@ export class GlobalHeaderAccountMenuDndMenu extends Scope {
         });
     }
 
-    async clickTomorrowMenuItem(): Promise<void> {
+    /** Clicks tomorrowMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickTomorrowMenuItem(): Promise<ResetStatusModal> {
         await this.tomorrowMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 
     /**
@@ -506,8 +533,10 @@ export class GlobalHeaderAccountMenuDndMenu extends Scope {
         });
     }
 
-    async clickTwoHoursMenuItem(): Promise<void> {
+    /** Clicks twoHoursMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickTwoHoursMenuItem(): Promise<ResetStatusModal> {
         await this.twoHoursMenuItem.click();
+        return new ResetStatusModal(this.page, 'reset_status_modal');
     }
 }
 
@@ -675,8 +704,10 @@ export class GlobalHeaderProductMenu extends Scope {
         });
     }
 
-    async clickAboutMenuItem(): Promise<void> {
+    /** Clicks aboutMenuItem and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickAboutMenuItem(): Promise<AboutBuildModal> {
         await this.aboutMenuItem.click();
+        return new AboutBuildModal(this.page, 'about_build_modal');
     }
 
     /**

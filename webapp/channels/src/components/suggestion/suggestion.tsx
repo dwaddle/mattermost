@@ -62,7 +62,6 @@ const SuggestionContainer = React.forwardRef<HTMLLIElement, SuggestionProps<unkn
             className={classNames('suggestion-list__item', {'suggestion--selected': isSelection}, className)}
             role='option'
             aria-selected={isSelection}
-            data-testid={isSelection ? 'suggestion-selected' : undefined}
             onClick={handleClick}
             onMouseMove={handleMouseMove}
             tabIndex={tabIndex}

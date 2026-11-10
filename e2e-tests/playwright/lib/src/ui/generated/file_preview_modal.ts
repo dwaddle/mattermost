@@ -29,6 +29,20 @@ export class FilePreviewModal extends Scope {
     }
 
     /**
+     * `file_preview_modal.pdf` — PDFPreview (channels/src/components/pdf_preview.tsx)
+     * Renders only when !(this.props.fileInfos.length < 1 || this.props.fileInfos.length - 1 < this.state.imageIndex) and this.state.loaded[this.state.imageIndex] and !(fileType === FileTypes.IMAGE || fileType === FileTypes.SVG).
+     */
+    get pdf() {
+        return drivers.container(this.byTestId(`${this.scope}.pdf`), {
+            testId: `${this.scope}.pdf`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/pdf_preview.tsx#PDFPreview',
+        });
+    }
+
+    /**
      * `file_preview_modal.zoom_bar` — PopoverBar (channels/src/components/file_preview_modal/popover_bar/popover_bar.tsx)
      * Renders only when !(this.props.fileInfos.length < 1 || this.props.fileInfos.length - 1 < this.state.imageIndex) and this.state.loaded[this.state.imageIndex] and !(fileType === FileTypes.IMAGE || fileType === FileTypes.SVG).
      */

@@ -5,6 +5,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AppBinding} from '@mattermost/types/apps';
 import type {Channel} from '@mattermost/types/channels';
 import type {Post} from '@mattermost/types/posts';
@@ -25,6 +26,9 @@ type Props = {
     intl: IntlShape;
     post: Post;
     binding: AppBinding;
+
+    /** The post's testid scope; the select is `<testIdScope>.binding_select:<location>`. */
+    testIdScope?: TestId;
     actions: {
         handleBindingClick: HandleBindingClick;
         getChannel: (channelId: string) => Promise<ActionResult>;
@@ -170,6 +174,8 @@ class SelectBinding extends React.PureComponent<Props, State> {
                         inputClassName='post-attachment-dropdown'
                         value={this.state.selected?.text}
                         toggleFocus={handlePopupOpened}
+                        testIdScope={this.props.testIdScope ? `${this.props.testIdScope}.binding_select` : undefined}
+                        testKey={this.props.binding.location}
                     />
                 )}
             </PostContext.Consumer>

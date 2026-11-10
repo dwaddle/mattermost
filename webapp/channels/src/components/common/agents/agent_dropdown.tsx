@@ -28,6 +28,8 @@ type Props = {
     // Otherwise the underlying mui popover and GenericModal will exhaust the call stack trying to set focus when this closes
     onMenuToggle?: (isOpen: boolean) => void;
 
+    // The button is `<testIdScope>--button`, the options `<testIdScope>.menu.agent:<bot id>--menuitem`;
+    // without it, they have none.
     testIdScope?: TestId;
 };
 
@@ -108,7 +110,7 @@ const AgentDropdown = ({
                         <Menu.Item
                             key={bot.id}
                             id={`agent-option-${bot.id}`}
-                            data-testid={testIdScope ? `${testIdScope}.menu.agent:${bot.id}--menuitem` : `agent-option-${bot.id}`}
+                            data-testid={testIdScope ? `${testIdScope}.menu.agent:${bot.id}--menuitem` : undefined}
                             leadingElement={
                                 <Avatar
                                     url={getBotAvatarUrl(bot.id)}

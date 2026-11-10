@@ -11,6 +11,7 @@ import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
+import {Admin} from './admin';
 import {DeactivateAccountModal} from './deactivate_account_modal';
 import {Choice, ConfirmModal, Input, TokenExpiryPicker} from './shared';
 import type {
@@ -889,6 +890,28 @@ export class SettingsSectionItem extends Scope {
 
     async fillFirstNameTextbox(value: string): Promise<void> {
         await this.firstNameTextbox.fill(value);
+    }
+
+    /**
+     * `settings.section.graph--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when active and !isReadOnly.
+     * Opens menu menu (`admin`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get graphButton() {
+        return drivers.button(this.byTestId(`${this.scope}.graph--button`), {
+            testId: `${this.scope}.graph--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks graphButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickGraphButton(): Promise<Admin> {
+        await this.graphButton.click();
+        return new Admin(this.page, 'admin');
     }
 
     /**

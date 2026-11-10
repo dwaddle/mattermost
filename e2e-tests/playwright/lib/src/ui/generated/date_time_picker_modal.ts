@@ -14,7 +14,9 @@ import {KeyboardShortcutsModal} from './keyboard_shortcuts_modal';
 import {LeaveChannelModal} from './leave_channel_modal';
 import {MarketplaceModal} from './marketplace_modal';
 import {NotifyConfirmModal} from './notify_confirm_modal';
-import {CustomStatusModalExpiryCustom} from './shared';
+import {PostDeletedModal} from './post_deleted_modal';
+import {ResetStatusModal} from './reset_status_modal';
+import {When} from './shared';
 import {UserSettingsModal} from './user_settings_modal';
 
 /** Scope `date_time_picker_modal`. */
@@ -133,6 +135,8 @@ export class DateTimePickerModal extends Scope {
         leaveChannelModal: LeaveChannelModal;
         marketplaceModal: MarketplaceModal;
         notifyConfirmModal: NotifyConfirmModal;
+        postDeletedModal: PostDeletedModal;
+        resetStatusModal: ResetStatusModal;
         userSettingsModal: UserSettingsModal;
     }> {
         await this.confirmButton.click();
@@ -142,6 +146,8 @@ export class DateTimePickerModal extends Scope {
             leaveChannelModal: new LeaveChannelModal(this.page, 'leave_channel_modal'),
             marketplaceModal: new MarketplaceModal(this.page, 'marketplace_modal'),
             notifyConfirmModal: new NotifyConfirmModal(this.page, 'notify_confirm_modal'),
+            postDeletedModal: new PostDeletedModal(this.page, 'post_deleted_modal'),
+            resetStatusModal: new ResetStatusModal(this.page, 'reset_status_modal'),
             userSettingsModal: new UserSettingsModal(this.page, 'user_settings_modal'),
         };
     }
@@ -163,8 +169,8 @@ export class DateTimePickerModal extends Scope {
         await this.repeatWeeklyCheckbox.set(on);
     }
 
-    get when(): CustomStatusModalExpiryCustom {
-        return new CustomStatusModalExpiryCustom(this.page, `${this.scope}.when`, this.root);
+    get when(): When {
+        return new When(this.page, `${this.scope}.when`, this.root);
     }
 }
 

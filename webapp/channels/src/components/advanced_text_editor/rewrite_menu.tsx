@@ -367,6 +367,7 @@ export function RewriteSubMenuHeader({
                     defaultBotId={defaultAgent?.id}
                     disabled={isProcessing}
                     showLabel={true}
+                    testIdScope={testIdScope ? `${testIdScope}.agent` : undefined}
                 />
             )}
             {isProcessing &&

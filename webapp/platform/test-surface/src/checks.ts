@@ -6,7 +6,7 @@ import ts from 'typescript';
 import {TEST_ID_ROLES, type TestIdRole} from '@mattermost/types/test_id';
 
 import {cmp, cmpLoc} from './compare.ts';
-import type {AllowEntry, KeyFieldAllow, PluginConfig} from './config.ts';
+import type {AllowEntry, KeyFieldAllow, PluginConfig, StrictException} from './config.ts';
 import {allowCovers, isGrammarError, KEY_PLACEHOLDER, toWord} from './grammar.ts';
 import {MAX_TEMPLATE_VALUES} from './limits.ts';
 import type {AriaRole, Diagnostic, Element, Loc, Manifest, RuleName} from './manifest_types.ts';
@@ -21,6 +21,9 @@ export type CheckOptions = {
 
     /** Files (repo-relative prefixes) where legacy testids are errors. */
     strictPaths: string[];
+
+    /** Reviewed files or folders under a strict path that stay warnings, each with its reason. */
+    strictExceptions?: StrictException[];
 
     /** Open-string keys are errors instead of warnings. */
     strictKeys: boolean;
@@ -54,7 +57,11 @@ const NON_INTERACTIVE = new Set<AriaRole | null>([null, 'none', 'presentation', 
 /** Runs every check over a scan; returns its diagnostics and the scan's own, sorted (they aren't part of the manifest). */
 export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] {
     const out: Diagnostic[] = [...result.diagnostics];
-    const strictAt = (at: Loc, template?: string) => opts.strictPaths.some((p) => at.startsWith(p)) || (template !== undefined && opts.strictScopes.some((s) => template.startsWith(s)));
+    const exceptions = opts.strictExceptions ?? [];
+
+    // a diagnostic is the excepted path's when it is there, or when the testid's value came through it (`via`)
+    const exceptionFor = (locs: Loc[]) => exceptions.find((e) => locs.some((l) => l.startsWith(e.path)));
+    const strictAt: StrictAt = (at, template, via = []) => (opts.strictPaths.some((p) => at.startsWith(p)) && !exceptionFor([at, ...via])) || (template !== undefined && opts.strictScopes.some((s) => template.startsWith(s)));
     const push: Push = (rule, strict, at, message, fix, about = {}) => {
         const {template, key, via} = about;
         out.push({rule, severity: strict ? 'error' : 'warning', at, message, ...(fix ? {fix} : {}), ...(template === undefined ? {} : {template}), ...(key ? {key} : {}), ...(via?.length ? {via} : {})});
@@ -70,13 +77,15 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
     checkPluginSlots(result.manifest, push);
     for (const el of result.manifest.elements) {
         if (el.unreachable) {
-            push('unreachable', strictAt(el.component.at, el.template), el.component.at, `"${el.template}" is in code the app never loads: no file on its path is imported from the entries (dead code, or used only by tests).`, 'Delete the code, or render it from the app.', {template: el.template, via: el.instances.flatMap((i) => i.via)});
+            const via = el.instances.flatMap((i) => i.via);
+            push('unreachable', strictAt(el.component.at, el.template, via), el.component.at, `"${el.template}" is in code the app never loads: no file on its path is imported from the entries (dead code, or used only by tests).`, 'Delete the code, or render it from the app.', {template: el.template, via});
         }
     }
     if (opts.plugin) {
         checkPlugin(result.manifest, push, strictAt, opts.plugin, opts.configAt);
     }
     applyAllow(out, opts.allow ?? [], opts.configAt);
+    applyStrictExceptions(out, exceptions, (d) => [d.at, ...(d.via ?? [])], opts.configAt);
 
     const seen = new Set<string>();
     return out.
@@ -93,6 +102,7 @@ export function runChecks(result: ScanResult, opts: CheckOptions): Diagnostic[] 
 
 /** What a diagnostic is about, beside where: the testid template, its literal key, the usage chain it came through. */
 type About = {template?: string; key?: string | null; via?: Loc[]};
+type StrictAt = (at: Loc, template?: string, via?: Loc[]) => boolean;
 
 type Push = (rule: RuleName, strict: boolean, at: Loc, message: string, fix?: string, about?: About) => void;
 
@@ -115,6 +125,24 @@ function applyAllow(out: Diagnostic[], allow: AllowEntry[], configAt: string) {
         }
         if (!used) {
             out.push({rule: 'allow', severity: 'warning', at: configAt, message: `checks.allow entry for "${a.template}" (${a.rule}) no longer matches anything.`, fix: 'Remove it.'});
+        }
+    }
+}
+
+/**
+ * `checks.strictExceptions`: what a strict path would report as errors there is a warning carrying the reason; an
+ * entry with nothing left to report is itself reported, so the list only shrinks.
+ */
+function applyStrictExceptions(out: Diagnostic[], exceptions: StrictException[], provenance: (d: Diagnostic) => Loc[], configAt: string) {
+    for (const e of exceptions) {
+        const here = out.filter((d) => provenance(d).some((l) => l.startsWith(e.path)));
+        for (const d of here) {
+            if (d.severity === 'warning' && !d.waived) {
+                d.waived = {by: 'strict-exception', reason: e.reason};
+            }
+        }
+        if (!here.length) {
+            out.push({rule: 'strict-exceptions', severity: 'warning', at: configAt, message: `checks.strictExceptions entry for "${e.path}" no longer has anything to report.`, fix: 'Remove it: the path passes strict.'});
         }
     }
 }
@@ -151,7 +179,7 @@ function checkPluginSlots(manifest: Manifest, push: Push) {
  * Plugin mode: the plugin's testids live under `plugins.<key>` (host slots carry the host's testids), and
  * every host version it supports still renders the slots its registry calls fill (always errors).
  */
-function checkPlugin(manifest: Manifest, push: Push, strictAt: (at: Loc, t?: string) => boolean, plugin: PluginConfig, configAt: string) {
+function checkPlugin(manifest: Manifest, push: Push, strictAt: StrictAt, plugin: PluginConfig, configAt: string) {
     const scope = `plugins.${plugin.key}`;
     for (const e of manifest.elements) {
         if (e.grammar && e.template !== scope && !e.template.startsWith(scope + '.')) {
@@ -177,7 +205,7 @@ function checkPlugin(manifest: Manifest, push: Push, strictAt: (at: Loc, t?: str
     }
 }
 
-function checkSites(sites: Site[], push: Push, strictAt: (at: Loc, t?: string) => boolean) {
+function checkSites(sites: Site[], push: Push, strictAt: StrictAt) {
     for (const s of sites) {
         if (s.forwarded) {
             continue;
@@ -193,16 +221,16 @@ function checkSites(sites: Site[], push: Push, strictAt: (at: Loc, t?: string) =
                 push('unresolved', false, s.at, `testid value can't be read statically${via}: ${v.k === 'unres' ? v.why : 'computed'} at ${v.at}.`, 'Build the testid from literals and `:${key}` data, or pass a literal down.', {via: v.via});
             } else if (isUnscoped(v)) {
                 // eslint-disable-next-line no-template-curly-in-string
-                push('unscoped', strictAt(s.at), s.at, `testid is made entirely of runtime data${via}.`, 'Write the scope and name as literals; runtime data may only fill the key: `scope.name:${value}`.', {via: v.via});
+                push('unscoped', strictAt(s.at, undefined, v.via ?? []), s.at, `testid is made entirely of runtime data${via}.`, 'Write the scope and name as literals; runtime data may only fill the key: `scope.name:${value}`.', {via: v.via});
             }
         }
     }
 }
 
-function checkEmissions(emissions: Emission[], pushAt: Push, strictAt: (at: Loc, t?: string) => boolean, opts: CheckOptions, usedKeyFields?: Set<KeyFieldAllow>) {
+function checkEmissions(emissions: Emission[], pushAt: Push, strictAt: StrictAt, opts: CheckOptions, usedKeyFields?: Set<KeyFieldAllow>) {
     for (const e of emissions) {
         const at = e.site.at;
-        const strict = strictAt(at, e.template);
+        const strict = strictAt(at, e.template, e.via);
         const push: Push = (rule, isStrict, where, message, fix) => pushAt(rule, isStrict, where, message, fix, {template: e.template, key: e.key, via: e.via});
         if (isUnscoped(e.value)) {
             continue;
@@ -383,7 +411,7 @@ function helperCalls(n: ts.Node): ts.Node[] {
 }
 
 /** Same template from two places: fine in mutually exclusive branches of one component with the same role; otherwise an error. */
-function checkDuplicates(emissions: Emission[], push: Push, strictAt: (at: Loc, t?: string) => boolean, usageNodeAt: (loc: Loc) => ts.Node | undefined) {
+function checkDuplicates(emissions: Emission[], push: Push, strictAt: StrictAt, usageNodeAt: (loc: Loc) => ts.Node | undefined) {
     const byKey = new Map<string, Emission[]>();
     for (const e of emissions) {
         if (e.value.k !== 'lit' && e.key === null) {

@@ -28,7 +28,7 @@ export type SuggestionListContentsProps = {
     onMouseDown?: () => void;
 
     // The list's scope: items are `<testId>.item:<suggestionTestKey(term)>--option`, keyed by what they suggest
-    // (the list reorders as you type). Without it, the selected item is `suggestion-selected`.
+    // (the list reorders as you type). Without it, items have no testid; the selected one is `aria-selected`.
     testId?: TestId;
 };
 
