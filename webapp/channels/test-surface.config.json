@@ -669,6 +669,56 @@
                 "rule": "aria",
                 "template": "admin.user.card.picture_input",
                 "reason": "the hidden file input is opened by the picture menu's Upload item (admin.user.card.picture_menu.upload--menuitem); tests attach files to it directly."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.access_control.policy.edit_policy.policyNamelabel",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.access_control.policy.edit_policy.policyNamehelp-text",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.access_control.policy.edit_policy.policyNameinput",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.access_control.policy.edit_policy.policyNametext",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.permission_policies.edit.policyNamelabel",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.permission_policies.edit.policyNamehelp-text",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.permission_policies.edit.policyNameinput",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.permission_policies.edit.policyNametext",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.access_control.policy.edit_policy.policyName",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
+            },
+            {
+                "rule": "grammar",
+                "template": "admin.permission_policies.edit.policyName",
+                "reason": "the access policy editors' fields pass no testIdScope until the ABAC PR moves them to the grammar, so the settings widgets (strict here) render their legacy ids for them."
             }
         ],
         "keyFields": {

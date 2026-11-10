@@ -3411,6 +3411,30 @@
       }
     },
     {
+      "template": "admin.access_control.policy.edit_policy.policyName",
+      "grammar": false,
+      "scope": [],
+      "name": "admin.access_control.policy.edit_policy.policyName",
+      "role": null,
+      "component": {
+        "name": "Setting",
+        "at": "channels/src/components/widgets/settings/setting.tsx#Setting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
+            "channels/src/components/admin_console/access_control/policy_details/policy_details.tsx#PolicyDetails"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "admin.access_control.policy.edit_policy.policyNamehelp-text",
       "grammar": false,
       "scope": [],
@@ -13448,6 +13472,37 @@
         "field": "uppercase",
         "valueType": "boolean"
       }
+    },
+    {
+      "template": "admin.permission_policies.edit.policyName",
+      "grammar": false,
+      "scope": [],
+      "name": "admin.permission_policies.edit.policyName",
+      "role": null,
+      "component": {
+        "name": "Setting",
+        "at": "channels/src/components/widgets/settings/setting.tsx#Setting"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/settings/text_setting.tsx#TextSetting",
+            "channels/src/components/admin_console/permission_policies/policy_details/permission_policy_details.tsx#PermissionPolicyDetails"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "pageLoaded && !loadFailed",
+          "explained": "pageLoaded && !loadFailed",
+          "kind": "local state"
+        }
+      ]
     },
     {
       "template": "admin.permission_policies.edit.policyNamehelp-text",

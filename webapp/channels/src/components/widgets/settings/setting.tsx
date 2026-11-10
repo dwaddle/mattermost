@@ -37,7 +37,7 @@ const Setting: React.FC<Props> = ({
 }: Props) => {
     return (
         <div
-            data-testid={testIdScope ? testId ?? testIdScope : undefined}
+            data-testid={testIdScope ? testId ?? testIdScope : inputId}
             className='form-group'
         >
             {label && (
