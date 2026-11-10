@@ -46,8 +46,9 @@ export type ConfigFile = {
     /**
      * How handlers are traced. `pureCalls`: method names that send no request when their target can't be known
      * (`ref.current.focus()`); any other call through data is an unknown effect, even when it returns nothing.
+     * `declared`: requests an element sends that the scan can't see (`DeclaredEffect`).
      */
-    effects?: {pureCalls?: string[]};
+    effects?: {pureCalls?: string[]; declared?: DeclaredEffect[]};
 
     /** Where outputs are written (relative to root). */
     output: {
@@ -134,6 +135,13 @@ export type ConfigFile = {
 export type AllowEntry = {rule: string; template: string; reason: string};
 
 /**
+ * `effects.declared`: requests an element sends that the scan can't see, by testid template, with why
+ * (`{"testId": "center.post_create.attach--button", "ops": ["UploadFile"], "reason": "uploads go through a raw XHR"}`).
+ * An op is a client method's operation or an OpenAPI operation id.
+ */
+export type DeclaredEffect = {testId: string; ops: string[]; reason: string};
+
+/**
  * Which entity fields may key a testid without review (`checks.keyFields`): `pattern` matches the field's name (by
  * default id-like fields); `allow` lists reviewed others (`{"entity": "AppSelectOption", "field": "value", "reason": …}`).
  */
@@ -159,7 +167,7 @@ export type Config = {
     openapiDir: string | null;
     i18n: string | null;
     errorCalls: RegExp;
-    effects: {pureCalls: string[]};
+    effects: {pureCalls: string[]; declared: DeclaredEffect[]};
     output: {
         manifest: string;
         generated: string | null;
@@ -231,7 +239,7 @@ export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.jo
         openapiDir: raw.openapiDir ? fromDir(raw.openapiDir) : null,
         i18n: raw.i18n ? fromDir(raw.i18n) : null,
         errorCalls: new RegExp(`^(${(raw.errorCalls ?? ['logError', 'forceLogoutIfNecessary', 'handleServerError']).join('|')})$`),
-        effects: {pureCalls: raw.effects?.pureCalls ?? DEFAULT_PURE_CALLS},
+        effects: {pureCalls: raw.effects?.pureCalls ?? DEFAULT_PURE_CALLS, declared: raw.effects?.declared ?? []},
         output: {
             manifest: fromDir(raw.output.manifest),
             generated: raw.output.generated ? fromDir(raw.output.generated) : null,

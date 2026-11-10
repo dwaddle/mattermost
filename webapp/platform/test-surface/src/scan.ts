@@ -1082,6 +1082,35 @@ export class Scanner {
         return out;
     }
 
+    /**
+     * `effects.declared`: requests the scan can't see an element send (an upload through a raw XMLHttpRequest), added
+     * to its effects. An entry naming no element is reported, like an allow entry that stopped matching; one naming an
+     * operation that neither a client method nor the OpenAPI spec has is an error.
+     */
+    private addDeclaredEffects(elements: Element[]) {
+        const at = relativeToRoot(this.config, this.config.configPath);
+        for (const d of this.config.effects.declared) {
+            const el = elements.find((e) => e.template === d.testId);
+            if (!el) {
+                this.diag('allow', 'warning', at, `effects.declared entry for "${d.testId}" matches no element.`, 'Remove it, or name the testid as it is now.');
+                continue;
+            }
+            for (const id of d.ops) {
+                if (!this.ops.byId.has(id)) {
+                    const spec = this.ops.specOps.find((o) => o.opId === id);
+                    if (!spec) {
+                        this.diag('input', 'error', at, `effects.declared names ${id} for "${d.testId}", which is neither a client method's operation nor in the OpenAPI spec.`, 'Name the OpenAPI operation id.');
+                        continue;
+                    }
+                    this.ops.byId.set(id, {opId: id, verb: spec.verb, path: spec.path, body: null, schema: spec.schema, inSpec: true, client: ''});
+                }
+                const fx = el.effects ?? {ops: [], unknown: false, delegated: []};
+                fx.ops = [...new Set([...fx.ops, id])].sort();
+                el.effects = fx;
+            }
+        }
+    }
+
     // ---- manifest -------------------------------------------------------------------------
 
     scan(): ScanResult {
@@ -1360,6 +1389,7 @@ export class Scanner {
 
         addForms(elements);
         const sets = fixedSets(elements);
+        this.addDeclaredEffects(elements);
         const usedOps = new Set(elements.flatMap((e) => e.effects?.ops ?? []));
         const operations = [...usedOps].sort().map((id) => {
             const op = this.ops.byId.get(id)!;

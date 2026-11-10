@@ -24,7 +24,7 @@ test('effects: client routes evaluate helpers and match OpenAPI, exact and liter
     assert.equal(byId.get('GetUserMe')?.path, '/api/v4/users/me');
     assert.equal(byId.get('GetUserMe')?.body, 'UserProfile');
     assert.equal(byId.get('GetUserMe')?.inSpec, true);
-    assert.ok(!byId.has('GetUser'));
+    assert.ok(!byId.get('GetUser')?.path.endsWith('/me'));
     assert.equal(byId.get('RequestJoinChannel')?.inSpec, false);
 });
 
@@ -133,4 +133,15 @@ test('effects: meForm puts `me` where the client hard-codes it for a placeholder
     assert.equal(meForm('/api/v4/users/{user_id}/teams/{team_id}/channels', '/api/v4/users/me/teams/{teamId}/channels'), '/api/v4/users/me/teams/{team_id}/channels');
     assert.equal(meForm('/api/v4/users/{user_id}', '/api/v4/users/{userId}'), null);
     assert.equal(meForm('/api/v4/users/{user_id}', '/api/v4/users/me/patch'), null);
+});
+
+test('effects: effects.declared adds a request the scan can\'t see, by testid; a stale entry or an unknown operation is reported', () => {
+    assert.deepEqual(ops('effects.file--link'), ['PostLog']);
+    assert.deepEqual(ops('effects.graph.grant--button'), ['GetUser']);
+    const byId = new Map(out().manifest.operations.map((o) => [o.opId, o]));
+    assert.equal(byId.get('PostLog')?.verb, 'POST');
+    assert.deepEqual(byId.get('GetUser'), {opId: 'GetUser', verb: 'GET', path: '/api/v4/users/{user_id}', body: null, inSpec: true});
+    const ds = out().diagnostics;
+    assert.ok(ds.some((d) => d.rule === 'allow' && d.severity === 'warning' && d.message.includes('"effects.gone--button"')));
+    assert.ok(ds.some((d) => d.rule === 'input' && d.severity === 'error' && d.message.includes('NoSuchOp')));
 });

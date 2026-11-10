@@ -5,5 +5,13 @@
     "entityTypeDirs": ["types"],
     "client": {"file": "client/client4.ts", "className": "Client4", "urlVersion": "/api/v4"},
     "openapiDir": "openapi",
+    "effects": {
+        "declared": [
+            {"testId": "effects.file--link", "ops": ["PostLog"], "reason": "a client method's operation"},
+            {"testId": "effects.graph.grant--button", "ops": ["GetUser"], "reason": "an OpenAPI operation no client method calls"},
+            {"testId": "effects.gone--button", "ops": ["PatchChannel"], "reason": "names no element"},
+            {"testId": "effects.graph.grant--button", "ops": ["NoSuchOp"], "reason": "names no operation"}
+        ]
+    },
     "output": {"manifest": "test-surface.json"}
 }
