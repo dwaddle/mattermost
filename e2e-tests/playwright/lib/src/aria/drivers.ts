@@ -90,7 +90,7 @@ export class Driver<M extends Meta = Meta> {
  * Adds the element's testid and source to an error (once), keeping its type and stack. For drivers, matchers and
  * page objects that report on an element.
  */
-export function withElement(e: unknown, meta: Pick<Meta, 'testId' | 'source'>): unknown {
+export function withElement(e: unknown, meta: ElementInfo): unknown {
     if (!(e instanceof Error)) {
         return e;
     }
@@ -105,9 +105,15 @@ export function withElement(e: unknown, meta: Pick<Meta, 'testId' | 'source'>): 
     return e;
 }
 
-/** `  element: center.post_create.send--button (channels/src/…/file.tsx#Component)` (or `file.tsx:51`, before manifest v2). */
-export function elementLine(meta: Pick<Meta, 'testId' | 'source'>): string {
-    return `  element: ${meta.testId} (${meta.source})`;
+/** What failures say about an element. */
+export type ElementInfo = Pick<Meta, 'testId' | 'source' | 'when'>;
+
+/**
+ * `  element: center.post_create.send--button (channels/src/…/file.tsx#Component)` (or `file.tsx:51`, before manifest
+ * v2), plus `; renders only when …` when the metadata has render conditions.
+ */
+export function elementLine(meta: ElementInfo): string {
+    return `  element: ${meta.testId} (${meta.source})${meta.when ? `; renders only when ${meta.when}` : ''}`;
 }
 
 /** Container (no role): a region of the page. */

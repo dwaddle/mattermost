@@ -154,5 +154,15 @@ test.describe('every driver', () => {
             .toBePressed({timeout: 200})
             .catch((e) => e);
         baseExpect(matcher.message).toContain('element: x.gone--button (channels/src/components/gone.tsx:12)');
+
+        // render conditions, when the metadata has them
+        const conditional = drivers.button(page.getByTestId('x.hint--button'), {
+            ...meta('x.hint--button', 'button'),
+            when: 'showSearchHintToast',
+        });
+        const hidden = await conditional.click().catch((e) => e);
+        baseExpect(hidden.message).toContain(
+            'element: x.hint--button (test/fixture.tsx#x); renders only when showSearchHintToast',
+        );
     });
 });

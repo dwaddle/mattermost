@@ -51,6 +51,12 @@ export type Meta<E extends readonly Effect[] = readonly Effect[], U extends bool
      * (older generated code: the file and line, `channels/src/…/file.tsx:51`). Failures print it as it is.
      */
     readonly source: string;
+
+    /**
+     * When the element renders, if only under conditions (`showSearchHintToast`, `isAdmin and canEdit`): failures print
+     * it, as a missing element is often a condition that doesn't hold. Optional: generated code may not carry it.
+     */
+    readonly when?: string;
 };
 
 /**

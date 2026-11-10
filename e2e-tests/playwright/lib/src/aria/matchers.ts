@@ -6,8 +6,7 @@ import {expect as baseExpect} from '@playwright/test';
 
 import {expect as subpathExpect} from '../expect';
 
-import {Driver, elementLine} from './drivers';
-import type {Meta} from './effects';
+import {Driver, elementLine, type ElementInfo} from './drivers';
 import {formatMessage, type Message, type ParamsOf} from './msg';
 import {KeyedList, Scope} from './scope';
 
@@ -15,7 +14,7 @@ type HasLocator = Driver | Scope | Locator;
 type Options = {timeout?: number};
 
 /** The element to assert on, and (for a driver) its metadata, so a failure says which element and where it comes from. */
-function locatorOf(received: HasLocator): {locator: Locator; meta?: Pick<Meta, 'testId' | 'source'>} {
+function locatorOf(received: HasLocator): {locator: Locator; meta?: ElementInfo} {
     if (received instanceof Driver) {
         return {locator: received.locator, meta: received.meta};
     }
@@ -29,7 +28,7 @@ function locatorOf(received: HasLocator): {locator: Locator; meta?: Pick<Meta, '
 }
 
 /** The line a failure ends with: the element's testid and source, when known. */
-function where(meta?: Pick<Meta, 'testId' | 'source'>): string {
+function where(meta?: ElementInfo): string {
     return meta ? `\n${elementLine(meta)}` : '';
 }
 
