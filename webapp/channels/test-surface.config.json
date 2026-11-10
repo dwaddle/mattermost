@@ -443,7 +443,8 @@
     "staleReferences": {
         "roots": [
             "../../e2e-tests/playwright/specs",
-            "../../e2e-tests/playwright/lib/src"
+            "../../e2e-tests/playwright/lib/src",
+            "../../e2e-tests/cypress/tests"
         ],
         "allow": [
             {
