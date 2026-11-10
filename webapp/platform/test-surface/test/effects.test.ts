@@ -115,3 +115,8 @@ test('effects: a result a cycle cut short is not reused: each end of a cycle fir
     assert.deepEqual(ops('effects.cycle.ping--button'), ['GetUser', 'PatchChannel']);
     assert.deepEqual(ops('effects.cycle.pong--button'), ['GetUser', 'PatchChannel']);
 });
+
+test('effects: a call through data that returns nothing is unknown, unless it is a known harmless method', () => {
+    assert.equal(element(out(), 'effects.registry.action--button').effects?.unknown, true);
+    assert.equal(element(out(), 'effects.registry.focus--button').effects, undefined);
+});

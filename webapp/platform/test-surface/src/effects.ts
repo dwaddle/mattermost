@@ -89,6 +89,7 @@ export class Tracer {
     private readonly R: Resolver;
     private readonly ops: Operations;
     private readonly checker: ts.TypeChecker;
+    private readonly pureCalls: Set<string>;
     private readonly memo = new Map<ts.Node, Effects>();
     private readonly inProgress = new Set<ts.Node>();
 
@@ -114,6 +115,7 @@ export class Tracer {
         this.R = R;
         this.ops = ops;
         this.checker = ix.checker;
+        this.pureCalls = new Set(ix.config.effects.pureCalls);
     }
 
     // ---- connect(): props.actions.x -> action creator ------------------------------------
@@ -722,10 +724,12 @@ export class Tracer {
                 } else if (t.prop || t.param) {
                     acc.delegated.push(this.ix.where(n) + ' ' + shortText(n.expression, 50));
                 } else if (t.dynamic) {
-                    // a call whose result is a plain value (boolean/string/number/JSX) is computation, not a request
+                    // a call whose result is a plain value (boolean/string/number/JSX) is computation, not a request; one
+                    // that returns nothing may send one (a registry's action, a saved callback), unless it is a known
+                    // harmless method (`ref.current.focus()`)
                     const rt = this.checker.getTypeAtLocation(n);
                     const txt = this.checker.typeToString(rt);
-                    const pure = (rt.flags & (ts.TypeFlags.BooleanLike | ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.Void)) || PURE_TYPE.test(txt);
+                    const pure = (rt.flags & (ts.TypeFlags.BooleanLike | ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike)) || PURE_TYPE.test(txt) || this.pureCalls.has(calleeName(n));
                     if (pure) {
                         acc.assumedPure++;
                     } else {

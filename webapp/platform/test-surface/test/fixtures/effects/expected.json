@@ -960,6 +960,59 @@
       }
     },
     {
+      "template": "effects.registry.action--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "registry"
+      ],
+      "name": "action",
+      "role": "button",
+      "component": {
+        "name": "Registry",
+        "at": "src/registry.tsx:19"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": true,
+        "delegated": []
+      }
+    },
+    {
+      "template": "effects.registry.focus--button",
+      "grammar": true,
+      "scope": [
+        "effects",
+        "registry"
+      ],
+      "name": "focus",
+      "role": "button",
+      "component": {
+        "name": "Registry",
+        "at": "src/registry.tsx:24"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      }
+    },
+    {
       "template": "effects.restore--button",
       "grammar": true,
       "scope": [

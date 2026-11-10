@@ -43,6 +43,12 @@ export type ConfigFile = {
     /** Calls whose subtree is an error path, not part of what an action does. */
     errorCalls?: string[];
 
+    /**
+     * How handlers are traced. `pureCalls`: method names that send no request when their target can't be known
+     * (`ref.current.focus()`); any other call through data is an unknown effect, even when it returns nothing.
+     */
+    effects?: {pureCalls?: string[]};
+
     /** Where outputs are written (relative to root). */
     output: {
         manifest: string;
@@ -137,6 +143,7 @@ export type Config = {
     openapiDir: string | null;
     i18n: string | null;
     errorCalls: RegExp;
+    effects: {pureCalls: string[]};
     output: {
         manifest: string;
         generated: string | null;
@@ -166,6 +173,9 @@ export type PluginConfig = {
     key: string;
     hosts: Array<{name: string; appMap: string}>;
 };
+
+/** DOM methods a handler calls on elements it can't see the type of (refs): focus and scrolling send nothing. */
+export const DEFAULT_PURE_CALLS = ['focus', 'blur', 'select', 'scrollIntoView', 'scrollTo'];
 
 export const DEFAULT_EXCLUDE = [
     '\\.test\\.',
@@ -199,6 +209,7 @@ export function resolveConfig(raw: ConfigFile, dir: string, configPath = path.jo
         openapiDir: raw.openapiDir ? fromDir(raw.openapiDir) : null,
         i18n: raw.i18n ? fromDir(raw.i18n) : null,
         errorCalls: new RegExp(`^(${(raw.errorCalls ?? ['logError', 'forceLogoutIfNecessary', 'handleServerError']).join('|')})$`),
+        effects: {pureCalls: raw.effects?.pureCalls ?? DEFAULT_PURE_CALLS},
         output: {
             manifest: fromDir(raw.output.manifest),
             generated: raw.output.generated ? fromDir(raw.output.generated) : null,
