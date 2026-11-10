@@ -45,8 +45,8 @@ export type ScopeNode = {
     /** For an item scope: the keyed element in the parent (`lhs.channel_list.channel:{key}--link`). */
     item?: Element;
 
-    /** The class this node is emitted as (its own, or a shared one). */
-    cls: ClassModel;
+    /** The class this node is emitted as (its own, or a shared one); set for every node once classes are assigned. */
+    cls?: ClassModel;
 };
 
 export type ClassModel = {
@@ -67,7 +67,7 @@ export type Model = {
     byScope: Map<string, ScopeNode>;
 };
 
-const newNode = (path: string[]): ScopeNode => ({path, children: new Map(), members: [], cls: undefined as unknown as ClassModel});
+const newNode = (path: string[]): ScopeNode => ({path, children: new Map(), members: []});
 
 /**
  * Which elements are generated: those in migrated areas (emitted in, or rendered through, a strict path)

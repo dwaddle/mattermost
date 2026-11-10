@@ -806,8 +806,12 @@ export class Scanner {
         if (ts.isObjectBindingPattern(param.name)) {
             return param.name.elements.some((el) => (el.propertyName ?? el.name).getText() === name);
         }
-        const props = param.name.getText();
-        return fn!.getText().includes(`${props}.${name}`);
+
+        // `props.dialogType` read somewhere in the component (not text that merely contains it)
+        const props = ts.isIdentifier(param.name) ? this.ix.checker.getSymbolAtLocation(param.name) : undefined;
+        const reads = (n: ts.Node): boolean => (ts.isPropertyAccessExpression(n) && n.name.text === name && ts.isIdentifier(n.expression) &&
+            Boolean(props) && this.ix.checker.getSymbolAtLocation(n.expression) === props) || Boolean(ts.forEachChild(n, reads));
+        return reads(fn!);
     }
 
     /** Menu triggers: a testid read from `props.menuButton` of a component that also takes `menu` opens that menu. */

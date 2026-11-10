@@ -293,11 +293,13 @@ class Members {
     private readonly names = new Map<string, string>();
     readonly out: string[] = [];
     private readonly ctx: Ctx;
-    private readonly cls: ClassModel;
 
-    constructor(ctx: Ctx, cls: ClassModel) {
+    /** The class the members are emitted into (for collision messages). */
+    private readonly className: string;
+
+    constructor(ctx: Ctx, className: string) {
         this.ctx = ctx;
-        this.cls = cls;
+        this.className = className;
     }
 
     has(name: string): boolean {
@@ -308,7 +310,7 @@ class Members {
     add(name: string, source: string, code: string): boolean {
         const prev = this.names.get(name);
         if (prev) {
-            this.ctx.diagnostics.push({rule: 'collisions', severity: 'error', at: source, message: `${this.cls.name}.${name} is generated for both ${prev} and ${source}.`, fix: 'Rename one of the testids.'});
+            this.ctx.diagnostics.push({rule: 'collisions', severity: 'error', at: source, message: `${this.className}.${name} is generated for both ${prev} and ${source}.`, fix: 'Rename one of the testids.'});
             return false;
         }
         this.names.set(name, source);
@@ -610,7 +612,7 @@ function row(node: ScopeNode, cls: ClassModel, m: Members, extraTypes: string[])
 /** Source of one class. */
 export function emitClass(ctx: Ctx, cls: ClassModel): {code: string; types: string[]} {
     const node = cls.node;
-    const m = new Members(ctx, cls);
+    const m = new Members(ctx, cls.name);
     const types: string[] = [];
     if (node.item) {
         itemSelf(ctx, node, m);
@@ -645,7 +647,7 @@ export function emitClass(ctx: Ctx, cls: ClassModel): {code: string; types: stri
 /** The App root: top-level scopes, plus elements whose testid is a bare scope word. */
 export function emitApp(ctx: Ctx, model: Model, pages: Page[]): string {
     const root = model.root;
-    const m = new Members(ctx, root.cls);
+    const m = new Members(ctx, 'App');
     for (const [word, child] of [...root.children.entries()].sort((a, b) => cmp(a[0], b[0]))) {
         childScope(ctx, root, word, child, m);
     }
