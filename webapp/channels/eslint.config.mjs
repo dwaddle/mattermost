@@ -12,6 +12,7 @@ import eslintPlugin from '@mattermost/eslint-plugin';
 const TESTID_LINT_PENDING = [
     // its attribute combobox takes a testid scope only from the ABAC and attributes PR, which takes it off this list
     'src/components/user_settings/general/user_settings_general.tsx',
+    'src/components/widgets/settings/setting.tsx',
 ];
 
 export default defineConfig([
