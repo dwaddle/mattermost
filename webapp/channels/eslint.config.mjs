@@ -12,11 +12,39 @@ import eslintPlugin from '@mattermost/eslint-plugin';
 // Strict files where the testid rules' extended checks (every branch of a testid, such as a `testId ? new : 'legacy'`
 // fallback, and the testid helpers) found what the area-fix wave fixes: there the two rules stay warnings until then.
 const TESTID_LINT_PENDING = [
-    // its announcement bar renders a testid built only from runtime data; the strict PR fixes it with the other bars
+    'src/components/admin_console/access_control/editors/table_editor/graph_value_cell.tsx',
+    'src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx',
+    'src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx',
+    'src/components/admin_console/data_grid/data_grid.tsx',
+    'src/components/admin_console/data_grid/data_grid_header.tsx',
+    'src/components/admin_console/data_grid/data_grid_search.tsx',
+    'src/components/admin_console/list_table/list_table.tsx',
+    'src/components/admin_console/system_properties/rank_badge.tsx',
+    'src/components/alert_banner/index.tsx',
     'src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx',
-    // the settings row keeps its label and help fallbacks for hosts without a scope until the strict PR drops the
-    // shared widgets' legacy ids
+    'src/components/autosize_textarea.tsx',
+    'src/components/channel_attributes/attribute_chip.tsx',
+    'src/components/color_input.tsx',
+    'src/components/confirm_modal.tsx',
+    'src/components/datetime_input/datetime_input.tsx',
+    'src/components/invitation_modal/invite_as.tsx',
+    'src/components/notification_box/notification_box.tsx',
+    'src/components/post_view/burn_on_read_badge/burn_on_read_badge.tsx',
+    'src/components/post_view/burn_on_read_concealed_placeholder/burn_on_read_concealed_placeholder.tsx',
+    'src/components/post_view/burn_on_read_timer_chip/burn_on_read_timer_chip.tsx',
+    'src/components/post_view/commented_on_files_message/commented_on_files_message.tsx',
+    'src/components/property_fields/hierarchical_value_menu/hierarchical_value_menu.tsx',
+    'src/components/property_fields/hierarchical_value_menu/hierarchical_value_menu_test_helpers.tsx',
+    'src/components/settings_sidebar/settings_sidebar.tsx',
+    'src/components/user_settings/general/user_settings_general.tsx',
+    'src/components/widgets/advanced_textbox/advanced_textbox.tsx',
+    'src/components/widgets/inputs/check/index.tsx',
+    'src/components/widgets/inputs/input/input.tsx',
+    'src/components/widgets/separator/basic-separator.tsx',
+    'src/components/widgets/separator/notification-separator.tsx',
+    'src/components/widgets/settings/checkbox_matrix_setting.tsx',
     'src/components/widgets/settings/setting.tsx',
+    'src/components/widgets/settings/text_setting.tsx',
 ];
 
 // Files the testid scan keeps at warnings (dead code, reviewed a11y cases): repo-relative paths become src/ globs.
