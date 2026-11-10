@@ -13,7 +13,7 @@ npm run test-surface                # scan + checks, writes test-surface.json
 npm run test-surface:generate       # writes e2e-tests/playwright/lib/src/ui/generated from the manifest
 npm run test-surface:check          # scan + checks; exit 1 on errors or a stale manifest (CI)
 npm run test-surface:report         # also writes reports/ (unknown effects, spec gaps, diagnostics, exact locations, unrendered test ids)
-npm run test-surface:watch          # keeps a language service warm, rescans and regenerates (about 10 s per change, against 30 s cold)
+npm run test-surface:watch          # keeps a language service warm, rescans and regenerates (7–10 s per change)
 npm run test-surface:install-hooks  # opt-in git hooks: pre-commit lints staged testids; pre-push scans, checks and regenerates
 npx test-surface where <testid>     # the exact places (file:line:column) that render a testid or template, and its usage chains
 ```
@@ -28,7 +28,7 @@ CI (`check-test-surface` in `.github/workflows/webapp-ci.yml`) runs the tool's t
 
 The tool runs from TypeScript source on Node 24 (native type stripping), so it has no build step. A whole-webapp program needs a bigger heap than Node's default: the bin reruns itself with `--max-old-space-size=4096` unless you set a size (a scan and generate peak at about 2.5 GB of heap, watch mode near 3 GB).
 
-A whole-webapp scan takes about 30 s on a laptop (Apple M-series), half of it building the TypeScript program and about 10 s the analysis; it peaks at about 2.6 GB resident. Watch mode rescans a change in about 10 s.
+A whole-webapp `check` takes 13–40 s on a laptop (Apple M-series): building the TypeScript program is 3 s with the files in the OS cache and 15–35 s without, and the analysis about 9 s. It peaks at about 2.6 GB resident. Watch mode rescans a change in 7–10 s.
 
 ## The testid grammar
 
