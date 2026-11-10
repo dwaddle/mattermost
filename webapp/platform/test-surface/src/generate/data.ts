@@ -55,7 +55,44 @@ ${entries.join('\n')}
 } as const;
 export type ${s.name} = (typeof ${s.name})[keyof typeof ${s.name}];`;
     });
+    const settings = settingIds(manifest, out);
+    if (settings) {
+        blocks.push(settings);
+    }
     return `${out.header}\n${blocks.length ? blocks.join('\n\n') : 'export {};'}\n`;
+}
+
+/**
+ * `AdminSettingId`: the System Console settings keyed by a literal id where the page passes one (a React id like
+ * `restrictUnauthenticatedWebappPlugins`, or a path the config type doesn't have). They join the runtime's
+ * `AdminSettingKey` by declaration merging (`AdminSettingIds`), so `admin.setting()` takes them, the config paths and the
+ * custom attribute settings, and nothing else.
+ */
+function settingIds(manifest: Manifest, out: Output): string | null {
+    const ids = [...new Set(manifest.elements.filter((e) => e.key?.kind === 'setting').flatMap((e) => e.key!.values ?? []))].sort(cmp);
+    if (!ids.length) {
+        return null;
+    }
+    const used = new Set<string>();
+    const entries = ids.map((v) => {
+        let k = pascal(v) || 'Empty';
+        for (let i = 2; used.has(k); i++) {
+            k = `${pascal(v)}${i}`;
+        }
+        used.add(k);
+        return `    ${k}: '${v}',`;
+    });
+    return `/** System Console settings keyed by a literal id (a React id, or a path the config type doesn't have): \`admin.setting(AdminSettingId.X)\`. */
+export const AdminSettingId = {
+${entries.join('\n')}
+} as const;
+export type AdminSettingId = (typeof AdminSettingId)[keyof typeof AdminSettingId];
+
+declare module '${out.runtime}' {
+    interface AdminSettingIds {
+${ids.map((v) => `        ${propKey(v)}: true;`).join('\n')}
+    }
+}`;
 }
 
 type MsgNode = {leaf?: {id: string; text: string}; children: Map<string, MsgNode>};

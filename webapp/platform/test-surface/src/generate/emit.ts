@@ -277,7 +277,6 @@ function keyParam(ctx: Ctx, k: KeyInfo | undefined, name: string): KeyParam {
         return {decl: `${p}: PluginKey`, expr: () => `(${p} as string)`};
     }
 
-    // a System Console setting: the config path, turned into its testid key at runtime
     // an autocomplete suggestion: the term (a username, a channel name), turned into its testid key at runtime
     if (k.kind === 'suggestion') {
         ctx.imports.aria.add('suggestionTestKey');
@@ -289,10 +288,13 @@ function keyParam(ctx: Ctx, k: KeyInfo | undefined, name: string): KeyParam {
         ctx.imports.aria.add('textTestKey');
         return {decl: `${p}: string`, expr: () => `textTestKey(${p})`};
     }
+    // a System Console setting: its config path, its literal id (`AdminSettingId`) or a custom attribute's, as the runtime
+    // types them (`AdminSettingKey`), turned into its testid key at runtime
     if (k.kind === 'setting') {
-        ctx.imports.ariaTypes.add('AdminSettingPath');
+        ctx.imports.ariaTypes.add('AdminSettingKey');
         ctx.imports.aria.add('settingTestKey');
-        return {decl: `${p}: ${k.type}`, expr: () => `settingTestKey(${p})`};
+        const others = k.type.split(' | ').filter((t) => t.startsWith('`') && t !== '`custom_profile_attribute-${string}`');
+        return {decl: `${p}: ${['AdminSettingKey', ...others].join(' | ')}`, expr: () => `settingTestKey(${p})`};
     }
     return {decl: `${p}: string`, expr: () => p};
 }

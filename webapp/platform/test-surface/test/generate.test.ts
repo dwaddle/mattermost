@@ -228,13 +228,18 @@ test('generate: a class never takes the name of a fixed set (or entity) that set
     assert.ok(names.includes('SettingsSectionItem'), names.join(', '));
 });
 
-test('generate: a setting-keyed item takes the config path (or a page\'s own setting id) and builds its key at runtime', async () => {
+test('generate: a setting-keyed item takes an AdminSettingKey (config path, a page\'s own setting id) and builds its key at runtime', async () => {
     const {read} = await generateFixture('values');
     const values = read('values.ts');
-    assert.match(values, /setting\(\s*setting:\s*\|?\s*AdminSettingPath[\s|'"A-Za-z.]*['"]bannerEnabled['"]/);
-    assert.match(values, /['"]GitLabSettings\.Url['"]/);
-    assert.doesNotMatch(values, /['"]ServiceSettings\.SiteURL['"]/);
+    assert.match(values, /setting\(setting: AdminSettingKey \| `custom_attribute-\$\{string\}`\)/);
+    assert.match(values, /import type \{[^}]*AdminSettingKey[^}]*\} from '@mattermost\/playwright-lib'/);
     assert.match(values, /\.setting:\$\{settingTestKey\(setting\)\}/);
+
+    // the literal ids join the runtime's AdminSettingKey by declaration merging; a config path only the type knows doesn't
+    const sets = read('sets.ts');
+    assert.match(sets, /export const AdminSettingId = \{[^}]*GitLabSettingsUrl: 'GitLabSettings\.Url',[^}]*BannerEnabled: 'bannerEnabled',[^}]*\} as const;/);
+    assert.match(sets, /declare module '@mattermost\/playwright-lib' \{\n\s+interface AdminSettingIds \{[^}]*['"]GitLabSettings\.Url['"]: true;[^}]*bannerEnabled: true;/);
+    assert.doesNotMatch(sets, /ServiceSettings\.SiteURL/);
 });
 
 test('generate: shapes of one component share a class; colliding names get their area, else their component', () => {
