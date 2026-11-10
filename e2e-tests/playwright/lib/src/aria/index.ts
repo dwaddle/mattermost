@@ -4,6 +4,7 @@
 // Hand-written runtime for the generated page objects (src/ui/generated): one driver per ARIA pattern,
 // the Scope base class, branded API effects, i18n messages and retrying matchers.
 
+export {RUNTIME_API, type RuntimeApiCheck} from './api_version';
 export * from './drivers';
 export {
     effect,
@@ -25,6 +26,13 @@ export {
     type PluginKeyOf,
     type PluginKeys,
 } from './plugins';
-export {settingTestKey, suggestionTestKey, type AdminSettingPath} from './settings';
+export {
+    settingTestKey,
+    suggestionTestKey,
+    type AdminSettingId,
+    type AdminSettingIds,
+    type AdminSettingKey,
+    type AdminSettingPath,
+} from './settings';
 export {KeyedList, keyOfTestId, Scope, type ContentFilter} from './scope';
 export {settle, settleAll, SettleError, type SettleOptions} from './settle';
