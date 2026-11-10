@@ -6,15 +6,31 @@ import {expect as baseExpect} from '@playwright/test';
 
 import {expect as subpathExpect} from '../expect';
 
-import {Driver} from './drivers';
+import {Driver, elementLine} from './drivers';
+import type {Meta} from './effects';
 import {formatMessage, type Message, type ParamsOf} from './msg';
 import {Scope} from './scope';
 
 type HasLocator = Driver | Scope | Locator;
 type Options = {timeout?: number};
 
-function locatorOf(received: HasLocator): Locator {
-    return received instanceof Driver || received instanceof Scope ? received.locator : received;
+/** The element to assert on, and (for a driver) its metadata, so a failure says which element and where it comes from. */
+function locatorOf(received: HasLocator): {locator: Locator; meta?: Pick<Meta, 'testId' | 'source'>} {
+    if (received instanceof Driver) {
+        return {locator: received.locator, meta: received.meta};
+    }
+    if (received instanceof Scope) {
+        return {
+            locator: received.locator,
+            meta: {testId: received.scope, source: `class ${received.constructor.name}`},
+        };
+    }
+    return {locator: received};
+}
+
+/** The line a failure ends with: the element's testid and source, when known. */
+function where(meta?: Pick<Meta, 'testId' | 'source'>): string {
+    return meta ? `\n${elementLine(meta)}` : '';
 }
 
 /**
@@ -23,8 +39,19 @@ function locatorOf(received: HasLocator): Locator {
  */
 // extends the subpath-aware expect (toHavePath, toHaveHrefPath), so tests get one expect with every matcher
 export const expect = subpathExpect.extend({
+    /** A switch or checkbox that is on: `aria-checked="true"`, or a native input's checked state (compass's Switch). */
     async toBeOn(this: ExpectMatcherState, received: HasLocator, options?: Options) {
-        return attribute.call(this, 'toBeOn', locatorOf(received), 'aria-checked', 'true', options);
+        const {locator, meta} = locatorOf(received);
+        try {
+            await baseExpect(locator).toBeChecked({checked: !this.isNot, ...options});
+            return {pass: !this.isNot, name: 'toBeOn', message: () => `toBeOn: is ${this.isNot ? 'off' : 'on'}`};
+        } catch (e) {
+            return {
+                pass: this.isNot,
+                name: 'toBeOn',
+                message: () => `toBeOn: expected ${this.isNot ? 'off' : 'on'}${where(meta)}\n${(e as Error).message}`,
+            };
+        }
     },
     async toBePressed(this: ExpectMatcherState, received: HasLocator, options?: Options) {
         return attribute.call(this, 'toBePressed', locatorOf(received), 'aria-pressed', 'true', options);
@@ -43,7 +70,7 @@ export const expect = subpathExpect.extend({
         if (this.isNot) {
             throw new Error('not.toBeSaved() is ambiguous (unsaved, or still saving?): assert toBeEnabled() instead');
         }
-        const locator = locatorOf(received);
+        const {locator, meta} = locatorOf(received);
         try {
             await baseExpect(locator).toBeDisabled(options);
             await baseExpect(locator).not.toHaveAttribute('aria-busy', 'true', options);
@@ -52,7 +79,8 @@ export const expect = subpathExpect.extend({
             return {
                 pass: false,
                 name: 'toBeSaved',
-                message: () => `toBeSaved: expected the save to finish (disabled, not busy)\n${(e as Error).message}`,
+                message: () =>
+                    `toBeSaved: expected the save to finish (disabled, not busy)${where(meta)}\n${(e as Error).message}`,
             };
         }
     },
@@ -99,7 +127,7 @@ export const expect = subpathExpect.extend({
 async function attribute(
     this: ExpectMatcherState,
     name: string,
-    locator: Locator,
+    {locator, meta}: ReturnType<typeof locatorOf>,
     attr: string,
     value: string,
     options?: Options,
@@ -116,7 +144,7 @@ async function attribute(
             pass: this.isNot,
             name,
             message: () =>
-                `${name}: expected ${attr}${this.isNot ? ' not' : ''} to be "${value}"\n${(e as Error).message}`,
+                `${name}: expected ${attr}${this.isNot ? ' not' : ''} to be "${value}"${where(meta)}\n${(e as Error).message}`,
         };
     }
 }
@@ -124,7 +152,7 @@ async function attribute(
 async function messageText(
     this: ExpectMatcherState,
     name: string,
-    locator: Locator,
+    {locator, meta}: ReturnType<typeof locatorOf>,
     text: string,
     id: string,
     exact: boolean,
@@ -144,7 +172,7 @@ async function messageText(
             pass: this.isNot,
             name,
             message: () =>
-                `${this.isNot ? 'expected not ' : 'expected '}to ${verb} message ${id}: "${text}"\n${(e as Error).message}`,
+                `${this.isNot ? 'expected not ' : 'expected '}to ${verb} message ${id}: "${text}"${where(meta)}\n${(e as Error).message}`,
         };
     }
 }

@@ -17,6 +17,7 @@ export {
     registerPluginSurface,
     Scope,
     suggestionTestKey,
+    withElement,
     type BodyOf,
     type PathParamsOf,
 
@@ -30,6 +31,7 @@ export {
     type MenuitemDriver,
     type OptionDriver,
     type RadioDriver,
+    type RadiogroupDriver,
     type SwitchDriver,
     type TabDriver,
     type TextboxDriver,
