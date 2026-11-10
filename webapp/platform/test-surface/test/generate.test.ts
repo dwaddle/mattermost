@@ -163,11 +163,17 @@ test('generate: pages with typed params, entity keys, defaults for fixed sets, a
     assert.match(read('app.ts'), /get channelsPage\(\): ChannelsPage \{\n {8}return new ChannelsPage\(this\.page\);/);
 });
 
-test('generate: a keyed item gets its collection and its keys in document order', async () => {
+test('generate: a keyed item gets its collection, its keys in document order, and a KeyedList', async () => {
     const {read} = await generateFixture('values');
     const values = read('values.ts');
     assert.match(values, /get channelItems\(\): Locator \{\n {8}return this\.byTestIdPattern\(`\$\{this\.scope\}\.channel:`, '--link'\);/);
     assert.match(values, /channelKeys\(\): Promise<string\[\]> \{\n {8}return this\.keysOf\(`\$\{this\.scope\}\.channel:`, '--link'\);/);
+
+    // the list builds each item from the key its testid carries (a scope item's class, or a keyed element's driver)
+    assert.match(values, /get channelList\(\) \{\n {8}return this\.keyedList\(`\$\{this\.scope\}\.channel:`, '--link', \(key: string\) => new ValuesChannelsChannel\(this\.page, `\$\{this\.scope\}\.channel`, this\.byTestId\(`\$\{this\.scope\}\.channel:\$\{key\}--link`\)\)\);/);
+
+    // a fixed set's keys are its values
+    assert.match(values, /get choiceList\(\) \{\n {8}return this\.keyedList\(`\$\{this\.scope\}\.choice:`, '--radio', \(key: ValuesChoice\) => drivers\.radio\(/);
 });
 
 test('generate: a combobox\'s options are found from the page; a listbox\'s options within the list', async () => {

@@ -288,6 +288,7 @@ function keyParam(ctx: Ctx, k: KeyInfo | undefined, name: string): KeyParam {
         ctx.imports.aria.add('textTestKey');
         return {decl: `${p}: string`, expr: () => `textTestKey(${p})`};
     }
+
     // a System Console setting: its config path, its literal id (`AdminSettingId`) or a custom attribute's, as the runtime
     // types them (`AdminSettingKey`), turned into its testid key at runtime
     if (k.kind === 'setting') {
@@ -314,6 +315,17 @@ class Members {
 
     has(name: string): boolean {
         return this.names.has(name);
+    }
+
+    /** Members added after all others, and only when their name is free (`xList` beside `x(key)`). */
+    readonly late: Array<{name: string; source: string; code: string}> = [];
+
+    addLate() {
+        for (const l of this.late) {
+            if (!this.has(l.name)) {
+                this.add(l.name, l.source, l.code);
+            }
+        }
     }
 
     /** Adds a member unless its name is taken (collisions are errors, never silently renamed). */
@@ -463,7 +475,9 @@ function element(ctx: Ctx, node: ScopeNode, e: Element, m: Members, mt: {ops?: s
         const id = testIdExpr(node, e.template, kp.expr(fn));
         ctx.imports.locator = true;
         m.add(fn, e.component.at, `${doc(e, opensDoc)}\n${fn}(${kp.decl}) {\n    return drivers.${factory}(this.byTestId(${id}${popupArg(node, e)}), ${meta(ctx, node, e, id, mt)});\n}`);
-        addItemsLocator(node, e, m);
+        const byKey = testIdExpr(node, e.template, 'key');
+        const keyType = shared ? shared.kp.decl.slice(fn.length + 2) : listKeyType(ctx, e.key);
+        addItemsLocator(node, e, m, keyType, `drivers.${factory}(this.byTestId(${byKey}${popupArg(node, e)}), ${meta(ctx, node, e, byKey, mt)})`);
         const values = shared?.values ?? ((e.key.kind === 'set' || e.key.kind === 'string') && e.key.set ? e.key.values : undefined);
         if (values) {
             for (const v of values) {
@@ -513,7 +527,21 @@ function popupArg(node: ScopeNode, e: Element): string {
     return e.role === 'option' && node.members.some((m) => m.role === 'combobox') ? ', true' : '';
 }
 
-function addItemsLocator(node: ScopeNode, e: Element, m: Members) {
+/**
+ * A keyed element's collection: `xItems` (every item), `xKeys()` (their keys now) and `xList`, a `KeyedList` the list
+ * matchers retry over (`toHaveKeys`), whose items are built from the key the testid carries (`item` is that code, with
+ * `key` in scope). The list is added last, and only when its name is free.
+ */
+/** A `KeyedList`'s key type: a fixed set's keys are its values; other keys are the strings the testids carry. */
+function listKeyType(ctx: Ctx, k: KeyInfo | undefined): string {
+    if (k?.kind === 'set' && k.set) {
+        ctx.imports.sets.add(k.set);
+        return k.set;
+    }
+    return 'string';
+}
+
+function addItemsLocator(node: ScopeNode, e: Element, m: Members, keyType: string, item: string) {
     const base = node.path.join('.');
     const [before, after] = splitAtKey(e.template);
     const prefix = base ? '`${this.scope}' + before.slice(base.length) + '`' : `'${before}'`;
@@ -521,6 +549,10 @@ function addItemsLocator(node: ScopeNode, e: Element, m: Members) {
     m.add(name, e.component.at, `/** Every \`${e.template}\` in the scope. */\nget ${name}(): Locator {\n    return this.byTestIdPattern(${prefix}, '${after}'${popupArg(node, e)});\n}`);
     const keys = memberName(camel(e.name) + 'Keys');
     m.add(keys, e.component.at, `/** The keys of every \`${e.template}\` in the scope, in document order. */\n${keys}(): Promise<string[]> {\n    return this.keysOf(${prefix}, '${after}'${popupArg(node, e)});\n}`);
+
+    const list = memberName(camel(e.name) + 'List');
+    const popup = popupArg(node, e);
+    m.late.push({name: list, source: e.component.at, code: `/** Every \`${e.template}\` in the scope as a list by key, for the list matchers: \`expect(x.${list}).toHaveKeys([…])\`. */\nget ${list}() {\n    return this.keyedList(${prefix}, '${after}', (key: ${keyType}) => ${item}${popup});\n}`});
 }
 
 const menuScopesMemo = new WeakMap<Manifest, Set<string>>();
@@ -551,7 +583,7 @@ function childScope(ctx: Ctx, node: ScopeNode, word: string, child: ScopeNode, m
         ctx.imports.locator = true;
         const opensDoc = (e.opens ?? []).map((o) => `Opens ${o.kind} ${shortTarget(o.target)}.`).slice(0, 3);
         m.add(fn, e.component.at, `${doc(e, opensDoc)}\n${fn}(${kp.decl}): ${cls.name} {\n    return new ${cls.name}(this.page, ${scopeExpr}, this.byTestId(${id}${popupArg(node, e)}));\n}`);
-        addItemsLocator(node, e, m);
+        addItemsLocator(node, e, m, listKeyType(ctx, e.key), `new ${cls.name}(this.page, ${scopeExpr}, this.byTestId(${testIdExpr(node, e.template, 'key')}${popupArg(node, e)}))`);
         return;
     }
     const name = memberName(camel(word));
@@ -641,6 +673,7 @@ export function emitClass(ctx: Ctx, cls: ClassModel): {code: string; types: stri
     }
     form(node, cls, m, types);
     row(node, cls, m, types);
+    m.addLate();
     ctx.imports.aria.add('Scope');
     const scopes = cls.mounts.map((n) => `\`${n.path.join('.')}\``).join(', ');
     const what = cls.shared ? `Rendered at ${scopes}: one class, constructed with the scope it is mounted at.` : `Scope ${scopes}.`;
@@ -661,6 +694,7 @@ export function emitApp(ctx: Ctx, model: Model, pages: Page[]): string {
     for (const [word, child] of [...root.children.entries()].sort((a, b) => cmp(a[0], b[0]))) {
         childScope(ctx, root, word, child, m);
     }
+    m.addLate();
     for (const page of pages) {
         const getter = pageGetter(page.class);
         if (m.add(getter, page.path, `/** \`${page.path}\` */\nget ${getter}(): ${page.class} {\n    return new ${page.class}(this.page);\n}`)) {
