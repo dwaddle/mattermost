@@ -13,7 +13,7 @@ npm run test-surface                # scan + checks, writes test-surface.json
 npm run test-surface:generate       # writes e2e-tests/playwright/lib/src/ui/generated from the manifest
 npm run test-surface:check          # scan + checks; exit 1 on errors or a stale manifest (CI)
 npm run test-surface:report         # also writes reports/ (unknown effects, spec gaps, diagnostics by rule, unrendered test ids)
-npm run test-surface:watch          # keeps a language service warm, rescans and regenerates (~2 s per changed file)
+npm run test-surface:watch          # keeps a language service warm, rescans and regenerates (about 10 s per change, against 30 s cold)
 npm run test-surface:install-hooks  # opt-in git hooks: pre-commit lints testids, regenerates and adds the output to the commit; pre-push re-checks
 ```
 
@@ -26,6 +26,8 @@ test-surface parts --config packages/compass-ui/test-surface.config.json   # wri
 CI (`check-test-surface` in `.github/workflows/webapp-ci.yml`) runs the tool's tests, `check`, regenerates, fails if the committed manifest or generated page objects differ, and runs the golden-numbers check.
 
 The tool runs from TypeScript source on Node 24 (native type stripping), so it has no build step. A whole-webapp program needs a bigger heap than Node's default: the bin reruns itself with `--max-old-space-size=8192` unless you set a size.
+
+A whole-webapp scan takes about 30 s on a laptop (Apple M-series), half of it building the TypeScript program and about 10 s the analysis; it peaks at about 2.6 GB resident. Watch mode rescans a change in about 10 s.
 
 ## The testid grammar
 
@@ -54,7 +56,14 @@ Every diagnostic names the file and line, the rule, and the fix. Rules:
 | `duplicates` | the same testid twice only in mutually exclusive branches of one component, with the same role |
 | `key-origin` | keys come from a fixed set, an entity field (`channel.name`) or a typed value |
 | `unresolved` | the testid can be read statically |
+| `truncated` | a testid (or navigation target) built from lists has at most 256 values; past that the scan would keep only some (`limits.ts`) |
+| `unreachable` | the testid is in code the app's entries load (config `entries`), not only in dead code or tests |
 | `plugin-slots` | the published plugin slot contract (`pluginSlots` in the config: `PLUGIN_SLOT_TEST_IDS`) and the plugin-keyed testids the webapp renders agree, both ways; always errors |
+| `plugin-scope`, `plugin-compat` | (plugin mode) the plugin's testids are under `plugins.<key>`; every supported host renders the slots its registry calls fill |
+| `pages` | `pageReady` names pages and elements that exist |
+| `input` | the files the tool reads (OpenAPI yaml, a library's `test-parts.json`, a host's `app-map.json`, the manifest) exist, parse and are of the format version it reads; a configured library is installed |
+| `allow` | every `checks.allow` entry still matches something |
+| `stale-reference` | (warnings, not stored) e2e code queries only testids the app renders (`staleReferences` in the config) |
 | `collisions` | (generator) two testids in one scope don't produce the same member name |
 
 Where checks are errors rather than warnings is set in `channels/test-surface.config.json` (`checks.strictScopes`, `checks.strictPaths`): migrated areas are strict, the rest of the webapp reports warnings until it is migrated. After a rename, `reports/unrendered_test_ids.txt` lists testids unit tests query that no template produces (mocks in the same file excluded): an absence check on one can never fail. A reviewed exception goes in `checks.allow` (`{"rule", "template", "reason"}`): that error becomes a warning carrying the reason, and an entry that stops matching is reported so the list doesn't go stale.
@@ -69,11 +78,20 @@ Where checks are errors rather than warnings is set in `channels/test-surface.co
 | `roles.ts` | ARIA role of the element a testid lands on, following component props spreads to the DOM element or library component. |
 | `conditions.ts` | Render conditions (`&&`, ternary arms, if/else, early returns), explained one level (`useSelector` inlined), classified (prop, permission, config, local state…). |
 | `routes.ts` | `Client4` method → verb + path (route helpers evaluated) → OpenAPI operation; response body type from the method's TypeScript return type. |
-| `effects.ts` | Handler → call graph → `Client4` operations, opened modals/popovers/menus, navigation. Follows `connect`/`bindActionCreators`, props callbacks per instance, hooks, IIFEs, factories; skips catch blocks and error logging. |
-| `scan.ts` | Finds every emission point, follows component-level testids to where they land, groups values into manifest elements. |
+| `effects.ts` | Handler → call graph → `Client4` operations, opened modals/popovers/menus, navigation. Follows `connect`/`bindActionCreators`, props callbacks per instance, hooks, IIFEs, factories; skips catch blocks and error logging. A call through data is an unknown effect unless it returns a plain value or is a known harmless method (`effects.pureCalls`). |
+| `store_gates.ts` | UI the store shows: a constant a click dispatches that a component's render condition compares against (the panel a button opens). |
+| `navigation.ts` | Which page a navigation target goes to, matched against the route table. |
 | `pages.ts` | The route table: every `<…Route path>` (paths through constants and template literals; `component` or `render`), the component it renders, its params, and the scopes rendered under it. Page names and entity-typed params come from `pageNames` / `pageParams` in the config. `pageReady` names, per page, the elements whose showing means the app is up; the generated `goto` waits for one of them, since the load event comes before a single-page app has rendered. |
+| `reachability.ts` | The files the app's entries import (config `entries`), for `unreachable`. |
+| `scan.ts` | Finds every emission point, follows component-level testids to where they land, groups values into manifest elements. |
 | `checks.ts` | The rules above. |
+| `stale_refs.ts` | `stale-reference`: testids e2e code queries that no template renders. |
+| `report.ts` | The manifest's text, the summary, `report`'s files, the golden numbers. |
+| `input.ts` | Reads the files another run wrote (versioned), and the `input` diagnostics. |
+| `limits.ts` | How far the analysis follows code, each limit with its reason. |
+| `parts.ts`, `parts_cli.ts` | Library mode (below), and loading the parts a library publishes. |
 | `watch.ts` | Watch mode: incremental program + index, rescan, regenerate. |
+| `cli.ts`, `config.ts`, `hooks.ts` | The commands, the config file, the opt-in git hooks. |
 
 ### Component libraries (`parts.ts`)
 
@@ -129,7 +147,7 @@ The manifest is the contract: the scanner writes it from the webapp's source, th
 | Scanner, checks, CLI, watch | `src/*.ts` | the webapp: it runs on the webapp's TypeScript program and its rules are the webapp's |
 | Grammar | defined once in `@mattermost/types/test_id` (roles, words, the parser, the key helpers); the scanner (`src/grammar.ts`), the lint rules in `@mattermost/eslint-plugin` and the Playwright runtime import it, each wording its own messages; components import it through `@mattermost/shared/utils/test_id` | the webapp |
 | Manifest | `webapp/channels/test-surface.json` (committed, CI-checked) | the change that moved the testids |
-| Generator | `src/generate` (imports only the manifest types, the grammar and `src/compare.ts` from the rest of the package) | the e2e tests: its output is the API specs are written against |
+| Generator | `src/generate` (imports only the manifest types, the grammar, the config and `src/compare.ts` from the rest of the package) | the e2e tests: its output is the API specs are written against |
 | Generated page objects | `e2e-tests/playwright/lib/src/ui/generated` (committed, never edited) | the e2e tests |
 | Runtime | `e2e-tests/playwright/lib/src/aria` | the e2e tests |
 
