@@ -5,7 +5,7 @@ import type {AdminConfig} from '@mattermost/types/config';
 import {settingTestKey as baseSettingTestKey, type SettingTestKey} from '@mattermost/types/test_id';
 
 // the webapp's own key helpers (`@mattermost/types/test_id`), so tests build the keys it renders
-export {suggestionTestKey} from '@mattermost/types/test_id';
+export {suggestionTestKey, textTestKey} from '@mattermost/types/test_id';
 
 /** `Prefix.Key` for every key of T, and (Depth more levels) the keys of the plain objects it holds (`A.B.C`). */
 type PathsOf<T, Prefix extends string, Depth extends unknown[]> = {

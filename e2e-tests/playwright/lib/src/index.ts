@@ -22,6 +22,7 @@ export {
     Scope,
     settingTestKey,
     suggestionTestKey,
+    textTestKey,
     withElement,
     type AdminSettingId,
     type AdminSettingIds,

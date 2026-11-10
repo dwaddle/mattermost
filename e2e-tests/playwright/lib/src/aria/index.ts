@@ -29,6 +29,7 @@ export {
 export {
     settingTestKey,
     suggestionTestKey,
+    textTestKey,
     type AdminSettingId,
     type AdminSettingIds,
     type AdminSettingKey,
