@@ -5,10 +5,19 @@
 // the Scope base class, branded API effects, i18n messages and retrying matchers.
 
 export * from './drivers';
-export {effect, pathPattern, type BodyOf, type Effect, type Meta} from './effects';
+export {
+    effect,
+    pathPattern,
+    type BodyOf,
+    type Effect,
+    type Meta,
+    type PathParamsOf,
+    type PlaceholdersOf,
+} from './effects';
 export {expect} from './matchers';
 export {formatMessage, msg, type Message, type ParamsOf} from './msg';
 export {buildPath, keyOf} from './pages';
 export {pluginSurfaces, registerPluginSurface, type PluginKey, type PluginKeys} from './plugins';
 export {settingTestKey, suggestionTestKey, type AdminSettingPath} from './settings';
 export {Scope} from './scope';
+export {settle, settleAll, SettleError, type SettleOptions} from './settle';

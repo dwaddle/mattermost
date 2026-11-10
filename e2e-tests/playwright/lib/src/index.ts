@@ -18,6 +18,7 @@ export {
     Scope,
     suggestionTestKey,
     type BodyOf,
+    type PathParamsOf,
 
     // the drivers' types, so a plugin's generated package (its getters return them) can emit declarations
     type ButtonDriver,
@@ -41,7 +42,7 @@ export {
     type PluginKey,
     type PluginKeys,
 } from './aria';
-export {settle, SettleError, type SettleOptions} from './settle';
+export {settle, settleAll, SettleError, type SettleOptions} from './settle';
 export type {ExtendedFixtures} from './test_fixture';
 export {testConfig, TESTCONTAINERS_SERVICE_NAMES, SERVER_DEPLOYMENTS} from './test_config';
 export type {TestContainersServiceName, ServerDeployment} from './test_config';

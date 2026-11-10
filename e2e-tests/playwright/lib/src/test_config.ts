@@ -290,6 +290,18 @@ export class TestConfig {
     }
 
     /**
+     * The app path of a request's pathname: strips subpathPrefix (the inverse of withSubpath). A pathname without
+     * the prefix is returned as it is, as some requests reach the server unprefixed (routeUnprefixedApiToSubpath).
+     */
+    withoutSubpath(pathname: string): string {
+        const prefix = this.subpathPrefix;
+        if (prefix && (pathname === prefix || pathname.startsWith(`${prefix}/`))) {
+            return pathname.slice(prefix.length) || '/';
+        }
+        return pathname;
+    }
+
+    /**
      * The SiteURL the server runs with in subpath mode: the nginx proxy under the subpath, addressed
      * by its Docker network alias. The server calls itself back through SiteURL (plugin integration
      * and dialog URLs), so it must be an address the server's own container can reach. The
