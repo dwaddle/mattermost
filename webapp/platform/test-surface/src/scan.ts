@@ -868,7 +868,6 @@ export class Scanner {
     private scopeMemo = new Map<ts.Node, Map<string, Set<string>>>();
     private emissionsByFile = new Map<ts.SourceFile, Emission[]>();
 
-    /** Testid scopes a subtree renders: its own valid testids plus those of the components it uses. */
     /**
      * Testid scopes a subtree renders: its own valid testids plus those of the components it uses. `path` is the
      * chain of usages descended through (outermost first); a child's testid only counts when it was produced
@@ -1222,7 +1221,6 @@ export class Scanner {
             return {name, at: this.ix.where(node), scopes};
         }).sort((a, b) => cmp(a.name, b.name) || cmp(a.at, b.at));
 
-        // a component's own scopes (decided in its body) name it; the rest are nested components' (a popover in its textbox)
         // a component's own scopes (decided in its body) name it; without any, it has no name of its own (a scope
         // nested inside it, like a popover in its textbox, would be the wrong page object to return)
         const ownScopes = new Map([...opTargets.entries()].map(([name, node]) => [name, this.scopesDecidedIn(node)]));
@@ -1556,7 +1554,6 @@ function enclosingForm(tag: JsxTag): JsxTag | null {
     return null;
 }
 
-/** Longest common scope prefix of a set of scopes ("a.b.c", "a.b.d" -> "a.b"), else the most common top scope. */
 /** The scope that most of `scopes` are, or nest under; null on a tie. */
 export function dominantScope(scopes: string[]): string | null {
     const covered = (c: string) => scopes.filter((x) => x === c || x.startsWith(c + '.')).length;
@@ -1567,6 +1564,7 @@ export function dominantScope(scopes: string[]): string | null {
     return ranked[0].c;
 }
 
+/** Longest common scope prefix of a set of scopes ("a.b.c", "a.b.d" -> "a.b"), else the most common top scope. */
 export function commonScope(scopes: string[]): string | null {
     if (!scopes.length) {
         return null;
@@ -1681,11 +1679,6 @@ function suffixValues(part: TestPart, expr: string): Value[] {
 }
 
 /**
- * The scope of the menu a trigger opens: the common scope of the menu's items, preferring the items under
- * the trigger's own scope (a shared selector at `search_box.team_selector` and `search.team_selector`
- * renders each instance's items under its own scope).
- */
-/**
  * The old widgets/menu: `<MenuWrapper>{trigger}<Menu>…items…</Menu></MenuWrapper>`. A trigger (an element in the
  * wrapper, outside its Menu) opens that Menu; returns the Menu's tag.
  */
@@ -1703,6 +1696,11 @@ function wrapperMenu(anchor: ts.Node): JsxTag | null {
     return null;
 }
 
+/**
+ * The scope of the menu a trigger opens: the common scope of the menu's items, preferring the items under
+ * the trigger's own scope (a shared selector at `search_box.team_selector` and `search.team_selector`
+ * renders each instance's items under its own scope).
+ */
 function menuScopeFor(scopes: Set<string> | undefined, triggerScope: string): string | null {
     if (!scopes?.size) {
         return null;

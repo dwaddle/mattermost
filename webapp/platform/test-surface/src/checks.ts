@@ -100,12 +100,12 @@ function applyAllow(out: Diagnostic[], allow: AllowEntry[]) {
     }
 }
 
-/** The published plugin slot contract and what the webapp renders agree, both ways (always errors: plugins depend on it). */
 /** Whether a slot's template (`*.` for any scope) names a rendered template. */
 export function slotMatches(slotTemplate: string, template: string): boolean {
     return slotTemplate.startsWith('*.') ? template.endsWith(slotTemplate.slice(1)) : template === slotTemplate;
 }
 
+/** The published plugin slot contract and what the webapp renders agree, both ways (always errors: plugins depend on it). */
 function checkPluginSlots(manifest: Manifest, push: Push) {
     if (!manifest.pluginSlots.length) {
         return;
@@ -251,7 +251,6 @@ export function suggest(template: string, role: string | null): string | null {
     return `${scope}.${name}${hasKey ? ':{key}' : ''}${r}`;
 }
 
-/** Same template from two places: fine in mutually exclusive branches of one component with the same role; otherwise an error. */
 /**
  * Two emissions are exclusive when, at the first file their usage chains share, the nodes they render
  * through sit in different branches (`flag ? <A/> : <B/>`, an early return before one of them).
@@ -343,6 +342,7 @@ function helperCalls(n: ts.Node): ts.Node[] {
     return out;
 }
 
+/** Same template from two places: fine in mutually exclusive branches of one component with the same role; otherwise an error. */
 function checkDuplicates(emissions: Emission[], push: Push, strictAt: (at: Loc, t?: string) => boolean, usageNodeAt: (loc: Loc) => ts.Node | undefined) {
     const byKey = new Map<string, Emission[]>();
     for (const e of emissions) {

@@ -113,8 +113,10 @@ export type ManifestOperation = {
  */
 export type PageParam = {name: string; as: string; optional: boolean; values?: string[]; entity?: {type: string; field: string; module: string}};
 
-/** A route: its path as written (`/:team/:path(channels|messages)/:identifier/:postid?`), params, and the scopes it renders. */
-/** `ready`: testids of which one shows the page is up; `goto` waits for it (config `pageReady`). */
+/**
+ * A route: its path as written (`/:team/:path(channels|messages)/:identifier/:postid?`), params, and the scopes it
+ * renders. `ready`: testids of which one shows the page is up; `goto` waits for it (config `pageReady`).
+ */
 export type Page = {class: string; path: string; params: PageParam[]; scopes: string[]; ready?: string[]; component: {name: string; at: Loc}};
 
 export type ComponentScopes = {name: string; at: Loc; scopes: string[]};

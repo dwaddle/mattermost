@@ -2,14 +2,11 @@
 // See LICENSE.txt for license information.
 
 /**
- * The scanner's reading of the testid grammar, which is defined once in `@mattermost/types/test_id`:
- *
- *     testid  := path [ ":" KEY ] [ "--" ROLE ]
- *     path    := WORD ( "." WORD )*        ; leading WORDs = scope, last WORD = name
- *     WORD    := [a-z][a-z0-9_]*
+ * The scanner's reading of the testid grammar, which is defined once, with its syntax, in
+ * `@mattermost/types/test_id` (webapp/platform/types/src/test_id.ts).
  *
  * KEY is runtime data, written in source as `:${expr}` and normalized to `{key}` in the manifest.
- * ROLE is an ARIA role name or one of the pseudo-roles; no role means a container.
+ * ROLE is an ARIA role name or the pseudo-role `text` (read-only content); no role means a container.
  */
 
 import {isTestIdProblem, parseTestId as parseGrammar, TEST_ID_ROLES, type TestIdProblem, type TestIdRole} from '@mattermost/types/test_id';

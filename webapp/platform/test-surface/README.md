@@ -29,11 +29,7 @@ The tool runs from TypeScript source on Node 24 (native type stripping), so it h
 
 ## The testid grammar
 
-```
-testid  := path [ ":" KEY ] [ "--" ROLE ]
-path    := WORD ( "." WORD )*        leading WORDs = scope, last WORD = name
-WORD    := [a-z][a-z0-9_]*
-```
+`scope.name:key--role`, defined once (syntax, roles and key helpers) in [`@mattermost/types/test_id`](../types/src/test_id.ts):
 
 - Every testid has a scope: `center.post_create.send--button`, not `SendMessageButton`.
 - Runtime data only fills the key of the last word: `` `lhs.channel_list.channel:${channel.name}--link` ``.

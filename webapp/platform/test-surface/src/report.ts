@@ -72,7 +72,7 @@ export function summary(result: ScanResult, diagnostics: Diagnostic[]): string {
     return lines.join('\n');
 }
 
-/** One diagnostic in the §9.4 shape: what, where, how to fix. */
+/** One diagnostic as printed: where, the rule, what is wrong, and how to fix it. */
 export function formatDiagnostic(d: Diagnostic): string {
     const mark = d.severity === 'error' ? '✗' : '!';
     return `${mark} ${d.at}  [${d.rule}]\n  ${d.message}${d.fix ? `\n  ${d.fix}` : ''}`;
