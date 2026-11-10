@@ -138,7 +138,12 @@ function checkPlugin(manifest: Manifest, push: Push, strictAt: (at: Loc, t?: str
         }
     }
     for (const host of plugin.hosts) {
-        const slots = new Set(readHostSlots(host.appMap).map((s) => s.slot));
+        const read = readHostSlots(host.appMap);
+        if ('diagnostic' in read) {
+            push('input', true, read.diagnostic.at, read.diagnostic.message, read.diagnostic.fix);
+            continue;
+        }
+        const slots = new Set(read.slots.map((s) => s.slot));
         if (!slots.size) {
             push('plugin-compat', true, 'test-surface.config.json', `Host ${host.name}: no plugin slots in ${host.appMap}.`, 'Point plugin.hosts at the app-map.json the host version\'s generated page objects ship.');
             continue;

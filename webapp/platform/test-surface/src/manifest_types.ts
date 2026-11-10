@@ -158,8 +158,14 @@ export type PluginInfo = {
 
 export type Diagnostic = {rule: string; severity: 'error' | 'warning'; at: Loc; message: string; fix?: string};
 
+/** The manifest format this version writes and reads (`Manifest.version`). */
+export const MANIFEST_VERSION = 1;
+
+/** The `app-map.json` format the generator writes and plugin mode reads (its `version`). */
+export const APP_MAP_VERSION = 1;
+
 export type Manifest = {
-    version: 1;
+    version: typeof MANIFEST_VERSION;
     generatedFrom: {tsconfig: string; scope: string[]};
     elements: Element[];
     sets: FixedSet[];

@@ -8,8 +8,9 @@ import ts from 'typescript';
 
 import {attrValue, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, strip, typeText, type JsxTag} from './ast.ts';
 import {cmp} from './compare.ts';
-import type {Config} from './config.ts';
+import {relativeToRoot, type Config} from './config.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId} from './grammar.ts';
+import {inputDiagnostic, readVersioned} from './input.ts';
 import type {Diagnostic, Loc, TestPart, TestParts} from './manifest_types.ts';
 import type {CodeNode, ProgramIndex} from './program_index.ts';
 import type {Roles} from './roles.ts';
@@ -67,7 +68,7 @@ export class LibraryParts {
                 components[name] = {at: this.ix.where(node), role, parts};
             }
         }
-        return {version: 1, package: pkg.name, packageVersion: pkg.version, testIdProp: this.testIdProp, components};
+        return {version: TEST_PARTS_VERSION, package: pkg.name, packageVersion: pkg.version, testIdProp: this.testIdProp, components};
     }
 
     private rendersJsx(n: CodeNode): boolean {
@@ -375,35 +376,56 @@ export function packageOf(config: Config): {name: string; version: string} {
 /** A library's published `test-parts.json`, and the directory its declarations live in. */
 export type PublishedParts = {package: string; dir: string; parts: TestParts};
 
+/** The `test-parts.json` format this version reads (`TestParts.version`). */
+export const TEST_PARTS_VERSION = 1;
+
 /**
  * Loads `test-parts.json` for each configured library: `"@mattermost/compass-ui"` (from the installed
- * package) or `{"package": …, "parts": "path/to/test-parts.json"}`. A library whose installed version
- * doesn't publish one is skipped (its roles come from the built-in table).
+ * package) or `{"package": …, "parts": "path/to/test-parts.json"}`. A configured library that isn't installed, or
+ * whose file is corrupt or of another format version, is an `input` error; an installed version that publishes no
+ * file is a warning (its roles come from the built-in table).
  */
-export function loadPublishedParts(config: Config): PublishedParts[] {
+export function loadPublishedParts(config: Config, problems: Diagnostic[] = []): PublishedParts[] {
     const out: PublishedParts[] = [];
+    const at = relativeToRoot(config, config.configPath);
     for (const lib of config.libraries) {
-        let file: string | null = null;
+        let file: string;
         let dir: string;
+        const name = typeof lib === 'string' ? lib : lib.package;
         if (typeof lib === 'string') {
             // node_modules lookup by directory: a package's `exports` may not expose package.json
             const found = packageDir(config.root, lib);
             if (!found) {
+                problems.push(inputDiagnostic(at, `Library ${lib} (config \`libraries\`) isn't installed.`, 'Install the webapp\'s dependencies (npm ci), or remove it from `libraries`.'));
                 continue;
             }
             dir = found;
             file = path.join(dir, 'test-parts.json');
+            if (!fs.existsSync(file)) {
+                problems.push(inputDiagnostic(at, `Library ${lib}@${installedVersion(dir)} publishes no test-parts.json: its components' roles come from the built-in table, and their parts aren't scanned.`, 'Upgrade to a version that ships test-parts.json.', 'warning'));
+                continue;
+            }
         } else {
             file = path.resolve(config.root, lib.parts);
             dir = path.dirname(file);
         }
-        if (!fs.existsSync(file)) {
+        const read = readVersioned<TestParts>(file, TEST_PARTS_VERSION, `${name}'s test-parts.json`, relativeToRoot(config, file));
+        if ('diagnostic' in read) {
+            problems.push(read.diagnostic);
             continue;
         }
-        const parts = JSON.parse(fs.readFileSync(file, 'utf8')) as TestParts;
-        out.push({package: typeof lib === 'string' ? lib : lib.package, dir: path.resolve(dir), parts});
+        out.push({package: name, dir: path.resolve(dir), parts: read.value});
     }
     return out;
+}
+
+/** The version in an installed package's package.json. */
+export function installedVersion(dir: string): string {
+    try {
+        return (JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')) as {version?: string}).version ?? '?';
+    } catch {
+        return '?';
+    }
 }
 
 function packageDir(from: string, pkg: string): string | null {

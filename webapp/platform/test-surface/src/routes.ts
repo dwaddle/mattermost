@@ -9,6 +9,8 @@ import ts from 'typescript';
 
 import {exprName, strip, typeText} from './ast.ts';
 import {cmp} from './compare.ts';
+import {inputDiagnostic} from './input.ts';
+import type {Diagnostic} from './manifest_types.ts';
 import type {ProgramIndex} from './program_index.ts';
 
 export type ClientRoute = {verb: string; path: string};
@@ -286,7 +288,8 @@ function collectImports(ix: ProgramIndex, t: ts.Type, out: Record<string, string
     return false;
 }
 
-export function openApiOps(dir: string | null): OpenApiOp[] {
+/** The OpenAPI operations in a directory of yaml files; a file that doesn't parse is an `input` error in `problems`. */
+export function openApiOps(dir: string | null, problems: Diagnostic[] = []): OpenApiOp[] {
     if (!dir || !fs.existsSync(dir)) {
         return [];
     }
@@ -295,7 +298,8 @@ export function openApiOps(dir: string | null): OpenApiOp[] {
         let doc: unknown;
         try {
             doc = yaml.load(fs.readFileSync(path.join(dir, f), 'utf8'));
-        } catch {
+        } catch (e) {
+            problems.push(inputDiagnostic(path.join(dir, f), `OpenAPI file ${f} doesn't parse: ${(e as Error).message.split('\n')[0]}`, 'Fix the yaml: its operations are left out of the scan until it parses.'));
             continue;
         }
         if (!doc || typeof doc !== 'object') {
@@ -356,9 +360,15 @@ export class Operations {
     readonly specOps: OpenApiOp[];
     readonly stats: Record<string, number>;
 
+    /** Inputs it couldn't read (an OpenAPI file that doesn't parse). */
+    readonly diagnostics: Diagnostic[] = [];
+
     constructor(ix: ProgramIndex) {
         const {routes, bodies} = clientRoutes(ix);
-        this.specOps = openApiOps(ix.config.openapiDir);
+        this.specOps = openApiOps(ix.config.openapiDir, this.diagnostics);
+        this.diagnostics.forEach((d) => {
+            d.at = ix.rel(d.at);
+        });
         const match = opMatcher(this.specOps);
         let fetches = 0;
         let apiCalls = 0;

@@ -116,6 +116,9 @@ export class ProgramIndex {
     /** Per-file entries, reused by the next index (watch mode) when nothing they depend on changed. */
     readonly entries = new Map<string, FileEntries>();
 
+    /** The first symbol the checker failed to resolve, and why (`stats.resolverErrors` counts them). */
+    resolverError: string | null = null;
+
     private readonly includeDirs: string[];
     private deps: Set<ts.SourceFile> | null = null;
 
@@ -217,7 +220,10 @@ export class ProgramIndex {
             }
             const d = s.declarations?.[0];
             r = d ? this.resolveDeclToNode(d, seen) : null;
-        } catch {
+        } catch (e) {
+            // the checker can throw on a symbol it can't resolve: counted, and the first one kept to report
+            this.stats.resolverErrors = (this.stats.resolverErrors ?? 0) + 1;
+            this.resolverError ??= `${sym.getName()}: ${(e as Error).message.split('\n')[0]}`;
             r = null;
         } finally {
             this.deps = outer;

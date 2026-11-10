@@ -1,8 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import fs from 'node:fs';
-
 import ts from 'typescript';
 
 import {attrValue, exprName, isFunctionLike, isIntrinsic, isJsxTag, jsxAttr, oneLine, propName, returnsOf, strip, tagName, type FunctionLike, type JsxTag} from './ast.ts';
@@ -11,7 +9,8 @@ import {Conditions} from './conditions.ts';
 import {relativeToRoot, type Config} from './config.ts';
 import {componentName, emptyEffects, mergeEffects, Tracer, withDialogOps, type Effects} from './effects.ts';
 import {isGrammarError, KEY_PLACEHOLDER, parseTestId, type GrammarError, type ParsedTestId} from './grammar.ts';
-import type {Aria, Diagnostic, Element, Loc, Manifest, Open, PluginInfo, PluginSlot, RenderCondition, TestPart} from './manifest_types.ts';
+import {readVersioned} from './input.ts';
+import {APP_MAP_VERSION, MANIFEST_VERSION, type Aria, type Diagnostic, type Element, type Loc, type Manifest, type Open, type PluginInfo, type PluginSlot, type RenderCondition, type TestPart} from './manifest_types.ts';
 import {pageOf} from './navigation.ts';
 import {buildPages, discoverRoutes} from './pages.ts';
 import {loadPublishedParts, publishedComponent, type PublishedParts} from './parts.ts';
@@ -126,11 +125,12 @@ export class Scanner {
         this.ix = new ProgramIndex(loaded, config, previous);
         this.timings.index = Date.now() - t;
         this.R = new Resolver(this.ix);
-        this.published = loadPublishedParts(config);
+        this.published = loadPublishedParts(config, this.diagnostics);
         this.roles = new Roles(this.ix, this.R, this.published);
         this.conditions = new Conditions(this.ix, this.R);
         t = Date.now();
         this.ops = new Operations(this.ix);
+        this.diagnostics.push(...this.ops.diagnostics);
         this.timings.routes = Date.now() - t;
         this.tracer = new Tracer(this.ix, this.R, this.ops);
         t = Date.now();
@@ -1366,8 +1366,11 @@ export class Scanner {
             this.markUnreachable(elements);
             this.timings.reachability = Date.now() - t;
         }
+        if (this.ix.resolverError) {
+            this.diag('input', 'warning', relativeToRoot(this.config, this.config.tsconfig), `The type checker failed on ${this.ix.stats.resolverErrors} symbol lookups (first: ${this.ix.resolverError}); what they name is left out of the scan.`, 'Check that the program type-checks (tsc) with the config\'s pathOverrides.');
+        }
         const manifest: Manifest = {
-            version: 1,
+            version: MANIFEST_VERSION,
             generatedFrom: {
                 tsconfig: relativeToRoot(this.config, this.config.tsconfig),
                 scope: this.config.include.map((d) => relativeToRoot(this.config, d)),
@@ -1447,7 +1450,10 @@ export class Scanner {
         const plugin = this.config.plugin!;
         const slotsByMethod = new Map<string, Set<string>>();
         for (const host of plugin.hosts) {
-            for (const s of readHostSlots(host.appMap)) {
+            const read = readHostSlots(host.appMap);
+
+            // (an unreadable host map is reported by the plugin-compat check)
+            for (const s of 'slots' in read ? read.slots : []) {
                 for (const m of s.registry ?? []) {
                     slotsByMethod.set(m, (slotsByMethod.get(m) ?? new Set()).add(s.slot));
                 }
@@ -1757,12 +1763,10 @@ function alwaysReturns(st: ts.Statement): boolean {
     return ts.isBlock(st) && st.statements.length > 0 && alwaysReturns(st.statements[st.statements.length - 1]);
 }
 
-/** The plugin slots a host's `app-map.json` publishes (`[]` when the file is missing or has none). */
-export function readHostSlots(appMap: string): Array<{slot: string; testId: string; registry?: string[]}> {
-    try {
-        const map = JSON.parse(fs.readFileSync(appMap, 'utf8')) as {pluginSlots?: Array<{slot: string; testId: string; registry?: string[]}>};
-        return map.pluginSlots ?? [];
-    } catch {
-        return [];
-    }
+export type HostSlot = {slot: string; testId: string; registry?: string[]};
+
+/** The plugin slots a host's `app-map.json` publishes, or why it can't be read (missing, corrupt, another format version). */
+export function readHostSlots(appMap: string): {slots: HostSlot[]} | {diagnostic: Diagnostic} {
+    const read = readVersioned<{version: number; pluginSlots?: HostSlot[]}>(appMap, APP_MAP_VERSION, `Host app-map.json ${appMap}`, 'test-surface.config.json');
+    return 'value' in read ? {slots: read.value.pluginSlots ?? []} : read;
 }

@@ -8,7 +8,7 @@ import type {Model, ScopeNode} from './model.ts';
 import {isIdentifier, pageGetter, pascal, propKey} from './names.ts';
 
 import {cmp} from '../compare.ts';
-import type {Manifest, Page} from '../manifest_types.ts';
+import {APP_MAP_VERSION, type Manifest, type Page} from '../manifest_types.ts';
 
 /** `Api`: every operation an element can fire, branded with its response body type. */
 export function emitApi(manifest: Manifest, out: Output): string {
@@ -191,5 +191,5 @@ export function appMap(manifest: Manifest, model: Model, pageList: Page[]): stri
         scopes: p.scopes,
     }));
     const pluginSlots = manifest.pluginSlots.map((s) => ({slot: s.slot, testId: s.template, key: 'PluginKey', ...(s.registry ? {registry: s.registry} : {})}));
-    return JSON.stringify({version: 1, pages, scopes, pluginSlots, operations}, null, 2) + '\n';
+    return JSON.stringify({version: APP_MAP_VERSION, pages, scopes, pluginSlots, operations}, null, 2) + '\n';
 }

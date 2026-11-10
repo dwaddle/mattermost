@@ -9,7 +9,8 @@ import {parseArgs} from 'node:util';
 
 import {runChecks} from './checks.ts';
 import {findConfig, loadConfig, relativeToRoot, type Config} from './config.ts';
-import type {Diagnostic, Manifest} from './manifest_types.ts';
+import {readVersioned} from './input.ts';
+import {MANIFEST_VERSION, type Diagnostic, type Manifest} from './manifest_types.ts';
 import {loadProgram} from './program.ts';
 import {formatDiagnostic, manifestText, summary, unrenderedTestIds, writeIfChanged, writeReports} from './report.ts';
 import {Scanner, type ScanResult} from './scan.ts';
@@ -105,8 +106,12 @@ export async function main(argv: string[]): Promise<number> {
     }
     case 'generate': {
         const {generate} = await import('./generate/index.ts');
-        const manifest = JSON.parse(fs.readFileSync(config.output.manifest, 'utf8')) as Manifest;
-        const out = await generate(manifest, config);
+        const read = readVersioned<Manifest>(config.output.manifest, MANIFEST_VERSION, 'The manifest', relativeToRoot(config, config.output.manifest));
+        if ('diagnostic' in read) {
+            console.log(formatDiagnostic(read.diagnostic));
+            return 1;
+        }
+        const out = await generate(read.value, config);
         for (const d of out.diagnostics) {
             console.log(formatDiagnostic(d));
         }
