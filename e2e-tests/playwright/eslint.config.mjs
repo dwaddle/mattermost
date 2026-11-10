@@ -91,6 +91,13 @@ export default [
         rules: {
             '@mattermost/e2e-no-literal-locators': 'warn',
             '@mattermost/e2e-no-wait-for-timeout': 'warn',
+
+            // warnings while the area PRs move the specs over; see each rule's comment in @mattermost/eslint-plugin
+            '@mattermost/e2e-commit-settles': ['warn', {generated: 'lib/src/ui/generated'}], // saves wait: commit()/submit()/settle()
+            '@mattermost/e2e-no-catalog-text': 'warn', // catalog English is asserted through Msg (reads webapp/channels/src/i18n/en.json)
+            '@mattermost/e2e-no-locator-action': 'warn', // act through the driver, not x.locator
+            '@mattermost/e2e-named-timeouts': 'warn', // timeouts come from duration.*
+            '@mattermost/e2e-no-instant-check': 'warn', // no expect(await x.isDisabled()): use the retrying matchers
         },
     },
     {
