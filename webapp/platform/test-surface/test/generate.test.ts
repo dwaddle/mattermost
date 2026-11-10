@@ -158,7 +158,7 @@ test('generate: pages with typed params, entity keys, defaults for fixed sets, a
     assert.match(pages, /static path\(params: HelpPageParams = \{\}\): string/);
 
     // goto waits for the page's ready scope (pageReady); a page with nothing to wait for says why, and returns on the load event
-    assert.match(pages, /waits until `header.label` or `banner.url` shows\. \*\/\n {4}async goto\(params: ChannelsPageParams\): Promise<void> \{\n {8}await this\.page\.goto\(ChannelsPage\.path\(params\)\);\n {8}await this\.page\.getByTestId\('header\.label'\)\.or\(this\.page\.getByTestId\('banner\.url'\)\)\.waitFor\(\);\n {4}\}/);
+    assert.match(pages, /waits until `header.label` or `banner.url` shows\. \*\/\n {4}async goto\(params: ChannelsPageParams\): Promise<void> \{\n {8}await this\.page\.goto\(ChannelsPage\.path\(params\)\);\n {8}await this\.page\.getByTestId\('header\.label'\)\.or\(this\.page\.getByTestId\('banner\.url'\)\)\.first\(\)\.waitFor\(\);\n {4}\}/);
     assert.match(pages, /there is nothing to wait for \(the help pages render no testid yet\)\. \*\/\n {4}async goto\(params: HelpPageParams = \{\}\): Promise<void> \{\n {8}await this\.page\.goto\(HelpPage\.path\(params\)\);\n {4}\}/);
     assert.match(read('app.ts'), /get channelsPage\(\): ChannelsPage \{\n {8}return new ChannelsPage\(this\.page\);/);
 });

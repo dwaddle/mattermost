@@ -56,7 +56,10 @@ function readyWait(page: Page): string {
         return '';
     }
     const locators = page.ready.map((r) => `this.page.getByTestId(${JSON.stringify(r).replace(/^"|"$/g, "'")})`);
-    return `\n        await ${locators[0]}${locators.slice(1).map((l) => `.or(${l})`).join('')}.waitFor();`;
+
+    // several may show at once (the threads list beside the empty thread pane): wait for the first, not for exactly one
+    const any = locators.length > 1 ? `${locators[0]}${locators.slice(1).map((l) => `.or(${l})`).join('')}.first()` : locators[0];
+    return `\n        await ${any}.waitFor();`;
 }
 
 /**
