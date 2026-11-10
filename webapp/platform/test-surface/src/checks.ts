@@ -3,7 +3,7 @@
 
 import ts from 'typescript';
 
-import type {TestIdRole} from '@mattermost/types/test_id';
+import {TEST_ID_ROLES, type TestIdRole} from '@mattermost/types/test_id';
 
 import {escapeRegExp} from './ast.ts';
 import {cmp} from './compare.ts';
@@ -43,6 +43,8 @@ const ROLE_EQUIV: Partial<Record<TestIdRole, readonly AriaRole[]>> = {
     searchbox: ['textbox'],
     menuitem: ['menuitemcheckbox', 'menuitemradio'],
 };
+
+const isTestIdRole = (role: string): role is TestIdRole => (TEST_ID_ROLES as readonly string[]).includes(role);
 
 /** Roles of content a user doesn't operate: `--text` fits them, and they need no suffix. */
 const NON_INTERACTIVE = new Set<AriaRole | null>([null, 'none', 'presentation', 'text', 'img', 'list', 'listitem', 'heading', 'grid', 'table', 'cell', 'columnheader', 'row', 'gridcell', 'status', 'alert', 'tooltip', 'separator', 'region', 'form', 'navigation', 'dialog', 'alertdialog', 'menu', 'tabpanel', 'progressbar', 'main', 'banner', 'complementary', 'contentinfo', 'log', 'feed', 'group', 'article']);
@@ -204,9 +206,11 @@ function checkEmissions(emissions: Emission[], push: Push, strictAt: (at: Loc, t
         const role = e.landing.aria.role;
         const suffix = e.parsed.role;
         if (suffix && role && !fits(suffix, role)) {
-            push('role-fit', strict, at, `"${e.template}" is on a${role ? ` ${role}` : 'n element with no role'} (<${tagText(e)}>).`, `Use --${roleSuffixFor(role) ?? 'text'}, or render an element with role ${suffix}.`);
+            const fit = roleSuffixFor(role);
+            push('role-fit', strict, at, `"${e.template}" is on a${role ? ` ${role}` : 'n element with no role'} (<${tagText(e)}>).`, fit ? `Use --${fit}, or render an element with role ${suffix}.` : `Render an element with role ${suffix}, or add ${role} to TEST_ID_ROLES.`);
         } else if (!suffix && role && !NON_INTERACTIVE.has(role)) {
-            push('role-fit', strict, at, `"${e.template}" has no role suffix but is a ${role}.`, `Add --${roleSuffixFor(role) ?? role}.`);
+            const fit = roleSuffixFor(role);
+            push('role-fit', strict, at, `"${e.template}" has no role suffix but is a ${role}.`, fit ? `Add --${fit}.` : `Use --text, or add ${role} to TEST_ID_ROLES.`);
         } else if (suffix && suffix !== 'text' && !role && e.landing.tag) {
             push('role-fit', strict, at, `"${e.template}" is on a <${tagText(e)}> with no ARIA role.`, `Render a native ${suffix} or add role='${suffix}' (and its state attributes); for read-only content use --text.`);
         }
@@ -239,11 +243,15 @@ function fits(suffix: TestIdRole, role: AriaRole): boolean {
     return (ROLE_EQUIV[suffix] ?? []).includes(role);
 }
 
-function roleSuffixFor(role: string | null): string | null {
+/** The suffix for an element's role: the role itself when it is a testid role, `text` for read-only content, else none. */
+export function roleSuffixFor(role: AriaRole | null): TestIdRole | null {
     if (!role) {
         return null;
     }
-    return role;
+    if (isTestIdRole(role)) {
+        return role;
+    }
+    return NON_INTERACTIVE.has(role) ? 'text' : null;
 }
 
 /** A grammar-conforming suggestion for a legacy testid. */

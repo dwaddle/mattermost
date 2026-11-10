@@ -6,7 +6,7 @@ import {test} from 'node:test';
 
 import {element, matchSnapshot, scanFixture} from './helpers.ts';
 
-import {runChecks, slotMatches} from '../src/checks.ts';
+import {roleSuffixFor, runChecks, slotMatches} from '../src/checks.ts';
 
 const out = () => scanFixture('checks');
 const diags = (rule: string) => out().diagnostics.filter((d) => d.rule === rule).map((d) => `${d.severity} ${d.at} ${d.message}`);
@@ -129,4 +129,11 @@ test('checks: a template past the value cap is reported (an error under strict p
     assert.equal(d.length, 1, d.join('\n'));
     assert.match(d[0], /^error src\/cap\.tsx:\d+ "checks\.cap\.cell:r01_c01--text" can take more than 256 values/);
     assert.equal(out().result.stats.truncatedTestIdSites, 1);
+});
+
+test('checks: the suffix a role-fit fix suggests is a testid role, --text for read-only content, or none', () => {
+    assert.equal(roleSuffixFor('switch'), 'switch');
+    assert.equal(roleSuffixFor('heading'), 'text');
+    assert.equal(roleSuffixFor('treeitem'), null);
+    assert.equal(roleSuffixFor(null), null);
 });
