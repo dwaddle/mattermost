@@ -51,12 +51,12 @@ test.describe('Post dot menu in mobile view', () => {
 // Logs in a fresh user, posts a message, and opens the post actions ("…") menu on it.
 async function openMobilePostActionsMenu(pw: PlaywrightExtended, message: string) {
     // # Initialize a user and log in
-    const {user} = await pw.initSetup();
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {user, team} = await pw.initSetup();
+    const {app} = await pw.testBrowser.login(user);
 
     // # Post a message in the default channel
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
     const {postList} = app.center;
     const before = (await postList.postKeys()).length;
     await app.center.postCreate.fillMessageTextbox(message);

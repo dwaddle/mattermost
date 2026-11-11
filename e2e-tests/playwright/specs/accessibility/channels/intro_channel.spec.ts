@@ -15,14 +15,14 @@ async function postMessage(app: App, message: string) {
 
 test.fixme('Base channel accessibility', async ({pw, axe}) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
     await postMessage(app, 'hello');
 
     // # Analyze the page
@@ -35,16 +35,16 @@ test.fixme('Base channel accessibility', async ({pw, axe}) => {
 
 test('Post actions tab support', async ({pw, axe}) => {
     // # Create and sign in a new user
-    const {user, adminClient} = await pw.initSetup();
+    const {user, adminClient, team} = await pw.initSetup();
     const config = await adminClient.getConfig();
     const license = await adminClient.getClientLicenseOld();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
     const post = await postMessage(app, 'hello');
     await post.locator.hover();
     await expect(post.menu.dotMenuButton.locator).toBeVisible();

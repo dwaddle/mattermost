@@ -146,7 +146,7 @@ test.afterAll(async () => {
  */
 test('MM-T5768 Editing Custom Profile Attributes @custom_profile_attributes', async ({pw}) => {
     // 1. Login as the test user
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {page, channelsPage, app} = await pw.testBrowser.login(user);
     await channelsPage.goto();
 
     // 2. Open profile settings modal
@@ -172,7 +172,7 @@ test('MM-T5768 Editing Custom Profile Attributes @custom_profile_attributes', as
     await channelsPage.postMessage(TEST_MESSAGE);
 
     // 8. Login as the other user to view the profile popover
-    const {channelsPage: otherChannelsPage} = await pw.testBrowser.login(otherUser);
+    const {channelsPage: otherChannelsPage, app: otherApp} = await pw.testBrowser.login(otherUser);
     await otherChannelsPage.goto();
 
     // 9. View the test user's profile popover
@@ -200,7 +200,7 @@ test(
     'select attribute keyboard picks without saving and Escape keeps the profile modal open',
     {tag: '@custom_profile_attributes'},
     async ({pw}) => {
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {page, channelsPage, app} = await pw.testBrowser.login(user);
         await channelsPage.goto();
 
         // # Open the profile settings modal
@@ -278,7 +278,7 @@ test(
     'clicking the select attribute menu outside an option keeps focus and Escape keeps the profile modal open',
     {tag: '@custom_profile_attributes'},
     async ({pw}) => {
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {page, channelsPage, app} = await pw.testBrowser.login(user);
         await channelsPage.goto();
 
         // # Open the profile settings modal and edit the LocationUS attribute
@@ -350,7 +350,7 @@ test(
  */
 test('MM-T5769 Clearing Custom Profile Attributes @custom_profile_attributes', async ({pw}) => {
     // 1. Login as the test user
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {page, channelsPage, app} = await pw.testBrowser.login(user);
     await channelsPage.goto();
 
     // Prepare the environment by posting a message as other user
@@ -373,7 +373,7 @@ test('MM-T5769 Clearing Custom Profile Attributes @custom_profile_attributes', a
     await channelsPage.postMessage('Testing cleared attributes');
 
     // 6. Login as the other user
-    const {channelsPage: otherChannelsPage} = await pw.testBrowser.login(otherUser);
+    const {channelsPage: otherChannelsPage, app: otherApp} = await pw.testBrowser.login(otherUser);
     await otherChannelsPage.goto();
 
     // 7. View the test user's profile popover
@@ -395,7 +395,7 @@ test('MM-T5769 Clearing Custom Profile Attributes @custom_profile_attributes', a
  */
 test('MM-T5770 Cancelling Changes to Custom Profile Attributes @custom_profile_attributes', async ({pw}) => {
     // 1. Login as the test user
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {channelsPage, app} = await pw.testBrowser.login(user);
     await channelsPage.goto();
 
     // 2. Open profile settings modal
@@ -438,7 +438,7 @@ test('MM-T5770 Cancelling Changes to Custom Profile Attributes @custom_profile_a
  */
 test('MM-T5771 Editing Phone and URL Type Custom Profile Attributes @custom_profile_attributes', async ({pw}) => {
     // 1. Login as the test user
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {page, channelsPage, app} = await pw.testBrowser.login(user);
     await channelsPage.goto();
 
     // Prepare the environment by posting a message as other user
@@ -464,7 +464,7 @@ test('MM-T5771 Editing Phone and URL Type Custom Profile Attributes @custom_prof
     await channelsPage.postMessage('Testing phone and URL attributes');
 
     // 7. Login as the other user
-    const {channelsPage: otherChannelsPage} = await pw.testBrowser.login(otherUser);
+    const {channelsPage: otherChannelsPage, app: otherApp} = await pw.testBrowser.login(otherUser);
     await otherChannelsPage.goto();
 
     // 8. View the test user's profile popover
@@ -487,7 +487,7 @@ test('MM-T5771 Editing Phone and URL Type Custom Profile Attributes @custom_prof
  */
 test('MM-T5772 URL Validation in Custom Profile Attributes @custom_profile_attributes', async ({pw}) => {
     // 1. Login as the test user
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {channelsPage, app} = await pw.testBrowser.login(user);
     await channelsPage.goto();
 
     // 2. Open profile settings modal

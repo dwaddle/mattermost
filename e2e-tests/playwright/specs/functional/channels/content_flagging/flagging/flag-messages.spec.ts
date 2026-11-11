@@ -21,13 +21,13 @@ const systemMessageForUser = (username: string): string =>
 
 // Helper to login and navigate to channel
 async function loginAndNavigate(pw: any, user: any, teamName?: string, channelName?: string): Promise<any> {
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {channelsPage, app} = await pw.testBrowser.login(user);
     if (teamName && channelName) {
         await channelsPage.goto(teamName, channelName);
     } else {
         await channelsPage.goto();
     }
-    await channelsPage.toBeVisible();
+    await expect(app.center.composer.locator).toBeVisible();
     return channelsPage;
 }
 

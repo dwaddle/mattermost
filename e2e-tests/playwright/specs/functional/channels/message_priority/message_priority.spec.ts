@@ -37,11 +37,10 @@ async function postWithPriorityAndVerify(pw: PlaywrightExtended, priority: Prior
     const {user, team} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Open priority menu
     const composer = app.center.postCreate;
@@ -101,11 +100,10 @@ test(
         const {user, team} = await pw.initSetup();
 
         // # Log in as a user in new browser context
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
 
         // # Visit default channel page
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // * Verify the priority control is available while the system setting is enabled
         const picker = pickerOf(app, app.center.postCreate);
@@ -157,9 +155,8 @@ test(
             await adminClient.patchConfig({ServiceSettings: {PostPriority: false}});
 
             // # Log in as a user after the setting is disabled
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // * Verify the priority control is hidden
             await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
@@ -211,11 +208,10 @@ test(
         const {user, team} = await pw.initSetup();
 
         // # Log in as a user in new browser context
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
 
         // # Visit default channel page
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         const composer = app.center.postCreate;
         const input = composer.messageTextbox.locator;

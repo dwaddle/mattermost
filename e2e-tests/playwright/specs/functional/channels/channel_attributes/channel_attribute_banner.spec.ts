@@ -49,9 +49,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'RESTRICTED'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // The composer seeds itself with the banner already on screen, so clear it
             // to author from a known template.
@@ -104,14 +103,11 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
             await setChannelValue(adminClient, channel.id, programme, 'AURORA');
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // * Both designated attributes share the one banner, in sort order
-            await expect(channelsPage.page.getByTestId('center.channel_banner.text--text')).toHaveText(
-                'SECRET · AURORA',
-            );
+            await expect(page.getByTestId('center.channel_banner.text--text')).toHaveText('SECRET · AURORA');
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -156,12 +152,11 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // * The channel shows a banner, so its settings must not claim it is off
-            await expect(channelsPage.page.getByTestId('center.channel_banner.text--text')).toContainText('SECRET');
+            await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('SECRET');
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -207,9 +202,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'NOFORN'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -261,9 +255,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -310,9 +303,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             const channel = await createChannelForAttributes(adminClient, team, `banner-empty-${suffix}`);
             await adminClient.addToChannel(adminUser.id, channel.id);
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -361,9 +353,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'ORCON'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -386,8 +377,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             } as never);
 
             // * The authored token still resolves, because it keys off the machine name
-            await channelsPage.page.reload();
-            await channelsPage.toBeVisible();
+            await page.reload();
+            await expect(app.center.composer.locator).toBeVisible();
             await channelsPage.centerView.assertChannelBanner('ORCON', BANNER_COLOR);
         } finally {
             await deleteAttributes(adminClient, created);
@@ -419,9 +410,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, classification, optionId(classification, 'SECRET'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -466,9 +456,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'ORCON'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -515,9 +504,8 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
             ]);
             await adminClient.addToChannel(adminUser.id, channel.id);
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();

@@ -17,8 +17,7 @@ test('MM-T568 Channel Notifications turn off Ignore mentions for @channel, @here
 
     // # Open channel notification preferences and turn off ignore mentions
     const {app, channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channelA.name);
-    await channelsPage.toBeVisible();
+    await app.channelsPage.goto({team, channel: channelA.name});
     const notificationPreferences = await channelsPage.openChannelNotificationPreferences();
     if (await notificationPreferences.ignoreMentionsCheckbox.isChecked()) {
         await notificationPreferences.ignoreMentionsCheckbox.uncheck();

@@ -14,9 +14,8 @@ test.beforeEach(async ({pw}) => {
 test('MM-69305 WYSIWYG editor is not mounted when user preference is off', TAGS, async ({pw}) => {
     const {user, team} = await pw.initSetup();
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'off-topic'});
 
     await expect(channelsPage.centerView.postCreate.input).toHaveJSProperty('tagName', 'TEXTAREA');
     await expect(page.locator('.WysiwygEditor')).toHaveCount(0);
@@ -26,9 +25,8 @@ test('MM-69305 WYSIWYG editor mounts when the user preference is enabled', TAGS,
     const {user, userClient, team} = await pw.initSetup();
     await setWysiwygUserPreference(userClient, user.id, true);
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
+    const {page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'off-topic'});
 
     const editor = new WysiwygEditor(page.getByTestId('center.composer'));
     await editor.toBeVisible();
@@ -38,9 +36,8 @@ test('MM-69305 WYSIWYG editor mounts when the user preference is enabled', TAGS,
 test('preference toggle in Advanced Settings switches between Markdown and Rich text', TAGS, async ({pw}) => {
     const {user, team} = await pw.initSetup();
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'off-topic'});
 
     await expect(channelsPage.centerView.postCreate.input).toHaveJSProperty('tagName', 'TEXTAREA');
 

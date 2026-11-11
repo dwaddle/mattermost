@@ -68,9 +68,9 @@ test.afterEach(async () => {
 test.describe('Channel Classification - New channel creation', () => {
     test('Enabling classification toggle without selecting values prevents channel creation', async ({pw}) => {
         const {adminUser, team} = await initSetupTracked(pw);
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        await app.teamPage.goto({team});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const newChannelModal = await channelsPage.openNewChannelModal();
         await newChannelModal.fillDisplayName(`test-${pw.random.id()}`);
@@ -88,9 +88,9 @@ test.describe('Channel Classification - New channel creation', () => {
 
     test('Classification dropdown displays the correct levels from the template', async ({pw}) => {
         const {adminUser, team} = await initSetupTracked(pw);
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        await app.teamPage.goto({team});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const newChannelModal = await channelsPage.openNewChannelModal();
         await newChannelModal.fillDisplayName(`test-${pw.random.id()}`);
@@ -99,11 +99,11 @@ test.describe('Channel Classification - New channel creation', () => {
         await newChannelModal.enableClassification();
 
         // Open the classification dropdown
-        const dropdownContainer = channelsPage.page.getByTestId('channelClassificationLevel');
+        const dropdownContainer = page.getByTestId('channelClassificationLevel');
         await dropdownContainer.click();
 
         // Verify all test levels are present in the dropdown menu
-        const menu = channelsPage.page.locator('.DropDown__menu');
+        const menu = page.locator('.DropDown__menu');
         await expect(menu).toBeVisible();
         for (const level of TEST_LEVELS) {
             await expect(menu.getByText(level.name, {exact: true})).toBeVisible();
@@ -112,9 +112,9 @@ test.describe('Channel Classification - New channel creation', () => {
 
     test('User can append text to the Banner Text field after selecting a classification', async ({pw}) => {
         const {adminUser, team} = await initSetupTracked(pw);
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        await app.teamPage.goto({team});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET');
         expect(selectedLevel).toBeDefined();
@@ -126,13 +126,13 @@ test.describe('Channel Classification - New channel creation', () => {
         await newChannelModal.enableClassification();
 
         // Select a classification level
-        const dropdownContainer = channelsPage.page.getByTestId('channelClassificationLevel');
+        const dropdownContainer = page.getByTestId('channelClassificationLevel');
         await dropdownContainer.click();
-        const menu = channelsPage.page.locator('.DropDown__menu');
+        const menu = page.locator('.DropDown__menu');
         await menu.getByText(selectedLevel!.name, {exact: true}).click();
 
         // Banner text should be auto-populated with the bold level name
-        const bannerTextbox = channelsPage.page.locator('#channel_classification_banner_text');
+        const bannerTextbox = page.locator('#channel_classification_banner_text');
         await expect(bannerTextbox).toBeVisible();
         const currentValue = await bannerTextbox.inputValue();
         expect(currentValue).toContain(selectedLevel!.name);
@@ -148,9 +148,9 @@ test.describe('Channel Classification - New channel creation', () => {
 
     test('Creating channel with classification shows banner with correct color', async ({pw}) => {
         const {adminUser, team} = await initSetupTracked(pw);
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        await app.teamPage.goto({team});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET');
         expect(selectedLevel).toBeDefined();
@@ -163,24 +163,24 @@ test.describe('Channel Classification - New channel creation', () => {
         await newChannelModal.enableClassification();
 
         // Select the classification level
-        const dropdownContainer = channelsPage.page.getByTestId('channelClassificationLevel');
+        const dropdownContainer = page.getByTestId('channelClassificationLevel');
         await dropdownContainer.click();
-        const menu = channelsPage.page.locator('.DropDown__menu');
+        const menu = page.locator('.DropDown__menu');
         await menu.getByText(selectedLevel!.name, {exact: true}).click();
 
         // Wait for banner text to auto-populate, then create the channel
-        const bannerTextbox = channelsPage.page.locator('#channel_classification_banner_text');
+        const bannerTextbox = page.locator('#channel_classification_banner_text');
         await expect(bannerTextbox).toBeVisible();
         await expect(bannerTextbox).not.toHaveValue('');
 
         await newChannelModal.create();
 
         // Should be redirected to the new channel and center view loads
-        await expect(channelsPage.page).toHaveURL(/\/channels\//, {timeout: 30000});
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 30000});
+        await expect(page).toHaveURL(/\/channels\//, {timeout: 30000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 30000});
 
         // Channel banner should be visible (allow extra time for property value fetch)
-        const banner = channelsPage.page.getByTestId('center.channel_banner');
+        const banner = page.getByTestId('center.channel_banner');
         await expect(banner).toBeVisible({timeout: 30000});
 
         // Verify the banner has the correct background color
@@ -204,9 +204,9 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -230,9 +230,9 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -241,12 +241,12 @@ test.describe('Channel Classification - Existing channel settings', () => {
         await configurationTab.enableClassification();
 
         // Classification level dropdown should be visible
-        const dropdownContainer = channelsPage.page.getByTestId('channelClassificationLevel');
+        const dropdownContainer = page.getByTestId('channelClassificationLevel');
         await expect(dropdownContainer).toBeVisible();
 
         // Open dropdown and select a level
         await dropdownContainer.click();
-        const menu = channelsPage.page.locator('.DropDown__menu');
+        const menu = page.locator('.DropDown__menu');
         await expect(menu).toBeVisible();
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'CONFIDENTIAL');
@@ -265,9 +265,9 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -275,12 +275,12 @@ test.describe('Channel Classification - Existing channel settings', () => {
         // Enable classification and select a level
         await configurationTab.enableClassification();
 
-        const dropdownContainer = channelsPage.page.getByTestId('channelClassificationLevel');
+        const dropdownContainer = page.getByTestId('channelClassificationLevel');
         await dropdownContainer.click();
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET');
         expect(selectedLevel).toBeDefined();
-        const menu = channelsPage.page.locator('.DropDown__menu');
+        const menu = page.locator('.DropDown__menu');
         await menu.getByText(selectedLevel!.name, {exact: true}).click();
 
         // The channel banner toggle should now be forced active and disabled
@@ -290,7 +290,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         await expect(bannerToggle).toBeDisabled();
 
         // Banner color input should be locked to the classification color
-        const colorInput = channelsPage.page.locator('#channel_banner_banner_background_color_picker-inputColorValue');
+        const colorInput = page.locator('#channel_banner_banner_background_color_picker-inputColorValue');
         await expect(colorInput).toBeVisible();
         const colorValue = await colorInput.inputValue();
         expect(colorValue.toLowerCase().replace('#', '')).toBe(selectedLevel!.color.toLowerCase().replace('#', ''));
@@ -306,9 +306,9 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         // Step 1: enable classification, select a level, save
         const channelSettingsModal = await channelsPage.openChannelSettings();
@@ -316,10 +316,10 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         await configurationTab.enableClassification();
 
-        const dropdownContainer = channelsPage.page.getByTestId('channelClassificationLevel');
+        const dropdownContainer = page.getByTestId('channelClassificationLevel');
         await dropdownContainer.click();
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET')!;
-        await channelsPage.page.locator('.DropDown__menu').getByText(selectedLevel.name, {exact: true}).click();
+        await page.locator('.DropDown__menu').getByText(selectedLevel.name, {exact: true}).click();
         await configurationTab.save();
 
         // Step 2: in the same open modal, disable classification, enable a manual banner,
@@ -334,14 +334,14 @@ test.describe('Channel Classification - Existing channel settings', () => {
         await configurationTab.save();
 
         // Symptom 1 guard: color input reflects what we typed and the server persisted the custom color
-        const colorInput = channelsPage.page.locator('#channel_banner_banner_background_color_picker-inputColorValue');
+        const colorInput = page.locator('#channel_banner_banner_background_color_picker-inputColorValue');
         await expect(colorInput).toHaveValue(`#${customColor}`);
         const persisted = await adminClient.getChannel(channel.id);
         expect(persisted.banner_info?.background_color?.toLowerCase().replace('#', '')).toBe(customColor);
 
         // Symptom 2 guard: re-enable classification → Save button reappears (panel transitions out of 'saved')
         await configurationTab.enableClassification();
-        const saveButton = channelsPage.page.getByTestId('SaveChangesPanel__save-btn');
+        const saveButton = page.getByTestId('SaveChangesPanel__save-btn');
         await expect(saveButton).toBeVisible();
         await expect(saveButton).toBeEnabled();
 
@@ -356,9 +356,9 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(channelsPage.page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -366,17 +366,17 @@ test.describe('Channel Classification - Existing channel settings', () => {
         // Enable classification and select a level
         await configurationTab.enableClassification();
 
-        const dropdownContainer = channelsPage.page.getByTestId('channelClassificationLevel');
+        const dropdownContainer = page.getByTestId('channelClassificationLevel');
         await dropdownContainer.click();
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'TOP SECRET');
         expect(selectedLevel).toBeDefined();
-        const menu = channelsPage.page.locator('.DropDown__menu');
+        const menu = page.locator('.DropDown__menu');
         await menu.getByText(selectedLevel!.name, {exact: true}).click();
 
         // Edit the banner text to a custom value
         const customBannerText = 'TOP SECRET - Handle via COMINT channels only';
-        const bannerTextbox = channelsPage.page.locator('#channel_banner_banner_text_textbox');
+        const bannerTextbox = page.locator('#channel_banner_banner_text_textbox');
         await expect(bannerTextbox).toBeVisible();
         await bannerTextbox.fill(customBannerText);
 
@@ -385,7 +385,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         await channelSettingsModal.close();
 
         // The channel banner should now show the custom text with the classification color
-        const banner = channelsPage.page.getByTestId('center.channel_banner');
+        const banner = page.getByTestId('center.channel_banner');
         await expect(banner).toBeVisible({timeout: 30000});
         await expect(banner).toContainText(customBannerText);
 

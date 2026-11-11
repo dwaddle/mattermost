@@ -24,9 +24,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const marker = `E2E mm_blocks ephemeral ${pw.random.id()}`;
 
@@ -77,9 +76,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             // Ephemeral roots have no Reply control; under CRT, integration ephemerals stay out of the center list.
             // Thread the interactive ephemeral under a normal channel post so the Thread panel can host it and the follow-up ephemeral.
@@ -157,9 +155,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -233,9 +230,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks anchor override ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -317,9 +313,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks eph query anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -399,9 +394,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks eph override anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -476,9 +470,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks eph select query anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -567,9 +560,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks eph ds users anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -656,9 +648,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks eph ds channels anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -742,9 +733,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks eph context anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({
@@ -809,9 +799,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
                 throw new Error('Town Square or Off-Topic channel not found');
             }
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const anchorMarker = `E2E mm_blocks eph openurl anchor ${pw.random.id()}`;
             const anchor = await userClient.createPost({

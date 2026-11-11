@@ -7,9 +7,9 @@ import {ChannelsPage, expect, test, type PlaywrightExtended} from '@mattermost/p
 
 /** Opens Recent Mentions on a freshly logged in page. */
 async function openRecentMentions(pw: PlaywrightExtended, user: UserProfile, teamName: string) {
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(teamName);
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.teamPage.goto({team: teamName});
+    await expect(app.center.composer.locator).toBeVisible();
     await channelsPage.globalHeader.openRecentMentions();
 
     const panel = channelsPage.searchResultsPanel;

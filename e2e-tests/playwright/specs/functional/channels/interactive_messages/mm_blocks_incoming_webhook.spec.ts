@@ -50,9 +50,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             await expect(lastPost.blocks.locator).toBeVisible();
@@ -88,9 +87,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             await expect(lastPost.blocks.locator).toBeVisible();
@@ -133,9 +131,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
 
@@ -203,9 +200,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             await expect(lastPost.blocks.locator).toBeVisible();
@@ -277,9 +273,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             await lastPost.action('pw_mm_blocks_integration').click();
@@ -351,9 +346,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             await lastPost.action('pw_mm_blocks_apply_update').click();
@@ -422,9 +416,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
 
@@ -498,9 +491,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -585,9 +577,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -673,9 +664,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -762,9 +752,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -824,9 +813,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             await lastPost.action('pw_mm_blocks_openurl').click();
@@ -898,9 +886,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -974,9 +961,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -1049,9 +1035,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -1110,9 +1095,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
 
@@ -1174,9 +1158,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
                 },
             });
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
             const lastPost = await lastCenterPost(app);
 

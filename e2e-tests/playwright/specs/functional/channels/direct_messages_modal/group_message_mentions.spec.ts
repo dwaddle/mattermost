@@ -14,9 +14,8 @@ test('MM-T469 Create a group message and post a mention for another user', async
     const gmChannel = await adminClient.createGroupChannel([user.id, sender.id, secondParticipant.id]);
 
     // # View another channel, then have a participant mention the test user in the GM
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'off-topic');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'off-topic'});
     await pw.stubNotification(page, 'granted');
     await pw.postAs(sender, {
         channel_id: gmChannel.id,
@@ -45,9 +44,8 @@ test(
         const {user, team, adminClient} = await pw.initSetup();
         const [member1, member2] = await adminClient.createUsers(team.id, 2, 'gm');
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Create a group message with the two members
         const dmModal = await channelsPage.openDirectChannelsModal();

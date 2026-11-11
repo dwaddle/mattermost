@@ -25,9 +25,8 @@ test.describe('WYSIWYG editor - quoting selected text', TAGS, () => {
             message: 'Ullamcorper eu mi, dictumst nec. Diam sapien pellentesque vestibulum pretium eget massa.',
         });
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();

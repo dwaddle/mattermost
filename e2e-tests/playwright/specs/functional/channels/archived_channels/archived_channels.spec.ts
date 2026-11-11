@@ -11,9 +11,8 @@ test('MM-T1671 shows a read-only member list for an archived channel', {tag: '@c
     const channel = await adminClient.createPublicChannel(team.id, `Archive ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {channelsPage, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: channel.name});
 
     // # Archive the channel
     await channelsPage.archiveChannel();
@@ -42,9 +41,8 @@ test('MM-T1679 opens an archived channel by jumping from search results', {tag: 
     const message = `archived post ${pw.random.id()}`;
     await pw.postAs(user, {channel_id: channel.id, message});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, channel.name);
-    await channelsPage.toBeVisible();
+    const {channelsPage, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: channel.name});
 
     // # Archive the channel, then move to another channel
     await channelsPage.archiveChannel();

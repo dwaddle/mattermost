@@ -23,22 +23,16 @@ test('MM-T449 edits a direct message body', {tag: '@direct_messages'}, async ({p
     });
 
     // # Open the direct message as the recipient
-    const {
-        app: recipientApp,
-        channelsPage: recipientChannelsPage,
-        page: recipientPage,
-    } = await pw.testBrowser.login(recipient);
-    await recipientChannelsPage.goto(team.name, `@${sender.username}`);
-    await recipientChannelsPage.toBeVisible();
+    const {app: recipientApp, page: recipientPage} = await pw.testBrowser.login(recipient);
+    await recipientApp.channelsPage.goto({team, channel: `@${sender.username}`, path: 'messages'});
 
     // * Verify the original message is shown, under the post's id (sent, not pending)
     const recipientPost = recipientApp.center.postList.post(post);
     await expect(recipientPost.messageText.locator).toContainText(originalMessage);
 
     // # Open the direct message as the sender and edit the post with the Up arrow shortcut
-    const {app: senderApp, channelsPage: senderChannelsPage} = await pw.testBrowser.login(sender);
-    await senderChannelsPage.goto(team.name, `@${recipient.username}`);
-    await senderChannelsPage.toBeVisible();
+    const {app: senderApp} = await pw.testBrowser.login(sender);
+    await senderApp.channelsPage.goto({team, channel: `@${recipient.username}`, path: 'messages'});
     await senderApp.center.postCreate.messageTextbox.locator.press('ArrowUp');
     const editor = senderApp.postEdit.editor.messageTextbox.locator;
     await expect(editor).toHaveValue(originalMessage);
@@ -52,7 +46,7 @@ test('MM-T449 edits a direct message body', {tag: '@direct_messages'}, async ({p
 
     // # Reload the recipient's direct message
     await recipientPage.reload();
-    await recipientChannelsPage.toBeVisible();
+    await expect(recipientApp.center.composer.locator).toBeVisible();
 
     // * Verify the recipient sees the edit without an unread mention indicator
     await expect(recipientPost.messageText.locator).toContainText(editedMessage);

@@ -29,11 +29,10 @@ test.describe('sending a draft from the Drafts panel', () => {
         });
         await adminClient.addToTeam(team2.id, user.id);
 
-        const {channelsPage, draftsPage} = await pw.testBrowser.login(user);
+        const {channelsPage, draftsPage, app} = await pw.testBrowser.login(user);
 
         // # Type a draft in Town Square without sending it
-        await channelsPage.goto(team1.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team: team1, channel: 'town-square'});
         await channelsPage.centerView.postCreate.writeMessage(draftMessage);
 
         // # Switch channels so the draft is synced to the server
@@ -63,7 +62,7 @@ test.describe('sending a draft from the Drafts panel', () => {
         await channelsPage.switchToTeam(team2.name);
         await channelsPage.sidebarLeft.draftsNotVisible();
         await channelsPage.switchToTeam(team1.name);
-        await channelsPage.toBeVisible();
+        await expect(app.center.composer.locator).toBeVisible();
 
         // * The sent draft did not reappear
         await channelsPage.sidebarLeft.draftsNotVisible();
@@ -87,10 +86,9 @@ test.describe('sending a draft from the Drafts panel', () => {
         const replyDraft = `thread-reply-draft-${pw.random.id()}`;
 
         const {user, team, userClient} = await pw.initSetup();
-        const {channelsPage, draftsPage} = await pw.testBrowser.login(user);
+        const {channelsPage, draftsPage, app} = await pw.testBrowser.login(user);
 
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Start a thread and leave a reply draft in it
         await channelsPage.centerView.postCreate.postMessage(rootMessage);

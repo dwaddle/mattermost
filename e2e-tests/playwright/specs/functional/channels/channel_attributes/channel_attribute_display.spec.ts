@@ -62,9 +62,8 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await setChannelValue(adminClient, channel.id, program, optionId(program, 'AURORA'));
             await setChannelValue(adminClient, channel.id, hidden, optionId(hidden, 'QUIET'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // Visible to an ordinary member, not just whoever set it. Undesignated
             // values never become chips.
@@ -139,9 +138,8 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
                 message: 'Reply',
             });
 
-            const {page, channelsPage, threadsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, threadsPage, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // # Open the thread from the channel
             const post = await channelsPage.centerView.getLastPost();
@@ -320,9 +318,8 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await expect(asMember.page.getByTestId(`channelInfoAttributeRow-${undesignated.name}`)).toHaveCount(0);
 
             // # Look at the same channel as the channel admin
-            const {channelsPage} = await pw.testBrowser.login(channelAdmin);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(channelAdmin);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // * No chips in the header, because nothing was designated
             await expect(channelsPage.centerView.header.attributes.container).toHaveCount(0);
@@ -392,9 +389,8 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
                 await setChannelValue(adminClient, channel.id, field, optionId(field, `LONG_VALUE_NUMBER_${i}`));
             }
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const infoButton = page.locator('#channel-info-btn');
             const labels = channelsPage.centerView.header.attributes;
@@ -469,9 +465,8 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, locked, optionId(locked, 'FIXED'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
             await page.locator('#channel-info-btn').click();
 
             // Shown with the reason: hiding it looks like a missing marking.
@@ -516,9 +511,9 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(optional);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, app} = await pw.testBrowser.login(user);
+            await app.teamPage.goto({team});
+            await expect(app.center.composer.locator).toBeVisible();
 
             const modal = await channelsPage.openNewChannelModal();
             const displayName = `Attr Optional ${suffix}`;
@@ -577,9 +572,8 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'RESTRICTED'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // Falls back to the value name, reproducing today's classification banner.
             await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('RESTRICTED');
@@ -612,9 +606,9 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(caveats);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, app} = await pw.testBrowser.login(user);
+            await app.teamPage.goto({team});
+            await expect(app.center.composer.locator).toBeVisible();
 
             const modal = await channelsPage.openNewChannelModal();
             await modal.fillDisplayName(`Attr Banner Multi ${suffix}`);
@@ -660,9 +654,9 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(note);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, app} = await pw.testBrowser.login(user);
+            await app.teamPage.goto({team});
+            await expect(app.center.composer.locator).toBeVisible();
 
             const modal = await channelsPage.openNewChannelModal();
             await modal.fillDisplayName(`Attr Banner Text ${suffix}`);
@@ -709,9 +703,8 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, adminOnly, optionId(adminOnly, 'SET'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
             await page.locator('#channel-info-btn').click();
 
             await expect(page.getByTestId(`channelInfoAttributeRow-${adminOnly.name}`)).toContainText('SET');

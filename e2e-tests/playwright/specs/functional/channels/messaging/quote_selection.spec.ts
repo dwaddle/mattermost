@@ -19,9 +19,8 @@ test('quotes text selected in a post into the channel message box', TAGS, async 
     const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     const post = await channelsPage.getLastPost();
     const quoteButton = page.getByRole('button', {name: 'Quote selection'});
@@ -61,9 +60,8 @@ test('adds a quote of a right to left selection after the existing draft', TAGS,
     const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     const post = await channelsPage.getLastPost();
     const quoteButton = page.getByRole('button', {name: 'Quote selection'});
@@ -93,9 +91,8 @@ test('quotes text selected in the RHS into the thread reply box', TAGS, async ({
     });
     await userClient.createPost({channel_id: townSquare.id, root_id: root.id, message: MESSAGE});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Open the thread in the RHS
     const rootPost = await channelsPage.centerView.getPostById(root.id);
@@ -137,9 +134,8 @@ test('keeps the Markdown formatting of the quoted text', TAGS, async ({pw}) => {
         ].join('\n'),
     });
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Select the whole message and quote it
     const post = await channelsPage.getLastPost();
@@ -175,9 +171,8 @@ test('quotes the selection with the keyboard', TAGS, async ({pw}) => {
     const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Select part of the message
     const post = await channelsPage.getLastPost();
@@ -205,7 +200,7 @@ test('does not offer to quote in an archived channel', TAGS, async ({pw}) => {
     const archivedPost = await userClient.createPost({channel_id: channel.id, message: MESSAGE});
     await userClient.deleteChannel(channel.id);
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
     await channelsPage.goto(team.name, channel.name);
 
     // * The archived channel has no message box, so wait for the post instead
@@ -230,9 +225,8 @@ test('quotes text selected in a channel pop-out window', TAGS, async ({pw}) => {
     const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     const post = await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Open the channel in a pop-out window
     const [popout] = await Promise.all([

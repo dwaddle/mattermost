@@ -14,12 +14,12 @@ test.describe('Mobile view schedule message menu', () => {
     });
 
     async function openScheduleMessageMenu(pw: PlaywrightExtended): Promise<{app: App; draftMessage: string}> {
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in as the test user and go to a channel
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Write a draft message without sending it
         const draftMessage = `Mobile scheduled draft ${pw.random.id()}`;

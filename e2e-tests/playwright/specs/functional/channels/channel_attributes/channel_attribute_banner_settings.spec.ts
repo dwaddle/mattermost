@@ -56,9 +56,8 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
                 {field_id: channelFieldId, value: level.id},
             ] as never);
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             let settings = await channelsPage.openChannelSettings();
             let configuration = await settings.openConfigurationTab();
@@ -129,9 +128,8 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // # Remove every attribute from the banner and switch it off
             let settings = await channelsPage.openChannelSettings();
@@ -188,9 +186,8 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const settings = await channelsPage.openChannelSettings();
             const configuration = await settings.openConfigurationTab();
@@ -245,9 +242,8 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
             await adminClient.addToChannel(adminUser.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'SECRET'));
 
-            const {channelsPage} = await pw.testBrowser.login(adminUser);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // * The attribute drives the banner before anyone touches the settings
             await channelsPage.centerView.assertChannelBanner('SECRET', BANNER_COLOR);
@@ -274,7 +270,7 @@ test.describe('Channel attribute banner settings', {tag: ['@channel_attributes']
 
             // * The banner is back. Saving it stores the colour the picker showed, so
             // * only the text is the attribute's.
-            await expect(channelsPage.page.getByTestId('center.channel_banner.text--text')).toHaveText('SECRET');
+            await expect(page.getByTestId('center.channel_banner.text--text')).toHaveText('SECRET');
             expect((await adminClient.getChannel(channel.id)).banner_info?.enabled).toBe(true);
         } finally {
             await deleteAttributes(adminClient, created);

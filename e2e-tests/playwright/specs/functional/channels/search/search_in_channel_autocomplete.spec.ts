@@ -24,8 +24,7 @@ test(
         await adminClient.addToChannel(user.id, channel.id);
 
         const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // # Rename the channel's display name via Channel Settings
         const channelSettings = await channelsPage.openChannelSettings();

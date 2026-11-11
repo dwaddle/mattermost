@@ -33,11 +33,11 @@ test(
         const created = await Promise.all(channelsRes);
 
         // # Log in a user in new browser context
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Click on "Find channel" and type "test_channel"
         await app.lhs.header.findChannelsButton.click();

@@ -31,9 +31,9 @@ test('AI Rewrite custom prompt handles Korean IME input correctly', {tag: '@ai_r
     });
 
     // # Log in and go to the default channel.
-    const {app, channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name);
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Write a draft message so the Rewrite options become available.
     const composer = app.center.postCreate;

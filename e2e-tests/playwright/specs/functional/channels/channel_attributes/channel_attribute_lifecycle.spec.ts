@@ -47,9 +47,9 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             });
             created.push(required, optional);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
+            const {page, channelsPage, app} = await pw.testBrowser.login(user);
+            await app.teamPage.goto({team});
+            await expect(app.center.composer.locator).toBeVisible();
 
             const modal = await channelsPage.openNewChannelModal();
 
@@ -108,9 +108,8 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, program, optionId(program, 'BEFORE'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const chips = page.getByTestId('attributeChip');
             await expect(chips.filter({hasText: 'BEFORE'}).first()).toBeVisible();
@@ -168,9 +167,8 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             });
             created.push(required);
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
             await page.locator('#channel-info-btn').click();
 
             // The empty row is both the signal and the retry path.
@@ -234,9 +232,8 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'RESTRICTED'));
             await setChannelValue(adminClient, channel.id, program, optionId(program, 'AURORA'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             // No manual text: falls back to the value name.
             await expect(page.getByTestId('center.channel_banner.text--text')).toContainText('RESTRICTED');
@@ -291,9 +288,9 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             // Not blocked at the API level, but no DM surface displays them.
             await setChannelValue(adminClient, dm.id, marking, optionId(marking, 'PRIVATE'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.teamPage.goto({team});
+            await expect(app.center.composer.locator).toBeVisible();
             await page.goto(`/${team.name}/messages/@${other.username}`);
 
             await expect(page.getByTestId('channelAttributeLabels-info-header')).toHaveCount(0);
@@ -333,9 +330,8 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             await adminClient.addToChannel(user.id, channel.id);
             await setChannelValue(adminClient, channel.id, marking, optionId(marking, 'DARKBG'));
 
-            const {page, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channel.name);
-            await channelsPage.toBeVisible();
+            const {page, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channel.name});
 
             const chip = page.getByTestId('attributeChip').filter({hasText: 'DARKBG'}).first();
             await expect(chip).toBeVisible();

@@ -50,14 +50,14 @@ test(
     {tag: '@gif_picker'},
     async ({pw}) => {
         // # Initialize a test user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in as a user in new browser context
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
 
         // # Navigate to default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Open emoji/gif picker from center textbox, and pick a GIF for "hello"
         const composer = app.center.postCreate;
@@ -82,14 +82,14 @@ test(
     {tag: '@gif_picker'},
     async ({pw}) => {
         // # Initialize a test user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in as a user in new browser context
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
 
         // # Navigate to default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Post a message to create a thread
         const center = app.center.postCreate;

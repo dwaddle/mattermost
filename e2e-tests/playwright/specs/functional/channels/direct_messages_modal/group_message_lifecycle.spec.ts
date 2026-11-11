@@ -14,9 +14,9 @@ test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
     const gmChannel = await adminClient.createGroupChannel([user.id, sender.id, secondParticipant.id]);
 
     // # Open the GM and mute it through notification preferences
-    const {channelsPage, page} = await pw.testBrowser.login(user);
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
     await channelsPage.gotoMessage(team.name, gmChannel.name);
-    await channelsPage.toBeVisible();
+    await expect(app.center.composer.locator).toBeVisible();
     const notificationPreferences = await channelsPage.openChannelNotificationPreferences();
     await notificationPreferences.muteChannelCheckbox.check();
     await notificationPreferences.save();
@@ -54,9 +54,9 @@ test('MM-T478 Closing group message channels and re-opening via Direct Messages 
     const gmChannel = await adminClient.createGroupChannel([user.id, participants[0].id, participants[1].id]);
 
     // # Open then close the group message conversation
-    const {channelsPage} = await pw.testBrowser.login(user);
+    const {channelsPage, app} = await pw.testBrowser.login(user);
     await channelsPage.gotoMessage(team.name, gmChannel.name);
-    await channelsPage.toBeVisible();
+    await expect(app.center.composer.locator).toBeVisible();
     await channelsPage.closeGroupMessage();
     await expect(channelsPage.sidebarLeft.item(participants[0].username)).toHaveCount(0);
 
@@ -86,9 +86,8 @@ test(
         const {user, team, adminClient, userClient} = await pw.initSetup();
         const [member1, member2] = await adminClient.createUsers(team.id, 2, 'gm');
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Create a group message and post a message, then save that message
         const dmModal = await channelsPage.openDirectChannelsModal();

@@ -11,9 +11,8 @@ test('MM-T1239 CTRL/CMD+/ and /shortcuts open keyboard shortcuts', async ({pw}) 
     const {user, team} = await pw.initSetup();
 
     // # Open the keyboard shortcuts modal with the shortcut
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
     await channelsPage.centerView.postCreate.input.focus();
     await page.keyboard.press('ControlOrMeta+/');
 
@@ -51,9 +50,8 @@ test('MM-T1242 CTRL/CMD+K typed characters are not lost after switching channels
     const message = 'Hello World!';
 
     // # Open quick switcher, select the current channel, and type into the focused page
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
     await channelsPage.centerView.postCreate.input.focus();
     await page.keyboard.press('ControlOrMeta+K');
     await expect(channelsPage.findChannelsModal.input).toBeVisible();

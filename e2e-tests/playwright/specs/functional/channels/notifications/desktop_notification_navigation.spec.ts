@@ -39,9 +39,8 @@ test(
         });
 
         // # Log in and view the first team's Town Square, then stub notifications
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
         await pw.stubNotification(page, 'granted');
 
         // # Post a message from the admin in the second team's channel
@@ -80,9 +79,8 @@ test(
         const dmChannel = await adminClient.createDirectChannel([adminUser.id, user.id]);
 
         // # Log in and view Town Square, then stub notifications
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
         await pw.stubNotification(page, 'granted');
 
         // # Send a direct message from the admin to the user
@@ -121,9 +119,8 @@ test(
         const dmChannel = await adminClient.createDirectChannel([adminUser.id, user.id]);
 
         // # Log in and view Town Square (not the DM), then stub notifications
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
         await pw.stubNotification(page, 'granted');
 
         // # Send a direct message from the admin while the user is available

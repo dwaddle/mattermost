@@ -18,9 +18,8 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         const {user, userClient, team} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'off-topic'});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
@@ -53,9 +52,8 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         const {user, userClient, team} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'off-topic'});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
@@ -79,9 +77,8 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         const {user, userClient, team} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'off-topic'});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
@@ -111,9 +108,8 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
         const {user, userClient, team} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'off-topic');
-        await channelsPage.toBeVisible();
+        const {channelsPage, page, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'off-topic'});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         const msg = `edit-me ${pw.random.id()}`;

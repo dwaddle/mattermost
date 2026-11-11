@@ -38,9 +38,8 @@ test.fixme(
         const channel = await createDiscoverableChannel(adminClient, team.id);
 
         // # Log in as the non-member user and open Browse Channels
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         const dialog = await channelsPage.openBrowseChannelsModal();
         await dialog.toBeVisible();
@@ -54,8 +53,8 @@ test.fixme(
 
         // # Request to join and confirm in the modal
         await dialog.clickRequestToJoin(channel.display_name);
-        await expect(channelsPage.page.getByRole('button', {name: 'Send Request'})).toBeVisible();
-        await channelsPage.page.getByRole('button', {name: 'Send Request'}).click();
+        await expect(page.getByRole('button', {name: 'Send Request'})).toBeVisible();
+        await page.getByRole('button', {name: 'Send Request'}).click();
 
         // * The row flips to the pending "Withdraw" state
         await dialog.toHaveWithdrawButton(channel.display_name);
@@ -79,9 +78,8 @@ test(
         const channel = await createDiscoverableChannel(adminClient, team.id);
 
         // # Log in as the non-member user
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open Find Channels (Cmd/Ctrl+K) and locate the discoverable channel
         await channelsPage.sidebarLeft.findChannelButton.click();
@@ -96,7 +94,7 @@ test(
 
         // * The Request to Join modal opens instead of the legacy private-channel join
         // confirmation, and no "Join private channel" dialog is shown.
-        await expect(channelsPage.page.getByRole('button', {name: 'Send Request'})).toBeVisible();
-        await expect(channelsPage.page.getByText('Are you sure you wish to join')).toHaveCount(0);
+        await expect(page.getByRole('button', {name: 'Send Request'})).toBeVisible();
+        await expect(page.getByText('Are you sure you wish to join')).toHaveCount(0);
     },
 );
