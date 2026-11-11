@@ -1,13 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-declare module '@mattermost/playwright-lib' {
-    interface PluginKeys {
-        playbooks: true;
-    }
-}
+import {expect, playbooksPluginId, pluginKey, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Capture visual snapshot of the intro channel view for a regular user
@@ -27,7 +21,7 @@ test(
         await channelsPage.toBeVisible();
 
         // # Wait for Playbooks icon to be loaded in App bar
-        await expect(app.appBar.plugin('playbooks').locator.getByRole('img')).toBeVisible();
+        await expect(app.appBar.plugin(pluginKey(playbooksPluginId)).locator.getByRole('img')).toBeVisible();
 
         // # Hide dynamic elements of Channels page
         await pw.hideDynamicChannelsContent(page);
