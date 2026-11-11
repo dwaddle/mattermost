@@ -7,12 +7,13 @@ import type {Team} from '@mattermost/types/teams';
 import {
     AdminOperator,
     Api,
+    type App,
     expect,
     generated,
     newTestPassword,
     settle,
     test,
-    type App,
+    waitForApi,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -83,9 +84,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
      * mount, and a response landing after the toggle is switched on would switch it back off.
      */
     async function openTeamConfig(app: App, team: Team) {
-        const policyFetched = app.page.waitForResponse((r) =>
-            r.url().includes(`/teams/${team.id}/access_control/policy`),
-        );
+        const policyFetched = waitForApi(app.page, Api.GetTeamAccessControlPolicy, {params: {team_id: team.id}});
         await app.page.goto(`${generated.AdminConsolePage.path()}/user_management/teams/${team.id}`);
         await policyFetched;
         await expect(app.admin.team.policyEnforceSwitch.locator).toBeVisible();
