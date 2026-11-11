@@ -23,7 +23,7 @@ test(
         const channel = await adminClient.createPublicChannel(team.id, `Original ${id}`, handle);
         await adminClient.addToChannel(user.id, channel.id);
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: channel.name});
 
         // # Rename the channel's display name via Channel Settings

@@ -122,19 +122,19 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
     await page.keyboard.press('Escape');
     await expect(groups.locator).not.toBeVisible();
 
-    // # Open the Add people dialog for the channel
-    const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.clickMembersMenuItem();
-    await expect(app.rhs.channelMembers.addButton.locator).toBeEnabled();
-    const {channelInviteModal} = await app.rhs.channelMembers.clickAddButton();
-    await expect(channelInviteModal.locator).toBeVisible();
+    // # Open the Add people dialog for the channel from the channel's members panel
+    await (await app.channelHeader.clickOpenMenuButton()).clickMembersMenuItem();
+    const channelMembers = app.rhs.channelMembers;
+    await channelMembers.clickAddButton();
+    const invite = app.channelInviteModal.users;
+    await expect(invite.searchCombobox.locator).toBeVisible();
 
-    // # Search for the group by its mention (the dialog focuses its search input on open)
-    await page.keyboard.type(`@${groupName}`);
+    // # Search for the group by its mention
+    await invite.searchCombobox.locator.fill(`@${groupName}`);
 
     // * Verify the group is offered with its current member count
-    const addGroupMembers = channelInviteModal.locator.getByText(`Add ${members.length} people`);
-    await expect(addGroupMembers).toBeVisible();
+    const addGroupMembers = invite.results.group(group).addMembersText;
+    await expect(addGroupMembers.locator).toHaveText(`Add ${members.length} people`);
 
     // # Hover the shortcut. Its tooltip renders in a portal outside the dialog, where the open modal
     // # keeps it out of the accessibility tree, and tooltips carry no testids yet; while it shows, it is the

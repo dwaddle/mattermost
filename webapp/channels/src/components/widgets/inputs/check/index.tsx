@@ -4,6 +4,7 @@
 import React from 'react';
 import type {ReactNode} from 'react';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './check.scss';
@@ -16,7 +17,6 @@ type Props = {
     onChange: () => void;
     checked: boolean;
 
-    // The checkbox renders `<testId>--checkbox`.
     testId: TestId;
 };
 
@@ -29,7 +29,7 @@ function CheckInput(props: Props) {
                 {...rest}
                 id={id}
                 aria-label={ariaLabel}
-                data-testid={`${testId}--checkbox`}
+                data-testid={withRole(testId, 'checkbox')}
                 type='checkbox'
             />
             <label

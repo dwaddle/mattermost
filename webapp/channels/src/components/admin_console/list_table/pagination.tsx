@@ -32,8 +32,8 @@ export function Pagination(props: Props) {
             disablePrevious={props.disablePrevPage}
             disableNext={props.disableNextPage}
             isLoading={props.isLoading}
-            previousButtonTestId={`${props.testIdScope}.previous--button`}
-            nextButtonTestId={`${props.testIdScope}.next--button`}
+            previousButtonTestId={part(props.testIdScope, 'previous', 'button')}
+            nextButtonTestId={part(props.testIdScope, 'next', 'button')}
         />
     );
 }

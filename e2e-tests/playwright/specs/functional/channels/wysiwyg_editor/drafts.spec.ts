@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {lastPostText, openRichComposer, sendRich, typeRich} from './support';
 
@@ -31,16 +31,16 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
 
         // # Type in Off-Topic and switch away without waiting for the draft to save
         await typeRich(composer, offTopicDraft);
-        await switchTo(app, 'town-square', 'Town Square');
+        await switchTo(app, DefaultChannel.TownSquare, 'Town Square');
 
         // # Type in Town Square and switch back right away
         await typeRich(composer, townSquareDraft);
-        await switchTo(app, 'off-topic', 'Off-Topic');
+        await switchTo(app, DefaultChannel.OffTopic, 'Off-Topic');
 
         // * Each channel restores its own draft
         await expect(composer.messageTextbox.locator).toHaveText(offTopicDraft);
 
-        await switchTo(app, 'town-square', 'Town Square');
+        await switchTo(app, DefaultChannel.TownSquare, 'Town Square');
         await expect(composer.messageTextbox.locator).toHaveText(townSquareDraft);
     });
 
@@ -73,8 +73,8 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
 
         // # Leave a draft, then switch away and back
         await typeRich(composer, draft);
-        await switchTo(app, 'town-square', 'Town Square');
-        await switchTo(app, 'off-topic', 'Off-Topic');
+        await switchTo(app, DefaultChannel.TownSquare, 'Town Square');
+        await switchTo(app, DefaultChannel.OffTopic, 'Off-Topic');
         await expect(composer.messageTextbox.locator).toHaveText(draft);
 
         // # Keep typing without moving the cursor

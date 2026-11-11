@@ -37,8 +37,6 @@ type Props = {
     icon?: React.ReactNode;
     value?: string;
 
-    // The button is `<testIdScope>.date--button` and the calendar popper `<testIdScope>.calendar`; without a scope, neither
-    // has a testid.
     testIdScope?: TestId;
 };
 
@@ -132,7 +130,7 @@ const DatePicker = ({children, datePickerProps, isPopperOpen, handlePopperOpenSt
                     initialFocus={-1}
                 >
                     <div
-                        data-testid={testIdScope ? `${testIdScope}.calendar` : undefined}
+                        data-testid={part(testIdScope, 'calendar')}
                         ref={setFloating}
                         style={{
                             position: strategy,

@@ -563,7 +563,7 @@ const DateTimeInputContainer: React.FC<Props> = ({
                             <Menu.Item
                                 key={index}
                                 id={`time_option_${index}`}
-                                data-testid={testIdScope ? `${testIdScope}.time_menu.time:${option.format('HHmm')}--menuitem` : undefined}
+                                data-testid={part(testIdScope, 'time_menu.time', {key: option.format('HHmm')}, 'menuitem')}
                                 labels={
                                     <span>{option.format(isMilitaryTime ? 'HH:mm' : 'LT')}</span>
                                 }

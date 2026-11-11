@@ -16,6 +16,7 @@ import React, {useCallback, useState} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {Post} from '@mattermost/types/posts';
@@ -41,7 +42,6 @@ type Props = {
     post: Post;
     channel?: Channel;
 
-    // The post's scope (`center.post_list.post`): the row is `<scope>.attributes`, its chips `<scope>.attributes.value.…`.
     testIdScope?: TestId;
 };
 
@@ -111,11 +111,11 @@ function PostAttributesChips({post, channel, testIdScope}: Props) {
         return (
             <div
                 className='PostAttributesChips'
-                data-testid={testIdScope ? `${testIdScope}.attributes_unavailable` : undefined}
+                data-testid={part(testIdScope, 'attributes_unavailable')}
             >
                 <span
                     className='PostAttributesChips__unavailable'
-                    data-testid={testIdScope ? `${testIdScope}.attributes_unavailable.message--text` : undefined}
+                    data-testid={part(testIdScope, 'attributes_unavailable.message', 'text')}
                 >
                     <FormattedMessage
                         id='post_attributes.chips.unavailable'
@@ -135,7 +135,7 @@ function PostAttributesChips({post, channel, testIdScope}: Props) {
         <>
             <div
                 className='PostAttributesChips'
-                data-testid={testIdScope ? `${testIdScope}.attributes` : undefined}
+                data-testid={part(testIdScope, 'attributes')}
                 ref={refs.setReference}
                 {...getReferenceProps()}
             >
@@ -145,7 +145,7 @@ function PostAttributesChips({post, channel, testIdScope}: Props) {
                         field={field}
                         value={value}
                         maxItems={maxItems}
-                        testIdScope={testIdScope ? `${testIdScope}.attributes.value` : undefined}
+                        testIdScope={part(testIdScope, 'attributes.value')}
                     />
                 ))}
                 {overflow > 0 && (
@@ -159,7 +159,7 @@ function PostAttributesChips({post, channel, testIdScope}: Props) {
                      */
                     <span
                         className='PostAttributesChips__overflow'
-                        data-testid={testIdScope ? `${testIdScope}.attributes.overflow--img` : undefined}
+                        data-testid={part(testIdScope, 'attributes.overflow', 'img')}
                         role='img'
                         aria-label={formatMessage(
                             {

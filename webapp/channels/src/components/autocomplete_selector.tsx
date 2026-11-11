@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import {part} from '@mattermost/shared/utils/test_id';
+import {keyed, part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {UserProfile} from '@mattermost/types/users';
@@ -176,7 +176,7 @@ export default class AutocompleteSelector extends React.PureComponent<Props, Sta
 
         return (
             <div
-                data-testid={testIdScope ? `${testIdScope}:${testKey}` : undefined}
+                data-testid={keyed(testIdScope, testKey)}
                 className='form-group'
             >
                 {labelContent}

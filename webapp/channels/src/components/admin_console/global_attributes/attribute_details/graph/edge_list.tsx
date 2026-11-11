@@ -277,7 +277,7 @@ export function EdgeList({
                         onKeyUp={(event) => event.stopPropagation()}
                         disabled={disabled || atMax}
                         autoComplete='off'
-                        testId={`${testIdScope}.search`}
+                        testId={part(testIdScope, 'search')}
                     />
                 </div>
             </div>

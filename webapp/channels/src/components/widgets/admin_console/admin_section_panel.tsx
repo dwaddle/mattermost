@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React from 'react';
 import type {MessageDescriptor} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {LicenseSkuBadge} from 'components/widgets/badges';
@@ -20,7 +21,6 @@ type Props = {
     children: React.ReactNode;
     'data-testid'?: string;
 
-    // The panel's parts: `.description--text`, `.body` (without it, none). Unkeyed when the panel is keyed.
     testIdScope?: TestIdScope;
 };
 
@@ -48,7 +48,7 @@ const AdminSectionPanel: React.FC<Props> = ({
                 className='AdminSectionPanel'
                 data-testid={dataTestId}
             >
-                <div data-testid={testIdScope ? `${testIdScope}.body` : undefined}>
+                <div data-testid={part(testIdScope, 'body')}>
                     {children}
                 </div>
             </div>
@@ -72,7 +72,7 @@ const AdminSectionPanel: React.FC<Props> = ({
             titleTestId={descriptionTestId && !titleDescriptor ? descriptionTestId : undefined}
             subtitleTestId={descriptionTestId && titleDescriptor ? descriptionTestId : undefined}
         >
-            <div data-testid={testIdScope ? `${testIdScope}.body` : undefined}>
+            <div data-testid={part(testIdScope, 'body')}>
                 {children}
             </div>
         </AdminPanel>

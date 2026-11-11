@@ -5,7 +5,7 @@ import React, {useCallback, useMemo} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CheckIcon, ChevronDownIcon} from '@mattermost/compass-icons/components';
-import {withRole} from '@mattermost/shared/utils/test_id';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Agent} from '@mattermost/types/agents';
 
@@ -110,7 +110,7 @@ const AgentDropdown = ({
                         <Menu.Item
                             key={bot.id}
                             id={`agent-option-${bot.id}`}
-                            data-testid={testIdScope ? `${testIdScope}.menu.agent:${bot.id}--menuitem` : undefined}
+                            data-testid={part(testIdScope, 'menu.agent', {key: bot.id}, 'menuitem')}
                             leadingElement={
                                 <Avatar
                                     url={getBotAvatarUrl(bot.id)}

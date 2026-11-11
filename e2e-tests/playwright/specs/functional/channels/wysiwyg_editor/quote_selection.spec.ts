@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {selectTextWithMouse} from '../messaging/quote_selection_helpers';
 
@@ -21,7 +21,7 @@ test.describe('WYSIWYG editor - quoting selected text', TAGS, () => {
     test('quotes selected text and types the reply below the quote', async ({pw}) => {
         const setup = await pw.initSetup();
         const {userClient, team} = setup;
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const townSquare = await userClient.getChannelByName(team.id, DefaultChannel.TownSquare);
         const created = await userClient.createPost({
             channel_id: townSquare.id,
             message: 'Ullamcorper eu mi, dictumst nec. Diam sapien pellentesque vestibulum pretium eget massa.',

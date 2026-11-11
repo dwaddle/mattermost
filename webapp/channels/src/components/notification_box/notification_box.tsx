@@ -5,6 +5,7 @@ import React, {memo, type JSX} from 'react';
 import styled, {css} from 'styled-components';
 
 import {AlertOutlineIcon, CheckIcon, InformationOutlineIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type NotificationVariant = 'general' | 'info' | 'success' | 'warning' | 'danger';
@@ -12,7 +13,6 @@ type NotificationVariant = 'general' | 'info' | 'success' | 'warning' | 'danger'
 type NotificationProps = {
     id?: string;
 
-    /** The box's testid; its text is `<testId>.text`. */
     testId: TestId;
     dismissable?: boolean;
     title?: JSX.Element | string;
@@ -116,7 +116,7 @@ const NotificationBox = ({variant, title, text, testId}: NotificationProps) => {
             {text && (
                 <NotificationText
                     noTitle={!title}
-                    data-testid={`${testId}.text`}
+                    data-testid={part(testId, 'text')}
                 >
                     {text}
                 </NotificationText>

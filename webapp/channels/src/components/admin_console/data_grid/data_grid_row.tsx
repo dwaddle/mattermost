@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React from 'react';
 import type {CSSProperties} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {Row, Column} from './data_grid';
@@ -42,7 +43,7 @@ const DataGridCell = ({row, column, testIdScope}: DataGridCellProps) => {
         <div
             key={column.field}
             className={classNames('DataGrid_cell', column.className)}
-            data-testid={`${testIdScope}.row.cell:${column.field}`}
+            data-testid={part(testIdScope, 'row.cell', {key: column.field})}
             style={style}
         >
             {row.cells[column.field]}
@@ -62,7 +63,7 @@ const DataGridRow = ({row, columns, testIdScope, testKey}: DataGridRowProps) => 
     return (
         <div
             className='DataGrid_row'
-            data-testid={`${testIdScope}.row:${testKey}`}
+            data-testid={part(testIdScope, 'row', {key: testKey})}
             onClick={row.onClick}
         >
             {cells}

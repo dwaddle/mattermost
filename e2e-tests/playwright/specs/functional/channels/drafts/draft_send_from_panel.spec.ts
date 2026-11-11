@@ -3,7 +3,7 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, DefaultChannel} from '@mattermost/playwright-lib';
 
 /** The channel's last post, once the server has one. */
 async function lastPost(client: Client4, channelId: string) {
@@ -32,7 +32,7 @@ test.describe('sending a draft from the Drafts panel', () => {
     test('channel draft does not come back after switching teams', {tag: '@messaging'}, async ({pw}) => {
         const draftMessage = `panel-send-${pw.random.id()}`;
 
-        const {user, team: team1, adminClient, userClient, townSquare} = await pw.initSetup();
+        const {user, team: team1, adminClient, userClient} = await pw.initSetup();
         const team2 = await pw.createNewTeam(adminClient, {
             name: 'team',
             displayName: 'Team',
@@ -41,8 +41,8 @@ test.describe('sending a draft from the Drafts panel', () => {
         });
         await adminClient.addToTeam(team2.id, user.id);
         const [townSquare, offTopic] = await Promise.all([
-            userClient.getChannelByName(team1.id, 'town-square'),
-            userClient.getChannelByName(team1.id, 'off-topic'),
+            userClient.getChannelByName(team1.id, DefaultChannel.TownSquare),
+            userClient.getChannelByName(team1.id, DefaultChannel.OffTopic),
         ]);
 
         const {app} = await pw.testBrowser.login(user);
@@ -106,8 +106,7 @@ test.describe('sending a draft from the Drafts panel', () => {
         const rootMessage = `thread-root-${pw.random.id()}`;
         const replyDraft = `thread-reply-draft-${pw.random.id()}`;
 
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {user, team, userClient, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
 
         await app.channelsPage.goto({team, channel: townSquare});

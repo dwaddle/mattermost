@@ -4,6 +4,7 @@
 import React from 'react';
 import type {CSSProperties} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {Column} from './data_grid';
@@ -39,7 +40,7 @@ const DataGridHeader = ({columns, testIdScope}: Props) => {
     return (
         <div
             className='DataGrid_header'
-            data-testid={`${testIdScope}.header`}
+            data-testid={part(testIdScope, 'header')}
         >
             {columns.map((col) => (
                 <HeaderElement

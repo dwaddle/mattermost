@@ -97,11 +97,11 @@ test('asks the posts endpoint to hydrate', {tag: '@post_attributes'}, async ({pw
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Arm the wait before the navigation that triggers the fetch
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
     const hydrated = app.page.waitForResponse((response) => response.url().includes(HYDRATION_PARAM));
 
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // * Verify a posts request carried the hydration parameter. The wait is the
     // assertion: it resolves on the first matching response and fails the test on the
@@ -206,7 +206,7 @@ test('renders chips on the RHS root and on a reply', {tag: '@post_attributes'}, 
         await expect(optionChip(rootInCenter.attributes, SECRET)).toBeVisible();
 
         // # Open the thread in the RHS
-        await rootInCenter.messageText.locator.hover();
+        await rootInCenter.messageText.hover();
         await rootInCenter.menu.clickReplyButton();
         await expect(app.rhs.postCreate.messageTextbox.locator).toBeVisible();
 

@@ -177,7 +177,7 @@ export default class PostMessageView extends React.PureComponent<Props, State> {
                 <div
                     id={id}
                     className='post-message__text'
-                    data-testid={this.props.testId ? `${this.props.testId}--text` : undefined}
+                    data-testid={withRole(this.props.testId, 'text')}
                     dir='auto'
                     onClick={this.handleFormattedTextClick}
                 >

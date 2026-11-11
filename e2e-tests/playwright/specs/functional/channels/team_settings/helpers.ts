@@ -4,7 +4,7 @@
 import {expect} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 
-import {newTestPassword, type generated, duration} from '@mattermost/playwright-lib';
+import {newTestPassword, type generated} from '@mattermost/playwright-lib';
 
 export async function enableABACConfig(client: Client4) {
     await client.patchConfig({

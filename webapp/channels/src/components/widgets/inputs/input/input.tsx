@@ -8,7 +8,7 @@ import {useIntl} from 'react-intl';
 
 import {CloseCircleIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {part} from '@mattermost/shared/utils/test_id';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {ItemStatus} from 'utils/constants';
@@ -46,8 +46,6 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
     rows?: number;
     validate?: (value: React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>['value']) => CustomMessageInputType | undefined;
 
-    // The field renders `<testId>--textbox`, its wrapper `<testId>.field` and its message `<testId>.message--alert`
-    // (`--text` for info and success). Without it, none of them has a testid.
     testId?: TestId;
 }
 
@@ -252,7 +250,7 @@ const Input = React.forwardRef((
                     disabled={disabled}
                     {...valueProps}
                     {...otherProps}
-                    data-testid={testId && `${testId}--textbox`}
+                    data-testid={withRole(testId, 'textbox')}
                     maxLength={limit ? undefined : maxLength}
                     onFocus={handleOnFocus}
                     onBlur={handleOnBlur}
@@ -273,7 +271,7 @@ const Input = React.forwardRef((
                 disabled={disabled}
                 {...valueProps}
                 {...otherProps}
-                data-testid={testId && `${testId}--textbox`}
+                data-testid={withRole(testId, 'textbox')}
                 maxLength={limit ? undefined : maxLength}
                 onFocus={handleOnFocus}
                 onBlur={handleOnBlur}

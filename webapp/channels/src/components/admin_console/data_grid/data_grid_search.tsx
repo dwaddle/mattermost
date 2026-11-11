@@ -4,6 +4,7 @@
 import React, {useCallback, memo, type JSX} from 'react';
 import {defineMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Filter from 'components/admin_console/filter/filter';
@@ -66,7 +67,7 @@ const DataGridSearch = ({
                         placeholder={defineMessage({id: 'search_bar.search', defaultMessage: 'Search'})}
                         onChange={handleSearch}
                         value={termFromProps}
-                        data-testid={`${testIdScope}.search--textbox`}
+                        data-testid={part(testIdScope, 'search', 'textbox')}
                         disabled={disabled}
                     />
                     <i

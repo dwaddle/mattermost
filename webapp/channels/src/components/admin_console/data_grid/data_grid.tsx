@@ -38,13 +38,11 @@ export type Row = {
     };
     onClick?: () => void;
 
-    // The row is `<testIdScope>.row:<testKey>` (its position when unset).
     testKey?: string;
 };
 
 type Props = {
 
-    // Names the grid's parts (`<testIdScope>.row:<key>`, `.search--textbox`, `.footer.pagination--text`).
     testIdScope: TestId;
     rows: Row[];
     columns: Column[];
@@ -195,7 +193,7 @@ class DataGrid extends React.PureComponent<Props, State> {
         return (
             <div
                 className='DataGrid_rows'
-                data-testid={`${this.props.testIdScope}.rows`}
+                data-testid={part(this.props.testIdScope, 'rows')}
                 style={rowsContainerStyles || {}}
             >
                 {rowsToRender}
@@ -267,10 +265,10 @@ class DataGrid extends React.PureComponent<Props, State> {
             footer = (
                 <div
                     className='DataGrid_footer'
-                    data-testid={`${this.props.testIdScope}.footer`}
+                    data-testid={part(this.props.testIdScope, 'footer')}
                 >
                     <div className='DataGrid_cell'>
-                        <span data-testid={`${this.props.testIdScope}.footer.pagination--text`}>
+                        <span data-testid={part(this.props.testIdScope, 'footer.pagination', 'text')}>
                             <FormattedMessage
                                 id='admin.data_grid.paginatorCount'
                                 defaultMessage='{startCount, number} - {endCount, number} of {total, number}'
@@ -288,8 +286,8 @@ class DataGrid extends React.PureComponent<Props, State> {
                             disableNext={lastPage}
                             previousButtonClassName='ml-2 prev'
                             nextButtonClassName='next'
-                            previousButtonTestId={`${this.props.testIdScope}.footer.previous--button`}
-                            nextButtonTestId={`${this.props.testIdScope}.footer.next--button`}
+                            previousButtonTestId={part(this.props.testIdScope, 'footer.previous', 'button')}
+                            nextButtonTestId={part(this.props.testIdScope, 'footer.next', 'button')}
                         />
                     </div>
                 </div>

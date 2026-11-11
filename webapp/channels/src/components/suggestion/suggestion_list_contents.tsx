@@ -70,7 +70,7 @@ const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListConte
                 onClick={onItemClick}
                 onMouseMove={onItemHover}
                 role='option'
-                {...(testId ? {'data-testid': `${testId}.item:${suggestionTestKey(itemTestKey(item, term))}--option`} : {})}
+                {...(testId ? {'data-testid': part(testId, 'item', {key: suggestionTestKey(itemTestKey(item, term))}, 'option')} : {})}
             />
         );
     }

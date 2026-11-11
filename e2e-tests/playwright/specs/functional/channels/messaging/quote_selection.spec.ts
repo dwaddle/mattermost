@@ -5,7 +5,7 @@ import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {App, expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {App, expect, test, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {selectTextWithMouse} from './quote_selection_helpers';
 
@@ -17,7 +17,7 @@ const MESSAGE =
 /** Logs the user in and opens the team's Town Square. */
 async function openTownSquare(pw: PlaywrightExtended, user: UserProfile, team: Team) {
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     return app;
 }
 
@@ -38,8 +38,7 @@ async function lastPostWith(client: Client4, channelId: string, text: string) {
  * and that the quote and the reply typed below it are posted together.
  */
 test('quotes text selected in a post into the channel message box', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     const created = await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
     const app = await openTownSquare(pw, user, team);
@@ -79,8 +78,7 @@ test('quotes text selected in a post into the channel message box', TAGS, async 
  * added after what's already in the message box.
  */
 test('adds a quote of a right to left selection after the existing draft', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     const created = await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
     const app = await openTownSquare(pw, user, team);
@@ -133,8 +131,7 @@ test('quotes text selected in the RHS into the thread reply box', TAGS, async ({
  * lists, code blocks and links.
  */
 test('keeps the Markdown formatting of the quoted text', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     const created = await userClient.createPost({
         channel_id: townSquare.id,
         message: [
@@ -185,8 +182,7 @@ test('keeps the Markdown formatting of the quoted text', TAGS, async ({pw}) => {
  * @objective Verify that the quote button can be reached with Tab and used with the keyboard.
  */
 test('quotes the selection with the keyboard', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     const created = await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
     const app = await openTownSquare(pw, user, team);

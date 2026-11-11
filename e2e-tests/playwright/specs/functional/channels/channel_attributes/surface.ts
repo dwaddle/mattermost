@@ -124,7 +124,7 @@ export async function select(app: App, attributes: Editable, field: Field, optio
 export async function deselect(attributes: Editable, field: Field, option: string) {
     const exactly = new RegExp(`^${option.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
     const chip = await row(attributes, field).chipList.itemWith({text: exactly});
-    await chip.removeButton.click();
+    await chip.removeButton.commit();
 }
 
 /**

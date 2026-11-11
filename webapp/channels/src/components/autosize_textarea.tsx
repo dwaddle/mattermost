@@ -18,7 +18,6 @@ type Props = {
     onInput?: (e: FormEvent<HTMLTextAreaElement>) => void;
     placeholder?: string;
 
-    /** The textarea's testid (Textbox passes `<testId>--textbox`). */
     'data-testid'?: string;
 } & Intersection<HTMLProps<HTMLTextAreaElement>, HTMLProps<HTMLDivElement>>;
 

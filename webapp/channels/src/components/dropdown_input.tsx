@@ -7,6 +7,7 @@ import {useIntl} from 'react-intl';
 import ReactSelect, {components} from 'react-select';
 import type {Props as SelectProps, ActionMeta, StylesConfig} from 'react-select';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import InputError from 'components/input_error';
@@ -91,7 +92,6 @@ const Control = (props: any) => {
     );
 };
 
-// An option is `<testId>.menu.option:<value>--option` (none without a testId).
 const makeOption = (testId?: TestId) => (props: any) => {
     return (
         <div
@@ -102,18 +102,17 @@ const makeOption = (testId?: TestId) => (props: any) => {
         >
             <components.Option
                 {...props}
-                innerProps={{...props.innerProps, 'data-testid': testId ? `${testId}.menu.option:${props.data.value}--option` : undefined}}
+                innerProps={{...props.innerProps, 'data-testid': part(testId, 'menu.option', {key: props.data.value}, 'option')}}
             />
         </div>
     );
 };
 
-// The menu is `<testId>.menu` (none without a testId).
 const makeMenu = (testId?: TestId) => (props: any) => {
     return (
         <components.Menu
             {...props}
-            innerProps={{...props.innerProps, 'data-testid': testId ? `${testId}.menu` : undefined}}
+            innerProps={{...props.innerProps, 'data-testid': part(testId, 'menu')}}
         />
     );
 };

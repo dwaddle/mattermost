@@ -6,6 +6,7 @@ import React, {type JSX} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 import {Link} from 'react-router-dom';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type Props = {
@@ -34,7 +35,7 @@ const BackButton = ({url = '/', className, onClick, testId}: Props): JSX.Element
             className={classNames('signup-header', className)}
         >
             <Link
-                data-testid={`${testId}--link`}
+                data-testid={withRole(testId, 'link')}
                 onClick={onClick}
                 to={url}
             >
