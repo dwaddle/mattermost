@@ -81,6 +81,10 @@ export type AdminContentFlaggingReviewersFormValues = {
     systemAdmins: boolean;
     teamAdmins: boolean;
 };
+/** The read-only parts of a `admin.content_flagging.reviewers.teams.row` item. */
+export type AdminContentFlaggingReviewersTeamsRowRow = {
+    teamName: string | null;
+};
 /** The form fields of `admin.create_invite_modal`. */
 export type AdminCreateInviteModalFormValues = {
     code?: string;
@@ -2205,30 +2209,6 @@ export class AdminContentFlaggingReviewers extends Scope {
     }
 
     /**
-     * `admin.content_flagging.reviewers.enabled:{key}--switch` — TeamReviewers (channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx)
-     * Renders only when !reviewerSetting.CommonReviewers.
-     */
-    enabled(enabled: Pick<Team, 'id'>) {
-        return drivers.switch(this.byTestId(`${this.scope}.enabled:${enabled.id}--switch`), {
-            testId: `${this.scope}.enabled:${enabled.id}--switch`,
-            role: 'switch',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers',
-        });
-    }
-
-    /** Every `admin.content_flagging.reviewers.enabled:{key}--switch` in the scope. */
-    get enabledItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.enabled:`, '--switch');
-    }
-
-    /** The keys of every `admin.content_flagging.reviewers.enabled:{key}--switch` in the scope, in document order. */
-    enabledKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.enabled:`, '--switch');
-    }
-
-    /**
      * `admin.content_flagging.reviewers.system_admins--checkbox` — CheckboxSetting (channels/src/components/admin_console/checkbox_setting.tsx)
      */
     get systemAdminsCheckbox() {
@@ -2260,30 +2240,6 @@ export class AdminContentFlaggingReviewers extends Scope {
 
     async setTeamAdminsCheckbox(on: boolean): Promise<void> {
         await this.teamAdminsCheckbox.set(on);
-    }
-
-    /**
-     * `admin.content_flagging.reviewers.team_name:{key}--text` — TeamReviewers (channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx)
-     * Renders only when !reviewerSetting.CommonReviewers.
-     */
-    teamName(teamName: Pick<Team, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.team_name:${teamName.id}--text`), {
-            testId: `${this.scope}.team_name:${teamName.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers',
-        });
-    }
-
-    /** Every `admin.content_flagging.reviewers.team_name:{key}--text` in the scope. */
-    get teamNameItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.team_name:`, '--text');
-    }
-
-    /** The keys of every `admin.content_flagging.reviewers.team_name:{key}--text` in the scope, in document order. */
-    teamNameKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.team_name:`, '--text');
     }
 
     get sameForAllTeams(): AdminContentFlaggingReviewersSameForAllTeams {
@@ -2319,32 +2275,6 @@ export class AdminContentFlaggingReviewers extends Scope {
             systemAdmins: vSystemAdmins,
             teamAdmins: vTeamAdmins,
         };
-    }
-
-    /** Every `admin.content_flagging.reviewers.enabled:{key}--switch` in the scope as a list by key, for the list matchers: `expect(x.enabledList).toHaveKeys([…])`. */
-    get enabledList() {
-        return this.keyedList(`${this.scope}.enabled:`, '--switch', (key: string) =>
-            drivers.switch(this.byTestId(`${this.scope}.enabled:${key}--switch`), {
-                testId: `${this.scope}.enabled:${key}--switch`,
-                role: 'switch',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers',
-            }),
-        );
-    }
-
-    /** Every `admin.content_flagging.reviewers.team_name:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.teamNameList).toHaveKeys([…])`. */
-    get teamNameList() {
-        return this.keyedList(`${this.scope}.team_name:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.team_name:${key}--text`), {
-                testId: `${this.scope}.team_name:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers',
-            }),
-        );
     }
 }
 
@@ -2457,8 +2387,12 @@ export class AdminContentFlaggingReviewersTeams extends Scope {
      * `admin.content_flagging.reviewers.teams.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
      */
-    row(row: string): Row {
-        return new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminContentFlaggingReviewersTeamsRow {
+        return new AdminContentFlaggingReviewersTeamsRow(
+            this.page,
+            `${this.scope}.row`,
+            this.byTestId(`${this.scope}.row:${row}`),
+        );
     }
 
     /** Every `admin.content_flagging.reviewers.teams.row:{key}` in the scope. */
@@ -2476,13 +2410,22 @@ export class AdminContentFlaggingReviewersTeams extends Scope {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminContentFlaggingReviewersTeamsRow(
+                    this.page,
+                    `${this.scope}.row`,
+                    this.byTestId(`${this.scope}.row:${key}`),
+                ),
         );
     }
 }
 
-/** Rendered at `admin.content_flagging.reviewers.teams.row`, `admin.data_retention.custom_policies.row`, `admin.data_retention.global_policy.row`: one class, constructed with the scope it is mounted at. */
-export class Row extends Scope {
+/** Scope `admin.content_flagging.reviewers.teams.row`. */
+export class AdminContentFlaggingReviewersTeamsRow extends Scope {
+    constructor(page: Page, scope = 'admin.content_flagging.reviewers.teams.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
     /**
      * `admin.content_flagging.reviewers.teams.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
@@ -2524,6 +2467,49 @@ export class Row extends Scope {
     /** The keys of every `admin.content_flagging.reviewers.teams.row.cell:{key}` in the scope, in document order. */
     cellKeys(): Promise<string[]> {
         return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.content_flagging.reviewers.teams.row.enabled--switch` — TeamReviewers (channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx)
+     * Renders only when !reviewerSetting.CommonReviewers.
+     */
+    get enabledSwitch() {
+        return drivers.switch(this.byTestId(`${this.scope}.enabled--switch`), {
+            testId: `${this.scope}.enabled--switch`,
+            role: 'switch',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers',
+        });
+    }
+
+    async setEnabledSwitch(on: boolean): Promise<void> {
+        await this.enabledSwitch.set(on);
+    }
+
+    /**
+     * `admin.content_flagging.reviewers.teams.row.team_name--text` — TeamReviewers (channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx)
+     * Renders only when !reviewerSetting.CommonReviewers.
+     */
+    get teamNameText() {
+        return drivers.text(this.byTestId(`${this.scope}.team_name--text`), {
+            testId: `${this.scope}.team_name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers',
+        });
+    }
+
+    getTeamNameText(): Promise<string> {
+        return this.teamNameText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminContentFlaggingReviewersTeamsRowRow> {
+        return {
+            teamName: await this.teamNameText.textIfPresent(),
+        };
     }
 
     /** Every `admin.content_flagging.reviewers.teams.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
@@ -2819,8 +2805,8 @@ export class AdminDataGrid extends Scope {
      * `admin.data_retention.custom_policies.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
      */
-    row(row: string): Row {
-        return new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminDataGridRow {
+        return new AdminDataGridRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
     }
 
     /** Every `admin.data_retention.custom_policies.row:{key}` in the scope. */
@@ -2838,7 +2824,67 @@ export class AdminDataGrid extends Scope {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminDataGridRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Rendered at `admin.data_retention.custom_policies.row`, `admin.data_retention.global_policy.row`: one class, constructed with the scope it is mounted at. */
+export class AdminDataGridRow extends Scope {
+    /**
+     * `admin.data_retention.custom_policies.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.data_retention.custom_policies.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.data_retention.custom_policies.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.data_retention.custom_policies.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.data_retention.custom_policies.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /** Every `admin.data_retention.custom_policies.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
         );
     }
 }

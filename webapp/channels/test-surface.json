@@ -7307,48 +7307,6 @@
       ]
     },
     {
-      "template": "admin.content_flagging.reviewers.enabled:{key}--switch",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "content_flagging",
-        "reviewers"
-      ],
-      "name": "enabled",
-      "role": "switch",
-      "component": {
-        "name": "TeamReviewers",
-        "at": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "switch",
-        "native": false,
-        "state": [
-          "checked",
-          "disabled"
-        ]
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "Team",
-        "field": "id",
-        "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "!reviewerSetting.CommonReviewers",
-          "explained": "!reviewerSetting.CommonReviewers",
-          "kind": "local state"
-        }
-      ]
-    },
-    {
       "template": "admin.content_flagging.reviewers.same_for_all_teams.false--radio",
       "grammar": true,
       "scope": [
@@ -7489,45 +7447,6 @@
         "field": "team_admins",
         "valueType": "boolean"
       }
-    },
-    {
-      "template": "admin.content_flagging.reviewers.team_name:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "content_flagging",
-        "reviewers"
-      ],
-      "name": "team_name",
-      "role": "text",
-      "component": {
-        "name": "TeamReviewers",
-        "at": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "Team",
-        "field": "id",
-        "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "!reviewerSetting.CommonReviewers",
-          "explained": "!reviewerSetting.CommonReviewers",
-          "kind": "local state"
-        }
-      ]
     },
     {
       "template": "admin.content_flagging.reviewers.teams",
@@ -7778,6 +7697,77 @@
           "expr": "!(rows.length === 0)",
           "explained": "!(rows.length === 0)",
           "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.content_flagging.reviewers.teams.row.enabled--switch",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "content_flagging",
+        "reviewers",
+        "teams",
+        "row"
+      ],
+      "name": "enabled",
+      "role": "switch",
+      "component": {
+        "name": "TeamReviewers",
+        "at": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "switch",
+        "native": false,
+        "state": [
+          "checked",
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!reviewerSetting.CommonReviewers",
+          "explained": "!reviewerSetting.CommonReviewers",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.content_flagging.reviewers.teams.row.team_name--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "content_flagging",
+        "reviewers",
+        "teams",
+        "row"
+      ],
+      "name": "team_name",
+      "role": "text",
+      "component": {
+        "name": "TeamReviewers",
+        "at": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!reviewerSetting.CommonReviewers",
+          "explained": "!reviewerSetting.CommonReviewers",
+          "kind": "local state"
         }
       ]
     },

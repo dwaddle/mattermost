@@ -136,7 +136,7 @@ export default function TeamReviewers({teamReviewersSetting, onChange, disabled}
                             intl={intl}
                         />
                         <span
-                            data-testid={`admin.content_flagging.reviewers.team_name:${team.id}--text`}
+                            data-testid='admin.content_flagging.reviewers.teams.row.team_name--text'
                             className='TeamReviewers__team-name'
                         >
                             {team.display_name}
@@ -159,7 +159,7 @@ export default function TeamReviewers({teamReviewersSetting, onChange, disabled}
                         onChange={getHandleToggle(team.id)}
                         checked={teamReviewersSetting[team.id]?.Enabled || false}
                         disabled={disabled}
-                        data-testid={`admin.content_flagging.reviewers.enabled:${team.id}--switch`}
+                        data-testid='admin.content_flagging.reviewers.teams.row.enabled--switch'
                         tabIndex={0}
                         aria-label={intl.formatMessage({id: 'admin.dataSpillage.reviewerSettings.toggle', defaultMessage: 'Enable or disable content reviewers for team {teamName}'}, {teamName: team.display_name})}
                     />

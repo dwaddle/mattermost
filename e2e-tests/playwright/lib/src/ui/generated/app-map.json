@@ -2551,13 +2551,6 @@
                     "source": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
                 },
                 {
-                    "testId": "admin.content_flagging.reviewers.enabled:{key}--switch",
-                    "role": "switch",
-                    "key": "Pick<Team, 'id'>",
-                    "renderedWhen": ["!reviewerSetting.CommonReviewers"],
-                    "source": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
-                },
-                {
                     "testId": "admin.content_flagging.reviewers.system_admins--checkbox",
                     "role": "checkbox",
                     "source": "channels/src/components/admin_console/checkbox_setting.tsx#CheckboxSetting"
@@ -2566,13 +2559,6 @@
                     "testId": "admin.content_flagging.reviewers.team_admins--checkbox",
                     "role": "checkbox",
                     "source": "channels/src/components/admin_console/checkbox_setting.tsx#CheckboxSetting"
-                },
-                {
-                    "testId": "admin.content_flagging.reviewers.team_name:{key}--text",
-                    "role": "text",
-                    "key": "Pick<Team, 'id'>",
-                    "renderedWhen": ["!reviewerSetting.CommonReviewers"],
-                    "source": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
                 }
             ]
         },
@@ -2643,7 +2629,7 @@
         },
         {
             "scope": "admin.content_flagging.reviewers.teams.row",
-            "class": "Row",
+            "class": "AdminContentFlaggingReviewersTeamsRow",
             "elements": [
                 {
                     "testId": "admin.content_flagging.reviewers.teams.row.cell:{key}",
@@ -2651,6 +2637,18 @@
                     "key": "string",
                     "renderedWhen": ["!this.props.loading", "!(rows.length === 0)"],
                     "source": "channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell"
+                },
+                {
+                    "testId": "admin.content_flagging.reviewers.teams.row.enabled--switch",
+                    "role": "switch",
+                    "renderedWhen": ["!reviewerSetting.CommonReviewers"],
+                    "source": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
+                },
+                {
+                    "testId": "admin.content_flagging.reviewers.teams.row.team_name--text",
+                    "role": "text",
+                    "renderedWhen": ["!reviewerSetting.CommonReviewers"],
+                    "source": "channels/src/components/admin_console/content_flagging/content_reviewers/team_reviewers_section/team_reviewers_section.tsx#TeamReviewers"
                 },
                 {
                     "testId": "admin.content_flagging.reviewers.teams.row:{key}",
@@ -2908,7 +2906,7 @@
         },
         {
             "scope": "admin.data_retention.custom_policies.row",
-            "class": "Row",
+            "class": "AdminDataGridRow",
             "elements": [
                 {
                     "testId": "admin.data_retention.custom_policies.row.cell:{key}",
@@ -2970,7 +2968,7 @@
         },
         {
             "scope": "admin.data_retention.global_policy.row",
-            "class": "Row",
+            "class": "AdminDataGridRow",
             "elements": [
                 {
                     "testId": "admin.data_retention.global_policy.row.cell:{key}",
