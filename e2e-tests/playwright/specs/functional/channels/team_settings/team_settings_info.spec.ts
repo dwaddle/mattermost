@@ -7,7 +7,7 @@
  */
 
 import {getAsset} from '@/asset';
-import {expect, Msg, openTeamSettings, test} from '@mattermost/playwright-lib';
+import {expect, Msg, openTeamSettings, test, Api} from '@mattermost/playwright-lib';
 
 test.describe('Team Settings Modal - Info Tab', () => {
     /**
@@ -145,7 +145,7 @@ test.describe('Team Settings Modal - Info Tab', () => {
         await expect(reopenedPicture.initials.locator).toHaveCount(0);
 
         // # Remove the icon
-        await reopenedPicture.clickRemoveButton();
+        await reopenedPicture.removeButton.commit({wait: Api.RemoveTeamIcon});
 
         // * Verify icon was removed - the initials show again in the modal
         await expect(reopenedPicture.initials.locator).toBeVisible();

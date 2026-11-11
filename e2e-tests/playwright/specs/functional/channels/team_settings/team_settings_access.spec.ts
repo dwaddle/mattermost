@@ -73,7 +73,7 @@ test.describe('Team Settings Modal - Access Tab', () => {
         const settings = await openTeamSettings(app, 'access');
 
         // # Click regenerate button
-        await settings.access.inviteLink.clickRegenerateButton();
+        await settings.access.inviteLink.regenerateButton.commit();
 
         // * Verify invite ID changed via API
         await expect.poll(async () => (await adminClient.getTeam(team.id)).invite_id).not.toBe(originalInviteId);

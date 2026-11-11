@@ -41,7 +41,7 @@ test('MM-T837 syncs public channel create and archive across sessions', {tag: '@
 
     // # Archive the channel in the first session, then navigate away from the archived channel
     const archive = await (await first.channelHeader.clickOpenMenuButton()).clickArchiveChannelMenuItem();
-    await archive.clickConfirmButton();
+    await archive.confirmButton.commit();
     await first.lhs.channelList.channel({name: DefaultChannel.TownSquare}).clickLink();
 
     // * Verify the channel is removed from the sidebar of both sessions

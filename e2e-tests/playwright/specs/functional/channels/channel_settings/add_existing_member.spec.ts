@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, Msg} from '@mattermost/playwright-lib';
+import {expect, test, Msg, Api} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that a user already in a channel is shown as "Already in channel" (not addable) in the
@@ -68,7 +68,7 @@ test('adds a team member to the channel from the add people modal', {tag: '@chan
     await expect(invite.users.removeList).toHaveKeys([newcomer.id]);
 
     // # Add them
-    await invite.users.clickSaveButton();
+    await invite.users.saveButton.commit({wait: Api.AddChannelMember});
 
     // * The modal closes and the server lists the newcomer as a channel member
     await expect(invite.locator).not.toBeVisible();

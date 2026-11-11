@@ -31,7 +31,7 @@ test(
 
         // # Mute the channel
         await expect(info.muteButton).not.toBePressed();
-        await info.clickMuteButton();
+        await info.muteButton.commit();
 
         // * The button shows it pressed (its label stays "Mute"), and the server has the channel muted for the user
         await expect(info.muteButton).toBePressed();
