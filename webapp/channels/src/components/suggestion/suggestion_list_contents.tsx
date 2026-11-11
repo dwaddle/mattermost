@@ -11,7 +11,7 @@ import LoadingSpinner from 'components/widgets/loading/loading_spinner';
 
 import {formatAsComponent} from 'utils/i18n';
 
-import {isItemLoaded, type SuggestionResults} from './suggestion_results';
+import {isItemLoaded, itemTestKey, type SuggestionResults} from './suggestion_results';
 
 export type SuggestionListContentsProps = {
     id: string;
@@ -27,8 +27,8 @@ export type SuggestionListContentsProps = {
     onItemHover: (term: string) => void;
     onMouseDown?: () => void;
 
-    // The list's scope: items are `<testId>.item:<suggestionTestKey(term)>--option`, keyed by what they suggest
-    // (the list reorders as you type). Without it, items have no testid; the selected one is `aria-selected`.
+    // The list's scope: items are `<testId>.item:<suggestionTestKey(key)>--option`, keyed by what they suggest (the
+    // list reorders as you type): the item's own `testKey` when its provider sets one, else its term. Without it, items have no testid; the selected one is `aria-selected`.
     testId?: TestId;
 };
 
@@ -70,7 +70,7 @@ const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListConte
                 onClick={onItemClick}
                 onMouseMove={onItemHover}
                 role='option'
-                {...(testId ? {'data-testid': part(testId, 'item', {key: suggestionTestKey(term)}, 'option')} : {})}
+                {...(testId ? {'data-testid': `${testId}.item:${suggestionTestKey(itemTestKey(item, term))}--option`} : {})}
             />
         );
     }

@@ -39,9 +39,8 @@ test(
         await app.channelsPage.goto({team, channel: townSquare});
         const title = app.channelHeader.openMenuButton.locator;
 
-        // # Open the quick switcher and open the direct message with member1 (a direct message's result is keyed by
-        // its channel id once the app has loaded the channel, and by the other user's id before that)
-        await switchTo(app, member1.username, dm.id, member1.id);
+        // # Open the quick switcher and open the direct message with member1 (a person's result is keyed by user id)
+        await switchTo(app, member1.username, member1.id);
 
         // * Verify the direct message with member1 is opened
         await expect(page).toHaveURL(new RegExp(`/messages/@${member1.username}$`));

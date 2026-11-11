@@ -119,6 +119,10 @@ export interface WrappedChannel {
     discoverableNonMember?: boolean;
     hasPendingJoinRequest?: boolean;
     hiddenInSidebar?: boolean;
+
+    // The key of the item's testid when it differs from its term: a person is keyed by user id whether or not a
+    // direct message with them exists yet (the term, which drives selection, is the channel id once it does).
+    testKey?: string;
 }
 
 type Props = SuggestionProps<WrappedChannel> & {
@@ -850,6 +854,7 @@ export default class SwitchChannelProvider extends Provider {
             type: 'search.direct',
             name: user.username,
             deactivated: Boolean(user.delete_at),
+            testKey: user.id,
         };
     }
 

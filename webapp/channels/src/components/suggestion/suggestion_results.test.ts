@@ -7,12 +7,24 @@ import type {SuggestionResults} from 'components/suggestion/suggestion_results';
 
 import {TestHelper} from 'utils/test_helper';
 
-import {countResults, flattenItems, flattenTerms, getItemForTerm, hasLoadedResults, isItemLoaded, trimResults} from './suggestion_results';
+import {countResults, flattenItems, flattenTerms, getItemForTerm, hasLoadedResults, isItemLoaded, itemTestKey, trimResults} from './suggestion_results';
 
 describe('isItemLoaded', () => {
     test('should return whether or not an item is loaded', () => {
         expect(isItemLoaded(TestHelper.getUserMock())).toEqual(true);
         expect(isItemLoaded({loading: true})).toEqual(false);
+    });
+});
+
+describe('itemTestKey', () => {
+    test('uses the testKey the provider gave the item', () => {
+        expect(itemTestKey({testKey: 'user_id'}, 'dm_channel_id')).toBe('user_id');
+    });
+
+    test('falls back to the term', () => {
+        expect(itemTestKey({channel: {}}, 'channel_id')).toBe('channel_id');
+        expect(itemTestKey('a string item', 'term')).toBe('term');
+        expect(itemTestKey(undefined, 'term')).toBe('term');
     });
 });
 

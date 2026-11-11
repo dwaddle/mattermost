@@ -17,6 +17,14 @@ export type {
     SuggestionResultsUngrouped,
 } from '@mattermost/shared/types/global';
 
+/** The key of an item's testid: the `testKey` its provider gave it, else its term. */
+export function itemTestKey(item: unknown, term: string): string {
+    if (item && typeof item === 'object' && 'testKey' in item && typeof item.testKey === 'string') {
+        return item.testKey;
+    }
+    return term;
+}
+
 export function isItemLoaded<Item>(item: Item | Loading): item is Item {
     return !item || typeof item !== 'object' || !('loading' in item) || !item.loading;
 }
