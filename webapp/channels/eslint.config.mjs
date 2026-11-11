@@ -19,7 +19,6 @@ const TESTID_LINT_PENDING = [
     'src/components/channel_attributes/attribute_chip.tsx',
     'src/components/color_input.tsx',
     'src/components/datetime_input/datetime_input.tsx',
-    'src/components/invitation_modal/invite_as.tsx',
     'src/components/post_view/burn_on_read_badge/burn_on_read_badge.tsx',
     'src/components/post_view/burn_on_read_concealed_placeholder/burn_on_read_concealed_placeholder.tsx',
     'src/components/post_view/burn_on_read_timer_chip/burn_on_read_timer_chip.tsx',
