@@ -12,6 +12,8 @@ import eslintPlugin from '@mattermost/eslint-plugin';
 const TESTID_LINT_PENDING = [
     // its attribute combobox takes a testid scope only from the ABAC and attributes PR, which takes it off this list
     'src/components/user_settings/general/user_settings_general.tsx',
+    // the access policy editors pass no scope until the ABAC PR, so the row keeps its legacy ids here (the shared
+    // widgets' fallbacks go in the strict PR)
     'src/components/widgets/settings/setting.tsx',
 ];
 
