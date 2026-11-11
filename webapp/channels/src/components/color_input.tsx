@@ -14,9 +14,9 @@ export interface ColorInputProps {
     value: string;
     isDisabled?: boolean;
 
-    /** The input's testid scope (`settings.section.color`); with `testIdKey` the root is `<scope>:<key>`. Without it, the legacy testids. */
+    /** The input's testid scope (`settings.section.color`); with `testKey` the root is `<scope>:<key>`. Without it, the legacy testids. */
     testIdScope?: TestIdScope;
-    testIdKey?: string;
+    testKey?: string;
 }
 
 const ColorInput = ({
@@ -25,7 +25,7 @@ const ColorInput = ({
     value: valueFromProps,
     isDisabled,
     testIdScope,
-    testIdKey,
+    testKey,
 }: ColorInputProps) => {
     const container = useRef<HTMLDivElement>(null);
     const colorInput = useRef<HTMLInputElement>(null);
@@ -115,7 +115,7 @@ const ColorInput = ({
         <div
             className='color-input input-group'
             ref={container}
-            data-testid={testIdKey ? `${testIdScope}:${testIdKey}` : testIdScope}
+            data-testid={testKey ? `${testIdScope}:${testKey}` : testIdScope}
         >
             <input
                 id={`${id}-inputColorValue`}

@@ -136,7 +136,7 @@ const WysiwygEditorSection: React.FC<Props> = ({active, areAllSectionsInactive, 
                 saving={isSaving}
                 updateSection={handleUpdateSection}
                 disableEnterSubmit={true}
-                testIdSection='wysiwygEditor'
+                testKey='wysiwygEditor'
             />
         );
     }

@@ -5,6 +5,7 @@ import type {ReactNode, JSX} from 'react';
 import React from 'react';
 
 import {Radio} from '@mattermost/compass-ui/components/radio';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {BaseSettingItemProps} from './base_setting_item';
@@ -12,7 +13,6 @@ import BaseSettingItem from './base_setting_item';
 
 export type FieldsetRadio = {
     options: Array<{
-        dataTestId?: string;
         title: ReactNode;
         name: string;
         key: string;
@@ -26,8 +26,8 @@ type Props = BaseSettingItemProps & {
     inputFieldValue: string;
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
-    /** The options' scope: each renders `<testIdScope>.option:<value>--radio`. Without it, each option's own dataTestId. */
-    testIdScope?: TestId;
+    /** The options' scope: each renders `<testIdScope>.option:<value>--radio`. */
+    testIdScope: TestId;
 };
 
 function RadioSettingItem({
@@ -45,7 +45,7 @@ function RadioSettingItem({
             <Radio
                 key={option.key}
                 id={option.key}
-                data-testid={testIdScope ? `${testIdScope}.option:${option.value}--radio` : option.dataTestId}
+                data-testid={part(testIdScope, 'option', {key: option.value}, 'radio')}
                 className='mm-modal-generic-section-item__label-radio'
                 name={option.name}
                 checked={option.value === inputFieldValue}

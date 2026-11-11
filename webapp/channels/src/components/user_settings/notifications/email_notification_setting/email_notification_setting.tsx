@@ -451,7 +451,7 @@ export default class EmailNotificationSetting extends React.PureComponent<Props,
 
         return (
             <SettingItemMax
-                testIdSection='email'
+                testKey='email'
                 title={
                     <FormattedMessage
                         id='user.settings.notifications.emailNotifications'

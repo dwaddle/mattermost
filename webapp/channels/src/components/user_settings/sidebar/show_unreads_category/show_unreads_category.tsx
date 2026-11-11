@@ -142,7 +142,7 @@ export default class ShowUnreadsCategory extends React.PureComponent<Props, Stat
 
         return (
             <SettingItemMax
-                testIdSection='showUnreadsCategory'
+                testKey='showUnreadsCategory'
                 title={title}
                 inputs={
                     <fieldset>

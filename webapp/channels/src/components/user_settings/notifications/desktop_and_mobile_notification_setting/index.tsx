@@ -306,7 +306,7 @@ function DesktopAndMobileNotificationSettings({
     if (active) {
         return (
             <SettingItemMax
-                testIdSection={UserSettingsNotificationSections.DESKTOP_AND_MOBILE}
+                testKey={UserSettingsNotificationSections.DESKTOP_AND_MOBILE}
                 title={
                     <FormattedMessage
                         id={'user.settings.notifications.desktopAndMobile.title'}

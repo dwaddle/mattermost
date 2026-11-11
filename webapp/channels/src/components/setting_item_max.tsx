@@ -39,8 +39,8 @@ type Props = {
      */
     section?: string;
 
-    /** The section key for the testid when `section` isn't passed and no SettingItem is around it (that sets it). */
-    testIdSection?: string;
+    /** The section's testid key (`settings.section:<testKey>`) when `section` isn't passed and no SettingItem around it sets one. */
+    testKey?: string;
     updateSection?: (section: string) => void;
     setting?: string;
     submit?: ((setting?: string) => void) | null;
@@ -61,7 +61,7 @@ const SettingItemMax = ({
     infoPosition = 'bottom',
     saving = false,
     section = '',
-    testIdSection,
+    testKey,
     containerStyle = '',
     shiftEnter,
     disableEnterSubmit,
@@ -173,7 +173,7 @@ const SettingItemMax = ({
     );
 
     const contextSection = useContext(SettingSectionContext);
-    const testIdKey = section || testIdSection || contextSection;
+    const sectionKey = section || testKey || contextSection;
 
     let serverError = null;
     if (serverErrorFromProps) {
@@ -280,7 +280,7 @@ const SettingItemMax = ({
     return (
         <section
             className={`section-max form-horizontal ${containerStyle}`}
-            data-testid={testIdKey ? `settings.section:${testIdKey}` : undefined}
+            data-testid={sectionKey ? `settings.section:${sectionKey}` : undefined}
             ref={settingList}
         >
             {title}

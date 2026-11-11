@@ -143,7 +143,7 @@ export default class LimitVisibleGMsDMs extends React.PureComponent<Props, State
 
         return (
             <SettingItemMax
-                testIdSection='limitVisibleGMsDMs'
+                testKey='limitVisibleGMsDMs'
                 title={title}
                 inputs={
                     <fieldset>

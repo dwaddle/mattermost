@@ -1007,7 +1007,7 @@ class UserAccessTokenSection extends React.PureComponent<Props, State> {
         return (
             <div>
                 <SettingItemMax
-                    testIdSection={SECTION_TOKENS}
+                    testKey={SECTION_TOKENS}
                     title={
                         <FormattedMessage
                             id='user.settings.tokens.title'

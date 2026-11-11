@@ -87,7 +87,7 @@ export default class JoinLeaveSection extends React.PureComponent<Props, State> 
         if (this.props.active) {
             return (
                 <SettingItemMax
-                    testIdSection={AdvancedSections.JOIN_LEAVE}
+                    testKey={AdvancedSections.JOIN_LEAVE}
                     title={
                         <FormattedMessage
                             id='user.settings.advance.joinLeaveTitle'

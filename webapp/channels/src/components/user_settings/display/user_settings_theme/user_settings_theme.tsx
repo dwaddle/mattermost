@@ -288,7 +288,7 @@ export default class ThemeSetting extends React.PureComponent<Props, State> {
                     serverError={serverError}
                     isFullWidth={true}
                     updateSection={this.handleUpdateSection}
-                    testIdSection='theme'
+                    testKey='theme'
                 />
             );
         } else {
