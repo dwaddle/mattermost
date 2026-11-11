@@ -8,13 +8,15 @@ import type {Team} from '@mattermost/types/teams';
 import type {UserProfile, UserNotifyProps} from '@mattermost/types/users';
 
 import {
+    Api,
+    type App,
+    DefaultChannel,
     duration,
     expect,
-    test,
-    type App,
     type PlaywrightClient4,
     type PlaywrightExtended,
-    DefaultChannel,
+    test,
+    waitForApi,
 } from '@mattermost/playwright-lib';
 
 test.describe('Reply notifications', () => {
@@ -61,12 +63,7 @@ test.describe('Reply notifications', () => {
     });
 
     async function goToTownSquare() {
-        const channelViewResponse = receiverPage.waitForResponse(
-            (response) =>
-                response.url().endsWith('/api/v4/channels/members/me/view') &&
-                response.request().method() === 'POST' &&
-                response.ok(),
-        );
+        const channelViewResponse = waitForApi(receiverPage, Api.ViewChannelMe);
         await app.lhs.channelList.channel({name: DefaultChannel.TownSquare}).clickLink();
         await channelViewResponse;
     }
@@ -79,15 +76,10 @@ test.describe('Reply notifications', () => {
 
     async function verifyStartedThreadNotification(message: string) {
         // # Start a thread as the receiver
-        const rootPostResponse = receiverPage.waitForResponse(
-            (response) =>
-                response.url().endsWith('/api/v4/posts') &&
-                response.request().method() === 'POST' &&
-                response.status() === 201,
-        );
+        const rootPostResponse = waitForApi(receiverPage, Api.CreatePost);
         await app.center.postCreate.fillMessageTextbox('Hi there, this is another root message');
         await app.center.postCreate.clickSendButton();
-        const rootPost = (await (await rootPostResponse).json()) as {id: string};
+        const rootPost = await rootPostResponse;
 
         // # Move to Town Square and post a reply as the sender
         await goToTownSquare();
@@ -154,15 +146,10 @@ test.describe('Reply notifications', () => {
             await receiverRootPost.locator.hover();
             await receiverRootPost.menu.clickReplyButton();
             await expect(app.rhs.postCreate.messageTextbox.locator).toBeVisible();
-            const receiverReplyResponse = receiverPage.waitForResponse(
-                (response) =>
-                    response.url().endsWith('/api/v4/posts') &&
-                    response.request().method() === 'POST' &&
-                    response.status() === 201,
-            );
+            const receiverReplyResponse = waitForApi(receiverPage, Api.CreatePost);
             await app.rhs.postCreate.fillMessageTextbox('this is a reply from the receiver');
             await app.rhs.postCreate.clickSendButton();
-            const receiverReply = (await (await receiverReplyResponse).json()) as {id: string};
+            const receiverReply = await receiverReplyResponse;
 
             // * Verify the receiver's reply appears in the thread
             await expect(app.rhs.thread.post(receiverReply).messageText.locator).toContainText(
