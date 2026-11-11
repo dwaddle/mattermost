@@ -247,7 +247,9 @@ export const goToPermissionsAndCreateTeamOverrideScheme = (schemeName: string, t
 export const deleteOrEditTeamScheme = (schemeDisplayName: string, editOrDelete: string) => {
     cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions');
-    cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeDisplayName).findByTestId(`admin.permission_schemes.scheme.${editOrDelete}--link`).click();
+    // Edit is a link; Delete is an action, so its testid names a button (it is still an <a> without href today)
+    const role = editOrDelete === 'delete' ? 'button' : 'link';
+    cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeDisplayName).findByTestId(`admin.permission_schemes.scheme.${editOrDelete}--${role}`).click();
     if (editOrDelete === 'delete') {
         cy.get('#confirmModalButton').click();
     }

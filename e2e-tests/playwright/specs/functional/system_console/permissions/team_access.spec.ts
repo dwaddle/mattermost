@@ -94,8 +94,8 @@ const setupSystemManagerPermission = async (
 ) => {
     // # Log in as admin and open the System Manager role
     const {app} = await pw.testBrowser.login(adminUser);
-    await app.page.goto(`${generated.AdminConsolePage.path()}/user_management/system_roles`);
-    await app.admin.roles.edit({name: 'system_manager'}).click();
+    await app.page.goto(generated.AdminConsolePage.path({section: 'user_management/system_roles'}));
+    await app.admin.roles.row('system_manager').clickEditLink();
     const role = app.admin.role;
     await expect(role.nameText.locator).toBeVisible();
 

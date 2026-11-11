@@ -6,6 +6,7 @@ import {ChromePicker} from 'react-color';
 import type {ColorResult} from 'react-color';
 import tinycolor from 'tinycolor2';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 export interface ColorInputProps {
@@ -14,7 +15,8 @@ export interface ColorInputProps {
     value: string;
     isDisabled?: boolean;
 
-    testIdScope?: TestIdScope;
+    /** The input's testid scope (`settings.section.color`); with `testKey` the root is `<scope>:<key>`. */
+    testIdScope: TestIdScope;
     testKey?: string;
 }
 
@@ -128,18 +130,18 @@ const ColorInput = ({
                 onKeyDown={onKeyDown}
                 maxLength={7}
                 disabled={isDisabled}
-                data-testid={testIdScope ? `${testIdScope}.value--textbox` : 'color-inputColorValue'}
+                data-testid={part(testIdScope, 'value', 'textbox')}
             />
             <span
                 id={`${id}-squareColorIcon`}
                 className={`input-group-addon color-pad${isDisabled ? ' color-pad--disabled' : ''}`}
                 onClick={isDisabled ? undefined : togglePicker}
-                data-testid={testIdScope ? `${testIdScope}.toggle--button` : 'color-togglerButton'}
+                data-testid={part(testIdScope, 'toggle', 'button')}
             >
                 <i
                     id={`${id}-squareColorIconValue`}
                     className='color-icon'
-                    data-testid={testIdScope ? `${testIdScope}.swatch` : 'color-icon'}
+                    data-testid={part(testIdScope, 'swatch')}
                     style={{
                         backgroundColor: valueFromState,
                     }}
@@ -149,7 +151,7 @@ const ColorInput = ({
                 <div
                     className='color-popover'
                     id={`${id}-ChromePickerModal`}
-                    data-testid={testIdScope ? `${testIdScope}.picker` : 'color-popover'}
+                    data-testid={part(testIdScope, 'picker')}
                 >
                     <ChromePicker
                         color={valueFromState}

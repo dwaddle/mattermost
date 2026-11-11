@@ -5857,11 +5857,6 @@
       },
       "renderedWhen": [
         {
-          "expr": "testId",
-          "explained": "testId",
-          "kind": "prop"
-        },
-        {
           "expr": "!isSynced",
           "explained": "!isSynced",
           "kind": "prop"
@@ -6250,14 +6245,7 @@
         "role": null,
         "native": false,
         "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "testId",
-          "explained": "testId",
-          "kind": "prop"
-        }
-      ]
+      }
     },
     {
       "template": "admin.channel.visibility",
@@ -6316,44 +6304,6 @@
         "native": false,
         "state": []
       }
-    },
-    {
-      "template": "admin.channels.edit:{key}--link",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "channels"
-      ],
-      "name": "edit",
-      "role": "link",
-      "component": {
-        "name": "(anonymous)",
-        "at": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "link",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "ChannelWithTeamData",
-        "field": "id",
-        "module": "@mattermost/types/channels",
-        "type": "Pick<ChannelWithTeamData, 'id'>"
-      },
-      "opens": [
-        {
-          "kind": "page",
-          "target": "`/admin_console/user_management/channels/${channel.id}`",
-          "at": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
-        }
-      ]
     },
     {
       "template": "admin.channels.footer",
@@ -6532,77 +6482,6 @@
       }
     },
     {
-      "template": "admin.channels.icon:{key}",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "channels"
-      ],
-      "name": "icon",
-      "role": null,
-      "component": {
-        "name": "ChannelIcon",
-        "at": "channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "ChannelWithTeamData",
-        "field": "id",
-        "module": "@mattermost/types/channels",
-        "type": "Pick<ChannelWithTeamData, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "testId !== undefined",
-          "explained": "testId !== undefined",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "admin.channels.name:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "channels"
-      ],
-      "name": "name",
-      "role": "text",
-      "component": {
-        "name": "(anonymous)",
-        "at": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "ChannelWithTeamData",
-        "field": "id",
-        "module": "@mattermost/types/channels",
-        "type": "Pick<ChannelWithTeamData, 'id'>"
-      }
-    },
-    {
       "template": "admin.channels.row.cell:{key}",
       "grammar": true,
       "scope": [
@@ -6646,6 +6525,97 @@
           "kind": "prop"
         }
       ]
+    },
+    {
+      "template": "admin.channels.row.edit--link",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "channels",
+        "row"
+      ],
+      "name": "edit",
+      "role": "link",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "`/admin_console/user_management/channels/${channel.id}`",
+          "at": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
+        }
+      ]
+    },
+    {
+      "template": "admin.channels.row.icon",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "channels",
+        "row"
+      ],
+      "name": "icon",
+      "role": null,
+      "component": {
+        "name": "ChannelIcon",
+        "at": "channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "testId !== undefined",
+          "explained": "testId !== undefined",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.channels.row.name--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "channels",
+        "row"
+      ],
+      "name": "name",
+      "role": "text",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
     },
     {
       "template": "admin.channels.row:{key}",
@@ -10544,14 +10514,7 @@
         "role": null,
         "native": false,
         "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "testId",
-          "explained": "testId",
-          "kind": "prop"
-        }
-      ]
+      }
     },
     {
       "template": "admin.group.members",
@@ -13140,9 +13103,7 @@
       },
       "instances": [
         {
-          "via": [
-            "channels/src/components/admin_console/ldap_wizard/ldap_wizard.tsx#LDAPWizard"
-          ]
+          "via": []
         }
       ],
       "aria": {
@@ -13153,8 +13114,66 @@
         ]
       },
       "key": {
-        "kind": "string",
-        "type": "string"
+        "kind": "setting",
+        "type": "AdminSettingPath | \"AIRecapSettings.DefaultLimits.CooldownMinutes\" | \"AIRecapSettings.DefaultLimits.MaxChannelsPerRecap\" | \"AIRecapSettings.DefaultLimits.MaxPostsPerDay\" | \"AIRecapSettings.DefaultLimits.MaxPostsPerRecap\" | \"AIRecapSettings.DefaultLimits.MaxRecapsPerDay\" | \"AIRecapSettings.DefaultLimits.MaxScheduledRecaps\" | \"AIRecapSettings.DefaultLimits.MaxTokensPerRecap\" | \"AccessControlPolicyJobs\" | \"AnnouncementBannerFeatureDiscovery\" | \"AttributeBasedAccessControlFeatureDiscovery\" | \"AutoTranslationSettings\" | \"CacheSettings.RedisEnableTLS\" | \"CacheSettings.RedisTLSCA\" | \"CacheSettings.RedisTLSClientCert\" | \"CacheSettings.RedisTLSClientKey\" | \"CacheSettings.RedisTLSSkipVerify\" | \"ClassificationMarkingsFeatureDiscovery\" | \"ComplianceExportFeatureDiscovery\" | \"CustomBrandImage\" | \"CustomTermsOfServiceFeatureDiscovery\" | \"DataRetentionFeatureDiscovery\" | \"DataSpillageFeatureDiscovery\" | \"GitLabFeatureDiscovery\" | \"GitLabSettings.Url\" | \"GroupsFeatureDiscovery\" | \"GuestAccessFeatureDiscovery\" | \"InvalidateEmailInvitesButton\" | \"LDAPFeatureDiscovery\" | \"LdapSettings.AdditionalFilters\" | \"LdapSettings.CustomProfileAttributes\" | \"LdapSettings.TestAttributes\" | \"LdapSettings.TestConnection\" | \"LdapSettings.TestFilters\" | \"LdapSettings.TestGroupAttributes\" | \"LocalizationSettings\" | \"MobileSecurityFeatureDiscovery\" | \"OpenIDFeatureDiscovery\" | \"OpenIdConvert\" | \"OpenIdSettings.CustomProfileAttributes\" | \"PermissionPolicyListPanel\" | \"PolicyListPanel\" | \"PurgeButton\" | \"ReloadConfigButton\" | \"RevokeNonCompliantTokensButton\" | \"SAMLFeatureDiscovery\" | \"SamlSettings.CustomProfileAttributes\" | \"SessionAttributesFeatureDiscovery\" | \"SystemRolesFeatureDiscovery\" | \"TestFileStoreConnection\" | \"TestSiteURL\" | \"TestSmtpConnection\" | \"UserAttributesFeatureDiscovery\" | \"auto-translation-discovery\" | \"getSamlMetadataFromIDPButton\" | \"oauthType\" | \"openidType\"",
+        "values": [
+          "AIRecapSettings.DefaultLimits.CooldownMinutes",
+          "AIRecapSettings.DefaultLimits.MaxChannelsPerRecap",
+          "AIRecapSettings.DefaultLimits.MaxPostsPerDay",
+          "AIRecapSettings.DefaultLimits.MaxPostsPerRecap",
+          "AIRecapSettings.DefaultLimits.MaxRecapsPerDay",
+          "AIRecapSettings.DefaultLimits.MaxScheduledRecaps",
+          "AIRecapSettings.DefaultLimits.MaxTokensPerRecap",
+          "AccessControlPolicyJobs",
+          "AnnouncementBannerFeatureDiscovery",
+          "AttributeBasedAccessControlFeatureDiscovery",
+          "AutoTranslationSettings",
+          "CacheSettings.RedisEnableTLS",
+          "CacheSettings.RedisTLSCA",
+          "CacheSettings.RedisTLSClientCert",
+          "CacheSettings.RedisTLSClientKey",
+          "CacheSettings.RedisTLSSkipVerify",
+          "ClassificationMarkingsFeatureDiscovery",
+          "ComplianceExportFeatureDiscovery",
+          "CustomBrandImage",
+          "CustomTermsOfServiceFeatureDiscovery",
+          "DataRetentionFeatureDiscovery",
+          "DataSpillageFeatureDiscovery",
+          "GitLabFeatureDiscovery",
+          "GitLabSettings.Url",
+          "GroupsFeatureDiscovery",
+          "GuestAccessFeatureDiscovery",
+          "InvalidateEmailInvitesButton",
+          "LDAPFeatureDiscovery",
+          "LdapSettings.AdditionalFilters",
+          "LdapSettings.CustomProfileAttributes",
+          "LdapSettings.TestAttributes",
+          "LdapSettings.TestConnection",
+          "LdapSettings.TestFilters",
+          "LdapSettings.TestGroupAttributes",
+          "LocalizationSettings",
+          "MobileSecurityFeatureDiscovery",
+          "OpenIDFeatureDiscovery",
+          "OpenIdConvert",
+          "OpenIdSettings.CustomProfileAttributes",
+          "PermissionPolicyListPanel",
+          "PolicyListPanel",
+          "PurgeButton",
+          "ReloadConfigButton",
+          "RevokeNonCompliantTokensButton",
+          "SAMLFeatureDiscovery",
+          "SamlSettings.CustomProfileAttributes",
+          "SessionAttributesFeatureDiscovery",
+          "SystemRolesFeatureDiscovery",
+          "TestFileStoreConnection",
+          "TestSiteURL",
+          "TestSmtpConnection",
+          "UserAttributesFeatureDiscovery",
+          "auto-translation-discovery",
+          "getSamlMetadataFromIDPButton",
+          "oauthType",
+          "openidType"
+        ]
       }
     },
     {
@@ -13960,7 +13979,7 @@
       ]
     },
     {
-      "template": "admin.permission_schemes.scheme.delete--link",
+      "template": "admin.permission_schemes.scheme.delete--button",
       "grammar": true,
       "scope": [
         "admin",
@@ -13968,7 +13987,7 @@
         "scheme"
       ],
       "name": "delete",
-      "role": "link",
+      "role": "button",
       "component": {
         "name": "(anonymous)",
         "at": "channels/src/components/admin_console/permission_schemes_settings/permissions_scheme_summary/permissions_scheme_summary.tsx#PermissionsSchemeSummary"
@@ -18902,44 +18921,6 @@
       }
     },
     {
-      "template": "admin.roles.edit:{key}--link",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "roles"
-      ],
-      "name": "edit",
-      "role": "link",
-      "component": {
-        "name": "SystemRoles",
-        "at": "channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "link",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "Role",
-        "field": "name",
-        "module": "@mattermost/types/roles",
-        "type": "Pick<Role, 'name'>"
-      },
-      "opens": [
-        {
-          "kind": "page",
-          "target": "`/admin_console/user_management/system_roles/${role.id}`",
-          "at": "channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles"
-        }
-      ]
-    },
-    {
       "template": "admin.roles.footer",
       "grammar": true,
       "scope": [
@@ -19149,6 +19130,38 @@
           "expr": "!(rows.length === 0)",
           "explained": "!(rows.length === 0)",
           "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.roles.row.edit--link",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "roles",
+        "row"
+      ],
+      "name": "edit",
+      "role": "link",
+      "component": {
+        "name": "SystemRoles",
+        "at": "channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "`/admin_console/user_management/system_roles/${role.id}`",
+          "at": "channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles"
         }
       ]
     },
@@ -23394,11 +23407,6 @@
       },
       "renderedWhen": [
         {
-          "expr": "testId",
-          "explained": "testId",
-          "kind": "prop"
-        },
-        {
           "expr": "!syncChecked",
           "explained": "!syncChecked",
           "kind": "prop"
@@ -23480,11 +23488,6 @@
         "state": []
       },
       "renderedWhen": [
-        {
-          "expr": "testId",
-          "explained": "testId",
-          "kind": "prop"
-        },
         {
           "expr": "!syncChecked",
           "explained": "!syncChecked",
@@ -24681,14 +24684,7 @@
         "role": null,
         "native": false,
         "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "testId",
-          "explained": "testId",
-          "kind": "prop"
-        }
-      ]
+      }
     },
     {
       "template": "admin.team.profile.icon--img",
@@ -25214,14 +25210,7 @@
         "role": null,
         "native": false,
         "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "testId",
-          "explained": "testId",
-          "kind": "prop"
-        }
-      ]
+      }
     },
     {
       "template": "admin.teams",
@@ -25247,44 +25236,6 @@
         "native": false,
         "state": []
       }
-    },
-    {
-      "template": "admin.teams.edit:{key}--link",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "teams"
-      ],
-      "name": "edit",
-      "role": "link",
-      "component": {
-        "name": "(anonymous)",
-        "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "link",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "Team",
-        "field": "id",
-        "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'id'>"
-      },
-      "opens": [
-        {
-          "kind": "page",
-          "target": "`/admin_console/user_management/teams/${team.id}`",
-          "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
-        }
-      ]
     },
     {
       "template": "admin.teams.footer",
@@ -25463,68 +25414,6 @@
       }
     },
     {
-      "template": "admin.teams.management:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "teams"
-      ],
-      "name": "management",
-      "role": "text",
-      "component": {
-        "name": "(anonymous)",
-        "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "Team",
-        "field": "id",
-        "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'id'>"
-      }
-    },
-    {
-      "template": "admin.teams.name:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "teams"
-      ],
-      "name": "name",
-      "role": "text",
-      "component": {
-        "name": "(anonymous)",
-        "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "Team",
-        "field": "id",
-        "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'id'>"
-      }
-    },
-    {
       "template": "admin.teams.row.cell:{key}",
       "grammar": true,
       "scope": [
@@ -25566,6 +25455,38 @@
           "expr": "!(rows.length === 0)",
           "explained": "!(rows.length === 0)",
           "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.teams.row.edit--link",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "teams",
+        "row"
+      ],
+      "name": "edit",
+      "role": "link",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "`/admin_console/user_management/teams/${team.id}`",
+          "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
         }
       ]
     },
@@ -25648,6 +25569,56 @@
           "viaLocal": true
         }
       ]
+    },
+    {
+      "template": "admin.teams.row.management--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "teams",
+        "row"
+      ],
+      "name": "management",
+      "role": "text",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.teams.row.name--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "teams",
+        "row"
+      ],
+      "name": "name",
+      "role": "text",
+      "component": {
+        "name": "(anonymous)",
+        "at": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
     },
     {
       "template": "admin.teams.row:{key}",

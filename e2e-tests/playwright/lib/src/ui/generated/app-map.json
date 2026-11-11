@@ -2252,7 +2252,7 @@
                 {
                     "testId": "admin.channel.policy_enforce.help--text",
                     "role": "text",
-                    "renderedWhen": ["testId", "!isSynced"],
+                    "renderedWhen": ["!isSynced"],
                     "source": "channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx#AdminSettingsSwitch"
                 }
             ]
@@ -2324,7 +2324,6 @@
                 {
                     "testId": "admin.channel.sync_groups.help--text",
                     "role": "text",
-                    "renderedWhen": ["testId"],
                     "source": "channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx#AdminSettingsSwitch"
                 }
             ]
@@ -2335,34 +2334,9 @@
             "container": "channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid",
             "elements": [
                 {
-                    "testId": "admin.channels.edit:{key}--link",
-                    "role": "link",
-                    "key": "Pick<ChannelWithTeamData, 'id'>",
-                    "opens": [
-                        {
-                            "kind": "page",
-                            "target": "`/admin_console/user_management/channels/${channel.id}`"
-                        }
-                    ],
-                    "source": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
-                },
-                {
                     "testId": "admin.channels.header",
                     "role": null,
                     "source": "channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader"
-                },
-                {
-                    "testId": "admin.channels.icon:{key}",
-                    "role": null,
-                    "key": "Pick<ChannelWithTeamData, 'id'>",
-                    "renderedWhen": ["testId !== undefined"],
-                    "source": "channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon"
-                },
-                {
-                    "testId": "admin.channels.name:{key}--text",
-                    "role": "text",
-                    "key": "Pick<ChannelWithTeamData, 'id'>",
-                    "source": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
                 },
                 {
                     "testId": "admin.channels.rows",
@@ -2405,7 +2379,7 @@
         },
         {
             "scope": "admin.channels.row",
-            "class": "Row",
+            "class": "AdminChannelsRow",
             "elements": [
                 {
                     "testId": "admin.channels.row.cell:{key}",
@@ -2413,6 +2387,28 @@
                     "key": "string",
                     "renderedWhen": ["!this.props.loading", "!(rows.length === 0)"],
                     "source": "channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell"
+                },
+                {
+                    "testId": "admin.channels.row.edit--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/admin_console/user_management/channels/${channel.id}`"
+                        }
+                    ],
+                    "source": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
+                },
+                {
+                    "testId": "admin.channels.row.icon",
+                    "role": null,
+                    "renderedWhen": ["testId !== undefined"],
+                    "source": "channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon"
+                },
+                {
+                    "testId": "admin.channels.row.name--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList"
                 },
                 {
                     "testId": "admin.channels.row:{key}",
@@ -3074,7 +3070,7 @@
         },
         {
             "scope": "admin.data_retention.policy.teams",
-            "class": "Teams",
+            "class": "AdminDataRetentionPolicyTeams",
             "container": "channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid",
             "elements": [
                 {
@@ -3123,7 +3119,7 @@
         },
         {
             "scope": "admin.data_retention.policy.teams.row",
-            "class": "TeamsRow",
+            "class": "AdminDataRetentionPolicyTeamsRow",
             "elements": [
                 {
                     "testId": "admin.data_retention.policy.teams.row.cell:{key}",
@@ -3246,7 +3242,6 @@
                 {
                     "testId": "admin.group.allow_reference.help--text",
                     "role": "text",
-                    "renderedWhen": ["testId"],
                     "source": "channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx#AdminSettingsSwitch"
                 }
             ]
@@ -3817,7 +3812,7 @@
                 {
                     "testId": "admin.ldap.expand:{key}--button",
                     "role": "button",
-                    "key": "string",
+                    "key": "AdminSettingPath | \"AIRecapSettings.DefaultLimits.CooldownMinutes\" | \"AIRecapSettings.DefaultLimits.MaxChannelsPerRecap\" | \"AIRecapSettings.DefaultLimits.MaxPostsPerDay\" | \"AIRecapSettings.DefaultLimits.MaxPostsPerRecap\" | \"AIRecapSettings.DefaultLimits.MaxRecapsPerDay\" | \"AIRecapSettings.DefaultLimits.MaxScheduledRecaps\" | \"AIRecapSettings.DefaultLimits.MaxTokensPerRecap\" | \"AccessControlPolicyJobs\" | \"AnnouncementBannerFeatureDiscovery\" | \"AttributeBasedAccessControlFeatureDiscovery\" | \"AutoTranslationSettings\" | \"CacheSettings.RedisEnableTLS\" | \"CacheSettings.RedisTLSCA\" | \"CacheSettings.RedisTLSClientCert\" | \"CacheSettings.RedisTLSClientKey\" | \"CacheSettings.RedisTLSSkipVerify\" | \"ClassificationMarkingsFeatureDiscovery\" | \"ComplianceExportFeatureDiscovery\" | \"CustomBrandImage\" | \"CustomTermsOfServiceFeatureDiscovery\" | \"DataRetentionFeatureDiscovery\" | \"DataSpillageFeatureDiscovery\" | \"GitLabFeatureDiscovery\" | \"GitLabSettings.Url\" | \"GroupsFeatureDiscovery\" | \"GuestAccessFeatureDiscovery\" | \"InvalidateEmailInvitesButton\" | \"LDAPFeatureDiscovery\" | \"LdapSettings.AdditionalFilters\" | \"LdapSettings.CustomProfileAttributes\" | \"LdapSettings.TestAttributes\" | \"LdapSettings.TestConnection\" | \"LdapSettings.TestFilters\" | \"LdapSettings.TestGroupAttributes\" | \"LocalizationSettings\" | \"MobileSecurityFeatureDiscovery\" | \"OpenIDFeatureDiscovery\" | \"OpenIdConvert\" | \"OpenIdSettings.CustomProfileAttributes\" | \"PermissionPolicyListPanel\" | \"PolicyListPanel\" | \"PurgeButton\" | \"ReloadConfigButton\" | \"RevokeNonCompliantTokensButton\" | \"SAMLFeatureDiscovery\" | \"SamlSettings.CustomProfileAttributes\" | \"SessionAttributesFeatureDiscovery\" | \"SystemRolesFeatureDiscovery\" | \"TestFileStoreConnection\" | \"TestSiteURL\" | \"TestSmtpConnection\" | \"UserAttributesFeatureDiscovery\" | \"auto-translation-discovery\" | \"getSamlMetadataFromIDPButton\" | \"oauthType\" | \"openidType\"",
                     "source": "channels/src/components/admin_console/ldap_wizard/ldap_expandable_setting.tsx#LDAPExpandableSetting"
                 }
             ]
@@ -3977,8 +3972,8 @@
             "class": "AdminPermissionSchemesScheme",
             "elements": [
                 {
-                    "testId": "admin.permission_schemes.scheme.delete--link",
-                    "role": "link",
+                    "testId": "admin.permission_schemes.scheme.delete--button",
+                    "role": "button",
                     "opens": [
                         {
                             "kind": "modal",
@@ -4899,18 +4894,6 @@
             "container": "channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid",
             "elements": [
                 {
-                    "testId": "admin.roles.edit:{key}--link",
-                    "role": "link",
-                    "key": "Pick<Role, 'name'>",
-                    "opens": [
-                        {
-                            "kind": "page",
-                            "target": "`/admin_console/user_management/system_roles/${role.id}`"
-                        }
-                    ],
-                    "source": "channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles"
-                },
-                {
                     "testId": "admin.roles.header",
                     "role": null,
                     "source": "channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader"
@@ -4949,7 +4932,7 @@
         },
         {
             "scope": "admin.roles.row",
-            "class": "Row",
+            "class": "AdminRolesRow",
             "elements": [
                 {
                     "testId": "admin.roles.row.cell:{key}",
@@ -4957,6 +4940,17 @@
                     "key": "string",
                     "renderedWhen": ["!this.props.loading", "!(rows.length === 0)"],
                     "source": "channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell"
+                },
+                {
+                    "testId": "admin.roles.row.edit--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/admin_console/user_management/system_roles/${role.id}`"
+                        }
+                    ],
+                    "source": "channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles"
                 },
                 {
                     "testId": "admin.roles.row:{key}",
@@ -5643,7 +5637,7 @@
                 {
                     "testId": "admin.team.allow_all.help--text",
                     "role": "text",
-                    "renderedWhen": ["testId", "!syncChecked"],
+                    "renderedWhen": ["!syncChecked"],
                     "source": "channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx#AdminSettingsSwitch"
                 }
             ]
@@ -5655,7 +5649,7 @@
                 {
                     "testId": "admin.team.allowed_domains.help--text",
                     "role": "text",
-                    "renderedWhen": ["testId", "!syncChecked"],
+                    "renderedWhen": ["!syncChecked"],
                     "source": "channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx#AdminSettingsSwitch"
                 }
             ]
@@ -5891,7 +5885,6 @@
                 {
                     "testId": "admin.team.policy_enforce.help--text",
                     "role": "text",
-                    "renderedWhen": ["testId"],
                     "source": "channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx#AdminSettingsSwitch"
                 }
             ]
@@ -6019,44 +6012,19 @@
                 {
                     "testId": "admin.team.sync_groups.help--text",
                     "role": "text",
-                    "renderedWhen": ["testId"],
                     "source": "channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx#AdminSettingsSwitch"
                 }
             ]
         },
         {
             "scope": "admin.teams",
-            "class": "Teams",
+            "class": "AdminTeams",
             "container": "channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid",
             "elements": [
-                {
-                    "testId": "admin.teams.edit:{key}--link",
-                    "role": "link",
-                    "key": "Pick<Team, 'id'>",
-                    "opens": [
-                        {
-                            "kind": "page",
-                            "target": "`/admin_console/user_management/teams/${team.id}`"
-                        }
-                    ],
-                    "source": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
-                },
                 {
                     "testId": "admin.teams.header",
                     "role": null,
                     "source": "channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader"
-                },
-                {
-                    "testId": "admin.teams.management:{key}--text",
-                    "role": "text",
-                    "key": "Pick<Team, 'id'>",
-                    "source": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
-                },
-                {
-                    "testId": "admin.teams.name:{key}--text",
-                    "role": "text",
-                    "key": "Pick<Team, 'id'>",
-                    "source": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
                 },
                 {
                     "testId": "admin.teams.rows",
@@ -6099,7 +6067,7 @@
         },
         {
             "scope": "admin.teams.row",
-            "class": "TeamsRow",
+            "class": "AdminTeamsRow",
             "elements": [
                 {
                     "testId": "admin.teams.row.cell:{key}",
@@ -6107,6 +6075,17 @@
                     "key": "string",
                     "renderedWhen": ["!this.props.loading", "!(rows.length === 0)"],
                     "source": "channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell"
+                },
+                {
+                    "testId": "admin.teams.row.edit--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`/admin_console/user_management/teams/${team.id}`"
+                        }
+                    ],
+                    "source": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
                 },
                 {
                     "testId": "admin.teams.row.icon--img",
@@ -6119,6 +6098,16 @@
                     "role": "img",
                     "renderedWhen": ["typeof content === 'string'", "!teamIconUrl"],
                     "source": "channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon"
+                },
+                {
+                    "testId": "admin.teams.row.management--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
+                },
+                {
+                    "testId": "admin.teams.row.name--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList"
                 },
                 {
                     "testId": "admin.teams.row:{key}",

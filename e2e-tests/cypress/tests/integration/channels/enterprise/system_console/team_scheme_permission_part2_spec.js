@@ -71,7 +71,7 @@ describe('Team Scheme', () => {
 
     it('MM-T2857 Delete Scheme', () => {
         // # Click `Delete` for the scheme created above
-        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeName).findByTestId('admin.permission_schemes.scheme.delete--link').click().wait(TIMEOUTS.HALF_SEC);
+        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeName).findByTestId('admin.permission_schemes.scheme.delete--button').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Click `Cancel` on the confirmation dialog
         cy.get('#cancelModalButton').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);
@@ -83,7 +83,7 @@ describe('Team Scheme', () => {
         });
 
         // # Click `Delete` for the scheme created above
-        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeName).findByTestId('admin.permission_schemes.scheme.delete--link').click().wait(TIMEOUTS.HALF_SEC);
+        cy.contains('[data-testid^="admin.permission_schemes.scheme:"]', schemeName).findByTestId('admin.permission_schemes.scheme.delete--button').click().wait(TIMEOUTS.HALF_SEC);
 
         // # Click `Yes, Delete` on the confirmation dialog
         cy.get('#confirmModalButton').should('be.visible').click().wait(TIMEOUTS.HALF_SEC);

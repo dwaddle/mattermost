@@ -4,6 +4,8 @@
 import React, {useState} from 'react';
 import {useIntl} from 'react-intl';
 
+import {settingTestKey} from '@mattermost/shared/utils/test_id';
+
 import {SettingsTypes} from 'utils/constants';
 
 import type {LDAPDefinitionSetting, GeneralSettingProps} from './ldap_wizard';
@@ -37,7 +39,7 @@ const LDAPExpandableSetting = (props: ExpandableSettingProps) => {
         <div className='ldap-expandable-section'>
             <div className='ldap-expandable-section-header'>
                 <button
-                    data-testid={`admin.ldap.expand:${props.setting.key}--button`}
+                    data-testid={`admin.ldap.expand:${settingTestKey(props.setting.key)}--button`}
                     className='ldap-expandable-section-toggle'
                     onClick={toggleExpanded}
                     aria-expanded={expanded}

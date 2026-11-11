@@ -93,30 +93,12 @@ class DataGrid {
         this.rows = container.getByTestId('admin.roles.rows');
 
         // Individual role rows
-        this.systemAdmin = new RoleRow(
-            this.rows.getByTestId('admin.roles.row:system_admin'),
-            'admin.roles.edit:system_admin',
-        );
-        this.systemManager = new RoleRow(
-            this.rows.getByTestId('admin.roles.row:system_manager'),
-            'admin.roles.edit:system_manager',
-        );
-        this.userManager = new RoleRow(
-            this.rows.getByTestId('admin.roles.row:system_user_manager'),
-            'admin.roles.edit:system_user_manager',
-        );
-        this.customGroupManager = new RoleRow(
-            this.rows.getByTestId('admin.roles.row:system_custom_group_admin'),
-            'admin.roles.edit:system_custom_group_admin',
-        );
-        this.sharedChannelManager = new RoleRow(
-            this.rows.getByTestId('admin.roles.row:system_shared_channel_manager'),
-            'admin.roles.edit:system_shared_channel_manager',
-        );
-        this.viewer = new RoleRow(
-            this.rows.getByTestId('admin.roles.row:system_read_only_admin'),
-            'admin.roles.edit:system_read_only_admin',
-        );
+        this.systemAdmin = new RoleRow(this.rows.getByTestId('admin.roles.row:system_admin'));
+        this.systemManager = new RoleRow(this.rows.getByTestId('admin.roles.row:system_manager'));
+        this.userManager = new RoleRow(this.rows.getByTestId('admin.roles.row:system_user_manager'));
+        this.customGroupManager = new RoleRow(this.rows.getByTestId('admin.roles.row:system_custom_group_admin'));
+        this.sharedChannelManager = new RoleRow(this.rows.getByTestId('admin.roles.row:system_shared_channel_manager'));
+        this.viewer = new RoleRow(this.rows.getByTestId('admin.roles.row:system_read_only_admin'));
     }
 
     async toBeVisible() {
@@ -131,13 +113,13 @@ class RoleRow {
     readonly type: Locator;
     readonly editLink: Locator;
 
-    constructor(container: Locator, editTestId: string) {
+    constructor(container: Locator) {
         this.container = container;
 
         this.roleName = container.getByTestId('admin.roles.row.cell:role');
         this.description = container.getByTestId('admin.roles.row.cell:description');
         this.type = container.getByTestId('admin.roles.row.cell:type');
-        this.editLink = container.getByTestId(`${editTestId}--link`);
+        this.editLink = container.getByTestId('admin.roles.row.edit--link');
     }
 
     async toBeVisible() {

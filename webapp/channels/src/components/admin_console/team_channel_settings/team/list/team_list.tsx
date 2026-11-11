@@ -243,7 +243,7 @@ export default class TeamList extends React.PureComponent<Props, State> {
                                 />
                             </div>
                             <div className='TeamList_nameText'>
-                                <b data-testid={`admin.teams.name:${team.id}--text`}>
+                                <b data-testid='admin.teams.row.name--text'>
                                     {team.display_name}
                                     {team.delete_at !== 0 && (
                                         <span className='archived-label'>
@@ -265,7 +265,7 @@ export default class TeamList extends React.PureComponent<Props, State> {
                     ),
                     management: (
                         <span
-                            data-testid={`admin.teams.management:${team.id}--text`}
+                            data-testid='admin.teams.row.management--text'
                             className='TeamList_managementText'
                         >
                             {this.renderManagementMethodText(team)}
@@ -275,7 +275,7 @@ export default class TeamList extends React.PureComponent<Props, State> {
                         <span className='group-actions TeamList_editText'>
                             <Link
                                 to={`/admin_console/user_management/teams/${team.id}`}
-                                data-testid={`admin.teams.edit:${team.id}--link`}
+                                data-testid='admin.teams.row.edit--link'
                             >
                                 <FormattedMessage
                                     id='admin.team_settings.team_row.configure'

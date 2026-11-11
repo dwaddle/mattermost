@@ -64,7 +64,7 @@ export function makeUserASystemRole(testUsers, role) {
     });
 
     // # Click on edit for the role
-    cy.findByTestId(`admin.roles.edit:${role}--link`).click();
+    cy.findByTestId(`admin.roles.row:${role}`).findByTestId('admin.roles.row.edit--link').click();
 
     // # Click Add People button
     cy.findByRole('button', {name: 'Add People'}).click().wait(TIMEOUTS.HALF_SEC);

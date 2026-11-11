@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {Locator, Page} from '@playwright/test';
 
-import {expect} from '@mattermost/playwright-lib';
+import {expect, generated} from '@mattermost/playwright-lib';
 
 /**
  * Enable team-membership ABAC end to end: the umbrella attribute-based access
@@ -123,7 +123,7 @@ export async function assignTeamsToPolicy(client: Client4, policyId: string, tea
  * Navigate to a team's configuration page from the Teams list and wait for it to load.
  */
 export async function openTeamConfig(page: Page, teamDisplayName: string): Promise<void> {
-    await page.goto('/admin_console/user_management/teams');
+    await page.goto(generated.AdminConsolePage.path({section: 'user_management/teams'}));
 
     // Let the unfiltered first load land, so it can't overwrite the search results.
     const rows = page.locator('.DataGrid_row');

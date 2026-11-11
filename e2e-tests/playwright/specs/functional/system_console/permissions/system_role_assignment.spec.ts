@@ -3,12 +3,12 @@
 
 import {expect, generated, test, type App} from '@mattermost/playwright-lib';
 
-const SYSTEM_ROLES_PATH = `${generated.AdminConsolePage.path()}/user_management/system_roles`;
+const SYSTEM_ROLES_PATH = generated.AdminConsolePage.path({section: 'user_management/system_roles'});
 
 /** Opens System Console > Delegated Granular Administration and the role's page. */
 async function openRole(app: App, roleId: string) {
     await app.page.goto(SYSTEM_ROLES_PATH);
-    await app.admin.roles.edit({name: roleId}).click();
+    await app.admin.roles.row(roleId).clickEditLink();
     await expect(app.admin.role.nameText.locator).toBeVisible();
     return app.admin.role;
 }

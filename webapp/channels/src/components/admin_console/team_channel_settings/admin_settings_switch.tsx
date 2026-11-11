@@ -4,6 +4,7 @@
 import React, {type JSX, type ReactNode} from 'react';
 
 import {Switch} from '@mattermost/compass-ui/components/switch';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type Props = {
@@ -18,8 +19,8 @@ type Props = {
     /** Extra content rendered below the switch row (e.g. domain input). */
     footer?: ReactNode;
 
-    /** The switch renders `${testId}--switch` and its help `${testId}_help--text` (without it, the legacy ids). */
-    testId?: TestId;
+    /** The switch renders `<testId>--switch` and its help `<testId>.help--text`. */
+    testId: TestId;
 };
 
 /**
@@ -28,9 +29,6 @@ type Props = {
  *
  * Uses `size="medium"` + `semiBold` to match Channel Settings rows. The old
  * Toggle adapter defaulted to `btn-lg` → Compass `large` (16px label).
- *
- * Without `testId`, preserves both `data-testid={id}` (wrapper, for Cypress) and
- * `data-testid={`${id}-button`}` (on the switch input, for unit tests).
  */
 const AdminSettingsSwitch = ({
     id,
@@ -44,17 +42,17 @@ const AdminSettingsSwitch = ({
     testId,
 }: Props): JSX.Element => (
     <>
-        <div data-testid={testId ? undefined : id}>
+        <div>
             <Switch
                 id={id}
                 size='medium'
                 checked={checked}
                 disabled={disabled}
                 onChange={onChange}
-                data-testid={testId ? `${testId}--switch` : `${id}-button`}
+                data-testid={withRole(testId, 'switch')}
                 tabIndex={0}
                 semiBold={true}
-                secondaryLabel={testId ? <span data-testid={`${testId}.help--text`}>{secondaryLabel}</span> : secondaryLabel}
+                secondaryLabel={<span data-testid={part(testId, 'help', 'text')}>{secondaryLabel}</span>}
             >
                 {children}
             </Switch>

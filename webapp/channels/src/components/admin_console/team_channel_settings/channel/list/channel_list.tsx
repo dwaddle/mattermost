@@ -191,7 +191,7 @@ export default class ChannelList extends React.PureComponent<ChannelListProps, C
                 <ChannelIcon
                     channel={channel}
                     className='channel-icon'
-                    data-testid={`admin.channels.icon:${channel.id}`}
+                    data-testid='admin.channels.row.icon'
                 />
             );
 
@@ -209,7 +209,7 @@ export default class ChannelList extends React.PureComponent<ChannelListProps, C
                     name: (
                         <span
                             className='group-name overflow--ellipsis row-content'
-                            data-testid={`admin.channels.name:${channel.id}--text`}
+                            data-testid='admin.channels.row.name--text'
                         >
                             {iconToDisplay}
                             <span className='TeamList_channelDisplayName'>
@@ -241,7 +241,7 @@ export default class ChannelList extends React.PureComponent<ChannelListProps, C
                         <span className='group-actions TeamList_editRow'>
                             <Link
                                 to={`/admin_console/user_management/channels/${channel.id}`}
-                                data-testid={`admin.channels.edit:${channel.id}--link`}
+                                data-testid='admin.channels.row.edit--link'
                             >
                                 <FormattedMessage
                                     id='admin.channel_settings.channel_row.configure'

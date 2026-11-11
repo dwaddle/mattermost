@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import React, {type JSX, type ReactNode} from 'react';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './admin_settings_segmented_row.scss';
@@ -14,7 +15,7 @@ export type AdminSettingsSegment = {
     selected: boolean;
     onSelect: () => void;
 
-    // the segment's own testid, e.g. `admin.channel.public--togglebutton`
+    // the segment's own testid without the role, e.g. `admin.channel.public`: it renders `<testId>--togglebutton`
     testId: TestId;
 };
 
@@ -71,7 +72,7 @@ const AdminSettingsSegmentedRow = ({
                         key={segment.id}
                         type='button'
                         id={`${id}-${segment.id}`}
-                        data-testid={segment.testId}
+                        data-testid={withRole(segment.testId, 'togglebutton')}
                         className={classNames('AdminSettingsSegmentedRow__segment', {
                             'AdminSettingsSegmentedRow__segment--active': segment.selected,
                         })}

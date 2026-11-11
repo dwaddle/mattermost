@@ -74,7 +74,7 @@ describe('LDAP guest', () => {
         gotoLDAPSettings();
 
         // # expand the filters section
-        cy.findByTestId('admin.ldap.expand:LdapSettings.AdditionalFilters--button').click();
+        cy.findByTestId('admin.ldap.expand:LdapSettings_AdditionalFilters--button').click();
         updateGuestFilter(`(uid=${user1.username})`);
 
         // # Login as LDAP user1
@@ -94,7 +94,7 @@ describe('LDAP guest', () => {
 
             // # Go to LDAP settings page and EMPTY guest filter value
             gotoLDAPSettings();
-            cy.findByTestId('admin.ldap.expand:LdapSettings.AdditionalFilters--button').click();
+            cy.findByTestId('admin.ldap.expand:LdapSettings_AdditionalFilters--button').click();
             updateGuestFilter('');
 
             // # Login again as LDAP user1
@@ -128,7 +128,7 @@ describe('LDAP guest', () => {
 
         // # Go to LDAP settings page and update guest filter as user1
         gotoLDAPSettings();
-        cy.findByTestId('admin.ldap.expand:LdapSettings.AdditionalFilters--button').click();
+        cy.findByTestId('admin.ldap.expand:LdapSettings_AdditionalFilters--button').click();
         updateGuestFilter(`(uid=${user1.username})`);
 
         // # Go to Guest access page and disable guest access

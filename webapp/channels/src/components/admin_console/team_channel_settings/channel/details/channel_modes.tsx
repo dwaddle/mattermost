@@ -107,7 +107,7 @@ const AllowAllToggle = (props: Props): JSX.Element | null => {
             segments={[
                 {
                     id: 'public',
-                    testId: 'admin.channel.public--togglebutton',
+                    testId: 'admin.channel.public',
                     selected: isPublic,
                     onSelect: () => setPublic(true),
                     label: (
@@ -119,7 +119,7 @@ const AllowAllToggle = (props: Props): JSX.Element | null => {
                 },
                 {
                     id: 'private',
-                    testId: 'admin.channel.private--togglebutton',
+                    testId: 'admin.channel.private',
                     selected: !isPublic,
                     onSelect: () => setPublic(false),
                     label: (

@@ -3,7 +3,7 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, newTestPassword, test} from '@mattermost/playwright-lib';
+import {expect, generated, newTestPassword, test} from '@mattermost/playwright-lib';
 
 import {
     addAttributeRule,
@@ -357,7 +357,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         const {systemConsolePage} = await pw.testBrowser.login(adminUser);
         const {page} = systemConsolePage;
 
-        await page.goto('/admin_console/system_attributes/membership_policies');
+        await page.goto(generated.AdminConsolePage.path({section: 'system_attributes/membership_policies'}));
         await page.waitForLoadState('networkidle');
 
         // Filter to our policy so the assertion is stable under parallel runs.
@@ -1089,10 +1089,10 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         createdPolicyIds.push(policy.id);
         await assignTeamsToPolicy(adminClient, policy.id, [team.id]);
 
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
+        const {app, systemConsolePage} = await pw.testBrowser.login(adminUser);
         const {page} = systemConsolePage;
 
-        await page.goto('/admin_console/user_management/teams');
+        await page.goto(generated.AdminConsolePage.path({section: 'user_management/teams'}));
         await page.waitForLoadState('networkidle');
 
         // Wait on the debounced server-side search rather than a fixed sleep.
@@ -1104,7 +1104,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         await searchDone;
 
         // * The governed team's Management cell reads "Attribute Based", not "Invite Only"
-        const management = page.locator(`[data-testid="admin.teams.management:${team.id}--text"]`);
+        const management = app.admin.teams.row(team.id).managementText.locator;
         await expect(management).toBeVisible({timeout: 10000});
         await expect(management).toHaveText('Attribute Based');
     });

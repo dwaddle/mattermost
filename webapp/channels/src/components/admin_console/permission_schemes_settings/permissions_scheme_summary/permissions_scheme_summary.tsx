@@ -191,7 +191,7 @@ export default class PermissionsSchemeSummary extends React.PureComponent<Props 
                         </Link>
                         {'-'}
                         <a
-                            data-testid='admin.permission_schemes.scheme.delete--link'
+                            data-testid='admin.permission_schemes.scheme.delete--button'
                             className={isDisabled ? 'delete-button disabled' : 'delete-button'}
                             onClick={this.delete}
                         >

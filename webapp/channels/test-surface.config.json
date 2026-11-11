@@ -356,12 +356,12 @@
             },
             {
                 "rule": "aria",
-                "template": "admin.permission_schemes.scheme.delete--link",
+                "template": "admin.permission_schemes.scheme.delete--button",
                 "reason": "the scheme row's Delete control is an <a> without href: keyboard users can't reach it. Making it a <button> is an a11y fix for its own review."
             },
             {
                 "rule": "role-fit",
-                "template": "admin.permission_schemes.scheme.delete--link",
+                "template": "admin.permission_schemes.scheme.delete--button",
                 "reason": "the scheme row's Delete control is an <a> without href: keyboard users can't reach it. Making it a <button> is an a11y fix for its own review."
             },
             {

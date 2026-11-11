@@ -5,11 +5,9 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
-import type {ChannelWithTeamData} from '@mattermost/types/channels';
 import type {Group} from '@mattermost/types/groups';
 import type {HealthFinding} from '@mattermost/types/health';
 import type {Job} from '@mattermost/types/jobs';
-import type {Role} from '@mattermost/types/roles';
 import type {Scheme} from '@mattermost/types/schemes';
 import type {Team} from '@mattermost/types/teams';
 
@@ -73,6 +71,10 @@ export type MembersRowRow = {
 export type AdminChannelModerationPermissionFormValues = {
     guests?: boolean;
     members?: boolean;
+};
+/** The read-only parts of a `admin.channels.row` item. */
+export type AdminChannelsRowRow = {
+    name: string | null;
 };
 /** The form fields of `admin.content_flagging.reviewers`. */
 export type AdminContentFlaggingReviewersFormValues = {
@@ -161,6 +163,11 @@ export type AdminTeamFormValues = {
     name: string;
     policyEnforce: boolean;
     syncGroups: boolean;
+};
+/** The read-only parts of a `admin.teams.row` item. */
+export type AdminTeamsRowRow = {
+    management: string | null;
+    name: string | null;
 };
 /** The form fields of `admin.user`. */
 export type AdminUserFormValues = {
@@ -511,8 +518,8 @@ export class Admin extends Scope {
     /**
      * `admin.teams` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
      */
-    get teams(): Teams {
-        return new Teams(this.page, `${this.scope}.teams`, this.root);
+    get teams(): AdminTeams {
+        return new AdminTeams(this.page, `${this.scope}.teams`, this.root);
     }
 
     /**
@@ -1604,7 +1611,7 @@ export class AdminSettingsSwitch extends Scope {
 
     /**
      * `admin.channel.policy_enforce.help--text` — AdminSettingsSwitch (channels/src/components/admin_console/team_channel_settings/admin_settings_switch.tsx)
-     * Renders only when testId and !isSynced.
+     * Renders only when !isSynced.
      */
     get helpText() {
         return drivers.text(this.byTestId(`${this.scope}.help--text`), {
@@ -1727,30 +1734,6 @@ export class AdminChannels extends Scope {
     }
 
     /**
-     * `admin.channels.edit:{key}--link` — ChannelList (channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx)
-     * Goes to `/admin_console/user_management/channels/${channel.id}`.
-     */
-    edit(edit: Pick<ChannelWithTeamData, 'id'>) {
-        return drivers.link(this.byTestId(`${this.scope}.edit:${edit.id}--link`), {
-            testId: `${this.scope}.edit:${edit.id}--link`,
-            role: 'link',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList',
-        });
-    }
-
-    /** Every `admin.channels.edit:{key}--link` in the scope. */
-    get editItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.edit:`, '--link');
-    }
-
-    /** The keys of every `admin.channels.edit:{key}--link` in the scope, in document order. */
-    editKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.edit:`, '--link');
-    }
-
-    /**
      * `admin.channels.header` — DataGridHeader (channels/src/components/admin_console/data_grid/data_grid_header.tsx)
      */
     get header() {
@@ -1761,53 +1744,6 @@ export class AdminChannels extends Scope {
             unknownEffects: false,
             source: 'channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader',
         });
-    }
-
-    /**
-     * `admin.channels.icon:{key}` — ChannelIcon (channels/src/components/channel_type_icon/channel_icon.tsx)
-     * Renders only when testId !== undefined.
-     */
-    icon(icon: Pick<ChannelWithTeamData, 'id'>) {
-        return drivers.container(this.byTestId(`${this.scope}.icon:${icon.id}`), {
-            testId: `${this.scope}.icon:${icon.id}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon',
-        });
-    }
-
-    /** Every `admin.channels.icon:{key}` in the scope. */
-    get iconItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.icon:`, '');
-    }
-
-    /** The keys of every `admin.channels.icon:{key}` in the scope, in document order. */
-    iconKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.icon:`, '');
-    }
-
-    /**
-     * `admin.channels.name:{key}--text` — ChannelList (channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx)
-     */
-    name(name: Pick<ChannelWithTeamData, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.name:${name.id}--text`), {
-            testId: `${this.scope}.name:${name.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList',
-        });
-    }
-
-    /** Every `admin.channels.name:{key}--text` in the scope. */
-    get nameItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.name:`, '--text');
-    }
-
-    /** The keys of every `admin.channels.name:{key}--text` in the scope, in document order. */
-    nameKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.name:`, '--text');
     }
 
     /**
@@ -1852,8 +1788,8 @@ export class AdminChannels extends Scope {
      * `admin.channels.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
      */
-    row(row: string): Row {
-        return new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminChannelsRow {
+        return new AdminChannelsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
     }
 
     /** Every `admin.channels.row:{key}` in the scope. */
@@ -1866,57 +1802,23 @@ export class AdminChannels extends Scope {
         return this.keysOf(`${this.scope}.row:`, '');
     }
 
-    /** Every `admin.channels.edit:{key}--link` in the scope as a list by key, for the list matchers: `expect(x.editList).toHaveKeys([…])`. */
-    get editList() {
-        return this.keyedList(`${this.scope}.edit:`, '--link', (key: string) =>
-            drivers.link(this.byTestId(`${this.scope}.edit:${key}--link`), {
-                testId: `${this.scope}.edit:${key}--link`,
-                role: 'link',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList',
-            }),
-        );
-    }
-
-    /** Every `admin.channels.icon:{key}` in the scope as a list by key, for the list matchers: `expect(x.iconList).toHaveKeys([…])`. */
-    get iconList() {
-        return this.keyedList(`${this.scope}.icon:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.icon:${key}`), {
-                testId: `${this.scope}.icon:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon',
-            }),
-        );
-    }
-
-    /** Every `admin.channels.name:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.nameList).toHaveKeys([…])`. */
-    get nameList() {
-        return this.keyedList(`${this.scope}.name:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.name:${key}--text`), {
-                testId: `${this.scope}.name:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList',
-            }),
-        );
-    }
-
     /** Every `admin.channels.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
     get rowList() {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminChannelsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
         );
     }
 }
 
-/** Rendered at `admin.channels.row`, `admin.content_flagging.reviewers.teams.row`, `admin.data_retention.custom_policies.row`, `admin.data_retention.global_policy.row`, `admin.roles.row`: one class, constructed with the scope it is mounted at. */
-export class Row extends Scope {
+/** Scope `admin.channels.row`. */
+export class AdminChannelsRow extends Scope {
+    constructor(page: Page, scope = 'admin.channels.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
     /**
      * `admin.channels.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
@@ -1958,6 +1860,62 @@ export class Row extends Scope {
     /** The keys of every `admin.channels.row.cell:{key}` in the scope, in document order. */
     cellKeys(): Promise<string[]> {
         return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.channels.row.edit--link` — ChannelList (channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx)
+     * Goes to `/admin_console/user_management/channels/${channel.id}`.
+     */
+    get editLink() {
+        return drivers.link(this.byTestId(`${this.scope}.edit--link`), {
+            testId: `${this.scope}.edit--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList',
+        });
+    }
+
+    async clickEditLink(): Promise<void> {
+        await this.editLink.click();
+    }
+
+    /**
+     * `admin.channels.row.icon` — ChannelIcon (channels/src/components/channel_type_icon/channel_icon.tsx)
+     * Renders only when testId !== undefined.
+     */
+    get icon() {
+        return drivers.container(this.byTestId(`${this.scope}.icon`), {
+            testId: `${this.scope}.icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/channel_type_icon/channel_icon.tsx#ChannelIcon',
+        });
+    }
+
+    /**
+     * `admin.channels.row.name--text` — ChannelList (channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/channel/list/channel_list.tsx#ChannelList',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminChannelsRowRow> {
+        return {
+            name: await this.nameText.textIfPresent(),
+        };
     }
 
     /** Every `admin.channels.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
@@ -2523,6 +2481,65 @@ export class AdminContentFlaggingReviewersTeams extends Scope {
     }
 }
 
+/** Rendered at `admin.content_flagging.reviewers.teams.row`, `admin.data_retention.custom_policies.row`, `admin.data_retention.global_policy.row`: one class, constructed with the scope it is mounted at. */
+export class Row extends Scope {
+    /**
+     * `admin.content_flagging.reviewers.teams.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.content_flagging.reviewers.teams.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.content_flagging.reviewers.teams.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.content_flagging.reviewers.teams.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.content_flagging.reviewers.teams.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /** Every `admin.content_flagging.reviewers.teams.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
+        );
+    }
+}
+
 /** Rendered at `admin.content_flagging.save_panel`, `admin.ip_filtering.save_panel`: one class, constructed with the scope it is mounted at. */
 export class AdminSaveChangesPanel extends Scope {
     /**
@@ -2847,8 +2864,8 @@ export class AdminDataRetentionPolicy extends Scope {
     /**
      * `admin.data_retention.policy.teams` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
      */
-    get teams(): Teams {
-        return new Teams(this.page, `${this.scope}.teams`, this.root);
+    get teams(): AdminDataRetentionPolicyTeams {
+        return new AdminDataRetentionPolicyTeams(this.page, `${this.scope}.teams`, this.root);
     }
 }
 
@@ -3023,8 +3040,106 @@ export class AdminDataRetentionPolicyChannelsRow extends Scope {
     }
 }
 
-/** Rendered at `admin.data_retention.policy.teams.row`, `admin.teams.row`: one class, constructed with the scope it is mounted at. */
-export class TeamsRow extends Scope {
+/** Scope `admin.data_retention.policy.teams`. */
+export class AdminDataRetentionPolicyTeams extends Scope {
+    constructor(page: Page, scope = 'admin.data_retention.policy.teams', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.data_retention.policy.teams.header` — DataGridHeader (channels/src/components/admin_console/data_grid/data_grid_header.tsx)
+     */
+    get header() {
+        return drivers.container(this.byTestId(`${this.scope}.header`), {
+            testId: `${this.scope}.header`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader',
+        });
+    }
+
+    /**
+     * `admin.data_retention.policy.teams.rows` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     */
+    get rows() {
+        return drivers.container(this.byTestId(`${this.scope}.rows`), {
+            testId: `${this.scope}.rows`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid.tsx#DataGrid',
+        });
+    }
+
+    /**
+     * `admin.data_retention.policy.teams.search--textbox` — DataGridSearch (channels/src/components/admin_console/data_grid/data_grid_search.tsx)
+     */
+    get searchTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.search--textbox`), {
+            testId: `${this.scope}.search--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_search.tsx#DataGridSearch',
+        });
+    }
+
+    async fillSearchTextbox(value: string): Promise<void> {
+        await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.data_retention.policy.teams.footer` — DataGrid (channels/src/components/admin_console/data_grid/data_grid.tsx)
+     * Renders only when total.
+     */
+    get footer(): Footer {
+        return new Footer(this.page, `${this.scope}.footer`, this.root);
+    }
+
+    /**
+     * `admin.data_retention.policy.teams.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    row(row: string): AdminDataRetentionPolicyTeamsRow {
+        return new AdminDataRetentionPolicyTeamsRow(
+            this.page,
+            `${this.scope}.row`,
+            this.byTestId(`${this.scope}.row:${row}`),
+        );
+    }
+
+    /** Every `admin.data_retention.policy.teams.row:{key}` in the scope. */
+    get rowItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.row:`, '');
+    }
+
+    /** The keys of every `admin.data_retention.policy.teams.row:{key}` in the scope, in document order. */
+    rowKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    /** Every `admin.data_retention.policy.teams.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
+    get rowList() {
+        return this.keyedList(
+            `${this.scope}.row:`,
+            '',
+            (key: string) =>
+                new AdminDataRetentionPolicyTeamsRow(
+                    this.page,
+                    `${this.scope}.row`,
+                    this.byTestId(`${this.scope}.row:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.data_retention.policy.teams.row`. */
+export class AdminDataRetentionPolicyTeamsRow extends Scope {
+    constructor(page: Page, scope = 'admin.data_retention.policy.teams.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
     /**
      * `admin.data_retention.policy.teams.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
@@ -4425,9 +4540,9 @@ export class AdminLdap extends Scope {
     /**
      * `admin.ldap.expand:{key}--button` — LDAPExpandableSetting (channels/src/components/admin_console/ldap_wizard/ldap_expandable_setting.tsx)
      */
-    expand(expand: string) {
-        return drivers.button(this.byTestId(`${this.scope}.expand:${expand}--button`), {
-            testId: `${this.scope}.expand:${expand}--button`,
+    expand(expand: AdminSettingKey) {
+        return drivers.button(this.byTestId(`${this.scope}.expand:${settingTestKey(expand)}--button`), {
+            testId: `${this.scope}.expand:${settingTestKey(expand)}--button`,
             role: 'button',
             effects: [],
             unknownEffects: false,
@@ -4911,22 +5026,22 @@ export class AdminPermissionSchemesScheme extends Scope {
     }
 
     /**
-     * `admin.permission_schemes.scheme.delete--link` — PermissionsSchemeSummary (channels/src/components/admin_console/permission_schemes_settings/permissions_scheme_summary/permissions_scheme_summary.tsx)
+     * `admin.permission_schemes.scheme.delete--button` — PermissionsSchemeSummary (channels/src/components/admin_console/permission_schemes_settings/permissions_scheme_summary/permissions_scheme_summary.tsx)
      * Opens modal ConfirmModal (`admin.permission_schemes.delete_modal`).
      */
-    get deleteLink() {
-        return drivers.link(this.byTestId(`${this.scope}.delete--link`), {
-            testId: `${this.scope}.delete--link`,
-            role: 'link',
+    get deleteButton() {
+        return drivers.button(this.byTestId(`${this.scope}.delete--button`), {
+            testId: `${this.scope}.delete--button`,
+            role: 'button',
             effects: [],
             unknownEffects: false,
             source: 'channels/src/components/admin_console/permission_schemes_settings/permissions_scheme_summary/permissions_scheme_summary.tsx#PermissionsSchemeSummary',
         });
     }
 
-    /** Clicks deleteLink and returns what it opens (modal); the page object is returned at once, with no wait. */
-    async clickDeleteLink(): Promise<ConfirmModal> {
-        await this.deleteLink.click();
+    /** Clicks deleteButton and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickDeleteButton(): Promise<ConfirmModal> {
+        await this.deleteButton.click();
         return new ConfirmModal(this.page, 'admin.permission_schemes.delete_modal');
     }
 
@@ -6471,30 +6586,6 @@ export class AdminRoles extends Scope {
     }
 
     /**
-     * `admin.roles.edit:{key}--link` — SystemRoles (channels/src/components/admin_console/system_roles/system_roles.tsx)
-     * Goes to `/admin_console/user_management/system_roles/${role.id}`.
-     */
-    edit(edit: Pick<Role, 'name'>) {
-        return drivers.link(this.byTestId(`${this.scope}.edit:${edit.name}--link`), {
-            testId: `${this.scope}.edit:${edit.name}--link`,
-            role: 'link',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles',
-        });
-    }
-
-    /** Every `admin.roles.edit:{key}--link` in the scope. */
-    get editItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.edit:`, '--link');
-    }
-
-    /** The keys of every `admin.roles.edit:{key}--link` in the scope, in document order. */
-    editKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.edit:`, '--link');
-    }
-
-    /**
      * `admin.roles.header` — DataGridHeader (channels/src/components/admin_console/data_grid/data_grid_header.tsx)
      */
     get header() {
@@ -6532,8 +6623,8 @@ export class AdminRoles extends Scope {
      * `admin.roles.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
      */
-    row(row: string): Row {
-        return new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminRolesRow {
+        return new AdminRolesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
     }
 
     /** Every `admin.roles.row:{key}` in the scope. */
@@ -6546,25 +6637,94 @@ export class AdminRoles extends Scope {
         return this.keysOf(`${this.scope}.row:`, '');
     }
 
-    /** Every `admin.roles.edit:{key}--link` in the scope as a list by key, for the list matchers: `expect(x.editList).toHaveKeys([…])`. */
-    get editList() {
-        return this.keyedList(`${this.scope}.edit:`, '--link', (key: string) =>
-            drivers.link(this.byTestId(`${this.scope}.edit:${key}--link`), {
-                testId: `${this.scope}.edit:${key}--link`,
-                role: 'link',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles',
-            }),
-        );
-    }
-
     /** Every `admin.roles.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
     get rowList() {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminRolesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Scope `admin.roles.row`. */
+export class AdminRolesRow extends Scope {
+    constructor(page: Page, scope = 'admin.roles.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.roles.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.roles.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.roles.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.roles.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.roles.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.roles.row.edit--link` — SystemRoles (channels/src/components/admin_console/system_roles/system_roles.tsx)
+     * Goes to `/admin_console/user_management/system_roles/${role.id}`.
+     */
+    get editLink() {
+        return drivers.link(this.byTestId(`${this.scope}.edit--link`), {
+            testId: `${this.scope}.edit--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/system_roles/system_roles.tsx#SystemRoles',
+        });
+    }
+
+    async clickEditLink(): Promise<void> {
+        await this.editLink.click();
+    }
+
+    /** Every `admin.roles.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
         );
     }
 }
@@ -8514,30 +8674,10 @@ export class AdminTeamProfile extends Scope {
     }
 }
 
-/** Rendered at `admin.teams`, `admin.data_retention.policy.teams`: one class, constructed with the scope it is mounted at. */
-export class Teams extends Scope {
-    /**
-     * `admin.teams.edit:{key}--link` — TeamList (channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx)
-     * Goes to `/admin_console/user_management/teams/${team.id}`.
-     */
-    edit(edit: Pick<Team, 'id'>) {
-        return drivers.link(this.byTestId(`${this.scope}.edit:${edit.id}--link`), {
-            testId: `${this.scope}.edit:${edit.id}--link`,
-            role: 'link',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
-        });
-    }
-
-    /** Every `admin.teams.edit:{key}--link` in the scope. */
-    get editItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.edit:`, '--link');
-    }
-
-    /** The keys of every `admin.teams.edit:{key}--link` in the scope, in document order. */
-    editKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.edit:`, '--link');
+/** Scope `admin.teams`. */
+export class AdminTeams extends Scope {
+    constructor(page: Page, scope = 'admin.teams', root?: Locator) {
+        super(page, scope, root);
     }
 
     /**
@@ -8551,52 +8691,6 @@ export class Teams extends Scope {
             unknownEffects: false,
             source: 'channels/src/components/admin_console/data_grid/data_grid_header.tsx#DataGridHeader',
         });
-    }
-
-    /**
-     * `admin.teams.management:{key}--text` — TeamList (channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx)
-     */
-    management(management: Pick<Team, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.management:${management.id}--text`), {
-            testId: `${this.scope}.management:${management.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
-        });
-    }
-
-    /** Every `admin.teams.management:{key}--text` in the scope. */
-    get managementItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.management:`, '--text');
-    }
-
-    /** The keys of every `admin.teams.management:{key}--text` in the scope, in document order. */
-    managementKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.management:`, '--text');
-    }
-
-    /**
-     * `admin.teams.name:{key}--text` — TeamList (channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx)
-     */
-    name(name: Pick<Team, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.name:${name.id}--text`), {
-            testId: `${this.scope}.name:${name.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
-        });
-    }
-
-    /** Every `admin.teams.name:{key}--text` in the scope. */
-    get nameItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.name:`, '--text');
-    }
-
-    /** The keys of every `admin.teams.name:{key}--text` in the scope, in document order. */
-    nameKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.name:`, '--text');
     }
 
     /**
@@ -8641,8 +8735,8 @@ export class Teams extends Scope {
      * `admin.teams.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
      * Renders only when !this.props.loading and !(rows.length === 0).
      */
-    row(row: string): TeamsRow {
-        return new TeamsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminTeamsRow {
+        return new AdminTeamsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
     }
 
     /** Every `admin.teams.row:{key}` in the scope. */
@@ -8655,51 +8749,164 @@ export class Teams extends Scope {
         return this.keysOf(`${this.scope}.row:`, '');
     }
 
-    /** Every `admin.teams.edit:{key}--link` in the scope as a list by key, for the list matchers: `expect(x.editList).toHaveKeys([…])`. */
-    get editList() {
-        return this.keyedList(`${this.scope}.edit:`, '--link', (key: string) =>
-            drivers.link(this.byTestId(`${this.scope}.edit:${key}--link`), {
-                testId: `${this.scope}.edit:${key}--link`,
-                role: 'link',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
-            }),
-        );
-    }
-
-    /** Every `admin.teams.management:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.managementList).toHaveKeys([…])`. */
-    get managementList() {
-        return this.keyedList(`${this.scope}.management:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.management:${key}--text`), {
-                testId: `${this.scope}.management:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
-            }),
-        );
-    }
-
-    /** Every `admin.teams.name:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.nameList).toHaveKeys([…])`. */
-    get nameList() {
-        return this.keyedList(`${this.scope}.name:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.name:${key}--text`), {
-                testId: `${this.scope}.name:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
-            }),
-        );
-    }
-
     /** Every `admin.teams.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
     get rowList() {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new TeamsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminTeamsRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+        );
+    }
+}
+
+/** Scope `admin.teams.row`. */
+export class AdminTeamsRow extends Scope {
+    constructor(page: Page, scope = 'admin.teams.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.teams.row:{key}` — DataGridRow (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.teams.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.teams.row.cell:{key}` — DataGridCell (channels/src/components/admin_console/data_grid/data_grid_row.tsx)
+     * Renders only when !this.props.loading and !(rows.length === 0).
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+        });
+    }
+
+    /** Every `admin.teams.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.teams.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.teams.row.edit--link` — TeamList (channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx)
+     * Goes to `/admin_console/user_management/teams/${team.id}`.
+     */
+    get editLink() {
+        return drivers.link(this.byTestId(`${this.scope}.edit--link`), {
+            testId: `${this.scope}.edit--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
+        });
+    }
+
+    async clickEditLink(): Promise<void> {
+        await this.editLink.click();
+    }
+
+    /**
+     * `admin.teams.row.icon--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when typeof content === 'string' and teamIconUrl.
+     */
+    get iconImg() {
+        return drivers.text(this.byTestId(`${this.scope}.icon--img`), {
+            testId: `${this.scope}.icon--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
+    }
+
+    /**
+     * `admin.teams.row.initials--img` — TeamIcon (channels/src/components/widgets/team_icon/team_icon.tsx)
+     * Renders only when typeof content === 'string' and !teamIconUrl.
+     */
+    get initialsImg() {
+        return drivers.text(this.byTestId(`${this.scope}.initials--img`), {
+            testId: `${this.scope}.initials--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/team_icon/team_icon.tsx#TeamIcon',
+        });
+    }
+
+    /**
+     * `admin.teams.row.management--text` — TeamList (channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx)
+     */
+    get managementText() {
+        return drivers.text(this.byTestId(`${this.scope}.management--text`), {
+            testId: `${this.scope}.management--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
+        });
+    }
+
+    getManagementText(): Promise<string> {
+        return this.managementText.text();
+    }
+
+    /**
+     * `admin.teams.row.name--text` — TeamList (channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/team_channel_settings/team/list/team_list.tsx#TeamList',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminTeamsRowRow> {
+        return {
+            management: await this.managementText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+        };
+    }
+
+    /** Every `admin.teams.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/data_grid/data_grid_row.tsx#DataGridCell',
+            }),
         );
     }
 }

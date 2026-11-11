@@ -67,7 +67,7 @@ const SystemRoles = ({roles}: Props) => {
                             <span className='SystemRoles_editRow'>
                                 <Link
                                     to={`/admin_console/user_management/system_roles/${role.id}`}
-                                    data-testid={`admin.roles.edit:${role.name}--link`}
+                                    data-testid='admin.roles.row.edit--link'
                                 >
                                     <FormattedMessage
                                         id='admin.permissions.roles.edit'

@@ -10,9 +10,6 @@ import eslintPlugin from '@mattermost/eslint-plugin';
 // Strict files where the testid rules' extended checks (every branch of a testid, such as a `testId ? new : 'legacy'`
 // fallback, and the testid helpers) found what the area-fix wave fixes: there the two rules stay warnings until then.
 const TESTID_LINT_PENDING = [
-    'src/components/admin_console/checkbox_setting.tsx',
-    'src/components/admin_console/team_channel_settings/admin_settings_switch.tsx',
-    'src/components/admin_console/team_channel_settings/channel/details/channel_modes.tsx',
     'src/components/user_settings/general/user_settings_general.tsx',
 ];
 

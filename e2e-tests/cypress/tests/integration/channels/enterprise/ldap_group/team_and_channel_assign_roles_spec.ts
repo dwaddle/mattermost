@@ -12,7 +12,7 @@
 import * as TIMEOUTS from '@/fixtures/timeouts';
 
 // # Save setting and get back to the resource page
-const saveAndNavigateBackTo = (editTestId: string, displayName: string, page: string) => {
+const saveAndNavigateBackTo = (rowTestId: string, displayName: string, page: string) => {
     cy.get('#saveSetting').should('be.enabled').click().wait(TIMEOUTS.HALF_SEC);
 
     // * Verify that it redirects to page and wait for a while to load
@@ -20,7 +20,7 @@ const saveAndNavigateBackTo = (editTestId: string, displayName: string, page: st
     cy.get('.DataGrid_searchBar').within(() => {
         cy.findByPlaceholderText('Search').should('be.visible').type(`${displayName}{enter}`).wait(TIMEOUTS.HALF_SEC);
     });
-    cy.findByTestId(editTestId).should('be.visible').click();
+    cy.findByTestId(rowTestId).findByTestId(`admin.${page}.row.edit--link`).should('be.visible').click();
 };
 
 const changeRole = (type: string, fromRole: string, toRole: string) => {
@@ -49,8 +49,8 @@ describe('System Console', () => {
     let channelDisplayName: string;
 
     // the System Console lists' edit links are keyed by id
-    let teamEditTestId: string;
-    let channelEditTestId: string;
+    let teamRowTestId: string;
+    let channelRowTestId: string;
 
     before(() => {
         // * Check if server has license for LDAP Groups
@@ -62,9 +62,9 @@ describe('System Console', () => {
         }).then(({team, channel}) => {
             testTeam = team;
             teamDisplayName = team.display_name;
-            teamEditTestId = `admin.teams.edit:${team.id}--link`;
+            teamRowTestId = `admin.teams.row:${team.id}`;
             channelDisplayName = channel.display_name;
-            channelEditTestId = `admin.channels.edit:${channel.id}--link`;
+            channelRowTestId = `admin.channels.row:${channel.id}`;
 
             cy.apiGetLDAPGroups().then((res) => {
                 res.body.groups.forEach((group: {name: string; display_name: string; id: string; primary_key: string}) => {
@@ -94,7 +94,7 @@ describe('System Console', () => {
         cy.get('.DataGrid_searchBar').within(() => {
             cy.findByPlaceholderText('Search').should('be.visible').type(`${teamDisplayName}{enter}`);
         });
-        cy.findByTestId(teamEditTestId).click();
+        cy.findByTestId(teamRowTestId).findByTestId('admin.teams.row.edit--link').click();
 
         // # Add the first group in the group list then save
         cy.get('#addGroupsToTeamToggle').scrollIntoView().click();
@@ -106,13 +106,13 @@ describe('System Console', () => {
         changeRole('team', 'Member', 'Team Admin');
 
         // # Save the setting and navigate back to page
-        saveAndNavigateBackTo(teamEditTestId, teamDisplayName, 'teams');
+        saveAndNavigateBackTo(teamRowTestId, teamDisplayName, 'teams');
 
         // # Change role from Team Admin to Member
         changeRole('team', 'Team Admin', 'Member');
 
         // # Save the setting and navigate back to page
-        saveAndNavigateBackTo(teamEditTestId, teamDisplayName, 'teams');
+        saveAndNavigateBackTo(teamRowTestId, teamDisplayName, 'teams');
 
         // * Check to make the the current role text is displayed as Member
         cy.get('#team_groups').scrollIntoView().findByTestId('admin.groups.group.role').should('have.text', 'Member');
@@ -135,7 +135,7 @@ describe('System Console', () => {
         cy.get('#groups-list--body').should('be.visible').contains('No groups specified yet');
 
         // # Save the setting and navigate back to page
-        saveAndNavigateBackTo(teamEditTestId, teamDisplayName, 'teams');
+        saveAndNavigateBackTo(teamRowTestId, teamDisplayName, 'teams');
 
         // * Assert that the group was removed successfully
         cy.get('#groups-list--body').scrollIntoView().should('be.visible').contains('No groups specified yet');
@@ -149,7 +149,7 @@ describe('System Console', () => {
         cy.get('.DataGrid_searchBar').within(() => {
             cy.findByPlaceholderText('Search').should('be.visible').type(`${teamDisplayName}{enter}`);
         });
-        cy.findByTestId(teamEditTestId).click();
+        cy.findByTestId(teamRowTestId).findByTestId('admin.teams.row.edit--link').click();
 
         // # Add the first group in the group list then save
         cy.get('#addGroupsToTeamToggle').click();
@@ -161,7 +161,7 @@ describe('System Console', () => {
         changeRole('team', 'Member', 'Team Admin');
 
         // # Save the setting and navigate back to page
-        saveAndNavigateBackTo(teamEditTestId, teamDisplayName, 'teams');
+        saveAndNavigateBackTo(teamRowTestId, teamDisplayName, 'teams');
 
         // * Check to make the the current role text is displayed as Team Admin
         cy.get('#team_groups').scrollIntoView().findByTestId('admin.groups.group.role').should('have.text', 'Team Admin');
@@ -175,7 +175,7 @@ describe('System Console', () => {
         cy.get('.DataGrid_searchBar').within(() => {
             cy.findByPlaceholderText('Search').should('be.visible').type(`${channelDisplayName}{enter}`);
         });
-        cy.findByTestId(channelEditTestId).click();
+        cy.findByTestId(channelRowTestId).findByTestId('admin.channels.row.edit--link').click();
 
         // # Add the first group in the group list then save
         cy.get('#addGroupsToChannelToggle').click();
@@ -187,13 +187,13 @@ describe('System Console', () => {
         changeRole('channel', 'Member', 'Channel Admin');
 
         // # Save the setting and navigate back to page
-        saveAndNavigateBackTo(channelEditTestId, channelDisplayName, 'channels');
+        saveAndNavigateBackTo(channelRowTestId, channelDisplayName, 'channels');
 
         // # Change role from Channel Admin to Member
         changeRole('channel', 'Channel Admin', 'Member');
 
         // # Save the setting and navigate back to page
-        saveAndNavigateBackTo(channelEditTestId, channelDisplayName, 'channels');
+        saveAndNavigateBackTo(channelRowTestId, channelDisplayName, 'channels');
 
         // * Check to make the the current role text is displayed as Member
         cy.get('#channel_groups').scrollIntoView().findByTestId('admin.groups.group.role').should('have.text', 'Member');
@@ -207,7 +207,7 @@ describe('System Console', () => {
         cy.get('.DataGrid_searchBar').within(() => {
             cy.findByPlaceholderText('Search').should('be.visible').type(`${channelDisplayName}{enter}`);
         });
-        cy.findByTestId(channelEditTestId).click();
+        cy.findByTestId(channelRowTestId).findByTestId('admin.channels.row.edit--link').click();
 
         // # Add the first group in the group list then save
         cy.get('#addGroupsToChannelToggle').click();
@@ -219,7 +219,7 @@ describe('System Console', () => {
         changeRole('channel', 'Member', 'Channel Admin');
 
         // # Save the setting and navigate back to page
-        saveAndNavigateBackTo(channelEditTestId, channelDisplayName, 'channels');
+        saveAndNavigateBackTo(channelRowTestId, channelDisplayName, 'channels');
 
         // * Check to make the the current role text is displayed as Channel Admin
         cy.get('#channel_groups').scrollIntoView().findByTestId('admin.groups.group.role').should('have.text', 'Channel Admin');

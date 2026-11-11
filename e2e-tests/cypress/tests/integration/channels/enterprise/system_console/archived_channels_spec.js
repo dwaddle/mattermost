@@ -43,7 +43,7 @@ describe('Archived channels', () => {
         cy.findByText(testChannel.display_name, {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
 
         // * Verify the deleted channel displays the correct icon
-        cy.findByTestId(`admin.channels.icon:${testChannel.id}`).should('be.visible');
+        cy.findByTestId(`admin.channels.row:${testChannel.id}`).findByTestId('admin.channels.row.icon').should('be.visible');
     });
 
     it('appear in the search results of the channels list view', () => {
@@ -99,7 +99,7 @@ describe('Archived channels', () => {
         cy.findByText(testChannel.display_name, {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
 
         // * Verify the archive icon is displayed
-        cy.findByTestId(`admin.channels.icon:${testChannel.id}`).should('be.visible');
+        cy.findByTestId(`admin.channels.row:${testChannel.id}`).findByTestId('admin.channels.row.icon').should('be.visible');
     });
 
     it('display archive-lock icon for private archived channels in channel list', () => {
@@ -110,6 +110,6 @@ describe('Archived channels', () => {
         cy.findByText(testPrivateChannel.display_name, {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
 
         // * Verify the archive icon is displayed for private channel
-        cy.findByTestId(`admin.channels.icon:${testPrivateChannel.id}`).should('be.visible');
+        cy.findByTestId(`admin.channels.row:${testPrivateChannel.id}`).findByTestId('admin.channels.row.icon').should('be.visible');
     });
 });

@@ -193,7 +193,7 @@ context('ldap', () => {
                 });
 
                 // * Ensure anyone can join text shows
-                cy.findByTestId(`admin.teams.management:${testTeam.id}--text`).should('have.text', 'Anyone Can Join');
+                cy.findByTestId(`admin.teams.row:${testTeam.id}`).findByTestId('admin.teams.row.management--text').should('have.text', 'Anyone Can Join');
 
                 // * Search for second team we just made
                 cy.get('.DataGrid_searchBar').within(() => {
@@ -201,7 +201,7 @@ context('ldap', () => {
                 });
 
                 // * Ensure the management text shows Invite only
-                cy.findByTestId(`admin.teams.management:${testTeam2.id}--text`).should('have.text', 'Invite Only');
+                cy.findByTestId(`admin.teams.row:${testTeam2.id}`).findByTestId('admin.teams.row.management--text').should('have.text', 'Invite Only');
             });
         });
 
@@ -315,8 +315,8 @@ context('ldap', () => {
             });
             cy.wait(TIMEOUTS.FIVE_SEC);
 
-            // (after the search, the list holds only town squares; edit links are keyed by channel id)
-            cy.get('[data-testid^="admin.channels.edit:"]').then((elements) => {
+            // (after the search, the list holds only town squares; each row's edit link is under its row)
+            cy.get('[data-testid="admin.channels.row.edit--link"]').then((elements) => {
                 elements[0].click();
                 cy.get('.admin-console__header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').and('have.text', 'Channel Configuration');
 
