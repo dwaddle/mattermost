@@ -85408,17 +85408,17 @@
       ]
     },
     {
-      "template": "search_box.date_picker.day:{key}--gridcell",
+      "template": "search_box.date_picker.day:{key}--text",
       "grammar": true,
       "scope": [
         "search_box",
         "date_picker"
       ],
       "name": "day",
-      "role": "gridcell",
+      "role": "text",
       "component": {
-        "name": "Day",
-        "at": "channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#Day"
+        "name": "DayContent",
+        "at": "channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#DayContent"
       },
       "instances": [
         {
@@ -85426,7 +85426,7 @@
         }
       ],
       "aria": {
-        "role": "gridcell",
+        "role": null,
         "native": false,
         "state": []
       },

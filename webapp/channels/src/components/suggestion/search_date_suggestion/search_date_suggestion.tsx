@@ -2,9 +2,9 @@
 // See LICENSE.txt for license information.
 
 import type {Locale} from 'date-fns';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Button, DayPicker, useDayRender} from 'react-day-picker';
-import type {DayProps} from 'react-day-picker';
+import React, {useCallback, useEffect, useState} from 'react';
+import {DayPicker, useDayPicker} from 'react-day-picker';
+import type {DayContentProps} from 'react-day-picker';
 
 import Constants from 'utils/constants';
 import * as Keyboard from 'utils/keyboard';
@@ -37,30 +37,20 @@ const IconRight = () => {
 const dayKey = (date: Date) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
 
 /**
- * react-day-picker's own Day, plus a testid keyed by the day's date (`search_box.date_picker.day:2020-06-15--gridcell`;
- * the library makes each day button a grid cell).
+ * The library's day label (its `formatDay`), in a span keyed by the day's date
+ * (`search_box.date_picker.day:2020-06-15--text`). The library keeps rendering the day's button around it; the key
+ * tells apart the same day number shown twice (outside days).
  */
-const Day = (props: DayProps) => {
-    const buttonRef = useRef<HTMLButtonElement>(null) as React.RefObject<HTMLButtonElement>;
-    const day = useDayRender(props.date, props.displayMonth, buttonRef);
-    if (day.isHidden) {
-        return <div role='gridcell'/>;
-    }
-    if (!day.isButton) {
-        return <div {...day.divProps}/>;
-    }
+const DayContent = (props: DayContentProps) => {
+    const {locale, formatters: {formatDay}} = useDayPicker();
     return (
-        <Button
-            name='day'
-            ref={buttonRef}
-            role='gridcell'
-            {...day.buttonProps}
-            data-testid={`search_box.date_picker.day:${dayKey(props.date)}--gridcell`}
-        />
+        <span data-testid={`search_box.date_picker.day:${dayKey(props.date)}--text`}>
+            {formatDay(props.date, {locale})}
+        </span>
     );
 };
 
-const DAY_PICKER_COMPONENTS = {IconRight, IconLeft, Day};
+const DAY_PICKER_COMPONENTS = {IconRight, IconLeft, DayContent};
 
 const SearchDateSuggestion = ({
     currentDate,

@@ -206,37 +206,37 @@ export class SearchBoxDatePicker extends Scope {
     }
 
     /**
-     * `search_box.date_picker.day:{key}--gridcell` — Day (channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx)
+     * `search_box.date_picker.day:{key}--text` — DayContent (channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx)
      */
     day(day: string) {
-        return drivers.text(this.byTestId(`${this.scope}.day:${day}--gridcell`), {
-            testId: `${this.scope}.day:${day}--gridcell`,
-            role: 'gridcell',
+        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
+            testId: `${this.scope}.day:${day}--text`,
+            role: 'text',
             effects: [],
             unknownEffects: false,
-            source: 'channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#Day',
+            source: 'channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#DayContent',
         });
     }
 
-    /** Every `search_box.date_picker.day:{key}--gridcell` in the scope. */
+    /** Every `search_box.date_picker.day:{key}--text` in the scope. */
     get dayItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.day:`, '--gridcell');
+        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
     }
 
-    /** The keys of every `search_box.date_picker.day:{key}--gridcell` in the scope, in document order. */
+    /** The keys of every `search_box.date_picker.day:{key}--text` in the scope, in document order. */
     dayKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.day:`, '--gridcell');
+        return this.keysOf(`${this.scope}.day:`, '--text');
     }
 
-    /** Every `search_box.date_picker.day:{key}--gridcell` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
+    /** Every `search_box.date_picker.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
     get dayList() {
-        return this.keyedList(`${this.scope}.day:`, '--gridcell', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.day:${key}--gridcell`), {
-                testId: `${this.scope}.day:${key}--gridcell`,
-                role: 'gridcell',
+        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
+            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
+                testId: `${this.scope}.day:${key}--text`,
+                role: 'text',
                 effects: [],
                 unknownEffects: false,
-                source: 'channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#Day',
+                source: 'channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#DayContent',
             }),
         );
     }

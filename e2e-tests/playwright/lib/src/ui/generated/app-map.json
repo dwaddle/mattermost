@@ -14312,10 +14312,10 @@
             "class": "SearchBoxDatePicker",
             "elements": [
                 {
-                    "testId": "search_box.date_picker.day:{key}--gridcell",
-                    "role": "gridcell",
+                    "testId": "search_box.date_picker.day:{key}--text",
+                    "role": "text",
                     "key": "string",
-                    "source": "channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#Day"
+                    "source": "channels/src/components/suggestion/search_date_suggestion/search_date_suggestion.tsx#DayContent"
                 }
             ]
         },
