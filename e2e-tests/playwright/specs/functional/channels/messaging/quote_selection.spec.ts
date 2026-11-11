@@ -195,7 +195,7 @@ test('does not offer to quote in an archived channel', TAGS, async ({pw}) => {
     const archivedPost = await userClient.createPost({channel_id: channel.id, message: MESSAGE});
     await userClient.deleteChannel(channel.id);
 
-    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    const {channelsPage, page} = await pw.testBrowser.login(user);
     await channelsPage.goto(team.name, channel.name);
 
     // * The archived channel has no message box, so wait for the post instead

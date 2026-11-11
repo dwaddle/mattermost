@@ -204,7 +204,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
         await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
@@ -230,7 +230,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
         await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
@@ -265,7 +265,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
         await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
@@ -306,7 +306,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
         await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
@@ -356,7 +356,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         );
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
+        const {channelsPage, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
         await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
