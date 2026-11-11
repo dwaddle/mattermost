@@ -5,11 +5,11 @@ import {demoPluginId, demoPluginUrl, getPluginStatus, test, expect} from '@matte
 
 test('should install and enable demo plugin from URL', async ({pw}) => {
     // # Create and navigate to channels page
-    const {adminClient, user} = await pw.initSetup();
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {adminClient, user, team} = await pw.initSetup();
+    const {app} = await pw.testBrowser.login(user);
 
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Enable public links before installing plugin
     await adminClient.patchConfig({

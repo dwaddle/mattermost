@@ -13,9 +13,8 @@ test(
     {tag: '@marketplace'},
     async ({pw}) => {
         const {adminUser, team} = await pw.initSetup();
-        const {app, channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open the App Marketplace from the product menu
         const productMenu = await app.globalHeader.clickProductMenuButton();
