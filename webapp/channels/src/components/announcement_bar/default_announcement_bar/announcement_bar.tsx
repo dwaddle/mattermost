@@ -22,7 +22,7 @@ type Props = {
     id?: string;
 
     // The bar is `<testId>`, its message `<testId>.message--text`, its close link `<testId>.close--link`.
-    testId?: TestId;
+    testId: TestId;
     showCloseButton: boolean;
     className?: string;
     color: string;
@@ -170,7 +170,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
                 <a
                     href='#'
                     className='announcement-bar__close'
-                    data-testid={part(this.props.testId, 'close', 'link')}
+                    data-testid={`${this.props.testId}.close--link`}
                     style={linkStyle}
                     onClick={this.handleClose}
                 >
@@ -196,7 +196,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
             <span
                 ref={this.messageRef}
                 onMouseEnter={this.enableToolTipIfNeeded}
-                data-testid={part(this.props.testId, 'message', 'text')}
+                data-testid={`${this.props.testId}.message--text`}
             >
                 {message}
             </span>

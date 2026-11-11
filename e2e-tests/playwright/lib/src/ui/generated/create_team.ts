@@ -160,6 +160,10 @@ export class CreateTeam extends Scope {
         });
     }
 
+    get header(): CreateTeamHeader {
+        return new CreateTeamHeader(this.page, `${this.scope}.header`, this.root);
+    }
+
     get name(): Input {
         return new Input(this.page, `${this.scope}.name`, this.root);
     }
@@ -182,5 +186,35 @@ export class CreateTeam extends Scope {
             name: vName,
             url: vUrl,
         };
+    }
+}
+
+/** Scope `create_team.header`. */
+export class CreateTeamHeader extends Scope {
+    constructor(page: Page, scope = 'create_team.header', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `create_team.header.back--link` — BackButton (channels/src/components/common/back_button.tsx)
+     * Goes to url.
+     */
+    get backLink() {
+        return drivers.link(this.byTestId(`${this.scope}.back--link`), {
+            testId: `${this.scope}.back--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/back_button.tsx#BackButton',
+        });
+    }
+
+    async clickBackLink(): Promise<void> {
+        await this.backLink.click();
     }
 }

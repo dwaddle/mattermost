@@ -36,6 +36,24 @@ export class Claim extends Scope {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
+    /**
+     * `claim.back--link` — BackButton (channels/src/components/common/back_button.tsx)
+     * Goes to url.
+     */
+    get backLink() {
+        return drivers.link(this.byTestId(`${this.scope}.back--link`), {
+            testId: `${this.scope}.back--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/back_button.tsx#BackButton',
+        });
+    }
+
+    async clickBackLink(): Promise<void> {
+        await this.backLink.click();
+    }
+
     get emailToLdap(): ClaimEmailToLdap {
         return new ClaimEmailToLdap(this.page, `${this.scope}.email_to_ldap`, this.root);
     }

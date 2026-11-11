@@ -22,7 +22,8 @@ type Props = {
      */
     onClick?: React.EventHandler<React.MouseEvent>;
 
-    testId?: TestId;
+    /** The link is `<testId>--link`. */
+    testId: TestId;
 };
 
 const BackButton = ({url = '/', className, onClick, testId}: Props): JSX.Element => {
@@ -30,11 +31,10 @@ const BackButton = ({url = '/', className, onClick, testId}: Props): JSX.Element
 
     return (
         <div
-            data-testid={testId ? undefined : 'signup.header'}
             className={classNames('signup-header', className)}
         >
             <Link
-                data-testid={testId ? `${testId}--link` : 'signup.header.back--link'}
+                data-testid={`${testId}--link`}
                 onClick={onClick}
                 to={url}
             >

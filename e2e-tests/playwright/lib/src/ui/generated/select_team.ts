@@ -23,6 +23,24 @@ export class SelectTeam extends Scope {
     }
 
     /**
+     * `select_team.back--link` — BackButton (channels/src/components/common/back_button.tsx)
+     * Goes to url.
+     */
+    get backLink() {
+        return drivers.link(this.byTestId(`${this.scope}.back--link`), {
+            testId: `${this.scope}.back--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/common/back_button.tsx#BackButton',
+        });
+    }
+
+    async clickBackLink(): Promise<void> {
+        await this.backLink.click();
+    }
+
+    /**
      * `select_team.recommended:{key}--text` — SelectTeamItem (channels/src/components/select_team/components/select_team_item.tsx)
      * Renders only when team.recommended and !this.state.loadingTeamId and !this.state.error.
      */

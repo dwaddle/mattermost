@@ -3,6 +3,8 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import Markdown from 'components/markdown';
 
 import AnnouncementBar from './default_announcement_bar/index';
@@ -16,6 +18,7 @@ interface Props extends Partial<AnnouncementBarProps> {
     text: React.ReactNode;
     onDismissal?: () => void;
     className?: string;
+    testId: TestId;
 }
 
 const options = {

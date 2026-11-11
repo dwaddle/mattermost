@@ -262,10 +262,10 @@ export class ClaimPage {
         return buildPath(ClaimPage.route, {});
     }
 
-    /** Navigates here and waits until `signup.header` shows. */
+    /** Navigates here and waits until `claim.back--link` shows. */
     async goto(): Promise<void> {
         await this.page.goto(ClaimPage.path());
-        await this.page.getByTestId('signup.header').waitFor();
+        await this.page.getByTestId('claim.back--link').waitFor();
     }
 }
 

@@ -630,7 +630,7 @@
             "center.archived_notice"
         ],
         "ClaimPage": [
-            "signup.header"
+            "claim.back--link"
         ],
         "ComponentLibraryPage": {
             "ready": null,

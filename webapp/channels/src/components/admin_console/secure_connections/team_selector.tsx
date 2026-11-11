@@ -5,6 +5,7 @@ import type {ComponentProps, JSX} from 'react';
 import React, {useCallback} from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Team} from '@mattermost/types/teams';
 import type {IDMappedObjects} from '@mattermost/types/utilities';
 
@@ -14,7 +15,7 @@ export type Props = {
     value: string;
     teamsById: IDMappedObjects<Team>;
     onChange: (teamId: string) => void;
-    testId: string;
+    testId: TestId;
     legend?: string;
 };
 

@@ -65027,6 +65027,1389 @@
       ]
     },
     {
+      "template": "announcement_bar.cloud_preview",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "cloud_preview",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/cloud_preview_announcement_bar/index.tsx#CloudPreviewAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!subscription?.is_cloud_preview || !isCloud)",
+          "explained": "!(!subscription?.is_cloud_preview || !isCloud)",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.cloud_preview.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "cloud_preview"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/cloud_preview_announcement_bar/index.tsx#CloudPreviewAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!subscription?.is_cloud_preview || !isCloud)",
+          "explained": "!(!subscription?.is_cloud_preview || !isCloud)",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.cloud_trial",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "cloud_trial",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/cloud_trial_announcement_bar/cloud_trial_announcement_bar.tsx#CloudTrialAnnouncementBarInternal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.shouldShowBanner()",
+          "explained": "this.shouldShowBanner()",
+          "kind": "other"
+        },
+        {
+          "expr": "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+          "explained": "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.cloud_trial.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "cloud_trial"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/cloud_trial_announcement_bar/cloud_trial_announcement_bar.tsx#CloudTrialAnnouncementBarInternal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/announcement_bar/cloud_trial_announcement_bar/cloud_trial_announcement_bar.tsx#CloudTrialAnnouncementBarInternal"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.shouldShowBanner()",
+          "explained": "this.shouldShowBanner()",
+          "kind": "other"
+        },
+        {
+          "expr": "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+          "explained": "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.cloud_trial.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "cloud_trial"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/cloud_trial_announcement_bar/cloud_trial_announcement_bar.tsx#CloudTrialAnnouncementBarInternal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.shouldShowBanner()",
+          "explained": "this.shouldShowBanner()",
+          "kind": "other"
+        },
+        {
+          "expr": "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+          "explained": "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.error",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "error",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/announcement_bar_controller.tsx#AnnouncementBarController"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.error.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "error"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/announcement_bar_controller.tsx#AnnouncementBarController"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.error.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "error"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/announcement_bar_controller.tsx#AnnouncementBarController"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_expired",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "license_expired",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+          "explained": "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_expired.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "license_expired"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "UpdatePreferences"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+          "explained": "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_expired.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "license_expired"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+          "explained": "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_expiring",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "license_expiring",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+          "explained": "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_expiring.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "license_expiring"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+          "explained": "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_expiring.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "license_expiring"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+          "explained": "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_past_grace",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "license_past_grace",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!props.canViewSystemErrors",
+          "explained": "!props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "isLicensePastGracePeriod(props.license)",
+          "explained": "isLicensePastGracePeriod(props.license)",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.license_past_grace.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "license_past_grace"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!props.canViewSystemErrors",
+          "explained": "!props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "isLicensePastGracePeriod(props.license)",
+          "explained": "isLicensePastGracePeriod(props.license)",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.non_production_license",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "non_production_license",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/non_production_license_bar/index.tsx#NonProductionLicenseAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!(license?.IsNonProduction !== 'true')",
+          "explained": "!(license?.IsNonProduction !== 'true')",
+          "kind": "license/config/flag"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.non_production_license.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "non_production_license"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/non_production_license_bar/index.tsx#NonProductionLicenseAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!(license?.IsNonProduction !== 'true')",
+          "explained": "!(license?.IsNonProduction !== 'true')",
+          "kind": "license/config/flag"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.notifications_never_granted",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "notifications_never_granted",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/notification_permission_bar/notification_permission_never_granted_bar.tsx#NotificationPermissionNeverGrantedBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "show",
+          "explained": "show",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.notifications_never_granted.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "notifications_never_granted"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/notification_permission_bar/notification_permission_never_granted_bar.tsx#NotificationPermissionNeverGrantedBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        },
+        {
+          "expr": "show",
+          "explained": "show",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.notifications_never_granted.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "notifications_never_granted"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/notification_permission_bar/notification_permission_never_granted_bar.tsx#NotificationPermissionNeverGrantedBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "show",
+          "explained": "show",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.notifications_unsupported",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "notifications_unsupported",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/notification_permission_bar/notification_permission_unsupported_bar.tsx#UnsupportedNotificationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "show",
+          "explained": "show",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.notifications_unsupported.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "notifications_unsupported"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/notification_permission_bar/notification_permission_unsupported_bar.tsx#UnsupportedNotificationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        },
+        {
+          "expr": "show",
+          "explained": "show",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.notifications_unsupported.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "notifications_unsupported"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/notification_permission_bar/notification_permission_unsupported_bar.tsx#UnsupportedNotificationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "show",
+          "explained": "show",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.overage_users",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "overage_users",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/overage_users_banner/index.tsx#OverageUsersBanner"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))",
+          "explained": "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))",
+          "kind": "permission"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.overage_users.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "overage_users"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/overage_users_banner/index.tsx#OverageUsersBanner"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "UpdatePreferences"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        },
+        {
+          "expr": "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))",
+          "explained": "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))",
+          "kind": "permission"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.overage_users.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "overage_users"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/overage_users_banner/index.tsx#OverageUsersBanner"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))",
+          "explained": "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))",
+          "kind": "permission"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.post_history_limit",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "post_history_limit",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/post_history_limit_banner/index.tsx#PostHistoryLimitBanner"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "showBanner",
+          "explained": "showBanner",
+          "kind": "permission",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.post_history_limit.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "post_history_limit"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/post_history_limit_banner/index.tsx#PostHistoryLimitBanner"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "UpdatePreferences"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        },
+        {
+          "expr": "showBanner",
+          "explained": "showBanner",
+          "kind": "permission",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.post_history_limit.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "post_history_limit"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/post_history_limit_banner/index.tsx#PostHistoryLimitBanner"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "showBanner",
+          "explained": "showBanner",
+          "kind": "permission",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.preview_mode",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "preview_mode",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar",
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+          "explained": "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!dismissed",
+          "explained": "!dismissed",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.preview_mode.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "preview_mode"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar",
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+          "explained": "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        },
+        {
+          "expr": "!dismissed",
+          "explained": "!dismissed",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.preview_mode.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "preview_mode"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar",
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+          "explained": "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!dismissed",
+          "explained": "!dismissed",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
       "template": "announcement_bar.single_channel_guest_limit",
       "grammar": true,
       "scope": [
@@ -65148,6 +66531,567 @@
           "expr": "!(!props.userIsAdmin || isDismissed || isEntrySku || !guestAccountsEnabled || singleChannelGuestLimit === 0 || singleChannelGuestCount <= singleChannelGuestLimit)",
           "explained": "!(!props.userIsAdmin || isDismissed || isEntrySku || !guestAccountsEnabled || singleChannelGuestLimit === 0 || singleChannelGuestCount <= singleChannelGuestLimit)",
           "kind": "store selector"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.site_url",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "site_url",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar",
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors && props.config?.SiteURL === ''",
+          "explained": "props.canViewSystemErrors && props.config?.SiteURL === ''",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!dismissed",
+          "explained": "!dismissed",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.site_url.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "site_url"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar",
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors && props.config?.SiteURL === ''",
+          "explained": "props.canViewSystemErrors && props.config?.SiteURL === ''",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        },
+        {
+          "expr": "!dismissed",
+          "explained": "!dismissed",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.site_url.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "site_url"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/text_dismissable_bar.tsx#TextDismissableBar",
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors && props.config?.SiteURL === ''",
+          "explained": "props.canViewSystemErrors && props.config?.SiteURL === ''",
+          "kind": "prop"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!dismissed",
+          "explained": "!dismissed",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.trial_expiring",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "trial_expiring",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+          "explained": "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.trial_expiring.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "trial_expiring"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+          "explained": "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.trial_expiring.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "trial_expiring"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/configuration_bar/configuration_bar.tsx#ConfigurationAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "props.canViewSystemErrors",
+          "explained": "props.canViewSystemErrors",
+          "kind": "prop"
+        },
+        {
+          "expr": "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+          "explained": "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+          "kind": "license/config/flag"
+        },
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.users_limits_critical",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "users_limits_critical",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/users_limits_announcement_bar/index.tsx#UsersLimitsAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount})",
+          "explained": "shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount})",
+          "kind": "license/config/flag"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.users_limits_critical.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "users_limits_critical"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/users_limits_announcement_bar/index.tsx#UsersLimitsAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount})",
+          "explained": "shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount})",
+          "kind": "license/config/flag"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.users_limits_warning",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "users_limits_warning",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/users_limits_announcement_bar/index.tsx#UsersLimitsAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
+          "explained": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
+          "kind": "license/config/flag"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.users_limits_warning.close--link",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "users_limits_warning"
+      ],
+      "name": "close",
+      "role": "link",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/users_limits_announcement_bar/index.tsx#UsersLimitsAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "UpdatePreferences"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "this.props.showCloseButton",
+          "explained": "this.props.showCloseButton",
+          "kind": "prop"
+        },
+        {
+          "expr": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
+          "explained": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
+          "kind": "license/config/flag"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.users_limits_warning.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "users_limits_warning"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/users_limits_announcement_bar/index.tsx#UsersLimitsAnnouncementBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
+          "explained": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
+          "kind": "license/config/flag"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.version",
+      "grammar": true,
+      "scope": [
+        "announcement_bar"
+      ],
+      "name": "version",
+      "role": null,
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/version_bar/version_bar.tsx#VersionBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!(!buildHashOnAppLoad || buildHashOnAppLoad === buildHash)",
+          "explained": "!(!buildHashOnAppLoad || buildHashOnAppLoad === buildHash)",
+          "kind": "local state"
+        },
+        {
+          "expr": "buildHashOnAppLoad !== buildHash",
+          "explained": "buildHashOnAppLoad !== buildHash",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "announcement_bar.version.message--text",
+      "grammar": true,
+      "scope": [
+        "announcement_bar",
+        "version"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "AnnouncementBar",
+        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/announcement_bar/version_bar/version_bar.tsx#VersionBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "this.props.message",
+          "explained": "this.props.message",
+          "kind": "other"
+        },
+        {
+          "expr": "!(!buildHashOnAppLoad || buildHashOnAppLoad === buildHash)",
+          "explained": "!(!buildHashOnAppLoad || buildHashOnAppLoad === buildHash)",
+          "kind": "local state"
+        },
+        {
+          "expr": "buildHashOnAppLoad !== buildHash",
+          "explained": "buildHashOnAppLoad !== buildHash",
+          "kind": "local state"
         }
       ]
     },
@@ -102304,6 +104248,45 @@
       ]
     },
     {
+      "template": "claim.back--link",
+      "grammar": true,
+      "scope": [
+        "claim"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/claim/claim_controller.tsx#ClaimController"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/common/back_button.tsx#BackButton"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/back_button.tsx#BackButton"
+        ]
+      }
+    },
+    {
       "template": "claim.email_to_ldap.ldap_id--textbox",
       "grammar": true,
       "scope": [
@@ -104886,6 +106869,46 @@
         "role": null,
         "native": false,
         "state": []
+      }
+    },
+    {
+      "template": "create_team.header.back--link",
+      "grammar": true,
+      "scope": [
+        "create_team",
+        "header"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/create_team/create_team.tsx#CreateTeam"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/common/back_button.tsx#BackButton"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/back_button.tsx#BackButton"
+        ]
       }
     },
     {
@@ -132439,6 +134462,52 @@
         "native": false,
         "state": []
       }
+    },
+    {
+      "template": "mfa.back--link",
+      "grammar": true,
+      "scope": [
+        "mfa"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/common/back_button.tsx#BackButton"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/back_button.tsx#BackButton"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(this.props.mfa && this.props.enforceMultifactorAuthentication)",
+          "explained": "!(this.props.mfa && this.props.enforceMultifactorAuthentication)",
+          "kind": "other"
+        }
+      ]
     },
     {
       "template": "mobile_header.open_menu--button",
@@ -192966,6 +195035,45 @@
       }
     },
     {
+      "template": "select_team.back--link",
+      "grammar": true,
+      "scope": [
+        "select_team"
+      ],
+      "name": "back",
+      "role": "link",
+      "component": {
+        "name": "BackButton",
+        "at": "channels/src/components/common/back_button.tsx#BackButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/select_team/select_team.tsx#SelectTeam"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/common/back_button.tsx#BackButton"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/back_button.tsx#BackButton"
+        ]
+      }
+    },
+    {
       "template": "select_team.recommended:{key}--text",
       "grammar": true,
       "scope": [
@@ -200511,101 +202619,6 @@
           "kind": "other"
         }
       ]
-    },
-    {
-      "template": "signup.header",
-      "grammar": true,
-      "scope": [
-        "signup"
-      ],
-      "name": "header",
-      "role": null,
-      "component": {
-        "name": "BackButton",
-        "at": "channels/src/components/common/back_button.tsx#BackButton"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/claim/claim_controller.tsx#ClaimController"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/create_team/create_team.tsx#CreateTeam"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/select_team/select_team.tsx#SelectTeam"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      }
-    },
-    {
-      "template": "signup.header.back--link",
-      "grammar": true,
-      "scope": [
-        "signup",
-        "header"
-      ],
-      "name": "back",
-      "role": "link",
-      "component": {
-        "name": "BackButton",
-        "at": "channels/src/components/common/back_button.tsx#BackButton"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/claim/claim_controller.tsx#ClaimController"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/create_team/create_team.tsx#CreateTeam"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/mfa/mfa_controller/mfa_controller.tsx#MFAController"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/select_team/select_team.tsx#SelectTeam"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "link",
-        "native": false,
-        "state": []
-      },
-      "opens": [
-        {
-          "kind": "page",
-          "target": "url",
-          "at": "channels/src/components/common/back_button.tsx#BackButton"
-        }
-      ],
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/common/back_button.tsx#BackButton"
-        ]
-      }
     },
     {
       "template": "signup.no_methods.message--text",
@@ -221481,7 +223494,24 @@
         "admin.sidebar.header.menu.switch_teams_menu",
         "admin.sidebar.header.menu.switch_teams_menu.paper",
         "announcement_bar.admin",
+        "announcement_bar.cloud_preview",
+        "announcement_bar.cloud_trial",
+        "announcement_bar.error",
+        "announcement_bar.license_expired",
+        "announcement_bar.license_expiring",
+        "announcement_bar.license_past_grace",
+        "announcement_bar.non_production_license",
+        "announcement_bar.notifications_never_granted",
+        "announcement_bar.notifications_unsupported",
+        "announcement_bar.overage_users",
+        "announcement_bar.post_history_limit",
+        "announcement_bar.preview_mode",
         "announcement_bar.single_channel_guest_limit",
+        "announcement_bar.site_url",
+        "announcement_bar.trial_expiring",
+        "announcement_bar.users_limits_critical",
+        "announcement_bar.users_limits_warning",
+        "announcement_bar.version",
         "backstage.navbar",
         "classification_banner.bottom",
         "classification_banner.top",
@@ -221500,21 +223530,21 @@
       "path": "/claim",
       "params": [],
       "scopes": [
+        "claim",
         "claim.email_to_ldap",
         "claim.email_to_oauth",
         "claim.ldap_to_email",
         "claim.oauth_to_email",
         "login_mfa",
         "login_mfa.token",
-        "login_mfa.token.field",
-        "signup.header"
+        "login_mfa.token.field"
       ],
       "component": {
         "name": "ClaimController",
         "at": "channels/src/components/claim/claim_controller.tsx#ClaimController"
       },
       "ready": [
-        "signup.header"
+        "claim.back--link"
       ]
     },
     {
@@ -221534,12 +223564,29 @@
       "params": [],
       "scopes": [
         "announcement_bar.admin",
+        "announcement_bar.cloud_preview",
+        "announcement_bar.cloud_trial",
+        "announcement_bar.error",
+        "announcement_bar.license_expired",
+        "announcement_bar.license_expiring",
+        "announcement_bar.license_past_grace",
+        "announcement_bar.non_production_license",
+        "announcement_bar.notifications_never_granted",
+        "announcement_bar.notifications_unsupported",
+        "announcement_bar.overage_users",
+        "announcement_bar.post_history_limit",
+        "announcement_bar.preview_mode",
         "announcement_bar.single_channel_guest_limit",
+        "announcement_bar.site_url",
+        "announcement_bar.trial_expiring",
+        "announcement_bar.users_limits_critical",
+        "announcement_bar.users_limits_warning",
+        "announcement_bar.version",
         "create_team",
         "create_team.form",
+        "create_team.header",
         "create_team.name",
-        "create_team.name.field",
-        "signup.header"
+        "create_team.name.field"
       ],
       "component": {
         "name": "CreateTeam",
@@ -221648,7 +223695,7 @@
       "path": "/mfa",
       "params": [],
       "scopes": [
-        "signup.header"
+        "mfa"
       ],
       "component": {
         "name": "MFAController",
@@ -221718,9 +223765,25 @@
       "params": [],
       "scopes": [
         "announcement_bar.admin",
+        "announcement_bar.cloud_preview",
+        "announcement_bar.cloud_trial",
+        "announcement_bar.error",
+        "announcement_bar.license_expired",
+        "announcement_bar.license_expiring",
+        "announcement_bar.license_past_grace",
+        "announcement_bar.non_production_license",
+        "announcement_bar.notifications_never_granted",
+        "announcement_bar.notifications_unsupported",
+        "announcement_bar.overage_users",
+        "announcement_bar.post_history_limit",
+        "announcement_bar.preview_mode",
         "announcement_bar.single_channel_guest_limit",
-        "select_team",
-        "signup.header"
+        "announcement_bar.site_url",
+        "announcement_bar.trial_expiring",
+        "announcement_bar.users_limits_critical",
+        "announcement_bar.users_limits_warning",
+        "announcement_bar.version",
+        "select_team"
       ],
       "component": {
         "name": "SelectTeam",
@@ -221786,7 +223849,24 @@
       "params": [],
       "scopes": [
         "announcement_bar.admin",
+        "announcement_bar.cloud_preview",
+        "announcement_bar.cloud_trial",
+        "announcement_bar.error",
+        "announcement_bar.license_expired",
+        "announcement_bar.license_expiring",
+        "announcement_bar.license_past_grace",
+        "announcement_bar.non_production_license",
+        "announcement_bar.notifications_never_granted",
+        "announcement_bar.notifications_unsupported",
+        "announcement_bar.overage_users",
+        "announcement_bar.post_history_limit",
+        "announcement_bar.preview_mode",
         "announcement_bar.single_channel_guest_limit",
+        "announcement_bar.site_url",
+        "announcement_bar.trial_expiring",
+        "announcement_bar.users_limits_critical",
+        "announcement_bar.users_limits_warning",
+        "announcement_bar.version",
         "terms_of_service.terms"
       ],
       "component": {

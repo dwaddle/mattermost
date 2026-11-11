@@ -30,15 +30,151 @@ export class AnnouncementBar extends Scope {
     }
 
     /**
+     * `announcement_bar.cloud_preview` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when !(!subscription?.is_cloud_preview || !isCloud) and this.props.message.
+     */
+    get cloudPreview(): AnnouncementBar3 {
+        return new AnnouncementBar3(this.page, `${this.scope}.cloud_preview`, this.root);
+    }
+
+    /**
+     * `announcement_bar.cloud_trial` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.shouldShowBanner() and !((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeft… and this.props.message.
+     */
+    get cloudTrial(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.cloud_trial`, this.root);
+    }
+
+    /**
+     * `announcement_bar.error` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message.
+     */
+    get error(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.error`, this.root);
+    }
+
+    /**
+     * `announcement_bar.license_expired` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when props.canViewSystemErrors and (isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense and this.props.message.
+     */
+    get licenseExpired(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.license_expired`, this.root);
+    }
+
+    /**
+     * `announcement_bar.license_expiring` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when props.canViewSystemErrors and !isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense and this.props.message.
+     */
+    get licenseExpiring(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.license_expiring`, this.root);
+    }
+
+    /**
+     * `announcement_bar.license_past_grace` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when !props.canViewSystemErrors and isLicensePastGracePeriod(props.license) and this.props.message.
+     */
+    get licensePastGrace(): AnnouncementBar3 {
+        return new AnnouncementBar3(this.page, `${this.scope}.license_past_grace`, this.root);
+    }
+
+    /**
+     * `announcement_bar.non_production_license` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and !(license?.IsNonProduction !== 'true').
+     */
+    get nonProductionLicense(): AnnouncementBar3 {
+        return new AnnouncementBar3(this.page, `${this.scope}.non_production_license`, this.root);
+    }
+
+    /**
+     * `announcement_bar.notifications_never_granted` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and show.
+     */
+    get notificationsNeverGranted(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.notifications_never_granted`, this.root);
+    }
+
+    /**
+     * `announcement_bar.notifications_unsupported` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and show.
+     */
+    get notificationsUnsupported(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.notifications_unsupported`, this.root);
+    }
+
+    /**
+     * `announcement_bar.overage_users` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and !(!hasPermission || adminHasDismissed({overagePreferences, preferenceName})).
+     */
+    get overageUsers(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.overage_users`, this.root);
+    }
+
+    /**
+     * `announcement_bar.post_history_limit` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and showBanner.
+     */
+    get postHistoryLimit(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.post_history_limit`, this.root);
+    }
+
+    /**
+     * `announcement_bar.preview_mode` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true' and this.props.message and !dismissed.
+     */
+    get previewMode(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.preview_mode`, this.root);
+    }
+
+    /**
      * `announcement_bar.single_channel_guest_limit` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
      * Renders only when this.props.message and !(!props.userIsAdmin || isDismissed || isEntrySku || !guestAccountsEnabled || singleChannelGuestLimit === 0 |….
      */
     get singleChannelGuestLimit(): AnnouncementBar2 {
         return new AnnouncementBar2(this.page, `${this.scope}.single_channel_guest_limit`, this.root);
     }
+
+    /**
+     * `announcement_bar.site_url` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when props.canViewSystemErrors && props.config?.SiteURL === '' and this.props.message and !dismissed.
+     */
+    get siteUrl(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.site_url`, this.root);
+    }
+
+    /**
+     * `announcement_bar.trial_expiring` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when props.canViewSystemErrors and isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <=… and this.props.message.
+     */
+    get trialExpiring(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.trial_expiring`, this.root);
+    }
+
+    /**
+     * `announcement_bar.users_limits_critical` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount}).
+     */
+    get usersLimitsCritical(): AnnouncementBar3 {
+        return new AnnouncementBar3(this.page, `${this.scope}.users_limits_critical`, this.root);
+    }
+
+    /**
+     * `announcement_bar.users_limits_warning` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, active….
+     */
+    get usersLimitsWarning(): AnnouncementBar2 {
+        return new AnnouncementBar2(this.page, `${this.scope}.users_limits_warning`, this.root);
+    }
+
+    /**
+     * `announcement_bar.version` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when this.props.message and !(!buildHashOnAppLoad || buildHashOnAppLoad === buildHash) and buildHashOnAppLoad !== buildHash.
+     */
+    get version(): AnnouncementBar3 {
+        return new AnnouncementBar3(this.page, `${this.scope}.version`, this.root);
+    }
 }
 
-/** Rendered at `announcement_bar.admin`, `announcement_bar.single_channel_guest_limit`: one class, constructed with the scope it is mounted at. */
+/** Rendered at `announcement_bar.admin`, `announcement_bar.cloud_trial`, `announcement_bar.error`, `announcement_bar.license_expired`, `announcement_bar.license_expiring`, `announcement_bar.notifications_never_granted`, `announcement_bar.notifications_unsupported`, `announcement_bar.overage_users`, `announcement_bar.post_history_limit`, `announcement_bar.preview_mode`, `announcement_bar.single_channel_guest_limit`, `announcement_bar.site_url`, `announcement_bar.trial_expiring`, `announcement_bar.users_limits_warning`: one class, constructed with the scope it is mounted at. */
 export class AnnouncementBar2 extends Scope {
     /**
      * `announcement_bar.admin.close--link` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
@@ -61,6 +197,27 @@ export class AnnouncementBar2 extends Scope {
     /**
      * `announcement_bar.admin.message--text` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
      * Renders only when this.props.config?.EnableBanner === 'true' && this.props.config.BannerText?.trim() and this.props.message and !dismissed.
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+}
+
+/** Rendered at `announcement_bar.cloud_preview`, `announcement_bar.license_past_grace`, `announcement_bar.non_production_license`, `announcement_bar.users_limits_critical`, `announcement_bar.version`: one class, constructed with the scope it is mounted at. */
+export class AnnouncementBar3 extends Scope {
+    /**
+     * `announcement_bar.cloud_preview.message--text` — AnnouncementBar (channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx)
+     * Renders only when !(!subscription?.is_cloud_preview || !isCloud) and this.props.message.
      */
     get messageText() {
         return drivers.text(this.byTestId(`${this.scope}.message--text`), {

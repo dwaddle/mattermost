@@ -145,7 +145,24 @@
                 "admin.sidebar.header.menu.switch_teams_menu",
                 "admin.sidebar.header.menu.switch_teams_menu.paper",
                 "announcement_bar.admin",
+                "announcement_bar.cloud_preview",
+                "announcement_bar.cloud_trial",
+                "announcement_bar.error",
+                "announcement_bar.license_expired",
+                "announcement_bar.license_expiring",
+                "announcement_bar.license_past_grace",
+                "announcement_bar.non_production_license",
+                "announcement_bar.notifications_never_granted",
+                "announcement_bar.notifications_unsupported",
+                "announcement_bar.overage_users",
+                "announcement_bar.post_history_limit",
+                "announcement_bar.preview_mode",
                 "announcement_bar.single_channel_guest_limit",
+                "announcement_bar.site_url",
+                "announcement_bar.trial_expiring",
+                "announcement_bar.users_limits_critical",
+                "announcement_bar.users_limits_warning",
+                "announcement_bar.version",
                 "backstage.navbar",
                 "classification_banner.bottom",
                 "classification_banner.top",
@@ -759,14 +776,14 @@
             "path": "/claim",
             "params": [],
             "scopes": [
+                "claim",
                 "claim.email_to_ldap",
                 "claim.email_to_oauth",
                 "claim.ldap_to_email",
                 "claim.oauth_to_email",
                 "login_mfa",
                 "login_mfa.token",
-                "login_mfa.token.field",
-                "signup.header"
+                "login_mfa.token.field"
             ]
         },
         {
@@ -783,12 +800,29 @@
             "params": [],
             "scopes": [
                 "announcement_bar.admin",
+                "announcement_bar.cloud_preview",
+                "announcement_bar.cloud_trial",
+                "announcement_bar.error",
+                "announcement_bar.license_expired",
+                "announcement_bar.license_expiring",
+                "announcement_bar.license_past_grace",
+                "announcement_bar.non_production_license",
+                "announcement_bar.notifications_never_granted",
+                "announcement_bar.notifications_unsupported",
+                "announcement_bar.overage_users",
+                "announcement_bar.post_history_limit",
+                "announcement_bar.preview_mode",
                 "announcement_bar.single_channel_guest_limit",
+                "announcement_bar.site_url",
+                "announcement_bar.trial_expiring",
+                "announcement_bar.users_limits_critical",
+                "announcement_bar.users_limits_warning",
+                "announcement_bar.version",
                 "create_team",
                 "create_team.form",
+                "create_team.header",
                 "create_team.name",
-                "create_team.name.field",
-                "signup.header"
+                "create_team.name.field"
             ]
         },
         {
@@ -930,7 +964,7 @@
             "getter": "mfaPage",
             "path": "/mfa",
             "params": [],
-            "scopes": ["signup.header"]
+            "scopes": ["mfa"]
         },
         {
             "class": "PasswordResetFormPage",
@@ -1022,9 +1056,25 @@
             "params": [],
             "scopes": [
                 "announcement_bar.admin",
+                "announcement_bar.cloud_preview",
+                "announcement_bar.cloud_trial",
+                "announcement_bar.error",
+                "announcement_bar.license_expired",
+                "announcement_bar.license_expiring",
+                "announcement_bar.license_past_grace",
+                "announcement_bar.non_production_license",
+                "announcement_bar.notifications_never_granted",
+                "announcement_bar.notifications_unsupported",
+                "announcement_bar.overage_users",
+                "announcement_bar.post_history_limit",
+                "announcement_bar.preview_mode",
                 "announcement_bar.single_channel_guest_limit",
-                "select_team",
-                "signup.header"
+                "announcement_bar.site_url",
+                "announcement_bar.trial_expiring",
+                "announcement_bar.users_limits_critical",
+                "announcement_bar.users_limits_warning",
+                "announcement_bar.version",
+                "select_team"
             ]
         },
         {
@@ -1111,7 +1161,24 @@
             "params": [],
             "scopes": [
                 "announcement_bar.admin",
+                "announcement_bar.cloud_preview",
+                "announcement_bar.cloud_trial",
+                "announcement_bar.error",
+                "announcement_bar.license_expired",
+                "announcement_bar.license_expiring",
+                "announcement_bar.license_past_grace",
+                "announcement_bar.non_production_license",
+                "announcement_bar.notifications_never_granted",
+                "announcement_bar.notifications_unsupported",
+                "announcement_bar.overage_users",
+                "announcement_bar.post_history_limit",
+                "announcement_bar.preview_mode",
                 "announcement_bar.single_channel_guest_limit",
+                "announcement_bar.site_url",
+                "announcement_bar.trial_expiring",
+                "announcement_bar.users_limits_critical",
+                "announcement_bar.users_limits_warning",
+                "announcement_bar.version",
                 "terms_of_service.terms"
             ]
         },
@@ -14628,6 +14695,266 @@
             ]
         },
         {
+            "scope": "announcement_bar.cloud_preview",
+            "class": "AnnouncementBar3",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.cloud_preview.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!(!subscription?.is_cloud_preview || !isCloud)", "this.props.message"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.cloud_trial",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.cloud_trial.close--link",
+                    "role": "link",
+                    "renderedWhen": [
+                        "this.shouldShowBanner()",
+                        "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+                        "this.props.message",
+                        "this.props.showCloseButton"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.cloud_trial.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "this.shouldShowBanner()",
+                        "!((preferences.some((pref) => pref.name === CloudBanners.TRIAL && pref.value === MAX_DAYS_BANNER) && daysLeftOnTrial > TrialPeriodDays.TRIAL_WARNING_THRESHOLD) || ((daysLeftOnTrial <= TrialPeriodDays.T…)",
+                        "this.props.message"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.error",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.error.close--link",
+                    "role": "link",
+                    "renderedWhen": ["this.props.message", "this.props.showCloseButton"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.error.message--text",
+                    "role": "text",
+                    "renderedWhen": ["this.props.message"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.license_expired",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.license_expired.close--link",
+                    "role": "link",
+                    "effects": ["UpdatePreferences"],
+                    "renderedWhen": [
+                        "props.canViewSystemErrors",
+                        "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+                        "this.props.message",
+                        "this.props.showCloseButton"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.license_expired.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.canViewSystemErrors",
+                        "(isLicensePastGracePeriod(props.license) || isLicenseExpired(props.license)) && !props.dismissedExpiredLicense",
+                        "this.props.message"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.license_expiring",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.license_expiring.close--link",
+                    "role": "link",
+                    "renderedWhen": [
+                        "props.canViewSystemErrors",
+                        "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+                        "this.props.message",
+                        "this.props.showCloseButton"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.license_expiring.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.canViewSystemErrors",
+                        "!isTrialLicense(props.license) && isLicenseExpiring(props.license) && !props.dismissedExpiringLicense",
+                        "this.props.message"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.license_past_grace",
+            "class": "AnnouncementBar3",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.license_past_grace.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!props.canViewSystemErrors",
+                        "isLicensePastGracePeriod(props.license)",
+                        "this.props.message"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.non_production_license",
+            "class": "AnnouncementBar3",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.non_production_license.message--text",
+                    "role": "text",
+                    "renderedWhen": ["this.props.message", "!(license?.IsNonProduction !== 'true')"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.notifications_never_granted",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.notifications_never_granted.close--link",
+                    "role": "link",
+                    "renderedWhen": ["this.props.message", "this.props.showCloseButton", "show"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.notifications_never_granted.message--text",
+                    "role": "text",
+                    "renderedWhen": ["this.props.message", "show"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.notifications_unsupported",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.notifications_unsupported.close--link",
+                    "role": "link",
+                    "renderedWhen": ["this.props.message", "this.props.showCloseButton", "show"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.notifications_unsupported.message--text",
+                    "role": "text",
+                    "renderedWhen": ["this.props.message", "show"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.overage_users",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.overage_users.close--link",
+                    "role": "link",
+                    "effects": ["UpdatePreferences"],
+                    "renderedWhen": [
+                        "this.props.message",
+                        "this.props.showCloseButton",
+                        "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.overage_users.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "this.props.message",
+                        "!(!hasPermission || adminHasDismissed({overagePreferences, preferenceName}))"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.post_history_limit",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.post_history_limit.close--link",
+                    "role": "link",
+                    "effects": ["UpdatePreferences"],
+                    "renderedWhen": ["this.props.message", "this.props.showCloseButton", "showBanner"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.post_history_limit.message--text",
+                    "role": "text",
+                    "renderedWhen": ["this.props.message", "showBanner"],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.preview_mode",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.preview_mode.close--link",
+                    "role": "link",
+                    "renderedWhen": [
+                        "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+                        "this.props.message",
+                        "this.props.showCloseButton",
+                        "!dismissed"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.preview_mode.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.config?.SendEmailNotifications !== 'true' && props.config?.EnablePreviewModeBanner === 'true'",
+                        "this.props.message",
+                        "!dismissed"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
             "scope": "announcement_bar.single_channel_guest_limit",
             "class": "AnnouncementBar2",
             "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
@@ -14649,6 +14976,122 @@
                     "renderedWhen": [
                         "this.props.message",
                         "!(!props.userIsAdmin || isDismissed || isEntrySku || !guestAccountsEnabled || singleChannelGuestLimit === 0 || singleChannelGuestCount <= singleChannelGuestLimit)"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.site_url",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.site_url.close--link",
+                    "role": "link",
+                    "renderedWhen": [
+                        "props.canViewSystemErrors && props.config?.SiteURL === ''",
+                        "this.props.message",
+                        "this.props.showCloseButton",
+                        "!dismissed"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.site_url.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.canViewSystemErrors && props.config?.SiteURL === ''",
+                        "this.props.message",
+                        "!dismissed"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.trial_expiring",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.trial_expiring.close--link",
+                    "role": "link",
+                    "renderedWhen": [
+                        "props.canViewSystemErrors",
+                        "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+                        "this.props.message",
+                        "this.props.showCloseButton"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.trial_expiring.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "props.canViewSystemErrors",
+                        "isTrialLicense(props.license) && typeof daysUntilLicenseExpires !== 'undefined' && daysUntilLicenseExpires <= 14 && !props.dismissedExpiringTrialLicense",
+                        "this.props.message"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.users_limits_critical",
+            "class": "AnnouncementBar3",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.users_limits_critical.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "this.props.message",
+                        "shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount})"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.users_limits_warning",
+            "class": "AnnouncementBar2",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.users_limits_warning.close--link",
+                    "role": "link",
+                    "effects": ["UpdatePreferences"],
+                    "renderedWhen": [
+                        "this.props.message",
+                        "this.props.showCloseButton",
+                        "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                },
+                {
+                    "testId": "announcement_bar.users_limits_warning.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "this.props.message",
+                        "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})"
+                    ],
+                    "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
+                }
+            ]
+        },
+        {
+            "scope": "announcement_bar.version",
+            "class": "AnnouncementBar3",
+            "container": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar",
+            "elements": [
+                {
+                    "testId": "announcement_bar.version.message--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "this.props.message",
+                        "!(!buildHashOnAppLoad || buildHashOnAppLoad === buildHash)",
+                        "buildHashOnAppLoad !== buildHash"
                     ],
                     "source": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
                 }
@@ -22736,7 +23179,19 @@
         {
             "scope": "claim",
             "class": "Claim",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "claim.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "source": "channels/src/components/common/back_button.tsx#BackButton"
+                }
+            ]
         },
         {
             "scope": "claim.email_to_ldap",
@@ -23361,6 +23816,23 @@
                     "role": "alert",
                     "renderedWhen": ["step === 'team_url'", "nameError"],
                     "source": "channels/src/components/create_team/components/create_team_form/team_url_step.tsx#TeamUrlStep"
+                }
+            ]
+        },
+        {
+            "scope": "create_team.header",
+            "class": "CreateTeamHeader",
+            "elements": [
+                {
+                    "testId": "create_team.header.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "source": "channels/src/components/common/back_button.tsx#BackButton"
                 }
             ]
         },
@@ -30025,6 +30497,24 @@
                     "testId": "menu_modal.list",
                     "role": null,
                     "source": "channels/src/components/menu/menu_modal.tsx#MenuModal"
+                }
+            ]
+        },
+        {
+            "scope": "mfa",
+            "class": "Mfa",
+            "elements": [
+                {
+                    "testId": "mfa.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "renderedWhen": ["!(this.props.mfa && this.props.enforceMultifactorAuthentication)"],
+                    "source": "channels/src/components/common/back_button.tsx#BackButton"
                 }
             ]
         },
@@ -44113,6 +44603,17 @@
             "class": "SelectTeam",
             "elements": [
                 {
+                    "testId": "select_team.back--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "source": "channels/src/components/common/back_button.tsx#BackButton"
+                },
+                {
                     "testId": "select_team.recommended:{key}--text",
                     "role": "text",
                     "key": "Pick<Team, 'id'>",
@@ -46204,24 +46705,6 @@
                     "role": "text",
                     "renderedWhen": ["enableSignUpWithEmail"],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
-                }
-            ]
-        },
-        {
-            "scope": "signup.header",
-            "class": "SignupHeader",
-            "container": "channels/src/components/common/back_button.tsx#BackButton",
-            "elements": [
-                {
-                    "testId": "signup.header.back--link",
-                    "role": "link",
-                    "opens": [
-                        {
-                            "kind": "page",
-                            "target": "url"
-                        }
-                    ],
-                    "source": "channels/src/components/common/back_button.tsx#BackButton"
                 }
             ]
         },

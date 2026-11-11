@@ -93,6 +93,7 @@ import {ManageTeamsModal} from './manage_teams_modal';
 import {Markdown} from './markdown';
 import {MarketplaceModal} from './marketplace_modal';
 import {MenuModal} from './menu_modal';
+import {Mfa} from './mfa';
 import {MobileHeader} from './mobile_header';
 import {MobileMenu} from './mobile_menu';
 import {Modal} from './modal';
@@ -722,6 +723,10 @@ export class App extends Scope {
      */
     get menuModal(): MenuModal {
         return new MenuModal(this.page, 'menu_modal', this.root);
+    }
+
+    get mfa(): Mfa {
+        return new Mfa(this.page, 'mfa', this.root);
     }
 
     get mobileHeader(): MobileHeader {

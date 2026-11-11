@@ -56,6 +56,7 @@ class AnnouncementBarController extends React.PureComponent<Props> {
         if (this.props.latestError) {
             errorBar = (
                 <AnnouncementBar
+                    testId='announcement_bar.error'
                     type={this.props.latestError.error.type}
                     message={this.props.latestError.error.message}
                     showCloseButton={true}

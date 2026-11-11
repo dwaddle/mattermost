@@ -4,6 +4,8 @@
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import DropdownInput from 'components/dropdown_input';
 import Input from 'components/widgets/inputs/input/input';
 
@@ -13,7 +15,7 @@ import type {StateCode} from 'utils/states';
 type Props = {
     country: string;
     state: string;
-    testId?: string;
+    testId?: TestId;
     onChange: (newValue: string) => void;
     onBlur?: () => void;
 };
@@ -35,7 +37,7 @@ export default function StateSelector(props: Props) {
     }
 
     if (stateList.length > 0) {
-        const withId: {testId?: string} = {};
+        const withId: {testId?: TestId} = {};
         if (props.testId) {
             withId.testId = props.testId;
         }

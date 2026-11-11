@@ -100,13 +100,6 @@ export class Signup extends Scope {
         return new SignupCard(this.page, `${this.scope}.card`, this.root);
     }
 
-    /**
-     * `signup.header` — BackButton (channels/src/components/common/back_button.tsx)
-     */
-    get header(): SignupHeader {
-        return new SignupHeader(this.page, `${this.scope}.header`, this.root);
-    }
-
     get noMethods(): SignupNoMethods {
         return new SignupNoMethods(this.page, `${this.scope}.no_methods`, this.root);
     }
@@ -355,31 +348,6 @@ export class SignupCard extends Scope {
             terms: vTerms,
             username: vUsername,
         };
-    }
-}
-
-/** Scope `signup.header`. */
-export class SignupHeader extends Scope {
-    constructor(page: Page, scope = 'signup.header', root?: Locator) {
-        super(page, scope, root);
-    }
-
-    /**
-     * `signup.header.back--link` — BackButton (channels/src/components/common/back_button.tsx)
-     * Goes to url.
-     */
-    get backLink() {
-        return drivers.link(this.byTestId(`${this.scope}.back--link`), {
-            testId: `${this.scope}.back--link`,
-            role: 'link',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/common/back_button.tsx#BackButton',
-        });
-    }
-
-    async clickBackLink(): Promise<void> {
-        await this.backLink.click();
     }
 }
 

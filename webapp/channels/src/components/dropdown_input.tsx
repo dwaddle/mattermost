@@ -7,6 +7,8 @@ import {useIntl} from 'react-intl';
 import ReactSelect, {components} from 'react-select';
 import type {Props as SelectProps, ActionMeta, StylesConfig} from 'react-select';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import InputError from 'components/input_error';
 import type {CustomMessageInputType} from 'components/widgets/inputs/input/input';
 
@@ -26,7 +28,7 @@ type Props<T extends ValueType> = Omit<SelectProps<T>, 'onChange'> & {
     legend?: string;
     error?: string;
     onChange: (value: T, action: ActionMeta<T>) => void;
-    testId?: string;
+    testId?: TestId;
     required?: boolean;
     addon?: React.ReactNode;
     textPrefix?: React.ReactNode;
@@ -89,7 +91,8 @@ const Control = (props: any) => {
     );
 };
 
-const makeOption = (testId?: string) => (props: any) => {
+// An option is `<testId>.menu.option:<value>--option` (none without a testId).
+const makeOption = (testId?: TestId) => (props: any) => {
     return (
         <div
             className={classNames('DropdownInput__option', {
@@ -105,7 +108,8 @@ const makeOption = (testId?: string) => (props: any) => {
     );
 };
 
-const makeMenu = (testId?: string) => (props: any) => {
+// The menu is `<testId>.menu` (none without a testId).
+const makeMenu = (testId?: TestId) => (props: any) => {
     return (
         <components.Menu
             {...props}

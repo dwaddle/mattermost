@@ -5,6 +5,8 @@ import {getName} from 'country-list';
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 import DropdownInput from 'components/dropdown_input';
 
 import {COUNTRIES} from 'utils/countries';
@@ -12,7 +14,7 @@ import {COUNTRIES} from 'utils/countries';
 type CountrySelectorProps = {
     onChange: (option: any) => void;
     value?: string;
-    testId?: string;
+    testId?: TestId;
 };
 
 const CountrySelector = (props: CountrySelectorProps) => {

@@ -97,6 +97,7 @@ export * from './manage_teams_modal';
 export * from './markdown';
 export * from './marketplace_modal';
 export * from './menu_modal';
+export * from './mfa';
 export * from './mobile_header';
 export * from './mobile_menu';
 export * from './modal';

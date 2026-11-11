@@ -138,6 +138,7 @@ class CloudTrialAnnouncementBarInternal extends React.PureComponent<PropsWithPri
 
         return (
             <AnnouncementBar
+                testId='announcement_bar.cloud_trial'
                 type={dismissable ? AnnouncementBarTypes.ADVISOR : AnnouncementBarTypes.CRITICAL}
                 showCloseButton={dismissable}
                 handleClose={this.handleClose}
