@@ -113,7 +113,7 @@ test('MM-T473_2 Edit GM channel header with a mention', {tag: '@messaging'}, asy
     await menu.settingsMenuItem.hover(); // a group message keeps Edit Header in the Settings submenu
     const editor = await menu.clickEditHeaderMenuItem();
     await editor.headerTextbox.fill(header);
-    await editor.clickSaveButton();
+    await editor.saveButton.commit();
     await expect(editor.headerTextbox.locator).not.toBeVisible();
 
     // * Verify the mention is shown and is not highlighted for the mentioned user

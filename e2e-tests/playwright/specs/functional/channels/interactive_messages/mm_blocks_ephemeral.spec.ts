@@ -121,7 +121,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
             // Thread RHS posts are `rhs.thread.post:<id>`; center channel posts are `center.post_list.post:<id>`.
             const ephemeralInThread = await threadPostContaining(app, ephemeralMarker);
             await expect(ephemeralInThread.locator).toBeVisible();
-            await ephemeralInThread.action('pw_mm_blocks_integration').click();
+            await ephemeralInThread.action('pw_mm_blocks_integration').commit();
 
             const integrationEphemeral = await threadPostContaining(app, /Playwright mm_blocks integration OK \(user:/);
             await expect(integrationEphemeral.locator).toBeVisible();
@@ -197,7 +197,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
 
             const ephemeralInThread = await threadPostContaining(app, ephemeralMarker);
             await expect(ephemeralInThread.locator).toBeVisible();
-            await ephemeralInThread.action('pw_mm_blocks_apply_update').click();
+            await ephemeralInThread.action('pw_mm_blocks_apply_update').commit();
 
             await threadPostContaining(app, 'PLAYWRIGHT_MM_BLOCKS_UPDATED');
         },
@@ -279,7 +279,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
             const author = ephemeralInThread.header.locator;
             await expect(author).toContainText(overrideAuthorName);
 
-            await ephemeralInThread.action('pw_mm_blocks_apply_update_eph_override').click();
+            await ephemeralInThread.action('pw_mm_blocks_apply_update_eph_override').commit();
 
             const updated = await threadPostContaining(app, 'PLAYWRIGHT_MM_BLOCKS_UPDATED');
             await expect(updated.locator).toBeVisible();
@@ -357,7 +357,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
 
             const ephemeralInThread = await threadPostContaining(app, ephemeralMarker);
             await expect(ephemeralInThread.locator).toBeVisible();
-            await ephemeralInThread.action('pw_mm_blocks_query_btn_eph').click();
+            await ephemeralInThread.action('pw_mm_blocks_query_btn_eph').commit();
 
             const integrationEphemeral = await threadPostContaining(
                 app,
@@ -438,7 +438,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
 
             const ephemeralInThread = await threadPostContaining(app, ephemeralMarker);
             await expect(ephemeralInThread.locator).toBeVisible();
-            await ephemeralInThread.action('pw_mm_blocks_query_override_eph').click();
+            await ephemeralInThread.action('pw_mm_blocks_query_override_eph').commit();
 
             await threadPostContaining(app, 'Playwright mm_blocks query OK (dup=from_block)');
         },
@@ -776,7 +776,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
 
             const ephemeralInThread = await threadPostContaining(app, ephemeralMarker);
             await expect(ephemeralInThread.locator).toBeVisible();
-            await ephemeralInThread.action('pw_mm_blocks_echo_ctx_eph').click();
+            await ephemeralInThread.action('pw_mm_blocks_echo_ctx_eph').commit();
 
             const integrationEphemeral = await threadPostContaining(
                 app,
@@ -841,7 +841,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
 
             const ephemeralInThread = await threadPostContaining(app, ephemeralMarker);
             await expect(ephemeralInThread.locator).toBeVisible();
-            await ephemeralInThread.action('pw_mm_blocks_openurl_eph').click();
+            await ephemeralInThread.action('pw_mm_blocks_openurl_eph').commit();
 
             await expect(app.page).toHaveURL(/\/channels\/off-topic/);
             expect(new URL(app.page.url()).searchParams.get('mm_openurl')).toBe('from_action_eph');

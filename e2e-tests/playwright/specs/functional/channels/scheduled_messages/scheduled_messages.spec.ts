@@ -339,7 +339,7 @@ test(
         await scheduledPost.locator.hover();
         const modal = await scheduledPost.clickDeleteButton();
         await expect(modal.confirmButton.locator).toBeVisible();
-        await modal.clickConfirmButton();
+        await modal.confirmButton.commit();
 
         // * Verify the scheduled message is removed and no longer appears
         await expect(scheduledPost.locator).toHaveCount(0);

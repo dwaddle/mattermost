@@ -278,7 +278,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
-            await lastPost.action('pw_mm_blocks_integration').click();
+            await lastPost.action('pw_mm_blocks_integration').commit();
 
             // With Collapsed Reply Threads (CRT) on, integration ephemerals carry root_id and are not inserted into
             // the main channel post list (postsInChannel), so assert the ephemeral in the thread panel.
@@ -351,7 +351,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
-            await lastPost.action('pw_mm_blocks_apply_update').click();
+            await lastPost.action('pw_mm_blocks_apply_update').commit();
 
             await expect(lastPost.blocks.locator).toContainText('PLAYWRIGHT_MM_BLOCKS_UPDATED');
         },
@@ -425,7 +425,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const author = lastPost.header.locator;
             await expect(author).toContainText(overrideAuthorName);
 
-            await lastPost.action('pw_mm_blocks_apply_update_override').click();
+            await lastPost.action('pw_mm_blocks_apply_update_override').commit();
 
             const updated = await centerPostContaining(app, 'PLAYWRIGHT_MM_BLOCKS_UPDATED');
             await expect(updated.header.locator).toContainText(overrideAuthorName);
@@ -758,7 +758,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
-            await anchorPost.action('pw_mm_blocks_echo_ctx').click();
+            await anchorPost.action('pw_mm_blocks_echo_ctx').commit();
 
             await openThread(app, anchorPost);
 
@@ -818,7 +818,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
-            await lastPost.action('pw_mm_blocks_openurl').click();
+            await lastPost.action('pw_mm_blocks_openurl').commit();
 
             await expect(app.page).toHaveURL(/\/channels\/off-topic/);
             expect(new URL(app.page.url()).searchParams.get('mm_openurl')).toBe('from_action');
@@ -892,7 +892,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
-            await anchorPost.action('pw_mm_blocks_query_btn').click();
+            await anchorPost.action('pw_mm_blocks_query_btn').commit();
 
             await openThread(app, anchorPost);
 
@@ -967,7 +967,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
-            await anchorPost.action('pw_mm_blocks_query_override').click();
+            await anchorPost.action('pw_mm_blocks_query_override').commit();
 
             await openThread(app, anchorPost);
             await threadPostContaining(app, 'Playwright mm_blocks query OK (dup=from_block)');
