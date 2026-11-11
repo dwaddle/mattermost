@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Api} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a custom user group can be archived, viewed under the archived filter, and restored.
@@ -40,7 +40,7 @@ test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async (
     groupModal = await groups.group(group).clickButton();
 
     // # Restore the group
-    await groupModal.clickRestoreButton();
+    await groupModal.restoreButton.commit();
 
     // * The group is restored: member management is available again, and the server agrees
     await expect(groupModal.addPeopleButton.locator).toBeVisible();
@@ -143,7 +143,7 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
 
     // # Select the whole group and add it to the channel
     await addGroupMembers.click();
-    await app.channelInviteModal.users.clickSaveButton();
+    await app.channelInviteModal.users.saveButton.commit({wait: Api.AddChannelMember});
 
     // * Verify every member of the group joined the channel
     await channelsPage.centerView.waitUntilLastPostContains('added to the channel');

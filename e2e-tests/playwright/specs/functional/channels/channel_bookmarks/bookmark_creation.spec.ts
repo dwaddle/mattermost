@@ -45,7 +45,7 @@ test('MM-T5602 adds a link bookmark to the channel bookmarks bar', {tag: '@chann
 
     // # Enter a link and add the bookmark
     await dialog.fillLinkTextbox('https://www.mattermost.com');
-    await dialog.clickConfirmButton();
+    await dialog.confirmButton.commit();
 
     // * The server has the bookmark, and it appears in the channel bookmarks bar
     await expect.poll(async () => (await userClient.getChannelBookmarks(channel.id)).length).toBe(1);
@@ -72,7 +72,7 @@ test('MM-T5603 adds a file bookmark to the channel bookmarks bar', {tag: '@chann
     await fileChooser.setFiles(path.resolve('asset/mattermost-icon_128x128.png'));
 
     // # Confirm the file bookmark
-    await dialog.clickConfirmButton();
+    await dialog.confirmButton.commit();
 
     // * The server has a file bookmark, and it appears in the channel bookmarks bar
     await expect.poll(async () => (await userClient.getChannelBookmarks(channel.id)).length).toBe(1);

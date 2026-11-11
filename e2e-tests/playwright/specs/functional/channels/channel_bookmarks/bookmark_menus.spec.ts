@@ -52,7 +52,7 @@ test('renames a bookmark from the bar and deletes one from the overflow menu', {
     await hidden.locator.hover();
     const hiddenMenu = await hidden.clickOpenMenuButton();
     const deleteModal = await hiddenMenu.clickDeleteMenuItem();
-    await deleteModal.clickConfirmButton();
+    await deleteModal.confirmButton.commit();
 
     // * The bookmark is gone from the channel
     await expect

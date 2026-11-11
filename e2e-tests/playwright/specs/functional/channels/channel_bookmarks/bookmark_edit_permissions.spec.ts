@@ -71,7 +71,7 @@ test('MM-T5610 edits a bookmark URL and title', {tag: '@channels'}, async ({pw})
     await expect(editModal.titleTextbox.locator).toHaveValue('hub.mattermost.com');
     await expect(editModal.confirmButton.locator).toBeEnabled();
     await editModal.fillTitleTextbox('Hub Server');
-    await editModal.clickConfirmButton();
+    await editModal.confirmButton.commit();
 
     // * Verify the updated bookmark title and link
     await expect(item.openLink.locator).toHaveText('Hub Server');
@@ -121,7 +121,7 @@ test('MM-T5725 prevents bookmark management in an archived channel', {tag: '@cha
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
     const archiveModal = await (await app.channelHeader.clickOpenMenuButton()).clickArchiveChannelMenuItem();
-    await archiveModal.clickConfirmButton();
+    await archiveModal.confirmButton.commit();
     await expect(app.center.archivedNotice.locator).toBeVisible();
 
     // * Verify the bookmarks can be opened and copied but not added, edited, deleted or reordered

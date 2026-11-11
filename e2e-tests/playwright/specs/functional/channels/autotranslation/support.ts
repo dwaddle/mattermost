@@ -24,7 +24,7 @@ export function postIn(app: App, item: Locator): CenterPost {
 export async function clickAutotranslationMenuItem(app: App, label: string) {
     const menu = await app.channelHeader.clickOpenMenuButton();
     await expect(menu.autotranslationMenuItem.locator).toContainText(label);
-    await menu.autotranslationMenuItem.click();
+    await menu.autotranslationMenuItem.commit();
 }
 
 /** Turns auto-translation off for the current user in this channel (the menu item, then the dialog's confirm). */

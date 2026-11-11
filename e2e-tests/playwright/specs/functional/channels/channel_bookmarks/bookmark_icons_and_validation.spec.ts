@@ -51,7 +51,7 @@ test(
         let editModal = await (await item.clickOpenMenuButton()).clickEditMenuItem();
         await editModal.clickEmojiButton();
         await app.emojiPicker.emoji('smile').click();
-        await editModal.clickConfirmButton();
+        await editModal.confirmButton.commit();
 
         // * Verify the bookmark now uses an emoji icon
         await expect(item.icon.locator).toHaveAttribute('data-icon-kind', 'emoji');
@@ -60,7 +60,7 @@ test(
         await item.locator.hover();
         editModal = await (await item.clickOpenMenuButton()).clickEditMenuItem();
         await editModal.clickRemoveEmojiButton();
-        await editModal.clickConfirmButton();
+        await editModal.confirmButton.commit();
 
         // * Verify the fallback icon is restored
         await expect(item.icon.locator).toHaveAttribute('data-icon-kind', 'link-fallback');

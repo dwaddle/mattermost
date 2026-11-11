@@ -72,7 +72,7 @@ test('MM-T5614 removes a deleted file bookmark from Files search results', {tag:
     await item.locator.hover();
     const menu = await item.clickOpenMenuButton();
     const deleteModal = await menu.clickDeleteMenuItem();
-    await deleteModal.clickConfirmButton();
+    await deleteModal.confirmButton.commit();
     await expect.poll(async () => (await userClient.getChannelBookmarks(channel.id)).length).toBe(0);
 
     // * The deleted file is no longer in the Files results

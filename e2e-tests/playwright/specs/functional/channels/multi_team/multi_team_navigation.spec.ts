@@ -34,7 +34,7 @@ test('MM-T430 MM-T432 switches between teams and logs out', {tag: '@multi_team'}
     await expect.poll(() => page.url(), {timeout: pw.duration.ten_sec}).toContain(`/${team.name}/`);
 
     // # Log out
-    await (await app.globalHeader.clickOpenAccountMenuButton()).clickLogOutMenuItem();
+    await (await app.globalHeader.clickOpenAccountMenuButton()).logOutMenuItem.commit();
 
     // * Verify the user is returned to the sign-in page
     await expect.poll(() => page.url(), {timeout: pw.duration.ten_sec}).toContain('/login');

@@ -31,7 +31,7 @@ test('MM-T2547 leaves a team while viewing it and rejoins it', {tag: '@multi_tea
     const leaveModal = await (await app.lhs.header.clickOpenTeamMenuButton()).clickLeaveTeamMenuItem();
 
     // # Confirm leaving in the dialog
-    await leaveModal.clickConfirmButton();
+    await leaveModal.confirmButton.commit();
 
     // * Verify the user is moved to the other team and the left team is gone from the team sidebar
     await expect.poll(() => page.url(), {timeout: pw.duration.ten_sec}).toContain(`/${secondTeam.name}/`);

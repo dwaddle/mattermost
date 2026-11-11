@@ -22,7 +22,7 @@ async function searchFor(app: App, term: string) {
 async function leaveTeam(app: App, team: Team) {
     await app.teamSidebar.team(team.id).locator.click();
     const leaveModal = await (await app.lhs.header.clickOpenTeamMenuButton()).clickLeaveTeamMenuItem();
-    await leaveModal.clickConfirmButton();
+    await leaveModal.confirmButton.commit();
 }
 
 test('team selector should not be visible if user belongs to only one team', async ({pw}) => {

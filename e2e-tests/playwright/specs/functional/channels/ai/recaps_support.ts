@@ -220,7 +220,7 @@ export class RecapItem {
     }
 
     async clickMarkRead() {
-        await (await this.recap()).clickMarkReadButton();
+        await (await this.recap()).markReadButton.commit();
     }
 
     /** Clicks the delete button, and returns the confirmation dialog it opens. */
