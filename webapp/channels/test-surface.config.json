@@ -752,6 +752,14 @@
                 "testid": "post_textbox_placeholder",
                 "file": "multi_team_and_dm/max_gm_members_spec.js",
                 "reason": "stale on master too: no component renders it (the composer's placeholder is the textbox's placeholder attribute, which a CSS check can't read through ::placeholder). The truncation check needs rewriting with the channels area owner."
+            },
+            {
+                "testid": "invitation_modal.invite.as_member",
+                "reason": "rendered: InviteAs passes it in RadioGroup's `values` array (invitation_modal/invite_as.tsx), an object property the scan can't follow into the option wrapper."
+            },
+            {
+                "testid": "invitation_modal.invite.as_guest",
+                "reason": "rendered: InviteAs passes it in RadioGroup's `values` array (invitation_modal/invite_as.tsx), an object property the scan can't follow into the option wrapper."
             }
         ]
     },
