@@ -3,8 +3,6 @@
 
 import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
-import {openChannel} from './desktop_notification_support';
-
 /**
  * @objective Verify clicking a desktop notification for a message in another team's channel navigates
  * the user to that team and channel.
@@ -44,7 +42,7 @@ test(
 
         // # Log in and view the first team's Town Square, then stub notifications
         const {app, page} = await pw.testBrowser.login(user);
-        await openChannel(app, team, await adminClient.getChannelByName(team.id, 'town-square'));
+        await app.channelsPage.goto({team, channel: await adminClient.getChannelByName(team.id, 'town-square')});
         await pw.stubNotification(page, 'granted');
 
         // # Post a message from the admin in the second team's channel
@@ -84,7 +82,7 @@ test(
 
         // # Log in and view Town Square, then stub notifications
         const {app, page} = await pw.testBrowser.login(user);
-        await openChannel(app, team, await adminClient.getChannelByName(team.id, 'town-square'));
+        await app.channelsPage.goto({team, channel: await adminClient.getChannelByName(team.id, 'town-square')});
         await pw.stubNotification(page, 'granted');
 
         // # Send a direct message from the admin to the user
@@ -124,7 +122,7 @@ test(
 
         // # Log in and view Town Square (not the DM), then stub notifications
         const {app, page} = await pw.testBrowser.login(user);
-        await openChannel(app, team, await adminClient.getChannelByName(team.id, 'town-square'));
+        await app.channelsPage.goto({team, channel: await adminClient.getChannelByName(team.id, 'town-square')});
         await pw.stubNotification(page, 'granted');
 
         // # Send a direct message from the admin while the user is available
