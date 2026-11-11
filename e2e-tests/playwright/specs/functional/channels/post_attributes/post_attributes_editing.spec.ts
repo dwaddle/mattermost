@@ -216,7 +216,7 @@ test('rewrites the chip behind the modal when an option is picked', {tag: '@post
         await app.postAttributesModal
             .attribute(classification)
             .valueMenu.option({id: optionId(classification, UNCLASSIFIED)})
-            .click();
+            .commit();
         expect((await written).status()).toBe(200);
 
         // * Verify the chip behind the modal changed. The row reads the store, so the
@@ -660,7 +660,7 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         await app.postAttributesModal
             .attribute(classification)
             .valueMenu.option({id: optionId(classification, SECRET)})
-            .click();
+            .commit();
         expect((await written).status()).toBe(200);
 
         // # Close the modal
