@@ -29,8 +29,8 @@ type Props = {
     onReveal?: (postId: string) => void;
     onSenderDelete?: () => void;
 
-    // The post's scope; without it, the legacy testid.
-    testIdScope?: TestId;
+    // The post's scope; undefined renders no testid.
+    testIdScope: TestId | undefined;
 };
 
 function BurnOnReadBadge({
@@ -225,7 +225,7 @@ function BurnOnReadBadge({
                     <button
                         type='button'
                         className='BurnOnReadBadge'
-                        data-testid={testIdScope ? `${testIdScope}.burn_on_read--button` : `burn-on-read-badge-${post.id}`}
+                        data-testid={testIdScope ? `${testIdScope}.burn_on_read--button` : undefined}
                         aria-label={getAriaLabel()}
                         onClick={isInteractive ? handleClick : undefined}
                         disabled={!isInteractive}

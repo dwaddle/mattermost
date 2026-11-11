@@ -19,8 +19,8 @@ interface Props {
     expireAt?: number;
     onClick: () => void;
 
-    // The post's scope; without it, the legacy testid.
-    testIdScope?: TestId;
+    // The post's scope; undefined renders no testid.
+    testIdScope: TestId | undefined;
 }
 
 const BurnOnReadTimerChip = ({expireAt, onClick, testIdScope}: Props) => {
@@ -93,7 +93,7 @@ const BurnOnReadTimerChip = ({expireAt, onClick, testIdScope}: Props) => {
                 <button
                     type='button'
                     className={`BurnOnReadTimerChip ${isWarning ? 'BurnOnReadTimerChip--warning' : ''} ${isExpired ? 'BurnOnReadTimerChip--expired' : ''}`}
-                    data-testid={testIdScope ? `${testIdScope}.burn_on_read_timer--button` : 'burn-on-read-timer-chip'}
+                    data-testid={testIdScope ? `${testIdScope}.burn_on_read_timer--button` : undefined}
                     onClick={handleClick}
                     onKeyDown={handleKeyDown}
                     aria-label={ariaLabel}

@@ -21,8 +21,8 @@ type Props = {
     loading?: boolean;
     error?: string | null;
 
-    // The post's scope; without it, the legacy testid.
-    testIdScope?: TestId;
+    // The post's scope; undefined renders no testid.
+    testIdScope: TestId | undefined;
 };
 
 const ERROR_STATE_DURATION_MS = 3000;
@@ -99,7 +99,7 @@ function BurnOnReadConcealedPlaceholder({
                     disabled={loading}
                     aria-label={ariaLabel}
                     tabIndex={0}
-                    data-testid={testIdScope ? `${testIdScope}.reveal--button` : `burn-on-read-concealed-${postId}`}
+                    data-testid={testIdScope ? `${testIdScope}.reveal--button` : undefined}
                 >
                     {loading ? (
                         <LoadingSpinner legacy={true}/>

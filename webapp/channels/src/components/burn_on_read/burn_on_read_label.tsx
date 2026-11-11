@@ -20,8 +20,8 @@ type Props = {
     // The configured duration in minutes for BoR messages
     durationMinutes: number;
 
-    // The label's testid; without it, the legacy id
-    testId?: TestId;
+    // The label's testid; undefined renders none
+    testId: TestId | undefined;
 };
 
 const BurnOnReadLabel = ({canRemove, onRemove, durationMinutes, testId}: Props) => {
@@ -63,7 +63,7 @@ const BurnOnReadLabel = ({canRemove, onRemove, durationMinutes, testId}: Props) 
     return (
         <div
             className='BurnOnReadLabel'
-            data-testid={testId ?? 'burn-on-read-label'}
+            data-testid={testId}
         >
             <div className='BurnOnReadLabel__badge'>
                 <FireIcon

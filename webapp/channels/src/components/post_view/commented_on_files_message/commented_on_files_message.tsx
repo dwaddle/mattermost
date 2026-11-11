@@ -14,8 +14,8 @@ type Props = {
      */
     fileInfos?: FileInfo[];
 
-    /* The text renders `<testId>--text`; without it, the legacy id. */
-    testId?: TestId;
+    /** The text renders `<testId>--text`; undefined renders no testid. */
+    testId: TestId | undefined;
 };
 
 const CommentedOnFilesMessage = ({
@@ -40,7 +40,7 @@ const CommentedOnFilesMessage = ({
     }
 
     return (
-        <span data-testid={testId ? `${testId}--text` : 'fileInfo'}>
+        <span data-testid={testId ? `${testId}--text` : undefined}>
             {fileInfos[0].name}
             {plusMore}
         </span>

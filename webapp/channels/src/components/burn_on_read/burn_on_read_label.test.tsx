@@ -12,6 +12,7 @@ describe('BurnOnReadLabel', () => {
         canRemove: true,
         onRemove: jest.fn(),
         durationMinutes: 10,
+        testId: 'center.post_create.burn_on_read_label' as const,
     };
 
     it('should render correctly with duration', () => {
