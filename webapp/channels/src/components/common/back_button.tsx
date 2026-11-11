@@ -22,7 +22,6 @@ type Props = {
      */
     onClick?: React.EventHandler<React.MouseEvent>;
 
-    /** The link is `<testId>--link`. Without it, the legacy `signup.header` testids. */
     testId?: TestId;
 };
 

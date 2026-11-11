@@ -8,7 +8,6 @@ import type {TestId} from '@mattermost/shared/utils/test_id';
 type ErrorLabelProps = {
     errorText?: string | JSX.Element;
 
-    // The error renders `<testId>--text`.
     testId?: TestId;
 };
 

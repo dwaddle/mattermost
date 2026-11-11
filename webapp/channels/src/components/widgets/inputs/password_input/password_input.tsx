@@ -28,7 +28,6 @@ type PasswordInputProps = {
     disabled?: boolean;
     inputSize?: SIZE;
 
-    // The field renders `<testId>--textbox` (see Input) and its show/hide button `<testId>.toggle--button`.
     testId?: TestId;
 };
 

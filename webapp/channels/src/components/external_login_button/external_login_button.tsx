@@ -17,7 +17,6 @@ export type ExternalLoginButtonType = {
     direction?: 'row' | 'column';
     onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 
-    // The link renders `<testId>--link`
     testId?: TestId;
 };
 

@@ -15,7 +15,6 @@ type AlternateLinkProps = {
     alternateLinkPath?: string;
     alternateLinkLabel?: string;
 
-    /** The page's testid for the link and its message (`login.alternate`): they are `<testId>.message--text` and `<testId>.action--link`. */
     testId?: TestId;
 };
 
