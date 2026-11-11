@@ -61,7 +61,7 @@ test('MM-T388 Invite new user to closed team with email domain restriction', {ta
     const settings = await openTeamSettings(app, 'access');
 
     // # Enable "Allow only users with a specific email domain" and add the domain
-    await settings.access.allowedDomainsCheckbox.locator.check();
+    await settings.access.allowedDomainsCheckbox.check();
     const domains = settings.access.allowedDomains.inputCombobox.locator;
     await domains.fill(emailDomain);
     await domains.press('Enter');
@@ -91,7 +91,7 @@ test('MM-T388 Invite new user to closed team with email domain restriction', {ta
 
     // * Verify that the user has been successfully invited to the team
     const result = app.invitationModal.result;
-    await expect(result.sent.locator).toContainText('This member has been added to the team.');
+    await expect(result.sent.locator).toContainMessage(Msg.invite.members['added-to-team']);
 
     await adminClient.patchConfig({
         ServiceSettings: {EnableEmailInvitations: true},

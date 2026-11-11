@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, duration} from '@mattermost/playwright-lib';
+import {expect, test, duration, Msg} from '@mattermost/playwright-lib';
 
 test.describe('Bot account personal access token expiry @bot_accounts @personal_access_tokens', () => {
     test('creates and regenerates a user-owned bot token under an enforced maximum lifetime', async ({pw}) => {
@@ -36,11 +36,11 @@ test.describe('Bot account personal access token expiry @bot_accounts @personal_
         // * The default-token expiry picker is enforced and clamped by the 30-day policy.
         const expiry = form.defaultToken.expiryCombobox.locator;
         await expect(expiry).toBeVisible();
-        await expect(expiry).not.toContainText('No expiry');
+        await expect(expiry).not.toContainMessage(Msg.user.settings.tokens.expiry.none);
         await expect(expiry).toContainText('30 days');
-        await expect(expiry).not.toContainText('90 days');
-        await expect(form.defaultToken.expiryEnforcedText.locator).toHaveText(
-            'Your administrator requires all personal access tokens to have an expiry date.',
+        await expect(expiry).not.toContainMessage(Msg.user.settings.tokens.expiry['90d']);
+        await expect(form.defaultToken.expiryEnforcedText.locator).toHaveMessage(
+            Msg.user.settings.tokens.expiryEnforced,
         );
 
         await form.clickSaveButton();
@@ -56,21 +56,21 @@ test.describe('Bot account personal access token expiry @bot_accounts @personal_
         // * The default token is the bot's only token, active, with an expiry date rather than "Never"
         await expect(bot.tokenItems).toHaveCount(1);
         const token = bot.token({id: (await bot.tokenKeys())[0]});
-        await expect(token.locator).toContainText('Default Token');
-        await expect(token.statusText.locator).toHaveText('Active');
-        await expect(token.expiryText.locator).toContainText('Expires:');
-        await expect(token.expiryText.locator).not.toContainText('Never');
+        await expect(token.locator).toContainMessage(Msg.bot.token.default.description);
+        await expect(token.statusText.locator).toHaveMessage(Msg.user.settings.tokens.status.active);
+        await expect(token.expiryText.locator).toContainMessage(Msg.user.settings.tokens.expiry._);
+        await expect(token.expiryText.locator).not.toContainMessage(Msg.user.settings.tokens.expiry.never);
 
         await token.clickRegenerateLink();
         const regenerate = app.botTokenRegenerateModal;
-        await expect(regenerate.locator).toContainText('Regenerate Token?');
+        await expect(regenerate.locator).toContainMessage(Msg.user.settings.tokens.confirmRegenerateTitle);
         await expect(regenerate.expiryCombobox.locator).toBeVisible();
-        await expect(regenerate.expiryCombobox.locator).not.toContainText('No expiry');
-        await expect(regenerate.confirmButton.locator).toHaveText('Yes, Regenerate');
+        await expect(regenerate.expiryCombobox.locator).not.toContainMessage(Msg.user.settings.tokens.expiry.none);
+        await expect(regenerate.confirmButton.locator).toHaveMessage(Msg.user.settings.tokens.confirmRegenerateButton);
         await regenerate.clickConfirmButton();
 
         // * The rotated secret is revealed using the same one-time-copy pattern.
-        await expect(bot.newToken.locator).toContainText('Access Token:');
+        await expect(bot.newToken.locator).toContainMessage(Msg.user.settings.tokens.token);
         await expect(bot.newToken.copyButton.locator).toBeVisible();
     });
 });

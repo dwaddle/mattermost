@@ -157,7 +157,7 @@ test.fixme(
         // # Type "in:" and pick the channel from the autocomplete suggestion
         await searchInput.fill('in:');
         await searchInput.pressSequentially(channel.name);
-        await app.searchBox.suggestions.item(channel.name).locator.click();
+        await app.searchBox.suggestions.item(channel.name).select();
         await expect(searchInput).toHaveValue(`in:${channel.name} `);
 
         // # Switch the team selector to "All Teams"

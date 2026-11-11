@@ -12,6 +12,7 @@ import {
     postWith,
     test,
     duration,
+    Msg,
 } from '@mattermost/playwright-lib';
 
 const EMOJI_SIZE = 16;
@@ -220,6 +221,6 @@ test('Should render markdown', async ({pw}) => {
 
     const banner = app.center.channelBanner.locator;
     await expect(banner.getByRole('strong')).toHaveText('bold');
-    await expect(banner.getByRole('emphasis')).toHaveText('italic');
+    await expect(banner.getByRole('emphasis')).toHaveMessage(Msg.accessibility.button.italic);
     await expect(banner.getByRole('deletion')).toHaveText('strikethrough');
 });

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that a user already in a channel is shown as "Already in channel" (not addable) in the
@@ -31,7 +31,9 @@ test(
         await people.searchCombobox.locator.fill(member.username);
 
         // * The member's row says they are already in the channel
-        await expect(people.results.user(member).membershipText.locator).toHaveText('Already in channel');
+        await expect(people.results.user(member).membershipText.locator).toHaveMessage(
+            Msg.channel_invite.already_member._,
+        );
 
         // # Search for a team member who isn't in the channel
         await people.searchCombobox.locator.fill(outsider.username);

@@ -19,7 +19,7 @@ test('MM-63451 should be able to navigate the account settings menu with the key
     await expect(app.center.composer.locator).toBeVisible();
 
     // # Click on the account menu button
-    await app.globalHeader.openAccountMenuButton.locator.click();
+    await app.globalHeader.openAccountMenuButton.click();
 
     await testMenuWithKeyboard(app, page);
 });
@@ -38,7 +38,7 @@ test('MM-63451 should be able to navigate the account settings menu with the key
     await expect(app.center.composer.locator).toBeVisible();
 
     // # Focus the account menu button
-    await app.globalHeader.openAccountMenuButton.locator.focus();
+    await app.globalHeader.openAccountMenuButton.focus();
     await expect(app.globalHeader.openAccountMenuButton.locator).toBeFocused();
     await page.keyboard.press('Space');
 

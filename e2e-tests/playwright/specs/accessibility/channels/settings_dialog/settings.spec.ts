@@ -23,7 +23,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible and focus should be on the modal
@@ -66,7 +66,7 @@ test('navigates between settings tabs using arrow keys', {tag: ['@accessibility'
     await expect(app.center.composer.locator).toBeVisible();
 
     // # Set focus to Settings button and press Enter
-    await app.globalHeader.settingsButton.locator.focus();
+    await app.globalHeader.settingsButton.focus();
     await page.keyboard.press('Enter');
 
     // * Settings modal should be visible and focus should be on the modal
@@ -134,7 +134,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await app.globalHeader.settingsButton.locator.focus();
+        await app.globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal on notifications panel should be visible
@@ -178,7 +178,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await app.globalHeader.settingsButton.locator.focus();
+        await app.globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings dialog should be visible
@@ -228,7 +228,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await app.globalHeader.settingsButton.locator.focus();
+        await app.globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings dialog should be visible
@@ -278,7 +278,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await app.globalHeader.settingsButton.locator.focus();
+        await app.globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings dialog should be visible

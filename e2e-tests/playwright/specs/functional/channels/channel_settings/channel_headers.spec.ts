@@ -77,7 +77,7 @@ test('MM-T880 adds a channel header from the intro Set header link', {tag: '@cha
     // # Reopen the Edit Header modal and save a header
     const header = 'this is the channel header';
     const editor = await intro.clickSetHeaderButton();
-    await editor.headerTextbox.locator.fill(header);
+    await editor.headerTextbox.fill(header);
     await editor.clickSaveButton();
     await expect(editor.headerTextbox.locator).not.toBeVisible();
 

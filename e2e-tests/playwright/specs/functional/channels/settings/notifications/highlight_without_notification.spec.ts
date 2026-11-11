@@ -3,7 +3,7 @@
 
 import type {Locator} from '@playwright/test';
 
-import {type App, expect, generated, postWith, test} from '@mattermost/playwright-lib';
+import {type App, expect, generated, postWith, test, Msg} from '@mattermost/playwright-lib';
 
 let keywords: string[];
 
@@ -25,7 +25,7 @@ async function openHighlightKeywords(app: App) {
 async function saveHighlightKeyword(app: App, keyword: string) {
     const section = await openHighlightKeywords(app);
     await section.keywordsCombobox.locator.fill(keyword);
-    await section.keywordsCombobox.locator.press('Tab');
+    await section.keywordsCombobox.press('Tab');
     await section.clickSaveButton();
     await app.userSettingsModal.clickCloseButton();
 }
@@ -171,7 +171,7 @@ test('MM-T5465-4 Highlighted keywords should not appear in the Recent Mentions',
     await app.globalHeader.clickRecentMentionsButton();
 
     // * Verify recent mentions are empty
-    await expect(app.noResults.titleText.locator).toHaveText('No mentions yet');
+    await expect(app.noResults.titleText.locator).toHaveMessage(Msg.no_results.mentions.title);
 });
 
 /**

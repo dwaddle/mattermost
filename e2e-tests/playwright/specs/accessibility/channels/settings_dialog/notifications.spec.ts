@@ -22,7 +22,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible and focus should be on the modal
@@ -103,7 +103,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -174,7 +174,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -214,7 +214,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -254,7 +254,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -294,7 +294,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
@@ -350,7 +350,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
-        await globalHeader.settingsButton.locator.focus();
+        await globalHeader.settingsButton.focus();
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible

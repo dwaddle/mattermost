@@ -23,7 +23,7 @@
  * button additionally requires `MM_FEATUREFLAGS_POLICYSIMULATION=true`.
  */
 
-import {ChannelsPage, expect, test} from '@mattermost/playwright-lib';
+import {ChannelsPage, expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {enableABACConfig, ensureDepartmentAttribute, createPrivateChannel} from '../team_settings/helpers';
 
@@ -198,7 +198,7 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
             // footer in its error state, with saving from there disabled. The
             // modal withdraws it after 3s, so assert inside that window.
             const savePanel = channelSettings.container.locator('.SaveChangesPanel');
-            await expect(savePanel).toContainText('You have unsaved changes');
+            await expect(savePanel).toContainMessage(Msg.saveChangesPanel.message);
             await expect(savePanel).toHaveClass(/error/);
             await expect(savePanel.getByTestId('SaveChangesPanel__save-btn')).toBeDisabled();
 

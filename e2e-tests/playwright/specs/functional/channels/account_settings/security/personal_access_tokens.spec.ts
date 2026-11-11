@@ -116,7 +116,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
         await form.fillExpiryDateTextbox('');
 
         // * The inline validation error surfaces and Save is disabled, so no token can be created
-        await expect(form.errorText.locator).toHaveText('An expiry date is required.');
+        await expect(form.errorText.locator).toHaveMessage(Msg.user.settings.tokens.expiryRequired);
         await expect(form.saveButton.locator).toBeDisabled();
         await expect(form.tokenText.locator).toBeHidden();
     });

@@ -6,7 +6,7 @@
  * @reference MM-69100
  */
 
-import {ChannelsPage, expect, test, DefaultChannel} from '@mattermost/playwright-lib';
+import {ChannelsPage, expect, test, DefaultChannel, Msg} from '@mattermost/playwright-lib';
 
 import {enableTeamMembershipABACConfig} from './helpers';
 
@@ -31,9 +31,9 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
 
         // * Tabs appear in the correct order
         await expect(tabButtons.nth(0)).toContainText('Info');
-        await expect(tabButtons.nth(1)).toContainText('Access');
+        await expect(tabButtons.nth(1)).toContainMessage(Msg.team_settings_modal.accessTab);
         await expect(tabButtons.nth(2)).toContainText('Team Membership');
-        await expect(tabButtons.nth(3)).toContainText('Channel Membership');
+        await expect(tabButtons.nth(3)).toContainMessage(Msg.team_settings_modal.accessPoliciesTab);
 
         // * Fourth tab does NOT contain the old label
         await expect(tabButtons.nth(3)).not.toContainText('Membership Policies');
@@ -63,7 +63,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
         await expect(channelMembershipTab).toBeVisible();
 
         // * Label is "Channel Membership"
-        await expect(channelMembershipTab).toContainText('Channel Membership');
+        await expect(channelMembershipTab).toContainMessage(Msg.team_settings_modal.accessPoliciesTab);
 
         // * Old label is gone
         await expect(channelMembershipTab).not.toContainText('Membership Policies');

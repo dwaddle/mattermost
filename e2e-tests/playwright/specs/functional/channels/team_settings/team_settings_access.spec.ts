@@ -20,12 +20,12 @@ test.describe('Team Settings Modal - Access Tab', () => {
         const saved = formatMessage(Msg.saveChangesPanel.saved);
 
         // # Enable allowed domains checkbox to show the input
-        await settings.access.allowedDomainsCheckbox.locator.check();
+        await settings.access.allowedDomainsCheckbox.check();
 
         // # Add an allowed domain
         const testDomain = 'testdomain.com';
         await domains.inputCombobox.locator.fill(testDomain);
-        await domains.inputCombobox.locator.press('Enter');
+        await domains.inputCombobox.press('Enter');
 
         // * Verify domain appears in the UI
         await expect(domains.locator).toContainText(testDomain);

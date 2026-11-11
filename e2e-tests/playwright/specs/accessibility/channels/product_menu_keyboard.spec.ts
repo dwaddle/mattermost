@@ -19,7 +19,7 @@ test('MM-55271 should be able to navigate the product menu with the keyboard aft
     await expect(app.center.composer.locator).toBeVisible();
 
     // # Click on the product menu button
-    await app.globalHeader.productMenuButton.locator.click();
+    await app.globalHeader.productMenuButton.click();
 
     await testProductMenuWithKeyboard(app, page);
 });
@@ -38,7 +38,7 @@ test('MM-55271 should be able to navigate the product menu with the keyboard aft
     await expect(app.center.composer.locator).toBeVisible();
 
     // # Focus the product menu button and open it with the keyboard
-    await app.globalHeader.productMenuButton.locator.focus();
+    await app.globalHeader.productMenuButton.focus();
     await expect(app.globalHeader.productMenuButton.locator).toBeFocused();
     await page.keyboard.press('Space');
 
@@ -57,7 +57,7 @@ test('MM-55271 should be able to select a product menu item with the keyboard', 
     await expect(app.center.composer.locator).toBeVisible();
 
     // # Open the product menu with the keyboard
-    await app.globalHeader.productMenuButton.locator.focus();
+    await app.globalHeader.productMenuButton.focus();
     await page.keyboard.press('Enter');
     await expect(app.globalHeader.productMenu.channelsMenuItem.locator).toBeVisible();
 

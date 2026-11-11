@@ -28,7 +28,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus on team menu button and press Enter to open the menu
-        await header.openTeamMenuButton.locator.focus();
+        await header.openTeamMenuButton.focus();
         await page.keyboard.press('Enter');
 
         await pw.logFocusedElement(page);
@@ -82,7 +82,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus on team menu button and press Enter to open the menu
-        await header.openTeamMenuButton.locator.focus();
+        await header.openTeamMenuButton.focus();
         await page.keyboard.press('Enter');
 
         // * Team menu should be visible and focus should be on first menu item
@@ -122,14 +122,14 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Click on team menu button to open the menu
-        await header.openTeamMenuButton.locator.focus();
+        await header.openTeamMenuButton.focus();
         await page.keyboard.press('Enter');
 
         // * Team menu should be visible
         await expect(teamMenu.locator).toBeVisible();
 
         // # Set focus on "Team settings" menu item and press Enter
-        await teamMenu.teamSettingsMenuItem.locator.focus();
+        await teamMenu.teamSettingsMenuItem.focus();
         await page.keyboard.press('Enter');
 
         // * Team settings modal should open (wait for navigation or modal)
@@ -141,12 +141,12 @@ test(
         await expect(app.teamSettingsModal.locator).not.toBeVisible();
 
         // # Reopen team menu
-        await header.openTeamMenuButton.locator.focus();
+        await header.openTeamMenuButton.focus();
         await page.keyboard.press('Enter');
         await expect(teamMenu.locator).toBeVisible();
 
         // # Set focus on "Learn about teams" menu item and press Space
-        await teamMenu.invitePeopleMenuItem.locator.focus();
+        await teamMenu.invitePeopleMenuItem.focus();
         await page.keyboard.press(' ');
 
         // * Should navigate to learn about teams documentation or open modal
@@ -171,7 +171,7 @@ test('close menu using Escape key', {tag: ['@accessibility', '@team_menu', '@key
     await expect(app.center.composer.locator).toBeVisible();
 
     // # Click on team menu button to open the menu
-    await header.openTeamMenuButton.locator.click();
+    await header.openTeamMenuButton.click();
 
     // * Team menu should be visible
     await expect(teamMenu.locator).toBeVisible();
@@ -207,7 +207,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Click on team menu button to open the menu
-        await header.openTeamMenuButton.locator.click();
+        await header.openTeamMenuButton.click();
 
         // * Team menu should be visible
         await expect(teamMenu.locator).toBeVisible();
@@ -247,7 +247,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Click on team menu button to open the menu
-        await header.openTeamMenuButton.locator.click();
+        await header.openTeamMenuButton.click();
 
         // * Team menu should be visible
         await expect(teamMenu.locator).toBeVisible();
@@ -308,7 +308,7 @@ test(
         await expect(app.center.composer.locator).toBeVisible();
 
         // # Open the menu from the keyboard (after a mouse click, a focused item never shows the keyboard focus ring)
-        await header.openTeamMenuButton.locator.focus();
+        await header.openTeamMenuButton.focus();
         await app.page.keyboard.press('Enter');
 
         // * Team menu should be visible
