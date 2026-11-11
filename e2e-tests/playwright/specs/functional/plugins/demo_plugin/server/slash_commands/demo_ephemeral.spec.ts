@@ -1,9 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
-import {openChannel} from '../../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../../helpers';
 
 import {actionNamed, postContaining, sendCommand} from './support';
@@ -14,7 +13,7 @@ test('should send ephemeral post with Update and Delete actions via /ephemeral c
     await pw.ensureDemoPlugin();
 
     // # Log in and open Town Square (away from the plugin's own ephemeral messages)
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // # Send /ephemeral
     await sendDemoSlashCommand(app.page, () => sendCommand(app, '/ephemeral'));

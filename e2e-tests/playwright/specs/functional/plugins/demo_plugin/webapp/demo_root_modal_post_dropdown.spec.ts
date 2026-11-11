@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {duration, test, type App} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../channels/burn_on_read/support';
+import {type App, duration, openChannel, test} from '@mattermost/playwright-lib';
 
 import {closeRootModal, DEMO, expectRootModal} from './support';
 
@@ -24,7 +22,7 @@ test('should open Root Modal from post actions menu and all submenu items', asyn
         channel_id: townSquare.id,
         message: 'Test post for Root Modal validation',
     });
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Click the plugin's top-level action

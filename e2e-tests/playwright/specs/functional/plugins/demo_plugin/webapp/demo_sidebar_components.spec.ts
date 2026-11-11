@@ -1,9 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
-import {openChannel} from '../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../helpers';
 import {sendCommand} from '../server/slash_commands/support';
 
@@ -13,7 +12,7 @@ test('should show Demo Plugin enabled/disabled status in left sidebar header', a
     // # Set up the demo plugin and open Town Square (its slash command works from any channel)
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const status = app.plugins.comMattermostDemoPlugin.lhsHeader.statusText;
 
     /** Sends /demo_plugin <enabled> and waits for the sidebar header to follow. */
@@ -40,7 +39,7 @@ test('should show demo plugin plug icon at the bottom of the team sidebar', asyn
     await pw.ensureDemoPlugin();
     const otherTeam = await adminClient.createTeam(await pw.random.team());
     await adminClient.addToTeam(otherTeam.id, user.id);
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // * The plugin's icon shows at the bottom of the team sidebar
     await expect(app.plugins.comMattermostDemoPlugin.teamSidebarIcon.locator).toBeVisible();
@@ -50,7 +49,7 @@ test('should show Demo Plugin Item in Browse or create channels menu and trigger
     // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // # Open the "Browse or create channels" menu
     const menu = await app.lhs.header.clickOpenBrowseOrAddMenuButton();

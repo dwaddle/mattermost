@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../channels/burn_on_read/support';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
 import {DEMO} from './support';
 
@@ -11,7 +9,7 @@ test('should open right-hand sidebar when demo plugin App Bar button is clicked'
     // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Click the plugin's App Bar button

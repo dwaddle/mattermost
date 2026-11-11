@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../../channels/burn_on_read/support';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
 import {markdownOf, postContaining, sendCommand} from './support';
 
@@ -11,7 +9,7 @@ test('should parse user and channel mentions from /show_mentions command text', 
     // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // # Send /show_mentions
     await sendCommand(app, '/show_mentions @sysadmin ~town-square');

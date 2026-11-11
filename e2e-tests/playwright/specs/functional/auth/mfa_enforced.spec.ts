@@ -3,7 +3,6 @@
 
 import {expect, openSystemUsers, searchSystemUsers, test, testConfig} from '@mattermost/playwright-lib';
 
-
 import {expectOnSelectTeam, logIn, openAdminConsole, openLogin} from './support';
 
 /**

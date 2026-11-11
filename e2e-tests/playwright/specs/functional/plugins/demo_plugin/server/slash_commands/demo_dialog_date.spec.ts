@@ -1,9 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, getDayPickerDayCell, test} from '@mattermost/playwright-lib';
+import {expect, getDayPickerDayCell, openChannel, test} from '@mattermost/playwright-lib';
 
-import {openChannel} from '../../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../../helpers';
 
 import {fieldLabelled, postContaining, sendCommand} from './support';
@@ -14,7 +13,7 @@ test('should open /dialog date and post submit confirmation after selecting date
     await pw.ensureDemoPlugin();
 
     // # Log in and open Town Square
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // # Send /dialog date command
     const form = app.appsForm;

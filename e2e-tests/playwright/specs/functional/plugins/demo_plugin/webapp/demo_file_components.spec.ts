@@ -3,9 +3,7 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, getFileFromAsset, test} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../channels/burn_on_read/support';
+import {expect, getFileFromAsset, openChannel, test} from '@mattermost/playwright-lib';
 
 import {closeRootModal, DEMO, expectRootModal, uploadFromYourComputer} from './support';
 
@@ -24,7 +22,7 @@ test('should show "Upload using Demo Plugin" entry in attachment menu and open R
     // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // # Open the attachment menu (the plugin's upload method turns the button into a menu)
     const composer = app.center.postCreate;
@@ -49,7 +47,7 @@ test('should show Demo Plugin entry in file attachment dropdown for .demo files 
     );
     await adminClient.addToChannel(user.id, channel.id);
     const {postId, fileId} = await postDemoFile(userClient, channel.id);
-    const app = await openChannel(pw, user, team, channel);
+    const app = await openChannel(pw, user, {team, channel});
 
     // # Open the file's "..." menu
     const card = app.center.postList.post({id: postId}).attachments.fileCard({id: fileId});
@@ -75,7 +73,7 @@ test('should render custom preview for .demo files', async ({pw}) => {
     );
     await adminClient.addToChannel(user.id, channel.id);
     const {postId, fileId} = await postDemoFile(userClient, channel.id);
-    const app = await openChannel(pw, user, team, channel);
+    const app = await openChannel(pw, user, {team, channel});
 
     // # Open the file's preview from its thumbnail
     await app.center.postList.post({id: postId}).attachments.fileCard({id: fileId}).thumbnailLink.click();
@@ -102,7 +100,7 @@ test('should upload a file via "Your computer" from the demo plugin attachment s
     // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const composer = app.center.postCreate;
 
     // # Upload a file through the attachment menu's "Your computer"

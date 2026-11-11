@@ -3,9 +3,7 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../channels/burn_on_read/support';
+import {type App, expect, openChannel, type PlaywrightExtended, test} from '@mattermost/playwright-lib';
 
 import {closeRootModal, expectRootModal} from './support';
 
@@ -15,7 +13,7 @@ async function openOwnProfilePopover(pw: PlaywrightExtended, message: string): P
     await pw.ensureDemoPlugin();
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const post = await userClient.createPost({channel_id: townSquare.id, message});
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     await app.center.postList.post({id: post.id}).avatar.locator.click();
     await expect(app.profilePopover.usernameText.locator).toContainText(user.username);
     return {app, user};

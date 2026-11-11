@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../../channels/burn_on_read/support';
+import {expect, openChannel, type PlaywrightExtended, test} from '@mattermost/playwright-lib';
 
 import {fieldContaining, openDialog, postContaining, radioFieldWith} from './support';
 
@@ -11,7 +9,7 @@ import {fieldContaining, openDialog, postContaining, radioFieldWith} from './sup
 async function openDemoDialog(pw: PlaywrightExtended, command: string) {
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const form = await openDialog(app, command);
     return {app, form};
 }

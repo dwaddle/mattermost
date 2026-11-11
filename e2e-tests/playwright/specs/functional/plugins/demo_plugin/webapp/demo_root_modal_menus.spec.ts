@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../channels/burn_on_read/support';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
 import {closeRootModal, DEMO, expectRootModal} from './support';
 
@@ -11,7 +9,7 @@ test('should open Root Modal from team dropdown main menu', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Open the team menu: the plugin adds two items, told apart by their labels
@@ -32,7 +30,7 @@ test('should open Root Modal from channel header dropdown More actions', async (
     const {adminClient, user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // # Open the channel menu and hover "More actions" to show its submenu
     const menu = await app.channelHeader.clickOpenMenuButton();
@@ -52,7 +50,7 @@ test('should open Sample Confirmation Dialog from team dropdown and respond to C
     // # Set up the demo plugin and open Town Square
     const {user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Open the team menu and click "Sample Confirmation Dialog"

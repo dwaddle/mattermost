@@ -3,9 +3,8 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, getFileFromAsset, test} from '@mattermost/playwright-lib';
+import {expect, getFileFromAsset, openChannel, test} from '@mattermost/playwright-lib';
 
-import {openChannel} from '../../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../../helpers';
 
 import {postContaining, sendCommand} from './support';
@@ -49,7 +48,7 @@ test('should list uploaded files with running total via /list_files command', as
     await adminClient.addToChannel(user.id, createdChannel.id);
 
     // # Log in and open the channel
-    const app = await openChannel(pw, user, team, 'list-files-test');
+    const app = await openChannel(pw, user, {team, channel: 'list-files-test'});
 
     // * /list_files with no files: the bot replies with none
     await sendDemoSlashCommand(app.page, () => sendCommand(app, '/list_files'));

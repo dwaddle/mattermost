@@ -1,9 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
-import {openChannel} from '../../../../channels/burn_on_read/support';
 import {sendDemoSlashCommand} from '../../helpers';
 
 import {actionNamed, postContaining, sendCommand} from './support';
@@ -12,7 +11,7 @@ test('should post interactive button and respond with click attribution via /int
     // # Set up the demo plugin and open Town Square
     const {adminClient, user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
     // # Send /interactive
     await sendDemoSlashCommand(app.page, () => sendCommand(app, '/interactive'));

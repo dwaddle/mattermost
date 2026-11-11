@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {demoPluginId, duration, test, expect} from '@mattermost/playwright-lib';
-
-import {openChannel} from '../../../../channels/burn_on_read/support';
+import {demoPluginId, duration, expect, openChannel, test} from '@mattermost/playwright-lib';
 
 import {postContaining} from './support';
 
@@ -11,7 +9,7 @@ test('should crash plugin via /crash command and verify recovery', async ({pw}) 
     // # Setup
     const {adminClient, user, team} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, team, 'town-square');
+    const app = await openChannel(pw, user, {team, channel: 'town-square'});
     const composer = app.center.postCreate;
 
     // # Pick /crash from the slash command autocomplete and send it
