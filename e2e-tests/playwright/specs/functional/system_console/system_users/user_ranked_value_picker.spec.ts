@@ -18,9 +18,6 @@ import {expect, generated, getRandomId, test} from '@mattermost/playwright-lib';
 import {optionId} from '../../channels/channel_attributes/helpers';
 import {deleteCustomProfileAttributes} from '../../channels/custom_profile_attributes/helpers';
 
-// Written on the generated page objects: the System Console user detail page's attribute row by field id, its rank
-// picker and menu (options by option id, with their badges), and Save with its confirmation dialog.
-
 test.describe('System Console - Ranked value combobox', () => {
     let adminClient: Client4;
     let adminUser: UserProfile;

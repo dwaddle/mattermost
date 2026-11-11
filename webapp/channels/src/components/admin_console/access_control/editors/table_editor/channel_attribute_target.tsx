@@ -30,7 +30,6 @@ export function channelAttributeMenuItems(
     onSelect: (name: string) => void,
     formatMessage: IntlShape['formatMessage'],
 
-    // The rule row's scope: each target is `<testId>.value_menu.channel_attribute:<field id>--menuitemradio`.
     testId?: TestId,
 ): React.ReactNode[] {
     if (channelFields.length === 0) {

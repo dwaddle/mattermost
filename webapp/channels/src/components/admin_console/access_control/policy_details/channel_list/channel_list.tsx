@@ -43,7 +43,6 @@ type Props = WrappedComponentProps & {
     saving?: boolean;
     hideTeamColumn?: boolean;
 
-    // The grid's scope: rows are `<testIdScope>.row:<channel id>`, with `.row.auto_add--checkbox` and `.row.remove--link`.
     testIdScope?: TestId;
     actions: {
         searchChannels: (id: string, term: string, opts: ChannelSearchOpts) => Promise<ActionResult>;

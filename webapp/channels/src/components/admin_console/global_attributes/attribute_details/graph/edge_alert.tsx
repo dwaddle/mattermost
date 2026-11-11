@@ -14,7 +14,6 @@ type Props = {
     parentName: string;
     className: string;
 
-    // Renders `<testId>--alert`.
     testId: TestId;
 };
 

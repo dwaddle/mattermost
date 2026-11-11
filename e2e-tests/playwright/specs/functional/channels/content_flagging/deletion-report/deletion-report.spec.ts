@@ -20,9 +20,6 @@ import {
  * 3. Create a post, flag it, and remove it via reviewer
  * 4. Login as the reviewer and navigate to the content review DM
  * 5. Verify the deletion report summary table is posted in the reviewer's thread
- *
- * Written on the generated page objects: the report post by id (card, View details, Remove, thread footer), the
- * review dialog's form and skip-confirm steps, and the RHS thread.
  */
 test('Reviewer receives a deletion report summary after removing a flagged post', async ({pw}) => {
     const {adminClient, team, user: reviewerUser} = await pw.initSetup();

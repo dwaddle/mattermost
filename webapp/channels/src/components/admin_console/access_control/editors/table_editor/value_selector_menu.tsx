@@ -55,7 +55,6 @@ export interface ValueSelectorMenuProps {
     field?: UserPropertyField;
     rowIndex?: number;
 
-    // The rule row's scope (`<table>.row`): the value control is `<testId>.value--button` or `--textbox`.
     testId?: TestId;
 }
 

@@ -7,9 +7,6 @@ import type {UserProfile} from '@mattermost/types/users';
 
 import {expect, type App, type generated, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the content-review bot's DM, its report posts by id (the report card's
-// fields keyed by property name, its View details button), and the same card in the RHS thread.
-
 export const FLAG_REASON = 'Classification mismatch';
 
 export async function setupContentFlagging(

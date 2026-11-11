@@ -25,7 +25,6 @@ type Props<T extends string> = {
     // each option's id `${idPrefix}-${option.id}`.
     idPrefix: string;
 
-    // The trigger is `<testId>--button`, each option `<testId>.option:<id>--menuitemradio`.
     testId: TestId;
 
     // What the trigger shows. Kept separate from `options` because a value can

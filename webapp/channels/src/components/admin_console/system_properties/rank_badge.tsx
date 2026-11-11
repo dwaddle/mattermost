@@ -13,7 +13,6 @@ type Props = {
     rank?: number;
     className?: string;
 
-    // Renders `<testId>--text`; without it, the legacy `rank-badge`.
     testId?: TestId;
 };
 

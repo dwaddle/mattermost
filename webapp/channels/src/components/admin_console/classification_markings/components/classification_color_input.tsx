@@ -17,7 +17,6 @@ export type ClassificationColorInputProps = {
     swatchAriaLabel: string;
     isDisabled?: boolean;
 
-    // The hex input renders `<testId>--textbox`.
     testId: TestId;
 };
 

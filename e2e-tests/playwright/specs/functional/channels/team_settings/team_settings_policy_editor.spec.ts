@@ -21,10 +21,6 @@ import {
 } from './helpers';
 import {addChannel, closeTeamSettings, policyRow, openAccessPoliciesTab, openTeam} from './surface';
 
-// Written on the generated page objects: Team Settings' membership policies tab (Add policy, the list's rows and their
-// menu, the sync status) and the policy editor (back, name, rules, assigned channels with auto-add and Remove, Delete
-// and its dialog, the apply dialog), the channel selector dialog, and the save panel.
-
 /** Removes the first channel assigned to the policy being edited. */
 async function removeFirstChannel(editor: generated.TeamSettingsModalAccessPoliciesEditor) {
     const [first] = await editor.channels.rowKeys();

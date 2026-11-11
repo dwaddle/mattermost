@@ -12,7 +12,6 @@ import './session_attributes.scss';
 type Props = {
     enabled: boolean;
 
-    // Renders `<testId>--text`.
     testId?: TestId;
 };
 

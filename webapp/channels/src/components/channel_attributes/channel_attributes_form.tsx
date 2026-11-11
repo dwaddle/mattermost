@@ -30,8 +30,6 @@ type Props = {
     onChange: (fieldId: string, value: string | string[] | undefined) => void;
     disabled?: boolean;
 
-    // The form is `<testId>`; each attribute is `<testId>.attribute:<field id>`, whose control is
-    // `<testId>.attribute.value` (a textbox, a dropdown, or a graph picker's `--button`).
     testId: TestId;
 };
 

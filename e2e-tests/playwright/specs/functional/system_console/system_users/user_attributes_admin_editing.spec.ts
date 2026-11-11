@@ -29,10 +29,6 @@ import {
 } from '../../channels/custom_profile_attributes/helpers';
 import {optionId} from '../../channels/channel_attributes/helpers';
 
-// Written on the generated page objects: System Console > Users' search and row by user id, and the user detail page
-// (system fields, attribute rows by field id with their inputs and errors, the fields layout, Save with its
-// confirmation dialog, Cancel).
-
 /** Per-run CPA names — avoids reusing global fields (e.g. "Old Name") from other suites. */
 let cpaFieldNames: {
     department: string;

@@ -16,7 +16,6 @@ type Props = {
     value: PropertyValue<unknown>;
     maxItems?: number;
 
-    // the value's scope: each chip is `<scope>.select--text`
     testIdScope?: TestId;
 };
 

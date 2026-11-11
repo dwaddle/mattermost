@@ -99,8 +99,6 @@ interface AttributeSelectorProps {
     onMenuOpened?: () => void;
     enableUserManagedAttributes: boolean;
 
-    // The rule row's scope: the button is `<testId>.attribute--button`, opening `<testId>.attribute_menu`
-    // with an item per attribute (`.attribute:<field id>`).
     testId?: TestId;
 }
 

@@ -20,9 +20,6 @@ import {
 } from './helpers';
 import {openTeam} from './surface';
 
-// Written on the generated page objects: the team menu and the invite dialog (its policy banner and invite-link
-// warning, and the people picker's options by user).
-
 /** Opens Invite People from the team menu. */
 async function openInvitePeople(app: App) {
     const modal = await (await app.lhs.header.clickOpenTeamMenuButton()).clickInvitePeopleMenuItem();

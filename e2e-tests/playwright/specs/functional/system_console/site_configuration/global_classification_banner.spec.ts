@@ -28,9 +28,6 @@ import {
     setupClassificationFieldWithGlobalBanner,
 } from './classification_markings_helpers';
 
-// Written on the generated page objects: the global banners (`app.classificationBanner.top` and `.bottom`), and
-// System Console > Classification Markings' settings by id, preset dropdown and save panel.
-
 /** Logs the admin in on System Console > Classification Markings, waiting for its form. */
 async function openClassificationMarkings(pw: PlaywrightExtended, admin: UserProfile) {
     const {app} = await pw.testBrowser.login(admin);

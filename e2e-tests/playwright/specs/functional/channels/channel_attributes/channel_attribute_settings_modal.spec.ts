@@ -21,9 +21,6 @@ import {
 } from './helpers';
 import {add, editor, openChannel, openChannelSettingsInfo, row, setText} from './surface';
 
-// Written on the generated page objects (through ./surface): Channel Settings' Info tab and its attribute editor
-// (rows keyed by field id), and the save panel.
-
 // Editing in Channel Info (and this same editor reused in Channel Settings) is
 // admin-only, whatever an attribute's own setter tier says.
 async function promoteToChannelAdmin(

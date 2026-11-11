@@ -178,8 +178,6 @@ export interface CELEditorProps {
     hasMaskedRows?: boolean;
     actions?: CELEditorActions;
 
-    // The editor's scope: its input is `<testId>.input`, its validation status `<testId>.status--text`, its
-    // restricted-values banner `<testId>.masked--alert`.
     testId?: TestId;
 }
 

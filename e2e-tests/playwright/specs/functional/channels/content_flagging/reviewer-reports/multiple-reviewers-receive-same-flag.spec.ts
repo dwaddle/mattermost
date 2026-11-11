@@ -5,8 +5,6 @@ import {test} from '@mattermost/playwright-lib';
 
 import {createPost, setupContentFlagging, verifyReport} from './../support';
 
-// Written on the generated page objects: each reviewer's content-review DM and the report post about the flag.
-
 /** @objective Verify that multiple reviewers receive the same flag notification
  * @testcase
  * 1. Create three users and add them as reviewers to a team

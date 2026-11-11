@@ -88,9 +88,6 @@ type Props = {
     onCancel: () => void;
     saving: boolean;
 
-    // The attribute's row scope: `<testId>.edit--button` opens the editor (a menu, `<testId>.edit_menu`,
-    // or a graph picker), a text field edits in `<testId>.editor--textbox`, and values are
-    // `<testId>.chip:<value>` (keyed by the value each chip shows).
     testId: TestId;
 };
 

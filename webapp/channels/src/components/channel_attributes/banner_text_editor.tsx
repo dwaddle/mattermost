@@ -128,8 +128,6 @@ type Props = {
     maxLength?: number;
     hasError?: boolean;
 
-    // The editor is `<testId>--textbox` (the plain banner textarea's id too). An attribute in the text is
-    // `<testId>.token:<position>` with `.token.remove--button`; inserting one is `<testId>.insert--button`.
     testId: TestId;
 
     // The channel's kind, which picks the words: board rather than channel for a board.

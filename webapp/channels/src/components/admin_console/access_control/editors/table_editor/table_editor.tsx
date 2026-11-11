@@ -145,10 +145,6 @@ export function isRowValueValid(row: TableRow): boolean {
 
 export interface TableEditorProps {
 
-    // The rule table is `<testId>`; each rule `<testId>.row:<position>`, whose controls are under `<testId>.row`
-    // (`.attribute--button`, `.operator--button`, `.value--button` or `--textbox`, `.remove--button`). Adding a
-    // rule is `<testId>.add--button` and testing the rules `<testId>.test--button`. Plugins render the editor
-    // (`AccessControlTableEditor`) without one, and then it renders no testids.
     testId?: TestId;
     value: string;
     onChange: (value: string) => void;

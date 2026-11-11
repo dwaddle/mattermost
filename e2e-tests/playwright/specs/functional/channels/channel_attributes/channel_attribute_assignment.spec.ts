@@ -18,9 +18,6 @@ import {
 } from './helpers';
 import {openAttributeControl, openChannel, openNewChannelModal, pickListOption} from './surface';
 
-// Written on the generated page objects (through ./surface): the new-channel dialog and its attribute rows keyed by
-// field id (value button, text box), with options picked by name.
-
 test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, () => {
     test.describe.configure({mode: 'serial'});
 

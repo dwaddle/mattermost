@@ -11,7 +11,6 @@ import './selector_menus.scss';
 
 type Props = {
 
-    // The chip's path (`<rule row>.value.masked`); it renders `<testId>--img`
     testId?: TestId;
 };
 

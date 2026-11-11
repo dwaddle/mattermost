@@ -5,9 +5,6 @@ import {test} from '@mattermost/playwright-lib';
 
 import {createPost, verifyReport, verifyRHSFlaggedPostDetails} from './../support';
 
-// Written on the generated page objects: the content-review bot's report post by id, its card in the center and
-// (after View details) in the RHS.
-
 /**
  * @objective Verify a reviewer from other team can receive a review request for a flagged post
  * @testcase

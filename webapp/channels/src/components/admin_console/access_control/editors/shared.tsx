@@ -531,7 +531,6 @@ interface TestButtonProps {
      *  matching the dual-lane simulation modal they open. */
     label?: React.ReactNode;
 
-    // The button is `<testId>--button`.
     testId?: TestId;
 }
 
@@ -539,7 +538,6 @@ interface AddAttributeButtonProps {
     onClick: () => void;
     disabled: boolean;
 
-    // The button is `<testId>--button`.
     testId?: TestId;
 }
 

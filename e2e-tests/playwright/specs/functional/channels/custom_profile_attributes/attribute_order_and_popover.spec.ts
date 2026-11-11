@@ -13,9 +13,6 @@ import {
     setupCustomProfileAttributeValues,
 } from './helpers';
 
-// Written on the generated page objects: Settings' profile sections keyed by section (a custom attribute's is
-// `customAttribute_<field id>`), the composer, the post's avatar, and the profile popover's attributes keyed by field id.
-
 function matchingOrder(actual: string[], expected: string[]) {
     return actual.filter((value) => expected.includes(value));
 }

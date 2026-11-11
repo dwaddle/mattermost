@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 import {createPost, openReportDetails, reportCard, setupContentFlagging, verifyReport} from './../support';
 
-// Written on the generated page objects: the content-review bot's report posts by id (card, View details, Remove)
-// in the center and the RHS, and the review dialog's form and report-generated steps.
-
 /** @objective Verify Removed Flagged posts show appropriate status and do not show the post message
  * @testcase
  * 1. Create three users and add them as reviewers to a team

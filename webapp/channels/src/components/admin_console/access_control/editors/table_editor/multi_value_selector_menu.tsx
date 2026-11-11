@@ -42,8 +42,6 @@ const MultiValueSelector = ({
     targetAttribute?: string;
     onSelectTarget?: (name: string) => void;
 
-    // The rule row's scope: the value button is `<testId>.value--button` (a free-text value
-    // `<testId>.value--textbox`), its options `<testId>.value_menu.multi_option:<name>` and chips `<testId>.value.chip:<value>`.
     testId?: TestId;
 }) => {
     const {formatMessage} = useIntl();

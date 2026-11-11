@@ -85,7 +85,6 @@ export type AttributeComboboxProps = {
     options: PropertyFieldOption[];
     id?: string;
 
-    /** The field's scope: the input is `<scope>.value--combobox`, options `<scope>.choice:<option id>--option`, clear `<scope>.clear--button`. */
     testIdScope?: TestId;
     disabled?: boolean;
     invalid?: boolean;

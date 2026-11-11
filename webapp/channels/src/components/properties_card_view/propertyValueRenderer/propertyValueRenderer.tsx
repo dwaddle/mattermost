@@ -33,7 +33,6 @@ type Props = {
     metadata?: FieldMetadata;
     maxItems?: number;
 
-    // The field's value scope; each renderer names its kind under it (`<scope>.text--text`, `<scope>.user`).
     testIdScope?: TestId;
 };
 

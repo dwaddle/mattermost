@@ -88,9 +88,6 @@ const headingMessages: KindMessages = {
 type Props = {
     channelId: string;
 
-    // The block is `<testId>`. Each attribute is `<testId>.attribute:<field id>` (field names are typed by
-    // admins; ids are stable), and its parts are under `<testId>.attribute`. "Add attribute" is
-    // `<testId>.add--button`, opening `<testId>.add_menu`.
     testId: TestId;
 
     // When true, edits are staged locally rather than saved on each change —

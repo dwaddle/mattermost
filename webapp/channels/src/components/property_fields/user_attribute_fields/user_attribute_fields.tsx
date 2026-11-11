@@ -32,7 +32,6 @@ export type UserAttributeFieldsProps = {
     onRemove?: (fieldId: string) => void;
     isRemovable?: (field: UserPropertyField) => boolean;
 
-    // Each field is `<testIdScope>:<field id>`, and its remove button `<testIdScope>.remove--button`.
     testIdScope: TestId;
 };
 

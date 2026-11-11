@@ -217,7 +217,6 @@ export type HierarchicalMenuSearchProps = {
     onArrowDown: () => void;
     inputRef: React.Ref<HTMLInputElement>;
 
-    // The search box renders `<testId>--textbox`.
     testId?: TestId;
 };
 

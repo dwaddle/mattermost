@@ -19,9 +19,6 @@ import {
 // fields the running test owns and delete them afterward.
 let ownedFields: {adminClient: Client4; fields: CpaFieldsMap} | undefined;
 
-// Written on the generated page objects: the account menu's Profile item and the Profile settings' sections keyed by
-// section (a custom attribute's is `customAttribute_<field id>`): title, value, Edit, the value's textbox, Cancel.
-
 /** Logs the user in and opens Profile settings. */
 async function openProfile(pw: PlaywrightExtended, user: UserProfile) {
     const {app} = await pw.testBrowser.login(user);

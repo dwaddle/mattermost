@@ -50,7 +50,6 @@ type RemoveButtonProps = {
     disabled?: boolean;
     className?: string;
 
-    // The button is `<testId>--button`. Without it, no testid.
     testId?: TestId;
 };
 

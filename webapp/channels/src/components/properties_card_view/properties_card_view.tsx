@@ -118,7 +118,6 @@ export type ActionRow = {
     label: React.ReactNode;
     content: React.ReactNode;
 
-    // With the card's testIdScope, the row is `<testIdScope>.action:<testKey>`.
     testKey?: string;
 };
 
@@ -133,7 +132,6 @@ type Props = {
     metadata?: PropertiesCardViewMetadata;
     footer?: React.ReactNode;
 
-    // Parts render under it: `.title--text` and each field's row `.field:<field name>` (`.label--text`, `.value`).
     testIdScope?: TestId;
 };
 

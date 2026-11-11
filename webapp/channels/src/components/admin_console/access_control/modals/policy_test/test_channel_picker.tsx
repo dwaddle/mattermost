@@ -30,7 +30,6 @@ const CHANNEL_SEARCH_OPTS = {
 interface Props {
     onSelect: (channelId: string) => void;
 
-    // The picker's scope: its search is `<testIdScope>.search--textbox`, each row `<testIdScope>.channel:<channel id>--button`
     testIdScope?: TestId;
 }
 

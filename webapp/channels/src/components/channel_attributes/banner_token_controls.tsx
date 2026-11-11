@@ -22,7 +22,6 @@ import './banner_token_controls.scss';
 
 type Props = {
 
-    // `<testId>.insert--button` opens `<testId>.insert_menu`, an item per attribute (`.attribute:<field id>`).
     testId: TestId;
 
     // Every channel attribute with this channel's value, unset ones included.

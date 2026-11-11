@@ -4,9 +4,6 @@
 /**
  * @objective E2E tests for the Membership Policies tab in Team Settings Modal
  * @reference MM-67669
- *
- * Written on the generated page objects: the team menu, the Team Settings tabs keyed by tab id, the Channel
- * Membership tab's policy list (rows keyed by policy id, cells by column) and its sync status footer.
  */
 
 import {expect, getRandomId, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';

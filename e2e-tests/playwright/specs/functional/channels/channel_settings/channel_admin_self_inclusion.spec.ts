@@ -15,9 +15,6 @@ import {expect, newTestPassword, test, type App, type generated} from '@mattermo
 
 import {closeSettings, openAccessRules, openChannel} from './access_rules';
 
-// Written on the generated page objects: Channel Settings' access rules tab (its rules table's Test button) and the
-// access rule test results dialog (user search and rows by user).
-
 const PROGRAM_OPTIONS = [
     {name: 'Artemis', color: '#FF8800'},
     {name: 'Helios', color: '#00AAFF'},

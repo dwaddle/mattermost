@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 import {setupContentFlagging, createPost, verifyReporterNotification} from './../support';
 
-// Written on the generated page objects: the content-review bot's DM and its last post.
-
 /**
  * @objective Verify Reporter is notified if the flagged post is Retained by the reviewer
  */

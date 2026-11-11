@@ -24,7 +24,6 @@ export type GraphValueCellProps = {
     onSelectTarget?: (name: string) => void;
     rowIndex?: number;
 
-    // The rule row's scope: the picker's button is `<testId>.value--button`.
     testId?: TestId;
 };
 

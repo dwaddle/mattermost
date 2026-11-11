@@ -64,9 +64,6 @@ const customAttributes: CustomProfileAttribute[] = [
     },
 ];
 
-// Written on the generated page objects: the composer, the post's avatar, and the profile popover's attributes keyed
-// by field id.
-
 let team: Team;
 let user: UserProfile;
 let otherUser: UserProfile;

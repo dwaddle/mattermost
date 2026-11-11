@@ -58,7 +58,6 @@ interface OperatorSelectorProps {
     // operator labels and the multiselect heuristic is bypassed.
     allowedOperators?: string[];
 
-    // The rule row's scope: the button is `<testId>.operator--button` (operators are picked by their label).
     testId?: TestId;
 }
 

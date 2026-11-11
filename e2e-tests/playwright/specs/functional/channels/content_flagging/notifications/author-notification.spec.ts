@@ -7,8 +7,6 @@ import {test} from '@mattermost/playwright-lib';
 
 import {createPost, verifyReporterNotification} from './../support';
 
-// Written on the generated page objects: the content-review bot's DM and its last post.
-
 async function setupContentFlagging(adminClient: Client4, userIds: string[], enable = true) {
     await adminClient.patchConfig({
         ContentFlaggingSettings: {
