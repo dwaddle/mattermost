@@ -303,7 +303,7 @@ const SidebarChannelMenu = ({
         <Menu.Container
             menuButton={{
                 id: `SidebarChannelMenu-Button-${channel.id}`,
-                dataTestId: 'lhs.channel_list.channel.open_menu--button',
+                testId: 'lhs.channel_list.channel.open_menu',
                 as: SidebarMenuTrigger,
                 class: 'SidebarMenu_menuButton',
                 'aria-label': formatMessage(messages.optionsAriaLabel[channelKind], {channelName: channel.name}),

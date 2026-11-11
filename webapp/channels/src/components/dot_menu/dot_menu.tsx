@@ -29,7 +29,6 @@ import {
     TrashCanOutlineIcon,
 } from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
-import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserThread} from '@mattermost/types/threads';
@@ -671,7 +670,7 @@ export class DotMenuClass extends React.PureComponent<Props, State> {
             <Menu.Container
                 menuButton={{
                     id: `${this.props.location}_button_${this.props.post.id}`,
-                    dataTestId: withRole(this.props.testId, 'button'),
+                    testId: this.props.testId,
                     as: PostDotMenuTrigger,
                     class: classNames('post-menu__item', {
                         'post-menu__item--active': this.props.isMenuOpen,

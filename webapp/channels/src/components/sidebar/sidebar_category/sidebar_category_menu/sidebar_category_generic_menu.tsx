@@ -46,7 +46,7 @@ const SidebarCategoryGenericMenu = ({
             <Menu.Container
                 menuButton={{
                     id: `SidebarCategoryMenu-Button-${id}`,
-                    dataTestId: 'lhs.channel_list.category.menu--button',
+                    testId: 'lhs.channel_list.category.menu',
                     'aria-label': formatMessage({id: 'sidebar_left.sidebar_category_menu.editCategory', defaultMessage: '{name} category options'}, {name}),
                     as: SidebarMenuTrigger,
                     class: 'SidebarMenu_menuButton',

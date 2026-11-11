@@ -73,7 +73,7 @@ export default function SidebarTeamMenu(props: Props) {
         <Menu.Container
             menuButton={{
                 id: 'sidebarTeamMenuButton',
-                dataTestId: 'lhs.header.open_team_menu--button',
+                testId: 'lhs.header.open_team_menu',
                 class: buttonClassNames({emphasis: 'quaternary', size: 'sm'}, 'btn-inverted'),
                 children: (
                     <>

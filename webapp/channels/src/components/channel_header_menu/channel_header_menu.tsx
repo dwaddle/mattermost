@@ -129,7 +129,7 @@ export default function ChannelHeaderMenu({dmUser, gmMembers, isMobile, archived
             }}
             menuButton={{
                 id: 'channelHeaderDropdownButton',
-                dataTestId: isMobile ? 'mobile_header.open_menu--button' : 'channel_header.open_menu--button',
+                testId: isMobile ? 'mobile_header.open_menu' : 'channel_header.open_menu',
                 class: classNames('channel-header__trigger style--none'),
                 children: (
                     <>

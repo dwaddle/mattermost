@@ -148,7 +148,7 @@ const AIActionsMenu = ({
             <Menu.Container
                 menuButton={{
                     id: 'ai-actions-button',
-                    dataTestId: part(testIdScope, 'open', 'button'),
+                    testId: part(testIdScope, 'open'),
                     as: AIActionsMenuTrigger,
                     class: 'control',
                     'aria-label': formatMessage({

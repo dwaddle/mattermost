@@ -246,7 +246,7 @@ function PostPriorityPicker({
         <Menu.Container
             menuButton={{
                 id: 'messagePriority',
-                dataTestId: 'post_priority_picker.open--button',
+                testId: 'post_priority_picker.open',
                 as: PostPriorityMenuTrigger,
                 class: 'control',
                 disabled,

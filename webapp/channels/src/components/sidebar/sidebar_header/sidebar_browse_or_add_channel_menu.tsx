@@ -202,7 +202,7 @@ export default function SidebarBrowserOrAddChannelMenu(props: Props) {
         <Menu.Container
             menuButton={{
                 id: ELEMENT_ID_FOR_BROWSE_OR_ADD_CHANNEL_MENU_BUTTON,
-                dataTestId: 'lhs.header.open_browse_or_add_menu--button',
+                testId: 'lhs.header.open_browse_or_add_menu',
                 'aria-label': formatMessage({
                     id: 'sidebarLeft.browserOrCreateChannelMenuButton.label',
                     defaultMessage: 'Browse or create channels',

@@ -21,7 +21,8 @@ import type {
 import {useDispatch, useSelector} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import type {TestIdScope} from '@mattermost/shared/utils/test_id';
+import {withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId, TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
@@ -57,6 +58,11 @@ export type MenuButtonComponentProps = ButtonHTMLAttributes<HTMLButtonElement> &
 
 export type MenuButtonProps = {
     id: string;
+
+    /** The trigger's testid path; the Menu adds the role (`<testId>--button`). */
+    testId?: TestId;
+
+    /** @deprecated Pass `testId`, the path without the role. This is the trigger's whole testid. */
     dataTestId?: string;
     'aria-label'?: string;
     'aria-describedby'?: string;
@@ -337,7 +343,7 @@ export function Menu(props: Props) {
             <MenuButtonComponent
                 ref={setMenuButton}
                 id={props.menuButton.id}
-                data-testid={props.menuButton.dataTestId}
+                data-testid={withRole(props.menuButton.testId, 'button') ?? props.menuButton.dataTestId}
                 aria-controls={props.menu.id}
                 aria-haspopup={true}
                 aria-expanded={isMenuOpen}

@@ -72,7 +72,7 @@ export function SendPostOptions({disabled, onSelect, channelId, repeatDisabledRe
             }}
             menuButton={{
                 id: 'button_send_post_options',
-                dataTestId: 'send_post_options.open_menu--button',
+                testId: 'send_post_options.open_menu',
                 class: classNames('button_send_post_options', {disabled}),
                 children: <ChevronDownIcon size={16}/>,
                 disabled,
