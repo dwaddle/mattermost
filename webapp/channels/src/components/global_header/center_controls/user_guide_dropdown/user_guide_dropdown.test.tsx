@@ -84,7 +84,7 @@ describe('components/channel_header/components/UserGuideDropdown', () => {
             expect(screen.getByTestId(`global_header.help_menu.${name}--link`)).toBeInTheDocument();
         }
         expect(screen.getByTestId('global_header.help_menu.keyboard_shortcuts--button')).toBeInTheDocument();
-        expect(screen.getByTestId('global_header.help_menu.plugin:testpluginid--button')).toHaveTextContent('Test Plugin Item');
+        expect(screen.getByTestId('global_header.help_menu.plugin:testpluginid--menuitem')).toHaveTextContent('Test Plugin Item');
     });
 
     test('should only render Report a Problem link when its value is non-empty', () => {
