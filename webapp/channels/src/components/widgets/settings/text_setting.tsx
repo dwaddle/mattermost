@@ -30,7 +30,6 @@ export type Props = {
     autoFocus?: boolean;
     multiple?: boolean;
 
-    /** The row's parts render under it (`${testIdScope}.value--textbox`, `--spinbutton` for numbers); without it, the legacy ids. */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row). */

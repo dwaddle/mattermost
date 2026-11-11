@@ -17,7 +17,6 @@ type Props = {
     disabled?: boolean;
     setByEnv: boolean;
 
-    /** Renders `${testId}--checkbox`. */
     testId: TestId;
 };
 

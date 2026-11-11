@@ -10,7 +10,6 @@ type Props = {
     action?: JSX.Element;
     children?: React.ReactNode;
 
-    // The category's key in its testid: `admin.sidebar.category:<testKey>`.
     testKey?: string;
     name?: string;
     parentLink?: string;

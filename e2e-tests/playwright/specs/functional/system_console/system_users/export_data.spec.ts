@@ -3,9 +3,6 @@
 
 import {type App, expect, openSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' date range menu, Export button and the export
-// dialogs it opens, and the post list of the system bot's direct message.
-
 /** The text of the center post list's last post. */
 async function lastPostText(app: App) {
     const id = (await app.center.postList.postKeys()).at(-1);

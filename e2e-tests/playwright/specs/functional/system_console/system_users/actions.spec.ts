@@ -3,9 +3,6 @@
 
 import {expect, openSystemUsers, type PlaywrightExtended, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' table row by user id and its actions menu, with the
-// dialogs it opens (deactivate, manage roles, manage teams, reset password, update email, revoke sessions).
-
 test('MM-T5520-1 should activate and deactivate users', async ({pw}) => {
     const {getUser, row} = await setupAndGetRandomUser(pw);
 

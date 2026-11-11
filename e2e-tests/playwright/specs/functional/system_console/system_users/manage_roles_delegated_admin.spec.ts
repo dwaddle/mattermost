@@ -6,9 +6,6 @@ import type {UserProfile} from '@mattermost/types/users';
 
 import {expect, openSystemUsers, type PlaywrightExtended, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' row by user id and its actions menu, and the Manage
-// Roles dialog (role radios, the delegated roles section and its checkboxes by role, Save).
-
 /**
  * Delegated (granular) administration roles surfaced in the Manage Roles modal.
  * Mirrors DELEGATED_ROLE_NAMES in the manage_roles_modal component.

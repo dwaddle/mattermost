@@ -36,7 +36,6 @@ type Props = {
     button?: React.ReactNode;
     children?: React.ReactNode;
 
-    // The panel's scope: its title is `<testId>.title--text`, its subtitle `<testId>.subtitle--text`.
     testId?: TestId;
 
     // Override the title's / subtitle's testid (default derived from `testId`).

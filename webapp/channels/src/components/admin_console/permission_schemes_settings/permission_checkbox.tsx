@@ -11,7 +11,6 @@ import CheckboxPartialIcon from 'components/widgets/icons/checkbox_partial_icon'
 type Props = {
     value?: string;
 
-    // The checkbox is `<testIdScope>`, and shows `<testIdScope>.checked` when checked.
     testIdScope?: TestId;
 };
 

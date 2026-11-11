@@ -37,7 +37,6 @@ export type Row = {
     };
     onClick?: () => void;
 
-    // With the grid's testIdScope, the row is `<testIdScope>.row:<testKey>` (its position when unset).
     testKey?: string;
 };
 

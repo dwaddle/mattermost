@@ -14,7 +14,6 @@ type Props = {
     action?: JSX.Element;
     children?: JSX.Element | JSX.Element[];
 
-    // The section's key in its testid, under its category: `admin.sidebar.category.section:<testKey>`.
     testKey?: string;
     type?: string;
     parentLink?: string;

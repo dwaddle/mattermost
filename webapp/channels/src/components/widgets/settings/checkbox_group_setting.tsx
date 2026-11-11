@@ -21,7 +21,6 @@ type Props = {
     labelPosition?: 'before' | 'after';
     disabled?: boolean;
 
-    /** The row's parts render under it; without it, the legacy ids. */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row). */

@@ -16,7 +16,6 @@ type Props = {
     value?: string[];
     disabled?: boolean;
 
-    /** The row's parts render under it (`${testIdScope}.cell:<row>_<column>--checkbox` or `--radio`); without it, the legacy ids. */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row). */

@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that a system admin viewing the System Console loses access and is returned to the
  * channel view when another admin demotes them to a regular member.
- *
- * Written on the generated page objects: the System Console page and its sidebar, and the channel view's composer.
  */
 test('MM-T2552 redirects a demoted admin out of the System Console', {tag: '@system_console'}, async ({pw}) => {
     const {user, adminClient} = await pw.initSetup();

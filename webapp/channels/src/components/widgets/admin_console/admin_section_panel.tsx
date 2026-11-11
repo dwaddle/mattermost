@@ -20,7 +20,6 @@ type Props = {
     children: React.ReactNode;
     'data-testid'?: string;
 
-    // The panel's parts: `.description--text`, `.body` (without it, the legacy ids). Unkeyed when the panel is keyed.
     testIdScope?: TestIdScope;
 };
 

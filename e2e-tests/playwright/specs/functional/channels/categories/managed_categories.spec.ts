@@ -7,11 +7,6 @@ import type {UserProfile} from '@mattermost/types/users';
 
 import {expect, generated, getRandomId, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the new-channel dialog and Channel Settings' Info tab (each with its managed
-// category selector: input, existing and "Create new category" options, clear control), the save panel, the
-// sidebar's categories keyed by category id (a managed category's id is `managed_<name>`) with their header and menu
-// button, the sidebar channel menu, the channel header's favorite button, and the System Console's setting rows.
-
 async function enableManagedCategories(adminClient: Client4) {
     await adminClient.patchConfig({
         TeamSettings: {

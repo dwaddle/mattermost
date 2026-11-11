@@ -3,9 +3,6 @@
 
 import {type App, expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' filters popover (team search and options by team id,
-// role and status dropdowns with options by value, Apply), the search box and the table's rows by user id.
-
 /** Opens the filters popover. */
 async function openFilters(app: App) {
     await app.admin.users.clickFiltersButton();

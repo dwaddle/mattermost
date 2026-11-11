@@ -6,10 +6,6 @@ import type {Channel} from '@mattermost/types/channels';
 
 import {expect, generated, Msg, test, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the new-channel dialog and Channel Settings' Info tab (each with its default
-// category selector: input, "Create new category" option), the save panel, the sidebar's categories keyed by
-// category id and its channel links, and the System Console's setting rows by config path.
-
 async function enableChannelCategorySorting(adminClient: Client4) {
     await adminClient.patchConfig({
         TeamSettings: {

@@ -280,7 +280,6 @@ const EnterpriseEditionLeftPanel = ({
 
 type LegendValues = 'START DATE:' | 'EXPIRES:' | 'LICENSED SEATS:' | 'ACTIVE USERS:' | 'SINGLE-CHANNEL GUESTS:' | 'EDITION:' | 'LICENSE ISSUED:' | 'NAME:' | 'COMPANY / ORG:';
 
-// Each license detail's testid key: `admin.license.enterprise_panel.item:<key>`
 const legendKeys = {
     'START DATE:': 'start_date',
     'EXPIRES:': 'expires',

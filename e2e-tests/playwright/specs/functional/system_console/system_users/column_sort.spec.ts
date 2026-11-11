@@ -3,9 +3,6 @@
 
 import {type App, expect, openSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' table header columns by column id (their sort state)
-// and the rows' email cells, read in document order.
-
 /** The emails the table shows, in row order (up to 40 rows). */
 async function visibleEmails(app: App) {
     const {table} = app.admin.users;

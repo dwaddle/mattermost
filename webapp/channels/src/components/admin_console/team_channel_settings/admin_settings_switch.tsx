@@ -19,7 +19,6 @@ type Props = {
     /** Extra content rendered below the switch row (e.g. domain input). */
     footer?: ReactNode;
 
-    /** The switch renders `<testId>--switch` and its help `<testId>.help--text`. */
     testId: TestId;
 };
 

@@ -3,9 +3,6 @@
 
 import {type App, expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' columns menu (its items by column id), the table's
-// header columns by column id, and a row's cells by column id.
-
 /** Toggles columns from the columns menu, closing it after. */
 async function toggleColumns(app: App, ...columns: string[]) {
     const menu = await app.admin.users.clickColumnsButton();

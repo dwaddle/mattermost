@@ -22,7 +22,6 @@ type Props = {
     disabled?: boolean;
     linkText: MessageDescriptor;
 
-    // The panel's testid; its link is `<testId>.action--link`.
     testId: TestId;
 };
 

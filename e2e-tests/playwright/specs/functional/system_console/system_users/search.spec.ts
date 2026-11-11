@@ -3,9 +3,6 @@
 
 import {expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' search box and its table's rows by user id, with
-// their email cells, and the table's empty state.
-
 test('MM-T5521-1 Should be able to search users with their first names', async ({pw}) => {
     const {adminUser, adminClient} = await pw.initSetup();
 

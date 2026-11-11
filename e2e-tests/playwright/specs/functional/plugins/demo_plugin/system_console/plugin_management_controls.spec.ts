@@ -11,8 +11,6 @@ const DEMO_PLUGIN_ROW_KEY = 'com_mattermost_demo_plugin';
 /**
  * @objective Verify a system admin can disable and re-enable a plugin from Plugin Management, and open its settings
  * page, which shows the plugin's id and its enable toggle.
- *
- * Written on the generated page objects (`app.admin.plugins`, `app.admin.plugin`).
  */
 test('disables, enables and opens a plugin from Plugin Management', {tag: '@plugins'}, async ({pw}) => {
     test.setTimeout(120000);

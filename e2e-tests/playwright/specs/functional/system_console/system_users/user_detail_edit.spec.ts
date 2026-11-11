@@ -5,9 +5,6 @@ import type {UserProfile} from '@mattermost/types/users';
 
 import {expect, openSystemUsers, type PlaywrightExtended, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: System Console > Users' row by user id, and the user detail page (email,
-// username and auth data fields with their errors, Save and its confirmation dialog).
-
 /**
  * @objective Verifies that authentication data field is displayed and editable for users with auth_service
  */

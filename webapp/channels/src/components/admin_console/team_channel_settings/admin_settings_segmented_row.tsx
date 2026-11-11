@@ -15,7 +15,6 @@ export type AdminSettingsSegment = {
     selected: boolean;
     onSelect: () => void;
 
-    // the segment's own testid without the role, e.g. `admin.channel.public`: it renders `<testId>--togglebutton`
     testId: TestId;
 };
 

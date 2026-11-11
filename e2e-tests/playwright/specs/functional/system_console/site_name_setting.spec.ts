@@ -6,9 +6,6 @@ import {Api, expect, generated, settle, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify a System Console text setting saves to the server config and shows its saved value after a
  * reload.
- *
- * Written on the generated page objects: a setting row is reached by its typed config path
- * (`app.admin.setting('TeamSettings.SiteName')`), and Save settles on the config patch it sends.
  */
 test('saves the site name from Customization', {tag: '@system_console'}, async ({pw}) => {
     const {adminUser, adminClient} = await pw.initSetup();
