@@ -12,12 +12,6 @@ import {expect, generated, getAdminClient, test, type App} from '@mattermost/pla
 // channel id, the search box and results by post id with their Jump link, the post list, and the channel header's
 // plugin actions (Calls).
 
-declare module '@mattermost/playwright-lib' {
-    interface PluginKeys {
-        com_mattermost_calls: true;
-    }
-}
-
 const OBFUSCATED_SLUG_RE = /^[a-z0-9]{26}$/;
 
 async function skipIfNoAdvancedLicense(adminClient: any) {
