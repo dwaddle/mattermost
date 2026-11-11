@@ -58,7 +58,6 @@ test(
         // # Search for a text and navigate with arrow keys
         await searchInput.fill('s');
         await expect(dialog.list.userItems.first()).toBeVisible();
-        await pw.wait(pw.duration.half_sec);
 
         // # Navigate down through the list
         await page.keyboard.press('ArrowDown');
@@ -83,7 +82,6 @@ test(
         const invalidSearchTerm = 'somethingwhichdoesnotexist';
         await searchInput.clear();
         await searchInput.fill(invalidSearchTerm);
-        await pw.wait(pw.duration.half_sec);
 
         // * Check if the no results message is displayed with proper accessibility
         const noResultsWrapper = dialog.list.results.liveRegion.locator;
@@ -116,7 +114,6 @@ test(
         // # Click on the Write a direct message button to open the Direct Messages dialog
         // * Verify the Direct Messages dialog is visible
         const dialog = await openDirectMessages(app, userClient, user.id, team.id);
-        await pw.wait(pw.duration.one_sec);
 
         // * Verify aria snapshot of Direct Messages dialog (key structural elements only)
         await expect(dialog.locator).toMatchAriaSnapshot(`
@@ -134,7 +131,7 @@ test(
         // * Analyze the Direct Messages dialog for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page)
-            .include(`[data-testid="${dialog.scope}"]`)
+            .include('[role="dialog"]')
             // TODO: Address scrollable-region-focusable violation in the Direct Messages dialog
             // The multiSelectList and sr-only status elements need to be keyboard accessible
             .disableRules(['color-contrast', 'scrollable-region-focusable'])

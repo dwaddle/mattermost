@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {duration, expect, test} from '@mattermost/playwright-lib';
+import {Api, expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a user can open a self direct message, post a message, and does not receive a desktop notification.
@@ -26,9 +26,8 @@ test('MM-T457 Self direct message', {tag: '@direct_messages'}, async ({pw}) => {
 
     // # Post a message
     await app.center.postCreate.fillMessageTextbox('todo list for today: 1,2,3');
-    await app.center.postCreate.clickSendButton();
+    await app.center.postCreate.sendButton.commit({wait: Api.CreatePost});
     await expect(app.center.postCreate.messageTextbox.locator).toHaveValue('');
-    await pw.wait(duration.one_sec);
 
     // * Verify no desktop notification is shown for your own message
     expect(await page.evaluate(() => window.getNotifications())).toHaveLength(0);
@@ -67,7 +66,7 @@ test('MM-T458 Edit direct message channel header', {tag: '@direct_messages'}, as
     await expect(popover).not.toBeVisible();
 
     // # Hover the header text
-    await description.hover({force: true});
+    await app.channelHeader.description.hover();
 
     // * Verify the popover shows the full multiline header
     await expect(popover).toBeVisible();
