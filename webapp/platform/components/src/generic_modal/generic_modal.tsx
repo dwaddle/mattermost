@@ -11,6 +11,7 @@ import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {useFocusTrap} from '../hooks/useFocusTrap';
@@ -249,7 +250,7 @@ export const GenericModal: React.FC<Props> = ({
                 onClick={handleConfirmCallback}
                 disabled={isConfirmDisabled}
                 loading={isConfirmLoading}
-                data-testid={testId ? `${testId}.confirm--button` : undefined}
+                data-testid={part(testId, 'confirm', 'button')}
             >
                 {confirmButtonTextContent}
             </Button>
@@ -273,7 +274,7 @@ export const GenericModal: React.FC<Props> = ({
                 type='button'
                 emphasis='tertiary'
                 onClick={handleCancelCallback}
-                data-testid={testId ? `${testId}.cancel--button` : undefined}
+                data-testid={part(testId, 'cancel', 'button')}
             >
                 {cancelButtonTextContent}
             </Button>
@@ -364,7 +365,7 @@ export const GenericModal: React.FC<Props> = ({
                             <WithTooltip title={intl.formatMessage({id: 'generic_modal.close', defaultMessage: 'Close'})}>
                                 <IconButton
                                     className='GenericModal__close'
-                                    data-testid={testId ? `${testId}.close--button` : undefined}
+                                    data-testid={part(testId, 'close', 'button')}
                                     size='medium'
                                     icon={<Icon glyph={<CloseIcon/>}/>}
                                     onClick={onHideCallback}

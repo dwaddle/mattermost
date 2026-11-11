@@ -31,10 +31,6 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
      */
     variant?: ButtonVariant;
 
-    /**
-     * The testid path of the button, without its role (e.g. `channel_settings_modal.save_panel.save`).
-     * The button renders it as `data-testid="<testId>--button"`.
-     */
     testId?: TestId;
 }
 
