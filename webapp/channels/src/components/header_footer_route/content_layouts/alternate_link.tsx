@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router-dom';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './alternate_link.scss';
@@ -31,7 +32,7 @@ const AlternateLink = ({className, alternateMessage, alternateLinkPath, alternat
             {alternateMessage && (
                 <span
                     className='alternate-link__message'
-                    data-testid={testId ? `${testId}.message--text` : undefined}
+                    data-testid={part(testId, 'message', 'text')}
                 >
                     {alternateMessage}
                 </span>
@@ -39,7 +40,7 @@ const AlternateLink = ({className, alternateMessage, alternateLinkPath, alternat
             {alternateLinkPath && alternateLinkLabel && (
                 <Link
                     className='alternate-link__link'
-                    data-testid={testId ? `${testId}.action--link` : undefined}
+                    data-testid={part(testId, 'action', 'link')}
                     to={{
                         pathname: alternateLinkPath,
                         search: location.search,

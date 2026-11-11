@@ -6,6 +6,7 @@ import React, {useState} from 'react';
 import type {ChangeEventHandler, FocusEventHandler} from 'react';
 import {useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {ItemStatus} from 'utils/constants';
@@ -71,7 +72,7 @@ const PasswordInput = React.forwardRef((
             addon={
                 <button
                     id='password_toggle'
-                    data-testid={testId ? `${testId}.toggle--button` : undefined}
+                    data-testid={part(testId, 'toggle', 'button')}
                     type='button'
                     aria-label={formatMessage({
                         id: showPassword ? 'widget.passwordInput.hidePassword' : 'widget.passwordInput.showPassword',

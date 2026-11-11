@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './external_login_button.scss';
@@ -32,7 +33,7 @@ const ExternalLoginButton = ({
 }: ExternalLoginButtonType) => (
     <a
         id={id}
-        data-testid={testId ? `${testId}--link` : undefined}
+        data-testid={withRole(testId, 'link')}
         className={classNames('external-login-button', {'direction-column': direction === 'column'}, id)}
         href={url}
         style={style}

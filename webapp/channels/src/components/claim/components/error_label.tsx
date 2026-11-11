@@ -3,6 +3,7 @@
 
 import React, {memo, type JSX} from 'react';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type ErrorLabelProps = {
@@ -15,7 +16,7 @@ const ErrorLabel = ({errorText, testId}: ErrorLabelProps) => (errorText ? (
     <div className='form-group has-error'>
         <label
             className='control-label'
-            data-testid={testId ? `${testId}--text` : undefined}
+            data-testid={withRole(testId, 'text')}
         >
             {errorText}
         </label>

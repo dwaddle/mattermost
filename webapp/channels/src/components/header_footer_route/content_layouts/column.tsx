@@ -3,6 +3,7 @@
 
 import React, {type ReactNode} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import Constants from 'utils/constants';
@@ -39,13 +40,13 @@ const Column = ({title, message, SVGElement, extraContent, onEnterKeyDown, testI
             </div>
             <h1
                 className='content-layout-column-title'
-                data-testid={testId ? `${testId}.title--text` : undefined}
+                data-testid={part(testId, 'title', 'text')}
             >
                 {title}
             </h1>
             <p
                 className='content-layout-column-message'
-                data-testid={testId ? `${testId}.message--text` : undefined}
+                data-testid={part(testId, 'message', 'text')}
             >
                 {message}
             </p>
