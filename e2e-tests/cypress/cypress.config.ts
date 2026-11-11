@@ -73,6 +73,9 @@ export default defineConfig({
                     extensions: ['.ts', '.js', '.json'],
                     alias: {
                         '@': path.resolve(__dirname, 'tests'),
+
+                        // the testid grammar's key helpers, from the webapp's source (the published package predates them)
+                        '@mattermost/types/test_id$': path.resolve(__dirname, '../../webapp/platform/types/src/test_id.ts'),
                     },
                 },
                 module: {
