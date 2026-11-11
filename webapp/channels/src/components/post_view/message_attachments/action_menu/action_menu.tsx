@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -112,7 +113,7 @@ export default class ActionMenu extends React.PureComponent<Props, State> {
                         value={this.state.value}
                         toggleFocus={handlePopupOpened}
                         disabled={disabled}
-                        testIdScope={testIdScope ? `${testIdScope}.action_select` : undefined}
+                        testIdScope={part(testIdScope, 'action_select')}
                         testKey={action.id}
                     />
                 )}

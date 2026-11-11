@@ -5,6 +5,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AppBinding} from '@mattermost/types/apps';
 import type {Channel} from '@mattermost/types/channels';
@@ -173,7 +174,7 @@ class SelectBinding extends React.PureComponent<Props, State> {
                         inputClassName='post-attachment-dropdown'
                         value={this.state.selected?.text}
                         toggleFocus={handlePopupOpened}
-                        testIdScope={this.props.testIdScope ? `${this.props.testIdScope}.binding_select` : undefined}
+                        testIdScope={part(this.props.testIdScope, 'binding_select')}
                         testKey={this.props.binding.location}
                     />
                 )}
