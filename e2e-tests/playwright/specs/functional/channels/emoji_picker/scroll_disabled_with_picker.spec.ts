@@ -34,6 +34,7 @@ test('MM-T2365 disables center channel scrolling while the emoji picker is open'
     // # Press PageUp while the picker is open
     const before = await post.locator.boundingBox();
     await page.keyboard.press('PageUp');
+    // eslint-disable-next-line @mattermost/e2e-no-wait-for-timeout -- an absence check: nothing signals "did not scroll", so give a scroll the time it would take
     await pw.wait(pw.duration.one_sec);
     const after = await post.locator.boundingBox();
 
@@ -47,12 +48,11 @@ test('MM-T2365 disables center channel scrolling while the emoji picker is open'
     await page.keyboard.press('Escape');
     await expect(app.emojiPicker.searchTextbox.locator).not.toBeVisible();
     await page.keyboard.press('PageUp');
-    await pw.wait(pw.duration.one_sec);
 
     // * Verify the posts scrolled this time
-    const afterClose = await post.locator.boundingBox();
-    if (!afterClose) {
-        throw new Error('Expected the post to have a bounding box after the emoji picker is closed');
-    }
-    expect(Math.abs(afterClose.y - before.y)).toBeGreaterThan(5);
+    await expect
+        .poll(async () => Math.abs(((await post.locator.boundingBox())?.y ?? before.y) - before.y), {
+            message: 'PageUp scrolls the posts once the emoji picker is closed',
+        })
+        .toBeGreaterThan(5);
 });

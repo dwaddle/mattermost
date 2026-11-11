@@ -58,10 +58,7 @@ test('Post actions tab support', async ({pw, axe}) => {
     await expect(dotMenu.replyMenuItem.locator).toBeFocused();
 
     // # Analyze the page
-    const accessibilityScanResults = await axe
-        .builder(page, {disableColorContrast: true})
-        .include(`[data-testid="${dotMenu.scope}"]`)
-        .analyze();
+    const accessibilityScanResults = await axe.builder(page, {disableColorContrast: true, within: dotMenu}).analyze();
 
     // * Should have no violation
     expect(accessibilityScanResults.violations).toHaveLength(0);

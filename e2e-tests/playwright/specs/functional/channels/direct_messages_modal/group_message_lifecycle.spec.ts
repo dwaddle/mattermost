@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {duration, expect, test} from '@mattermost/playwright-lib';
+import {expect, test} from '@mattermost/playwright-lib';
 
 import {getChannelSlugFromUrl} from './helpers';
 
@@ -30,9 +30,9 @@ test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
     // * Verify no notification fires for the normal message while muted. Every GM post implicitly
     // mentions all members server-side (server/channels/app/notification.go), so the mention badge
     // still shows here even for a non-@mention message — that's current, correct behavior, not a bug.
-    await pw.wait(duration.two_sec);
+    // (the badge counting the post shows the client has processed it, so a notification would have fired by then)
+    await expect(channelsPage.sidebarLeft.unreadMentionsBadge(sender.username)).toHaveText('1');
     expect(await page.evaluate(() => window.getNotifications())).toHaveLength(0);
-    await expect(channelsPage.sidebarLeft.unreadMentionsBadge(sender.username)).toBeVisible();
 
     // # Post a message that mentions the user while away
     await pw.postAs(sender, {
@@ -41,9 +41,8 @@ test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
     });
 
     // * Verify muting still suppresses the notification, but the mention indicator appears
-    await pw.wait(duration.two_sec);
+    await expect(channelsPage.sidebarLeft.unreadMentionsBadge(sender.username)).toHaveText('2');
     expect(await page.evaluate(() => window.getNotifications())).toHaveLength(0);
-    await expect(channelsPage.sidebarLeft.unreadMentionsBadge(sender.username)).toBeVisible();
 });
 
 /**

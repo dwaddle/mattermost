@@ -1,13 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
 import {
     BOR_TAG,
     createSecondUser,
     lastPost,
-    openChannel,
     openDm,
     recipientCount,
     reveal,
@@ -125,7 +124,7 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
             await adminClient.removeFromChannel(adminUser.id, channel.id);
 
             // # Login as sender and navigate to the channel
-            const senderApp = await openChannel(pw, sender, team, channel);
+            const senderApp = await openChannel(pw, sender, {team, channel});
 
             // # Enable BoR and send message
             await senderApp.center.postCreate.clickBurnOnReadButton();
@@ -143,7 +142,7 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
             expect(tooltipText).toContain('Read by 0 of 2');
 
             // # Login as first recipient and reveal
-            const recipient1App = await openChannel(pw, recipient1, team, channel);
+            const recipient1App = await openChannel(pw, recipient1, {team, channel});
 
             const {post: recipient1Post} = await lastPost(recipient1App);
             await recipient1Post.clickRevealButton();
@@ -162,7 +161,7 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
             expect(updatedTooltip).toContain('Read by 1 of 2');
 
             // # Login as second recipient and reveal
-            const recipient2App = await openChannel(pw, recipient2, team, channel);
+            const recipient2App = await openChannel(pw, recipient2, {team, channel});
 
             const {post: recipient2Post} = await lastPost(recipient2App);
             await recipient2Post.clickRevealButton();

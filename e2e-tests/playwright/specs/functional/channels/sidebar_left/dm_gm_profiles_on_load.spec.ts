@@ -17,7 +17,8 @@ const CHANNEL_MEMBERS_PATH = /^\/api\/v4\/users\/[^/]+\/channel_members$/;
 // GET /api/v4/users, the paged "load some profiles" request.
 const USER_PAGE_PATH = /^\/api\/v4\/users$/;
 
-const REQUEST_DELAY_MS = 4000;
+// GET /api/v4/users/me/teams/{team_id}/channels/categories, the sidebar categories.
+const CATEGORIES_PATH = /^\/api\/v4\/users\/[^/]+\/teams\/[^/]+\/channels\/categories$/;
 
 // Written on the generated page objects: the sidebar's channel rows keyed by channel name (link and a group
 // message's member count).
@@ -78,13 +79,15 @@ async function setupSidebarProfiles(pw: PlaywrightExtended) {
 }
 
 /**
- * Delays the requests matching the given path so the sidebar categories always win the race.
+ * Holds the requests matching the given path until the sidebar categories have arrived, so the categories always
+ * win the race.
  */
 async function delayRequests({page}: Scenario, path: RegExp) {
+    const categoriesLoaded = page.waitForResponse((response) => CATEGORIES_PATH.test(new URL(response.url()).pathname));
     await page.route(
         (url) => path.test(url.pathname),
         async (route) => {
-            await new Promise((resolve) => setTimeout(resolve, REQUEST_DELAY_MS));
+            await categoriesLoaded;
             await route.continue();
         },
     );

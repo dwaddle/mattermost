@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {duration, expect, generated, test} from '@mattermost/playwright-lib';
+import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the RHS thread refreshes replies when the center channel has changed.
@@ -35,7 +35,6 @@ test('MM-T94 RHS fetches messages on reconnect while a different channel is in c
     await app.lhs.channelList.channel(offTopic).clickLink();
     await pw.closeWebsockets(page);
     const missed = await authorClient.createPost({channel_id: threadChannel.id, message: 'ghi', root_id: root.id});
-    await pw.wait(duration.four_sec);
 
     // * The reply posted while disconnected hasn't reached the RHS
     expect(await app.rhs.thread.postKeys()).not.toContain(missed.id);
@@ -50,7 +49,7 @@ test('MM-T94 RHS fetches messages on reconnect while a different channel is in c
     await app.center.postCreate.clickSendButton();
 
     // * The RHS fetches the missed reply after reconnecting
-    await expect.poll(() => app.rhs.thread.postKeys(), {timeout: pw.duration.ten_sec}).toContain(missed.id);
+    await expect(app.rhs.thread.postList).toContainKeys([missed.id], {timeout: pw.duration.ten_sec});
     await expect(app.rhs.thread.post(missed).messageText.locator).toHaveText('ghi');
 });
 

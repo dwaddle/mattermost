@@ -39,7 +39,7 @@ test('Should be able to change threads with arrow keys', {tag: ['@smoke']}, asyn
 
     // * The draft is there, the threads are listed newest first, and none is open
     await expect(app.lhs.draftsLink.locator).toBeVisible();
-    await expect.poll(() => app.threads.list.threadKeys()).toEqual([ccc.root.id, bbb.root.id, aaa.root.id]);
+    await expect(app.threads.list.threadList).toHaveKeys([ccc.root.id, bbb.root.id, aaa.root.id]);
     await expect(page).toHaveURL(generated.ThreadsPage.path({team}));
 
     const toBeOpen = async (thread: typeof aaa) => {

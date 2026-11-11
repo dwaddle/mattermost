@@ -239,7 +239,9 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
 
             // * Whatever no longer fits is reachable through +N instead of being clipped
             await expect(threadsPage.attributes.overflowButton).toBeVisible();
-            expect(await threadsPage.attributes.chips.count()).toBeLessThan(5);
+            await expect
+                .poll(() => threadsPage.attributes.chips.count(), {message: 'fewer chips fit the narrower row'})
+                .toBeLessThan(5);
 
             // * The row yields to the thread controls rather than growing over them,
             // which is the invariant the 56px header slot has to hold

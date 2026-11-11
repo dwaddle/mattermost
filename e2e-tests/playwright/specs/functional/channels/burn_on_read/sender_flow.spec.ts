@@ -4,18 +4,9 @@
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, type PlaywrightClient4, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, openChannel, test, type PlaywrightClient4, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
-import {
-    BOR_TAG,
-    createSecondUser,
-    lastPost,
-    openChannel,
-    recipientCount,
-    reveal,
-    sendBorMessage,
-    setupBorTest,
-} from './support';
+import {BOR_TAG, createSecondUser, lastPost, recipientCount, reveal, sendBorMessage, setupBorTest} from './support';
 
 // Written on the generated page objects: the composer's burn-on-read toggle and label, the posts by id with their
 // burn-on-read badge (read count in its accessible name), timer chip and reveal button, and the delete confirmation.
@@ -56,7 +47,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         await createSecondUser(pw, adminClient, team);
 
         // # Login as sender, turn burn-on-read on (its label shows) and send a message
-        const app = await openChannel(pw, user, team, 'town-square');
+        const app = await openChannel(pw, user, {team, channel: 'town-square'});
         const message = `BoR Test ${pw.random.id()}`;
         const {post} = await sendBorMessage(app, message);
 
@@ -80,14 +71,14 @@ test.describe('Burn-on-Read Sender Flow', () => {
         const channel = await privateChannelWith(pw, adminClient, team, [user, recipient1, recipient2], 'bor-test');
 
         // # Login as sender and post BoR message
-        const senderApp = await openChannel(pw, user, team, channel);
+        const senderApp = await openChannel(pw, user, {team, channel});
         const {id: postId, post: senderPost} = await sendBorMessage(senderApp, `Secret message ${pw.random.id()}`);
 
         // * Verify initial state shows 0 of 2 recipients revealed (3 members - 1 sender)
         expect(await recipientCount(senderPost)).toEqual({revealed: 0, total: 2});
 
         // # Login as first recipient and reveal the message
-        const recipient1App = await openChannel(pw, recipient1, team, channel);
+        const recipient1App = await openChannel(pw, recipient1, {team, channel});
         await reveal(recipient1App.center.postList.post({id: postId}));
 
         // # Refresh sender's view and check updated count
@@ -96,7 +87,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         expect((await recipientCount(senderPost)).revealed).toBe(1);
 
         // # Login as second recipient and reveal the message
-        const recipient2App = await openChannel(pw, recipient2, team, channel);
+        const recipient2App = await openChannel(pw, recipient2, {team, channel});
         await reveal(recipient2App.center.postList.post({id: postId}));
 
         // # Refresh sender's view — all recipients revealed, sender timer should start
@@ -114,7 +105,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         const recipient = await createSecondUser(pw, adminClient, team);
 
         // # Login as sender and post BoR message
-        const senderApp = await openChannel(pw, user, team, 'town-square');
+        const senderApp = await openChannel(pw, user, {team, channel: 'town-square'});
         const message = `To be deleted ${pw.random.id()}`;
         const {id: postId, post: senderPost} = await sendBorMessage(senderApp, message);
 
@@ -127,7 +118,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         await expect(senderPost.locator).not.toBeVisible();
 
         // # Login as recipient
-        const recipientApp = await openChannel(pw, recipient, team, 'town-square');
+        const recipientApp = await openChannel(pw, recipient, {team, channel: 'town-square'});
 
         // * Verify the deleted message is not in the channel (the channel's posts have loaded)
         await lastPost(recipientApp);
@@ -146,7 +137,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         const channel = await privateChannelWith(pw, adminClient, team, [user, recipient], 'bor-timer-test');
 
         // # Login as sender and post BoR message in the controlled channel
-        const senderApp = await openChannel(pw, user, team, channel);
+        const senderApp = await openChannel(pw, user, {team, channel});
         const {id: postId, post: senderPost} = await sendBorMessage(senderApp, `Timer test ${pw.random.id()}`);
 
         // * Verify sender sees badge with exactly 1 recipient (not timer yet)
@@ -155,7 +146,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         expect(await recipientCount(senderPost)).toEqual({revealed: 0, total: 1});
 
         // # Login as recipient and reveal
-        const recipientApp = await openChannel(pw, recipient, team, channel);
+        const recipientApp = await openChannel(pw, recipient, {team, channel});
         const recipientPost = recipientApp.center.postList.post({id: postId});
         await reveal(recipientPost);
 

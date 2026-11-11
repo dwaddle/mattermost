@@ -125,17 +125,34 @@ const GENERATED_API_SPECS = [
     'specs/visual/channels/intro_channel.spec.ts',
 ];
 
-// Files where the spec rules' extended checks (template, variable, hasText and selector locators; pw.wait and timer
-// sleeps) found what the area-fix wave moves: there the two rules stay warnings until then (see the last block).
-const EXTENDED_LINT_PENDING = [
-    'specs/accessibility/channels/intro_channel.spec.ts',
-    'specs/functional/channels/emoji_picker/scroll_disabled_with_picker.spec.ts',
-    'specs/functional/channels/interactive_messages/mm_blocks_ephemeral.spec.ts',
-    'specs/functional/channels/interactive_messages/mm_blocks_incoming_webhook.spec.ts',
-    'specs/functional/channels/messaging/message_delivery_and_links.spec.ts',
-    'specs/functional/channels/search/search_result_display_refresh_scroll.spec.ts',
-    'specs/functional/channels/sidebar_left/dm_gm_profiles_on_load.spec.ts',
+// Spec areas: the folders under specs/functional, and specs/accessibility, specs/visual and specs/client. A spec
+// imports helpers from its own area or from the lib (UI flows in lib/src/flows); a helper two areas need moves to the
+// lib. The reviewed exceptions, by area:
+const SPEC_AREAS = [
+    'functional/auth',
+    'functional/channels',
+    'functional/ldap',
+    'functional/oidc',
+    'functional/plugins',
+    'functional/saml',
+    'functional/subpath',
+    'functional/system_console',
+    'accessibility',
+    'client',
+    'visual',
 ];
+const CROSS_AREA_IMPORTS = {
+    'functional/system_console': [
+        // API setup helpers the System Console specs shared with channels before the test surface work; moving them to
+        // lib/src/server is a follow-up
+        './functional/channels/custom_profile_attributes/helpers.ts',
+        './functional/channels/team_settings/helpers.ts',
+        './functional/channels/channel_classification/helpers.ts',
+
+        // the ABAC burn-on-read specs test the same feature as the channels ones, through its helpers
+        './functional/channels/burn_on_read/support.ts',
+    ],
+};
 
 export default [
     {
@@ -233,6 +250,23 @@ export default [
         },
     },
     {
+        files: ['specs/**/*.ts'],
+        rules: {
+            'import/no-restricted-paths': [
+                'error',
+                {
+                    zones: SPEC_AREAS.map((area) => ({
+                        target: `./specs/${area}`,
+                        from: './specs',
+                        except: [`./${area}`, './test_setup.ts', ...(CROSS_AREA_IMPORTS[area] ?? [])],
+                        message:
+                            'Specs import helpers from their own area or the lib: move a shared helper to lib/src/flows.',
+                    })),
+                },
+            ],
+        },
+    },
+    {
         files: GENERATED_API_SPECS,
         rules: {
             '@mattermost/e2e-no-literal-locators': 'error',
@@ -243,13 +277,6 @@ export default [
         files: ['lib/src/ui/generated/**/*.ts'], // page objects locate and act; specs assert
         rules: {
             '@mattermost/e2e-no-expect-in-page-objects': 'warn',
-        },
-    },
-    {
-        files: EXTENDED_LINT_PENDING,
-        rules: {
-            '@mattermost/e2e-no-literal-locators': 'warn',
-            '@mattermost/e2e-no-wait-for-timeout': 'warn',
         },
     },
 ];

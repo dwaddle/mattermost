@@ -7,7 +7,6 @@ import {
     displayNameCases,
     ensureSenderProfileLoaded,
     expectSingleNotification,
-    openChannel,
     runDisplayNameCase,
     setDesktopNotificationLevel,
 } from './desktop_notification_support';
@@ -31,7 +30,7 @@ test(
         const channel = await adminClient.getChannelByName(team.id, 'off-topic');
         const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
         const {page, app} = await pw.testBrowser.login(receiver);
-        await openChannel(app, team, townSquare);
+        await app.channelsPage.goto({team, channel: townSquare});
         await pw.stubNotification(page, 'granted');
         await ensureSenderProfileLoaded(senderClient, app, townSquare.id, pw, page);
 

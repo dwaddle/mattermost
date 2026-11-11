@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, setWysiwygUserPreference, test} from '@mattermost/playwright-lib';
+import {expect, lastPost, setWysiwygUserPreference, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Clicking a user at-mention in the composer preview opens the profile popover
@@ -57,7 +57,7 @@ test(
         await expect(input).toHaveValue(draft);
         await expect(previewArea).toContainText(unique);
 
-        const lastPost = await channelsPage.getLastPost();
-        await expect(lastPost.container).not.toContainText(unique);
+        const last = await lastPost(app.center.postList);
+        await expect(last.locator).not.toContainText(unique);
     },
 );

@@ -6,7 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 import {
     expectNoNotification,
     notificationSettingCases,
-    openChannel,
     runNotificationSettingCase,
     setDesktopNotificationLevel,
 } from './desktop_notification_support';
@@ -29,7 +28,7 @@ test(
 
         const channel = await adminClient.getChannelByName(team.id, 'off-topic');
         const {page, app} = await pw.testBrowser.login(receiver);
-        await openChannel(app, team, channel);
+        await app.channelsPage.goto({team, channel});
         await pw.stubNotification(page, 'granted');
 
         const message = '/echo test 3';

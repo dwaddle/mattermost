@@ -76,14 +76,14 @@ test('MM-T355 replaces old search results with new results', {tag: '@search'}, a
     await submitSearch(app, helloToken);
 
     // * Verify the first message is shown in the results
-    await expect.poll(() => app.search.results.postKeys()).toEqual([hello.id]);
+    await expect(app.search.results.postList).toHaveKeys([hello.id]);
 
     // # Run a new search for the second message from another channel
     await app.lhs.channelList.channel(offTopic).clickLink();
     await submitSearch(app, writingToken);
 
     // * Verify the new results are shown and the old results are gone
-    await expect.poll(() => app.search.results.postKeys()).toEqual([writing.id]);
+    await expect(app.search.results.postList).toHaveKeys([writing.id]);
 });
 
 /**
@@ -99,7 +99,8 @@ test('MM-T382 keeps search results unchanged while scrolling the center channel'
     await adminClient.addToChannel(user.id, channel.id);
     const token = `searchfun${pw.random.id()}`;
     const messageCount = 30;
-    for (let i = 0; i < messageCount; i++) {
+    const first = await adminClient.createPost({channel_id: channel.id, message: `${token} 0`});
+    for (let i = 1; i < messageCount; i++) {
         await adminClient.createPost({channel_id: channel.id, message: `${token} ${i}`});
     }
 
@@ -115,10 +116,10 @@ test('MM-T382 keeps search results unchanged while scrolling the center channel'
     const box = await app.center.postList.scroller.locator.boundingBox();
     expect(box).not.toBeNull();
     await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
-    for (let i = 0; i < 6; i++) {
+    await expect(async () => {
         await page.mouse.wheel(0, -1500);
-        await pw.wait(pw.duration.half_sec);
-    }
+        await expect(app.center.postList.post(first).locator).toBeInViewport({timeout: duration.one_sec});
+    }, 'the center channel scrolls up to its first matching post').toPass();
 
     // * Verify the search results panel is still open and its results are unchanged
     expect(await app.search.results.postKeys()).toEqual(resultsBefore);

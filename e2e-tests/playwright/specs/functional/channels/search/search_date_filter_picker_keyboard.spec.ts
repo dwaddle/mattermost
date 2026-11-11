@@ -65,7 +65,7 @@ test('MM-T596 sets the search date with the calendar picker', {tag: '@search'}, 
     await input.press('Enter');
 
     // * Verify the post created on that date is returned
-    await expect.poll(() => app.search.results.postKeys()).toEqual([post.id]);
+    await expect(app.search.results.postList).toHaveKeys([post.id]);
 });
 
 /**
@@ -105,7 +105,7 @@ test('MM-T600 updates the search date with the keyboard', {tag: '@search'}, asyn
     await input.press('Enter');
 
     // * Verify the post is returned for its own date
-    await expect.poll(() => app.search.results.postKeys()).toEqual([post.id]);
+    await expect(app.search.results.postList).toHaveKeys([post.id]);
 
     // # Reopen the search box and change the date filter to a week later, keeping the same message text
     input = await openEmptySearch(app);

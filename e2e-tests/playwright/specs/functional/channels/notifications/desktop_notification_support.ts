@@ -99,7 +99,9 @@ export async function expectSingleNotification(
     expect(notifications[0].body).toBe(expected.body);
 }
 
+/** No notification fired. Call it after a signal that the client processed the post (an unread channel, a later post). */
 export async function expectNoNotification(pw: PlaywrightExtended, page: Page) {
+    // eslint-disable-next-line @mattermost/e2e-no-wait-for-timeout -- an absence check: the notification is sent asynchronously after the post is processed
     await pw.wait(duration.one_sec);
     expect(await page.evaluate(() => window.getNotifications())).toHaveLength(0);
 }
@@ -122,14 +124,6 @@ export async function ensureSenderProfileLoaded(
     await pw.clearCapturedNotifications(page);
 }
 
-/**
- * Opens a channel and waits for the app to be up (the generated `goto` waits only for the document), so
- * notifications for posts made next are not missed.
- */
-export async function openChannel(app: App, team: {name: string}, channel: Channel) {
-    await app.channelsPage.goto({team, channel});
-}
-
 /** The channel's sidebar link reads as unread: "… unread", or "… N mention(s)" when it has mentions. */
 export async function expectUnread(app: App, channel: Channel) {
     await expect(app.lhs.channelList.channel(channel).link.locator).toHaveAccessibleName(/ (unread|\d+ mentions?)$/);
@@ -150,7 +144,7 @@ export async function runDisplayNameCase(pw: PlaywrightExtended, testCase: Displ
     const channel = await adminClient.getChannelByName(team.id, 'off-topic');
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const {page, app} = await pw.testBrowser.login(receiver);
-    await openChannel(app, team, townSquare);
+    await app.channelsPage.goto({team, channel: townSquare});
     await pw.stubNotification(page, 'granted');
     await ensureSenderProfileLoaded(senderClient, app, townSquare.id, pw, page);
 
@@ -193,7 +187,7 @@ export async function runNotificationSettingCase(pw: PlaywrightExtended, testCas
 
     const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const {page, app} = await pw.testBrowser.login(receiver);
-    await openChannel(app, team, townSquare);
+    await app.channelsPage.goto({team, channel: townSquare});
     await pw.stubNotification(page, 'granted');
     await ensureSenderProfileLoaded(senderClient, app, townSquare.id, pw, page);
 

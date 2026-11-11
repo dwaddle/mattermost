@@ -517,7 +517,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await regionSelect.click();
             await regionSelect.fill('Sou');
 
-            await regionSelectPicker.suggestions.itemItems.filter({hasText: 'South'}).first().click();
+            await regionSelectPicker.suggestions.item('South').select();
 
             const integrationEphemeral = await threadPostContaining(
                 app,
@@ -690,10 +690,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await expect(channelSelect).toBeVisible();
             await channelSelect.click();
             await channelSelect.fill('Town');
-            await channelSelectPicker.suggestions.itemItems
-                .filter({hasText: /Town Square/})
-                .first()
-                .click();
+            await channelSelectPicker.suggestions.item('Town Square').select();
 
             const integrationEphemeral = await threadPostContaining(
                 app,
@@ -834,8 +831,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const lastPost = await lastCenterPost(app);
             await lastPost.action('pw_mm_blocks_openurl').click();
 
-            await expect(channelsPage.page).toHaveURL(/\/channels\/off-topic/);
-            expect(new URL(channelsPage.page.url()).searchParams.get('mm_openurl')).toBe('from_action');
+            await expect(app.page).toHaveURL(/\/channels\/off-topic/);
+            expect(new URL(app.page.url()).searchParams.get('mm_openurl')).toBe('from_action');
         },
     );
 
@@ -1069,7 +1066,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await expect(regionSelect).toBeVisible();
             await regionSelect.click();
             await regionSelect.fill('Nor');
-            await regionSelectPicker.suggestions.itemItems.filter({hasText: 'North'}).first().click();
+            await regionSelectPicker.suggestions.item('North').select();
 
             const integrationEphemeral = await threadPostContaining(
                 app,
@@ -1126,7 +1123,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const toggle = lastPost.collapsible.toggleButton.locator;
             const content = lastPost.collapsible.content.locator;
             await expect(toggle).toBeVisible();
-            await expect(collapsible.getByText(headerLabel)).toBeVisible();
+            await expect(collapsible).toContainText(headerLabel);
             await expect(toggle).toHaveAttribute('aria-expanded', 'false');
             // Collapsed body stays in the DOM for animation; visibility is via aria-hidden + max-height.
             await expect(content).toHaveAttribute('aria-hidden', 'true');
@@ -1134,7 +1131,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await toggle.click();
             await expect(toggle).toHaveAttribute('aria-expanded', 'true');
             await expect(content).toHaveAttribute('aria-hidden', 'false');
-            await expect(collapsible.getByText(bodyLabel)).toBeVisible();
+            await expect(content).toContainText(bodyLabel);
 
             await toggle.click();
             await expect(toggle).toHaveAttribute('aria-expanded', 'false');
@@ -1187,10 +1184,10 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const toggle = lastPost.collapsible.toggleButton.locator;
             const content = lastPost.collapsible.content.locator;
 
-            await expect(collapsible.getByText(headerLabel)).toBeVisible();
+            await expect(collapsible).toContainText(headerLabel);
             await expect(toggle).toHaveAttribute('aria-expanded', 'true');
             await expect(content).toHaveAttribute('aria-hidden', 'false');
-            await expect(collapsible.getByText(bodyLabel)).toBeVisible();
+            await expect(content).toContainText(bodyLabel);
 
             await toggle.click();
             await expect(toggle).toHaveAttribute('aria-expanded', 'false');
@@ -1199,7 +1196,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await toggle.click();
             await expect(toggle).toHaveAttribute('aria-expanded', 'true');
             await expect(content).toHaveAttribute('aria-hidden', 'false');
-            await expect(collapsible.getByText(bodyLabel)).toBeVisible();
+            await expect(content).toContainText(bodyLabel);
         },
     );
 });

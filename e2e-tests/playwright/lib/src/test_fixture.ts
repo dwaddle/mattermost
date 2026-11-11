@@ -124,6 +124,9 @@ export type ExtendedFixtures = {
 type AxeBuilderOptions = {
     disableColorContrast?: boolean;
     disableLinkInTextBlock?: boolean;
+
+    /** Analyze only this generated scope's element: `axe.builder(page, {within: app.postDotMenu})`. */
+    within?: {readonly scope: string};
 };
 
 let lastSpecFile: string | undefined;
@@ -490,7 +493,8 @@ export class AxeBuilderExtended {
                 disabledRules.push('link-in-text-block');
             }
 
-            return new AxeBuilder({page}).withTags(this.tags).disableRules(disabledRules);
+            const builder = new AxeBuilder({page}).withTags(this.tags).disableRules(disabledRules);
+            return options.within ? builder.include(`[data-testid="${options.within.scope}"]`) : builder;
         };
     }
 

@@ -64,8 +64,6 @@ test(
         }
 
         // * Verify DisplayName matches come first, then the purpose-only matches
-        await expect
-            .poll(() => suggestions.itemKeys())
-            .toEqual(expected.map((channel) => suggestionTestKey(`~${channel.name}`)));
+        await expect(suggestions.itemList).toHaveKeys(expected.map((channel) => suggestionTestKey(`~${channel.name}`)));
     },
 );

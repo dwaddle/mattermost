@@ -92,7 +92,7 @@ test('MM-T599 Edit date and search again', async ({pw}) => {
     await input.press('Enter');
 
     // * Verify exactly one matching result for the original date
-    await expect.poll(() => app.search.results.postKeys()).toEqual([post.id]);
+    await expect(app.search.results.postList).toHaveKeys([post.id]);
 
     // # Reopen the channel, then reopen the day picker by backspacing right after the date
     await app.channelsPage.goto({team, channel});

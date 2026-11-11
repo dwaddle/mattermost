@@ -110,18 +110,6 @@ export function parseTimeRemaining(timerText: string): number {
 
 export type CenterPost = ReturnType<App['center']['postList']['post']>;
 
-/** Logs the user in and opens the channel, waiting for the app (a generated goto returns on page load). */
-export async function openChannel(
-    pw: PlaywrightExtended,
-    user: UserProfile,
-    team: Team,
-    channel: {name: string} | string,
-) {
-    const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel});
-    return app;
-}
-
 /** Logs the user in and opens their DM with `other`. */
 export async function openDm(pw: PlaywrightExtended, user: UserProfile, team: Team, other: {username: string}) {
     const {app} = await pw.testBrowser.login(user);

@@ -529,7 +529,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
             await expect(regionSelect).toBeVisible();
             await regionSelect.click();
             await regionSelect.fill('Nor');
-            await regionSelectPicker.suggestions.itemItems.filter({hasText: 'North'}).first().click();
+            await regionSelectPicker.suggestions.item('North').select();
 
             const integrationEphemeral = await threadPostContaining(
                 app,
@@ -704,10 +704,7 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
             await expect(channelSelect).toBeVisible();
             await channelSelect.click();
             await channelSelect.fill('Town');
-            await channelSelectPicker.suggestions.itemItems
-                .filter({hasText: /Town Square/})
-                .first()
-                .click();
+            await channelSelectPicker.suggestions.item('Town Square').select();
 
             const integrationEphemeral = await threadPostContaining(
                 app,
@@ -856,8 +853,8 @@ test.describe('Interactive mm_blocks (ephemeral post)', () => {
             await expect(ephemeralInThread.locator).toBeVisible();
             await ephemeralInThread.action('pw_mm_blocks_openurl_eph').click();
 
-            await expect(channelsPage.page).toHaveURL(/\/channels\/off-topic/);
-            expect(new URL(channelsPage.page.url()).searchParams.get('mm_openurl')).toBe('from_action_eph');
+            await expect(app.page).toHaveURL(/\/channels\/off-topic/);
+            expect(new URL(app.page.url()).searchParams.get('mm_openurl')).toBe('from_action_eph');
         },
     );
 });

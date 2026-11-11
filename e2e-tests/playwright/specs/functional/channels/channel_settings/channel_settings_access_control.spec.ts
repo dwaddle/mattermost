@@ -6,7 +6,9 @@
  * @reference MM-67326 — public and private channels can carry ABAC membership policies
  */
 
-import {ChannelsPage, expect, test} from '@mattermost/playwright-lib';
+import type {Client4} from '@mattermost/client';
+
+import {ChannelsPage, duration, expect, test} from '@mattermost/playwright-lib';
 
 import {
     enableABACConfig,
@@ -22,6 +24,19 @@ import {
 } from '../team_settings/helpers';
 
 import {waitForJobCompletion} from './helpers';
+
+/** Whether the user is in the channel: the server answers 404 when not, and any other error fails the test. */
+async function isChannelMember(client: Client4, channelId: string, userId: string): Promise<boolean> {
+    try {
+        await client.getChannelMember(channelId, userId);
+        return true;
+    } catch (err) {
+        if ((err as {status_code?: number}).status_code === 404) {
+            return false;
+        }
+        throw err;
+    }
+}
 
 /** Unique CPA value so only users this test sets match the rule (avoids clashing with leftover Engineering users on the server). */
 function uniqueDepartmentValue(testId: string): string {
@@ -322,17 +337,12 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await confirmModal.waitFor({state: 'hidden', timeout: 15000});
 
         // * Poll until target user appears as a channel member (sync job runs asynchronously)
-        let isMember = false;
-        for (let i = 0; i < 30; i++) {
-            try {
-                await adminClient.getChannelMember(channel.id, targetUser.id);
-                isMember = true;
-                break;
-            } catch {
-                await page.waitForTimeout(1000);
-            }
-        }
-        expect(isMember).toBe(true);
+        await expect
+            .poll(() => isChannelMember(adminClient, channel.id, targetUser.id), {
+                timeout: duration.half_min,
+                message: `${targetUser.username} should be added to the channel`,
+            })
+            .toBe(true);
 
         await channelSettings.close();
     });
@@ -632,21 +642,11 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
 
         // * Poll until memberToRemove is no longer a channel member
         await expect
-            .poll(
-                async () => {
-                    try {
-                        await adminClient.getChannelMember(channel.id, memberToRemove.id);
-                        return true;
-                    } catch {
-                        return false;
-                    }
-                },
-                {
-                    timeout: 15000,
-                    intervals: [500, 1000, 1000, 2000],
-                    message: `${memberToRemove.username} should be removed from the channel`,
-                },
-            )
+            .poll(() => isChannelMember(adminClient, channel.id, memberToRemove.id), {
+                timeout: 15000,
+                intervals: [500, 1000, 1000, 2000],
+                message: `${memberToRemove.username} should be removed from the channel`,
+            })
             .toBe(false);
 
         await channelSettings.close();

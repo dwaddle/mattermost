@@ -1,14 +1,13 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, test} from '@mattermost/playwright-lib';
 
 import {
     BOR_TAG,
     concealedPost,
     createSecondUser,
     lastPost,
-    openChannel,
     openDotMenu,
     openDm,
     sendMessage,
@@ -256,7 +255,7 @@ test.describe('Burn-on-Read Restrictions', () => {
 
             const {user, team} = await setupBorTest(pw);
 
-            const app = await openChannel(pw, user, team, 'town-square');
+            const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
             /** Opens the custom schedule time dialog from the send button's schedule menu. */
             const openScheduleModal = async () =>

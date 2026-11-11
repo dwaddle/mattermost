@@ -26,7 +26,7 @@ test('MM-T307 cancels a file upload', {tag: '@file_attachments'}, async ({pw}) =
     await (await fileChooserPromise).setFiles(path.resolve('asset', filename));
 
     // * The upload preview shows the file
-    await expect.poll(() => previews.fileKeys()).toHaveLength(1);
+    await expect(previews.fileList).toHaveKeyCount(1);
     const [fileId] = await previews.fileKeys();
     const preview = previews.file({id: fileId});
     await expect(preview.details.locator).toContainText(filename);

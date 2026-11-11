@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {Channel} from '@mattermost/types/channels';
+
 import {expect, getAdminClient, test} from '@mattermost/playwright-lib';
 
 const OBFUSCATED_SLUG_RE = /^[a-z0-9]{26}$/;
@@ -294,14 +296,19 @@ test.describe('Anonymous URLs', () => {
 
             // # Wait for channel to be created and navigated to
             await channelsPage.toBeVisible();
-            await pw.wait(pw.duration.two_sec);
 
-            // # Fetch all channels for the team to find the newly created one by display name
-            const allChannels = await adminClient.getChannels(team.id);
-            const createdChannel = allChannels.find((ch) => ch.display_name === channelDisplayName);
-
-            // * Verify channel was created
-            expect(createdChannel).toBeDefined();
+            // # Fetch the team's channels until the newly created one shows, by display name
+            let createdChannel: Channel | undefined;
+            await expect
+                .poll(
+                    async () => {
+                        const allChannels = await adminClient.getChannels(team.id);
+                        createdChannel = allChannels.find((ch) => ch.display_name === channelDisplayName);
+                        return createdChannel;
+                    },
+                    {message: 'the channel created through the UI is on the server'},
+                )
+                .toBeDefined();
 
             // * Verify the slug does not match a cleaned version of the display name
             const humanReadableSlug = channelDisplayName.toLowerCase().replace(/\s+/g, '-');

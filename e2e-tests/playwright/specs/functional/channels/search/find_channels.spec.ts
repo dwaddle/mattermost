@@ -40,7 +40,7 @@ test(
         await channelsPage.toBeVisible();
 
         // # Click on "Find channel" and type "test_channel"
-        await channelsPage.sidebarLeft.findChannelButton.click();
+        await app.lhs.header.findChannelsButton.click();
         const switcher = app.quickSwitchModal;
         await switcher.searchTextbox.fill(commonName);
 

@@ -115,5 +115,5 @@ export async function searchAndValidate(search: DateFilterSearch, query: string,
         return;
     }
 
-    await expect.poll(() => app.search.results.postKeys()).toEqual(expectedMessages.map(search.postId));
+    await expect(app.search.results.postList).toHaveKeys(expectedMessages.map(search.postId));
 }
