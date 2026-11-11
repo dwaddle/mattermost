@@ -4,7 +4,7 @@
 import type {Locator} from '@playwright/test';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 import type {App, PlaywrightExtended} from '@mattermost/playwright-lib';
 
 const categoryName = 'Noisy';
@@ -98,7 +98,7 @@ test.describe('Collapse category with unread channels', () => {
 
             // # Log in and open Town Square
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const {categoryHeader, channelLink} = sidebarOf(app, category);
 
@@ -129,7 +129,7 @@ test.describe('Collapse category with unread channels', () => {
 
             // # Log in and open Town Square
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             // # Open Settings > Display and turn the setting on
             await app.globalHeader.clickSettingsButton();

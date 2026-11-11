@@ -36,7 +36,7 @@ test('shows a value changed since the last load after a reload', {tag: '@post_at
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision a select field and set it on a post
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -47,8 +47,6 @@ test('shows a value changed since the last load after a reload', {tag: '@post_at
             options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'reloaded post'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, SECRET)},

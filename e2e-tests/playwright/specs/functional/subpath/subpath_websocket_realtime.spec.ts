@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test, expect, requireSubpathServer} from '@mattermost/playwright-lib';
+import {test, expect, requireSubpathServer, DefaultChannel} from '@mattermost/playwright-lib';
 
 test.describe('Subpath - websocket real-time delivery', {tag: '@subpath'}, () => {
     test.beforeAll(() => {
@@ -17,9 +17,9 @@ test.describe('Subpath - websocket real-time delivery', {tag: '@subpath'}, () =>
         const [otherUser] = await adminClient.createUsers(team.id, 1, 'subpathws');
 
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
         const message = `Subpath realtime message ${pw.random.id()}`;
 
         // # Another user posts to the same channel via API

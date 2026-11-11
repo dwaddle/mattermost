@@ -13,9 +13,7 @@ test.describe('Subpath - file upload', {tag: '@subpath'}, () => {
      * @objective Verify a file attachment uploads and previews correctly under the subpath.
      */
     test('uploads and previews a file attachment under the subpath', async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+        const {user, team, userClient, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
         const {postCreate, postList} = app.center;

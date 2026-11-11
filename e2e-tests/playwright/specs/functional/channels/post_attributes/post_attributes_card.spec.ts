@@ -22,7 +22,7 @@ test('reads every attribute from the hover card, overflow included', {tag: '@pos
 
     // # Provision four ordered fields and set all four on one post, so two of them
     // land in the row and two only exist behind the badge
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -46,8 +46,6 @@ test('reads every attribute from the hover card, overflow included', {tag: '@pos
             sortOrder: 4,
         });
         created.push(classification, caveat, owner, note);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'four attributes'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, SECRET)},

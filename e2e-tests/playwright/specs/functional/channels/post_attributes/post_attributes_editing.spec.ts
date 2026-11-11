@@ -3,7 +3,7 @@
 
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {
     VALUES_ROUTE,
@@ -56,7 +56,7 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
      * item ever holds it. The text control is rendered inline in the modal and has no
      * such problem, so it is the value type that can prove the route end to end today.
      */
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -65,8 +65,6 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
 
         const note = await createField(adminClient, fieldName('note', suffix), {type: 'text'});
         created.push(note);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'keyboard route'});
         await setPostValues(adminClient, post.id, [{field_id: note.id, value: Q3}]);
 
@@ -124,8 +122,8 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
 
         await expect(async () => {
             await page.keyboard.press('ArrowDown');
-            await expect(attributesItem).toBeFocused({timeout: 500});
-        }).toPass({timeout: 20000});
+            await expect(attributesItem).toBeFocused({timeout: duration.half_sec});
+        }).toPass({timeout: duration.half_min});
 
         // # Open the modal
         await page.keyboard.press('Enter');
@@ -138,8 +136,8 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
 
         await expect(async () => {
             await page.keyboard.press('Tab');
-            await expect(input).toBeFocused({timeout: 500});
-        }).toPass({timeout: 20000});
+            await expect(input).toBeFocused({timeout: duration.half_sec});
+        }).toPass({timeout: duration.half_min});
 
         // * Verify the control announces which attribute it writes, rather than leaving
         // a screen reader with an unnamed text box in a modal of several
@@ -179,7 +177,7 @@ test('rewrites the chip behind the modal when an option is picked', {tag: '@post
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision one select field and set it on a post
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -190,8 +188,6 @@ test('rewrites the chip behind the modal when an option is picked', {tag: '@post
             options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'about to be rewritten'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, SECRET)},
@@ -250,7 +246,7 @@ test('clears a value with the trash button, dropping chip and card row', {tag: '
     // # Provision two set fields. The one being cleared is declared `always`, so its
     // row survives losing its value and the trash button's disappearance is separable
     // from the row's.
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -267,8 +263,6 @@ test('clears a value with the trash button, dropping chip and card row', {tag: '
             sortOrder: 2,
         });
         created.push(classification, caveat);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'about to be cleared'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, SECRET)},
@@ -340,7 +334,7 @@ test('locks a field the user may not write, with a padlock and no way in', {tag:
 
     // # Provision three fields across the permission levels that matter here: one the
     // member may write, one only a system admin may, and one nobody may
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -363,8 +357,6 @@ test('locks a field the user may not write, with a padlock and no way in', {tag:
             sortOrder: 3,
         });
         created.push(open, restricted, sealed);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'mixed permissions'});
 
         // The sealed field gets no value: `none` is refused for every session that
@@ -426,7 +418,7 @@ test('updates an open modal when another session changes the value', {tag: '@pos
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision one select field and set it on a post
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -437,8 +429,6 @@ test('updates an open modal when another session changes the value', {tag: '@pos
             options: [SECRET, UNCLASSIFIED],
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'changed elsewhere'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, SECRET)},
@@ -487,7 +477,7 @@ test('opens the modal on a post with no values, listing always fields', {tag: '@
 
     // # Provision one `always` field and one that only appears once set. Neither is
     // set on the post.
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -505,8 +495,6 @@ test('opens the modal on a post with no values, listing always fields', {tag: '@
             sortOrder: 2,
         });
         created.push(classification, caveat);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'nothing set'});
 
         const {app} = await pw.testBrowser.login(user);
@@ -580,7 +568,7 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
      * picker that is still on screen, rather than against the whole control having
      * been omitted — which is a different rule, and the next test's.
      */
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -598,8 +586,6 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
             sortOrder: 2,
         });
         created.push(classification, caveat);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'nothing set yet'});
 
         const {app} = await pw.testBrowser.login(user);
@@ -731,7 +717,7 @@ test('omits the field picker when every field already has a row', {tag: '@post_a
     // # Provision one `always` field, and nothing else. It is a `select` writable by
     // any member, so it is a field the picker *would* offer; the only thing keeping it
     // out of the candidate list is that it already has a row.
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -743,8 +729,6 @@ test('omits the field picker when every field already has a row', {tag: '@post_a
             visibility: 'always',
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'all fields on show'});
 
         const {app} = await pw.testBrowser.login(user);

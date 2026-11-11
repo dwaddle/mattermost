@@ -14,11 +14,11 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
      * @objective Verify Town Square loads correctly when the server is deployed under a subpath.
      */
     test('loads Town Square under the subpath URL', async ({pw}) => {
-        const {user, team} = await pw.initSetup();
+        const {user, team, townSquare} = await pw.initSetup();
 
         // # Log in and go to town square
         const {channelsPage, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // * Verify the channel loads
         await channelsPage.centerView.header.toHaveTitle('Town Square');
