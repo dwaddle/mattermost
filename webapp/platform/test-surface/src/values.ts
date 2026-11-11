@@ -1678,7 +1678,7 @@ export class Resolver {
         };
 
         // a scope that is missing or empty renders no testid
-        const scopes = (e: ts.Expression | undefined): Value[] => (e ? this.resolve(e, depth + 1, seen, env) : [{k: 'absent'} as Value]).
+        const scopes = (e: ts.Expression | undefined, at: number): Value[] => (e ? this.resolve(e, at, seen, env) : [{k: 'absent'} as Value]).
             map((v) => (v.k === 'lit' && v.s === '' ? {k: 'absent', ...(v.via ? {via: v.via} : {})} as Value : v));
         const roles = (e: ts.Expression | undefined): Value[] | null => {
             if (!e) {
@@ -1704,18 +1704,20 @@ export class Resolver {
             if (!paths || !role || (third && ts.isObjectLiteralExpression(third) && !keyExpr)) {
                 return null;
             }
-            let acc = concat(scopes(args[0]), paths.map((p) => lit(`.${p}`)));
-            if (keyExpr) {
-                acc = concat(concat(acc, [lit(':')]), keys(keyExpr, 'text'));
-            }
-            return this.locateTruncation(concat(acc, role), x);
+            return this.locateTruncation(this.guardedByScope(args[0], scopes, (scope) => {
+                let acc = concat(scope, paths.map((p) => lit(`.${p}`)));
+                if (keyExpr) {
+                    acc = concat(concat(acc, [lit(':')]), keys(keyExpr, 'text'));
+                }
+                return concat(acc, role);
+            }, depth, seen, env), x);
         }
         case 'keyed': {
             const role = roles(args[2]);
             if (!role || !args[1]) {
                 return null;
             }
-            return this.locateTruncation(concat(concat(concat(scopes(args[0]), [lit(':')]), keys(args[1], 'none')), role), x);
+            return this.locateTruncation(this.guardedByScope(args[0], scopes, (scope) => concat(concat(concat(scope, [lit(':')]), keys(args[1]!, 'none')), role), depth, seen, env), x);
         }
         default: {
             const slots = literals(args[0]);
@@ -1728,11 +1730,30 @@ export class Resolver {
             return templates.flatMap((t) => {
                 const id = helper === 'pluginSlotPath' ? t.replace(/--[a-z]+$/, '') : t;
                 const [before, after] = id.split(KEY_PLACEHOLDER);
-                const head = before.startsWith('*') ? concat(scopes(args[2]), [lit(before.slice(1))]) : [lit(before)];
+                const head = before.startsWith('*') ? concat(scopes(args[2], depth + 1), [lit(before.slice(1))]) : [lit(before)];
                 return concat(concat(head, [key]), [lit(after ?? '')]);
             });
         }
         }
+    }
+
+    /**
+     * `part(scope, …)` / `keyed(scope, …)` read the way the guarded template they stand for is read
+     * (`scope ? \`${scope}…\` : undefined`): the testid where the scope is set, and no testid, per instance, where it
+     * can be unset. Building the testid from the scope's values alone loses that per-instance split: a scope that may
+     * be empty (a runtime value, a recursive prop) gave no "no testid" instance, so a child's fallback testid lost it,
+     * and the instances the scope's condition attaches to a value with no usage chain differed from the template's.
+     * A scope that isn't a simple condition (a literal, a call) is read from its values, as before.
+     */
+    private guardedByScope(e: ts.Expression | undefined, scopes: (e: ts.Expression | undefined, depth: number) => Value[], build: (scope: Value[]) => Value[], depth: number, seen: Set<ts.Node>, env: Env | null): Value[] {
+        const cond = e ? this.condition(e, depth, seen, env) : null;
+        if (!e || !cond) {
+            return build(scopes(e, depth + 1));
+        }
+
+        // the depths of `scope ? \`${scope}.x\` : undefined`: the arm one level down, the template's span another
+        const t = this.narrowing(e, true, () => build(scopes(e, depth + 2)));
+        return [...distribute(t, cond, true), ...distribute([{k: 'absent'}], cond, false)];
     }
 
     private slotTemplates: Map<string, string> | null | undefined;
