@@ -13,6 +13,7 @@ import {
     type AdminPermission,
     type AdminRole,
     type App,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import type {CpaFieldsMap} from '../../channels/custom_profile_attributes/helpers';
@@ -186,7 +187,7 @@ type PolicyEditor = generated.AdminAccessControlPolicy | generated.AdminPermissi
 /** Switches a policy editor to its CEL editor and types an expression, waiting for it to validate. */
 export async function setCelExpression(app: App, policy: PolicyEditor, expression: string) {
     // the switch waits for the editor to load the attributes
-    await expect(policy.switchModeButton.locator).toBeEnabled({timeout: 60_000});
+    await expect(policy.switchModeButton.locator).toBeEnabled({timeout: duration.one_min});
     await policy.switchModeButton.click();
     await policy.cel.input.locator.click();
     await app.page.keyboard.press('ControlOrMeta+a');
@@ -264,7 +265,7 @@ export async function policyIdByName(client: Client4, name: string): Promise<str
                 id = (result?.policies ?? []).find((p) => p.name === name)?.id ?? '';
                 return id;
             },
-            {timeout: 30_000, message: `policy ${name} not found`},
+            {timeout: duration.half_min, message: `policy ${name} not found`},
         )
         .not.toBe('');
     return id;
@@ -324,7 +325,7 @@ export async function permissionPolicyIdByName(client: Client4, name: string): P
                 id = (result?.policies ?? []).find((p) => p.name === name)?.id ?? '';
                 return id;
             },
-            {timeout: 30_000, message: `permission policy ${name} not found`},
+            {timeout: duration.half_min, message: `permission policy ${name} not found`},
         )
         .not.toBe('');
     return id;

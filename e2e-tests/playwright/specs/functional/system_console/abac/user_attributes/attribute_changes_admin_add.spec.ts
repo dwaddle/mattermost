@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, verifyUserInChannel, updateUserAttributes} from '@mattermost/playwright-lib';
+import {expect, test, verifyUserInChannel, updateUserAttributes, duration} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
@@ -30,7 +30,7 @@ test.describe('ABAC User Attributes - Attribute Changes', () => {
      * - "User added" message is posted in the channel by System
      */
     test('MM-T5795 User can be added by admin after attribute added (auto-add false)', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
 
@@ -100,7 +100,7 @@ test.describe('ABAC User Attributes - Attribute Changes', () => {
         // Membership + ABAC evaluation can lag behind the REST response in CI.
         await expect
             .poll(async () => verifyUserInChannel(adminClient, testUser.id, privateChannel.id), {
-                timeout: 60000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 3000],
             })
             .toBe(true);

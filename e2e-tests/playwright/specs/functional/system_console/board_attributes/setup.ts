@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {AdminType, expect, generated, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {AdminType, expect, generated, type App, type PlaywrightExtended, duration} from '@mattermost/playwright-lib';
 
 /**
  * System Console > Board Attributes on the generated page objects: the table's rows keyed by field id (name, type
@@ -117,9 +117,9 @@ export async function closeOptionMenu(row: BoardRow) {
     const menu = row.optionMenu.nameTextbox.locator;
     await expect(async () => {
         if (await menu.isVisible()) {
-            await row.optionMenu.colorItems.first().press('Escape', {timeout: 1000});
+            await row.optionMenu.colorItems.first().press('Escape', {timeout: duration.one_sec});
         }
-        await expect(menu).not.toBeVisible({timeout: 1000});
+        await expect(menu).not.toBeVisible({timeout: duration.one_sec});
     }).toPass();
 }
 
@@ -151,11 +151,11 @@ export async function save(ba: BoardAttributes) {
     // server has the change: wait for the save's first write to the board fields as well.
     const written = ba.page.waitForResponse(
         (r) => /\/properties\/groups\/boards\/[^/]+\/fields/.test(r.url()) && r.request().method() !== 'GET',
-        {timeout: 15_000},
+        {timeout: duration.half_min},
     );
     await saveButton.click();
     await written;
-    await expect(saveButton.locator).toBeDisabled({timeout: 15_000});
+    await expect(saveButton.locator).toBeDisabled({timeout: duration.half_min});
 }
 
 /** Creates a text field through the API. */

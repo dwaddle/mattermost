@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, verifyUserInChannel} from '@mattermost/playwright-lib';
+import {expect, test, verifyUserInChannel, duration} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
@@ -21,7 +21,7 @@ import {createMembershipPolicy, expectAccessTest, openPolicy, policyIdByName, ru
  * @reference https://github.com/mattermost/mattermost-test-management/blob/main/data/test-cases/channels/abac-attribute-based-access/abac-system-admin/MM-T5786.md
  */
 test('MM-T5786 Test "is not" (!=) operator in Simple mode', async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     await pw.skipIfNoLicense();
 
     const {adminUser, adminClient, team} = await pw.initSetup();
@@ -66,7 +66,7 @@ test('MM-T5786 Test "is not" (!=) operator in Simple mode', async ({pw}) => {
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, engineerUser.id, channel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'engineerUser should be in channel after sync',
         })
@@ -80,7 +80,7 @@ test('MM-T5786 Test "is not" (!=) operator in Simple mode', async ({pw}) => {
  * @reference https://github.com/mattermost/mattermost-test-management/blob/main/data/test-cases/channels/abac-attribute-based-access/abac-system-admin/MM-T5786.md
  */
 test('MM-T5786 Test "in" operator in Simple mode', async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     await pw.skipIfNoLicense();
 
     const {adminUser, adminClient, team} = await pw.initSetup();
@@ -127,7 +127,7 @@ test('MM-T5786 Test "in" operator in Simple mode', async ({pw}) => {
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, engineerUser.id, channel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'engineerUser should be in channel after sync',
         })
@@ -141,7 +141,7 @@ test('MM-T5786 Test "in" operator in Simple mode', async ({pw}) => {
  * @reference https://github.com/mattermost/mattermost-test-management/blob/main/data/test-cases/channels/abac-attribute-based-access/abac-system-admin/MM-T5786.md
  */
 test('MM-T5786 Test "starts with" operator in Simple mode', async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     await pw.skipIfNoLicense();
 
     const {adminUser, adminClient, team} = await pw.initSetup();
@@ -186,7 +186,7 @@ test('MM-T5786 Test "starts with" operator in Simple mode', async ({pw}) => {
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, engineerUser.id, channel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'engineerUser should be in channel after sync',
         })

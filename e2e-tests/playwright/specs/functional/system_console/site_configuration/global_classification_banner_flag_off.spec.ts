@@ -24,10 +24,10 @@ test.describe('Global Classification Banner (feature flag off)', () => {
         {tag: ['@classification_markings', '@global_banner']},
         async ({pw}) => {
             await pw.ensureFeatureFlag('ClassificationMarkings', false);
-            const {adminUser, team} = await pw.initSetup();
+            const {adminUser, team, townSquare} = await pw.initSetup();
 
             const {app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // * The app is up, with neither banner
             await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();

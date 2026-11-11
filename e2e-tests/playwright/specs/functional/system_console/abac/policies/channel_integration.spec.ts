@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test, verifyUserInChannel, type App} from '@mattermost/playwright-lib';
+import {expect, generated, test, verifyUserInChannel, type App, duration} from '@mattermost/playwright-lib';
 
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
 import {
@@ -42,7 +42,7 @@ test.describe('ABAC Policies - Channel Integration', () => {
      * 1. As admin go to System Console > User Management > Channels
      */
     test('MM-T5788 Add policy to channel from Channel Configuration page', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
 
@@ -160,7 +160,7 @@ test.describe('ABAC Policies - Channel Integration', () => {
      * This works without LDAP - the server accepts it and UI shows "Group Sync".
      */
     test('MM-T5789 Channel with LDAP group sync cannot use ABAC', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
         const {adminUser, adminClient, team} = await pw.initSetup();

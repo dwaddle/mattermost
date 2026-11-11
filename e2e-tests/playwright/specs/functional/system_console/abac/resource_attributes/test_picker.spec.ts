@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {Api, expect, settle, test} from '@mattermost/playwright-lib';
+import {Api, expect, settle, test, duration} from '@mattermost/playwright-lib';
 
 import {
     deleteCustomProfileAttributes,
@@ -56,7 +56,7 @@ test.describe('ABAC resource.attributes - test picker', {tag: ['@abac', '@abac_r
     });
 
     test('picker resolves a resource rule against the chosen channel', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
         await pw.ensureFeatureFlag('ResourceAttributesInPolicies', true);
 
@@ -94,7 +94,7 @@ test.describe('ABAC resource.attributes - test picker', {tag: ['@abac', '@abac_r
         const {app} = await pw.testBrowser.login(adminUser);
         const policy = await openPolicy(app, policyId);
         const {testButton} = policy.rules;
-        await expect(testButton.locator).toBeEnabled({timeout: 15000});
+        await expect(testButton.locator).toBeEnabled({timeout: duration.half_min});
         await policy.rules.clickTestButton();
         const modal = app.policyTestModal;
 
@@ -111,8 +111,8 @@ test.describe('ABAC resource.attributes - test picker', {tag: ['@abac', '@abac_r
         const {users} = modal;
         await expect(async () => {
             await users.fillSearchTextbox(userUS.username);
-            await expect(users.user(userUS).locator).toBeVisible({timeout: 3000});
-        }).toPass({timeout: 60000, intervals: [3000]});
+            await expect(users.user(userUS).locator).toBeVisible({timeout: duration.four_sec});
+        }).toPass({timeout: duration.one_min, intervals: [3000]});
 
         // * The non-matching user (region == "eu") is not admitted against this channel.
         // Wait for the search round-trip before asserting absence: the previous

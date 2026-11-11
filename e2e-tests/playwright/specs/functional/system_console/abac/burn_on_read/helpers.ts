@@ -6,7 +6,14 @@ import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {AdminPermission, expect, getRandomId, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    AdminPermission,
+    expect,
+    getRandomId,
+    type App,
+    type PlaywrightExtended,
+    duration,
+} from '@mattermost/playwright-lib';
 
 import {setupCustomProfileAttributeValuesForUser} from '../../../channels/custom_profile_attributes/helpers';
 import {deletePermissionPolicyByName, ensureUserAttributes, getUserAttributeFieldByName} from '../support';
@@ -75,7 +82,7 @@ export async function ensureBurnOnReadEnabled(adminClient: Client4): Promise<voi
                 const cfg = await adminClient.getConfig();
                 return cfg.ServiceSettings?.EnableBurnOnRead === true;
             },
-            {timeout: 15000, intervals: [500, 1000, 2000]},
+            {timeout: duration.half_min, intervals: [500, 1000, 2000]},
         )
         .toBe(true);
 }
@@ -96,7 +103,7 @@ export async function ensureABACEnabled(adminClient: Client4): Promise<void> {
                 const cfg = await adminClient.getConfig();
                 return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === true;
             },
-            {timeout: 15000, intervals: [500, 1000, 2000]},
+            {timeout: duration.half_min, intervals: [500, 1000, 2000]},
         )
         .toBe(true);
 }

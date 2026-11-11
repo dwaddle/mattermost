@@ -6,7 +6,7 @@
  * @reference MM-69100
  */
 
-import {expect, newTestPassword, test, type App} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, test, type App, duration} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -62,7 +62,7 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
 
         // * Policy banner visible with correct title
         const banner = invite.policyBannerStatus.locator;
-        await expect(banner).toBeVisible({timeout: 10000});
+        await expect(banner).toBeVisible();
         await expect(banner).toContainText('Team access is restricted by user attributes');
 
         // * Attribute chips are shown (async — wait on the chip text)
@@ -70,7 +70,7 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
 
         // * Invite-link warning visible
         const linkWarning = invite.linkWarningStatus.locator;
-        await expect(linkWarning).toBeVisible({timeout: 10000});
+        await expect(linkWarning).toBeVisible();
         await expect(linkWarning).toHaveText(/People who use this link must meet the membership requirements to join/i);
     });
 
@@ -116,7 +116,7 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
         // so isStrictlyFilteredTeam() is correct at componentDidMount.
         await expect
             .poll(async () => (await adminClient.getTeam(team.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
                 message: 'team should show policy_enforced=true before opening the invite modal',
             })
@@ -144,14 +144,14 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
         // returns — so that strict filtering is active before we search.  Typing
         // before this resolves causes the first search to fire in non-strict mode;
         // strict mode then activates mid-search and clears the results.
-        await expect(invite.policyBannerStatus.locator).toBeVisible({timeout: 15000});
+        await expect(invite.policyBannerStatus.locator).toBeVisible({timeout: duration.half_min});
 
         // # Search with the shared prefix to surface both users (strict filter will keep only qualifiers)
         await invite.users.inputCombobox.locator.click();
         await invite.users.inputCombobox.locator.pressSequentially(userPrefix);
 
         // * eng1 is an option (qualifies — Department=Engineering)
-        await expect(invite.users.user(eng1).locator).toBeVisible({timeout: 30000});
+        await expect(invite.users.user(eng1).locator).toBeVisible({timeout: duration.half_min});
 
         // * mkt1 is NOT in the list at all (strict filtering strips non-qualifiers from the DOM)
         await expect(invite.users.user(mkt1).locator).toHaveCount(0);
@@ -201,7 +201,7 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
 
         // * Banner still shown (governed) but with softened advisory copy
         const banner = invite.policyBannerStatus.locator;
-        await expect(banner).toBeVisible({timeout: 10000});
+        await expect(banner).toBeVisible();
         await expect(banner).toContainText('This team has membership requirements');
         await expect(banner).toContainText(/can still join, but will not be automatically added/i);
         await expect(banner).not.toContainText('Team access is restricted by user attributes');
@@ -214,8 +214,8 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
         await invite.users.inputCombobox.locator.pressSequentially(userPrefix);
 
         // * Both eng1 AND mkt1 appear (advisory = no filtering)
-        await expect(invite.users.user(eng1).locator).toBeVisible({timeout: 15000});
-        await expect(invite.users.user(mkt1).locator).toBeVisible({timeout: 15000});
+        await expect(invite.users.user(eng1).locator).toBeVisible({timeout: duration.half_min});
+        await expect(invite.users.user(mkt1).locator).toBeVisible({timeout: duration.half_min});
     });
 
     test('MM-69100_33 non-policy team behaves normally (regression)', async ({pw}) => {
@@ -232,7 +232,7 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
         const {invite} = await openInvitePeople(app);
 
         // * Policy banner NOT present
-        await expect(invite.policyBannerStatus.locator).not.toBeVisible({timeout: 5000});
+        await expect(invite.policyBannerStatus.locator).not.toBeVisible();
 
         // * Normal invite input present
         await expect(invite.users.inputCombobox.locator).toBeVisible();
@@ -276,7 +276,7 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
 
         await expect
             .poll(async () => (await adminClient.getTeam(team.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
                 message: 'team should show policy_enforced=true before opening the invite modal',
             })
@@ -292,14 +292,14 @@ test.describe('Invite People - Team Membership Policy', {tag: ['@abac', '@team_m
 
         // # Open Invite People
         const {invite} = await openInvitePeople(app);
-        await expect(invite.policyBannerStatus.locator).toBeVisible({timeout: 15000});
+        await expect(invite.policyBannerStatus.locator).toBeVisible({timeout: duration.half_min});
 
         // # Search a term that matches only engAlpha
         await invite.users.inputCombobox.locator.click();
         await invite.users.inputCombobox.locator.pressSequentially(`${userPrefix}engalpha`);
 
         // * engAlpha is returned by the server-side policy-scoped search
-        await expect(invite.users.user(engAlpha).locator).toBeVisible({timeout: 30000});
+        await expect(invite.users.user(engAlpha).locator).toBeVisible({timeout: duration.half_min});
 
         // * engBeta — also a qualifier — is excluded by the term, proving the
         //   search is applied server-side rather than dumping a buffered set

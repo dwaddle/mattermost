@@ -7,7 +7,7 @@
  * @reference MM-69100
  */
 
-import {expect, newTestPassword, test, type App} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, test, type App, duration} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -29,11 +29,11 @@ const SYSTEM_BOT_USERNAME = 'system-bot';
  */
 async function expectSystemMessage(app: App, team: {name: string}, dm: {name: string}, text: RegExp) {
     await app.channelsPage.goto({team, channel: dm.name});
-    await expect(app.center.postList.postItems.filter({hasText: text})).toHaveCount(1, {timeout: 15000});
+    await expect(app.center.postList.postItems.filter({hasText: text})).toHaveCount(1, {timeout: duration.half_min});
 }
 
 test.describe('ABAC - Sync System Messages', {tag: ['@abac', '@team_membership']}, () => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
 
     let createdTeamIds: string[] = [];
     let createdUserIds: string[] = [];

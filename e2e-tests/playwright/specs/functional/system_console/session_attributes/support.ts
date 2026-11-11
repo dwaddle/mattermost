@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {Api, expect, generated, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {Api, expect, generated, test, type App, type PlaywrightExtended, duration} from '@mattermost/playwright-lib';
 
 export const SESSION_ATTRIBUTES_GROUP = 'session_attributes';
 export const SESSION_ATTRIBUTES_OBJECT_TYPE = 'session';
@@ -101,12 +101,12 @@ export async function choosePreset(app: App, field: {id: string}, kind: 'ttl' | 
 
     await expect(async () => {
         await app.page.keyboard.press('Escape');
-        await expect(trigger.locator).toBeHidden({timeout: 2000});
+        await expect(trigger.locator).toBeHidden({timeout: duration.two_sec});
         await sa.row(field.id).actionsButton.click();
-        await expect(trigger.locator).toBeVisible({timeout: 2000});
+        await expect(trigger.locator).toBeVisible({timeout: duration.two_sec});
         await trigger.locator.press('ArrowRight');
-        await expect(option.locator).toBeVisible({timeout: 2000});
-    }).toPass({timeout: 20000, intervals: [250, 500, 1000]});
+        await expect(option.locator).toBeVisible({timeout: duration.two_sec});
+    }).toPass({timeout: duration.half_min, intervals: [250, 500, 1000]});
 
     // choosing a preset closes the whole menu; wait for it so a following menu opens clean
     await option.click();
@@ -121,7 +121,7 @@ export async function saveAndSettle(app: App) {
     const save = app.admin.sessionAttributes.savePanel.saveButton;
     await expect(save.locator).toBeEnabled();
     await save.commit({wait: Api.UpdatePropertyField, params: {group_name: 'session_attributes'}});
-    await expect(save.locator).toBeDisabled({timeout: 10000});
+    await expect(save.locator).toBeDisabled();
 }
 
 /**

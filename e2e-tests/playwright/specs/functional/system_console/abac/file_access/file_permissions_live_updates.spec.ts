@@ -12,6 +12,7 @@ import {
     test,
     TestBrowser,
     type PlaywrightExtended,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
@@ -59,7 +60,7 @@ test.describe('ABAC file permissions - live updates', () => {
     let sharedBrowser: TestBrowser | null = null;
 
     test.beforeAll(async ({browser}) => {
-        test.setTimeout(240000);
+        test.setTimeout(duration.four_min);
 
         const {adminClient, adminUser} = await getAdminClient();
         if (!adminUser) {

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminRole, expect, test, type App} from '@mattermost/playwright-lib';
+import {AdminRole, expect, test, type App, duration} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes} from '../support';
 import {openPermissionPolicies, setAbacEnabled, setCelExpression} from '../surface';
@@ -140,7 +140,7 @@ test.describe('Permission Policies - Create Policy', () => {
     });
 
     test('MM-T5811 Save is blocked when no permission is selected', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
         const {adminUser, adminClient} = await pw.initSetup();

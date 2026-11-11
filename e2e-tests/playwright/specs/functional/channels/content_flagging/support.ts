@@ -5,7 +5,7 @@ import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, type App, type generated, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, type App, type generated, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 export const FLAG_REASON = 'Classification mismatch';
 
@@ -51,7 +51,7 @@ export async function createPost(
     user: UserProfile,
     message: string,
 ) {
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     const post = await userClient.createPost({
         channel_id: townSquare.id,
         message,

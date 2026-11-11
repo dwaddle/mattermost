@@ -8,6 +8,7 @@ import {
     openChannelSettings,
     test,
     type App,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -59,10 +60,10 @@ test.describe('Attribute-Value Masking - Admin Roles', {tag: ['@abac', '@abac_ma
         // the Delete button stays disabled even after a team admin removes all assigned
         // channels from the policy, as long as masked values are present.
         // The server also returns HTTP 403 for a direct DELETE request.
-        test.setTimeout(150000);
+        test.setTimeout(duration.four_min);
         await pw.skipIfNoLicense();
 
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const fieldIds: string[] = [];
         const policyIds: string[] = [];
 
@@ -100,7 +101,7 @@ test.describe('Attribute-Value Masking - Admin Roles', {tag: ['@abac', '@abac_ma
             await setFieldAsSharedOnly(fieldId);
             await assignTeamsToPolicy(adminClient, policyId, [team.id]);
 
-            const app = await openChannel(pw, adminUser, {team, channel: 'town-square'});
+            const app = await openChannel(pw, adminUser, {team, channel: townSquare});
             const {settings, editor} = await openTeamPolicy(app, {id: policyId, name: policyName});
 
             // * The policy's masked values make Delete unavailable
@@ -156,10 +157,10 @@ test.describe('Attribute-Value Masking - Admin Roles', {tag: ['@abac', '@abac_ma
         // PermissionManageSystem) must see masking in the team-settings access
         // policy editor. The masked-values guard MUST apply at this surface too:
         // controls locked, Delete disabled, server 403 on direct DELETE.
-        test.setTimeout(180000);
+        test.setTimeout(duration.four_min);
         await pw.skipIfNoLicense();
 
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const fieldIds: string[] = [];
         const policyIds: string[] = [];
 
@@ -207,7 +208,7 @@ test.describe('Attribute-Value Masking - Admin Roles', {tag: ['@abac', '@abac_ma
             await setFieldAsSharedOnly(fieldId);
 
             // # Log in AS THE TEAM ADMIN (not the sysadmin) and open the policy in Team Settings
-            const app = await openChannel(pw, teamAdmin, {team, channel: 'town-square'});
+            const app = await openChannel(pw, teamAdmin, {team, channel: townSquare});
             const {settings, editor} = await openTeamPolicy(app, {id: policyId, name: policyName});
 
             // * Masking surfaces in the team-policy editor exactly as in the System Console, and Delete is disabled
@@ -256,7 +257,7 @@ test.describe('Attribute-Value Masking - Admin Roles', {tag: ['@abac', '@abac_ma
         // PermissionManageChannelAccessRules (via channel_admin role) on a
         // private channel must see masking inside the Membership Policy tab of
         // the channel settings modal.
-        test.setTimeout(180000);
+        test.setTimeout(duration.four_min);
         await pw.skipIfNoLicense();
 
         const {adminClient, user, team} = await pw.initSetup();
@@ -347,7 +348,7 @@ test.describe('Attribute-Value Masking - Admin Roles', {tag: ['@abac', '@abac_ma
         // Validates that the /attributes endpoint strips source_only and shared_only
         // fields before they reach the channel members RHS panel. A public field in
         // the same policy must still appear so we confirm the filter is selective.
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient, team} = await pw.initSetup();

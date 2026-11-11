@@ -7,6 +7,7 @@ import {
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -34,7 +35,7 @@ test.describe('ABAC LDAP Integration - Sync', () => {
     test('MM-T5800 Policy enforcement after attribute change (bidirectional)', async ({pw}) => {
         // 4 x waitForLatestSyncJob at up to 180 s each, plus policy creation and browser
         // navigation — CI LDAP sync jobs can take significantly longer than the default 90 s.
-        test.setTimeout(300000);
+        test.setTimeout(duration.ten_min);
 
         await pw.skipIfNoLicense();
 

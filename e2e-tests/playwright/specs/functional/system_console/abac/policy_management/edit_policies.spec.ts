@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, verifyUserInChannel} from '@mattermost/playwright-lib';
+import {expect, test, verifyUserInChannel, duration} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
@@ -33,7 +33,7 @@ test.describe('ABAC Policy Management - Edit Policies', () => {
      * 5. User who satisfies NEW policy but not in channel → NOT auto-added
      */
     test('MM-T5790 Editing policy value applies access control without auto-add', async ({pw}) => {
-        test.setTimeout(180000);
+        test.setTimeout(duration.four_min);
 
         await pw.skipIfNoLicense();
 
@@ -131,14 +131,14 @@ test.describe('ABAC Policy Management - Edit Policies', () => {
         // Poll under PW_WORKERS>=2: another shard's sync job may flip membership.
         await expect
             .poll(async () => verifyUserInChannel(adminClient, salesUser.id, privateChannel.id), {
-                timeout: 30_000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000],
                 message: 'salesUser should NOT be in channel (auto-add is off)',
             })
             .toBe(false);
         await expect
             .poll(async () => verifyUserInChannel(adminClient, engineerUser.id, privateChannel.id), {
-                timeout: 30_000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000],
                 message: 'engineerUser should be REMOVED (no longer satisfies policy)',
             })

@@ -20,6 +20,8 @@ import {
     test,
     type App,
     type PlaywrightExtended,
+    duration,
+    DefaultChannel,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -40,7 +42,7 @@ async function openClassificationMarkings(pw: PlaywrightExtended, admin: UserPro
 async function save(app: App) {
     const {saveButton} = app.admin.classification.savePanel;
     await saveButton.click();
-    await expect(saveButton.locator).toBeDisabled({timeout: 30000});
+    await expect(saveButton.locator).toBeDisabled({timeout: duration.half_min});
 }
 
 test.describe('Global Classification Banner', () => {
@@ -74,7 +76,7 @@ test.describe('Global Classification Banner', () => {
                 {levelId: '', enabled: false, placement: 'top'},
             );
 
-            const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+            const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
             await expect(app.classificationBanner.top.locator).not.toBeVisible();
             await expect(app.classificationBanner.bottom.locator).not.toBeVisible();
@@ -133,7 +135,7 @@ test.describe('Global Classification Banner', () => {
                 {levelId: 'lvlsecret00000000000000000', enabled: true, placement: 'top'},
             );
 
-            const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+            const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
             const topBanner = app.classificationBanner.top.locator;
             await expect(topBanner).toBeVisible();
@@ -162,7 +164,7 @@ test.describe('Global Classification Banner', () => {
                 {levelId: 'lvltopsecret00000000000000', enabled: true, placement: 'top_and_bottom'},
             );
 
-            const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+            const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
             const topBanner = app.classificationBanner.top.locator;
             const bottomBanner = app.classificationBanner.bottom.locator;
@@ -327,7 +329,7 @@ test.describe('Global Classification Banner', () => {
             );
 
             // Login the non-admin user
-            const app = await openChannel(pw, user, {team, channel: {name: 'town-square'}});
+            const app = await openChannel(pw, user, {team, channel: {name: DefaultChannel.TownSquare}});
 
             const userTopBanner = app.classificationBanner.top.locator;
             await expect(userTopBanner).toBeVisible();
@@ -369,7 +371,7 @@ test.describe('Global Classification Banner', () => {
                 {levelId: 'lvlunclassified00000000000', enabled: true, placement: 'top'},
             );
 
-            const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+            const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
             const topBanner = app.classificationBanner.top.locator;
             await expect(topBanner).toBeVisible();

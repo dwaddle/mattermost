@@ -7,6 +7,7 @@ import {
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -48,7 +49,7 @@ test.describe('ABAC LDAP Integration - Sync', () => {
      *       In production, attributes would be synced from LDAP server.
      */
     test('MM-T5798 User added by admin after LDAP attribute sync (auto-add false)', async ({pw}) => {
-        test.setTimeout(180000);
+        test.setTimeout(duration.four_min);
 
         await pw.skipIfNoLicense();
 

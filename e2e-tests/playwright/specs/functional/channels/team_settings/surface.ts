@@ -4,7 +4,7 @@
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, type App, type generated, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, type App, type generated, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * Team Settings on the generated page objects: the dialog's tabs, the membership tab (rules, auto-add, sync status,
@@ -15,7 +15,7 @@ import {expect, type App, type generated, type PlaywrightExtended} from '@matter
 /** Logs the user in on the team's town square, waiting for the app to be up. */
 export async function openTeam(pw: PlaywrightExtended, user: UserProfile, team: Team) {
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     return app;
 }
 

@@ -19,7 +19,7 @@ import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, getRandomId, test} from '@mattermost/playwright-lib';
+import {expect, getRandomId, test, duration} from '@mattermost/playwright-lib';
 
 import {deleteCustomProfileAttributes} from '../../../channels/custom_profile_attributes/helpers';
 import {addRule, openMembershipPolicies, openPolicy, policyIdByName} from '../surface';
@@ -99,7 +99,7 @@ test.describe('System Console - Membership Policy apostrophe values (MM-64357)',
 
             // # Switch to Advanced mode so the "Switch to Simple Mode" toggle is present.
             await expect(reopened.switchModeButton.locator).toHaveText('Switch to Advanced Mode');
-            await expect(reopened.switchModeButton.locator).toBeEnabled({timeout: 60_000});
+            await expect(reopened.switchModeButton.locator).toBeEnabled({timeout: duration.one_min});
             await reopened.switchModeButton.click();
 
             // * The stored apostrophe expression classifies as simple, so the

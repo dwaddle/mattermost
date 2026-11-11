@@ -5,7 +5,15 @@ import path from 'node:path';
 
 import type {Client4} from '@mattermost/client';
 
-import {assetPath, expect, getRandomId, newTestPassword, type App, type generated} from '@mattermost/playwright-lib';
+import {
+    assetPath,
+    expect,
+    getRandomId,
+    newTestPassword,
+    type App,
+    type generated,
+    duration,
+} from '@mattermost/playwright-lib';
 
 import {createPrivateChannelForABAC, ensureUserAttributes, getPolicyIdByName} from '../support';
 
@@ -53,7 +61,7 @@ export async function ensureABACEnabled(adminClient: Client4): Promise<void> {
                 const cfg = await adminClient.getConfig();
                 return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === true;
             },
-            {timeout: 15000, intervals: [500, 1000, 2000]},
+            {timeout: duration.half_min, intervals: [500, 1000, 2000]},
         )
         .toBe(true);
 }
@@ -62,7 +70,7 @@ export async function ensureABACEnabled(adminClient: Client4): Promise<void> {
 export async function waitForPolicy(adminClient: Client4, policyName: string): Promise<void> {
     await expect
         .poll(async () => Boolean(await getPolicyIdByName(adminClient, policyName, 1)), {
-            timeout: 30000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
         })
         .toBe(true);

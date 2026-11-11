@@ -7,6 +7,7 @@ import {
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -27,7 +28,7 @@ import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from
  * 4. Next sync auto-adds the user
  */
 test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     await pw.skipIfNoLicense();
 
     const {adminUser, adminClient, team} = await pw.initSetup();
@@ -61,7 +62,7 @@ test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', a
     // Poll: sync job marks itself success before channel_members write is committed.
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, channel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should NOT be in channel after first sync (Department=Sales)',
         })
@@ -75,7 +76,7 @@ test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', a
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, channel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should be in channel after second sync (Department=Engineering)',
         })
@@ -91,7 +92,7 @@ test('MM-T5797a LDAP sync - User auto-added with == operator (auto-add true)', a
  * 4. Next sync auto-adds the user
  */
 test('MM-T5797b LDAP sync - User auto-added with contains operator (auto-add true)', async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     await pw.skipIfNoLicense();
 
     const {adminUser, adminClient, team} = await pw.initSetup();
@@ -122,7 +123,7 @@ test('MM-T5797b LDAP sync - User auto-added with contains operator (auto-add tru
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, channel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should NOT be in channel after first sync (Department=Sales)',
         })
@@ -136,7 +137,7 @@ test('MM-T5797b LDAP sync - User auto-added with contains operator (auto-add tru
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, channel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should be in channel after second sync (Department=Engineering)',
         })

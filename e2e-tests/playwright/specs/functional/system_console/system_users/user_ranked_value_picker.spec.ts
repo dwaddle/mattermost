@@ -13,7 +13,7 @@ import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, generated, getRandomId, test} from '@mattermost/playwright-lib';
+import {expect, generated, getRandomId, test, duration} from '@mattermost/playwright-lib';
 
 import {optionId} from '../../channels/channel_attributes/helpers';
 import {deleteCustomProfileAttributes} from '../../channels/custom_profile_attributes/helpers';
@@ -75,7 +75,7 @@ test.describe('System Console - Ranked value combobox', () => {
         await app.page.goto(`${generated.AdminConsolePage.path()}/user_management/user/${testUser.id}`);
         const userDetail = app.admin.user;
         const attribute = userDetail.attribute(field!);
-        await expect(attribute.rankButton.locator).toBeVisible({timeout: 30_000});
+        await expect(attribute.rankButton.locator).toBeVisible({timeout: duration.half_min});
 
         // * The closed picker shows the assigned value
         await expect(attribute.rankButton.locator).toContainText('Secret');

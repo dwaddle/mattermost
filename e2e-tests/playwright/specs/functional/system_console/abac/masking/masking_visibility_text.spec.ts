@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {enableUserManagedAttributes} from '../support';
 import {openMembershipPolicies, setAbacEnabled, setCelExpression} from '../surface';
@@ -27,7 +27,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
     });
 
     test('MM-68508-7: Caller holding all policy values sees them all unmasked', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -85,7 +85,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
     });
 
     test('MM-68508-8: New policy creation has no masking', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -137,7 +137,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
         // The masked row's value selector is locked — callers cannot add or remove values
         // through it. This is intentional: any direct modification could silently drop
         // hidden values, and the merge logic gates write-path edits on shared_only fields.
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -190,7 +190,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
     });
 
     test('MM-68508-10: Text field masking with "in" operator', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -245,7 +245,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
     });
 
     test('MM-68508-11: Text field masking with single-value operator (value not held)', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -304,7 +304,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
         // which mergeMultiselectConditions promotes to hasAllOf — showing the wrong
         // operator in the table editor. The fix emits a duplicate-token OR to
         // preserve hasAnyOf semantics through the re-parse cycle.
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();

@@ -1816,7 +1816,7 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
         }) => {
             await pw.ensureFeatureFlag({ChannelAttributes: true, PostAttributes: true, PropertyFieldGraph: true});
             await requireGlobalAttributesEnabled(pw);
-            const {adminClient, adminUser, team, user} = await pw.initSetup();
+            const {adminClient, adminUser, team, user, townSquare} = await pw.initSetup();
 
             const timestamp = Date.now();
             const name = `e2e_global_attribute_display_name_${timestamp}`;
@@ -1842,7 +1842,7 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
 
                 // # Post a message as the user and open their own profile popover
                 const {app: asUser} = await pw.testBrowser.login(user);
-                await asUser.channelsPage.goto({team, channel: 'town-square'});
+                await asUser.channelsPage.goto({team, channel: townSquare});
                 const message = `display-name-rendering-${timestamp}`;
                 await asUser.center.postCreate.fillMessageTextbox(message);
                 await asUser.center.postCreate.clickSendButton();
@@ -2569,7 +2569,7 @@ async function waitForStableRectHeight(locator: Locator): Promise<number> {
                 lastHeight = height;
                 return isStable;
             },
-            {timeout: 2000, intervals: [50, 100, 150, 300]},
+            {intervals: [50, 100, 150, 300]},
         )
         .toBe(true);
 

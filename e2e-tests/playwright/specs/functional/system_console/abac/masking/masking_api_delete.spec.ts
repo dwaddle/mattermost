@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {enableUserManagedAttributes} from '../support';
 
@@ -28,7 +28,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
     });
 
     test('MM-68508-12: GET /policies/{id} does not leak raw CEL when values are masked', async ({pw}) => {
-        test.setTimeout(60000);
+        test.setTimeout(duration.one_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -88,7 +88,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
     });
 
     test('MM-68508-13: POST /policies/search does not leak raw CEL when values are masked', async ({pw}) => {
-        test.setTimeout(60000);
+        test.setTimeout(duration.one_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -145,7 +145,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
     });
 
     test('MM-68508-14: Warning banner visible in editor when policy has masked values', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -214,7 +214,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
     test('MM-68508-15: Delete button is disabled on masked policies; clean policies open the standard confirmation modal', async ({
         pw,
     }) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -289,7 +289,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
         // Validates that the read-only-when-masked invariant covers deletion:
         // - Delete Policy button in the UI is disabled when hasMaskedRows is true
         // - Server returns HTTP 403 for direct DELETE requests when caller has masked values
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -363,7 +363,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
         // Validates merge-on-save for a multi-condition policy. The caller (holds Alpha
         // in programField, nothing in clearanceField) can save — both conditions survive
         // with their hidden values intact. The server blocks deletion of masked conditions.
-        test.setTimeout(150000);
+        test.setTimeout(duration.four_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -460,7 +460,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
     });
 
     test('MM-68508-19: Mode toggle Simple → Advanced → Simple preserves all masked-row restrictions', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -538,7 +538,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
         // of defence — rejectMaskedTokens' former "== false" check was only a
         // redundant (and overbroad) extra layer on top of it. This is the
         // end-to-end proof of that protection.
-        test.setTimeout(60000);
+        test.setTimeout(duration.one_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();

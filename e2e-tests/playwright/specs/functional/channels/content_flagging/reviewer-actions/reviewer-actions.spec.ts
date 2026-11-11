@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {createPost, openReportDetails, reportCard, setupContentFlagging, verifyReport} from './../support';
 
@@ -70,7 +70,7 @@ test('Verify Removed Flagged posts show appropriate status and do not show the p
 
     // Multi-step flow: Continue -> wait for the report to generate -> Remove permanently
     await reviewDialog.form.clickPrimaryButton();
-    await expect(reviewDialog.generated.permanentButton.locator).toBeVisible({timeout: 30000});
+    await expect(reviewDialog.generated.permanentButton.locator).toBeVisible({timeout: duration.half_min});
     await reviewDialog.generated.clickPermanentButton();
     await expect(reviewDialog.generated.permanentButton.locator).not.toBeVisible();
     await setupContentFlagging(adminClient, [adminUser.id, secondUserID, thirdUserID]);

@@ -99,7 +99,7 @@ test(
     async ({pw}) => {
         test.setTimeout(pw.duration.four_min);
 
-        const {adminClient, team} = await pw.initSetup();
+        const {adminClient, team, townSquare} = await pw.initSetup();
         savedAdminClient = adminClient;
         await ensureBurnOnReadEnabled(adminClient);
         await ensureABACEnabled(adminClient);
@@ -122,7 +122,7 @@ test(
         await ensureABACEnabled(adminClient);
 
         // # View town-square as the user the policy matches
-        const allowed = await openChannel(pw, allowedUser, {team, channel: 'town-square'});
+        const allowed = await openChannel(pw, allowedUser, {team, channel: townSquare});
 
         // * Verify the control is offered
         await expectBurnOnReadOffered(allowed);
@@ -136,7 +136,7 @@ test(
         await expect(post.burnOnReadButton.locator).toBeVisible();
 
         // # View the same channel as the user the policy does not match
-        const denied = await openChannel(pw, deniedUser, {team, channel: 'town-square'});
+        const denied = await openChannel(pw, deniedUser, {team, channel: townSquare});
 
         // * Verify the control is withheld, so no burn-on-read post can be composed
         await expectBurnOnReadWithheld(denied);
@@ -159,7 +159,7 @@ test(
 test('governs burn-on-read in DMs and GMs under a system-scoped policy', {tag: '@abac_burn_on_read'}, async ({pw}) => {
     test.setTimeout(pw.duration.four_min);
 
-    const {adminClient, team} = await pw.initSetup();
+    const {adminClient, team, townSquare} = await pw.initSetup();
     savedAdminClient = adminClient;
     await ensureBurnOnReadEnabled(adminClient);
     await ensureABACEnabled(adminClient);
@@ -182,7 +182,7 @@ test('governs burn-on-read in DMs and GMs under a system-scoped policy', {tag: '
     });
     await ensureABACEnabled(adminClient);
 
-    const app = await openChannel(pw, sender, {team, channel: 'town-square'});
+    const app = await openChannel(pw, sender, {team, channel: townSquare});
 
     // * Verify the control is offered in the DM and in the GM while granted
     await gotoChannel(app, team, `@${other1.username}`, 'messages');

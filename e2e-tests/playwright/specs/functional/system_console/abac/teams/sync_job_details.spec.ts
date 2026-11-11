@@ -6,7 +6,7 @@
  * @reference MM-69100
  */
 
-import {AdminTable, expect, newTestPassword, test, type App} from '@mattermost/playwright-lib';
+import {AdminTable, expect, newTestPassword, test, type App, duration} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -41,7 +41,7 @@ async function openTeamsTab(job: Awaited<ReturnType<typeof latestSyncJob>>) {
 }
 
 test.describe('ABAC - Sync Job Details Modal', {tag: ['@abac', '@team_membership']}, () => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
 
     let createdTeamIds: string[] = [];
     let createdUserIds: string[] = [];

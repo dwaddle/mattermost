@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, verifyUserInChannel} from '@mattermost/playwright-lib';
+import {expect, test, verifyUserInChannel, duration} from '@mattermost/playwright-lib';
 
 import {
     createPrivateChannelForABAC,
@@ -39,7 +39,7 @@ import {
  * - User not satisfying new policy IS auto-removed
  */
 test('MM-T5791 Editing policy to add attribute with auto-add enabled', async ({pw}) => {
-    test.setTimeout(180000);
+    test.setTimeout(duration.four_min);
 
     await pw.skipIfNoLicense();
 
@@ -158,21 +158,21 @@ test('MM-T5791 Editing policy to add attribute with auto-add enabled', async ({p
     // membership after we read it, so we retry until stable.
     await expect
         .poll(async () => verifyUserInChannel(adminClient, engineerRemoteUser.id, privateChannel.id), {
-            timeout: 30_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'engineerRemoteUser should be in channel (satisfies BOTH attributes)',
         })
         .toBe(true);
     await expect
         .poll(async () => verifyUserInChannel(adminClient, engineerOfficeUser.id, privateChannel.id), {
-            timeout: 30_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'engineerOfficeUser should be REMOVED (does not satisfy new policy)',
         })
         .toBe(false);
     await expect
         .poll(async () => verifyUserInChannel(adminClient, salesUser.id, privateChannel.id), {
-            timeout: 30_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'salesUser should not be in channel',
         })
@@ -197,7 +197,7 @@ test('MM-T5791 Editing policy to add attribute with auto-add enabled', async ({p
  * - MM-T5792: REMOVE rule → policy LESS restrictive
  */
 test('MM-T5792 Editing policy to remove attribute rule with auto-add enabled', async ({pw}) => {
-    test.setTimeout(180000);
+    test.setTimeout(duration.four_min);
 
     await pw.skipIfNoLicense();
 
@@ -297,7 +297,7 @@ test('MM-T5792 Editing policy to remove attribute rule with auto-add enabled', a
 
     // # Remove the Office rule in Simple mode (table editor). A policy written in Advanced mode
     //   opens in it; the switch stays disabled while the attributes load.
-    await expect(policy.switchModeButton.locator).toBeEnabled({timeout: 60_000});
+    await expect(policy.switchModeButton.locator).toBeEnabled({timeout: duration.one_min});
     if ((await policy.switchModeButton.locator.textContent()) === 'Switch to Simple Mode') {
         await policy.switchModeButton.click();
     }
@@ -337,21 +337,21 @@ test('MM-T5792 Editing policy to remove attribute rule with auto-add enabled', a
     // Poll under PW_WORKERS>=2: other shards' sync jobs may briefly change membership.
     await expect
         .poll(async () => verifyUserInChannel(adminClient, engineerOfficeUser.id, privateChannel.id), {
-            timeout: 30_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'engineerOfficeUser should be AUTO-ADDED (satisfies simpler Dept-only policy)',
         })
         .toBe(true);
     await expect
         .poll(async () => verifyUserInChannel(adminClient, engineerRemoteUser.id, privateChannel.id), {
-            timeout: 30_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'engineerRemoteUser should still be in channel',
         })
         .toBe(true);
     await expect
         .poll(async () => verifyUserInChannel(adminClient, salesRemoteUser.id, privateChannel.id), {
-            timeout: 30_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'salesRemoteUser should NOT be in channel',
         })

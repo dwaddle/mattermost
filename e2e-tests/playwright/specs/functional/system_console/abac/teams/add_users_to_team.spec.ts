@@ -8,7 +8,7 @@
 
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, generated, newTestPassword, test, type App} from '@mattermost/playwright-lib';
+import {expect, generated, newTestPassword, test, type App, duration} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -31,7 +31,7 @@ async function openAddMembers(app: App, team: Team) {
 }
 
 test.describe('ABAC - Add members to team (System Console)', {tag: ['@abac', '@team_membership']}, () => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
 
     let createdTeamIds: string[] = [];
     let createdUserIds: string[] = [];

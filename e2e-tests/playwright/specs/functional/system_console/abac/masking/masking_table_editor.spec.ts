@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {enableUserManagedAttributes} from '../support';
 import {setAbacEnabled} from '../surface';
@@ -29,7 +29,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
     });
 
     test('MM-68508-1: Full masking round-trip in Simple editor', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -98,7 +98,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
         // Validates that callers with masked values CAN save changes. Merge-on-save
         // re-injects hidden values so Bravo and Charlie survive even though the caller
         // only sees and submits Alpha. Save button is enabled (not gated on masked state).
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -166,7 +166,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
         // The trash/remove button on a masked row is disabled — a caller with
         // masked values cannot delete individual rows, matching the Save/Delete
         // buttons which are also disabled when masked values are present.
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -226,7 +226,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
         // admins, and every admin screen asks the server first, so it is reached through the API only: a team admin
         // saving their team's membership policy. With masking on and the team admin holding every value in the rule,
         // nothing is hidden or re-merged, so the refusal is the specific self-exclusion one.
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminClient, team} = await pw.initSetup();
@@ -306,7 +306,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
     });
 
     test('MM-68508-5: Non-held value rejected via direct API', async ({pw}) => {
-        test.setTimeout(60000);
+        test.setTimeout(duration.one_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -381,7 +381,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
     });
 
     test('MM-68508-6: CEL editor is read-only when policy has masked values', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();

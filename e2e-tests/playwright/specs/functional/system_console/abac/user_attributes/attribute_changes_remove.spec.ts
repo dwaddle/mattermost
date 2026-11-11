@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, verifyUserInChannel, updateUserAttributes} from '@mattermost/playwright-lib';
+import {expect, test, verifyUserInChannel, updateUserAttributes, duration} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
@@ -36,7 +36,7 @@ test.describe('ABAC User Attributes - Attribute Changes', () => {
      * - System posts a "User removed" message in the channel
      */
     test('MM-T5796 User auto-removed when required attribute is removed', async ({pw}) => {
-        test.setTimeout(180000);
+        test.setTimeout(duration.four_min);
 
         await pw.skipIfNoLicense();
 

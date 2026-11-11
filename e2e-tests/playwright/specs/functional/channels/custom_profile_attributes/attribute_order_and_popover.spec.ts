@@ -48,7 +48,7 @@ test(
     async ({pw}) => {
         await pw.ensureLicense();
         await pw.skipIfNoLicense();
-        const {adminClient, team, user, userClient} = await pw.initSetup();
+        const {adminClient, team, user, userClient, townSquare} = await pw.initSetup();
         const suffix = pw.random.id();
         const labels = [`First ${suffix}`, `Second ${suffix}`, `Third ${suffix}`];
         const attributes: CustomProfileAttribute[] = labels.map((label, index) => ({
@@ -62,7 +62,7 @@ test(
         try {
             await setupCustomProfileAttributeValues(userClient, attributes, fields);
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
             const fieldIds = orderedFieldIds(attributes, fields);
 
             // * Verify the order in profile settings
@@ -94,7 +94,7 @@ test(
     async ({pw}) => {
         await pw.ensureLicense();
         await pw.skipIfNoLicense();
-        const {adminClient, team, user, userClient} = await pw.initSetup();
+        const {adminClient, team, user, userClient, townSquare} = await pw.initSetup();
         const suffix = pw.random.id();
         const attributes: CustomProfileAttribute[] = Array.from({length: 10}, (_, index) => ({
             name: `scroll_${index}_${suffix}`,
@@ -108,7 +108,7 @@ test(
             // # Open a profile popover containing ten populated attributes
             await setupCustomProfileAttributeValues(userClient, attributes, fields);
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
             const popover = await openOwnProfilePopover(app, `Popover scroll ${suffix}`);
             await expect(popover.attribute({id: orderedFieldIds(attributes, fields).at(-1)!}).locator).toBeAttached();
             const container = popover.locator;

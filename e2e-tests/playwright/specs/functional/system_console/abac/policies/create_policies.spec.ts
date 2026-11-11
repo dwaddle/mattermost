@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, verifyUserInChannel} from '@mattermost/playwright-lib';
+import {expect, test, verifyUserInChannel, duration} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
@@ -126,7 +126,7 @@ test.describe('ABAC Policies - Create Policies', () => {
      * - User who does not satisfy the policy is auto-removed
      */
     test('MM-T5784 Create and test policy with auto-add enabled', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         // # Skip test if no license for ABAC
         await pw.skipIfNoLicense();

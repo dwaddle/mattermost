@@ -12,6 +12,7 @@ import {
     hasEnterpriseLicense,
     test,
     testConfig,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -146,13 +147,13 @@ test.describe('Bot account attributes @bot_accounts', () => {
      * @objective Verify a system admin can add a text and a select attribute while creating a bot, and the values persist.
      */
     test('creates a bot with text and select attributes', {tag: '@bot_accounts'}, async ({pw}) => {
-        test.setTimeout(120000);
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        test.setTimeout(duration.two_min);
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const textValue = `Platform ${suffix}`;
 
         // # Log in as admin and open the Add Bot page
         const {app, page} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await page.goto(`/${team.name}/integrations/bots/add`);
         const form = app.integrations.botForm;
         await form.usernameTextbox.fill(botUsername('battr'));
@@ -202,7 +203,7 @@ test.describe('Bot account attributes @bot_accounts', () => {
      * @objective Verify editing a bot changes an existing attribute value.
      */
     test('edits a bot attribute value', {tag: '@bot_accounts'}, async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {adminUser, adminClient, team} = await pw.initSetup();
         const initialValue = `Initial ${suffix}`;
         const updatedValue = `Updated ${suffix}`;
@@ -243,7 +244,7 @@ test.describe('Bot account attributes @bot_accounts', () => {
         'lets a non-admin bot owner edit attributes except admin-managed ones',
         {tag: '@bot_accounts'},
         async ({pw}) => {
-            test.setTimeout(120000);
+            test.setTimeout(duration.two_min);
             const {user, userClient, adminClient, team} = await pw.initSetup();
             const initialValue = `Owner initial ${suffix}`;
             const updatedValue = `Owner updated ${suffix}`;
@@ -303,7 +304,7 @@ test.describe('Bot account attributes @bot_accounts', () => {
      * @objective Verify removing an attribute row from a bot clears that value and leaves the others intact.
      */
     test('removes a bot attribute and clears its value', {tag: '@bot_accounts'}, async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {adminUser, adminClient, team} = await pw.initSetup();
 
         // # Seed a bot with attribute values and open its edit page
@@ -344,7 +345,7 @@ test.describe('Bot account attributes @bot_accounts', () => {
      * @objective Verify a bot's attributes appear in its profile popover when it posts in a channel.
      */
     test('shows bot attributes in the bot profile popover', {tag: '@bot_accounts'}, async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {adminUser, adminClient, team} = await pw.initSetup();
         const textValue = `Popover ${suffix}`;
         const message = `Bot attributes ${suffix}`;

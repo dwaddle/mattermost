@@ -48,7 +48,7 @@ test('renders attribute chips on first paint without fetching values', {tag: '@p
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision one system-scoped select field and set it on a post
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -59,8 +59,6 @@ test('renders attribute chips on first paint without fetching values', {tag: '@p
             options: ['SECRET', 'UNCLASSIFIED'],
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'hydrated post'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, 'SECRET')},
@@ -119,7 +117,7 @@ test('sends no parameter and draws no chips with the flag off', {tag: '@post_att
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision a field and set it, so the only reason no chip appears is the flag
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -130,8 +128,6 @@ test('sends no parameter and draws no chips with the flag off', {tag: '@post_att
             options: ['SECRET'],
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'unflagged post'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, 'SECRET')},
@@ -174,7 +170,7 @@ test('renders chips on the RHS root and on a reply', {tag: '@post_attributes'}, 
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision a field, then set it on both a root post and its reply
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -185,8 +181,6 @@ test('renders chips on the RHS root and on a reply', {tag: '@post_attributes'}, 
             options: ['SECRET', 'UNCLASSIFIED'],
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const root = await userClient.createTestPost({channel_id: channel.id, message: 'thread root'});
         const reply = await userClient.createTestPost({
             channel_id: channel.id,
@@ -235,7 +229,7 @@ test('renders two chips and a +1 badge for three set fields', {tag: '@post_attri
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision three ordered fields and set all three on one post
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -255,8 +249,6 @@ test('renders two chips and a +1 badge for three set fields', {tag: '@post_attri
             sortOrder: 3,
         });
         created.push(first, second, third);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'three attributes'});
         await setPostValues(adminClient, post.id, [
             {field_id: first.id, value: optionId(first, 'SECRET')},
@@ -290,7 +282,7 @@ test('draws no chip for a field that is not set', {tag: '@post_attributes'}, asy
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision two fields and set only one of them
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -304,8 +296,6 @@ test('draws no chip for a field that is not set', {tag: '@post_attributes'}, asy
             sortOrder: 2,
         });
         created.push(set, unset);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'one of two set'});
         await setPostValues(adminClient, post.id, [{field_id: set.id, value: optionId(set, 'SECRET')}]);
 
@@ -392,7 +382,7 @@ test('updates a chip when another session changes the value', {tag: '@post_attri
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision a field, set it, and open the channel
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -403,8 +393,6 @@ test('updates a chip when another session changes the value', {tag: '@post_attri
             options: ['SECRET', 'UNCLASSIFIED'],
         });
         created.push(classification);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'about to change'});
         await setPostValues(adminClient, post.id, [
             {field_id: classification.id, value: optionId(classification, 'SECRET')},
@@ -441,7 +429,7 @@ test('renders every single-chip field type through its own renderer', {tag: '@po
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision one field of each type that draws exactly one chip
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -461,8 +449,6 @@ test('renders every single-chip field type through its own renderer', {tag: '@po
 
         // # Give each field its own post, so every post draws exactly one chip and the
         // two-chip budget never enters into it
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
-
         const textPost = await userClient.createTestPost({channel_id: channel.id, message: 'text field'});
         await setPostValues(adminClient, textPost.id, [{field_id: note.id, value: 'Q3 planning'}]);
 
@@ -541,7 +527,7 @@ test('renders one chip per entry of a multiselect', {tag: '@post_attributes'}, a
     await pw.ensureFeatureFlag('PostAttributes', true);
 
     // # Provision a multiselect and set two of its options on a post
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -556,8 +542,6 @@ test('renders one chip per entry of a multiselect', {tag: '@post_attributes'}, a
             ],
         });
         created.push(caveats);
-
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'two caveats'});
         await setPostValues(adminClient, post.id, [
             {field_id: caveats.id, value: [optionId(caveats, 'NOFORN'), optionId(caveats, 'ORCON')]},
@@ -603,7 +587,7 @@ test('colours a select chip from its option, falling back to neutral', {tag: '@p
     // # Provision one select carrying a palette colour, no colour, and a token nothing
     // recognises. The server stores options as opaque maps, so the third round-trips
     // exactly as written — which is the only way to reach the client's fallback for real.
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {adminClient, user, userClient, team, townSquare: channel} = await pw.initSetup();
     const suffix = pw.random.id();
     const created: PropertyField[] = [];
 
@@ -616,8 +600,6 @@ test('colours a select chip from its option, falling back to neutral', {tag: '@p
         created.push(classification);
 
         // # One post per option, so each draws a single chip
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
-
         const colouredPost = await userClient.createTestPost({channel_id: channel.id, message: 'palette colour'});
         await setPostValues(adminClient, colouredPost.id, [
             {field_id: classification.id, value: optionId(classification, 'SECRET')},

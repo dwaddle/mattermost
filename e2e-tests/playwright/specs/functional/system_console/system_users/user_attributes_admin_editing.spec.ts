@@ -18,7 +18,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, generated, getRandomId, searchSystemUsers, test, type App} from '@mattermost/playwright-lib';
+import {expect, generated, getRandomId, searchSystemUsers, test, type App, duration} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../channels/custom_profile_attributes/helpers';
 import {
@@ -249,8 +249,8 @@ test.describe('System Console - Admin User Profile Editing', () => {
         await app.page.reload();
         await app.page.waitForURL(`**/admin_console/user_management/user/${testUser.id}`);
         await expect(app.admin.user.emailTextbox.locator).toBeVisible();
-        await expect(attributeInput(cpaFieldNames.department)).toBeVisible({timeout: 30_000});
-        await expect(attributeInput(cpaFieldNames.workEmail)).toBeVisible({timeout: 30_000});
+        await expect(attributeInput(cpaFieldNames.department)).toBeVisible({timeout: duration.half_min});
+        await expect(attributeInput(cpaFieldNames.workEmail)).toBeVisible({timeout: duration.half_min});
 
         // Remove the intercept now that field visibility is confirmed.
         // Keeping it active through the test body would intercept the save API call
@@ -459,7 +459,7 @@ test.describe('System Console - Admin User Profile Editing', () => {
 
             // * Verify inline validation error appears
             const fieldError = userDetail.attribute(field(cpaFieldNames.workEmail)).errorAlert.locator;
-            await expect(fieldError).toBeVisible({timeout: 30000});
+            await expect(fieldError).toBeVisible({timeout: duration.half_min});
             await expect(fieldError).toContainText('Invalid email address');
 
             // * Verify Save button is disabled due to validation error

@@ -3,7 +3,7 @@
 
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     assertNoForeignRequiredAttributes,
@@ -60,7 +60,7 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program, caveats, note, userScoped);
 
-            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
             const modal = await openNewChannelModal(app);
             const attribute = (field: {id: string}) => modal.attributes.attribute(field);
 
@@ -127,7 +127,7 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             });
             created.push(program);
 
-            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
             const modal = await openNewChannelModal(app);
             const openControl = (field: {id: string}) => openAttributeControl(modal, field);
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminPermission, AdminRole, expect, test} from '@mattermost/playwright-lib';
+import {AdminPermission, AdminRole, expect, test, duration} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, deletePermissionPolicyByName} from '../support';
 import {
@@ -21,7 +21,7 @@ import {
  */
 test.describe('Permission Policies - Create Policy', () => {
     test('MM-T5812 admin can create a permission policy restricting file downloads', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
         const {adminUser, adminClient} = await pw.initSetup();
@@ -55,7 +55,7 @@ test.describe('Permission Policies - Create Policy', () => {
     });
 
     test('MM-T5813 admin can create a permission policy with both Download and Upload permissions', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
         const {adminUser, adminClient} = await pw.initSetup();
@@ -81,7 +81,7 @@ test.describe('Permission Policies - Create Policy', () => {
     });
 
     test('MM-T5814 created policy appears in list with correct name, role, and permissions', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
         const {adminUser, adminClient} = await pw.initSetup();

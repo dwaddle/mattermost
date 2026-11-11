@@ -18,7 +18,7 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, getRandomId, licenseTier, openChannel, test} from '@mattermost/playwright-lib';
+import {expect, getRandomId, licenseTier, openChannel, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {lastPost} from '../../../channels/burn_on_read/support';
 import {createUserForABAC} from '../support';
@@ -88,7 +88,7 @@ test(
         // for a slow job.
         test.setTimeout(pw.duration.four_min);
 
-        const {adminClient, team} = await pw.initSetup();
+        const {adminClient, team, townSquare} = await pw.initSetup();
         savedAdminClient = adminClient;
         await ensureBurnOnReadEnabled(adminClient);
         await ensureABACEnabled(adminClient);
@@ -103,7 +103,7 @@ test(
         });
         await ensureABACEnabled(adminClient);
 
-        const app = await openChannel(pw, user, {team, channel: 'town-square'});
+        const app = await openChannel(pw, user, {team, channel: townSquare});
 
         // * Verify the composer agrees the user may create one, so a later failure points
         // at the send path rather than at the grant
@@ -112,7 +112,7 @@ test(
         // # Schedule a burn-on-read post for a few seconds out. Through the API rather
         // than the schedule-message modal, whose slots are half-hourly; the server accepts
         // any time down to 5s in the past.
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
+        const channel = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
         const message = `bor scheduled ${getRandomId()}`;
         const scheduled = await scheduleBurnOnReadPostInPage(app.page, {
             channelId: channel.id,

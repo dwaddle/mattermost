@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, getUserAttributeFieldByName} from '../support';
 import {
@@ -30,7 +30,7 @@ test.describe('ABAC Policy Management - Edit Action Navigation', () => {
      * 5. Verify the URL is /admin_console/system_attributes/membership_policies/edit_policy/<policy_id>
      */
     test('MM-68958 Edit action navigates to membership policy editor', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
 
@@ -77,7 +77,7 @@ test.describe('ABAC Policy Management - Edit Action Navigation', () => {
      * This behavior should have been working before, but we verify it still works after the fix.
      */
     test('Row click navigates to membership policy editor', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
 

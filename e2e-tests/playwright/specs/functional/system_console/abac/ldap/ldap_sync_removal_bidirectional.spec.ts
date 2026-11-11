@@ -7,6 +7,7 @@ import {
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -22,7 +23,7 @@ import {createMembershipPolicy, runSyncJob, waitForSyncJob} from '../surface';
  * MM-T5800: Policy enforcement after attribute change (bidirectional)
  */
 test('MM-T5800 Policy enforcement after attribute change (bidirectional)', async ({pw}) => {
-    test.setTimeout(180000);
+    test.setTimeout(duration.four_min);
 
     await pw.skipIfNoLicense();
 
@@ -65,7 +66,7 @@ test('MM-T5800 Policy enforcement after attribute change (bidirectional)', async
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, privateChannel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should have been added to channel after qualifying sync',
         })
@@ -78,7 +79,7 @@ test('MM-T5800 Policy enforcement after attribute change (bidirectional)', async
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user.id, privateChannel.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should have been removed from channel after non-qualifying sync',
         })

@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, test, type App, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 import type {CpaFieldsMap, CustomProfileAttribute} from './helpers';
 import {
@@ -23,7 +23,7 @@ let ownedFields: {adminClient: Client4; fields: CpaFieldsMap} | undefined;
 async function openProfile(pw: PlaywrightExtended, user: UserProfile) {
     const {app} = await pw.testBrowser.login(user);
     const team = (await (await pw.makeClient(user)).client.getMyTeams())[0];
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     const modal = await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
     await expect(modal.locator).toBeVisible();
     return {app, modal};

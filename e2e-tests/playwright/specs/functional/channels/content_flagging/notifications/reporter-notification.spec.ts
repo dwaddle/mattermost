@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {setupContentFlagging, createPost, verifyReporterNotification} from './../support';
 
@@ -31,7 +31,7 @@ test('Verify Reporter is notified if flagged post is Retained in a channel', asy
                 const cfg = await adminClient.getAdminContentFlaggingConfig();
                 return cfg.ReviewerSettings?.CommonReviewerIds?.includes(reviewerUser.id) ?? false;
             },
-            {timeout: 30_000, intervals: [500, 1500, 3000]},
+            {timeout: duration.half_min, intervals: [500, 1500, 3000]},
         )
         .toBe(true);
     const message = `Post by @${reviewerUser.username}, is flagged once`;
@@ -73,7 +73,7 @@ test('Verify Reporter is notified if flagged post is Removed from a channel', as
                 const cfg = await adminClient.getAdminContentFlaggingConfig();
                 return cfg.ReviewerSettings?.CommonReviewerIds?.includes(reviewerUser.id) ?? false;
             },
-            {timeout: 30_000, intervals: [500, 1500, 3000]},
+            {timeout: duration.half_min, intervals: [500, 1500, 3000]},
         )
         .toBe(true);
     const message = `Post by @${reviewerUser.username}, is flagged once`;

@@ -6,7 +6,16 @@
  * @reference MM-67669
  */
 
-import {expect, getRandomId, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    expect,
+    getRandomId,
+    Msg,
+    test,
+    type App,
+    type PlaywrightExtended,
+    duration,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 import {
     enableABACConfig,
@@ -58,7 +67,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         await enableABACConfig(adminClient);
 
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
         const settings = await openTeamSettings(app);
 
@@ -83,7 +92,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
 
         const {app} = await pw.testBrowser.login(adminUser);
         const composer = app.center.postCreate.messageTextbox.locator;
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
         await expect(composer).toBeVisible();
 
         // Force a full navigation so the team settings bundle reads the latest
@@ -110,7 +119,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
 
         // * Tab is not visible (WebSocket config update can lag), while the tabs themselves are there
         await expect(settings.tabs.tab('info').locator).toBeVisible();
-        await expect(settings.tabs.tab('access_policies').locator).not.toBeVisible({timeout: 30000});
+        await expect(settings.tabs.tab('access_policies').locator).not.toBeVisible({timeout: duration.half_min});
 
         await settings.clickCloseButton();
     });
@@ -121,7 +130,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         await enableABACConfig(adminClient);
 
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
         const {settings, policies} = await openPoliciesTab(app);
 
@@ -146,7 +155,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         await assignChannelsToPolicy(adminClient, policy.id, [channel.id]);
 
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
         const {settings, policies} = await openPoliciesTab(app);
 
@@ -180,7 +189,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         await assignChannelsToPolicy(adminClient, crossPolicy.id, [channel1.id, channel2.id]);
 
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
         const {settings, policies} = await openPoliciesTab(app);
 
@@ -203,7 +212,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
 
         const {app} = await pw.testBrowser.login(teamAdmin);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
         // * Tab visible for Team Admin
         const settings = await openTeamSettings(app);
@@ -243,7 +252,7 @@ test.describe('Team Settings Modal - Membership Policies Tab', () => {
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
 
         const {app} = await pw.testBrowser.login(teamAdmin);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
         const {settings, policies} = await openPoliciesTab(app);
 

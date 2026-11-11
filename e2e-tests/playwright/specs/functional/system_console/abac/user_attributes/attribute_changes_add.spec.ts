@@ -7,6 +7,7 @@ import {
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -33,7 +34,7 @@ test.describe('ABAC User Attributes - Attribute Changes', () => {
      * 4. Scroll down to the required custom attribute, click Edit, and add the required value
      */
     test('MM-T5794 User auto-added when qualifying attribute is added to profile', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
 

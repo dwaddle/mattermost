@@ -7,6 +7,7 @@ import {
     verifyUserInChannel,
     updateUserAttributes,
     createUserWithAttributes,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, createPrivateChannelForABAC, activatePolicy, getPolicyIdByName} from '../support';
@@ -16,7 +17,7 @@ import {createMembershipPolicy, runSyncJob, setAbacEnabled, waitForSyncJob} from
  * MM-T5799a: LDAP sync - User removed after attribute removed (startsWith operator, auto-add true)
  */
 test('MM-T5799a LDAP sync - User removed with startsWith operator (auto-add true)', async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
 
     await pw.skipIfNoLicense();
 
@@ -57,7 +58,7 @@ test('MM-T5799a LDAP sync - User removed with startsWith operator (auto-add true
     // is fully committed.  Give the server up to 15 s to catch up.
     await expect
         .poll(() => verifyUserInChannel(adminClient, user1.id, channel1.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should have been added to channel after first sync',
         })
@@ -71,7 +72,7 @@ test('MM-T5799a LDAP sync - User removed with startsWith operator (auto-add true
 
     await expect
         .poll(() => verifyUserInChannel(adminClient, user1.id, channel1.id), {
-            timeout: 15_000,
+            timeout: duration.half_min,
             intervals: [500, 1000, 2000],
             message: 'User should have been removed from channel after second sync',
         })

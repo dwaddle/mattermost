@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {
@@ -44,7 +44,7 @@ test.describe('ABAC Attribute Selector - display_name rendering and filtering', 
         'renders and filters by display_name while persisting CEL identifier',
         {tag: '@user_attributes'},
         async ({pw}) => {
-            test.setTimeout(120000);
+            test.setTimeout(duration.two_min);
 
             await pw.ensureLicense();
             await pw.skipIfNoLicense();

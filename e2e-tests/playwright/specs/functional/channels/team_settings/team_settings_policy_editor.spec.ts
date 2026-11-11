@@ -6,7 +6,7 @@
  * @reference MM-67594
  */
 
-import {expect, newTestPassword, test, type generated} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, test, type generated, duration} from '@mattermost/playwright-lib';
 
 import {
     enableABACConfig,
@@ -92,7 +92,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         // # Save via SaveChangesPanel — wait for button to be enabled (form fully dirty).
         const saveBtn = teamSettings.savePanel.saveButton.locator;
-        await expect(saveBtn).toBeEnabled({timeout: 20000});
+        await expect(saveBtn).toBeEnabled({timeout: duration.half_min});
         await saveBtn.click();
 
         // Re-apply guard post-click: a concurrent initSetup() reset between the guard above
@@ -105,7 +105,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         await confirm.clickConfirmButton();
 
         // * Auto-navigated back to list, policy name visible.
-        await expect(policyRow(teamSettings, policyName)).toBeVisible({timeout: 15000});
+        await expect(policyRow(teamSettings, policyName)).toBeVisible({timeout: duration.half_min});
 
         await closeTeamSettings(teamSettings);
     });
@@ -232,7 +232,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         await teamSettings.savePanel.cancelButton.locator.click();
 
         // * List view restored (back navigation happened)
-        await expect(teamSettings.accessPolicies.addPolicyButton.locator).toBeVisible({timeout: 10000});
+        await expect(teamSettings.accessPolicies.addPolicyButton.locator).toBeVisible();
 
         await closeTeamSettings(teamSettings);
     });
@@ -397,7 +397,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         // # Open the existing policy editor
         await policyRow(teamSettings, policy.name).click();
-        await expect(teamSettings.accessPolicies.editor.nameTextbox.locator).toBeVisible({timeout: 10000});
+        await expect(teamSettings.accessPolicies.editor.nameTextbox.locator).toBeVisible();
 
         // # Open Add channels modal
         const selector = await teamSettings.accessPolicies.editor.clickAddChannelsButton();
@@ -487,7 +487,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         // # Save via SaveChangesPanel — wait for button to be enabled (form fully dirty)
         const saveBtn = teamSettings.savePanel.saveButton.locator;
-        await expect(saveBtn).toBeEnabled({timeout: 10000});
+        await expect(saveBtn).toBeEnabled();
         // Re-apply guard: concurrent initSetup() may reset ABAC between setup and save
         await enableABACConfig(adminClient);
         await saveBtn.click();
@@ -539,14 +539,16 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         await teamSettings.accessPolicies.syncStatus.clickSyncNowButton();
 
         // * Syncing state appears
-        await expect(teamSettings.accessPolicies.syncStatus.syncingText.locator).toBeVisible({timeout: 5000});
+        await expect(teamSettings.accessPolicies.syncStatus.syncingText.locator).toBeVisible();
 
         // * Wait for sync to complete and "Sync now" to reappear
-        await expect(teamSettings.accessPolicies.syncStatus.syncNowButton.locator).toBeVisible({timeout: 90000});
+        await expect(teamSettings.accessPolicies.syncStatus.syncNowButton.locator).toBeVisible({
+            timeout: duration.two_min,
+        });
 
         // * Status updates to "Last synced just now" confirming a fresh sync completed
         await expect(teamSettings.accessPolicies.syncStatus.timeText.locator).toHaveText(/Last synced just now/, {
-            timeout: 30000,
+            timeout: duration.half_min,
         });
 
         await closeTeamSettings(teamSettings);
@@ -571,13 +573,17 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // * Footer visible with "Sync now" action
-        await expect(teamSettings.accessPolicies.syncStatus.syncNowButton.locator).toBeVisible({timeout: 15000});
+        await expect(teamSettings.accessPolicies.syncStatus.syncNowButton.locator).toBeVisible({
+            timeout: duration.half_min,
+        });
 
         // # Click Sync now
         await teamSettings.accessPolicies.syncStatus.clickSyncNowButton();
 
         // * Wait for sync to complete and "Sync now" to reappear
-        await expect(teamSettings.accessPolicies.syncStatus.syncNowButton.locator).toBeVisible({timeout: 30000});
+        await expect(teamSettings.accessPolicies.syncStatus.syncNowButton.locator).toBeVisible({
+            timeout: duration.half_min,
+        });
 
         // * Status updates to "Last synced just now" confirming a fresh sync completed
         await expect(teamSettings.accessPolicies.syncStatus.timeText.locator).toHaveText(/Last synced just now/);
@@ -610,7 +616,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // * Policy is visible
-        await expect(policyRow(teamSettings, policyName)).toBeVisible({timeout: 10000});
+        await expect(policyRow(teamSettings, policyName)).toBeVisible();
 
         // # Open editor by clicking policy row
         await policyRow(teamSettings, policyName).click();
@@ -668,7 +674,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         // # Step 1: Team admin can see the policy (all channels in their team)
         const teamSettings = await openAccessPoliciesTab(app);
 
-        await expect(policyRow(teamSettings, policyName)).toBeVisible({timeout: 10000});
+        await expect(policyRow(teamSettings, policyName)).toBeVisible();
         await closeTeamSettings(teamSettings);
 
         // # Step 2: System admin adds a channel from team B (cross-team)
@@ -677,7 +683,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         // # Team admin reopens team settings — policy should NOT be visible (cross-team)
         const teamSettings2 = await openAccessPoliciesTab(app);
 
-        await expect(policyRow(teamSettings2, policyName)).not.toBeVisible({timeout: 10000});
+        await expect(policyRow(teamSettings2, policyName)).not.toBeVisible();
         await closeTeamSettings(teamSettings2);
 
         // # Step 3: System admin removes team B channel (back to single-team)
@@ -686,7 +692,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         // # Team admin reopens team settings — policy should be visible again
         const teamSettings3 = await openAccessPoliciesTab(app);
 
-        await expect(policyRow(teamSettings3, policyName)).toBeVisible({timeout: 10000});
+        await expect(policyRow(teamSettings3, policyName)).toBeVisible();
 
         await closeTeamSettings(teamSettings3);
     });
@@ -730,7 +736,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         // # Open the policy editor and click Add channels
         await teamSettings.accessPolicies.addPolicyButton.locator.click();
-        await expect(teamSettings.accessPolicies.editor.nameTextbox.locator).toBeVisible({timeout: 10000});
+        await expect(teamSettings.accessPolicies.editor.nameTextbox.locator).toBeVisible();
         const selector = await teamSettings.accessPolicies.editor.clickAddChannelsButton();
         const {results} = selector.channels;
         await expect(results.channelItems.first()).toBeVisible();
@@ -806,7 +812,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         // # Save — triggers confirmation modal
         const saveBtn = teamSettings.savePanel.saveButton.locator;
-        await expect(saveBtn).toBeEnabled({timeout: 20000});
+        await expect(saveBtn).toBeEnabled({timeout: duration.half_min});
         await saveBtn.click();
 
         // # Confirm "Apply policy" (add users immediately)
@@ -815,7 +821,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         await confirm.clickConfirmButton();
 
         // * Navigate back to policy list — confirms save succeeded (no 403 on job creation)
-        await expect(policyRow(teamSettings, policyName)).toBeVisible({timeout: 15000});
+        await expect(policyRow(teamSettings, policyName)).toBeVisible({timeout: duration.half_min});
 
         // * Target user is added to the channel by the sync job
         await expect
@@ -828,7 +834,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
                         return false;
                     }
                 },
-                {timeout: 90000, intervals: [2000, 4000, 6000]},
+                {timeout: duration.two_min, intervals: [2000, 4000, 6000]},
             )
             .toBe(true);
 

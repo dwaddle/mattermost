@@ -5,7 +5,7 @@ import type {Locator, Page} from '@playwright/test';
 import {expect} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 
-import {newTestPassword, type generated} from '@mattermost/playwright-lib';
+import {newTestPassword, type generated, duration} from '@mattermost/playwright-lib';
 
 export async function enableABACConfig(client: Client4) {
     await client.patchConfig({
@@ -315,19 +315,19 @@ export async function addRule(rules: generated.Rules, field: {id: string}, value
 
 export async function addAttributeRule(container: Locator, page: Page, value: string, attributeName = 'Department') {
     const addAttrBtn = container.getByRole('button', {name: /Add attribute/});
-    await expect(addAttrBtn).toBeEnabled({timeout: 10000});
+    await expect(addAttrBtn).toBeEnabled();
     await addAttrBtn.click();
 
     // The attribute selector menu auto-opens — select by name, not by position.
     // Clicking the first item is unreliable when multiple attributes exist (e.g. Location
     // sorts before Department and gets picked instead, causing self-inclusion to fail).
     const attributeMenu = page.locator('[id^="attribute-selector-menu"]');
-    await attributeMenu.waitFor({state: 'visible', timeout: 5000});
+    await attributeMenu.waitFor({state: 'visible', timeout: duration.ten_sec});
     await attributeMenu.locator('li').filter({hasText: attributeName}).first().click();
 
     // Fill value in the simple input (text-type attribute renders direct input)
     const valueInput = container.locator('.values-editor__simple-input').first();
-    await valueInput.waitFor({state: 'visible', timeout: 10000});
+    await valueInput.waitFor({state: 'visible', timeout: duration.ten_sec});
     await valueInput.fill(value);
 
     // Blur the input so React commits the onChange before the caller proceeds

@@ -5,7 +5,7 @@ import type {Client4} from '@mattermost/client';
 import type {FieldType} from '@mattermost/types/properties';
 import type {UserPropertyField, UserPropertyFieldPatch} from '@mattermost/types/properties_user';
 
-import {expect, type App, type generated} from '@mattermost/playwright-lib';
+import {expect, type App, type generated, duration} from '@mattermost/playwright-lib';
 
 // Common test data constants
 export const TEST_PHONE = '555-123-4567';
@@ -235,7 +235,7 @@ export async function verifyAttributesExistInSettings(
     for (const attribute of attributes) {
         // fields are fetched after the settings open, hence the longer wait
         await expect(attributeSection(app, fieldsMap, attribute.name).title.locator).toContainText(attribute.name, {
-            timeout: 15000,
+            timeout: duration.half_min,
         });
     }
 }

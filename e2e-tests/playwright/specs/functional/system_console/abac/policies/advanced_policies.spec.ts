@@ -10,6 +10,7 @@ import {
     TestBrowser,
     getRandomId,
     type App,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
@@ -57,7 +58,7 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5785 all attribute types 
     let licensed = true;
 
     test.beforeAll(async ({browser}) => {
-        test.setTimeout(240000);
+        test.setTimeout(duration.four_min);
 
         const {adminClient, adminUser} = await getAdminClient();
         if (!adminUser) {
@@ -145,11 +146,11 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5785 all attribute types 
     });
 
     test('MM-T5785_a auto-adds qualifying user who was not in channel', async () => {
-        test.setTimeout(60000);
+        test.setTimeout(duration.one_min);
         test.skip(!licensed, 'No ABAC license');
         await expect
             .poll(async () => verifyUserInChannel(sharedAdminClient, user1.id, privateChannel.id), {
-                timeout: 30_000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000],
                 message: 'user1 should be auto-added to channel',
             })
@@ -157,11 +158,11 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5785 all attribute types 
     });
 
     test('MM-T5785_b keeps qualifying user who was already in channel', async () => {
-        test.setTimeout(60000);
+        test.setTimeout(duration.one_min);
         test.skip(!licensed, 'No ABAC license');
         await expect
             .poll(async () => verifyUserInChannel(sharedAdminClient, user2.id, privateChannel.id), {
-                timeout: 30_000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000],
                 message: 'user2 should stay in channel',
             })
@@ -169,11 +170,11 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5785 all attribute types 
     });
 
     test('MM-T5785_c auto-removes non-qualifying user who was in channel', async () => {
-        test.setTimeout(60000);
+        test.setTimeout(duration.one_min);
         test.skip(!licensed, 'No ABAC license');
         await expect
             .poll(async () => verifyUserInChannel(sharedAdminClient, user3.id, privateChannel.id), {
-                timeout: 30_000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000],
                 message: 'user3 should be auto-removed from channel',
             })
@@ -210,7 +211,7 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5786 operator variants', 
     let licensed = true;
 
     test.beforeAll(async ({browser}) => {
-        test.setTimeout(180000);
+        test.setTimeout(duration.four_min);
 
         const {adminClient, adminUser} = await getAdminClient();
         if (!adminUser) {
@@ -310,14 +311,14 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5786 operator variants', 
         // Poll under PW_WORKERS>=2: another shard's sync job may interleave.
         await expect
             .poll(async () => verifyUserInChannel(sharedAdminClient, engineerUser.id, channel.id), {
-                timeout: 90_000,
+                timeout: duration.two_min,
                 intervals: [500, 1000, 2000, 4000],
                 message: 'engineerUser should be in channel',
             })
             .toBe(true);
         await expect
             .poll(async () => verifyUserInChannel(sharedAdminClient, salesUser.id, channel.id), {
-                timeout: 90_000,
+                timeout: duration.two_min,
                 intervals: [500, 1000, 2000, 4000],
                 message: 'salesUser should not be in channel',
             })
@@ -325,31 +326,31 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5786 operator variants', 
     }
 
     test('MM-T5786_a is-not (!=) operator', async () => {
-        test.setTimeout(90000);
+        test.setTimeout(duration.two_min);
         test.skip(!licensed, 'No ABAC license');
         await runOperatorCase('user.attributes.Department != "Sales"', 'IsNot');
     });
 
     test('MM-T5786_b in operator', async () => {
-        test.setTimeout(90000);
+        test.setTimeout(duration.two_min);
         test.skip(!licensed, 'No ABAC license');
         await runOperatorCase('user.attributes.Department in ["Engineering", "DevOps"]', 'In');
     });
 
     test('MM-T5786_c starts-with operator', async () => {
-        test.setTimeout(90000);
+        test.setTimeout(duration.two_min);
         test.skip(!licensed, 'No ABAC license');
         await runOperatorCase('user.attributes.Department.startsWith("Eng")', 'StartsWith');
     });
 
     test('MM-T5786_d ends-with operator', async () => {
-        test.setTimeout(90000);
+        test.setTimeout(duration.two_min);
         test.skip(!licensed, 'No ABAC license');
         await runOperatorCase('user.attributes.Department.endsWith("ing")', 'EndsWith');
     });
 
     test('MM-T5786_e contains operator', async () => {
-        test.setTimeout(90000);
+        test.setTimeout(duration.two_min);
         test.skip(!licensed, 'No ABAC license');
         await runOperatorCase('user.attributes.Department.contains("gineer")', 'Contains');
     });
@@ -373,7 +374,7 @@ test.describe('ABAC Policies - Advanced Policies', () => {
     });
 
     test('MM-T5787 Test policy with complex rules in Advanced Mode', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
 
@@ -441,21 +442,21 @@ test.describe('ABAC Policies - Advanced Policies', () => {
         // Poll under PW_WORKERS>=2: another shard's sync job may interleave.
         await expect
             .poll(async () => verifyUserInChannel(adminClient, engineerUser.id, channel.id), {
-                timeout: 90_000,
+                timeout: duration.two_min,
                 intervals: [500, 1000, 2000, 4000],
                 message: 'engineerUser should be in channel',
             })
             .toBe(true);
         await expect
             .poll(async () => verifyUserInChannel(adminClient, salesRemoteUser.id, channel.id), {
-                timeout: 90_000,
+                timeout: duration.two_min,
                 intervals: [500, 1000, 2000, 4000],
                 message: 'salesRemoteUser should be in channel',
             })
             .toBe(true);
         await expect
             .poll(async () => verifyUserInChannel(adminClient, salesOfficeUser.id, channel.id), {
-                timeout: 90_000,
+                timeout: duration.two_min,
                 intervals: [500, 1000, 2000, 4000],
                 message: 'salesOfficeUser should not be in channel',
             })

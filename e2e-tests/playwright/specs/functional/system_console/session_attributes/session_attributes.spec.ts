@@ -19,7 +19,7 @@
  * FeatureFlags.SessionAttributes flag. Tests skip cleanly when those are not met.
  */
 
-import {expect, test, type App, type generated} from '@mattermost/playwright-lib';
+import {expect, test, type App, type generated, duration} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, getUserAttributeFieldByName} from '../abac/support';
 import {openMembershipPolicies, openPermissionPolicies, setAbacEnabled} from '../abac/surface';
@@ -224,7 +224,7 @@ test.describe('System Console - Session Attributes', () => {
         'appears in permission-policy picker and is absent from membership-policy picker',
         {tag: '@session_attributes'},
         async ({pw}) => {
-            test.setTimeout(120000);
+            test.setTimeout(duration.two_min);
             const {adminClient, app, fields} = await setupSessionAttributesTest(pw);
 
             const sessionField = findFieldByName(fields, 'ip_address');
@@ -310,7 +310,7 @@ async function newPermissionPolicy(app: App, name: string) {
  */
 async function addAttributeRow(rules: generated.Rules) {
     const row = rules.row((await rules.rowKeys()).length);
-    await expect(rules.addButton.locator).toBeEnabled({timeout: 15000});
+    await expect(rules.addButton.locator).toBeEnabled({timeout: duration.half_min});
     await rules.clickAddButton();
     await expect(row.attributeMenu.locator).toBeVisible();
     return row.attributeMenu;
