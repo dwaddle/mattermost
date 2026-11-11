@@ -29,9 +29,9 @@ async function expectFields(app: App, shown: string[], hidden: string[]) {
 
 test('should refresh dialog fields when Project Type changes via /dialog field-refresh', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Send /dialog field-refresh command
     const form = app.appsForm;

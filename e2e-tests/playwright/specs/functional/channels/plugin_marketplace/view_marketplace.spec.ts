@@ -12,9 +12,9 @@ test(
     'MM-T1945 MM-T1946 MM-T1947 MM-T3680 system admin can view the plugin marketplace',
     {tag: '@marketplace'},
     async ({pw}) => {
-        const {adminUser, team} = await pw.initSetup();
+        const {adminUser, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open the App Marketplace from the product menu
         const productMenu = await app.globalHeader.clickProductMenuButton();

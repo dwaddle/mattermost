@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openSystemUsers, searchSystemUsers, test, testConfig} from '@mattermost/playwright-lib';
+import {expect, openSystemUsers, searchSystemUsers, test, testConfig, duration} from '@mattermost/playwright-lib';
 
 import {expectOnSelectTeam, logIn, openAdminConsole, openLogin} from './support';
 
@@ -71,8 +71,8 @@ test('MM-T1781 lets an admin remove MFA from an enrolled user', {tag: '@authenti
         // the table can re-render under an open menu as its search settles, detaching the item: reopen and retry
         await expect(async () => {
             const menu = await adminApp.admin.users.table.row(user.id).clickActionsButton();
-            await menu.removeMfaMenuItem.locator.click({timeout: 5000});
-        }).toPass({timeout: 30000});
+            await menu.removeMfaMenuItem.locator.click({timeout: duration.ten_sec});
+        }).toPass({timeout: duration.half_min});
         await expect.poll(async () => (await adminClient.getUser(user.id)).mfa_active ?? false).toBe(false);
 
         // # Log in as the user

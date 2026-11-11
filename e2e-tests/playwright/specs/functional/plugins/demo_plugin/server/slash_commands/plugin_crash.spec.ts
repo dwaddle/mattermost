@@ -7,9 +7,9 @@ import {postContaining} from './support';
 
 test('should crash plugin via /crash command and verify recovery', async ({pw}) => {
     // # Setup
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const composer = app.center.postCreate;
 
     // # Pick /crash from the slash command autocomplete and send it

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, duration} from '@mattermost/playwright-lib';
 
 import {DOMAIN_NOT_ALLOWED, openLogin, signUp} from './support';
 
@@ -15,7 +15,7 @@ async function inviteEmail(app: App, email: string) {
     await input.pressSequentially(email, {delay: 50});
 
     // the menu offers the suggestion once its search finishes; Enter takes it
-    await expect(invite.users.emailOption.locator).toBeVisible({timeout: 15000});
+    await expect(invite.users.emailOption.locator).toBeVisible({timeout: duration.half_min});
     await input.press('Enter');
     await expect(input).toHaveValue('');
     await invite.clickSendButton();
@@ -82,7 +82,7 @@ test(
  * @objective Verify inviting an email outside the allowed domains is rejected.
  */
 test('MM-T1755 rejects an email invite outside the allowed domains', {tag: '@authentication'}, async ({pw}) => {
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
 
     await adminClient.patchConfig({
         EmailSettings: {RequireEmailVerification: false},
@@ -91,7 +91,7 @@ test('MM-T1755 rejects an email invite outside the allowed domains', {tag: '@aut
     });
 
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Invite an email that is not on the allow list
     await (await app.lhs.header.clickOpenTeamMenuButton()).clickInvitePeopleMenuItem();

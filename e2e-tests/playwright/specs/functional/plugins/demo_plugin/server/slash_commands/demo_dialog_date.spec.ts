@@ -9,11 +9,11 @@ import {fieldLabelled, postContaining, sendCommand} from './support';
 
 test('should open /dialog date and post submit confirmation after selecting dates', async ({pw}) => {
     // # Setup
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
 
     // # Log in and open Town Square
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Send /dialog date command
     const form = app.appsForm;

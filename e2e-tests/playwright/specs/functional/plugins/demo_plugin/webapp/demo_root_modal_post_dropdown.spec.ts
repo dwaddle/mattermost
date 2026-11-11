@@ -15,14 +15,13 @@ async function openActionsMenu(app: App, postId: string) {
 
 test('should open Root Modal from post actions menu and all submenu items', async ({pw}) => {
     // # Set up the demo plugin, post a message and open Town Square
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const post = await userClient.createPost({
         channel_id: townSquare.id,
         message: 'Test post for Root Modal validation',
     });
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Click the plugin's top-level action

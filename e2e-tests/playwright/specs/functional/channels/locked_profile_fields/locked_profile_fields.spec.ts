@@ -4,7 +4,15 @@
 import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 
-import {App, expect, extractEmailLink, getRecentEmail, test} from '@mattermost/playwright-lib';
+import {
+    App,
+    expect,
+    extractEmailLink,
+    getRecentEmail,
+    test,
+    duration,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 type LockSetting = 'none' | 'name_and_username' | 'all';
 
@@ -21,7 +29,7 @@ test(
     'carries admin-provisioned profile data from invite email through signup and enforces the lock',
     {tag: '@locked_profile_fields'},
     async ({pw, page}) => {
-        test.setTimeout(90_000);
+        test.setTimeout(duration.two_min);
 
         // # Invite and register a member with administrator-provided profile details.
         const {adminUser, adminClient, team} = await pw.initSetup();
@@ -148,7 +156,7 @@ function memberKey(email: string) {
 
 /** Opens the team's Invite People dialog from the team menu. */
 async function openInvite(app: App, team: Team) {
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     await (await app.lhs.header.clickOpenTeamMenuButton()).clickInvitePeopleMenuItem();
     await expect(app.invitationModal.invite.users.inputCombobox.locator).toBeVisible();
     return app.invitationModal.invite;
@@ -160,7 +168,7 @@ async function addEmail(app: App, email: string) {
     const input = users.inputCombobox.locator;
     await input.click();
     await input.pressSequentially(email, {delay: 50});
-    await expect(users.emailOption.locator).toBeVisible({timeout: 15000});
+    await expect(users.emailOption.locator).toBeVisible({timeout: duration.half_min});
     await input.press('Enter');
     await expect(input).toHaveValue('');
 }

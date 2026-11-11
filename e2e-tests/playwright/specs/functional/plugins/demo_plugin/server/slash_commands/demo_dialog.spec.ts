@@ -7,9 +7,9 @@ import {fieldContaining, openDialog, postContaining, radioFieldWith} from './sup
 
 /** Sets up the demo plugin, opens Town Square and runs a /dialog command. */
 async function openDemoDialog(pw: PlaywrightExtended, command: string) {
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const form = await openDialog(app, command);
     return {app, form};
 }

@@ -9,11 +9,10 @@ import {closeRootModal, expectRootModal} from './support';
 
 /** Sets up the demo plugin, posts as the user and opens that post's author popover. */
 async function openOwnProfilePopover(pw: PlaywrightExtended, message: string): Promise<{app: App; user: UserProfile}> {
-    const {adminClient, user, userClient, team} = await pw.initSetup();
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const post = await userClient.createPost({channel_id: townSquare.id, message});
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     await app.center.postList.post({id: post.id}).avatar.locator.click();
     await expect(app.profilePopover.usernameText.locator).toContainText(user.username);
     return {app, user};

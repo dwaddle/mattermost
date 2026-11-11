@@ -17,7 +17,7 @@ test('switches an AD/LDAP account to email and password', {tag: '@authentication
     await pw.ensureLicense();
     await pw.skipIfNoLicense();
 
-    const {adminClient, team} = await pw.initSetup();
+    const {adminClient, team, townSquare} = await pw.initSetup();
     await pw.ensureOpenldap();
 
     const ldapUser = pw.generateLdapUser('claimldap');
@@ -32,7 +32,7 @@ test('switches an AD/LDAP account to email and password', {tag: '@authentication
         await expect(page).not.toHaveURL(/\/login/);
         const provisionedUser = await adminClient.getUserByUsername(ldapUser.username);
         await adminClient.addToTeam(team.id, provisionedUser.id);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Switch the account to email and password. The page opens on the MFA step even when MFA is off (its
         // `showMfa` starts true, a product bug); any token is refused and reveals the form.

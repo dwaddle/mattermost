@@ -9,6 +9,7 @@ import {
     signedInUrl,
     test,
     testConfig,
+    DefaultChannel,
 } from '@mattermost/playwright-lib';
 
 /**
@@ -40,7 +41,7 @@ test('logs in a directory-only user through Keycloak OpenID SSO', {tag: '@openid
 
     // # Grant team membership and open a channel
     await adminClient.addToTeam(team.id, provisionedUser.id);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
     // * Verify the user lands on a real channel
     await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
@@ -118,7 +119,7 @@ test('logout invalidates a session created via OpenID', {tag: '@openid'}, async 
 
     // # Dismiss the first-time onboarding tour so it doesn't cover the header
     await pw.setDefaultOnboardingPreferences(adminClient, provisionedUser.id);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
     // # Log out from the account menu
     await (await app.globalHeader.clickOpenAccountMenuButton()).clickLogOutMenuItem();

@@ -9,11 +9,11 @@ import {actionNamed, postContaining, sendCommand} from './support';
 
 test('should send ephemeral post with Update and Delete actions via /ephemeral command', async ({pw}) => {
     // # Setup
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
 
     // # Log in and open Town Square (away from the plugin's own ephemeral messages)
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Send /ephemeral
     await sendDemoSlashCommand(app.page, () => sendCommand(app, '/ephemeral'));

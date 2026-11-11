@@ -9,9 +9,9 @@ import {actionNamed, postContaining, sendCommand} from './support';
 
 test('should post interactive button and respond with click attribution via /interactive command', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Send /interactive
     await sendDemoSlashCommand(app.page, () => sendCommand(app, '/interactive'));

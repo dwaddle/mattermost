@@ -16,7 +16,7 @@ import {switchSignInTo} from './support';
 test('switches an OpenID account to email and password', {tag: '@authentication'}, async ({pw, page}) => {
     await pw.ensureLicense();
     await pw.skipIfNoLicense();
-    const {adminClient, team} = await pw.initSetup();
+    const {adminClient, team, townSquare} = await pw.initSetup();
     await pw.ensureSiteUrl();
     await pw.ensureKeycloakOpenId();
     const keycloakUser = pw.generateKeycloakUser('openidclaim');
@@ -29,7 +29,7 @@ test('switches an OpenID account to email and password', {tag: '@authentication'
 
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     await adminClient.addToTeam(team.id, provisionedUser.id);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the switch to email and set a new password
     await switchSignInTo(app, 'email');

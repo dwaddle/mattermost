@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, logIn, openLogin, test} from '@mattermost/playwright-lib';
+import {expect, logIn, openLogin, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify an LDAP member added to a team lands on that team after logging in again.
@@ -69,7 +69,7 @@ test('LDAP guest login with team invite lands on the invited channel', {tag: '@l
 
     // # Add the guest to the team and its town square, and log them out
     await adminClient.addToTeam(team.id, provisionedUser.id);
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     await adminClient.addToChannel(provisionedUser.id, townSquare.id);
     await adminClient.revokeAllSessionsForUser(provisionedUser.id);
 

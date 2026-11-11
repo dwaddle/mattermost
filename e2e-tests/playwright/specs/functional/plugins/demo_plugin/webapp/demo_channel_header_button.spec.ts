@@ -7,9 +7,9 @@ import {DEMO} from './support';
 
 test('should open right-hand sidebar when demo plugin App Bar button is clicked', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Click the plugin's App Bar button

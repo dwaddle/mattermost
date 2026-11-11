@@ -10,9 +10,9 @@ import {DEMO} from './support';
 
 test('should show Demo Plugin enabled/disabled status in left sidebar header', async ({pw}) => {
     // # Set up the demo plugin and open Town Square (its slash command works from any channel)
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const status = app.plugins.comMattermostDemoPlugin.lhsHeader.statusText;
 
     /** Sends /demo_plugin <enabled> and waits for the sidebar header to follow. */
@@ -35,11 +35,11 @@ test('should show Demo Plugin enabled/disabled status in left sidebar header', a
 
 test('should show demo plugin plug icon at the bottom of the team sidebar', async ({pw}) => {
     // # Set up the demo plugin, put the user on a second team (the team sidebar shows from two teams) and open Town Square
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
     const otherTeam = await adminClient.createTeam(await pw.random.team());
     await adminClient.addToTeam(otherTeam.id, user.id);
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // * The plugin's icon shows at the bottom of the team sidebar
     await expect(app.plugins.comMattermostDemoPlugin.teamSidebarIcon.locator).toBeVisible();
@@ -47,9 +47,9 @@ test('should show demo plugin plug icon at the bottom of the team sidebar', asyn
 
 test('should show Demo Plugin Item in Browse or create channels menu and trigger alert with team ID', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Open the "Browse or create channels" menu
     const menu = await app.lhs.header.clickOpenBrowseOrAddMenuButton();

@@ -20,9 +20,9 @@ async function postDemoFile(client: Client4, channelId: string): Promise<{postId
 
 test('should show "Upload using Demo Plugin" entry in attachment menu and open Root Modal', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Open the attachment menu (the plugin's upload method turns the button into a menu)
     const composer = app.center.postCreate;
@@ -98,9 +98,9 @@ test('should render custom preview for .demo files', async ({pw}) => {
 
 test('should upload a file via "Your computer" from the demo plugin attachment submenu', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const composer = app.center.postCreate;
 
     // # Upload a file through the attachment menu's "Your computer"

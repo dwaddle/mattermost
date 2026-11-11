@@ -7,9 +7,9 @@ import {closeRootModal, DEMO, expectRootModal} from './support';
 
 test('should open Root Modal from team dropdown main menu', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Open the team menu: the plugin adds two items, told apart by their labels
@@ -27,10 +27,9 @@ test('should open Root Modal from team dropdown main menu', async ({pw}) => {
 
 test('should open Root Modal from channel header dropdown More actions', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {adminClient, user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Open the channel menu and hover "More actions" to show its submenu
     const menu = await app.channelHeader.clickOpenMenuButton();
@@ -48,9 +47,9 @@ test('should open Root Modal from channel header dropdown More actions', async (
 
 test('should open Sample Confirmation Dialog from team dropdown and respond to Confirm and Cancel', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
     const demo = app.plugins.comMattermostDemoPlugin;
 
     // # Open the team menu and click "Sample Confirmation Dialog"

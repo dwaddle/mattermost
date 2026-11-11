@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, type App} from '@mattermost/playwright-lib';
+import {expect, generated, type App, duration} from '@mattermost/playwright-lib';
 
 /**
  * The demo plugin's slash commands on the generated page objects. The plugin answers in posts the webapp renders, so
@@ -89,7 +89,7 @@ export async function fieldLabels(app: App): Promise<string[]> {
         // a field can go between listing and reading it (the dialog re-renders on a refresh): skip it, don't wait
         const label = await field.labelText.locator
             .or(field.selectLabelText.locator)
-            .textContent({timeout: 1000})
+            .textContent({timeout: duration.one_sec})
             .catch(() => null);
         if (label) {
             labels.push(label.trim());
@@ -124,7 +124,7 @@ export async function openDialog(app: App, command: string, timeout = 60_000) {
     const form = app.appsForm;
     await expect(async () => {
         await sendCommand(app, command);
-        await expect(form.titleText.locator).toBeVisible({timeout: 15_000});
+        await expect(form.titleText.locator).toBeVisible({timeout: duration.half_min});
     }).toPass({timeout});
     return form;
 }

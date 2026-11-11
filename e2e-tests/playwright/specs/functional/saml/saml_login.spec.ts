@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, logInWithKeycloak, signedInUrl, test} from '@mattermost/playwright-lib';
+import {expect, logInWithKeycloak, signedInUrl, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a user who only exists in Keycloak is provisioned via SAML SSO on first login
@@ -32,7 +32,7 @@ test('logs in a directory-only user through Keycloak SAML SSO', {tag: '@saml'}, 
 
     // # Grant team membership and open a channel
     await adminClient.addToTeam(team.id, provisionedUser.id);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
     // * Verify the user lands on a real channel
     await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();

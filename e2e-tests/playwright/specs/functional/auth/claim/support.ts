@@ -4,7 +4,7 @@
 import type {Page} from '@playwright/test';
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, type App, type generated, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, type App, type generated, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {logIn, openLogin} from '../support';
 
@@ -18,7 +18,7 @@ export async function logInToTeam(pw: PlaywrightExtended, page: Page, loginId: s
     const app = await openLogin(pw, page);
     await logIn(app, loginId, password);
     await expect(page).not.toHaveURL(/\/login/);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     return app;
 }
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, test, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {expectOnSelectTeam, logIn, openLogin} from './support';
 
@@ -10,7 +10,7 @@ type Setup = Awaited<ReturnType<PlaywrightExtended['initSetup']>>;
 /** Logs the user in and opens Profile > Security. */
 async function openSecurity(pw: PlaywrightExtended, {user, team}: Pick<Setup, 'user' | 'team'>) {
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
     await app.userSettingsModal.tabs.tab('security').select();
     await expect(app.settings.section('password').locator).toBeVisible();

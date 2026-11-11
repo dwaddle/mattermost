@@ -18,7 +18,7 @@ test('round-trips an email account through OpenID and back to email', {tag: '@au
 
     await pw.ensureLicense();
     await pw.skipIfNoLicense();
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
     await pw.ensureSiteUrl();
     await pw.ensureKeycloakOpenId();
     const keycloakUser = {
@@ -46,7 +46,7 @@ test('round-trips an email account through OpenID and back to email', {tag: '@au
     await app.login.openidLink.click();
     await pw.keycloakLoginPage.loginIfFormShown(keycloakUser.username, keycloakUser.password);
     await expectSignedIn(page);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
     await switchSignInTo(app, 'email');
     const claim = app.claim.oauthToEmail;
     await claim.fillPasswordTextbox(newPassword);

@@ -38,12 +38,12 @@ test(
  * @objective Verify changing a profile email to a disallowed domain is rejected.
  */
 test('MM-T1757 rejects a profile email change to a disallowed domain', {tag: '@authentication'}, async ({pw}) => {
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
 
     await adminClient.patchConfig({TeamSettings: {RestrictCreationToDomains: ALLOWED_DOMAINS}});
 
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Try to change the profile email to a disallowed domain
     await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
