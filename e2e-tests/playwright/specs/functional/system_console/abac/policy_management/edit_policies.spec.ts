@@ -116,7 +116,7 @@ test.describe('ABAC Policy Management - Edit Policies', () => {
         // ===========================================
         // STEP 3: Click Test Access Rule
         // ===========================================
-        await expectAccessTest(app, policy, {matching: [salesUser], notMatching: [engineerUser]});
+        await expectAccessTest(app, policy, {client: adminClient, matching: [salesUser], notMatching: [engineerUser]});
 
         // ===========================================
         // STEP 4: Save the changes, applying the policy, and wait for its sync

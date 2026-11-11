@@ -317,7 +317,7 @@ test.describe('System Console - Admin User Profile Editing', () => {
         }
 
         // * Verify fields are arranged in rows
-        expect(await userDetail.fields.rowItems.count()).toBeGreaterThan(0);
+        await expect(userDetail.fields.rowItems.first()).toBeVisible();
     });
 
     test('Should edit system email attribute and save', async () => {

@@ -72,8 +72,12 @@ test('MM-T5791 Editing policy to add attribute with auto-add enabled', async ({p
         attributeFieldsMap[officeField.id] = officeField;
     }
 
-    // Wait for attributes to be indexed
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Wait until the policy editor's attribute list (the access control fields) has the Office field
+    await expect
+        .poll(async () => (await adminClient.getAccessControlFields('', 100)).map((field) => field.name), {
+            message: 'the access control fields never listed Office',
+        })
+        .toContain('Office');
 
     // Create users:
     // 1. engineerRemoteUser: Dept=Engineering, Office=Remote → satisfies BOTH (after edit)
@@ -135,6 +139,7 @@ test('MM-T5791 Editing policy to add attribute with auto-add enabled', async ({p
     // STEP 3: Test Access Rule
     // ===========================================
     await expectAccessTest(app, policy, {
+        client: adminClient,
         matching: [engineerRemoteUser],
         notMatching: [engineerOfficeUser, salesUser],
     });
@@ -225,8 +230,12 @@ test('MM-T5792 Editing policy to remove attribute rule with auto-add enabled', a
         attributeFieldsMap[officeField.id] = officeField;
     }
 
-    // Wait for attributes to be indexed
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Wait until the policy editor's attribute list (the access control fields) has the Office field
+    await expect
+        .poll(async () => (await adminClient.getAccessControlFields('', 100)).map((field) => field.name), {
+            message: 'the access control fields never listed Office',
+        })
+        .toContain('Office');
     await enableUserManagedAttributes(adminClient);
 
     // Create users:
@@ -301,6 +310,7 @@ test('MM-T5792 Editing policy to remove attribute rule with auto-add enabled', a
     // STEP 3: Test Access Rule
     // ===========================================
     await expectAccessTest(app, policy, {
+        client: adminClient,
         matching: [engineerRemoteUser, engineerOfficeUser],
         notMatching: [salesRemoteUser],
     });

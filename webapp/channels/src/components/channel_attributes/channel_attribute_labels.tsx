@@ -22,6 +22,7 @@ import {useDispatch} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
 import type {TestId} from '@mattermost/shared/utils/test_id';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
 import {getPropertyFieldLabel} from 'mattermost-redux/utils/property_utils';
@@ -82,6 +83,8 @@ type Props = {
  * suggest otherwise.
  */
 type ChipSpec = {
+
+    // the field's id (a multiselect's values add `:<position>`); also each chip's testid key
     chipId: string;
     fieldLabel: string;
     value: string;
@@ -211,7 +214,7 @@ const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible =
                             value={spec.value}
                             color={spec.color}
                             size='medium'
-                            testId={`${testId}.chip:${ids.indexOf(id)}`}
+                            testId={`${testId}.chip:${textTestKey(id)}`}
                         />,
                     )}
                 </WithTooltip>
@@ -285,7 +288,7 @@ const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible =
                                             color={spec.color}
                                             size='medium'
                                             announceLabel={false}
-                                            testId={`${testId}.overflow_popover.chip:${ids.indexOf(id)}`}
+                                            testId={`${testId}.overflow_popover.chip:${textTestKey(id)}`}
                                         />,
                                     )}
                                 </div>

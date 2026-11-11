@@ -17403,7 +17403,7 @@
                 {
                     "testId": "channel_header.attributes.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(chipSpecs.length === 0)", "spec", "channel", "!isDirect && !isGroup"],
                     "source": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
                 },
@@ -17428,7 +17428,7 @@
                 {
                     "testId": "channel_header.attributes.overflow_popover.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": [
                         "!(chipSpecs.length === 0)",
                         "isMounted",
@@ -32728,7 +32728,7 @@
                 {
                     "testId": "rhs.thread.header.attributes.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(chipSpecs.length === 0)", "spec"],
                     "source": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
                 },
@@ -32748,7 +32748,7 @@
                 {
                     "testId": "rhs.thread.header.attributes.overflow_popover.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(chipSpecs.length === 0)", "isMounted", "spec"],
                     "source": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
                 },
@@ -41095,7 +41095,7 @@
                 {
                     "testId": "threads.pane.attributes.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(chipSpecs.length === 0)", "spec"],
                     "source": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
                 },
@@ -41115,7 +41115,7 @@
                 {
                     "testId": "threads.pane.attributes.overflow_popover.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(chipSpecs.length === 0)", "isMounted", "spec"],
                     "source": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
                 }

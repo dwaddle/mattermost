@@ -247,7 +247,9 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
 
             // * Whatever no longer fits is reachable through +N instead of being clipped
             await expect(labels.overflowButton.locator).toBeVisible();
-            expect(await labels.chipItems.count()).toBeLessThan(5);
+            await expect
+                .poll(() => labels.chipItems.count(), {message: 'the narrow header should move some chips into +N'})
+                .toBeLessThan(5);
 
             // * The row yields to the thread controls rather than growing over them,
             // which is the invariant the 56px header slot has to hold

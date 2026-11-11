@@ -9,18 +9,22 @@
  * console UI and then checks what a user sees, with no API seeding in between.
  */
 
-import {AdminLocation, AdminPolicy, expect, test, type App, type generated} from '@mattermost/playwright-lib';
-
 import {
-    chip,
+    AdminLocation,
+    AdminPolicy,
+    attributeRow,
+    attributeValue,
+    expect,
     labelChip,
     openAttributeControl,
     openChannel,
     openChannelInfo,
     openNewChannelModal,
     pickListOption,
-    row,
-} from '../../channels/channel_attributes/surface';
+    test,
+    type App,
+    type generated,
+} from '@mattermost/playwright-lib';
 
 import {
     channelFieldNamed,
@@ -126,7 +130,7 @@ test.describe(
 
                 // # Create a channel as the same admin, who is a member of a team
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
 
                 const field = await channelFieldNamed(adminClient, name);
                 const modal = await openNewChannelModal(app);
@@ -166,7 +170,7 @@ test.describe(
                 });
 
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
 
                 const field = await channelFieldNamed(adminClient, name);
                 const modal = await openNewChannelModal(app);
@@ -202,7 +206,7 @@ test.describe(
                 });
 
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
 
                 const displayName = `Attr Quiet ${suffix}`;
                 const field = await channelFieldNamed(adminClient, name);
@@ -224,8 +228,8 @@ test.describe(
                 // * Channel Info still lists it: the display locations govern the
                 // header and banner, never whether an admin can reach a value
                 const info = await openChannelInfo(app);
-                await expect(chip(info, field)).toHaveText('QUIET');
-                await expect(row(info, field).editButton.locator).toBeVisible();
+                await expect(attributeValue(info, field)).toHaveText('QUIET');
+                await expect(attributeRow(info, field).editButton.locator).toBeVisible();
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -260,7 +264,7 @@ test.describe(
                 expect(channelField?.attrs?.editable).toBe(false);
 
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
 
                 const field = await channelFieldNamed(adminClient, name);
                 const modal = await openNewChannelModal(app);
@@ -268,8 +272,8 @@ test.describe(
 
                 // * Once set at creation the value is read-only, even to a system admin
                 const info = await openChannelInfo(app);
-                await expect(row(info, field).locked.locator).toBeVisible();
-                await expect(row(info, field).editButton.locator).toHaveCount(0);
+                await expect(attributeRow(info, field).locked.locator).toBeVisible();
+                await expect(attributeRow(info, field).editButton.locator).toHaveCount(0);
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -304,7 +308,7 @@ test.describe(
                 expect(channelField?.permission_values).toBe('admin');
 
                 const {team, user} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
 
                 const channelDisplayName = `Attr Restricted ${suffix}`;
                 const field = await channelFieldNamed(adminClient, name);
@@ -318,12 +322,12 @@ test.describe(
                 await adminClient.addToChannel(user.id, channel.id);
 
                 // # Look at the same attribute as an ordinary member
-                const asMember = await openChannel(pw, user, team, channel);
+                const asMember = await openChannel(pw, user, {team, channel});
 
                 // * The member reads the value but is offered no way to change it
                 const info = await openChannelInfo(asMember);
-                await expect(chip(info, field)).toHaveText('SET');
-                await expect(row(info, field).editButton.locator).toHaveCount(0);
+                await expect(attributeValue(info, field)).toHaveText('SET');
+                await expect(attributeRow(info, field).editButton.locator).toHaveCount(0);
             } finally {
                 await deleteChannelFieldIfExists(adminClient, name);
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);

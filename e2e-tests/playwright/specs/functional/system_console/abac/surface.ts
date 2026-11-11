@@ -6,6 +6,7 @@ import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {
+    Api,
     expect,
     generated,
     type AdminOperator,
@@ -15,6 +16,7 @@ import {
 } from '@mattermost/playwright-lib';
 
 import type {CpaFieldsMap} from '../../channels/custom_profile_attributes/helpers';
+import {waitForAttributeViewToInclude} from '../../channels/team_settings/helpers';
 
 /**
  * Attribute-based access on the generated page objects: the ABAC setting, the membership policy list (rows by policy
@@ -139,12 +141,10 @@ export async function savePolicy(app: App, policy: generated.AdminAccessControlP
 
     // applying it now is what starts the sync
     await expect(confirmModal.enforceCheckbox.locator).toBeChecked();
-    const job = app.page.waitForResponse((r) => r.url().includes('/api/v4/jobs') && r.request().method() === 'POST');
-    await confirmModal.clickConfirmButton();
-    const response = await job;
-    expect(response.ok(), `POST /api/v4/jobs: ${response.status()}`).toBe(true);
+    // the scanner doesn't see the dialog start the sync job (it is called through the editor's save handler)
+    const job = await confirmModal.confirmButton.commit({wait: Api.CreateJob, unlisted: true});
     await expect(app.page).toHaveURL(new RegExp(`${MEMBERSHIP_POLICIES_PATH}$`));
-    return ((await response.json()) as {id: string}).id;
+    return job.id;
 }
 
 export type NewPolicy = {
@@ -204,22 +204,30 @@ export async function setCelExpression(app: App, policy: PolicyEditor, expressio
 export async function expectAccessTest(
     app: App,
     policy: PolicyEditor,
-    {matching = [], notMatching = []}: {matching?: UserProfile[]; notMatching?: UserProfile[]},
+    {client, matching = [], notMatching = []}: {client: Client4; matching?: UserProfile[]; notMatching?: UserProfile[]},
 ) {
     const testButton = policy.rules.testButton.locator.or(policy.cel.testButton.locator);
     await expect(testButton).toBeEnabled();
+
+    // the dialog lists who its expression matches as soon as it opens
+    const listed = app.page.waitForRequest((r) => r.url().includes('/access_control_policies/cel/test'));
     await testButton.click();
+    const {expression} = (await listed).postDataJSON() as {expression: string};
     const {users} = app.policyTestModal;
     await expect(users.searchTextbox.locator).toBeVisible();
 
-    // The test reads the server's attribute view, which takes a moment to pick up users just given attributes:
-    // search again until it lists them
+    // The test reads the server's attribute view, which refreshes on its own schedule and so can trail users just
+    // given attributes (by design): wait until it lists them, then one search finds each
+    if (matching.length) {
+        await waitForAttributeViewToInclude(
+            client,
+            expression,
+            matching.map((user) => user.id),
+        );
+    }
     for (const user of matching) {
-        await expect(async () => {
-            await users.fillSearchTextbox('');
-            await users.fillSearchTextbox(user.username);
-            await expect(users.user(user).locator).toContainText(`@${user.username}`, {timeout: 3000});
-        }).toPass({timeout: 60_000});
+        await users.fillSearchTextbox(user.username);
+        await expect(users.user(user).locator).toContainText(`@${user.username}`);
     }
     for (const user of notMatching) {
         await users.fillSearchTextbox(user.username);
@@ -265,11 +273,8 @@ export async function policyIdByName(client: Client4, name: string): Promise<str
 /** Runs the membership policies' sync job from their page; returns the job's id. */
 export async function runSyncJob(app: App): Promise<string> {
     await openMembershipPolicies(app);
-    const job = app.page.waitForResponse((r) => r.url().includes('/api/v4/jobs') && r.request().method() === 'POST');
-    await app.admin.accessControl.runSyncButton.click();
-    const response = await job;
-    expect(response.ok(), `POST /api/v4/jobs: ${response.status()}`).toBe(true);
-    return ((await response.json()) as {id: string}).id;
+    const job = await app.admin.accessControl.runSyncButton.commit({wait: Api.CreateJob});
+    return job.id;
 }
 
 /** Opens System Console > Permission Policies, waiting for its list. */

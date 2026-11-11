@@ -245,7 +245,7 @@ describe('components/threading/global_threads/thread_pane', () => {
 
     describe('channel attribute labels', () => {
         // The row's own chips, not the ones repeated in the overflow popover.
-        const CHIP = /^threads\.pane\.attributes\.chip:\d+$/;
+        const CHIP = /^threads\.pane\.attributes\.chip:[^:]+$/;
 
         afterEach(() => {
             jest.restoreAllMocks();
@@ -287,7 +287,7 @@ describe('components/threading/global_threads/thread_pane', () => {
                 ]),
             );
 
-            const chip = await screen.findByTestId('threads.pane.attributes.chip:0');
+            const chip = await screen.findByTestId('threads.pane.attributes.chip:field_program');
             expect(chip.closest('button')).toBeNull();
         });
 

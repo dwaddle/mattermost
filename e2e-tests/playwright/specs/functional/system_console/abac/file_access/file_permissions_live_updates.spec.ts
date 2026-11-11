@@ -6,14 +6,14 @@ import type {Client4} from '@mattermost/client';
 import {
     AdminPermission,
     expect,
-    test,
     getAdminClient,
     getRandomId,
+    openChannel,
+    test,
     TestBrowser,
     type PlaywrightExtended,
 } from '@mattermost/playwright-lib';
 
-import {openChannel} from '../../../channels/channel_attributes/surface';
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {
     setupCustomProfileAttributeFields,
@@ -183,7 +183,7 @@ test.describe('ABAC file permissions - live updates', () => {
 
             // # A user who currently matches the policy opens the channel
             const user = await createAllowedMember(pw);
-            const app = await openChannel(pw, user, team, {name: channelName});
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify upload starts out available
             await expect(app.center.postCreate.attachButton.locator).toBeEnabled({
@@ -215,7 +215,7 @@ test.describe('ABAC file permissions - live updates', () => {
 
             // # A user who currently matches the policy opens the channel
             const user = await createAllowedMember(pw);
-            const app = await openChannel(pw, user, team, {name: channelName});
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify the file starts out visible
             const post = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
@@ -244,7 +244,7 @@ test.describe('ABAC file permissions - live updates', () => {
 
             // # A user who currently matches the policy opens the channel
             const user = await createAllowedMember(pw);
-            const app = await openChannel(pw, user, team, {name: channelName});
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify access starts out granted
             await expect(app.center.postCreate.attachButton.locator).toBeEnabled({
@@ -288,7 +288,7 @@ test.describe('ABAC file permissions - live updates', () => {
 
             // # A user who matches the policy opens the channel
             const user = await createAllowedMember(pw);
-            const app = await openChannel(pw, user, team, {name: channelName});
+            const app = await openChannel(pw, user, {team, channel: {name: channelName}});
 
             // * Verify upload starts out available
             await expect(app.center.postCreate.attachButton.locator).toBeEnabled({

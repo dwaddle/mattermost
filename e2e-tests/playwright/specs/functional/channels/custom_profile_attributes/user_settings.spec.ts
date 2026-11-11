@@ -321,16 +321,11 @@ test(
         const optionBox = await firstOption.boundingBox();
         expect(optionBox).not.toBeNull();
         const point = {x: optionBox!.x + optionBox!.width / 2, y: optionBox!.y - 3};
-        const optionTestId = await firstOption.getAttribute('data-testid');
-        const hitsMenuPadding = await app.page.evaluate(
-            ({x, y, testId}) => {
-                const el = document.elementFromPoint(x, y);
-                const option = document.querySelector(`[data-testid="${testId}"]`);
-                const popup = option?.closest('[class*="combobox__popup"]');
-                return Boolean(el && popup?.contains(el) && !el.closest('[role="option"]'));
-            },
-            {...point, testId: optionTestId},
-        );
+        const hitsMenuPadding = await firstOption.evaluate((option, {x, y}) => {
+            const el = document.elementFromPoint(x, y);
+            const popup = option.closest('[class*="combobox__popup"]');
+            return Boolean(el && popup?.contains(el) && !el.closest('[role="option"]'));
+        }, point);
         expect(
             hitsMenuPadding,
             'the click point must land on the menu padding, not an option or outside the menu',

@@ -17,6 +17,7 @@ import {
     deleteCustomProfileAttributes,
     setupCustomProfileAttributeFields,
 } from '../../../channels/custom_profile_attributes/helpers';
+import {waitForAttributeViewToInclude} from '../../../channels/team_settings/helpers';
 import {deleteParentPolicy} from '../resource_attributes/helpers';
 import {
     ensureUserAttributes,
@@ -94,8 +95,11 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5785 all attribute types 
         await adminClient.addToTeam(team.id, user2.id);
         await adminClient.addToTeam(team.id, user3.id);
 
-        // Attribute indexing settle
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Wait until the server's attribute view has the new users' attributes
+        await waitForAttributeViewToInclude(adminClient, 'user.attributes.Department == "Engineering"', [
+            user1.id,
+            user2.id,
+        ]);
 
         privateChannel = await createPrivateChannelForABAC(adminClient, team.id);
         await adminClient.addToChannel(user2.id, privateChannel.id);
@@ -295,6 +299,7 @@ test.describe('ABAC Policies - Advanced Policies - MM-T5786 operator variants', 
 
         // * Testing the rule lists the engineer, not the sales user
         await expectAccessTest(app, await openPolicy(app, policyId), {
+            client: sharedAdminClient,
             matching: [engineerUser],
             notMatching: [salesUser],
         });

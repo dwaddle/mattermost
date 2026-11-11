@@ -5767,9 +5767,9 @@ export class Attributes extends Scope {
      * `channel_header.attributes.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
      * Renders only when !(chipSpecs.length === 0) and spec and channel.
      */
-    chip(chip: number) {
-        return drivers.container(this.byTestId(`${this.scope}.chip:${chip}`), {
-            testId: `${this.scope}.chip:${chip}`,
+    chip(chip: string) {
+        return drivers.container(this.byTestId(`${this.scope}.chip:${textTestKey(chip)}`), {
+            testId: `${this.scope}.chip:${textTestKey(chip)}`,
             role: null,
             effects: [],
             unknownEffects: false,
@@ -5833,9 +5833,9 @@ export class OverflowPopover extends Scope {
      * `channel_header.attributes.overflow_popover.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
      * Renders only when !(chipSpecs.length === 0) and isMounted and spec.
      */
-    chip(chip: number) {
-        return drivers.container(this.byTestId(`${this.scope}.chip:${chip}`), {
-            testId: `${this.scope}.chip:${chip}`,
+    chip(chip: string) {
+        return drivers.container(this.byTestId(`${this.scope}.chip:${textTestKey(chip)}`), {
+            testId: `${this.scope}.chip:${textTestKey(chip)}`,
             role: null,
             effects: [],
             unknownEffects: false,

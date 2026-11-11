@@ -78,6 +78,7 @@ test.describe('ABAC Policies - Create Policies', () => {
         // * Testing the rule lists the users who satisfy it, and not the one who doesn't
         const policy = await openPolicy(app, await policyIdByName(adminClient, policyName));
         await expectAccessTest(app, policy, {
+            client: adminClient,
             matching: [satisfyingUserNotInChannel, satisfyingUserInChannel],
             notMatching: [nonSatisfyingUserInChannel],
         });
@@ -177,6 +178,7 @@ test.describe('ABAC Policies - Create Policies', () => {
         const policyId = await policyIdByName(adminClient, policyName);
         const policy = await openPolicy(app, policyId);
         await expectAccessTest(app, policy, {
+            client: adminClient,
             matching: [satisfyingUserNotInChannel, satisfyingUserInChannel],
             notMatching: [nonSatisfyingUserInChannel],
         });

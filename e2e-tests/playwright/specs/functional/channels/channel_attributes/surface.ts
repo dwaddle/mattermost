@@ -5,13 +5,28 @@ import type {Locator} from '@playwright/test';
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, type App, type generated, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    expect,
+    openChannel as openChannelFlow,
+    type App,
+    type generated,
+    type PlaywrightExtended,
+} from '@mattermost/playwright-lib';
 
 /**
- * Channel attributes on the generated page objects. Labels (the channel header's, a thread's) are chips by position;
- * the editable block (Channel Info in the RHS, and the same editor in Channel Settings' Info tab) has rows keyed by
- * field id, whose values are chips by position or a text value, edited inline through a text box or a menu.
+ * Channel attributes on the generated page objects. Labels (the channel header's, a thread's) are chips keyed by field
+ * id; the editable block (Channel Info in the RHS, and the same editor in Channel Settings' Info tab) has rows keyed by
+ * field id, whose values are chips keyed by value or a text value, edited inline through a text box or a menu. The
+ * helpers specs elsewhere share are in the lib's flows; they're re-exported here for this folder's specs.
  */
+
+export {
+    labelChip,
+    openAttributeControl,
+    openChannelInfo,
+    openNewChannelModal,
+    pickListOption,
+} from '@mattermost/playwright-lib';
 
 type Field = {id: string};
 export type Labels = generated.Attributes | generated.ThreadsPaneAttributes;
@@ -19,9 +34,7 @@ export type Editable = generated.ChannelInfoAttributes;
 
 /** Logs the user in and opens the channel (a direct message by `@username`), waiting for the app to be up. */
 export async function openChannel(pw: PlaywrightExtended, user: UserProfile, team: Team, channel: {name: string}) {
-    const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel, path: channel.name.startsWith('@') ? 'messages' : 'channels'});
-    return app;
+    return openChannelFlow(pw, user, {team, channel, path: channel.name.startsWith('@') ? 'messages' : 'channels'});
 }
 
 /** Opens a thread in global Threads (from the list, as a user would) and returns the view. */
@@ -33,27 +46,12 @@ export async function openGlobalThread(app: App, team: Team, root: {id: string})
     return {threads};
 }
 
-/** Opens Channel Info in the RHS (the header button toggles, so only when it isn't already showing). */
-export async function openChannelInfo(app: App) {
-    const header = app.rhs.channelInfo.header.locator;
-    if (!(await header.isVisible())) {
-        await app.channelHeader.clickInfoButton();
-    }
-    await expect(header).toBeVisible();
-    return app.rhs.channelInfo.about.attributes;
-}
-
 /** Opens Channel Settings on its Info tab. */
 export async function openChannelSettingsInfo(app: App) {
     const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
     await settings.tabs.infoTab.select();
     await expect(settings.info.nameTextbox.locator).toBeVisible();
     return settings;
-}
-
-/** A label chip showing the value. */
-export function labelChip(labels: Labels, value: string): Locator {
-    return labels.chipItems.filter({hasText: value});
 }
 
 /** Opens a label row's overflow popover and returns it. */
@@ -146,24 +144,6 @@ export async function add(app: App, attributes: Editable, field: Field, option?:
     if (option !== undefined) {
         await pickOption(app, option);
     }
-}
-
-/** Picks an option by name from an open select list (react-select's menu: options by role and name). */
-export async function pickListOption(app: App, option: string) {
-    await app.page.getByRole('option', {name: option, exact: true}).click();
-}
-
-/** Opens an attribute's control in the new-channel dialog: a select's is the dropdown itself, a graph picker's its button. */
-export async function openAttributeControl(modal: generated.NewChannelModal, field: Field) {
-    const attribute = modal.attributes.attribute(field);
-    await attribute.valueButton.locator.or(attribute.value.locator).click();
-}
-
-/** Opens the new-channel dialog from the sidebar's "+" menu. */
-export async function openNewChannelModal(app: App) {
-    const modal = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickCreateChannelMenuItem();
-    await expect(modal.nameTextbox.locator).toBeVisible();
-    return modal;
 }
 
 type Configuration = generated.ChannelSettingsModalConfiguration;

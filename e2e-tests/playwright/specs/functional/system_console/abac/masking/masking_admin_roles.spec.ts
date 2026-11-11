@@ -388,17 +388,21 @@ test.describe('Attribute-Value Masking - Admin Roles', {tag: ['@abac', '@abac_ma
             const channel = await createPrivateChannel(adminClient, team.id);
             await assignChannelsToPolicy(adminClient, policyId, [channel.id]);
 
-            // # Open the channel's members panel. The enforcement cache is cold on the first request, so reopen it
-            // (after a reload) until the public field's tag shows.
+            // # Wait until the server's answer for the channel holds the public field's value: the policy's
+            // enforcement cache is cold on the first request. The webapp keeps its first answer for five minutes, so
+            // the panel opens only after that.
+            await expect
+                .poll(async () => (await adminClient.getChannelAccessControlAttributes(channel.id))[publicFieldName], {
+                    message: `the channel's access control attributes never listed ${publicFieldName}`,
+                    timeout: pw.duration.one_min,
+                })
+                .toContain('Alpha');
+
+            // # Open the channel's members panel, once
             const app = await openChannel(pw, adminUser, team, channel);
             const {policy} = app.rhs.channelMembers;
-            const publicTag = policy.tag(`${publicFieldName}/Alpha`);
-            await expect(async () => {
-                await app.page.reload();
-                await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
-                await app.channelHeader.clickMembersButton();
-                await expect(publicTag.locator).toBeVisible({timeout: 10_000});
-            }).toPass({timeout: pw.duration.one_min});
+            await app.channelHeader.clickMembersButton();
+            await expect(policy.tag(`${publicFieldName}/Alpha`).locator).toBeVisible();
 
             // * The public field's value shows; the shared_only and source_only ones don't
             await expect(policy.locator).toContainText('Alpha');

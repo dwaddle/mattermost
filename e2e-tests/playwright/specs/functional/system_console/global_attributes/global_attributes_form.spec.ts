@@ -11,7 +11,7 @@
 import type {Locator} from '@playwright/test';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {AdminResource, expect, test, type App} from '@mattermost/playwright-lib';
+import {AdminResource, expect, Msg, test, type App} from '@mattermost/playwright-lib';
 
 import {
     GLOBAL_ATTRIBUTES_ADMIN_PATH,
@@ -1916,7 +1916,12 @@ test.describe('System Console - Global Attributes form', {tag: '@system_console'
                 await expect(page).toHaveURL(new RegExp(`attribute_details/${field.id}$`));
                 // Heading is "Edit {name} Attribute" (attribute_details.tsx's editTitle), not
                 // a static "Edit attribute" -- it includes the attribute's own display name.
-                await expect(page.getByRole('heading', {name: `Edit ${displayName} Attribute`})).toBeVisible();
+                await expect(app.admin.header).toContainMessage(
+                    Msg.admin.global_attributes.attribute_details.edit_title,
+                    {
+                        name: displayName,
+                    },
+                );
                 await expect(app.admin.attribute.displayNameTextbox.locator).toHaveValue(displayName);
                 await expect(app.admin.attribute.uniqueNameText.locator).toHaveText(name);
 

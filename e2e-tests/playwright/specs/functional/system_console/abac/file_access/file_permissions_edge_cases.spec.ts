@@ -3,10 +3,17 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {AdminPermission, expect, test, getRandomId, testConfig, type App} from '@mattermost/playwright-lib';
+import {
+    AdminPermission,
+    expect,
+    getRandomId,
+    openChannel,
+    test,
+    testConfig,
+    type App,
+} from '@mattermost/playwright-lib';
 
 import {concealedPost, reveal} from '../../../channels/burn_on_read/support';
-import {openChannel} from '../../../channels/channel_attributes/surface';
 import {deletePermissionPolicyByName, ensureUserAttributes} from '../support';
 import {createPermissionPolicy, setAbacEnabled} from '../surface';
 
@@ -74,7 +81,7 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
             const {testUser: deniedUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
 
             // # Admin sends a Burn-on-Read message carrying a file
-            const admin = await openChannel(pw, adminUser, team, {name: channelName});
+            const admin = await openChannel(pw, adminUser, {team, channel: {name: channelName}});
             await admin.center.postCreate.clickBurnOnReadButton();
             await expect(admin.center.postCreate.burnOnReadLabel.locator).toBeVisible();
             await postWithFile(admin, adminClient, channelId, 'BOR with file');
@@ -83,7 +90,7 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
             lastPolicyName = await denyDownloads(admin, adminClient, 'BOR');
 
             // # The denied user opens the channel and reveals the concealed message
-            const app = await openChannel(pw, deniedUser, team, {name: channelName});
+            const app = await openChannel(pw, deniedUser, {team, channel: {name: channelName}});
             const {post} = await concealedPost(app);
             await reveal(post);
 
@@ -107,9 +114,9 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
             const {testUser: deniedUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
 
             // # Admin posts a file, then posts a permalink to it in the same channel
-            const admin = await openChannel(pw, adminUser, team, {name: channelName});
+            const admin = await openChannel(pw, adminUser, {team, channel: {name: channelName}});
             const original = await postWithFile(admin, adminClient, channelId, 'original with file');
-            const originalPostId = (await original.locator.getAttribute('data-testid'))!.split(':').pop()!;
+            const originalPostId = original.postId;
 
             // Use testConfig.internalBaseURL rather than the admin client's host-mapped route:
             // the server must recognize this URL as its own SiteURL to embed it through an
@@ -128,7 +135,7 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
             lastPolicyName = await denyDownloads(admin, adminClient, 'Permalink');
 
             // # The denied user opens the channel
-            const app = await openChannel(pw, deniedUser, team, {name: channelName});
+            const app = await openChannel(pw, deniedUser, {team, channel: {name: channelName}});
 
             // * Verify the standalone original post is redacted
             await expectFilesRedacted(await postNamed(app, adminClient, channelId, 'original with file'));
@@ -155,21 +162,21 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
             const {testUser: deniedUser, channelName, channelId} = await setupUserAndChannel(adminClient, team);
 
             // # Admin posts a file
-            const admin = await openChannel(pw, adminUser, team, {name: channelName});
+            const admin = await openChannel(pw, adminUser, {team, channel: {name: channelName}});
             await postWithFile(admin, adminClient, channelId, THREAD_ROOT_MESSAGE);
 
             // # Enable ABAC and deny download for everyone
             lastPolicyName = await denyDownloads(admin, adminClient, 'Thread');
 
             // # The denied user opens the post in a thread
-            const app = await openChannel(pw, deniedUser, team, {name: channelName});
+            const app = await openChannel(pw, deniedUser, {team, channel: {name: channelName}});
             const centerPost = await postNamed(app, adminClient, channelId, THREAD_ROOT_MESSAGE);
             await expectFilesRedacted(centerPost);
             await centerPost.locator.hover();
             await centerPost.menu.clickReplyButton();
 
             // * Verify the thread's copy of the post is redacted as well
-            const rootId = (await centerPost.locator.getAttribute('data-testid'))!.split(':').pop()!;
+            const rootId = centerPost.postId;
             const rhsPost = app.rhs.thread.post({id: rootId});
             await expect(rhsPost.locator).toBeVisible();
             await expectFilesRedacted(rhsPost);
@@ -189,15 +196,15 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
 
         // # Admin posts a file with a searchable, unique term
         const searchTerm = `redactme${getRandomId()}`;
-        const admin = await openChannel(pw, adminUser, team, {name: channelName});
+        const admin = await openChannel(pw, adminUser, {team, channel: {name: channelName}});
         const posted = await postWithFile(admin, adminClient, channelId, searchTerm);
-        const postId = (await posted.locator.getAttribute('data-testid'))!.split(':').pop()!;
+        const postId = posted.postId;
 
         // # Enable ABAC and deny download for everyone
         lastPolicyName = await denyDownloads(admin, adminClient, 'Search');
 
         // # The denied user searches for the post
-        const app = await openChannel(pw, deniedUser, team, {name: channelName});
+        const app = await openChannel(pw, deniedUser, {team, channel: {name: channelName}});
         await app.globalHeader.search.clickOpenButton();
         await app.searchBox.inputSearchbox.locator.fill(searchTerm);
         await app.searchBox.inputSearchbox.locator.press('Enter');

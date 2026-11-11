@@ -6,7 +6,7 @@
 
 import type {Locator, Page} from '@playwright/test';
 
-import {Scope, drivers} from '../../aria';
+import {Scope, drivers, textTestKey} from '../../aria';
 
 import {Api} from './api';
 import {OverflowPopover} from './shared';
@@ -420,9 +420,9 @@ export class ThreadsPaneAttributes extends Scope {
      * `threads.pane.attributes.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
      * Renders only when !(chipSpecs.length === 0) and spec.
      */
-    chip(chip: number) {
-        return drivers.container(this.byTestId(`${this.scope}.chip:${chip}`), {
-            testId: `${this.scope}.chip:${chip}`,
+    chip(chip: string) {
+        return drivers.container(this.byTestId(`${this.scope}.chip:${textTestKey(chip)}`), {
+            testId: `${this.scope}.chip:${textTestKey(chip)}`,
             role: null,
             effects: [],
             unknownEffects: false,

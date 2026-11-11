@@ -6,7 +6,9 @@
  * @reference MM-67326 — public and private channels can carry ABAC membership policies
  */
 
-import {expect, test} from '@mattermost/playwright-lib';
+import type {Client4} from '@mattermost/client';
+
+import {Api, expect, test} from '@mattermost/playwright-lib';
 
 import {
     enableABACConfig,
@@ -31,6 +33,19 @@ import {waitForJobCompletion} from './helpers';
 /** Unique CPA value so only users this test sets match the rule (avoids clashing with leftover Engineering users on the server). */
 function uniqueDepartmentValue(testId: string): string {
     return `E2E-${testId}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+/** Whether the user is a member of the channel: a 404 means not (yet); any other error fails the poll at once. */
+async function isChannelMember(client: Client4, channelId: string, userId: string) {
+    try {
+        await client.getChannelMember(channelId, userId);
+        return true;
+    } catch (error) {
+        if ((error as {status_code?: number}).status_code === 404) {
+            return false;
+        }
+        throw error;
+    }
 }
 
 test.describe('Channel Settings Modal - Access Control Tab', () => {
@@ -256,17 +271,10 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
 
         // * Target user becomes a channel member (sync job runs asynchronously)
         await expect
-            .poll(
-                async () => {
-                    try {
-                        await adminClient.getChannelMember(channel.id, targetUser.id);
-                        return true;
-                    } catch {
-                        return false;
-                    }
-                },
-                {timeout: 30000},
-            )
+            .poll(() => isChannelMember(adminClient, channel.id, targetUser.id), {
+                timeout: 30000,
+                message: `${targetUser.username} should be added to the channel`,
+            })
             .toBe(true);
 
         await closeSettings(settings);
@@ -491,40 +499,19 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
 
         // # Confirm ("Save", auto-add being off) and wait for the access-control sync job that applies the removal
         await expect(confirm.confirmButton.locator).toHaveText('Save');
-        const [syncJobResponse] = await Promise.all([
-            app.page.waitForResponse(
-                (response) => response.url().includes('/api/v4/jobs') && response.request().method() === 'POST',
-                {timeout: duration.ten_sec},
-            ),
-            confirm.clickConfirmButton(),
-        ]);
+        const syncJob = await confirm.confirmButton.commit({wait: Api.CreateJob});
         await expect(confirm.confirmButton.locator).not.toBeVisible();
-
-        if (!syncJobResponse.ok()) {
-            throw new Error(`Failed to create access-control sync job: ${syncJobResponse.status()}`);
-        }
-        const syncJob = await syncJobResponse.json();
-        const syncJobId = syncJob.id as string;
+        const syncJobId = syncJob.id;
         const finished = await waitForJobCompletion(adminClient, syncJobId, {timeoutMs: 90_000});
         expect(finished.status, `sync job did not succeed: ${JSON.stringify(finished)}`).toBe('success');
 
         // * memberToRemove is no longer a channel member
         await expect
-            .poll(
-                async () => {
-                    try {
-                        await adminClient.getChannelMember(channel.id, memberToRemove.id);
-                        return true;
-                    } catch {
-                        return false;
-                    }
-                },
-                {
-                    timeout: 15000,
-                    intervals: [500, 1000, 1000, 2000],
-                    message: `${memberToRemove.username} should be removed from the channel`,
-                },
-            )
+            .poll(() => isChannelMember(adminClient, channel.id, memberToRemove.id), {
+                timeout: 15000,
+                intervals: [500, 1000, 1000, 2000],
+                message: `${memberToRemove.username} should be removed from the channel`,
+            })
             .toBe(false);
 
         await closeSettings(settings);

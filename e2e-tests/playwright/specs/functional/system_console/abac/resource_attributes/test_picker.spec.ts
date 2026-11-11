@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {Api, expect, settle, test} from '@mattermost/playwright-lib';
 
 import {
     deleteCustomProfileAttributes,
@@ -118,12 +118,10 @@ test.describe('ABAC resource.attributes - test picker', {tag: ['@abac', '@abac_r
         // Wait for the search round-trip before asserting absence: the previous
         // row is cleared the moment the term changes, so toHaveCount(0) would
         // pass on that intermediate empty render even if userEU were admitted.
-        const euSearch = app.page.waitForResponse(
-            (r) => r.url().includes('/access_control_policies/cel/test') && r.request().method() === 'POST',
-            {timeout: 15000},
-        );
-        await users.fillSearchTextbox(userEU.username);
-        await euSearch;
+        await settle(users.searchTextbox, (box) => box.fill(userEU.username), {
+            wait: Api.TestAccessControlPolicyExpression,
+            unlisted: true,
+        });
         await expect(users.user(userEU).locator).toHaveCount(0);
 
         // # The back arrow returns to the picker (only present because it preceded)

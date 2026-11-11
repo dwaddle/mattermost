@@ -4,7 +4,16 @@
 import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 
-import {AdminOperator, expect, generated, newTestPassword, test, type App} from '@mattermost/playwright-lib';
+import {
+    AdminOperator,
+    Api,
+    expect,
+    generated,
+    newTestPassword,
+    settle,
+    test,
+    type App,
+} from '@mattermost/playwright-lib';
 
 import {
     createPrivateTeam,
@@ -904,9 +913,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         const {teams} = app.admin;
 
         // # Search for the team
-        const searchDone = app.page.waitForResponse((resp) => resp.url().includes('/teams/search'));
-        await teams.fillSearchTextbox(team.display_name);
-        await searchDone;
+        await settle(teams.searchTextbox, (box) => box.fill(team.display_name), {wait: Api.SearchTeams});
 
         // * Its management column reads "Attribute Based"
         await expect(teams.row(team.id).cell('management').locator).toHaveText('Attribute Based');

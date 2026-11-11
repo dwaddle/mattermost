@@ -24,11 +24,11 @@ import {setChannelAttributeValue} from './set_channel_attribute_value';
 const T = 'channel_header.attributes';
 
 // The row's own chips, not the ones repeated in the overflow popover.
-const CHIP = /^channel_header\.attributes\.chip:\d+$/;
+const CHIP = /^channel_header\.attributes\.chip:[^:]+$/;
 
 // The RHS thread header, and the Global Threads pane (where the chips are not interactive).
 const RHS_THREAD = 'rhs.thread.header.attributes';
-const RHS_THREAD_CHIP = /^rhs\.thread\.header\.attributes\.chip:\d+$/;
+const RHS_THREAD_CHIP = /^rhs\.thread\.header\.attributes\.chip:[^:]+$/;
 const THREAD_PANE = 'threads.pane.attributes';
 
 jest.mock('mattermost-redux/actions/properties', () => ({
@@ -412,7 +412,7 @@ describe('ChannelAttributeLabels', () => {
             makeState([field('program')]),
         );
 
-        await userEvent.click(await screen.findByTestId(`${T}.chip:0`));
+        await userEvent.click(await screen.findByTestId(`${T}.chip:program`));
         expect(showChannelInfo).toHaveBeenCalledWith(CHANNEL_ID);
     });
 
@@ -435,7 +435,7 @@ describe('ChannelAttributeLabels', () => {
         });
 
         const popover = await screen.findByTestId(`${T}.overflow_popover`);
-        await userEvent.click(within(popover).getByTestId(`${T}.overflow_popover.chip:1`));
+        await userEvent.click(within(popover).getByTestId(`${T}.overflow_popover.chip:b`));
         expect(showChannelInfo).toHaveBeenCalledWith(CHANNEL_ID);
     });
 
@@ -650,7 +650,7 @@ describe('ChannelAttributeLabels', () => {
             makeState([field('a'), field('b'), field('c')]),
         );
 
-        const chip = await screen.findByTestId(`${THREAD_PANE}.chip:0`);
+        const chip = await screen.findByTestId(`${THREAD_PANE}.chip:a`);
         expect(chip.closest('button')).toBeNull();
         await userEvent.click(chip);
 

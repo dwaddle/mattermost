@@ -10,9 +10,17 @@
  * which is what these tests exercise.
  */
 
-import {AdminLocation, expect, test, getAdminClient} from '@mattermost/playwright-lib';
+import {
+    AdminLocation,
+    expect,
+    getAdminClient,
+    labelChip,
+    openChannel,
+    openNewChannelModal,
+    pickListOption,
+    test,
+} from '@mattermost/playwright-lib';
 
-import {labelChip, openChannel, openNewChannelModal, pickListOption} from '../../channels/channel_attributes/surface';
 import {
     deleteClassificationFieldsIfExist,
     setupClassificationWithChannelField,
@@ -93,7 +101,7 @@ test.describe(
                 {field_id: channelField!.id, value: levels[0].id},
             ] as Parameters<typeof adminClient.patchPropertyValues>[3]);
 
-            const app = await openChannel(pw, user, team, channel);
+            const app = await openChannel(pw, user, {team, channel});
 
             // * The header carries the chip the console asked for
             await expect(labelChip(app.channelHeader.attributes, levels[0].name)).toBeVisible();
@@ -113,7 +121,7 @@ test.describe(
             const {levels, channelFieldId} = await setupClassificationWithChannelField(adminClient);
             const {team} = await pw.initSetup();
 
-            let app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+            let app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
 
             // * Optional attributes are not asked for at creation, so Create is free
             let modal = await openNewChannelModal(app);
@@ -130,7 +138,7 @@ test.describe(
             await expect(settings.requiredSwitch.locator).toBeChecked();
             await saveInPlace(app);
 
-            app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+            app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
             modal = await openNewChannelModal(app);
             await modal.fillNameTextbox(`Required Classification ${pw.random.id()}`);
 
@@ -174,7 +182,7 @@ test.describe(
             await classification.appliesTo.channel.settings.location(AdminLocation.DisplayLabelHeader).check();
             await saveInPlace(admin);
 
-            const app = await openChannel(pw, user, team, channel);
+            const app = await openChannel(pw, user, {team, channel});
 
             // * The Header location took effect, and there is no banner even though
             // * the channel has a classification

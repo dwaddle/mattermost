@@ -80,7 +80,7 @@ export async function postWithFile(app: App, client: Client4, channelId: string,
     return postNamed(app, client, channelId, message);
 }
 
-/** The center post showing `message` (found through the API: other posts arrive around it). */
+/** The center post showing `message`, and its id (found through the API: other posts arrive around it). */
 export async function postNamed(app: App, client: Client4, channelId: string, message: string) {
     let id = '';
     await expect
@@ -92,7 +92,7 @@ export async function postNamed(app: App, client: Client4, channelId: string, me
         .not.toBe('');
     const post = app.center.postList.post({id});
     await expect(post.locator).toContainText(message);
-    return post;
+    return Object.assign(post, {postId: id});
 }
 
 /** A post (or a permalink preview, which carries the same parts) with attachments. */

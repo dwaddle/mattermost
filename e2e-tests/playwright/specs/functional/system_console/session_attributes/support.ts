@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, generated, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {Api, expect, generated, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 export const SESSION_ATTRIBUTES_GROUP = 'session_attributes';
 export const SESSION_ATTRIBUTES_OBJECT_TYPE = 'session';
@@ -63,7 +63,6 @@ export async function setupSessionAttributesTest(pw: PlaywrightExtended): Promis
 }
 
 const SESSION_ATTRIBUTES_PATH = `${generated.AdminConsolePage.path()}/system_attributes/session_attributes`;
-const PATCH_FIELD_URL_FRAGMENT = '/properties/groups/session_attributes/session/fields/';
 
 /** Opens System Console > Session Attributes, waiting for its rows. */
 export async function openSessionAttributes(app: App) {
@@ -121,11 +120,7 @@ export async function choosePreset(app: App, field: {id: string}, kind: 'ttl' | 
 export async function saveAndSettle(app: App) {
     const save = app.admin.sessionAttributes.savePanel.saveButton;
     await expect(save.locator).toBeEnabled();
-    const patched = app.page.waitForResponse(
-        (resp) => resp.url().includes(PATCH_FIELD_URL_FRAGMENT) && resp.request().method() === 'PATCH',
-    );
-    await save.click();
-    await patched;
+    await save.commit({wait: Api.UpdatePropertyField, params: {group_name: 'session_attributes'}});
     await expect(save.locator).toBeDisabled({timeout: 10000});
 }
 

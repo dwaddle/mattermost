@@ -555,9 +555,9 @@ test.describe('Channel attribute editing', {tag: ['@channel_attributes']}, () =>
 
             // * No Clear menu item — clear lives on the chip
             await startEditing(info.attributes, marking);
-            const options = row(info.attributes, marking).editMenu.optionItems;
-            await expect(options.filter({hasText: 'SECRET'})).toBeVisible();
-            await expect(options.filter({hasText: /^Clear /})).toHaveCount(0);
+            const {editMenu} = row(info.attributes, marking);
+            await expect(editMenu.option('SECRET').locator).toBeVisible();
+            expect(await editMenu.optionKeys()).not.toContainEqual(expect.stringMatching(/^Clear /));
             await app.page.keyboard.press('Escape');
 
             // # Clear it from the chip remove control

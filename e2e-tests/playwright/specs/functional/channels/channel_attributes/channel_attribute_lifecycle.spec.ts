@@ -117,14 +117,14 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
 
             const app = await openChannel(pw, user, team, channel);
 
-            const chips = app.channelHeader.attributes.chipItems;
-            await expect(chips.filter({hasText: 'BEFORE'}).first()).toBeVisible();
+            // the header shows one chip per field, keyed by the field's id
+            const chip = app.channelHeader.attributes.chip(program.id).locator;
+            await expect(chip).toHaveText('BEFORE');
 
             // Changed elsewhere, this session untouched.
             await setChannelValue(adminClient, channel.id, program, optionId(program, 'AFTER'));
 
-            await expect(chips.filter({hasText: 'AFTER'}).first()).toBeVisible();
-            await expect(chips.filter({hasText: 'BEFORE'})).toHaveCount(0);
+            await expect(chip).toHaveText('AFTER');
 
             // The shape most easily got wrong: a clear returns a null-valued row,
             // not a delete event.

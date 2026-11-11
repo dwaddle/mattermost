@@ -4,6 +4,17 @@
 // Flows: short sequences on the generated page objects that many specs share. They act and wait for elements
 // (`locator.waitFor()`); specs assert.
 
+export {
+    attributeRow,
+    attributeValue,
+    labelChip,
+    openAttributeControl,
+    openChannelInfo,
+    openNewChannelModal,
+    pickListOption,
+    type AttributeLabels,
+    type EditableAttributes,
+} from './attributes';
 export {calendarDayKey, pickDate, showMonth, type Calendar} from './calendar';
 export {removeChip} from './chips';
 export {openChannel} from './channels';

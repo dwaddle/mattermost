@@ -54,6 +54,7 @@ test('MM-T5786 Test "is not" (!=) operator in Simple mode', async ({pw}) => {
     const policyId = await policyIdByName(adminClient, policyName);
 
     await expectAccessTest(app, await openPolicy(app, policyId), {
+        client: adminClient,
         matching: [engineerUser],
         notMatching: [salesUser],
     });
@@ -112,6 +113,7 @@ test('MM-T5786 Test "in" operator in Simple mode', async ({pw}) => {
     const policyId = await policyIdByName(adminClient, policyName);
 
     await expectAccessTest(app, await openPolicy(app, policyId), {
+        client: adminClient,
         matching: [engineerUser],
         notMatching: [salesUser],
     });
@@ -172,6 +174,7 @@ test('MM-T5786 Test "starts with" operator in Simple mode', async ({pw}) => {
     const policyId = await policyIdByName(adminClient, policyName);
 
     await expectAccessTest(app, await openPolicy(app, policyId), {
+        client: adminClient,
         matching: [engineerUser],
         notMatching: [salesUser],
     });
