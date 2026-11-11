@@ -36,30 +36,30 @@ test('/reset_password accessibility tab support', async ({pw, page}) => {
     await expect(passwordReset.emailTextbox.locator).toBeFocused();
 
     // * Should move focus to reset button after tab
-    await passwordReset.emailTextbox.locator.press('Tab');
+    await passwordReset.emailTextbox.press('Tab');
     await expect(passwordReset.sendButton.locator).toBeFocused();
 
     // * Should move focus to about link after tab
-    await passwordReset.sendButton.locator.press('Tab');
+    await passwordReset.sendButton.press('Tab');
     await expect(footer.aboutLink.locator).toBeFocused();
 
     // * Should move focus to privacy policy link after tab
-    await footer.aboutLink.locator.press('Tab');
+    await footer.aboutLink.press('Tab');
     await expect(footer.privacyLink.locator).toBeFocused();
 
     // * Should move focus to terms link after tab
-    await footer.privacyLink.locator.press('Tab');
+    await footer.privacyLink.press('Tab');
     await expect(footer.termsLink.locator).toBeFocused();
 
     // * Should move focus to help link after tab
-    await footer.termsLink.locator.press('Tab');
+    await footer.termsLink.press('Tab');
     await expect(footer.helpLink.locator).toBeFocused();
 
     // # Move focus to email input
-    await passwordReset.emailTextbox.locator.focus();
+    await passwordReset.emailTextbox.focus();
     await expect(passwordReset.emailTextbox.locator).toBeFocused();
 
     // * Should move focus to back button after shift+tab
-    await passwordReset.emailTextbox.locator.press('Shift+Tab');
+    await passwordReset.emailTextbox.press('Shift+Tab');
     await expect(passwordReset.backLink.locator).toBeFocused();
 });

@@ -37,47 +37,47 @@ test('/signup_user_complete accessibility tab support', async ({pw, page}, testI
     await expect(card.emailTextbox.locator).toBeFocused();
 
     // * Should move focus to username input after tab
-    await card.emailTextbox.locator.press('Tab');
+    await card.emailTextbox.press('Tab');
     await expect(card.usernameTextbox.locator).toBeFocused();
 
     // * Should move focus to password input after tab
-    await card.usernameTextbox.locator.press('Tab');
+    await card.usernameTextbox.press('Tab');
     await expect(card.passwordTextbox.locator).toBeFocused();
 
     // * Should move focus to password toggle button after tab
-    await card.passwordTextbox.locator.press('Tab');
+    await card.passwordTextbox.press('Tab');
     await expect(card.password.toggleButton.locator).toBeFocused();
 
     // * Should move focus to terms and privacy checkbox after tab
-    await card.password.toggleButton.locator.press('Tab');
+    await card.password.toggleButton.press('Tab');
     await expect(card.termsCheckbox.locator).toBeFocused();
 
     // * Should move focus to acceptable use policy link after tab
-    await card.termsCheckbox.locator.press('Tab');
+    await card.termsCheckbox.press('Tab');
     await expect(card.acceptableUsePolicyLink.locator).toBeFocused();
 
     // * Should move focus to privacy policy link after tab
-    await card.acceptableUsePolicyLink.locator.press('Tab');
+    await card.acceptableUsePolicyLink.press('Tab');
     await expect(card.privacyPolicyLink.locator).toBeFocused();
 
     // * Should move focus to about link after tab (skips disabled create account button)
-    await card.privacyPolicyLink.locator.press('Tab');
+    await card.privacyPolicyLink.press('Tab');
     await expect(footer.aboutLink.locator).toBeFocused();
 
     // * Should move focus to privacy policy link after tab
-    await footer.aboutLink.locator.press('Tab');
+    await footer.aboutLink.press('Tab');
     await expect(footer.privacyLink.locator).toBeFocused();
 
     // * Should move focus to terms link after tab
-    await footer.privacyLink.locator.press('Tab');
+    await footer.privacyLink.press('Tab');
     await expect(footer.termsLink.locator).toBeFocused();
 
     // * Should move focus to help link after tab
-    await footer.termsLink.locator.press('Tab');
+    await footer.termsLink.press('Tab');
     await expect(footer.helpLink.locator).toBeFocused();
 
     // # Move focus to email input
-    await card.emailTextbox.locator.focus();
+    await card.emailTextbox.focus();
     await expect(card.emailTextbox.locator).toBeFocused();
 
     const loginLink = app.signup.alternate.actionLink.locator;
@@ -87,7 +87,7 @@ test('/signup_user_complete accessibility tab support', async ({pw, page}, testI
         await expect(header.backLink.locator).toBeFocused();
 
         // * Should move focus to log in link after shift+tab
-        await header.backLink.locator.press('Shift+Tab');
+        await header.backLink.press('Shift+Tab');
         await expect(loginLink).toBeFocused();
 
         // * Should move focus to header logo after shift+tab
@@ -103,7 +103,7 @@ test('/signup_user_complete accessibility tab support', async ({pw, page}, testI
         await expect(header.backLink.locator).toBeFocused();
 
         // * Should move focus to header logo after shift+tab
-        await header.backLink.locator.press('Shift+Tab');
+        await header.backLink.press('Shift+Tab');
         await expect(header.logoLink.locator).toBeFocused();
     }
 });

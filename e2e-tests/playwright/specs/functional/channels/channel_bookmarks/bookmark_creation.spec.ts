@@ -23,7 +23,7 @@ test('MM-T5600 MM-T5601 shows the Bookmarks Bar option in the channel menu', {ta
     await expect(menu.bookmarksMenuItem.locator).toBeVisible();
 
     // # Open the Bookmarks Bar submenu
-    await menu.bookmarksMenuItem.locator.hover();
+    await menu.bookmarksMenuItem.hover();
 
     // * The "Add a link" action is available
     await expect(menu.bookmarks.addLinkMenuItem.locator).toBeVisible();
@@ -40,7 +40,7 @@ test('MM-T5602 adds a link bookmark to the channel bookmarks bar', {tag: '@chann
 
     // # Open the Bookmarks Bar submenu from the channel menu and choose "Add a link"
     const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.bookmarksMenuItem.locator.hover();
+    await menu.bookmarksMenuItem.hover();
     const dialog = await menu.bookmarks.clickAddLinkMenuItem();
 
     // # Enter a link and add the bookmark
@@ -65,7 +65,7 @@ test('MM-T5603 adds a file bookmark to the channel bookmarks bar', {tag: '@chann
 
     // # Open the Bookmarks Bar submenu and choose "Attach a file", selecting a file
     const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.bookmarksMenuItem.locator.hover();
+    await menu.bookmarksMenuItem.hover();
     const fileChooserPromise = page.waitForEvent('filechooser');
     const dialog = await menu.bookmarks.clickAttachFileMenuItem();
     const fileChooser = await fileChooserPromise;

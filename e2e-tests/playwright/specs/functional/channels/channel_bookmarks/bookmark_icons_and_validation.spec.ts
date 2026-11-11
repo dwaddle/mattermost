@@ -80,7 +80,7 @@ test('MM-T5608 rejects an invalid bookmark URL', {tag: '@channels'}, async ({pw}
 
     // # Open Add bookmark and enter invalid URL text
     const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.bookmarksMenuItem.locator.hover();
+    await menu.bookmarksMenuItem.hover();
     const dialog = await menu.bookmarks.clickAddLinkMenuItem();
     await dialog.fillLinkTextbox('this is not a URL');
 

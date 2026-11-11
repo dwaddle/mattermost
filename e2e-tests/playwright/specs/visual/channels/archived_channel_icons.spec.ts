@@ -105,7 +105,7 @@ test(
         await expect(channels.searchTextbox.locator).toBeVisible();
 
         // # Search for our test channels to bring them into view
-        await channels.searchTextbox.locator.fill('Admin');
+        await channels.searchTextbox.fill('Admin');
         await expect(channels.row(publicChannel.id).icon.locator).toBeVisible();
         await expect(channels.row(privateChannel.id).icon.locator).toBeVisible();
 

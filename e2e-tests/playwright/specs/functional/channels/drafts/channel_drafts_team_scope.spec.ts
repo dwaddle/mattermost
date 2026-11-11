@@ -47,7 +47,7 @@ test('MM-T4410 Channel Drafts are scoped to current active team', {tag: '@messag
 
     // * Town Square shows a pencil icon for the draft
     // (move the mouse off the sidebar first: the pencil is hidden while its row is hovered)
-    await composer.messageTextbox.locator.hover();
+    await composer.messageTextbox.hover();
     await expect(channels.channel(team1TownSquare).draftText.locator).toBeVisible();
 
     // # Switch to Team2
@@ -70,7 +70,7 @@ test('MM-T4410 Channel Drafts are scoped to current active team', {tag: '@messag
     await expect(app.lhs.drafts.draftBadgeText.locator).toHaveText('1');
 
     // * Off-Topic on Team2 shows a pencil icon for the draft
-    await composer.messageTextbox.locator.hover();
+    await composer.messageTextbox.hover();
     await expect(channels.channel(team2OffTopic).draftText.locator).toBeVisible();
 
     // # Open global Drafts on Team2

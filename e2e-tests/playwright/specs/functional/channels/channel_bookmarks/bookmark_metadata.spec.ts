@@ -14,7 +14,7 @@ test('MM-T5604 auto-fills the bookmark title from the entered link', {tag: '@cha
 
     // # Open the bookmark dialog from the channel menu's Bookmarks Bar submenu
     const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.bookmarksMenuItem.locator.hover();
+    await menu.bookmarksMenuItem.hover();
     const dialog = await menu.bookmarks.clickAddLinkMenuItem();
 
     // # Enter a link

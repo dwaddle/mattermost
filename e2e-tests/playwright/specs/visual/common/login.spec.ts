@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openLogin, test} from '@mattermost/playwright-lib';
+import {expect, openLogin, test, Msg} from '@mattermost/playwright-lib';
 
 /**
  * @objective Capture visual snapshots of the login page in normal and error states
@@ -18,7 +18,7 @@ test(
         const app = await openLogin(pw, page);
 
         // # Click to other element to remove focus from email input
-        await app.login.loginIdTextbox.locator.blur();
+        await app.login.loginIdTextbox.blur();
 
         // # Get license information and prepare test args
         const testArgs = {page, browserName, viewport};
@@ -30,7 +30,7 @@ test(
 
         // # Click sign in button without entering user credential
         await app.login.card.clickLogInButton();
-        await expect(app.login.banner.locator).toContainText('Please enter your email or username');
+        await expect(app.login.banner.locator).toContainMessage(Msg.login.noEmailUsername);
 
         // * Verify login page with error appears as expected
         await pw.matchSnapshot({...testInfo, title: `${testInfo.title} error ${editionSuffix}`}, testArgs);

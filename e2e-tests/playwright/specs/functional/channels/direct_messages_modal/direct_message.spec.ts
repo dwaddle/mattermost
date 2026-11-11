@@ -45,10 +45,10 @@ test('MM-T458 Edit direct message channel header', {tag: '@direct_messages'}, as
     // # Add a multiline header, saving with Enter
     const expectedHeader = 'This is a line\n\nThis is another line';
     // (the add button shows only while the pointer is over the channel header)
-    await app.channelHeader.openMenuButton.locator.hover();
+    await app.channelHeader.openMenuButton.hover();
     const editor = await app.channelHeader.clickAddHeaderButton();
-    await editor.headerTextbox.locator.fill(expectedHeader);
-    await editor.headerTextbox.locator.press('Enter');
+    await editor.headerTextbox.fill(expectedHeader);
+    await editor.headerTextbox.press('Enter');
     await expect(editor.headerTextbox.locator).not.toBeVisible();
 
     // * Verify the header shows the text and its popover is closed

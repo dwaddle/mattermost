@@ -47,7 +47,7 @@ test('MM-T460 Add and remove users while creating new Group Message', {tag: '@di
     await expect(picker.helpText.locator).toContainText('You can add 5 more people');
 
     // # Remove the last selected user with Backspace in the empty search box
-    await picker.searchCombobox.locator.press('Backspace');
+    await picker.searchCombobox.press('Backspace');
 
     // * The last user is removed, and the counter reflects it
     await expect(picker.remove(participants[2].id).locator).toHaveCount(0);

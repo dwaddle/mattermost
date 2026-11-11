@@ -27,8 +27,8 @@ async function addFileBookmark(pw: PlaywrightExtended, client: Client4, channelI
 /** Searches for the sample file's name and shows the Files results. */
 async function searchFiles(app: App) {
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(fileName);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(fileName);
+    await app.searchBox.inputSearchbox.press('Enter');
     await app.search.tabs.filesTab.select();
 }
 

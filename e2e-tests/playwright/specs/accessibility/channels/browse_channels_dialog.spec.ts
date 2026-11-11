@@ -60,7 +60,7 @@ test(
 
         // # Focus on Create Channel button and tab through elements
         // Tab order: Close → Search → Channel type filter → Hide Archived → Hide Joined → first channel
-        await dialog.createChannelButton.locator.focus();
+        await dialog.createChannelButton.focus();
         await page.keyboard.press('Tab');
         await page.keyboard.press('Tab');
         await page.keyboard.press('Tab');

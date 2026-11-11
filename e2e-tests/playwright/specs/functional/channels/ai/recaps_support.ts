@@ -109,7 +109,7 @@ export class CreateRecapDialog {
     }
 
     async selectScheduleDay(day: ScheduleDay) {
-        await this.modal.schedule.day(day).locator.click();
+        await this.modal.schedule.day(day).toggle();
     }
 
     async selectAgent(agentName: string) {
@@ -198,8 +198,8 @@ export class RecapItem {
 
     async expectProcessing() {
         const processing = this.app.recaps.processing({id: await this.id()});
-        await expect(processing.locator).toContainText("Recap created. You'll receive a summary shortly");
-        await expect(processing.locator).toContainText("We're working on your recap. Check back shortly");
+        await expect(processing.locator).toContainMessage(Msg.recaps.processing.subtitle);
+        await expect(processing.locator).toContainMessage(Msg.recaps.processing.message);
     }
 
     async expectFailed() {
@@ -391,7 +391,7 @@ export class RecapsUi {
     /** Confirms a delete dialog, and waits for it to close. */
     async confirmDelete(dialog: generated.ConfirmModal) {
         await expect(dialog.confirmButton.locator).toBeVisible();
-        await dialog.confirmButton.locator.click();
+        await dialog.confirmButton.click();
         await expect(dialog.confirmButton.locator).not.toBeVisible({timeout: duration.ten_sec});
     }
 
