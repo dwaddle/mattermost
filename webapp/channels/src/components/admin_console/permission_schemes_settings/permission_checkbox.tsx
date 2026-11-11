@@ -3,6 +3,7 @@
 
 import React, {type JSX} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import CheckboxCheckedIcon from 'components/widgets/icons/checkbox_checked_icon';
@@ -19,7 +20,7 @@ const PermissionCheckbox = ({value = '', testIdScope}: Props): JSX.Element => {
     let extraClass = '';
     if (value === 'checked') {
         icon = (
-            <span data-testid={testIdScope ? `${testIdScope}.checked` : undefined}>
+            <span data-testid={part(testIdScope, 'checked')}>
                 <CheckboxCheckedIcon/>
             </span>
         );

@@ -5,6 +5,7 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
@@ -168,7 +169,7 @@ export default class UserGridRoleDropdown extends React.PureComponent<Props> {
             >
                 <button
                     id={`userGridRoleDropdown_${user.username}`}
-                    data-testid={`${testIdScope}.role--button`}
+                    data-testid={part(testIdScope, 'role', 'button')}
                     className='dropdown-toggle theme color--link style--none'
                     type='button'
                     aria-expanded='true'
@@ -178,16 +179,16 @@ export default class UserGridRoleDropdown extends React.PureComponent<Props> {
                 </button>
                 <Menu
                     ariaLabel={ariaLabel}
-                    testId={`${testIdScope}.role_menu`}
+                    testId={part(testIdScope, 'role_menu')}
                 >
                     <Menu.ItemAction
-                        testId={`${testIdScope}.role_menu.make_admin`}
+                        testId={part(testIdScope, 'role_menu.make_admin')}
                         show={showMakeAdmin}
                         onClick={this.handleMakeAdmin}
                         text={makeAdmin}
                     />
                     <Menu.ItemAction
-                        testId={`${testIdScope}.role_menu.make_member`}
+                        testId={part(testIdScope, 'role_menu.make_member')}
                         show={showMakeMember}
                         onClick={this.handleMakeUser}
                         text={makeMember}

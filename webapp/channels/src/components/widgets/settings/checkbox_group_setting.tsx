@@ -5,6 +5,7 @@ import React, {memo, useCallback} from 'react';
 import type {ChangeEventHandler} from 'react';
 
 import {Checkbox} from '@mattermost/compass-ui/components/checkbox';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Setting from './setting';
@@ -80,7 +81,7 @@ const CheckboxGroupSetting = ({
                         >
                             <Checkbox
                                 className={labelBeforeClass}
-                                data-testid={testIdScope ? `${testIdScope}.choice:${optionValue}--checkbox` : undefined}
+                                data-testid={part(testIdScope, 'choice', {key: optionValue}, 'checkbox')}
                                 value={optionValue}
                                 name={id}
                                 checked={selected.includes(optionValue)}

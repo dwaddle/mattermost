@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -31,14 +32,14 @@ const UserGridName = ({
 
             <div
                 className='UserGrid_name'
-                data-testid={`${testIdScope}.name`}
+                data-testid={part(testIdScope, 'name')}
             >
-                <span data-testid={`${testIdScope}.display_name--text`}>
+                <span data-testid={part(testIdScope, 'display_name', 'text')}>
                     {`${user.username} - ${user.first_name} ${user.last_name}`}
                 </span>
                 <span
                     className='ug-email'
-                    data-testid={`${testIdScope}.email--text`}
+                    data-testid={part(testIdScope, 'email', 'text')}
                 >
                     {user.email}
                 </span>

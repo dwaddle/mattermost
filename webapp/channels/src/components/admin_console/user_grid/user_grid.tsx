@@ -4,6 +4,7 @@
 import React, {type JSX} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
@@ -199,7 +200,7 @@ export default class UserGrid extends React.PureComponent<Props, State> {
                     name: (
                         <UserGridName
                             user={user}
-                            testIdScope={`${testIdScope}.row`}
+                            testIdScope={part(testIdScope, 'row')}
                         />
                     ),
                     new: includeUsers[user.id] ? (
@@ -220,7 +221,7 @@ export default class UserGrid extends React.PureComponent<Props, State> {
                             handleUpdateMembership={this.updateMembership}
                             scope={scope}
                             isDisabled={readOnly}
-                            testIdScope={`${testIdScope}.row`}
+                            testIdScope={part(testIdScope, 'row')}
                         />
                     ),
                     remove: (
@@ -228,7 +229,7 @@ export default class UserGrid extends React.PureComponent<Props, State> {
                             user={user}
                             removeUser={this.removeUser}
                             isDisabled={readOnly}
-                            testIdScope={`${testIdScope}.row`}
+                            testIdScope={part(testIdScope, 'row')}
                         />
                     ),
                 },

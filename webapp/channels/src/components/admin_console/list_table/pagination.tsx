@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import PaginationButtons from 'components/common/pagination_buttons';
@@ -31,8 +32,8 @@ export function Pagination(props: Props) {
             disablePrevious={props.disablePrevPage}
             disableNext={props.disableNextPage}
             isLoading={props.isLoading}
-            previousButtonTestId={props.testIdScope && `${props.testIdScope}.previous--button`}
-            nextButtonTestId={props.testIdScope && `${props.testIdScope}.next--button`}
+            previousButtonTestId={part(props.testIdScope, 'previous', 'button')}
+            nextButtonTestId={part(props.testIdScope, 'next', 'button')}
         />
     );
 }

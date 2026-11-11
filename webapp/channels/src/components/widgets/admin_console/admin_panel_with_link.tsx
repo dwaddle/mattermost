@@ -7,6 +7,7 @@ import {FormattedMessage} from 'react-intl';
 import {Link} from 'react-router-dom';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import AdminPanel from './admin_panel';
@@ -45,7 +46,7 @@ const AdminPanelWithLink = ({
         >
             <Link
                 to={url}
-                data-testid={`${testId}.action--link`}
+                data-testid={part(testId, 'action', 'link')}
             >
                 <FormattedMessage
                     {...linkText}

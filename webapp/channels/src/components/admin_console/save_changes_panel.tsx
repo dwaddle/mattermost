@@ -5,6 +5,7 @@ import React, {type JSX} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import BlockableLink from 'components/admin_console/blockable_link';
@@ -51,7 +52,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                 saving={saving}
                 disabled={isDisabled || !saveNeeded}
                 onClick={onClick}
-                testId={testId ? `${testId}.save` : undefined}
+                testId={part(testId, 'save')}
                 savingMessage={savingMessage ?? formatMessage({id: 'admin.team_channel_settings.saving', defaultMessage: 'Saving Config...'})}
             />
             {showCancel && (
@@ -63,7 +64,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                     >
                         <BlockableLink
                             to={cancelLink}
-                            data-testid={testId ? `${testId}.cancel--link` : undefined}
+                            data-testid={part(testId, 'cancel', 'link')}
                         >
                             {cancelLabel}
                         </BlockableLink>
@@ -71,7 +72,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                 ) : (
                     <Button
                         id='cancelButtonSettings'
-                        data-testid={testId ? `${testId}.cancel--button` : undefined}
+                        data-testid={part(testId, 'cancel', 'button')}
                         type='button'
                         emphasis='tertiary'
                         onClick={() => onCancel?.()}

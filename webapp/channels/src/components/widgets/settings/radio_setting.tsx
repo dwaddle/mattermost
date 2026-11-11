@@ -8,6 +8,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {Radio} from '@mattermost/compass-ui/components/radio';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Setting from './setting';
@@ -77,7 +78,7 @@ const RadioSetting = ({
                         return (
                             <Radio
                                 key={option}
-                                data-testid={testIdScope ? `${testIdScope}.option:${option}--radio` : undefined}
+                                data-testid={part(testIdScope, 'option', {key: option}, 'radio')}
                                 className={radioClassName}
                                 value={option}
                                 name={id}
@@ -96,7 +97,7 @@ const RadioSetting = ({
                     type='button'
                     emphasis='quaternary'
                     size='small'
-                    data-testid={testIdScope ? `${testIdScope}.clear--button` : undefined}
+                    data-testid={part(testIdScope, 'clear', 'button')}
                     className='radio-setting__clear'
                     onClick={handleClear}
                 >

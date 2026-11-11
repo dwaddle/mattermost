@@ -7,6 +7,7 @@ import type {CSSProperties, JSX} from 'react';
 import {FormattedMessage, injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {FilterOptions} from 'components/admin_console/filter/filter';
@@ -287,8 +288,8 @@ class DataGrid extends React.PureComponent<Props, State> {
                             disableNext={lastPage}
                             previousButtonClassName='ml-2 prev'
                             nextButtonClassName='next'
-                            previousButtonTestId={this.props.testIdScope ? `${this.props.testIdScope}.footer.previous--button` : undefined}
-                            nextButtonTestId={this.props.testIdScope ? `${this.props.testIdScope}.footer.next--button` : undefined}
+                            previousButtonTestId={part(this.props.testIdScope, 'footer.previous', 'button')}
+                            nextButtonTestId={part(this.props.testIdScope, 'footer.next', 'button')}
                         />
                     </div>
                 </div>

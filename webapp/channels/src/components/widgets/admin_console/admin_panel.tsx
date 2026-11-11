@@ -8,6 +8,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {AdminPanel as CompassAdminPanel} from '@mattermost/compass-ui/components/admin-panel';
 import type {AdminPanelProps as CompassAdminPanelProps} from '@mattermost/compass-ui/components/admin-panel';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './admin_panel.scss';
@@ -111,8 +112,8 @@ const AdminPanel = ({
     id,
     subtitleValues,
     testId,
-    titleTestId = testId ? `${testId}.title--text` : undefined,
-    subtitleTestId = testId ? `${testId}.subtitle--text` : undefined,
+    titleTestId = part(testId, 'title', 'text'),
+    subtitleTestId = part(testId, 'subtitle', 'text'),
     expandable,
     footer,
     ...rest

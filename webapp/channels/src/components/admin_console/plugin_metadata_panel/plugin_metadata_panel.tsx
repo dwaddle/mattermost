@@ -6,6 +6,7 @@ import React, {useCallback, useMemo} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import useCopyText, {messages as copyMessages} from 'components/common/hooks/useCopyText';
@@ -64,7 +65,7 @@ const PluginMetadataId = ({id, testId}: {id: string; testId: TestId}) => {
         >
             <span
                 className='PluginMetadataPanel__id'
-                data-testid={`${testId}--button`}
+                data-testid={withRole(testId, 'button')}
                 onClick={handleCopy}
                 onKeyDown={handleKeyDown}
                 role='button'
@@ -111,12 +112,12 @@ const PluginMetadataPanel = ({
                     <ExternalLink
                         href={releaseNotesUrl}
                         location='plugin_metadata_panel'
-                        data-testid={`${testIdScope}.version--link`}
+                        data-testid={part(testIdScope, 'version', 'link')}
                     >
                         {formattedVersion}
                     </ExternalLink>
                 ) : (
-                    <span data-testid={`${testIdScope}.version--text`}>
+                    <span data-testid={part(testIdScope, 'version', 'text')}>
                         {formattedVersion}
                     </span>
                 )}
@@ -134,7 +135,7 @@ const PluginMetadataPanel = ({
                 {!hideName && ' ('}
                 <PluginMetadataId
                     id={id}
-                    testId={`${testIdScope}.id`}
+                    testId={part(testIdScope, 'id')}
                 />
                 {versionElement}
                 {!hideName && ')'}

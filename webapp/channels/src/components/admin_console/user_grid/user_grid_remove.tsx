@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -35,7 +36,7 @@ const UserGridRemove = ({
                 onClick={handleClick}
                 href='#'
                 role='button'
-                data-testid={`${testIdScope}.remove--button`}
+                data-testid={part(testIdScope, 'remove', 'button')}
                 className={isDisabled ? 'disabled' : ''}
             >
                 <FormattedMessage

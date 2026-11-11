@@ -11,6 +11,7 @@ import ReactSelect, {components} from 'react-select';
 import type {IndicatorsContainerProps, OnChangeValue} from 'react-select';
 
 import {DragVerticalIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import LoadingSpinner from 'components/widgets/loading/loading_spinner';
@@ -175,7 +176,7 @@ function DraggableRow<T extends TableMandatoryTypes>({
                                 ref={setHandleElement}
                                 type='button'
                                 className='dragHandle'
-                                data-testid={testIdScope ? `${testIdScope}.row.drag_handle--button` : undefined}
+                                data-testid={part(testIdScope, 'row.drag_handle', 'button')}
                                 aria-label={formatMessage({
                                     id: 'adminConsole.list.table.dragHandleLabel',
                                     defaultMessage: 'Reorder row',
@@ -265,7 +266,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                                 isLoading={tableMeta.loadingState === LoadingStates.Loading}
                                 onPreviousPageClick={tableMeta.onPreviousPageClick}
                                 onNextPageClick={tableMeta.onNextPageClick}
-                                testIdScope={props.testIdScope && `${props.testIdScope}.top_pager`}
+                                testIdScope={part(props.testIdScope, 'top_pager')}
                             />
                         </>
                     )}
@@ -291,7 +292,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                                 <th
                                     key={header.id}
                                     id={`${headerIdPrefix}${header.id}`}
-                                    data-testid={props.testIdScope && `${props.testIdScope}.head.column:${header.id}`}
+                                    data-testid={part(props.testIdScope, 'head.column', {key: header.id})}
                                     colSpan={header.colSpan}
                                     scope='col'
                                     aria-sort={getAriaSortForTableHeader(header.column.getCanSort(), header.column.getIsSorted())}
@@ -356,7 +357,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                             >
                                 <LoadingSpinner
                                     text={formatMessage({id: 'adminConsole.list.table.genericLoading', defaultMessage: 'Loading'})}
-                                    testId={props.testIdScope && `${props.testIdScope}.loading`}
+                                    testId={part(props.testIdScope, 'loading')}
                                 />
                             </td>
                         </tr>
@@ -369,7 +370,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                                 colSpan={colCount}
                                 className='noRows'
                                 disabled={true}
-                                data-testid={props.testIdScope && `${props.testIdScope}.no_data--text`}
+                                data-testid={part(props.testIdScope, 'no_data', 'text')}
                             >
                                 {tableMeta.emptyDataMessage || formatMessage({id: 'adminConsole.list.table.genericNoData', defaultMessage: 'No data'})}
                             </td>
@@ -383,7 +384,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                                 colSpan={colCount}
                                 className='noRows'
                                 disabled={true}
-                                data-testid={props.testIdScope && `${props.testIdScope}.load_error--text`}
+                                data-testid={part(props.testIdScope, 'load_error', 'text')}
                             >
                                 {formatMessage({id: 'adminConsole.list.table.genericError', defaultMessage: 'There was an error loading the data, please try again'})}
                             </td>
@@ -451,7 +452,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                         isLoading={tableMeta.loadingState === LoadingStates.Loading}
                         onPreviousPageClick={tableMeta.onPreviousPageClick}
                         onNextPageClick={tableMeta.onNextPageClick}
-                        testIdScope={props.testIdScope && `${props.testIdScope}.footer`}
+                        testIdScope={part(props.testIdScope, 'footer')}
                     />
 
                 </div>

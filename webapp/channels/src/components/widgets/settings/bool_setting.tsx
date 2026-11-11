@@ -4,6 +4,7 @@
 import type {ChangeEvent} from 'react';
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Setting from './setting';
@@ -66,7 +67,7 @@ const BoolSetting = ({
                     {!isAfter && checkboxLabel}
                     <input
                         id={id}
-                        data-testid={testIdScope ? `${testIdScope}.value--checkbox` : undefined}
+                        data-testid={part(testIdScope, 'value', 'checkbox')}
                         disabled={disabled}
                         autoFocus={autoFocus}
                         type='checkbox'
