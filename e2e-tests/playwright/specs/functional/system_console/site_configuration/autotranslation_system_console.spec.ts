@@ -10,7 +10,7 @@
  * AT-SC-07: Target languages multi-select is visible and usable.
  */
 
-import {expect, test, hasAutotranslationLicense, type App} from '@mattermost/playwright-lib';
+import {expect, test, hasAutotranslationLicense, type App, Msg} from '@mattermost/playwright-lib';
 
 /** Opens System Console > Site Configuration > Localization through the sidebar. */
 async function openLocalization(app: App) {
@@ -57,8 +57,8 @@ test.describe('System Console - Autotranslation (Localization)', () => {
             await openLocalization(app);
 
             // * The feature discovery block shows instead of the auto-translation settings
-            await expect(app.admin.featureDiscovery.locator).toContainText(
-                'Remove language barriers with auto-translation',
+            await expect(app.admin.featureDiscovery.locator).toContainMessage(
+                Msg.admin.auto_translation_feature_discovery.title,
             );
             await expect(app.admin.autoTranslation.header.locator).not.toBeVisible();
         },
@@ -191,12 +191,12 @@ test.describe('System Console - Autotranslation (Localization)', () => {
 
             // * The target languages setting shows
             await expect(languages.valuesCombobox.locator).toBeVisible();
-            await expect(languages.locator).toContainText('Languages allowed');
+            await expect(languages.locator).toContainMessage(Msg.admin.site.localization.targetLanguagesTitle);
 
             // # Choose Spanish and French (the list closes after each choice)
             await languages.valuesCombobox.choose(/Español/);
             await languages.valuesCombobox.choose(/Français/);
-            await languages.valuesCombobox.locator.press('Escape');
+            await languages.valuesCombobox.press('Escape');
 
             // * Both are chosen: each has its remove button
             await expect(languages.remove('es').locator).toBeVisible();

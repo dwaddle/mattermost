@@ -98,10 +98,10 @@ test('allows editing email and username fields for regular users', {tag: '@user_
     const newEmail = `updated-${pw.random.id()}@example.com`;
     const newUsername = `updated-${pw.random.id()}`;
 
-    await userDetail.emailTextbox.locator.clear();
-    await userDetail.emailTextbox.locator.fill(newEmail);
-    await userDetail.usernameTextbox.locator.clear();
-    await userDetail.usernameTextbox.locator.fill(newUsername);
+    await userDetail.emailTextbox.clear();
+    await userDetail.emailTextbox.fill(newEmail);
+    await userDetail.usernameTextbox.clear();
+    await userDetail.usernameTextbox.fill(newUsername);
 
     // * Verify Save button is enabled after changes
     await expect(userDetail.saveButton.locator).toBeEnabled();
@@ -130,8 +130,8 @@ test('displays inline validation errors for invalid email', {tag: '@user_managem
     const userDetail = await navigateToUserDetail(pw, adminUser, user);
 
     // # Enter invalid email
-    await userDetail.emailTextbox.locator.clear();
-    await userDetail.emailTextbox.locator.fill('invalid-email');
+    await userDetail.emailTextbox.clear();
+    await userDetail.emailTextbox.fill('invalid-email');
 
     // * Verify email validation error appears
     const emailError = userDetail.emailErrorAlert.locator;
@@ -141,8 +141,8 @@ test('displays inline validation errors for invalid email', {tag: '@user_managem
     await expect(userDetail.saveButton.locator).toBeDisabled();
 
     // # Fix the email
-    await userDetail.emailTextbox.locator.clear();
-    await userDetail.emailTextbox.locator.fill('valid@example.com');
+    await userDetail.emailTextbox.clear();
+    await userDetail.emailTextbox.fill('valid@example.com');
 
     // * Verify email error disappears
     await expect(emailError).not.toBeVisible();
@@ -162,8 +162,8 @@ test('allows cancelling save confirmation dialog', {tag: '@user_management'}, as
 
     // # Update email field
     const newEmail = `cancelled-${pw.random.id()}@example.com`;
-    await userDetail.emailTextbox.locator.clear();
-    await userDetail.emailTextbox.locator.fill(newEmail);
+    await userDetail.emailTextbox.clear();
+    await userDetail.emailTextbox.fill(newEmail);
 
     // # Click Save button
     const confirm = await userDetail.clickSaveButton();

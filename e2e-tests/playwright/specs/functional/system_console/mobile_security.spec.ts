@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {Api, expect, test, testConfig, duration} from '@mattermost/playwright-lib';
+import {Api, expect, test, testConfig, duration, Msg} from '@mattermost/playwright-lib';
 
 import {openMobileSecurity, openMobileSecurityUpsell, openUsers} from './mobile_security_support';
 
@@ -182,8 +182,8 @@ test('should show mobile security upsell when not licensed', async ({pw}) => {
     await openMobileSecurityUpsell(app);
 
     // * Verify title is correct
-    await expect(app.admin.featureDiscovery.titleText.locator).toContainText(
-        'Enhance mobile app security with Mattermost Enterprise',
+    await expect(app.admin.featureDiscovery.titleText.locator).toContainMessage(
+        Msg.admin.mobile_security_feature_discovery.title,
     );
 });
 
@@ -329,7 +329,7 @@ test('should configure new IntuneSettings with Office365 auth provider', async (
     // # Select Office365 as auth provider.
     // After enabling Intune MAM the form re-renders; scroll the dropdown into view
     // before selecting so it is both visible and interactive.
-    await app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator.scrollIntoViewIfNeeded();
+    await app.admin.setting('IntuneSettings.AuthService').valueCombobox.scrollIntoView();
     await expect(app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator).toBeEnabled({
         timeout: duration.half_min,
     });

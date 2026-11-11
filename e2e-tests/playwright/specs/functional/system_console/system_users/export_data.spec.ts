@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {type App, expect, openSystemUsers, test} from '@mattermost/playwright-lib';
+import {type App, expect, openSystemUsers, test, Msg} from '@mattermost/playwright-lib';
 
 /** The text of the center post list's last post. */
 async function lastPostText(app: App) {
@@ -36,7 +36,7 @@ test.fixme('MM-T5522 Should begin export of data when export button is pressed',
     await dialogs.exportModal.clickConfirmButton();
 
     // * Verify that we are told that one is already running
-    await expect(dialogs.exportErrorModal.locator).toContainText('Export is in progress');
+    await expect(dialogs.exportErrorModal.locator).toContainMessage(Msg.export_error_modal.inProgress.title);
     await dialogs.exportErrorModal.clickConfirmButton();
 
     // # Go back to Channels and open the system bot DM

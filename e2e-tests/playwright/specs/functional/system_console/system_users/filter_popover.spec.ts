@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {type App, expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
+import {type App, expect, openSystemUsers, searchSystemUsers, test, Msg} from '@mattermost/playwright-lib';
 
 /** Opens the filters popover. */
 async function openFilters(app: App) {
@@ -49,7 +49,7 @@ test('MM-T5521-7 Should be able to filter users with team filter', async ({pw}) 
 
     // # Enter the team name of the first user and select it
     await filters.team.inputCombobox.locator.fill(team1.display_name);
-    await filters.team.option(team1.id).locator.click();
+    await filters.team.option(team1.id).select();
 
     // # Save the filter and close the popover
     await apply(app);
@@ -93,7 +93,7 @@ test('MM-T5521-8 Should be able to filter users with role filter', async ({pw}) 
     await app.admin.users.fillSearchTextbox(regularUser.email);
 
     // * Verify that regular user is not visible as 'Guest' role filter was applied
-    await expect(app.admin.users.table.noDataText.locator).toHaveText('No data');
+    await expect(app.admin.users.table.noDataText.locator).toHaveMessage(Msg.adminConsole.list.table.genericNoData);
 
     await expect(app.admin.users.table.row(regularUser.id).locator).toHaveCount(0);
 });
@@ -132,7 +132,7 @@ test('MM-T5521-9 Should be able to filter users with status filter', async ({pw}
     await app.admin.users.fillSearchTextbox(regularUser.email);
 
     // * Verify that regular user is not visible as 'Deactivated' status filter was applied
-    await expect(app.admin.users.table.noDataText.locator).toHaveText('No data');
+    await expect(app.admin.users.table.noDataText.locator).toHaveMessage(Msg.adminConsole.list.table.genericNoData);
 
     await expect(app.admin.users.table.row(regularUser.id).locator).toHaveCount(0);
 });
@@ -273,7 +273,7 @@ test(
         await app.admin.users.fillSearchTextbox(singleChannelGuest.email);
 
         // * Verify the single-channel guest is NOT visible
-        await expect(app.admin.users.table.noDataText.locator).toHaveText('No data');
+        await expect(app.admin.users.table.noDataText.locator).toHaveMessage(Msg.adminConsole.list.table.genericNoData);
 
         await expect(app.admin.users.table.row(singleChannelGuest.id).locator).toHaveCount(0);
     },

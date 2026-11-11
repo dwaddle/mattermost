@@ -454,7 +454,7 @@ test.describe('Managed Channel Categories', () => {
 
             // # Open the channel's menu from its sidebar row
             const row = app.lhs.channelList.channel(channel);
-            await row.link.locator.hover();
+            await row.link.hover();
             const menu = await row.clickOpenMenuButton();
 
             // * Verify the Favorite option is disabled
@@ -490,7 +490,7 @@ test.describe('Managed Channel Categories', () => {
 
             // # Open the channel's menu from its sidebar row
             const row = app.lhs.channelList.channel(channel);
-            await row.link.locator.hover();
+            await row.link.hover();
             const menu = await row.clickOpenMenuButton();
 
             // * Verify the Move To option is disabled

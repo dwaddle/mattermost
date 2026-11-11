@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test, type App} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, Msg} from '@mattermost/playwright-lib';
 
 /** Opens System Console > AD/LDAP, once its Test Connection button shows. */
 async function openAdLdap(app: App) {
@@ -30,7 +30,7 @@ test('MM-T2699 AD/LDAP test connection succeeds against the configured directory
     await testConnection.clickRequestButton();
 
     // * Verify the connection test succeeds
-    await expect(testConnection.requestSuccessText.locator).toHaveText('Test Connection Successful');
+    await expect(testConnection.requestSuccessText.locator).toHaveMessage(Msg.admin.ldap.testConnectionSuccess);
 });
 
 /**

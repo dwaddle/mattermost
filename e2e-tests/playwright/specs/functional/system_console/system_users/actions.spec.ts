@@ -29,7 +29,7 @@ test('MM-T5520-2 should change user roles', async ({pw}) => {
     let roles = await (await row.clickActionsButton()).clickManageRolesMenuItem();
 
     // # Change to System Admin and click Save
-    await roles.systemAdminRadio.locator.check();
+    await roles.systemAdminRadio.check();
     await roles.clickSaveButton();
 
     // * Verify that the role was updated
@@ -40,7 +40,7 @@ test('MM-T5520-2 should change user roles', async ({pw}) => {
     roles = await (await row.clickActionsButton()).clickManageRolesMenuItem();
 
     // # Change to Member and click Save
-    await roles.memberRadio.locator.check();
+    await roles.memberRadio.check();
     await roles.clickSaveButton();
 
     // * Verify that the role was updated

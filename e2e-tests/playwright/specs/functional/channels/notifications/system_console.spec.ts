@@ -4,7 +4,7 @@
 import type {AdminConfig} from '@mattermost/types/config';
 import type {DeepPartial} from '@mattermost/types/utilities';
 
-import {expect, generated, test, type App, duration} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, duration, Msg} from '@mattermost/playwright-lib';
 
 /**
  * Patch the Notifications page required fields to known valid values so tests
@@ -219,11 +219,13 @@ test.describe('System Console Notifications', () => {
 
         // * Verify that the help text is visible and matches text content
         await expect(supportEmail.helpText.locator).toBeVisible();
-        await expect(supportEmail.helpText.locator).toHaveText('Email address displayed on support emails.');
+        await expect(supportEmail.helpText.locator).toHaveMessage(
+            Msg.admin.environment.notifications.supportEmail.help,
+        );
 
         // # Clear and type new email
         const newEmail = 'changed_for_test_support@example.com';
-        await supportEmail.valueTextbox.locator.clear();
+        await supportEmail.valueTextbox.clear();
         await supportEmail.valueTextbox.fill(newEmail);
 
         // * Verify that set value is visible and matches text

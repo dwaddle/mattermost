@@ -104,7 +104,7 @@ test(
         await expect(manageRolesModal.delegatedRoles.locator).toBeVisible();
 
         // # Promote the account to System Admin within the modal
-        await manageRolesModal.systemAdminRadio.locator.check();
+        await manageRolesModal.systemAdminRadio.check();
         await expect(manageRolesModal.systemAdminRadio.locator).toBeChecked();
 
         // * Verify the delegated roles section is hidden since System Admins already have full access

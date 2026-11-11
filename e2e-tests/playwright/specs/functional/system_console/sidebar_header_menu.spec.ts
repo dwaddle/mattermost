@@ -44,7 +44,7 @@ test(
 
         // # Open the header menu, then the Switch teams submenu
         const headerMenu = await sidebar.header.clickMenuButton();
-        await headerMenu.switchTeamsMenuItem.locator.hover();
+        await headerMenu.switchTeamsMenuItem.hover();
         const menu = headerMenu.switchTeamsMenu.paper.locator;
         await expect(menu).toBeVisible();
 

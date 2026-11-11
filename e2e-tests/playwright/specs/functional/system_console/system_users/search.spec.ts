@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
+import {expect, openSystemUsers, searchSystemUsers, test, Msg} from '@mattermost/playwright-lib';
 
 test('MM-T5521-1 Should be able to search users with their first names', async ({pw}) => {
     const {adminUser, adminClient} = await pw.initSetup();
@@ -114,6 +114,6 @@ test('MM-T5521-6 Should show no user is found when user doesnt exists', async ({
 
     // * The table says there is nothing to show
     const {table} = app.admin.users;
-    await expect(table.noDataText.locator).toHaveText('No data');
+    await expect(table.noDataText.locator).toHaveMessage(Msg.adminConsole.list.table.genericNoData);
     await expect(table.rowItems).toHaveCount(0);
 });

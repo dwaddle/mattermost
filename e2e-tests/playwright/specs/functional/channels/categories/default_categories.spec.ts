@@ -192,8 +192,8 @@ test.describe('Channel Category Sorting', () => {
         let settings = await openChannelSettingsInfo(app);
         const selector = settings.info.defaultCategory;
         await expect(selector.locator).toContainText('Removable');
-        await selector.inputCombobox.locator.focus();
-        await selector.inputCombobox.locator.press('Backspace');
+        await selector.inputCombobox.focus();
+        await selector.inputCombobox.press('Backspace');
 
         // * Verify the value is gone
         await expect(selector.locator).not.toContainText('Removable');

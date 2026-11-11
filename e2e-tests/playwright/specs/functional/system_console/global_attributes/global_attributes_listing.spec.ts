@@ -10,7 +10,7 @@
  * Professional-only licenses hide this admin route (React Router redirects away).
  */
 
-import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel, Msg} from '@mattermost/playwright-lib';
 
 import {
     GLOBAL_ATTRIBUTES_ADMIN_PATH,
@@ -193,7 +193,9 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                     // * A leading icon renders alongside the label, including for the
                     // unmapped "date" type (fallback icon, not a blank cell)
                     await expect(row.getByTestId('global-attribute-type').locator('svg')).toBeVisible();
-                    await expect(row.getByTestId('global-attribute-source')).toContainText('Managed here');
+                    await expect(row.getByTestId('global-attribute-source')).toContainMessage(
+                        Msg.admin.global_attributes.table.source.managed,
+                    );
                     // * "Managed here" is the one source kind reachable through the admin
                     // API (plugin/ldap/saml require server-side attrs the API blocks from
                     // non-plugin callers — those icon mappings are unit-test-only) and it
@@ -315,9 +317,13 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                 });
 
                 await expect(row.getByTestId('global-attribute-name')).toHaveText(displayName);
-                await expect(row.getByTestId('global-attribute-type')).toContainText('Hierarchical');
+                await expect(row.getByTestId('global-attribute-type')).toContainMessage(
+                    Msg.admin.global_attributes.table.type.graph,
+                );
                 await expect(row.getByTestId('global-attribute-type').locator('svg')).toBeVisible();
-                await expect(row.getByTestId('global-attribute-source')).toContainText('Managed here');
+                await expect(row.getByTestId('global-attribute-source')).toContainMessage(
+                    Msg.admin.global_attributes.table.source.managed,
+                );
                 await expect(row.getByTestId('global-attribute-options')).toContainText('2 options');
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -592,7 +598,7 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 // * View (not Edit) is offered and navigable; Delete stays disabled
                 const viewItem = page.locator(`#global-attribute-actions-${field.id}-edit`);
-                await expect(viewItem).toContainText('View attribute');
+                await expect(viewItem).toContainMessage(Msg.admin.global_attributes.table.actions.view);
                 await expect(viewItem).not.toHaveAttribute('aria-disabled', 'true');
 
                 const deleteItem = page.locator(`#global-attribute-actions-${field.id}-delete`);

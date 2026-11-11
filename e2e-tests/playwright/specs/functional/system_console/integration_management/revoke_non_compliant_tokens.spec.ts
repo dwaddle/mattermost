@@ -3,7 +3,7 @@
 
 import {Client4} from '@mattermost/client';
 
-import {expect, test, testConfig, type App} from '@mattermost/playwright-lib';
+import {expect, test, testConfig, type App, Msg} from '@mattermost/playwright-lib';
 
 /**
  * E2E coverage for the "Revoke non-compliant tokens" admin console control added in
@@ -77,7 +77,7 @@ test.describe('System Console > Integrations > Revoke non-compliant tokens @syst
 
         // * With no policy configured the server-side count is always 0 (nothing is
         // "non-compliant" without a cap to violate), so the button is deterministically disabled
-        await expect(revoke.status.locator).toContainText('No personal access tokens currently need to be revoked.');
+        await expect(revoke.status.locator).toContainMessage(Msg.admin.service.revokeNonCompliantTokens.none);
         await expect(revoke.revokeButton.locator).toBeDisabled();
         expect(await tokenIsUsable(token.token)).toBe(true);
     });
@@ -107,7 +107,7 @@ test.describe('System Console > Integrations > Revoke non-compliant tokens @syst
         // # Open the confirmation and cancel it
         await revoke.revokeButton.click();
         const confirmModal = app.admin.revokeNonCompliantTokensModal;
-        await expect(confirmModal.locator).toContainText('Revoke non-compliant personal access tokens?');
+        await expect(confirmModal.locator).toContainMessage(Msg.admin.service.revokeNonCompliantTokens.confirmTitle);
         await expect(confirmModal.locator).toContainText(/This will permanently revoke \d+ personal access tokens?/);
         await confirmModal.clickCancelButton();
         await expect(confirmModal.cancelButton.locator).toBeHidden();
@@ -155,7 +155,9 @@ test.describe('System Console > Integrations > Revoke non-compliant tokens @syst
         // # Confirm the revoke
         await revoke.revokeButton.click();
         const confirmModal = app.admin.revokeNonCompliantTokensModal;
-        await expect(confirmModal.confirmButton.locator).toHaveText('Revoke tokens');
+        await expect(confirmModal.confirmButton.locator).toHaveMessage(
+            Msg.admin.service.revokeNonCompliantTokens.confirmButton,
+        );
         await confirmModal.clickConfirmButton();
 
         // * The success banner reports how many were revoked, and the button disables again
