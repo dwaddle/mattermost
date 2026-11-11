@@ -9,6 +9,7 @@ import {ContentCopyIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {copyToClipboard} from 'utils/utils';
@@ -40,7 +41,7 @@ const CopyText = ({
     return (
         <WithTooltip title={label}>
             <IconButton
-                data-testid={`${testId}--button`}
+                data-testid={withRole(testId, 'button')}
                 size='x-small'
                 className='ml-2'
                 icon={<Icon glyph={<ContentCopyIcon/>}/>}

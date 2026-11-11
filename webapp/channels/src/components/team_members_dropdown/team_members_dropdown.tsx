@@ -5,6 +5,7 @@ import React from 'react';
 import {FormattedMessage, injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Team, TeamMembership} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
@@ -140,7 +141,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
             serverError = (
                 <div
                     className='has-error'
-                    data-testid={`${this.props.testIdScope}.error--text`}
+                    data-testid={part(this.props.testIdScope, 'error', 'text')}
                 >
                     <label className='has-error control-label'>{this.state.serverError}</label>
                 </div>
@@ -259,7 +260,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
         const menuRemove = (
             <Menu.Item
                 id='removeFromTeam'
-                data-testid={`${this.props.testIdScope}.role_menu.remove--menuitem`}
+                data-testid={part(this.props.testIdScope, 'role_menu.remove', 'menuitem')}
                 onClick={this.handleRemoveFromTeam}
                 labels={
                     <FormattedMessage
@@ -271,7 +272,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
         );
         const menuMakeAdmin = (
             <Menu.Item
-                data-testid={`${this.props.testIdScope}.role_menu.make_admin--menuitem`}
+                data-testid={part(this.props.testIdScope, 'role_menu.make_admin', 'menuitem')}
                 onClick={this.handleMakeAdmin}
                 labels={
                     <FormattedMessage
@@ -283,7 +284,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
         );
         const menuMakeMember = (
             <Menu.Item
-                data-testid={`${this.props.testIdScope}.role_menu.make_member--menuitem`}
+                data-testid={part(this.props.testIdScope, 'role_menu.make_member', 'menuitem')}
                 onClick={this.handleMakeMember}
                 labels={
                     <FormattedMessage
@@ -298,7 +299,7 @@ class TeamMembersDropdown extends React.PureComponent<Props, State> {
                 <Menu.Container
                     menuButton={{
                         id: `teamMembersDropdown_${user.username}`,
-                        dataTestId: `${this.props.testIdScope}.role--button`,
+                        dataTestId: part(this.props.testIdScope, 'role', 'button'),
                         class: 'dropdown-toggle theme color--link style--none',
                         children: (
                             <>

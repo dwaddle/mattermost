@@ -10,6 +10,7 @@ import ReactSelect, {components} from 'react-select';
 import type {GetOptionValue, InputActionMeta, InputProps, MultiValueRemoveProps, SelectInstance} from 'react-select';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import SaveButton from 'components/save_button';
@@ -304,7 +305,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
     private SearchInput = (props: InputProps<T, true>) => (
         <components.Input
             {...props}
-            data-testid={`${this.props.testIdScope}.search--combobox`}
+            data-testid={part(this.props.testIdScope, 'search', 'combobox')}
         />
     );
 
@@ -313,7 +314,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
     private DefaultMultiValueRemove = (props: MultiValueRemoveProps<T>) => (
         <components.MultiValueRemove
             {...props}
-            innerProps={{...props.innerProps, 'data-testid': `${this.props.testIdScope}.remove:${props.data.id}--button`} as MultiValueRemoveProps<T>['innerProps']}
+            innerProps={{...props.innerProps, 'data-testid': part(this.props.testIdScope, 'remove', {key: props.data.id}, 'button')} as MultiValueRemoveProps<T>['innerProps']}
         />
     );
 
@@ -322,7 +323,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
             {...innerProps}
             role='button'
             tabIndex={0}
-            data-testid={`${this.props.testIdScope}.remove:${data.id}--button`}
+            data-testid={part(this.props.testIdScope, 'remove', {key: data.id}, 'button')}
             aria-label={this.props.intl.formatMessage({
                 id: 'multiselect.remove',
                 defaultMessage: 'Remove {label}',
@@ -398,7 +399,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
             noteTextContainer = (
                 <div
                     className='multi-select__note'
-                    data-testid={`${this.props.testIdScope}.note--text`}
+                    data-testid={part(this.props.testIdScope, 'note', 'text')}
                 >
                     <div className='note__icon'>
                         <i
@@ -433,7 +434,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                             emphasis='tertiary'
                             size='small'
                             className='filter-control filter-control__next'
-                            data-testid={`${this.props.testIdScope}.next--button`}
+                            data-testid={part(this.props.testIdScope, 'next', 'button')}
                             onClick={this.nextPage}
                         >
                             <FormattedMessage
@@ -450,7 +451,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                             emphasis='tertiary'
                             size='small'
                             className='filter-control filter-control__prev'
-                            data-testid={`${this.props.testIdScope}.previous--button`}
+                            data-testid={part(this.props.testIdScope, 'previous', 'button')}
                             onClick={this.prevPage}
                         >
                             <FormattedMessage
@@ -481,7 +482,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                         query={this.state.input}
                         selectedItemRef={this.props.selectedItemRef}
                         customNoOptionsMessage={this.props.customNoOptionsMessage || undefined}
-                        testIdScope={`${this.props.testIdScope}.results`}
+                        testIdScope={part(this.props.testIdScope, 'results')}
                     />
                 );
             }
@@ -498,7 +499,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                     query={this.state.input}
                     selectedItemRef={this.props.selectedItemRef}
                     customNoOptionsMessage={this.props.customNoOptionsMessage || undefined}
-                    testIdScope={`${this.props.testIdScope}.results`}
+                    testIdScope={part(this.props.testIdScope, 'results')}
                 />
             );
         }
@@ -561,7 +562,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                             {this.props.saveButtonPosition === 'top' &&
                                 <SaveButton
                                     id='saveItems'
-                                    testId={`${this.props.testIdScope}.save`}
+                                    testId={part(this.props.testIdScope, 'save')}
                                     extraClasses='multi-select__go'
                                     saving={this.props.saving}
                                     disabled={this.props.saving}
@@ -574,7 +575,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                         <div
                             id='multiSelectHelpMemberInfo'
                             className='multi-select__help'
-                            data-testid={`${this.props.testIdScope}.help--text`}
+                            data-testid={part(this.props.testIdScope, 'help', 'text')}
                         >
                             {numRemainingText}
                             {memberCount}
@@ -592,7 +593,7 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                             className='multi-select__error'
                             role='alert'
                             id='multiSelectMessageError'
-                            data-testid={`${this.props.testIdScope}.error--alert`}
+                            data-testid={part(this.props.testIdScope, 'error', 'alert')}
                         >
                             <i className='icon icon-alert-circle-outline'/>
                             <span>
@@ -619,14 +620,14 @@ export class MultiSelect<T extends Value> extends React.PureComponent<Props<T>, 
                                     }
                                 }}
                                 emphasis='tertiary'
-                                data-testid={`${this.props.testIdScope}.back--button`}
+                                data-testid={part(this.props.testIdScope, 'back', 'button')}
                             >
                                 {backButtonText}
                             </Button>
                         }
                         <SaveButton
                             id='saveItems'
-                            testId={`${this.props.testIdScope}.save`}
+                            testId={part(this.props.testIdScope, 'save')}
                             saving={this.props.saving}
                             disabled={this.props.saving || !this.props.savingEnabled}
                             onClick={this.handleOnClick}

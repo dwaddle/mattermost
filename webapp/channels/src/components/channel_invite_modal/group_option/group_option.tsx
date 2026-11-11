@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 
 import {AccountMultipleOutlineIcon, ChevronRightIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Group} from '@mattermost/types/groups';
 import type {GlobalState} from '@mattermost/types/store';
@@ -109,7 +110,7 @@ const GroupOption = (props: Props) => {
                     >
                         <span
                             className='add-group-members'
-                            data-testid={`${testIdScope}.add_members--text`}
+                            data-testid={part(testIdScope, 'add_members', 'text')}
                         >
                             <FormattedMessage
                                 id='multiselect.addGroupMembers'

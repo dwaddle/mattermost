@@ -5,6 +5,7 @@ import React, {useCallback} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {SectionNotice} from '@mattermost/compass-ui/components/section-notice';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {openModal as openModalAction} from 'actions/views/modals';
@@ -87,7 +88,7 @@ export default function DeleteIntegrationLink(props: Props) {
         <button
             className='color--link style--none'
             onClick={onClick}
-            data-testid={props.testId ? `${props.testId}--button` : undefined}
+            data-testid={withRole(props.testId, 'button')}
         >
             {linkText}
         </button>

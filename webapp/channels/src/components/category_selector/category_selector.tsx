@@ -10,6 +10,7 @@ import type {ClearIndicatorProps, GroupBase, InputProps, OptionProps, Options, O
 import CreatableSelect from 'react-select/creatable';
 
 import {FolderOutlineIcon, FolderPlusOutlineIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {GlobalState} from '@mattermost/types/store';
 
@@ -45,7 +46,7 @@ const ClearIndicator = (props: ClearIndicatorProps<Option> & {testIdScope?: Test
     const {testIdScope, ...indicatorProps} = props;
 
     // react-select's clear control is a hidden-from-assistive-tech div that acts on mouse down, not a button
-    const innerProps = {...indicatorProps.innerProps, 'data-testid': testIdScope ? `${testIdScope}.clear` : undefined} as typeof indicatorProps.innerProps;
+    const innerProps = {...indicatorProps.innerProps, 'data-testid': part(testIdScope, 'clear')} as typeof indicatorProps.innerProps;
     return (
         <components.ClearIndicator
             {...indicatorProps}
@@ -182,7 +183,7 @@ export default function CategorySelector({value, onChange, getOptions, label, pl
         Input: (props: InputProps<Option, false, GroupBase<Option>>) => (
             <components.Input
                 {...props}
-                data-testid={testIdScope ? `${testIdScope}.input--combobox` : undefined}
+                data-testid={part(testIdScope, 'input', 'combobox')}
             />
         ),
     }), [testIdScope]);

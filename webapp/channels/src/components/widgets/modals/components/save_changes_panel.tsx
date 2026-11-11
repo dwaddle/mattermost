@@ -13,6 +13,7 @@ import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './save_changes_panel.scss';
@@ -104,7 +105,7 @@ function SaveChangesPanel({
                     <WithTooltip title={intl.formatMessage({id: 'saveChangesPanel.dismiss', defaultMessage: 'Dismiss'})}>
                         <IconButton
                             id='panelCloseButton'
-                            data-testid={testId ? `${testId}.close--button` : undefined}
+                            data-testid={part(testId, 'close', 'button')}
                             size='small'
                             icon={<Icon glyph={<CloseIcon/>}/>}
                             onClick={handleClose}
@@ -166,7 +167,7 @@ function SaveChangesPanel({
         >
             <p
                 className={messageClassName}
-                data-testid={testId ? `${testId}.message--text` : undefined}
+                data-testid={part(testId, 'message', 'text')}
             >
                 <AlertCircleOutlineIcon
                     size={18}

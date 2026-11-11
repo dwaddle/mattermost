@@ -6,6 +6,7 @@ import {FormattedMessage, injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
@@ -228,7 +229,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                 nextButton = (
                     <Button
                         id='searchableUserListNextBtn'
-                        data-testid={`${this.props.testIdScope}.next--button`}
+                        data-testid={part(this.props.testIdScope, 'next', 'button')}
                         emphasis='tertiary'
                         size='small'
                         className='filter-control filter-control__next'
@@ -247,7 +248,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                 previousButton = (
                     <Button
                         id='searchableUserListPrevBtn'
-                        data-testid={`${this.props.testIdScope}.prev--button`}
+                        data-testid={part(this.props.testIdScope, 'prev', 'button')}
                         emphasis='tertiary'
                         size='small'
                         className='filter-control filter-control__prev'
@@ -281,7 +282,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                         <QuickInput
                             ref={this.filterRef}
                             id='searchUsersInput'
-                            data-testid={`${this.props.testIdScope}.search--textbox`}
+                            data-testid={part(this.props.testIdScope, 'search', 'textbox')}
                             className='form-control filter-textbox'
                             placeholder={this.props.intl.formatMessage({id: 'filtered_user_list.search', defaultMessage: 'Search users'})}
                             aria-label={this.props.intl.formatMessage({id: 'filtered_user_list.search', defaultMessage: 'Search users'})}
@@ -300,7 +301,7 @@ class SearchableUserList extends React.PureComponent<Props, State> {
                     <div className='col-sm-12'>
                         <span
                             id='searchableUserListTotal'
-                            data-testid={`${this.props.testIdScope}.count--text`}
+                            data-testid={part(this.props.testIdScope, 'count', 'text')}
                             className='member-count pull-left'
                             aria-live='polite'
                         >

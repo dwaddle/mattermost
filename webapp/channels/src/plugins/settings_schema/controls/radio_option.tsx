@@ -4,6 +4,7 @@
 import React, {useCallback} from 'react';
 
 import {Radio} from '@mattermost/compass-ui/components/radio';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Markdown from 'components/markdown';
@@ -37,7 +38,7 @@ const RadioOption = ({
                 value={option.value}
                 checked={selectedValue === option.value}
                 onChange={onChange}
-                data-testid={testIdScope ? `${testIdScope}.option:${option.value}--radio` : undefined}
+                data-testid={part(testIdScope, 'option', {key: option.value}, 'radio')}
             >
                 {option.text}
             </Radio>

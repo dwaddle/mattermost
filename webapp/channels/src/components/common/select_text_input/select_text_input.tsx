@@ -7,6 +7,7 @@ import {components as selectComponents} from 'react-select';
 import type {ContainerProps, InputProps, MultiValueRemoveProps, StylesConfig} from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import './select_text_input.scss';
@@ -119,13 +120,13 @@ const SelectTextInput = ({placeholder, value, handleNewSelection, onChange, id, 
         Input: (props: InputProps<SelectTextInputOption, true>) => (
             <selectComponents.Input
                 {...props}
-                data-testid={`${testIdScope}.input--combobox`}
+                data-testid={part(testIdScope, 'input', 'combobox')}
             />
         ),
         MultiValueRemove: (props: MultiValueRemoveProps<SelectTextInputOption, true>) => (
             <selectComponents.MultiValueRemove
                 {...props}
-                innerProps={{...props.innerProps, 'data-testid': `${testIdScope}.remove--button`} as MultiValueRemoveProps<SelectTextInputOption, true>['innerProps']}
+                innerProps={{...props.innerProps, 'data-testid': part(testIdScope, 'remove', 'button')} as MultiValueRemoveProps<SelectTextInputOption, true>['innerProps']}
             />
         ),
     } : components), [testIdScope]);

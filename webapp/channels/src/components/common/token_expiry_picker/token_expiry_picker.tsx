@@ -5,6 +5,7 @@ import React from 'react';
 import type {ChangeEvent} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import type {ExpiryPreset} from './token_expiry';
@@ -52,7 +53,7 @@ export default function TokenExpiryPicker({
         <>
             <select
                 id={`${idPrefix}Expiry`}
-                data-testid={testIdScope && `${testIdScope}.expiry--combobox`}
+                data-testid={part(testIdScope, 'expiry', 'combobox')}
                 className={selectClassName}
                 value={expiryPreset}
                 onChange={onPresetChange}
@@ -89,7 +90,7 @@ export default function TokenExpiryPicker({
             {expiryPreset === 'custom' && (
                 <input
                     id={`${idPrefix}ExpiryCustom`}
-                    data-testid={testIdScope && `${testIdScope}.expiry_date--textbox`}
+                    data-testid={part(testIdScope, 'expiry_date', 'textbox')}
                     className={`${selectClassName} mt-2`}
                     type='date'
                     aria-label={intl.formatMessage({id: 'user.settings.tokens.expiry.customDate', defaultMessage: 'Custom expiry date'})}
@@ -102,7 +103,7 @@ export default function TokenExpiryPicker({
             {maxLifetimeDays > 0 && (
                 <div
                     className={hintClassName}
-                    data-testid={testIdScope && `${testIdScope}.max_lifetime_hint--text`}
+                    data-testid={part(testIdScope, 'max_lifetime_hint', 'text')}
                 >
                     <FormattedMessage
                         id='user.settings.tokens.maxLifetimeHint'
@@ -114,7 +115,7 @@ export default function TokenExpiryPicker({
             {enforceExpiry && (
                 <div
                     className={hintClassName}
-                    data-testid={testIdScope && `${testIdScope}.expiry_enforced--text`}
+                    data-testid={part(testIdScope, 'expiry_enforced', 'text')}
                 >
                     <FormattedMessage
                         id='user.settings.tokens.expiryEnforced'

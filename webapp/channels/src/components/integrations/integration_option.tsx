@@ -4,6 +4,7 @@
 import React, {type JSX, type ReactNode} from 'react';
 import {Link} from 'react-router-dom';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type Props = {
@@ -20,7 +21,7 @@ const IntegrationOption = ({image, title, description, link, testId}: Props) => 
         <Link
             to={link}
             className='integration-option'
-            data-testid={`${testId}--link`}
+            data-testid={withRole(testId, 'link')}
         >
             <div className='integration-option__image'>
                 {image}

@@ -6,6 +6,7 @@ import type {IntlShape} from 'react-intl';
 import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Team} from '@mattermost/types/teams';
 
@@ -212,12 +213,12 @@ const ChannelNameFormField = (props: Props): JSX.Element => {
                 onChange={handleOnDisplayNameChange}
                 onBlur={handleOnDisplayNameBlur}
                 disabled={props.readOnly}
-                testId={`${props.testIdScope}.name`}
+                testId={part(props.testIdScope, 'name')}
             />
             {
                 showURLEditor &&
                 <URLInput
-                    testIdScope={`${props.testIdScope}.url`}
+                    testIdScope={part(props.testIdScope, 'url')}
                     className='new-channel-modal__url'
                     base={getSiteURL()}
                     path={`${teamName}/channels`}

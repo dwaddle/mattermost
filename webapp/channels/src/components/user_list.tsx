@@ -4,6 +4,7 @@
 import React, {memo, useRef, type JSX} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
@@ -68,7 +69,7 @@ const UserList = ({
                     index={index}
                     totalUsers={users.length}
                     userCount={index >= 0 ? index : -1}
-                    testIdScope={`${testIdScope}.user`}
+                    testIdScope={part(testIdScope, 'user')}
                 />
             );
         });
@@ -77,7 +78,7 @@ const UserList = ({
             <div
                 key='no-users-found'
                 className='more-modal__placeholder-row no-users-found'
-                data-testid={`${testIdScope}.no_users--text`}
+                data-testid={part(testIdScope, 'no_users', 'text')}
             >
                 <p>
                     <FormattedMessage

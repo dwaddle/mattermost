@@ -6,7 +6,7 @@ import React, {useCallback, type JSX} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginSlotPath} from '@mattermost/shared/utils/test_id';
+import {part, pluginSlotPath, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelType} from '@mattermost/types/channels';
 
@@ -73,7 +73,7 @@ const BigButtonSelector = ({
     const button = (
         <button
             id={`public-private-selector-button-${id}`}
-            data-testid={testId ? `${testId}--button` : undefined}
+            data-testid={withRole(testId, 'button')}
             className={classNames('public-private-selector-button', {selected, disabled, locked})}
             onClick={handleOnClick}
         >
@@ -203,7 +203,7 @@ const PublicPrivateSelector = ({
                         disabled={disabledPublic}
                         locked={lockedPublic}
                         onClick={handleOnClick}
-                        testId={testIdScope ? `${testIdScope}.public` : undefined}
+                        testId={part(testIdScope, 'public')}
                     />
                     <BigButtonSelector
                         id={Constants.PRIVATE_CHANNEL as ChannelType}
@@ -218,7 +218,7 @@ const PublicPrivateSelector = ({
                         disabled={disabledPrivate}
                         locked={lockedPrivate}
                         onClick={handleOnClick}
-                        testId={testIdScope ? `${testIdScope}.private` : undefined}
+                        testId={part(testIdScope, 'private')}
                     />
                 </>
             )}

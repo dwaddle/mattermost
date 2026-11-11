@@ -10,6 +10,7 @@ import {components} from 'react-select';
 import type {FormatOptionLabelMeta, InputActionMeta, InputProps, Options, StylesConfig, SelectInstance, MultiValue, SingleValue, OptionsOrGroups, GroupBase, MultiValueRemoveProps, OptionProps, ContainerProps} from 'react-select';
 import AsyncCreatable from 'react-select/async-creatable';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -276,7 +277,7 @@ export class UsersEmailsInput extends React.PureComponent<Props, State> {
         return (
             <components.Input
                 {...props}
-                data-testid={this.props.testIdScope ? `${this.props.testIdScope}.input--combobox` : undefined}
+                data-testid={part(this.props.testIdScope, 'input', 'combobox')}
 
                 // The onPaste is not part of the InputProps type definition. It's fixed in v5 of react-select.
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

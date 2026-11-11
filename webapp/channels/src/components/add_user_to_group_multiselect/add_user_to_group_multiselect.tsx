@@ -5,6 +5,7 @@ import React, {type JSX} from 'react';
 import type {IntlShape, MessageDescriptor} from 'react-intl';
 import {defineMessage, injectIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 import type {RelationOneToOne} from '@mattermost/types/utilities';
@@ -191,7 +192,7 @@ export class AddUserToGroupMultiSelect extends React.PureComponent<Props, State>
                 isSelected={isSelected}
                 onMouseMove={onMouseMove}
                 userStatuses={this.props.userStatuses}
-                testIdScope={`${this.props.testIdScope}.results`}
+                testIdScope={part(this.props.testIdScope, 'results')}
                 ref={isSelected ? this.selectedItemRef : undefined}
                 key={option.id}
             />

@@ -5,6 +5,7 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import type {GetOptionValue} from 'react-select';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import LoadingScreen from 'components/loading_screen';
@@ -185,7 +186,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
                     <div
                         key='no-users-found'
                         className='no-channel-message'
-                        data-testid={`${this.props.testIdScope}.no_results--text`}
+                        data-testid={part(this.props.testIdScope, 'no_results', 'text')}
                         tabIndex={0}
                     >
                         <p className='primary-message'>
@@ -231,7 +232,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
                         />
                     </div>
                     <div
-                        data-testid={`${this.props.testIdScope}.selection--text`}
+                        data-testid={part(this.props.testIdScope, 'selection', 'text')}
                         className='sr-only'
                         aria-live='polite'
                         aria-atomic='true'
@@ -252,7 +253,7 @@ export default class MultiSelectList<T extends Value> extends React.PureComponen
 
         return (
             <div
-                data-testid={`${this.props.testIdScope}.live_region`}
+                data-testid={part(this.props.testIdScope, 'live_region')}
                 className='multi-select__wrapper'
                 aria-live='polite'
             >

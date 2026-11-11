@@ -6,6 +6,7 @@ import type {JSX, ReactNode} from 'react';
 import {FormattedMessage} from 'react-intl';
 import styled from 'styled-components';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelMembership} from '@mattermost/types/channels';
 import type {TeamMembership} from '@mattermost/types/teams';
@@ -128,7 +129,7 @@ const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, a
                     <div
                         id={userCountID}
                         className='more-modal__name'
-                        data-testid={`${testIdScope}.name--text`}
+                        data-testid={part(testIdScope, 'name', 'text')}
                     >
                         <UserProfile
                             userId={user.id}
@@ -165,7 +166,7 @@ const UserListRow = ({user, status, extraInfo = [], actions = [], actionProps, a
                 <div
                     id={userCountEmail}
                     className={emailStyle}
-                    data-testid={`${testIdScope}.email--text`}
+                    data-testid={part(testIdScope, 'email', 'text')}
                 >
                     <span>{emailProp}</span>
                 </div>

@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Markdown from 'components/markdown';
@@ -35,7 +36,7 @@ const Radio = ({
         <fieldset
             key={setting.name}
             className='radio-option-list'
-            data-testid={testIdScope ? `${testIdScope}.setting:${setting.name}` : undefined}
+            data-testid={part(testIdScope, 'setting', {key: setting.name})}
         >
             <legend className='form-legend hidden-label'>
                 {setting.title || setting.name}
@@ -48,7 +49,7 @@ const Radio = ({
                         option={option}
                         selectedValue={value}
                         onSelected={onChange}
-                        testIdScope={testIdScope ? `${testIdScope}.setting` : undefined}
+                        testIdScope={part(testIdScope, 'setting')}
                     />
                 ))}
             </div>
