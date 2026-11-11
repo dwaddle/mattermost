@@ -42,7 +42,7 @@ async function openClassificationMarkings(pw: PlaywrightExtended, admin: UserPro
 async function save(app: App) {
     const {saveButton} = app.admin.classification.savePanel;
     await saveButton.click();
-    await expect(saveButton.locator).toBeDisabled({timeout: duration.half_min});
+    await expect(saveButton.locator).toBeSaved({timeout: duration.half_min});
 }
 
 test.describe('Global Classification Banner', () => {
