@@ -389,6 +389,8 @@
                 "rhs.channel_members",
                 "rhs.channel_members.pending_requests",
                 "rhs.channel_members.policy",
+                "rhs.channel_members.search",
+                "rhs.channel_members.search.field",
                 "rhs.edit_history",
                 "rhs.edit_history.version",
                 "rhs.edit_history.version.attachments",
@@ -914,6 +916,8 @@
                 "login.alternate",
                 "login.banner",
                 "login.card",
+                "login.login_id",
+                "login.login_id.field",
                 "login.password",
                 "login.password.field",
                 "login_mfa",
@@ -2613,6 +2617,30 @@
             ]
         },
         {
+            "scope": "admin.accept_invite_modal.code",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.accept_invite_modal.code.field",
+                    "role": null,
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.accept_invite_modal.code.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.accept_invite_modal.code.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "admin.accept_invite_modal.destination_team",
             "class": "DropdownInput",
             "container": "channels/src/components/dropdown_input.tsx#DropdownInput",
@@ -2629,6 +2657,54 @@
                     "key": "string",
                     "renderedWhen": ["!isPendingState(saving)"],
                     "source": "channels/src/components/dropdown_input.tsx#makeOption"
+                }
+            ]
+        },
+        {
+            "scope": "admin.accept_invite_modal.name",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.accept_invite_modal.name.field",
+                    "role": null,
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.accept_invite_modal.name.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.accept_invite_modal.name.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "admin.accept_invite_modal.password",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.accept_invite_modal.password.field",
+                    "role": null,
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.accept_invite_modal.password.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.accept_invite_modal.password.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!isPendingState(saving)"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         },
@@ -3802,6 +3878,27 @@
             ]
         },
         {
+            "scope": "admin.attribute.display_name",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.attribute.display_name.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.display_name.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.display_name.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "admin.attribute.external_source",
             "class": "AdminAttributeExternalSource",
             "container": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_external_source.tsx#AttributeExternalSource",
@@ -4150,12 +4247,6 @@
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu"
                 },
                 {
-                    "testId": "admin.attribute.graph.pane.name",
-                    "role": null,
-                    "renderedWhen": ["disabled"],
-                    "source": "channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu"
-                },
-                {
                     "testId": "admin.attribute.graph.pane.name--textbox",
                     "role": "textbox",
                     "renderedWhen": ["!disabled"],
@@ -4231,6 +4322,52 @@
             ]
         },
         {
+            "scope": "admin.attribute.graph.pane.children.search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.attribute.graph.pane.children.search.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.graph.pane.children.search.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.graph.pane.children.search.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "admin.attribute.graph.pane.name",
+            "class": "AdminAttributeGraphPaneName",
+            "container": "channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu",
+            "elements": [
+                {
+                    "testId": "admin.attribute.graph.pane.name.field",
+                    "role": null,
+                    "renderedWhen": ["!disabled"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.graph.pane.name.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!disabled"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.graph.pane.name.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!disabled"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "admin.attribute.graph.pane.parents",
             "class": "AdminAttributeGraphPaneChildren",
             "elements": [
@@ -4289,6 +4426,27 @@
                     "key": "string",
                     "renderedWhen": ["view === 'parents' || view === 'children'"],
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList"
+                }
+            ]
+        },
+        {
+            "scope": "admin.attribute.graph.pane.parents.search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.attribute.graph.pane.parents.search.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.graph.pane.parents.search.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attribute.graph.pane.parents.search.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         },
@@ -5124,6 +5282,27 @@
                     "effects": [],
                     "unknownEffects": true,
                     "source": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+                }
+            ]
+        },
+        {
+            "scope": "admin.attributes.search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.attributes.search.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attributes.search.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.attributes.search.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         },
@@ -6741,6 +6920,30 @@
             ]
         },
         {
+            "scope": "admin.classification.name",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.classification.name.field",
+                    "role": null,
+                    "renderedWhen": ["loadState === 'ready' && template"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.classification.name.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["loadState === 'ready' && template"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.classification.name.message--text",
+                    "role": "text",
+                    "renderedWhen": ["loadState === 'ready' && template"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "admin.classification.preset",
             "class": "DropdownInput",
             "container": "channels/src/components/dropdown_input.tsx#DropdownInput",
@@ -7262,6 +7465,54 @@
                 {
                     "testId": "admin.create_invite_modal.password--textbox",
                     "role": "textbox",
+                    "renderedWhen": ["!loading"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "admin.create_invite_modal.code",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.create_invite_modal.code.field",
+                    "role": null,
+                    "renderedWhen": ["!loading", "inviteCode"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.create_invite_modal.code.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!loading", "inviteCode"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.create_invite_modal.code.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!loading", "inviteCode"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "admin.create_invite_modal.password",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.create_invite_modal.password.field",
+                    "role": null,
+                    "renderedWhen": ["!loading"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.create_invite_modal.password.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!loading"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.create_invite_modal.password.message--text",
+                    "role": "text",
                     "renderedWhen": ["!loading"],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
@@ -13942,6 +14193,27 @@
             ]
         },
         {
+            "scope": "admin.users.search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "admin.users.search.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.users.search.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "admin.users.search.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "admin.users.table",
             "class": "AdminUsersTable",
             "elements": [
@@ -14883,6 +15155,27 @@
                     "testId": "bookmark_modal.link.message--text",
                     "role": "text",
                     "renderedWhen": ["type === 'link'"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "bookmark_modal.title",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "bookmark_modal.title.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "bookmark_modal.title.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "bookmark_modal.title.message--text",
+                    "role": "text",
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
@@ -21845,6 +22138,30 @@
             ]
         },
         {
+            "scope": "channel_settings_modal.info.url.value",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "channel_settings_modal.info.url.value.field",
+                    "role": null,
+                    "renderedWhen": ["showURLEditor", "!isDMorGroupChannel", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "channel_settings_modal.info.url.value.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["showURLEditor", "!isDMorGroupChannel", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "channel_settings_modal.info.url.value.message--text",
+                    "role": "text",
+                    "renderedWhen": ["showURLEditor", "!isDMorGroupChannel", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "channel_settings_modal.permissions_policy",
             "class": "ChannelSettingsModalPermissionsPolicy",
             "elements": [
@@ -22743,6 +23060,45 @@
                 {
                     "testId": "convert_gm_to_channel_modal.url.value--textbox",
                     "role": "textbox",
+                    "renderedWhen": [
+                        "showURLEditor",
+                        "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+                        "!showLoader",
+                        "isEditing"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "convert_gm_to_channel_modal.url.value",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "convert_gm_to_channel_modal.url.value.field",
+                    "role": null,
+                    "renderedWhen": [
+                        "showURLEditor",
+                        "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+                        "!showLoader",
+                        "isEditing"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "convert_gm_to_channel_modal.url.value.message--alert",
+                    "role": "alert",
+                    "renderedWhen": [
+                        "showURLEditor",
+                        "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+                        "!showLoader",
+                        "isEditing"
+                    ],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "convert_gm_to_channel_modal.url.value.message--text",
+                    "role": "text",
                     "renderedWhen": [
                         "showURLEditor",
                         "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
@@ -29146,6 +29502,30 @@
             ]
         },
         {
+            "scope": "login.login_id",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "login.login_id.field",
+                    "role": null,
+                    "renderedWhen": ["!magicLinkSuccessful", "enableBaseLogin"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login.login_id.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!magicLinkSuccessful", "enableBaseLogin"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "login.login_id.message--text",
+                    "role": "text",
+                    "renderedWhen": ["!magicLinkSuccessful", "enableBaseLogin"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "login.password",
             "class": "Password",
             "elements": [
@@ -31483,6 +31863,27 @@
             ]
         },
         {
+            "scope": "new_channel_modal.purpose",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "new_channel_modal.purpose.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "new_channel_modal.purpose.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "new_channel_modal.purpose.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "new_channel_modal.type",
             "class": "NewChannelModalType",
             "elements": [
@@ -31537,6 +31938,30 @@
                 {
                     "testId": "new_channel_modal.url.value--textbox",
                     "role": "textbox",
+                    "renderedWhen": ["showURLEditor", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
+            "scope": "new_channel_modal.url.value",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "new_channel_modal.url.value.field",
+                    "role": null,
+                    "renderedWhen": ["showURLEditor", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "new_channel_modal.url.value.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["showURLEditor", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "new_channel_modal.url.value.message--text",
+                    "role": "text",
                     "renderedWhen": ["showURLEditor", "isEditing"],
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
@@ -35504,6 +35929,30 @@
             ]
         },
         {
+            "scope": "rename_channel_modal.url.value",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "rename_channel_modal.url.value.field",
+                    "role": null,
+                    "renderedWhen": ["showURLEditor", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "rename_channel_modal.url.value.message--alert",
+                    "role": "alert",
+                    "renderedWhen": ["showURLEditor", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "rename_channel_modal.url.value.message--text",
+                    "role": "text",
+                    "renderedWhen": ["showURLEditor", "isEditing"],
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "request_join_channel_modal",
             "class": "RequestJoinChannelModal",
             "container": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal",
@@ -36578,6 +37027,27 @@
                     "key": "string",
                     "renderedWhen": ["!(structuredAttributes.length === 0)"],
                     "source": "channels/src/components/widgets/tag/alert_tag.tsx#AlertTag"
+                }
+            ]
+        },
+        {
+            "scope": "rhs.channel_members.search",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "rhs.channel_members.search.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "rhs.channel_members.search.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "rhs.channel_members.search.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         },
@@ -47160,6 +47630,27 @@
             ]
         },
         {
+            "scope": "team_settings_modal.info.description",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "team_settings_modal.info.description.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "team_settings_modal.info.description.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "team_settings_modal.info.description.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                }
+            ]
+        },
+        {
             "scope": "team_settings_modal.info.description_section",
             "class": "TeamSettingsModalInfoDescriptionSection",
             "container": "channels/src/components/widgets/modals/components/base_setting_item.tsx#BaseSettingItem",
@@ -47174,6 +47665,27 @@
                     "role": "text",
                     "renderedWhen": ["description"],
                     "source": "channels/src/components/widgets/modals/components/base_setting_item.tsx#BaseSettingItem"
+                }
+            ]
+        },
+        {
+            "scope": "team_settings_modal.info.name",
+            "class": "Input",
+            "elements": [
+                {
+                    "testId": "team_settings_modal.info.name.field",
+                    "role": null,
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "team_settings_modal.info.name.message--alert",
+                    "role": "alert",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+                },
+                {
+                    "testId": "team_settings_modal.info.name.message--text",
+                    "role": "text",
+                    "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 }
             ]
         },

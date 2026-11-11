@@ -114,7 +114,7 @@ const GlobalAttributes = ({disabled = false}: Props) => {
                                 maxLength={CPA_FIELD_NAME_MAX_RUNES}
                                 onChange={handleSearchChange}
                                 onClear={handleSearchClear}
-                                data-testid='admin.attributes.search--textbox'
+                                testId='admin.attributes.search'
                             />
                             <SourceFilter
                                 value={source}

@@ -889,12 +889,24 @@ export class AdminAcceptInviteModal extends Scope {
         await this.passwordTextbox.fill(value);
     }
 
+    get code(): Input {
+        return new Input(this.page, `${this.scope}.code`, this.root);
+    }
+
     /**
      * `admin.accept_invite_modal.destination_team` — DropdownInput (channels/src/components/dropdown_input.tsx)
      * Renders only when !isPendingState(saving).
      */
     get destinationTeam(): DropdownInput {
         return new DropdownInput(this.page, `${this.scope}.destination_team`, this.root);
+    }
+
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+
+    get password(): Input {
+        return new Input(this.page, `${this.scope}.password`, this.root);
     }
 
     /** Fills the given fields; others are left as they are. */
@@ -1618,6 +1630,10 @@ export class AdminAttribute extends Scope {
      */
     get appliesTo(): AdminAttributeAppliesTo {
         return new AdminAttributeAppliesTo(this.page, `${this.scope}.applies_to`);
+    }
+
+    get displayName(): Input {
+        return new Input(this.page, `${this.scope}.display_name`, this.root);
     }
 
     /**
@@ -3124,20 +3140,6 @@ export class AdminAttributeGraphPane extends Scope {
     }
 
     /**
-     * `admin.attribute.graph.pane.name` — NodeMenu (channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx)
-     * Renders only when disabled.
-     */
-    get name() {
-        return drivers.container(this.byTestId(`${this.scope}.name`), {
-            testId: `${this.scope}.name`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu',
-        });
-    }
-
-    /**
      * `admin.attribute.graph.pane.name--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
      * Renders only when !disabled.
      */
@@ -3174,6 +3176,14 @@ export class AdminAttributeGraphPane extends Scope {
 
     get children(): AdminAttributeGraphPaneChildren {
         return new AdminAttributeGraphPaneChildren(this.page, `${this.scope}.children`, this.root);
+    }
+
+    /**
+     * `admin.attribute.graph.pane.name` — NodeMenu (channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx)
+     * Renders only when disabled.
+     */
+    get name(): AdminAttributeGraphPaneName {
+        return new AdminAttributeGraphPaneName(this.page, `${this.scope}.name`, this.root);
     }
 
     get parents(): AdminAttributeGraphPaneChildren {
@@ -3294,6 +3304,10 @@ export class AdminAttributeGraphPaneChildren extends Scope {
         return this.keysOf(`${this.scope}.edge:`, '');
     }
 
+    get search(): Input {
+        return new Input(this.page, `${this.scope}.search`, this.root);
+    }
+
     /** Every `admin.attribute.graph.pane.children.edge:{key}` in the scope as a list by key, for the list matchers: `expect(x.edgeList).toHaveKeys([…])`. */
     get edgeList() {
         return this.keyedList(
@@ -3346,6 +3360,59 @@ export class AdminAttributeGraphPaneChildrenEdge extends Scope {
 
     async clickRemoveButton(): Promise<void> {
         await this.removeButton.click();
+    }
+}
+
+/** Scope `admin.attribute.graph.pane.name`. */
+export class AdminAttributeGraphPaneName extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.graph.pane.name', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.graph.pane.name.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !disabled.
+     */
+    get field() {
+        return drivers.container(this.byTestId(`${this.scope}.field`), {
+            testId: `${this.scope}.field`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.pane.name.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !disabled.
+     */
+    get messageAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
+            testId: `${this.scope}.message--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.attribute.graph.pane.name.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !disabled.
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
     }
 }
 
@@ -4686,6 +4753,10 @@ export class AdminAttributes extends Scope {
     /** The keys of every `admin.attributes.row:{key}` in the scope, in document order. */
     rowKeys(): Promise<string[]> {
         return this.keysOf(`${this.scope}.row:`, '');
+    }
+
+    get search(): Input {
+        return new Input(this.page, `${this.scope}.search`, this.root);
     }
 
     get topPager(): TopPager {
@@ -7526,6 +7597,10 @@ export class AdminClassification extends Scope {
         return new AdminClassificationLevels(this.page, `${this.scope}.levels`, this.root);
     }
 
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
+    }
+
     /**
      * `admin.classification.preset` — DropdownInput (channels/src/components/dropdown_input.tsx)
      * Renders only when enabled.
@@ -8651,6 +8726,14 @@ export class AdminCreateInviteModal extends Scope {
 
     async fillPasswordTextbox(value: string): Promise<void> {
         await this.passwordTextbox.fill(value);
+    }
+
+    get code(): Input {
+        return new Input(this.page, `${this.scope}.code`, this.root);
+    }
+
+    get password(): Input {
+        return new Input(this.page, `${this.scope}.password`, this.root);
     }
 
     /** Fills the given fields; others are left as they are. */
@@ -19751,6 +19834,10 @@ export class AdminUsers extends Scope {
      */
     get revokeSessionsModal(): AdminConfirmModal {
         return new AdminConfirmModal(this.page, `${this.scope}.revoke_sessions_modal`, this.root);
+    }
+
+    get search(): Input {
+        return new Input(this.page, `${this.scope}.search`, this.root);
     }
 
     get table(): AdminUsersTable {

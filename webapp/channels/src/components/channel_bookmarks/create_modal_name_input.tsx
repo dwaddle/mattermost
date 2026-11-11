@@ -142,7 +142,7 @@ const CreateModalNameInput = ({
                     onChange={handleInputChange}
                     value={displayName ?? placeholder ?? ''}
                     placeholder={placeholder}
-                    data-testid='bookmark_modal.title--textbox'
+                    testId='bookmark_modal.title'
                     useLegend={false}
                 />
                 <Clear

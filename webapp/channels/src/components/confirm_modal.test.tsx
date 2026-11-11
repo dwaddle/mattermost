@@ -13,6 +13,7 @@ describe('ConfirmModal', () => {
         show: true,
         onConfirm: jest.fn(),
         onCancel: jest.fn(),
+        testId: 'test_confirm_modal' as const,
     };
 
     test('should call onConfirm with correct checkbox value when confirm button is pressed', async () => {

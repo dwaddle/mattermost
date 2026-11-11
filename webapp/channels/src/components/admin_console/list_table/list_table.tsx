@@ -88,9 +88,8 @@ interface TableMandatoryTypes {
 type Props<TableType extends TableMandatoryTypes> = {
     table: Table<TableType>;
 
-    // Names the table's parts (`<testIdScope>.row:<row id>`, `.row.cell:<column>`, `.head`, `.footer.pagination--text`);
-    // without it they keep their old shared ids (`listTableBodyRow`, the column id).
-    testIdScope?: TestId;
+    // Names the table's parts (`<testIdScope>.row:<row id>`, `.row.cell:<column>`, `.head`, `.footer.pagination--text`).
+    testIdScope: TestId;
 };
 
 type DraggableRowProps<T extends TableMandatoryTypes> = {
@@ -101,7 +100,7 @@ type DraggableRowProps<T extends TableMandatoryTypes> = {
     cellIdPrefix: string;
     headerIdPrefix: string;
     handleRowClick: (e: MouseEvent<HTMLTableRowElement>) => void;
-    testIdScope?: TestId;
+    testIdScope: TestId;
 };
 
 function DraggableRow<T extends TableMandatoryTypes>({
@@ -153,7 +152,7 @@ function DraggableRow<T extends TableMandatoryTypes>({
             ref={setRowElement}
             id={`${rowIdPrefix}${row.original.id}`}
             key={row.id}
-            data-testid={testIdScope ? `${testIdScope}.row:${row.original.id}` : 'listTableBodyRow'}
+            data-testid={`${testIdScope}.row:${row.original.id}`}
             onClick={handleRowClick}
             className={classNames({clickable: Boolean(tableMeta.onRowClick)})}
         >
@@ -165,7 +164,7 @@ function DraggableRow<T extends TableMandatoryTypes>({
                     className={classNames(`${cell.column.id}`, {
                         [PINNED_CLASS]: cell.column.getCanPin(),
                     })}
-                    data-testid={testIdScope ? `${testIdScope}.row.cell:${cell.column.id}` : cell.column.id}
+                    data-testid={`${testIdScope}.row.cell:${cell.column.id}`}
                     style={{width: cell.column.getSize()}}
                 >
                     {tableMeta.onReorder && i === 0 && (
@@ -176,7 +175,7 @@ function DraggableRow<T extends TableMandatoryTypes>({
                                 ref={setHandleElement}
                                 type='button'
                                 className='dragHandle'
-                                data-testid={part(testIdScope, 'row.drag_handle', 'button')}
+                                data-testid={`${testIdScope}.row.drag_handle--button`}
                                 aria-label={formatMessage({
                                     id: 'adminConsole.list.table.dragHandleLabel',
                                     defaultMessage: 'Reorder row',
@@ -266,7 +265,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                                 isLoading={tableMeta.loadingState === LoadingStates.Loading}
                                 onPreviousPageClick={tableMeta.onPreviousPageClick}
                                 onNextPageClick={tableMeta.onNextPageClick}
-                                testIdScope={part(props.testIdScope, 'top_pager')}
+                                testIdScope={`${props.testIdScope}.top_pager`}
                             />
                         </>
                     )}
@@ -282,17 +281,14 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                 )}
             >
                 <caption className='sr-only'>{tableMeta.tableCaption}</caption>
-                <thead data-testid={props.testIdScope ? `${props.testIdScope}.head` : 'listTableHead'}>
+                <thead data-testid={`${props.testIdScope}.head`}>
                     {props.table.getHeaderGroups().map((headerGroup) => (
-                        <tr
-                            key={headerGroup.id}
-                            data-testid={props.testIdScope ? undefined : 'listTableHeadRow'}
-                        >
+                        <tr key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <th
                                     key={header.id}
                                     id={`${headerIdPrefix}${header.id}`}
-                                    data-testid={part(props.testIdScope, 'head.column', {key: header.id})}
+                                    data-testid={`${props.testIdScope}.head.column:${header.id}`}
                                     colSpan={header.colSpan}
                                     scope='col'
                                     aria-sort={getAriaSortForTableHeader(header.column.getCanSort(), header.column.getIsSorted())}
@@ -357,7 +353,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                             >
                                 <LoadingSpinner
                                     text={formatMessage({id: 'adminConsole.list.table.genericLoading', defaultMessage: 'Loading'})}
-                                    testId={part(props.testIdScope, 'loading')}
+                                    testId={`${props.testIdScope}.loading`}
                                 />
                             </td>
                         </tr>
@@ -370,7 +366,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                                 colSpan={colCount}
                                 className='noRows'
                                 disabled={true}
-                                data-testid={part(props.testIdScope, 'no_data', 'text')}
+                                data-testid={`${props.testIdScope}.no_data--text`}
                             >
                                 {tableMeta.emptyDataMessage || formatMessage({id: 'adminConsole.list.table.genericNoData', defaultMessage: 'No data'})}
                             </td>
@@ -384,7 +380,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                                 colSpan={colCount}
                                 className='noRows'
                                 disabled={true}
-                                data-testid={part(props.testIdScope, 'load_error', 'text')}
+                                data-testid={`${props.testIdScope}.load_error--text`}
                             >
                                 {formatMessage({id: 'adminConsole.list.table.genericError', defaultMessage: 'There was an error loading the data, please try again'})}
                             </td>
@@ -412,12 +408,12 @@ export function ListTable<TableType extends TableMandatoryTypes>(
             {hasPagination && (
                 <div
                     className='adminConsoleListTabletOptionalFoot'
-                    data-testid={props.testIdScope ? `${props.testIdScope}.footer` : 'listTableFoot'}
+                    data-testid={`${props.testIdScope}.footer`}
                 >
-                    <span data-testid={props.testIdScope ? `${props.testIdScope}.footer.pagination--text` : 'listTableFoot-paginationInfo'}>{tableMeta.paginationInfo}</span>
+                    <span data-testid={`${props.testIdScope}.footer.pagination--text`}>{tableMeta.paginationInfo}</span>
                     <div
                         className='adminConsoleListTablePageSize'
-                        data-testid={props.testIdScope ? `${props.testIdScope}.footer.page_size` : 'listTableFoot-pageSize'}
+                        data-testid={`${props.testIdScope}.footer.page_size`}
                         aria-label={formatMessage({id: 'adminConsole.list.table.rowCount.label', defaultMessage: 'Show {count} rows per page'}, {count: selectedPageSize.label})}
                     >
                         <FormattedMessage
@@ -452,7 +448,7 @@ export function ListTable<TableType extends TableMandatoryTypes>(
                         isLoading={tableMeta.loadingState === LoadingStates.Loading}
                         onPreviousPageClick={tableMeta.onPreviousPageClick}
                         onNextPageClick={tableMeta.onNextPageClick}
-                        testIdScope={part(props.testIdScope, 'footer')}
+                        testIdScope={`${props.testIdScope}.footer`}
                     />
 
                 </div>

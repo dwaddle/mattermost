@@ -1005,7 +1005,7 @@ const Login = ({onCustomizeHeader}: LoginProps) => {
                                         >
                                             <div className='login-body-card-form'>
                                                 <Input
-                                                    data-testid='login.login_id--textbox'
+                                                    testId='login.login_id'
                                                     ref={loginIdInput}
                                                     name='loginId'
                                                     containerClassName='login-body-card-form-input'

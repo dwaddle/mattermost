@@ -27,6 +27,7 @@ import {
     ChannelBanner,
     ChannelInfoAttributes,
     Header,
+    Input,
     MenuItemActionImpl,
     PostCreate,
     PostItem,
@@ -781,6 +782,10 @@ export class RhsChannelMembers extends Scope {
      */
     get policy(): RhsChannelMembersPolicy {
         return new RhsChannelMembersPolicy(this.page, `${this.scope}.policy`, this.root);
+    }
+
+    get search(): Input {
+        return new Input(this.page, `${this.scope}.search`, this.root);
     }
 
     /** Every `rhs.channel_members.member:{key}` in the scope as a list by key, for the list matchers: `expect(x.memberList).toHaveKeys([…])`. */

@@ -523,6 +523,60 @@ export class UsersResults extends Scope {
     }
 }
 
+/** Rendered at `admin.accept_invite_modal.code`, `admin.accept_invite_modal.name`, `admin.accept_invite_modal.password`, `admin.access_control.policy.rules.row.attribute_menu.filter`, `admin.access_control.policy.rules.row.value_menu.filter`, `admin.access_control.policy.rules.row.value_menu.search`, `admin.access_control.policy.rules.row.value_menu.value`, `admin.attribute.display_name`, `admin.attribute.graph.add_top.name`, `admin.attribute.graph.child_draft.name`, `admin.attribute.graph.empty.name`, `admin.attribute.graph.pane.children.search`, `admin.attribute.graph.pane.parents.search`, `admin.attribute.ranks.option_menu.label`, `admin.attribute.values.option_menu.label`, `admin.attributes.search`, `admin.channel.access_rules.rules.row.attribute_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.search`, `admin.channel.access_rules.rules.row.value_menu.value`, `admin.classification.name`, `admin.create_invite_modal.code`, `admin.create_invite_modal.password`, `admin.permission_policy.rules.row.attribute_menu.filter`, `admin.permission_policy.rules.row.value_menu.filter`, `admin.permission_policy.rules.row.value_menu.search`, `admin.permission_policy.rules.row.value_menu.value`, `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.access_rules.rules.row.attribute_menu.filter`, `admin.team.access_rules.rules.row.value_menu.filter`, `admin.team.access_rules.rules.row.value_menu.search`, `admin.team.access_rules.rules.row.value_menu.value`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `admin.users.search`, `bookmark_modal.link`, `bookmark_modal.title`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.access_rules.rules.row.attribute_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.search`, `channel_settings_modal.access_rules.rules.row.value_menu.value`, `channel_settings_modal.info.name`, `channel_settings_modal.info.url.value`, `channel_settings_modal.permissions_policy.editor.rules.row.attribute_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.search`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.value`, `convert_gm_to_channel_modal.name`, `convert_gm_to_channel_modal.url.value`, `create_recap_modal.channel_search`, `create_team.name`, `create_user_groups_modal.mention`, `create_user_groups_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `login.login_id`, `login_mfa.token`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.attributes.attribute.value`, `new_channel_modal.name`, `new_channel_modal.purpose`, `new_channel_modal.url.value`, `password_reset.email`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `rename_channel_modal.url.value`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.channel_members.search`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`, `signup.card.email`, `signup.card.username`, `team_settings_modal.access_policies.editor.name`, `team_settings_modal.access_policies.editor.rules.row.attribute_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.search`, `team_settings_modal.access_policies.editor.rules.row.value_menu.value`, `team_settings_modal.info.description`, `team_settings_modal.info.name`, `team_settings_modal.membership.rules.row.attribute_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.search`, `team_settings_modal.membership.rules.row.value_menu.value`, `update_user_group_modal.mention`, `update_user_group_modal.name`, `user_groups_modal.search`, `view_user_group_modal.search`: one class, constructed with the scope it is mounted at. */
+export class Input extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.accept_invite_modal.code.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !isPendingState(saving).
+     */
+    get field() {
+        return drivers.container(this.byTestId(`${this.scope}.field`), {
+            testId: `${this.scope}.field`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.accept_invite_modal.code.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !isPendingState(saving).
+     */
+    get messageAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
+            testId: `${this.scope}.message--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.accept_invite_modal.code.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when !isPendingState(saving).
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+}
+
 /** Rendered at `admin.accept_invite_modal.destination_team`, `admin.classification.global_banner_level`, `admin.classification.preset`, `admin.secure_connection.destination_team`, `admin.users.filters.role`, `admin.users.filters.status`, `channel_settings_modal.configuration.classification_level`, `convert_gm_to_channel_modal.team`, `create_recap_modal.schedule.time_of_day`, `create_recap_modal.schedule.time_period`, `new_channel_modal.classification_level`: one class, constructed with the scope it is mounted at. */
 export class DropdownInput extends Scope {
     /**
@@ -1382,60 +1436,6 @@ export class RulesRowAttributeMenu extends Scope {
                 source: 'channels/src/components/admin_console/access_control/editors/table_editor/attribute_selector_menu.tsx#AttributeSelectorMenu',
             }),
         );
-    }
-}
-
-/** Rendered at `admin.access_control.policy.rules.row.attribute_menu.filter`, `admin.access_control.policy.rules.row.value_menu.filter`, `admin.access_control.policy.rules.row.value_menu.search`, `admin.access_control.policy.rules.row.value_menu.value`, `admin.attribute.graph.add_top.name`, `admin.attribute.graph.child_draft.name`, `admin.attribute.graph.empty.name`, `admin.attribute.ranks.option_menu.label`, `admin.attribute.values.option_menu.label`, `admin.channel.access_rules.rules.row.attribute_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.filter`, `admin.channel.access_rules.rules.row.value_menu.search`, `admin.channel.access_rules.rules.row.value_menu.value`, `admin.permission_policy.rules.row.attribute_menu.filter`, `admin.permission_policy.rules.row.value_menu.filter`, `admin.permission_policy.rules.row.value_menu.search`, `admin.permission_policy.rules.row.value_menu.value`, `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.access_rules.rules.row.attribute_menu.filter`, `admin.team.access_rules.rules.row.value_menu.filter`, `admin.team.access_rules.rules.row.value_menu.search`, `admin.team.access_rules.rules.row.value_menu.value`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `bookmark_modal.link`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.access_rules.rules.row.attribute_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.filter`, `channel_settings_modal.access_rules.rules.row.value_menu.search`, `channel_settings_modal.access_rules.rules.row.value_menu.value`, `channel_settings_modal.info.name`, `channel_settings_modal.permissions_policy.editor.rules.row.attribute_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.filter`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.search`, `channel_settings_modal.permissions_policy.editor.rules.row.value_menu.value`, `convert_gm_to_channel_modal.name`, `create_recap_modal.channel_search`, `create_team.name`, `create_user_groups_modal.mention`, `create_user_groups_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `login_mfa.token`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.attributes.attribute.value`, `new_channel_modal.name`, `password_reset.email`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`, `signup.card.email`, `signup.card.username`, `team_settings_modal.access_policies.editor.name`, `team_settings_modal.access_policies.editor.rules.row.attribute_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.filter`, `team_settings_modal.access_policies.editor.rules.row.value_menu.search`, `team_settings_modal.access_policies.editor.rules.row.value_menu.value`, `team_settings_modal.membership.rules.row.attribute_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.filter`, `team_settings_modal.membership.rules.row.value_menu.search`, `team_settings_modal.membership.rules.row.value_menu.value`, `update_user_group_modal.mention`, `update_user_group_modal.name`, `user_groups_modal.search`, `view_user_group_modal.search`: one class, constructed with the scope it is mounted at. */
-export class Input extends Scope {
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `admin.access_control.policy.rules.row.attribute_menu.filter.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     * Renders only when !(rows.length === 0).
-     */
-    get field() {
-        return drivers.container(this.byTestId(`${this.scope}.field`), {
-            testId: `${this.scope}.field`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `admin.access_control.policy.rules.row.attribute_menu.filter.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     * Renders only when !(rows.length === 0).
-     */
-    get messageAlert() {
-        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
-            testId: `${this.scope}.message--alert`,
-            role: 'alert',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `admin.access_control.policy.rules.row.attribute_menu.filter.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     * Renders only when !(rows.length === 0).
-     */
-    get messageText() {
-        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
-            testId: `${this.scope}.message--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    getMessageText(): Promise<string> {
-        return this.messageText.text();
     }
 }
 
@@ -7565,6 +7565,10 @@ export class Url extends Scope {
 
     async fillValueTextbox(value: string): Promise<void> {
         await this.valueTextbox.fill(value);
+    }
+
+    get value(): Input {
+        return new Input(this.page, `${this.scope}.value`, this.root);
     }
 }
 

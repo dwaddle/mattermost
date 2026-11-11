@@ -46,7 +46,7 @@ export function SystemUsersSearch(props: Props) {
                 type='text'
                 clearable={true}
                 name='searchTerm'
-                data-testid='admin.users.search--textbox'
+                testId='admin.users.search'
                 containerClassName='systemUsersSearch'
                 placeholder={formatMessage({id: 'admin.system_users.search.placeholder', defaultMessage: 'Search users'})}
                 inputPrefix={<i className={'icon icon-magnify'}/>}

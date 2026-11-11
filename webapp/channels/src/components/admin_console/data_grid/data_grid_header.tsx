@@ -32,14 +32,14 @@ const HeaderElement = ({col}: HeaderElementProps) => {
 
 export type Props = {
     columns: Column[];
-    testIdScope?: TestId;
+    testIdScope: TestId;
 };
 
 const DataGridHeader = ({columns, testIdScope}: Props) => {
     return (
         <div
             className='DataGrid_header'
-            data-testid={testIdScope ? `${testIdScope}.header` : 'dataGrid-header'}
+            data-testid={`${testIdScope}.header`}
         >
             {columns.map((col) => (
                 <HeaderElement

@@ -26,7 +26,7 @@ const TeamNameSection = ({clientError, handleNameChanges, name}: Props) => {
     const nameSectionInput = (
         <Input
             id='teamName'
-            data-testid='team_settings_modal.info.name--textbox'
+            testId='team_settings_modal.info.name'
             type='text'
             maxLength={Constants.MAX_TEAMNAME_LENGTH}
             onChange={updateName}

@@ -145,7 +145,7 @@ function SecureConnectionCreateInviteModal({
                                     defaultMessage: 'Encrypted invitation code',
                                 })}
                                 value={inviteCode}
-                                data-testid='admin.create_invite_modal.code--textbox'
+                                testId='admin.create_invite_modal.code'
                                 readOnly={true}
                                 addon={(
                                     <Button
@@ -169,7 +169,7 @@ function SecureConnectionCreateInviteModal({
                             })}
                             value={password}
                             onChange={handlePasswordChange}
-                            data-testid='admin.create_invite_modal.password--textbox'
+                            testId='admin.create_invite_modal.password'
                             readOnly={done}
                             addon={done ? (
                                 <Button

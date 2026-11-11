@@ -217,6 +217,10 @@ export class NewChannelModal extends Scope {
         return new Input(this.page, `${this.scope}.name`, this.root);
     }
 
+    get purpose(): Input {
+        return new Input(this.page, `${this.scope}.purpose`, this.root);
+    }
+
     get type(): NewChannelModalType {
         return new NewChannelModalType(this.page, `${this.scope}.type`, this.root);
     }

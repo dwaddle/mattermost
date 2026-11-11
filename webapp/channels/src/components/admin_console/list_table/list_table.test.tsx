@@ -68,7 +68,12 @@ function Harness({rows, onReorder, isRowDragDisabled, onRowClick}: HarnessProps)
         meta,
     });
 
-    return <ListTable table={table}/>;
+    return (
+        <ListTable
+            table={table}
+            testIdScope='admin.test.table'
+        />
+    );
 }
 
 function makeRows(n: number): Row[] {

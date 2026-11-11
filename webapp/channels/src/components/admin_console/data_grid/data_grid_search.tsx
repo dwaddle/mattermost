@@ -18,7 +18,7 @@ type Props = {
     term?: string;
     extraComponent?: JSX.Element;
     disabled?: boolean;
-    testIdScope?: TestId;
+    testIdScope: TestId;
 
     filterProps?: {
         options: FilterOptions;
@@ -66,13 +66,12 @@ const DataGridSearch = ({
                         placeholder={defineMessage({id: 'search_bar.search', defaultMessage: 'Search'})}
                         onChange={handleSearch}
                         value={termFromProps}
-                        data-testid={testIdScope ? `${testIdScope}.search--textbox` : 'searchInput'}
+                        data-testid={`${testIdScope}.search--textbox`}
                         disabled={disabled}
                     />
                     <i
                         className={'DataGrid_clearButton fa fa-times-circle ' + (termFromProps.length ? '' : 'hidden')}
                         onClick={resetSearch}
-                        data-testid={testIdScope ? undefined : 'clear-search'}
                     />
                 </div>
                 {filter}

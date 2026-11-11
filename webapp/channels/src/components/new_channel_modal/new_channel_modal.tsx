@@ -679,7 +679,7 @@ const NewChannelModal = ({channelTypePluginId, modalHeaderText, nameLabel, nameP
                 <div className='new-channel-modal-purpose-container'>
                     <Input
                         id='new-channel-modal-purpose'
-                        data-testid='new_channel_modal.purpose--textbox'
+                        testId='new_channel_modal.purpose'
                         type='textarea'
                         value={purpose}
                         onChange={handleOnPurposeChange}

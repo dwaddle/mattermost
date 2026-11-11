@@ -118,8 +118,8 @@ type Props = {
      */
     isStacked?: boolean;
 
-    /** The modal's testid, on the whole dialog (title and close button included); its buttons render `<testId>.confirm--button` and `<testId>.cancel--button`. Without it, the body takes the modal's id. */
-    testId?: TestIdScope;
+    /** The modal's testid, on the whole dialog (title and close button included); its buttons render `<testId>.confirm--button` and `<testId>.cancel--button`. */
+    testId: TestIdScope;
 };
 
 const ConfirmModal = ({
@@ -177,7 +177,7 @@ const ConfirmModal = ({
                 <label>
                     <input
                         type='checkbox'
-                        data-testid={part(testId, 'dont_show_again', 'checkbox')}
+                        data-testid={`${testId}.dont_show_again--checkbox`}
                         onChange={handleCheckboxChange}
                         checked={checked}
                     />
@@ -204,7 +204,7 @@ const ConfirmModal = ({
         cancelButton = (
             <Button
                 type='button'
-                data-testid={testId ? `${testId}.cancel--button` : 'cancel-button'}
+                data-testid={`${testId}.cancel--button`}
                 emphasis='tertiary'
                 onClick={handleCancel}
                 id='cancelModalButton'
@@ -226,9 +226,7 @@ const ConfirmModal = ({
             isStacked={isStacked}
             testId={testId}
         >
-            <div
-                data-testid={testId ? undefined : id}
-            >
+            <div>
                 <div
                     className='ConfirmModal__body'
                     id='confirmModalBody'
@@ -246,7 +244,7 @@ const ConfirmModal = ({
                             destructive={destructive}
                             onClick={handleConfirm}
                             id='confirmModalButton'
-                            data-testid={part(testId, 'confirm', 'button')}
+                            data-testid={`${testId}.confirm--button`}
                             autoFocus={true}
                             disabled={confirmDisabled}
                         >

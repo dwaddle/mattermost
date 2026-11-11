@@ -2795,6 +2795,108 @@
       }
     },
     {
+      "template": "admin.accept_invite_modal.code.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "code"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.accept_invite_modal.code.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "code"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.accept_invite_modal.code.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "code"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
       "template": "admin.accept_invite_modal.confirm--button",
       "grammar": true,
       "scope": [
@@ -2990,6 +3092,108 @@
       }
     },
     {
+      "template": "admin.accept_invite_modal.name.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "name"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.accept_invite_modal.name.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "name"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.accept_invite_modal.name.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "name"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
       "template": "admin.accept_invite_modal.password--textbox",
       "grammar": true,
       "scope": [
@@ -3035,6 +3239,108 @@
         "field": "password",
         "valueType": "string"
       }
+    },
+    {
+      "template": "admin.accept_invite_modal.password.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "password"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.accept_invite_modal.password.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "password"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.accept_invite_modal.password.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "accept_invite_modal",
+        "password"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_accept_invite_modal.tsx#SecureConnectionAcceptInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPendingState(saving)",
+          "explained": "!isPendingState(saving)",
+          "kind": "local state"
+        }
+      ]
     },
     {
       "template": "admin.access_control.policies",
@@ -8766,6 +9072,87 @@
       }
     },
     {
+      "template": "admin.attribute.display_name.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "display_name"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attribute.display_name.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "display_name"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attribute.display_name.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "display_name"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_details.tsx#AttributeDetails"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "admin.attribute.external_source",
       "grammar": true,
       "scope": [
@@ -10727,6 +11114,96 @@
       }
     },
     {
+      "template": "admin.attribute.graph.pane.children.search.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "children",
+        "search"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attribute.graph.pane.children.search.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "children",
+        "search"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attribute.graph.pane.children.search.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "children",
+        "search"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "admin.attribute.graph.pane.children.suggestions--list",
       "grammar": true,
       "scope": [
@@ -10835,6 +11312,114 @@
           "channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu",
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!disabled",
+          "explained": "!disabled",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.attribute.graph.pane.name.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "name"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!disabled",
+          "explained": "!disabled",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.attribute.graph.pane.name.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "name"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!disabled",
+          "explained": "!disabled",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.attribute.graph.pane.name.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "name"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/node_menu.tsx#NodeMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       },
       "renderedWhen": [
         {
@@ -11086,6 +11671,96 @@
           "channels/src/components/admin_console/global_attributes/attribute_details/graph/grant_confirm_modal.tsx#useGrantConfirm",
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      }
+    },
+    {
+      "template": "admin.attribute.graph.pane.parents.search.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "parents",
+        "search"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attribute.graph.pane.parents.search.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "parents",
+        "search"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attribute.graph.pane.parents.search.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "graph",
+        "pane",
+        "parents",
+        "search"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/graph/edge_list.tsx#EdgeList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       }
     },
     {
@@ -15104,6 +15779,87 @@
         "delegated": [
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      }
+    },
+    {
+      "template": "admin.attributes.search.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "search"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/global_attributes.tsx#GlobalAttributes"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attributes.search.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "search"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/global_attributes.tsx#GlobalAttributes"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attributes.search.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "search"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/global_attributes.tsx#GlobalAttributes"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       }
     },
     {
@@ -23377,6 +24133,108 @@
       }
     },
     {
+      "template": "admin.classification.name.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "classification",
+        "name"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "loadState === 'ready' && template",
+          "explained": "loadState === 'ready' && template",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.classification.name.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "classification",
+        "name"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "loadState === 'ready' && template",
+          "explained": "loadState === 'ready' && template",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.classification.name.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "classification",
+        "name"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/classification_attribute/classification_attribute.tsx#ClassificationAttribute"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "loadState === 'ready' && template",
+          "explained": "loadState === 'ready' && template",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
       "template": "admin.classification.preset",
       "grammar": true,
       "scope": [
@@ -25860,6 +26718,123 @@
       }
     },
     {
+      "template": "admin.create_invite_modal.code.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "create_invite_modal",
+        "code"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_create_invite_modal.tsx#SecureConnectionCreateInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!loading",
+          "explained": "!loading",
+          "kind": "local state"
+        },
+        {
+          "expr": "inviteCode",
+          "explained": "inviteCode",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.create_invite_modal.code.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "create_invite_modal",
+        "code"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_create_invite_modal.tsx#SecureConnectionCreateInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!loading",
+          "explained": "!loading",
+          "kind": "local state"
+        },
+        {
+          "expr": "inviteCode",
+          "explained": "inviteCode",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.create_invite_modal.code.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "create_invite_modal",
+        "code"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_create_invite_modal.tsx#SecureConnectionCreateInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!loading",
+          "explained": "!loading",
+          "kind": "local state"
+        },
+        {
+          "expr": "inviteCode",
+          "explained": "inviteCode",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
       "template": "admin.create_invite_modal.confirm--button",
       "grammar": true,
       "scope": [
@@ -25952,6 +26927,108 @@
         "field": "password",
         "valueType": "string"
       }
+    },
+    {
+      "template": "admin.create_invite_modal.password.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "create_invite_modal",
+        "password"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_create_invite_modal.tsx#SecureConnectionCreateInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!loading",
+          "explained": "!loading",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.create_invite_modal.password.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "create_invite_modal",
+        "password"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_create_invite_modal.tsx#SecureConnectionCreateInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!loading",
+          "explained": "!loading",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.create_invite_modal.password.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "create_invite_modal",
+        "password"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/secure_connections/modals/secure_connection_create_invite_modal.tsx#SecureConnectionCreateInviteModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!loading",
+          "explained": "!loading",
+          "kind": "local state"
+        }
+      ]
     },
     {
       "template": "admin.data_retention.custom_policies",
@@ -58219,6 +59296,602 @@
       ]
     },
     {
+      "template": "admin.user_properties.footer",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties"
+      ],
+      "name": "footer",
+      "role": null,
+      "component": {
+        "name": "ListTable",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasPagination",
+          "explained": "hasPagination",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.footer.next--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "footer"
+      ],
+      "name": "next",
+      "role": "button",
+      "component": {
+        "name": "PaginationButtons",
+        "at": "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/pagination.tsx#Pagination",
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasPagination",
+          "explained": "hasPagination",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.footer.page_size",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "footer"
+      ],
+      "name": "page_size",
+      "role": null,
+      "component": {
+        "name": "ListTable",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasPagination",
+          "explained": "hasPagination",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.footer.pagination--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "footer"
+      ],
+      "name": "pagination",
+      "role": "text",
+      "component": {
+        "name": "ListTable",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasPagination",
+          "explained": "hasPagination",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.footer.previous--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "footer"
+      ],
+      "name": "previous",
+      "role": "button",
+      "component": {
+        "name": "PaginationButtons",
+        "at": "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/pagination.tsx#Pagination",
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasPagination",
+          "explained": "hasPagination",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.head",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties"
+      ],
+      "name": "head",
+      "role": null,
+      "component": {
+        "name": "ListTable",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.head.column:{key}",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "head"
+      ],
+      "name": "column",
+      "role": null,
+      "component": {
+        "name": "ListTable",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "columnheader",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      },
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.load_error--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties"
+      ],
+      "name": "load_error",
+      "role": "text",
+      "component": {
+        "name": "ListTable",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "cell",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "tableMeta.loadingState === LoadingStates.Failed",
+          "explained": "tableMeta.loadingState === LoadingStates.Failed",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.loading",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties"
+      ],
+      "name": "loading",
+      "role": null,
+      "component": {
+        "name": "LoadingSpinner",
+        "at": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "tableMeta.loadingState === LoadingStates.Loading && rowCount === 0",
+          "explained": "tableMeta.loadingState === LoadingStates.Loading && rowCount === 0",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.no_data--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties"
+      ],
+      "name": "no_data",
+      "role": "text",
+      "component": {
+        "name": "ListTable",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "cell",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0",
+          "explained": "tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.row.cell:{key}",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "row"
+      ],
+      "name": "cell",
+      "role": null,
+      "component": {
+        "name": "DraggableRow",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "cell",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      },
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.row.drag_handle--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "row"
+      ],
+      "name": "drag_handle",
+      "role": "button",
+      "component": {
+        "name": "DraggableRow",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "tableMeta.onReorder && i === 0",
+          "explained": "tableMeta.onReorder && i === 0",
+          "kind": "prop"
+        },
+        {
+          "expr": "!(tableMeta.isRowDragDisabled?.(row.original.id) === true)",
+          "explained": "!(tableMeta.isRowDragDisabled?.(row.original.id) === true)",
+          "kind": "prop"
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.row:{key}",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties"
+      ],
+      "name": "row",
+      "role": null,
+      "component": {
+        "name": "DraggableRow",
+        "at": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "row",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": true,
+        "delegated": []
+      },
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.top_pager.next--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "top_pager"
+      ],
+      "name": "next",
+      "role": "button",
+      "component": {
+        "name": "PaginationButtons",
+        "at": "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/pagination.tsx#Pagination",
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasPagination",
+          "explained": "hasPagination",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "tableMeta.hasDualSidedPagination",
+          "explained": "tableMeta.hasDualSidedPagination",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
+      "template": "admin.user_properties.top_pager.previous--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user_properties",
+        "top_pager"
+      ],
+      "name": "previous",
+      "role": "button",
+      "component": {
+        "name": "PaginationButtons",
+        "at": "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/list_table/pagination.tsx#Pagination",
+            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
+            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/common/pagination_buttons/pagination_buttons.tsx#PaginationButtons"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasPagination",
+          "explained": "hasPagination",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "tableMeta.hasDualSidedPagination",
+          "explained": "tableMeta.hasDualSidedPagination",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "unreachable": true
+    },
+    {
       "template": "admin.users",
       "grammar": true,
       "scope": [
@@ -61538,6 +63211,87 @@
         "delegated": [
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      }
+    },
+    {
+      "template": "admin.users.search.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "users",
+        "search"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_users/system_users_search/index.tsx#SystemUsersSearch"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.users.search.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "users",
+        "search"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_users/system_users_search/index.tsx#SystemUsersSearch"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.users.search.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "users",
+        "search"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_users/system_users_search/index.tsx#SystemUsersSearch"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       }
     },
     {
@@ -65967,6 +67721,84 @@
         "scope": "bookmark_modal",
         "field": "title",
         "valueType": "string"
+      }
+    },
+    {
+      "template": "bookmark_modal.title.field",
+      "grammar": true,
+      "scope": [
+        "bookmark_modal",
+        "title"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/channel_bookmarks/create_modal_name_input.tsx#CreateModalNameInput"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "bookmark_modal.title.message--alert",
+      "grammar": true,
+      "scope": [
+        "bookmark_modal",
+        "title"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/channel_bookmarks/create_modal_name_input.tsx#CreateModalNameInput"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "bookmark_modal.title.message--text",
+      "grammar": true,
+      "scope": [
+        "bookmark_modal",
+        "title"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/channel_bookmarks/create_modal_name_input.tsx#CreateModalNameInput"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       }
     },
     {
@@ -97452,6 +99284,156 @@
       ]
     },
     {
+      "template": "channel_settings_modal.info.url.value.field",
+      "grammar": true,
+      "scope": [
+        "channel_settings_modal",
+        "info",
+        "url",
+        "value"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/channel_settings_modal/channel_settings_info_tab.tsx#ChannelSettingsInfoTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "!isDMorGroupChannel",
+          "explained": "!isDMorGroupChannel",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "channel_settings_modal.info.url.value.message--alert",
+      "grammar": true,
+      "scope": [
+        "channel_settings_modal",
+        "info",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/channel_settings_modal/channel_settings_info_tab.tsx#ChannelSettingsInfoTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "!isDMorGroupChannel",
+          "explained": "!isDMorGroupChannel",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "channel_settings_modal.info.url.value.message--text",
+      "grammar": true,
+      "scope": [
+        "channel_settings_modal",
+        "info",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/channel_settings_modal/channel_settings_info_tab.tsx#ChannelSettingsInfoTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "!isDMorGroupChannel",
+          "explained": "!isDMorGroupChannel",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
       "template": "channel_settings_modal.permissions_policy.add_rule--button",
       "grammar": true,
       "scope": [
@@ -101831,6 +103813,168 @@
         "delegated": [
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+          "explained": "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+          "kind": "local state"
+        },
+        {
+          "expr": "!showLoader",
+          "explained": "!showLoader",
+          "kind": "local state",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "convert_gm_to_channel_modal.url.value.field",
+      "grammar": true,
+      "scope": [
+        "convert_gm_to_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/convert_gm_to_channel_modal/convert_gm_to_channel_modal.tsx#ConvertGmToChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+          "explained": "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+          "kind": "local state"
+        },
+        {
+          "expr": "!showLoader",
+          "explained": "!showLoader",
+          "kind": "local state",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "convert_gm_to_channel_modal.url.value.message--alert",
+      "grammar": true,
+      "scope": [
+        "convert_gm_to_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/convert_gm_to_channel_modal/convert_gm_to_channel_modal.tsx#ConvertGmToChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+          "explained": "!(!showLoader && Object.keys(commonTeamsById).length === 0)",
+          "kind": "local state"
+        },
+        {
+          "expr": "!showLoader",
+          "explained": "!showLoader",
+          "kind": "local state",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "convert_gm_to_channel_modal.url.value.message--text",
+      "grammar": true,
+      "scope": [
+        "convert_gm_to_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/convert_gm_to_channel_modal/convert_gm_to_channel_modal.tsx#ConvertGmToChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       },
       "renderedWhen": [
         {
@@ -126821,180 +128965,6 @@
       }
     },
     {
-      "template": "listTableBodyRow",
-      "grammar": false,
-      "scope": [],
-      "name": "listTableBodyRow",
-      "role": null,
-      "component": {
-        "name": "DraggableRow",
-        "at": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "row",
-        "native": true,
-        "state": []
-      },
-      "effects": {
-        "ops": [],
-        "unknown": true,
-        "delegated": []
-      },
-      "unreachable": true
-    },
-    {
-      "template": "listTableFoot",
-      "grammar": false,
-      "scope": [],
-      "name": "listTableFoot",
-      "role": null,
-      "component": {
-        "name": "ListTable",
-        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "hasPagination",
-          "explained": "hasPagination",
-          "kind": "prop",
-          "viaLocal": true
-        }
-      ],
-      "unreachable": true
-    },
-    {
-      "template": "listTableFoot-pageSize",
-      "grammar": false,
-      "scope": [],
-      "name": "listTableFoot-pageSize",
-      "role": null,
-      "component": {
-        "name": "ListTable",
-        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "hasPagination",
-          "explained": "hasPagination",
-          "kind": "prop",
-          "viaLocal": true
-        }
-      ],
-      "unreachable": true
-    },
-    {
-      "template": "listTableFoot-paginationInfo",
-      "grammar": false,
-      "scope": [],
-      "name": "listTableFoot-paginationInfo",
-      "role": null,
-      "component": {
-        "name": "ListTable",
-        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "hasPagination",
-          "explained": "hasPagination",
-          "kind": "prop",
-          "viaLocal": true
-        }
-      ],
-      "unreachable": true
-    },
-    {
-      "template": "listTableHead",
-      "grammar": false,
-      "scope": [],
-      "name": "listTableHead",
-      "role": null,
-      "component": {
-        "name": "ListTable",
-        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "unreachable": true
-    },
-    {
-      "template": "listTableHeadRow",
-      "grammar": false,
-      "scope": [],
-      "name": "listTableHeadRow",
-      "role": null,
-      "component": {
-        "name": "ListTable",
-        "at": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "row",
-        "native": true,
-        "state": []
-      },
-      "unreachable": true
-    },
-    {
       "template": "loading-screen",
       "grammar": false,
       "scope": [],
@@ -127366,12 +129336,6 @@
         {
           "via": [
             "channels/src/components/admin_console/health_dashboard/health_dashboard.tsx#HealthDashboard"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/admin_console/list_table/list_table.tsx#ListTable",
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#UserPropertiesTable"
           ]
         },
         {
@@ -128296,6 +130260,123 @@
         "field": "login_id",
         "valueType": "string"
       }
+    },
+    {
+      "template": "login.login_id.field",
+      "grammar": true,
+      "scope": [
+        "login",
+        "login_id"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "login.login_id.message--alert",
+      "grammar": true,
+      "scope": [
+        "login",
+        "login_id"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "login.login_id.message--text",
+      "grammar": true,
+      "scope": [
+        "login",
+        "login_id"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/login/login.tsx#Login"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!magicLinkSuccessful",
+          "explained": "!magicLinkSuccessful",
+          "kind": "local state"
+        },
+        {
+          "expr": "enableBaseLogin",
+          "explained": "enableBaseLogin",
+          "kind": "license/config/flag",
+          "viaLocal": true
+        }
+      ]
     },
     {
       "template": "login.password--textbox",
@@ -136926,6 +139007,84 @@
       }
     },
     {
+      "template": "new_channel_modal.purpose.field",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "purpose"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "new_channel_modal.purpose.message--alert",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "purpose"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "new_channel_modal.purpose.message--text",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "purpose"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "new_channel_modal.type.plugin_type:{key}--button",
       "grammar": true,
       "scope": [
@@ -137216,6 +139375,135 @@
         "delegated": [
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.url.value.field",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.url.value.message--alert",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.url.value.message--text",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       },
       "renderedWhen": [
         {
@@ -151624,6 +153912,135 @@
       ]
     },
     {
+      "template": "rename_channel_modal.url.value.field",
+      "grammar": true,
+      "scope": [
+        "rename_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "rename_channel_modal.url.value.message--alert",
+      "grammar": true,
+      "scope": [
+        "rename_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "rename_channel_modal.url.value.message--text",
+      "grammar": true,
+      "scope": [
+        "rename_channel_modal",
+        "url",
+        "value"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/widgets/inputs/url_input/url_input.tsx#UrlInput",
+            "channels/src/components/channel_name_form_field/channel_name_form_field.tsx#ChannelNameFormField",
+            "channels/src/components/rename_channel_modal/rename_channel_modal.tsx#RenameChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showURLEditor",
+          "explained": "showURLEditor",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
       "template": "request_join_channel_modal",
       "grammar": true,
       "scope": [],
@@ -156164,6 +158581,87 @@
         "delegated": [
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      }
+    },
+    {
+      "template": "rhs.channel_members.search.field",
+      "grammar": true,
+      "scope": [
+        "rhs",
+        "channel_members",
+        "search"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/channel_members_rhs/search.tsx#SearchBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "rhs.channel_members.search.message--alert",
+      "grammar": true,
+      "scope": [
+        "rhs",
+        "channel_members",
+        "search"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/channel_members_rhs/search.tsx#SearchBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "rhs.channel_members.search.message--text",
+      "grammar": true,
+      "scope": [
+        "rhs",
+        "channel_members",
+        "search"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/channel_members_rhs/search.tsx#SearchBar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       }
     },
     {
@@ -204880,6 +207378,87 @@
       }
     },
     {
+      "template": "team_settings_modal.info.description.field",
+      "grammar": true,
+      "scope": [
+        "team_settings_modal",
+        "info",
+        "description"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/team_settings/team_info_tab/team_description_section.tsx#TeamDescriptionSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "team_settings_modal.info.description.message--alert",
+      "grammar": true,
+      "scope": [
+        "team_settings_modal",
+        "info",
+        "description"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/team_settings/team_info_tab/team_description_section.tsx#TeamDescriptionSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "team_settings_modal.info.description.message--text",
+      "grammar": true,
+      "scope": [
+        "team_settings_modal",
+        "info",
+        "description"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/team_settings/team_info_tab/team_description_section.tsx#TeamDescriptionSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "team_settings_modal.info.description_section",
       "grammar": true,
       "scope": [
@@ -205005,6 +207584,87 @@
         "scope": "team_settings_modal.info",
         "field": "name",
         "valueType": "string"
+      }
+    },
+    {
+      "template": "team_settings_modal.info.name.field",
+      "grammar": true,
+      "scope": [
+        "team_settings_modal",
+        "info",
+        "name"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/team_settings/team_info_tab/team_name_section.tsx#TeamNameSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "team_settings_modal.info.name.message--alert",
+      "grammar": true,
+      "scope": [
+        "team_settings_modal",
+        "info",
+        "name"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/team_settings/team_info_tab/team_name_section.tsx#TeamNameSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "team_settings_modal.info.name.message--text",
+      "grammar": true,
+      "scope": [
+        "team_settings_modal",
+        "info",
+        "name"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/team_settings/team_info_tab/team_name_section.tsx#TeamNameSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
       }
     },
     {
@@ -211912,76 +214572,6 @@
       ]
     },
     {
-      "template": "users_limits_announcement_bar_critical",
-      "grammar": true,
-      "scope": [],
-      "name": "users_limits_announcement_bar_critical",
-      "role": null,
-      "component": {
-        "name": "AnnouncementBar",
-        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/announcement_bar/users_limits_announcement_bar/index.tsx#UsersLimitsAnnouncementBar"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "this.props.message",
-          "explained": "this.props.message",
-          "kind": "other"
-        },
-        {
-          "expr": "shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount})",
-          "explained": "shouldShowCriticalBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersHardLimit, activeUserCount})",
-          "kind": "license/config/flag"
-        }
-      ]
-    },
-    {
-      "template": "users_limits_announcement_bar_warning",
-      "grammar": true,
-      "scope": [],
-      "name": "users_limits_announcement_bar_warning",
-      "role": null,
-      "component": {
-        "name": "AnnouncementBar",
-        "at": "channels/src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx#AnnouncementBar"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/announcement_bar/users_limits_announcement_bar/index.tsx#UsersLimitsAnnouncementBar"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "this.props.message",
-          "explained": "this.props.message",
-          "kind": "other"
-        },
-        {
-          "expr": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
-          "explained": "shouldShowWarningBanner({userIsAdmin: props.userIsAdmin, isLicensed, maxUsersLimit, maxUsersHardLimit, activeUserCount, isWarningDismissed})",
-          "kind": "license/config/flag"
-        }
-      ]
-    },
-    {
       "template": "users_to_be_removed_modal",
       "grammar": true,
       "scope": [],
@@ -213038,15 +215628,10 @@
       "name": "{key}",
       "role": null,
       "component": {
-        "name": "AlertBanner",
-        "at": "channels/src/components/alert_banner/index.tsx#AlertBanner"
+        "name": "MenuItemActionImpl",
+        "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
       },
       "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/system_properties/user_properties_table.tsx#ValidationBanners"
-          ]
-        },
         {
           "via": [
             "channels/src/components/widgets/menu/menu_items/menu_item.tsx#menuItem"
@@ -213060,16 +215645,20 @@
           "disabled"
         ]
       },
-      "alsoAt": [
-        "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
-      ],
       "effects": {
         "ops": [],
         "unknown": false,
         "delegated": [
           "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
         ]
-      }
+      },
+      "renderedWhen": [
+        {
+          "expr": "show",
+          "explained": "show",
+          "kind": "prop"
+        }
+      ]
     },
     {
       "template": "{key}--button",
@@ -218037,6 +220626,8 @@
         "rhs.channel_members",
         "rhs.channel_members.pending_requests",
         "rhs.channel_members.policy",
+        "rhs.channel_members.search",
+        "rhs.channel_members.search.field",
         "rhs.edit_history",
         "rhs.edit_history.version",
         "rhs.edit_history.version.attachments",
@@ -219025,6 +221616,8 @@
         "login.alternate",
         "login.banner",
         "login.card",
+        "login.login_id",
+        "login.login_id.field",
         "login.password",
         "login.password.field",
         "login_mfa",
@@ -219530,7 +222123,8 @@
       "at": "channels/src/components/channel_bookmarks/channel_bookmarks_create_modal.tsx#ChannelBookmarkCreateModal",
       "scopes": [
         "bookmark_modal",
-        "bookmark_modal.link"
+        "bookmark_modal.link",
+        "bookmark_modal.title"
       ]
     },
     {
@@ -219596,6 +222190,7 @@
         "rhs.channel_members",
         "rhs.channel_members.pending_requests",
         "rhs.channel_members.policy",
+        "rhs.channel_members.search",
         "shared_user"
       ]
     },
@@ -219676,6 +222271,7 @@
         "channel_settings_modal.info.name",
         "channel_settings_modal.info.purpose",
         "channel_settings_modal.info.url",
+        "channel_settings_modal.info.url.value",
         "channel_settings_modal.permissions_policy",
         "channel_settings_modal.permissions_policy.editor",
         "channel_settings_modal.permissions_policy.editor.permissions",
@@ -219864,7 +222460,8 @@
       "scopes": [
         "convert_gm_to_channel_modal",
         "convert_gm_to_channel_modal.name",
-        "convert_gm_to_channel_modal.url"
+        "convert_gm_to_channel_modal.url",
+        "convert_gm_to_channel_modal.url.value"
       ]
     },
     {
@@ -220510,8 +223107,10 @@
         "new_channel_modal.discoverable",
         "new_channel_modal.managed_category",
         "new_channel_modal.name",
+        "new_channel_modal.purpose",
         "new_channel_modal.type",
         "new_channel_modal.url",
+        "new_channel_modal.url.value",
         "profile_popover",
         "profile_popover.actions",
         "user_group_popover",
@@ -220881,7 +223480,8 @@
       "scopes": [
         "rename_channel_modal",
         "rename_channel_modal.name",
-        "rename_channel_modal.url"
+        "rename_channel_modal.url",
+        "rename_channel_modal.url.value"
       ]
     },
     {
@@ -220986,7 +223586,9 @@
       "at": "channels/src/components/admin_console/secure_connections/modals/secure_connection_create_invite_modal.tsx#SecureConnectionCreateInviteModal",
       "scopes": [
         "admin",
-        "admin.create_invite_modal"
+        "admin.create_invite_modal",
+        "admin.create_invite_modal.code",
+        "admin.create_invite_modal.password"
       ]
     },
     {
@@ -221117,7 +223719,9 @@
         "team_settings_modal.access_policies.policies.row.menu",
         "team_settings_modal.access_policies.sync_status",
         "team_settings_modal.info",
+        "team_settings_modal.info.description",
         "team_settings_modal.info.description_section",
+        "team_settings_modal.info.name",
         "team_settings_modal.info.name_section",
         "team_settings_modal.info.picture",
         "team_settings_modal.info.picture_section",

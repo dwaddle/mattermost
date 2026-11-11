@@ -401,7 +401,7 @@ export default function ClassificationAttribute({disabled = false}: Props): JSX.
                                             aria-label={formatMessage(messages.displayNameLabel)}
                                             value={displayName}
                                             disabled={true}
-                                            data-testid='admin.classification.name--textbox'
+                                            testId='admin.classification.name'
                                         />
                                         <div className='ClassificationAttribute__uniqueName'>
                                             <span className='ClassificationAttribute__uniqueNameCaption'>

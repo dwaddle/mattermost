@@ -735,11 +735,19 @@ export class TeamSettingsModalInfo extends Scope {
         await this.nameTextbox.fill(value);
     }
 
+    get description(): Input {
+        return new Input(this.page, `${this.scope}.description`, this.root);
+    }
+
     /**
      * `team_settings_modal.info.description_section` — BaseSettingItem (channels/src/components/widgets/modals/components/base_setting_item.tsx)
      */
     get descriptionSection(): TeamSettingsModalInfoDescriptionSection {
         return new TeamSettingsModalInfoDescriptionSection(this.page, `${this.scope}.description_section`, this.root);
+    }
+
+    get name(): Input {
+        return new Input(this.page, `${this.scope}.name`, this.root);
     }
 
     /**

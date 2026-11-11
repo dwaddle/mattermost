@@ -38,6 +38,7 @@ describe('components/edit_scheduled_post/edit_post', () => {
         editingPost: {post, postId: post.id},
         isRHSOpened: false,
         isEditHistoryShowing: false,
+        testId: 'center.post.edit',
         actions: {
             addMessageIntoHistory: jest.fn(),
             editPost: jest.fn(),
@@ -59,7 +60,7 @@ describe('components/edit_scheduled_post/edit_post', () => {
     function pasteHtml(html: string) {
         renderWithContext(<EditPost {...baseProps}/>, initialState);
 
-        const textbox = screen.getByTestId('edit_textbox') as HTMLTextAreaElement;
+        const textbox = screen.getByTestId('center.post.edit--textbox') as HTMLTextAreaElement;
 
         fireEvent.paste(textbox, {
             clipboardData: {

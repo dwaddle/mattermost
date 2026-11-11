@@ -128,7 +128,7 @@ function SecureConnectionAcceptInviteModal({
                             })}
                             value={displayName}
                             onChange={handleDisplayNameChange}
-                            data-testid='admin.accept_invite_modal.name--textbox'
+                            testId='admin.accept_invite_modal.name'
                         />
 
                         <FormattedMessage
@@ -162,7 +162,7 @@ function SecureConnectionAcceptInviteModal({
                             })}
                             value={inviteCode}
                             onChange={handleInviteCodeChange}
-                            data-testid='admin.accept_invite_modal.code--textbox'
+                            testId='admin.accept_invite_modal.code'
                         />
                         <Input
                             type='text'
@@ -174,7 +174,7 @@ function SecureConnectionAcceptInviteModal({
                             })}
                             value={password}
                             onChange={handlePasswordChange}
-                            data-testid='admin.accept_invite_modal.password--textbox'
+                            testId='admin.accept_invite_modal.password'
                         />
                     </ModalFieldset>
                 </>

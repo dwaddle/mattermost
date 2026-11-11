@@ -36,7 +36,7 @@ export type AlertBannerProps = {
     onDismiss?: () => void;
     variant?: 'sys' | 'app';
 
-    /** The banner's testid; without it the banner's id. */
+    /** The banner's testid. */
     testId?: TestIdScope;
 };
 
@@ -88,7 +88,7 @@ const AlertBanner = ({
     return (
         <div
             id={id}
-            data-testid={testId ?? id}
+            data-testid={testId}
             className={classNames(
                 'AlertBanner',
                 mode,

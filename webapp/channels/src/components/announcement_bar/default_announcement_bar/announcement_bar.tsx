@@ -21,6 +21,7 @@ import './default_announcement_bar.scss';
 type Props = {
     id?: string;
 
+    // The bar is `<testId>`, its message `<testId>.message--text`, its close link `<testId>.close--link`.
     testId?: TestId;
     showCloseButton: boolean;
     className?: string;
@@ -247,7 +248,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
                 style={barStyle}
                 // eslint-disable-next-line react/no-unknown-property
                 css={{gridArea: 'announcement'}}
-                data-testid={this.props.testId ?? this.props.id}
+                data-testid={this.props.testId}
             >
                 {barContent}
                 {closeButton}

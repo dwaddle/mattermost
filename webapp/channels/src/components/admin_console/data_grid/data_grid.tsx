@@ -38,14 +38,14 @@ export type Row = {
     };
     onClick?: () => void;
 
+    // The row is `<testIdScope>.row:<testKey>` (its position when unset).
     testKey?: string;
 };
 
 type Props = {
 
-    // Names the grid's parts (`<testIdScope>.row:<key>`, `.search--textbox`, `.footer.pagination--text`); without it they
-    // keep their old shared ids (`dataGrid-row`), which every grid on a page repeats.
-    testIdScope?: TestId;
+    // Names the grid's parts (`<testIdScope>.row:<key>`, `.search--textbox`, `.footer.pagination--text`).
+    testIdScope: TestId;
     rows: Row[];
     columns: Column[];
     placeholderEmpty?: JSX.Element;
@@ -195,7 +195,7 @@ class DataGrid extends React.PureComponent<Props, State> {
         return (
             <div
                 className='DataGrid_rows'
-                data-testid={this.props.testIdScope ? `${this.props.testIdScope}.rows` : 'dataGrid-rows'}
+                data-testid={`${this.props.testIdScope}.rows`}
                 style={rowsContainerStyles || {}}
             >
                 {rowsToRender}
@@ -267,10 +267,10 @@ class DataGrid extends React.PureComponent<Props, State> {
             footer = (
                 <div
                     className='DataGrid_footer'
-                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.footer` : 'dataGrid-footer'}
+                    data-testid={`${this.props.testIdScope}.footer`}
                 >
                     <div className='DataGrid_cell'>
-                        <span data-testid={this.props.testIdScope ? `${this.props.testIdScope}.footer.pagination--text` : 'dataGrid-footer-paginationInfo'}>
+                        <span data-testid={`${this.props.testIdScope}.footer.pagination--text`}>
                             <FormattedMessage
                                 id='admin.data_grid.paginatorCount'
                                 defaultMessage='{startCount, number} - {endCount, number} of {total, number}'
@@ -288,8 +288,8 @@ class DataGrid extends React.PureComponent<Props, State> {
                             disableNext={lastPage}
                             previousButtonClassName='ml-2 prev'
                             nextButtonClassName='next'
-                            previousButtonTestId={part(this.props.testIdScope, 'footer.previous', 'button')}
-                            nextButtonTestId={part(this.props.testIdScope, 'footer.next', 'button')}
+                            previousButtonTestId={`${this.props.testIdScope}.footer.previous--button`}
+                            nextButtonTestId={`${this.props.testIdScope}.footer.next--button`}
                         />
                     </div>
                 </div>
@@ -303,7 +303,7 @@ class DataGrid extends React.PureComponent<Props, State> {
         return (
             <div
                 className={classNames('DataGrid', this.props.className)}
-                data-testid={this.props.testIdScope ?? 'dataGrid'}
+                data-testid={this.props.testIdScope}
                 ref={this.ref}
             >
                 {this.renderSearch()}

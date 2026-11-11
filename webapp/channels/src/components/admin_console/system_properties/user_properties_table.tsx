@@ -392,7 +392,10 @@ export function UserPropertiesTable({
 
     return (
         <TableWrapper>
-            <AdminConsoleListTable<UserPropertyField> table={table}/>
+            <AdminConsoleListTable<UserPropertyField>
+                table={table}
+                testIdScope='admin.user_properties'
+            />
         </TableWrapper>
     );
 }

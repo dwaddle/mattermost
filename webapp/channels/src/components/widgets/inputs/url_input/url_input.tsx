@@ -118,7 +118,7 @@ function UrlInput({
                 )}
                 {isEditing && (
                     <Input
-                        data-testid={part(testIdScope, 'value', 'textbox')}
+                        testId={`${testIdScope}.value`}
                         name='url-input'
                         type='text'
                         containerClassName='url-input-editable-container'

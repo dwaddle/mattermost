@@ -16,8 +16,8 @@ type Props = {
     onChange: () => void;
     checked: boolean;
 
-    // The checkbox renders `<testId>--checkbox`; without it, its `id`.
-    testId?: TestId;
+    // The checkbox renders `<testId>--checkbox`.
+    testId: TestId;
 };
 
 function CheckInput(props: Props) {
@@ -29,7 +29,7 @@ function CheckInput(props: Props) {
                 {...rest}
                 id={id}
                 aria-label={ariaLabel}
-                data-testid={testId ? `${testId}--checkbox` : id}
+                data-testid={`${testId}--checkbox`}
                 type='checkbox'
             />
             <label

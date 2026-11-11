@@ -1649,7 +1649,7 @@ function AttributeDetails({disabled = false}: Props): JSX.Element {
                                     autoFocus={true}
                                     disabled={saving || effectiveDisabled}
                                     maxLength={Constants.MAX_CUSTOM_ATTRIBUTE_NAME_LENGTH}
-                                    data-testid='admin.attribute.display_name--textbox'
+                                    testId='admin.attribute.display_name'
                                 />
                                 <div className='AttributeDetails__uniqueName'>
                                     <span

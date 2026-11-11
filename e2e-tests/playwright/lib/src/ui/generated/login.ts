@@ -10,7 +10,7 @@ import {Scope, drivers} from '../../aria';
 
 import {Api} from './api';
 import {PasswordResetSendLinkPage} from './pages';
-import {AlertBanner, Alternate, Password} from './shared';
+import {AlertBanner, Alternate, Input, Password} from './shared';
 import type {LoginExternal} from './sets';
 
 /** The form fields of `login`. */
@@ -151,6 +151,10 @@ export class Login extends Scope {
      */
     get card(): LoginCard {
         return new LoginCard(this.page, `${this.scope}.card`, this.root);
+    }
+
+    get loginId(): Input {
+        return new Input(this.page, `${this.scope}.login_id`, this.root);
     }
 
     get password(): Password {

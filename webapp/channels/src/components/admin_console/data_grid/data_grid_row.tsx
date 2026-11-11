@@ -14,12 +14,12 @@ import './data_grid.scss';
 type DataGridRowProps = {
     columns: Column[];
     row: Row;
-    testIdScope?: TestId;
+    testIdScope: TestId;
     testKey: string;
 };
 
 type DataGridCellProps = {
-    testIdScope?: TestId;
+    testIdScope: TestId;
     column: Column;
     row: Row;
 };
@@ -42,7 +42,7 @@ const DataGridCell = ({row, column, testIdScope}: DataGridCellProps) => {
         <div
             key={column.field}
             className={classNames('DataGrid_cell', column.className)}
-            data-testid={testIdScope ? `${testIdScope}.row.cell:${column.field}` : 'dataGrid-cell'}
+            data-testid={`${testIdScope}.row.cell:${column.field}`}
             style={style}
         >
             {row.cells[column.field]}
@@ -62,7 +62,7 @@ const DataGridRow = ({row, columns, testIdScope, testKey}: DataGridRowProps) => 
     return (
         <div
             className='DataGrid_row'
-            data-testid={testIdScope ? `${testIdScope}.row:${testKey}` : 'dataGrid-row'}
+            data-testid={`${testIdScope}.row:${testKey}`}
             onClick={row.onClick}
         >
             {cells}

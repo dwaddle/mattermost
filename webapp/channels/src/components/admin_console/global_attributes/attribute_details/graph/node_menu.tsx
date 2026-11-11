@@ -98,7 +98,7 @@ export function NodeMenu({
                         customMessage={renameIsDuplicate ?
                             {type: 'error', value: formatMessage(messages.duplicateName, {name: trimmedName})} :
                             null}
-                        data-testid='admin.attribute.graph.pane.name--textbox'
+                        testId='admin.attribute.graph.pane.name'
                         autoFocus={true}
                     />
                 </div>

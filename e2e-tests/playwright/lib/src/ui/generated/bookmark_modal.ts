@@ -180,6 +180,10 @@ export class BookmarkModal extends Scope {
         return new Input(this.page, `${this.scope}.link`, this.root);
     }
 
+    get title(): Input {
+        return new Input(this.page, `${this.scope}.title`, this.root);
+    }
+
     /** Fills the given fields; others are left as they are. */
     async fill(values: Partial<BookmarkModalFormValues>): Promise<void> {
         if (values.link !== undefined) {
