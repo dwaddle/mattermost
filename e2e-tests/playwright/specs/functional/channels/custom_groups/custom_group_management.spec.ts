@@ -19,9 +19,8 @@ test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async (
         user_ids: [user.id],
     });
 
-    const {app, channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Open the User Groups modal from the product menu
     const productMenu = await app.globalHeader.clickProductMenuButton();
@@ -66,9 +65,8 @@ test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async (
         user_ids: [user.id, member.id],
     });
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Create a new channel
     const channelName = `Group Channel ${pw.random.id()}`;
@@ -104,8 +102,7 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
     });
 
     const {app, page, channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Create a channel that none of the group's members belong to
     const channelName = `Group Channel ${pw.random.id()}`;

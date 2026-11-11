@@ -37,11 +37,10 @@ test(
         await adminClient.deleteChannel(privateChannel.id);
 
         // # Log in user
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town square to ensure we're in a stable state
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open browse channels modal to show archived channels
         await page.keyboard.press('ControlOrMeta+K');

@@ -11,9 +11,8 @@ test('MM-T460 Add and remove users while creating new Group Message', {tag: '@di
     const participants = await adminClient.createUsers(team.id, 3, 'gm-edit');
 
     // # Open the Direct Messages modal from the LHS "+" menu
-    const {app, channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
     const addMenu = await app.lhs.header.clickOpenBrowseOrAddMenuButton();
     const modal = await addMenu.clickOpenDirectMessageMenuItem();
     const picker = modal.list;

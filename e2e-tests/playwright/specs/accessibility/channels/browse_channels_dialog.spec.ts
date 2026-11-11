@@ -41,11 +41,10 @@ test(
         });
 
         // # Log in as regular user
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open the Browse Channels modal
         const dialog = await openBrowseChannels(app);
@@ -107,11 +106,10 @@ test(
         const {team, user} = await pw.initSetup();
 
         // # Log in as regular user
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open the Browse Channels modal
         const dialog = await openBrowseChannels(app);

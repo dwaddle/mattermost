@@ -45,9 +45,8 @@ test(
         });
 
         // # Log in as regular user and visit town-square
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open Browse Channels from the LHS "+" menu
         const addMenu = await app.lhs.header.clickOpenBrowseOrAddMenuButton();

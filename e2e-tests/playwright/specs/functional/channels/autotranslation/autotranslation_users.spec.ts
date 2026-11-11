@@ -83,9 +83,8 @@ test.fixme(
         });
 
         await adminClient.addToChannel(user.id, created.id);
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channelName);
-        await channelsPage.toBeVisible();
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channelName});
 
         // Re-apply config + reload so the badge and translated text reflect the latest server config.
         await enableAutotranslationConfig(adminClient, {mockBaseUrl: translationUrl, targetLanguages: ['en', 'es']});
@@ -93,8 +92,8 @@ test.fixme(
             const cfg = await adminClient.getConfig();
             return (cfg as any).AutoTranslationSettings?.Enable === true;
         });
-        await channelsPage.page.reload();
-        await channelsPage.toBeVisible();
+        await page.reload();
+        await expect(app.center.composer.locator).toBeVisible();
 
         // * Verify translation badge is visible (indicates autotranslation is ON by default)
         await expect(app.channelHeader.autotranslationBadgeText.locator).toBeVisible({timeout: 15000});
@@ -136,9 +135,8 @@ test(
         await adminClient.addToChannel(user.id, created.id);
         await setUserChannelAutotranslation(userClient, created.id, true);
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channelName);
-        await channelsPage.toBeVisible();
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channelName});
 
         // Re-apply config + reload so the badge reflects the latest AutoTranslationSettings.
         // A concurrent initSetup() → updateConfig(defaultConfig) resets Enable to false,
@@ -149,8 +147,8 @@ test(
             const cfg = await adminClient.getConfig();
             return (cfg as any).AutoTranslationSettings?.Enable === true;
         });
-        await channelsPage.page.reload();
-        await channelsPage.toBeVisible();
+        await page.reload();
+        await expect(app.center.composer.locator).toBeVisible();
 
         // Wait for autotranslation state to be reflected in the header before opening the menu,
         // so that the "Disable autotranslation" menu item is present when the menu opens.
@@ -217,9 +215,8 @@ test.fixme(
             user_id: createdPoster.id,
         });
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channelName);
-        await channelsPage.toBeVisible();
+        const {app, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channelName});
 
         // Re-apply config + reload so the browser reads the latest AutoTranslationSettings.
         // A concurrent initSetup() on another shard may have disabled autotranslation between
@@ -229,8 +226,8 @@ test.fixme(
             const cfg = await adminClient.getConfig();
             return (cfg as any).AutoTranslationSettings?.Enable === true;
         });
-        await channelsPage.page.reload();
-        await channelsPage.toBeVisible();
+        await page.reload();
+        await expect(app.center.composer.locator).toBeVisible();
 
         // * Verify post with translated text appears before disabling.
         // Mock server appends "[translated to en]" to the original text. Translation
@@ -338,9 +335,8 @@ test.fixme(
             user_id: createdPoster2.id,
         });
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channelName);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channelName});
 
         // * Verify both posts appear
         // Mock server produces "<original> [translated to en]", not real translations.
@@ -464,9 +460,8 @@ test.fixme(
             return (cfg as any).AutoTranslationSettings?.Enable === true;
         });
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channelName);
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channelName});
         await app.center.postCreate.messageTextbox.locator.waitFor({state: 'visible', timeout: 30000});
 
         // * Verify translated Spanish post is present
