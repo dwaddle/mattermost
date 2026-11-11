@@ -10,8 +10,10 @@ import eslintPlugin from '@mattermost/eslint-plugin';
 // Strict files where the testid rules' extended checks (every branch of a testid, such as a `testId ? new : 'legacy'`
 // fallback, and the testid helpers) found what the area-fix wave fixes: there the two rules stay warnings until then.
 const TESTID_LINT_PENDING = [
+    // its announcement bar renders a testid built only from runtime data; the strict PR fixes it with the other bars
     'src/components/announcement_bar/default_announcement_bar/announcement_bar.tsx',
-    'src/components/user_settings/general/user_settings_general.tsx',
+    // the settings row keeps its label and help fallbacks for hosts without a scope until the strict PR drops the
+    // shared widgets' legacy ids
     'src/components/widgets/settings/setting.tsx',
 ];
 
