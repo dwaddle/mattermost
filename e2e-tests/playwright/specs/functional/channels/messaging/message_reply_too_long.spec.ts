@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify an overlong thread reply shows the character-count warning and is not posted.
- *
- * Written on the generated page objects: the thread composer's error line and the thread's posts (by id).
  */
 test('MM-T106 Webapp: Message too long warning text', {tag: '@messaging'}, async ({pw}) => {
     const {user, team, adminClient, userClient} = await pw.initSetup();

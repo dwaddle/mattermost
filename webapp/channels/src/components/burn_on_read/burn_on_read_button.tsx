@@ -24,7 +24,6 @@ type Props = {
     // The configured duration in minutes for BoR messages
     durationMinutes: number;
 
-    // The composer's scope: the button is `<testIdScope>.burn_on_read--button`
     testIdScope?: TestId;
 };
 

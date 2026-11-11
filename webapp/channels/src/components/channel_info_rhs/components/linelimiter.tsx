@@ -16,7 +16,6 @@ interface LineLimiterProps {
     className?: string;
     errorMargin?: number;
 
-    /** The more/less toggle is `<testId>.toggle--button`. */
     testId?: TestId;
 }
 

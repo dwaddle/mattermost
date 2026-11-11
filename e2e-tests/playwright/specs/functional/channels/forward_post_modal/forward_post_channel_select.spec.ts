@@ -6,9 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that the forward-post channel selector normalizes search results, selects a destination, and
  * forwards the post there.
- *
- * Written on the generated page objects: the post's dot menu, the forward dialog's options by channel id, and the
- * forwarded post. The channel search box is react-select's combobox (no testid).
  */
 test('forward post channel selector searches and selects a destination channel', {tag: '@channels'}, async ({pw}) => {
     const {team, user, userClient, adminClient} = await pw.initSetup();

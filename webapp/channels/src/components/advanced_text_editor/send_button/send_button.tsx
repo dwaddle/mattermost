@@ -29,7 +29,6 @@ type SendButtonProps = {
     channelId: string;
     repeatDisabledReason?: RepeatDisabledReason;
 
-    /** Testid path of the button; renders `<testId>--button`. */
     testId?: TestId;
 };
 

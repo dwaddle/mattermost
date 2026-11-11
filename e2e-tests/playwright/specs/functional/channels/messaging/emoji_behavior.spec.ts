@@ -5,9 +5,6 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify selecting an emoji from the picker inserts it at the current caret position.
- *
- * Written on the generated page objects: the composer's emoji button, the picker's emoji by name, and the sent
- * post found on the server by its text, then by id in the page.
  */
 test('MM-T95 Selecting an emoji from emoji picker should insert it at the cursor position', async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

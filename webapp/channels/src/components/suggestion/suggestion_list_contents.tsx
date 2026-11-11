@@ -229,7 +229,6 @@ function GroupedSuggestionsGroup({
     groupKey: string | undefined;
     labelMessage?: MessageDescriptor | string;
 
-    // the list's scope: the group is `<testId>.group:<groupKey>`
     testId?: TestId;
 }) {
     const groupTestId = testId && groupKey ? `${testId}.group:${groupKey}` : undefined;

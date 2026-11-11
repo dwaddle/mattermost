@@ -5,9 +5,6 @@ import type {Locator, Page} from '@playwright/test';
 
 import {expect, generated, test, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the composer, and its suggestions grouped by key ("My Channels" is
-// `myChannels`, "Other Channels" `moreChannels`), with items keyed by channel name and the list's loading spinner.
-
 const AUTOCOMPLETE_ROUTE = /\/api\/v4\/teams\/[^/]+\/channels\/autocomplete/;
 
 function searchedName(url: string) {

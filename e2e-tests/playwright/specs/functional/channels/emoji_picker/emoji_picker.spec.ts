@@ -9,9 +9,6 @@ import {expect, test, type App} from '@mattermost/playwright-lib';
  * @objective Verify that using the emoji picker adds emojis to the correct place in the post textbox based on the
  * location of the keyboard caret, that keyboard focus is moved back to the post textbox correctly, and that the
  * keyboard caret is placed in the correct place.
- *
- * Written on the generated page objects: the composer's textbox and emoji button, and the emoji picker's emoji by
- * short name.
  */
 test(
     'Should add emoji to post textbox correctly and handle focus/selection correctly',

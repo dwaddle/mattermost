@@ -5,9 +5,6 @@ import {Api, expect, settle, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a channel can be moved to the Favorites category from its sidebar menu.
- *
- * Written on the generated page objects: the sidebar row, its channel menu and the "Move to" submenu (its
- * categories keyed by the ids the server returns) come from `app`.
  */
 test('moves a channel to Favorites from its sidebar menu', {tag: '@channel_sidebar'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that a user viewing a thread in the right-hand side can no longer reply once they are
  * removed from the channel.
- *
- * Written on the generated page objects: the root post and the thread are found by post id.
  */
 test(
     'MM-T843 removes the reply box in the right-hand side after the user is removed from the channel',

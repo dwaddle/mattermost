@@ -30,7 +30,6 @@ import FileAttachmentList from './file_attachment_list';
 export type OwnProps = {
     post: Post;
 
-    /** The post's attachments scope (`center.post_list.post.attachments`). */
     testIdScope?: TestId;
     compactDisplay?: boolean;
     isInPermalink?: boolean;

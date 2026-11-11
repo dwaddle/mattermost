@@ -33,7 +33,6 @@ import type {TextboxElement} from './index';
 export type Props = {
     id: string;
 
-    /** Testid path of the text area; renders `<testId>--textbox`. Without it the text area's testid is its id. */
     testId?: TestId;
     channelId: string;
     rootId?: string;

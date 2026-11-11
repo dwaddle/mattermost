@@ -15,7 +15,6 @@ type Props = {
     onSave: () => void;
     onCancel?: () => void;
 
-    /** Renders `${testIdScope}.save--button` and `${testIdScope}.cancel--button`. */
     testIdScope?: TestIdScope;
 };
 

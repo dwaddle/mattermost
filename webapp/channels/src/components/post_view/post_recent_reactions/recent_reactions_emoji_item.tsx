@@ -16,7 +16,6 @@ type Props = {
     onItemClick: (emoji: Emoji) => void;
     order?: number;
 
-    /** The recent reactions' testid; the item renders `<testIdScope>.emoji:<name>--button`. */
     testIdScope?: TestId;
 };
 const EmojiItem = ({emoji, onItemClick, order, testIdScope}: Props) => {

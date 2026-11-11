@@ -23,7 +23,6 @@ type Props = {
     rootId: string;
     enablePostUsernameOverride?: boolean;
 
-    /** The post's testid scope; renders `<testIdScope>.commented_on`. */
     testIdScope?: TestId;
 };
 

@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify deleting a root post while another user drafts a reply removes the original message and does not send the draft.
- *
- * Written on the generated page objects: the root post is found by id in the center and in the thread, and a
- * deleted post's placeholder is its message text.
  */
 test(
     'MM-T113 Delete a message during reply and show the other user a message deleted placeholder',

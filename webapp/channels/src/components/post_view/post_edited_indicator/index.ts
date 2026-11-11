@@ -30,7 +30,6 @@ type OwnProps = {
     postId?: string;
     editedAt?: number;
 
-    /** Renders `${testId}--button` when the label opens the edit history, else `${testId}--text`. */
     testId?: TestId;
 };
 

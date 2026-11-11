@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the "in:" search modifier autocompletes a direct-message user and returns matching DM posts.
- *
- * Written on the generated page objects: the search box, its suggestions keyed by what they suggest, and the
- * result by post id.
  */
 test('MM-T358 searches for a message in a direct message channel', {tag: '@search'}, async ({pw}) => {
     // # Create a direct message and a uniquely searchable post

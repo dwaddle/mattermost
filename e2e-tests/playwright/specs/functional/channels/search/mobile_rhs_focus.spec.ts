@@ -5,10 +5,6 @@ import type {Locator} from '@playwright/test';
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the mobile header's search and channel-menu buttons, the mobile search bar
-// (its input and back button), the channel menu's items, the post's Reply button, the RHS composer, and results by
-// post id.
-
 /** Waits until the element stops moving (a sliding menu has finished its entrance animation). */
 async function toBeStill(element: Locator) {
     let previous = '';

@@ -35,7 +35,6 @@ export interface Props extends PropsFromRedux {
     isInPermalink?: boolean;
     disableActions?: boolean;
 
-    /** The attachment list's scope (`<post>.attachments`); the image renders `<testIdScope>.image:<file id>`. */
     testIdScope?: TestId;
 }
 

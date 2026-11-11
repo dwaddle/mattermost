@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify channel autocomplete closes when a second tilde turns channel syntax into strikethrough syntax.
- *
- * Written on the generated page objects: the composer, the inline editor and its suggestions, and the post by id
- * (strikethrough read as the ARIA deletion role).
  */
 test(
     'MM-T173 Edit a post with strikethrough and close channel autocomplete after the second tilde',
@@ -71,8 +68,6 @@ test(
 
 /**
  * @objective Verify channel autocomplete closes when the tilde that opened it is deleted.
- *
- * Written on the generated page objects: the composer and the inline editor with its suggestions and Save button.
  */
 test('MM-T174 Autocomplete should close if tildes are deleted using backspace', {tag: '@messaging'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

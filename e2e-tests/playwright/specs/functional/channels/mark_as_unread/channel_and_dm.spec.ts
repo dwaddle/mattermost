@@ -8,9 +8,6 @@ const UNREAD = / (unread|\d+ mentions?)$/;
 
 /**
  * @objective Verify a public channel post can be marked unread from the post menu.
- *
- * Written on the generated page objects: the posts by id (Alt+click on the body marks unread), the "New Messages"
- * separator, and the sidebar links' read state from their accessible names.
  */
 test('MM-T246 Mark Post as Unread', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -56,9 +53,6 @@ test('MM-T246 Mark Post as Unread', async ({pw}) => {
 /**
  * @objective Verify a direct-message post can be marked unread and clears when revisited, preserving the
  * mention count across own trailing messages.
- *
- * Written on the generated page objects: the posts by id (Alt+click on the body marks unread), the "New Messages"
- * separator, and the sidebar links' read state from their accessible names.
  */
 test('MM-T248 Mark Direct Message post as Unread', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

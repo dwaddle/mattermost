@@ -6,9 +6,6 @@ import {Api, expect, settle, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify clicking a reaction removes the user's own reaction and clicking it again adds it back,
  * each saved on the server.
- *
- * Written on the generated page objects: the reaction button sends its request when its count's animation
- * ends, and declares that request, so `settle` waits for it.
  */
 test('removes and re-adds a reaction by clicking it', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, adminUser, team, user, userClient} = await pw.initSetup();

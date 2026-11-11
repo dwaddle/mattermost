@@ -6,7 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that multiple user mentions are displayed properly in the Recent Mentions section.
  *
- * Written on the generated page objects: the Recent mentions button and the search results' posts by id.
  *
  * @precondition
  * Two users must be members of the same team

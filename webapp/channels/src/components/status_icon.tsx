@@ -13,7 +13,6 @@ import StatusOnlineIcon from 'components/widgets/icons/status_online_icon';
 type Props = {
     id?: string;
 
-    // The icon is `<testId>` (a wrapper around the status image).
     testId?: TestId;
     button?: boolean;
     status?: string;

@@ -24,7 +24,6 @@ interface Props {
     noArgumentHandleSubmit: () => void;
     isInEditMode: boolean;
 
-    // The composer's scope; the post error is `<testIdScope>.error--text`.
     testIdScope: TestIdScope;
 }
 

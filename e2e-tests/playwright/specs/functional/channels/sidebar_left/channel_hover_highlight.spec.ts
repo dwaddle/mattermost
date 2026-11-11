@@ -12,8 +12,6 @@ function backgroundColor(item: Locator): Promise<string> {
 /**
  * @objective Verify that hovering different channel types (public channel and direct message) in the
  * sidebar highlights them by changing their background.
- *
- * Written on the generated page objects: sidebar rows are keyed by channel name, a direct message's included.
  */
 test(
     'MM-T842 highlights public channel and direct message items on hover',

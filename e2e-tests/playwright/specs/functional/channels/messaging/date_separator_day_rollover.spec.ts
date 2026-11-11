@@ -12,8 +12,6 @@ test.use({timezoneId: 'UTC'});
 /**
  * @objective Verify the date separators in an open channel relabel themselves when local midnight passes, without a reload.
  * @reference MM-60727
- *
- * Written on the generated page objects: the posts by id and the post list's date separators.
  */
 test('MM-60727 relabels date separators when local midnight passes', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

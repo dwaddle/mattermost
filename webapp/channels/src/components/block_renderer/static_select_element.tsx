@@ -37,7 +37,6 @@ type StaticSelectElementProps = {
     postId: string;
     onAction: ActionHandler;
 
-    /** The post's testid scope; the select is `<testIdScope>.select:<action id>`. */
     testIdScope?: TestId;
 };
 

@@ -23,7 +23,6 @@ type Props = {
     enablePublicLink: boolean;
     onClick: (index: number) => void;
 
-    /** The gallery's scope (`center.post_list.post.attachments`): the tile is `<scope>.file:<file id>--button`. */
     testIdScope?: TestId;
 };
 

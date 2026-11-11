@@ -33,7 +33,6 @@ export const scheduledPostTimeFormat: ComponentProps<typeof Timestamp>['useTime'
 type Props = {
     kind: 'draft' | 'scheduledPost';
 
-    /** The item's scope (`drafts.list.draft`): renders `<scope>.header`. */
     testIdScope?: TestId;
     actions: React.ReactNode;
     timestamp: number;

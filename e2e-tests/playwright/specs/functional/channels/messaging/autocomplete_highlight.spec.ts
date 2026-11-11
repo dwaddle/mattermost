@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that the autocomplete highlight follows the mouse hover and the arrow keys.
- *
- * Written on the generated page objects: the composer and its suggestion list, whose items are keyed by what they
- * suggest.
  */
 test('MM-T71 moves the autocomplete highlight with hover and arrow keys', {tag: '@messaging'}, async ({pw}) => {
     // # Create and log in as a test user

@@ -3,9 +3,6 @@
 
 import {App, expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the search box, Recent mentions and Saved messages, the search panel's
-// header (title, popout and close buttons), tabs and results by post id; the popout window gets its own `App`.
-
 /** Clicks the search panel's popout button and returns the popout window's app, once its document has loaded. */
 async function openPopout(app: App) {
     const [popoutPage] = await Promise.all([app.page.waitForEvent('popup'), app.search.header.clickPopoutButton()]);

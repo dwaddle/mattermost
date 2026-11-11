@@ -10,10 +10,6 @@ import {
     typeHangulWithIme,
 } from '@mattermost/playwright-lib';
 
-/**
- * Written on the generated page objects: the sidebar's Find Channels button returns the channel switcher, whose
- * results are keyed by channel id.
- */
 test('Find Channels modal handles Korean IME input correctly', async ({pw, browserName}) => {
     test.skip(browserName !== 'chromium', 'The API used to test this is only available in Chrome');
 
@@ -74,10 +70,6 @@ test('Find Channels modal handles Korean IME input correctly', async ({pw, brows
     await expect(switcher.suggestions.item(partialMatchChannel.id).locator).not.toBeAttached();
 });
 
-/**
- * Written on the generated page objects: the sidebar's Find Channels button returns the channel switcher, whose
- * results are keyed by channel id.
- */
 test('Find Channels autocomplete lists channel after each incomplete Korean character', async ({pw, browserName}) => {
     test.skip(browserName !== 'chromium', 'The API used to test this is only available in Chrome');
 

@@ -36,7 +36,6 @@ type Props = {
     onItemClick: (index: number) => void;
     onToggleCollapse?: (postId: string) => void;
 
-    /** The attachments' scope (`center.post_list.post.attachments`): the gallery renders it, each tile `.file:<id>--button`. */
     testIdScope?: TestId;
 };
 

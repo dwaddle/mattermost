@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that users can edit a message that has an attachment,
  * the attachment is preserved after edit, and the edited indicator appears.
- *
- * Written on the generated page objects: the post by id, its image by file id, the inline editor and the edited marker.
  */
 test('MM-T2268 Edit Message with Attachment', async ({pw}) => {
     // # Post a message with an image attachment

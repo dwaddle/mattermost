@@ -24,7 +24,6 @@ type Props = {
     isFlagged: boolean;
     actions: Actions;
 
-    /** Renders `${testId}--button`. */
     testId?: TestId;
 };
 

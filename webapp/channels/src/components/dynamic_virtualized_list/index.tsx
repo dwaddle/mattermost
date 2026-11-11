@@ -57,7 +57,6 @@ export interface DynamicVirtualizedListProps {
 
     id?: string;
 
-    /** Testid of the scrolling element (a container, e.g. `center.post_list.scroller`). */
     testId?: TestId;
     className?: string;
     correctScrollToBottom?: boolean;

@@ -106,7 +106,6 @@ export type Props = WrappedComponentProps & {
     */
     isFileRejected?: boolean;
 
-    /** Renders `<testId>--img` on the image, and `<testId>.frame` on its container once it has loaded. */
     testId?: TestId;
 };
 

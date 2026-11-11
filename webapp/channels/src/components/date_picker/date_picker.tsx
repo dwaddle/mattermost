@@ -33,8 +33,6 @@ type Props = {
     icon?: React.ReactNode;
     value?: string;
 
-    // The button is `<testIdScope>.date--button` and the calendar popper `<testIdScope>.calendar`; without a scope, the
-    // popper keeps the legacy id.
     testIdScope?: TestId;
 };
 

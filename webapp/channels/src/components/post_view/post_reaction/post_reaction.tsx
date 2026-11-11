@@ -28,7 +28,6 @@ export type Props = {
     setShowEmojiPicker: (showEmojiPicker: boolean) => void;
     showEmojiPicker: boolean;
 
-    /** Renders `${testId}--button`. */
     testId?: TestId;
     actions: {
         toggleReaction: (postId: string, emojiName: string) => void;

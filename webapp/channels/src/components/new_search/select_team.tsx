@@ -26,7 +26,6 @@ interface Props {
     selectedTeamId: string;
     onTeamSelected: (team: string) => void;
 
-    /** Where the selector is (`search_box.team_selector`): the trigger is `<scope>.open_menu--button`, teams `<scope>.menu.team:<team id>--menuitemradio`. */
     testIdScope: TestId;
 }
 

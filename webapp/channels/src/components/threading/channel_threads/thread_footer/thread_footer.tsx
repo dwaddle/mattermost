@@ -34,7 +34,6 @@ type Props = {
     threadId: UserThread['id'];
     replyClick?: React.EventHandler<React.MouseEvent>;
 
-    /** The footer's scope (`center.post_list.post.thread_footer`); its parts are `.reply--button` and `.follow--button`. */
     testIdScope?: TestId;
 };
 

@@ -4,10 +4,6 @@
 import {getAsset} from '@/asset';
 import {expect, test, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the channel switcher (results keyed by channel id), the channel header,
-// the composers (center and RHS, with the RHS attach button and file previews), the posts by id with their Reply
-// button, and the RHS thread.
-
 /**
  * Opens the channel switcher with Ctrl/Cmd+K, searches, and opens the result keyed by one of `keys`. The shortcut is
  * pressed in the message box, which also waits for the app to be up (a generated `goto` returns on page load).

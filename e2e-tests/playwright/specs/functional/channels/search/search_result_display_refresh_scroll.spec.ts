@@ -8,9 +8,6 @@ import {duration, expect, generated, test, type App} from '@mattermost/playwrigh
 /**
  * @objective Verify message search displays matching results in the right-hand side, rendering markdown
  * content correctly, and that jumping to the conversation and clearing the query keep results intact.
- *
- * Written on the generated page objects: the search box, the result by post id with its Jump link and its Markdown
- * hashtag; the heading and code block are read by their ARIA roles.
  */
 test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -56,8 +53,6 @@ test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
 
 /**
  * @objective Verify that a new search replaces the previous results instead of combining them.
- *
- * Written on the generated page objects: the search box and the results by post id.
  */
 test('MM-T355 replaces old search results with new results', {tag: '@search'}, async ({pw}) => {
     // # Create a message in Town Square and one in Off-Topic
@@ -88,9 +83,6 @@ test('MM-T355 replaces old search results with new results', {tag: '@search'}, a
 
 /**
  * @objective Verify that scrolling the center channel while the search results panel is open does not change the results.
- *
- * Written on the generated page objects: the search box, the results' keys, and the center post list's scrolling
- * element.
  */
 test('MM-T382 keeps search results unchanged while scrolling the center channel', {tag: '@search'}, async ({pw}) => {
     // # Create and log in as a test user, and open a channel with many matching posts

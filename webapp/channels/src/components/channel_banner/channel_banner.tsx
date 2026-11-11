@@ -35,7 +35,6 @@ const markdownRenderingOptions: Partial<TextFormattingOptions> = {
 type Props = {
     channelId: string;
 
-    // The banner is `<testIdScope>`, its text `<testIdScope>.text--text`.
     testIdScope: TestIdScope;
 };
 

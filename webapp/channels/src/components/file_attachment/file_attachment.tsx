@@ -30,7 +30,6 @@ import type {PropsFromRedux} from './index';
 
 type Props = PropsFromRedux & {
 
-    /** The attachment list's scope (`<post>.attachments`); the card renders `<testIdScope>.file_card:<file id>`. */
     testIdScope?: TestId;
 
     /*

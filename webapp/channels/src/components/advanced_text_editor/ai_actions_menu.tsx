@@ -38,7 +38,6 @@ interface AIActionsMenuProps {
     rewriteMenuProps?: RewriteMenuProps;
     aiRewriteEnabled?: boolean;
 
-    /** The menu's testid scope (`<composer>.ai_actions`): its button is `<testIdScope>.open--button`. */
     testIdScope?: TestId;
 }
 

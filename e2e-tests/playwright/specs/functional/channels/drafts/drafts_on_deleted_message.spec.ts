@@ -3,9 +3,6 @@
 
 import {expect, Msg, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the posts by id (body, Reply button, dot menu, Remove), the RHS composer
-// and thread header, the delete dialog, and the sidebar's Drafts link.
-
 test('MM-T5435_1 Global Drafts link in sidebar should be hidden when another user deleted root post and user removes the deleted post ', async ({
     pw,
 }) => {

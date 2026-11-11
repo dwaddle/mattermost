@@ -6,10 +6,6 @@ import {Api, expect, settle, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify a message in a private channel can only be forwarded to that channel, and that
  * forwarding it with a comment posts the comment there.
- *
- * Written on the generated page objects: the post, its dot menu and the forward modal (its notice,
- * comment box and Forward button) come from `app`; the forwarded post is found by the id the create
- * request returned.
  */
 test('forwards a private-channel message with a comment to the same channel', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

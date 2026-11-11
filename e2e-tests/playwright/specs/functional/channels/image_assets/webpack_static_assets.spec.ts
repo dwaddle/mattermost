@@ -14,8 +14,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  * This test catches that by reloading the page and asserting:
  *  - no static asset request returns 4xx/5xx
  *  - no <img> in the DOM has naturalWidth === 0 (failed to decode)
- *
- * Written on the generated page objects: the channels page and its message box (which shows the app has loaded).
  */
 
 test('app loads without any broken image assets on the main channel view', {tag: '@image_assets'}, async ({pw}) => {

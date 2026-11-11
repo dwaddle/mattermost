@@ -8,9 +8,6 @@ const UNREAD = / (unread|\d+ mentions?)$/;
 
 /**
  * @objective Verify a reply post can be marked unread from within an open RHS thread.
- *
- * Written on the generated page objects: the center post's Reply button, the RHS thread's posts by id (Alt+click on
- * the body marks unread) and its "New Messages" separator, and the sidebar links' read state.
  */
 test('MM-T248_2 Mark Direct Message post as Unread in a reply thread', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -61,9 +58,6 @@ test('MM-T248_2 Mark Direct Message post as Unread in a reply thread', async ({p
 
 /**
  * @objective Verify a thread post can be marked unread from the RHS.
- *
- * Written on the generated page objects: the center post's Reply button, the RHS thread's posts by id (Alt+click on
- * the body marks unread) and its "New Messages" separator, and the sidebar links' read state.
  */
 test('MM-T250 Mark as unread in the RHS', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

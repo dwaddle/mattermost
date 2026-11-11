@@ -10,9 +10,6 @@ setupFileServer().then((serverUrl) => {
 
 /**
  * @objective Verify collapsing a link preview is user-specific while removing it removes the preview for other users.
- *
- * Written on the generated page objects: the post by id, its link preview, and the preview's image, toggle and
- * remove button.
  */
 test('MM-T199 Removing a link preview removes it from the views of other users', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, adminUser, userClient, team, user} = await pw.initSetup();

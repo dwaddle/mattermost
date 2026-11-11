@@ -16,7 +16,6 @@ type Props = {
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
     tooltipText: React.ReactElement<any> | string;
 
-    // Renders `<testId>--button`.
     testId?: TestId;
 };
 

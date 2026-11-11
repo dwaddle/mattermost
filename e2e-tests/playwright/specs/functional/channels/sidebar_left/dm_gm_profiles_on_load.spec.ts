@@ -20,9 +20,6 @@ const USER_PAGE_PATH = /^\/api\/v4\/users$/;
 // GET /api/v4/users/me/teams/{team_id}/channels/categories, the sidebar categories.
 const CATEGORIES_PATH = /^\/api\/v4\/users\/[^/]+\/teams\/[^/]+\/channels\/categories$/;
 
-// Written on the generated page objects: the sidebar's channel rows keyed by channel name (link and a group
-// message's member count).
-
 type Scenario = Awaited<ReturnType<typeof setupSidebarProfiles>>;
 
 /**

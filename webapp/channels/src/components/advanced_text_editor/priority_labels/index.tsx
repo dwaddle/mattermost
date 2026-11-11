@@ -23,7 +23,6 @@ type Props = {
     priority?: PostPriorityMetadata['priority'];
     requestedAck?: PostPriorityMetadata['requested_ack'];
 
-    /** The labels' testid: `.priority`, `.persistent_notifications`, `.acknowledgement` and `.remove--button` are inside. */
     testIdScope?: TestId;
 };
 

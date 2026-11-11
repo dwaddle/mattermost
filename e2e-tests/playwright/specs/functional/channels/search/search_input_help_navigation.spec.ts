@@ -5,8 +5,6 @@ import {expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that a wildcard (*) is disregarded when it is not immediately preceded by text.
- *
- * Written on the generated page objects: the search box and the results by post id.
  */
 test('MM-T351 disregards a wildcard that is not preceded by text', {tag: '@search'}, async ({pw}) => {
     // # Post two messages, one with a longer variant of the search term
@@ -30,8 +28,6 @@ test('MM-T351 disregards a wildcard that is not preceded by text', {tag: '@searc
 
 /**
  * @objective Verify that the top navigation buttons remain clickable and open their panels while focus is in the search box.
- *
- * Written on the generated page objects: the global header's buttons, the search box and the search panel's header.
  */
 test('MM-T367 clicks top navigation buttons while the search box has focus', {tag: '@search'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();
@@ -62,8 +58,6 @@ test('MM-T367 clicks top navigation buttons while the search box has focus', {ta
 
 /**
  * @objective Verify that the search box shows help text when opened from the channel and again after opening a thread.
- *
- * Written on the generated page objects: the search box and its hints, and the post by id and its Reply button.
  */
 test('MM-T370 shows search help text when the search box is opened', {tag: '@search'}, async ({pw}) => {
     // # Post a message

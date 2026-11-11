@@ -5,9 +5,6 @@ import type {UserProfile} from '@mattermost/types/users';
 
 import {expect, generated, test, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the composer and its mention suggestions, the post by id with its rendered
-// mentions keyed by user id, and the profile popover's username, full name and email.
-
 /** Opens the profile popover from the user's mention in the post, and returns it. */
 async function openFromMention(app: App, postId: string, user: Pick<UserProfile, 'id'>) {
     const markdown = new generated.Markdown(app.page, 'markdown', app.center.postList.post({id: postId}).locator);

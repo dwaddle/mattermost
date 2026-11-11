@@ -57,7 +57,6 @@ type Props = {
      */
     imagesMetadata?: Record<string, PostImage>;
 
-    /** The post's testid scope; action buttons render `<testIdScope>.action:<action id>--button`. */
     testIdScope?: TestId;
 
     actions: {

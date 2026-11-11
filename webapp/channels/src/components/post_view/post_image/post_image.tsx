@@ -26,7 +26,6 @@ type PostImageProps = {
         openModal: <P>(modalData: ModalData<P>) => void;
     };
 
-    /** The image is `<testId>--img`, its container `<testId>.frame`. */
     testId?: TestId;
 };
 

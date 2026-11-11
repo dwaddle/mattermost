@@ -23,7 +23,6 @@ type Props = {
     size: number;
     defaultEmojis: Emoji[];
 
-    /** The recent reactions' testid (`<post>.menu.recent_reactions`); items render `.emoji:<name>--button`. */
     testIdScope?: TestId;
     actions: {
         toggleReaction: (postId: string, emojiName: string) => void;

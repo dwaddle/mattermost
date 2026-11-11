@@ -5,9 +5,6 @@ import {Api, expect, generated, settle, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify deleting the last post in a direct message keeps the user in that conversation.
- *
- * Written on the generated page objects: the route, the post (found by the id the create request
- * returned), its dot menu and the delete confirmation all come from `app`.
  */
 test('MM-T218 removes the last post without leaving the direct message', {tag: '@direct_messages'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

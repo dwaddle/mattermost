@@ -22,7 +22,6 @@ type Props = {
 
     onEmojiClick: (emoji: Emoji) => void;
 
-    /** Renders `${testId}--button`. */
     testId?: TestId;
 };
 

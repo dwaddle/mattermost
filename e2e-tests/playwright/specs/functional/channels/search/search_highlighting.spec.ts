@@ -20,8 +20,6 @@ function highlightsIn(app: App, post: Pick<Post, 'id'>) {
 
 /**
  * @objective Verify that searching with trailing double quotes highlights only the searched terms, with no unexpected highlighting.
- *
- * Written on the generated page objects: the search box, the result by post id and its Markdown search highlights.
  */
 test('MM-T354 highlights only the searched terms when searching with double quotes', {tag: '@search'}, async ({pw}) => {
     // # Post a message that contains the two search words plus an unrelated unique word
@@ -45,8 +43,6 @@ test('MM-T354 highlights only the searched terms when searching with double quot
 
 /**
  * @objective Verify that the search result highlighting reflects the submitted query and does not change while the search input is edited before submitting again.
- *
- * Written on the generated page objects: the search box, the result by post id and its Markdown search highlights.
  */
 test(
     'MM-T371 keeps search result highlighting unchanged while editing the search input',
@@ -83,10 +79,6 @@ test(
 
 /**
  * @objective Verify that search term highlighting appears in the search results panel but does not persist in the saved or pinned message panels.
- *
- * Written on the generated page objects: the post's Save button and dot menu Pin item, Saved messages, the channel
- * header's Pinned messages button, the search box, the search panel's close button, and the result's Markdown
- * search highlights.
  */
 test(
     'MM-T372 does not persist search highlighting in the saved or pinned message panels',

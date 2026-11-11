@@ -3,9 +3,6 @@
 
 import {expect, test, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the composer, the channel switcher (results keyed by channel id), the
-// channel header, the post list and posts by id, and the sidebar's channel rows (link and draft pencil).
-
 /** Sends the composer's text with the Send button (a trailing space has already dismissed any autocomplete). */
 async function send(app: App, text: string) {
     await app.center.postCreate.fillMessageTextbox(text);

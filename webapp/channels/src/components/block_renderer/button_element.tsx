@@ -26,7 +26,6 @@ type ButtonElementProps = {
     element: MmButtonBlock;
     onAction: ActionHandler;
 
-    /** The post's testid scope; the button renders `<testIdScope>.action:<action id>--button`. */
     testIdScope?: TestId;
 };
 

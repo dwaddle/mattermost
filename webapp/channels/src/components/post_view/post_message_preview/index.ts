@@ -31,7 +31,6 @@ export type OwnProps = {
     previewFooterMessage?: string;
     usePostAsSource?: boolean;
 
-    /** The preview's testid (`<post>.permalink_preview`), with `.message--text` and `.attachments` inside. */
     testIdScope?: TestId;
 };
 

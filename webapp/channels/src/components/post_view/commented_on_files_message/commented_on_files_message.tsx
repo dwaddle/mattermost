@@ -14,7 +14,6 @@ type Props = {
      */
     fileInfos?: FileInfo[];
 
-    /** The text renders `<testId>--text`; undefined renders no testid. */
     testId: TestId | undefined;
 };
 

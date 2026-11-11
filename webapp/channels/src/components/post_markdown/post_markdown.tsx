@@ -55,7 +55,6 @@ export type OwnProps = {
     /** Permalink previews and similar read-only surfaces. */
     disableInteractions?: boolean;
 
-    /** The post's testid scope: the "Edited" label is `<scope>.edited`, a data spillage report `<scope>.spillage_report`. */
     postTestIdScope?: TestId;
 };
 

@@ -6,9 +6,6 @@ import {Api, expect, generated, Msg, settle, test} from '@mattermost/playwright-
 /**
  * @objective Verify a thread the user follows is listed in Threads, opens in the thread pane, and leaves
  * the list once unfollowed from the pane's thread menu (an open thread stays until the user leaves it).
- *
- * Written on the generated page objects: the threads route, the list item (keyed by the root post's id),
- * the pane and the thread menu all come from `app`.
  */
 test(
     'lists a followed thread, opens it, and drops it from the list once unfollowed from the thread menu and left',

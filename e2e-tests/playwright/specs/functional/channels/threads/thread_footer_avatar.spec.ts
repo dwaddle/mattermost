@@ -7,8 +7,6 @@ import {expect, test, PlaywrightClient4, testConfig} from '@mattermost/playwrigh
  * @objective Verify that thread footer avatars with a broken image URL still render at correct
  * square dimensions — i.e. width equals height — confirming that alt text does not distort
  * the element when the image fails to load.
- *
- * Written on the generated page objects: the thread footer's participant avatars come from `app`.
  */
 test('MM-69802 Thread footer avatar with broken image URL renders with equal width and height', async ({pw}) => {
     // adminClient.createPost always posts as sysadmin regardless of user_id,

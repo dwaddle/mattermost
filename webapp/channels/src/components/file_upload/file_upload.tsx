@@ -149,8 +149,6 @@ export type Props = {
      */
     disabledByPolicy?: boolean;
 
-    // The composer's scope; the attach button is `<testIdScope>.attach--button`, and the menu it opens when plugins add
-    // upload methods `<testIdScope>.attach_menu`.
     testIdScope?: TestId;
 
     /**

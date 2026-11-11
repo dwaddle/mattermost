@@ -10,9 +10,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  *
  * @precondition
  * Test requires creating a thread with 100+ replies and 40+ unrelated channel messages
- *
- * Written on the generated page objects: the posts by id (center and RHS thread, with the Reply button) and the
- * thread's scroller.
  */
 test('MM-T3293 The entire thread appears in the RHS (scrollable)', {tag: ['@messaging']}, async ({pw}) => {
     test.setTimeout(120000);

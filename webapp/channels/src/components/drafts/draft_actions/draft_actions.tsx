@@ -38,7 +38,6 @@ type Props = {
     channelId: string;
     repeatDisabledReason?: RepeatDisabledReason;
 
-    // The row's scope (`drafts.list.draft`): actions are `<scope>.delete--button`, `.edit`, `.reschedule`, `.send`.
     testIdScope?: TestId;
 };
 

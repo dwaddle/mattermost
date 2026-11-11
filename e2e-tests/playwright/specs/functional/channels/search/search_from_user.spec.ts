@@ -6,8 +6,7 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that the "from:" search modifier autocompletes a username and returns that user's posts.
  *
- * MM-T376 covers the same from:user autocomplete behavior and is covered by this test. Written on the generated
- * page objects: the search box, its suggestions keyed by username, and the result by post id.
+ * MM-T376 covers the same from:user autocomplete behavior and is covered by this test.
  */
 test('MM-T376 MM-T377 completes a from: user search from the autocomplete', {tag: ['@search']}, async ({pw}) => {
     // # Create the test user plus another user who authors a post

@@ -16,7 +16,6 @@ interface ShowFormatProps {
     onClick: (event: React.MouseEvent) => void;
     active: boolean;
 
-    // The button is `<testId>--button`.
     testId?: TestId;
 }
 

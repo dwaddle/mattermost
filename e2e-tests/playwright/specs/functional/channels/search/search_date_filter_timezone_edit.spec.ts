@@ -7,8 +7,6 @@ import {duration, expect, test, type App} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify changing timezone changes which posts match an on: date filter.
- *
- * Written on the generated page objects: the search box, the results by post id and the no-results title.
  */
 test('MM-T595 Changing timezone changes day search results appears', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -54,9 +52,6 @@ test('MM-T595 Changing timezone changes day search results appears', async ({pw}
 
 /**
  * @objective Verify editing a date-filtered search query, via the interactive day picker, updates the search results.
- *
- * Written on the generated page objects: the search box, its date picker's days keyed by date, the results by post
- * id and the no-results title.
  */
 test('MM-T599 Edit date and search again', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

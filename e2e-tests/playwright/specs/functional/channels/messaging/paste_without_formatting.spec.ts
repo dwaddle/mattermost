@@ -7,8 +7,6 @@ import {expect, pasteHtml, test} from '@mattermost/playwright-lib';
  * @objective Verify that pasting with Ctrl/Cmd+Shift+V skips Mattermost's own paste-formatting
  * logic (e.g. auto-converting a pasted HTML table into markdown table syntax), unlike a normal
  * paste which applies it.
- *
- * Written on the generated page objects: the composer's textbox.
  */
 test('MM-T1434 pasting with Ctrl/Cmd+Shift+V skips Mattermost paste formatting', {tag: '@messaging'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

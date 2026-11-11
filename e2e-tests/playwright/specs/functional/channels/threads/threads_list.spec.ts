@@ -5,9 +5,6 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that users can navigate through threads list using keyboard arrow keys
- *
- * Written on the generated page objects: the list's threads are keyed by root post id, the open thread is the
- * URL's thread id, and its replies are found by post id.
  */
 test('Should be able to change threads with arrow keys', {tag: ['@smoke']}, async ({pw}, testInfo) => {
     test.skip(testInfo.project.name === 'ipad');

@@ -25,7 +25,6 @@ import {horizontallyWithin} from 'utils/floating';
 
 import type {GlobalState} from 'types/store';
 
-// testIdScope is the composer's scope: the button is `<testIdScope>.emoji--button`.
 const useEditorEmojiPicker = (
     textboxId: string,
     isDisabled: boolean,

@@ -22,7 +22,6 @@ type Props = {
     overflowType?: AttachmentTextOverflowType;
     maxHeight?: number;
 
-    // The Show more / Show less button is `<testId>.show_more--button`.
     testId?: TestId;
 };
 

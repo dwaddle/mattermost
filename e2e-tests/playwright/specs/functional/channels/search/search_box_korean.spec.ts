@@ -5,8 +5,6 @@ import {expect, koreanTestPhrase, test, typeHangulWithIme} from '@mattermost/pla
 
 /**
  * @objective Verify the search box composes Korean typed through an IME and suggests the matching channel.
- *
- * Written on the generated page objects: the search box and its suggestions, keyed by channel name.
  */
 test('Search box handles Korean IME correctly', async ({pw, browserName}) => {
     test.skip(browserName !== 'chromium', 'The API used to test this is only available in Chrome');

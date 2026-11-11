@@ -10,9 +10,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  *
  * @precondition
  * The server must have `ServiceSettings.EnableSVGs` set to `true`.
- *
- * Written on the generated page objects: the composer's attach button and file previews, and the posted image
- * found by its file id.
  */
 test('MM-T309 uploads and posts an SVG file when SVG support is enabled', {tag: '@file_attachments'}, async ({pw}) => {
     // # Create and log in as a test user, and enable SVG support

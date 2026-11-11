@@ -40,7 +40,6 @@ export type Props = {
     mmBlocksEnabled: boolean;
     handleFileDropdownOpened?: (open: boolean) => void;
 
-    /** The post's testid scope; a link preview renders `<testIdScope>.link_preview--link`. */
     testIdScope?: TestId;
     actions: {
         toggleEmbedVisibility: (id: string) => void;

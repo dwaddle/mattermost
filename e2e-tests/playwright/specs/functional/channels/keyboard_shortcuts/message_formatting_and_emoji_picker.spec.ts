@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify Ctrl/Cmd+B and Ctrl/Cmd+I wrap the message text in bold and italic markdown and
  * that the posted message renders the formatting.
- *
- * Written on the generated page objects: the composer, and the posts by id with their rendered message.
  */
 test('MM-T3405 formats text as bold and italic with keyboard shortcuts', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();
@@ -60,8 +58,6 @@ test('MM-T3405 formats text as bold and italic with keyboard shortcuts', {tag: '
 /**
  * @objective Verify the Ctrl/Cmd+Shift+\ shortcut opens the emoji picker to react to the last message,
  * and that it can be dismissed.
- *
- * Written on the generated page objects: the composer and the emoji picker.
  */
 test('MM-T4693 opens the emoji picker with the keyboard shortcut', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

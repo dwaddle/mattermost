@@ -23,10 +23,8 @@ type Props = {
     compactDisplay?: boolean;
     isChannelAutotranslated: boolean;
 
-    /** The message renders `${testId}--text`. */
     testId?: TestId;
 
-    /** The post's testid scope, for the content around the message (`<scope>.link_preview--link`, `<scope>.edited--button`). */
     testIdScope?: TestId;
 };
 

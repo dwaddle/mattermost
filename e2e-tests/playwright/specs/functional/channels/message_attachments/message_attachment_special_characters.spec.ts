@@ -3,10 +3,6 @@
 
 import {expect, test, testConfig, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the post list's last post and its rendered content. Attachments render
-// as mm_blocks text blocks, which carry no ids of their own, so author and title are checked within the post's
-// content (decoded text, and the title as a link by its accessible name).
-
 /**
  * Posts a JSON payload to an incoming webhook URL.
  */

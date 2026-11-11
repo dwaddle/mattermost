@@ -42,7 +42,6 @@ const useUploadFiles = (
     setServerError: (err: (ServerError & {submittedMessage?: string}) | null) => void,
     isPostBeingEdited?: boolean,
 
-    /** The composer's testid scope; the previews are `<scope>.file_previews`. */
     testIdScope?: TestId,
 ): [React.ReactNode, React.ReactNode] => {
     const intl = useIntl();

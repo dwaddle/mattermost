@@ -8,9 +8,6 @@ import {expect, openChannel, test, type PlaywrightClient4, type PlaywrightExtend
 
 import {BOR_TAG, createSecondUser, lastPost, recipientCount, reveal, sendBorMessage, setupBorTest} from './support';
 
-// Written on the generated page objects: the composer's burn-on-read toggle and label, the posts by id with their
-// burn-on-read badge (read count in its accessible name), timer chip and reveal button, and the delete confirmation.
-
 /** A private channel with exactly the given users (the admin who creates it leaves). */
 async function privateChannelWith(
     pw: PlaywrightExtended,

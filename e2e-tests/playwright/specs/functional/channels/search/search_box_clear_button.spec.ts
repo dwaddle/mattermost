@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify clearing the search box and closing it leaves no search type badge in the header.
- *
- * Written on the generated page objects: the header's search button and type badge, and the search box's
- * input and clear button come from `app`.
  */
 test('MM-64155 search box clear button should not leave type badge after closing the search box', async ({pw}) => {
     // # Set up test with a user

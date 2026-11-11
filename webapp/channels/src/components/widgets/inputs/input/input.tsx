@@ -45,8 +45,6 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
     rows?: number;
     validate?: (value: React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>['value']) => CustomMessageInputType | undefined;
 
-    // The field renders `<testId>--textbox`, its wrapper `<testId>.field` and its message `<testId>.message--alert`
-    // (`--text` for info and success). Without it, a `data-testid` goes on the field and the wrapper has none.
     testId?: TestId;
 }
 

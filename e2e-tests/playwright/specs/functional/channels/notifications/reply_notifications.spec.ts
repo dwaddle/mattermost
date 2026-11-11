@@ -16,9 +16,6 @@ import {
     type PlaywrightExtended,
 } from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the composer, the posts by id (center and RHS thread, with their Reply
-// button), the RHS composer and the sidebar's channel rows (link and mention badge).
-
 test.describe('Reply notifications', () => {
     let adminClient: PlaywrightClient4;
     let senderClient: PlaywrightClient4;

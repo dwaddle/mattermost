@@ -5,8 +5,6 @@ import {expect, generated, test, testConfig} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that clicking a post timestamp in the RHS or center channel highlights the post in the center channel.
- *
- * Written on the generated page objects: the post by id in the center and the thread, each with its time link.
  */
 test('MM-T176 highlights the center post when its timestamp is clicked', {tag: ['@messaging']}, async ({pw}) => {
     // # Create a root post with a reply, and log in

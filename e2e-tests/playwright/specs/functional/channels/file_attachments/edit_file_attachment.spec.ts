@@ -6,10 +6,6 @@ import type {Locator} from '@playwright/test';
 import {getAsset} from '@/asset';
 import {expect, test, type App, type generated, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the composers (center and RHS) and the inline post editor (message box,
-// attach button, file previews keyed by file with their names and remove buttons, Save), the posts by id with
-// their dot menu and Edited indicator, the delete and restore dialogs, and the RHS thread and edit history.
-
 const ORIGINAL_MESSAGE = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
 
 type Composer = generated.PostCreate;

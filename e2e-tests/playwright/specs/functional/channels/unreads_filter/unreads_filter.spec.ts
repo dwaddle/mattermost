@@ -5,10 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the unreads filter shows only channels with unread messages
- *
- * Written on the generated page objects: the sidebar's channel links by channel name (unread state from their
- * accessible names) and the unreads filter. The filter doesn't expose whether it is on (no aria-pressed), so the test
- * checks what it does instead.
  */
 test('unreads filter will show and hide unread channels', {tag: ['@smoke', '@filters']}, async ({pw}) => {
     // # Create a user with only one team

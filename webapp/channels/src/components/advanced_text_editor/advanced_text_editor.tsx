@@ -149,7 +149,6 @@ const AdvancedTextEditor = ({
     const getDraftSelector = useMemo(() => makeGetDraft(), []);
     const getDisplayName = useMemo(() => makeGetDisplayName(), []);
 
-    // testIdScope is the testid scope of this composer instance; its parts are `<scope>.message--textbox`, `<scope>.send--button`...
     let textboxId: string;
     let testIdScope: TestId;
     if (isInEditMode) {

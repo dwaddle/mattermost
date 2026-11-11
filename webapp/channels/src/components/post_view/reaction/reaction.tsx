@@ -20,7 +20,6 @@ type State = {
 
 type Props = WrappedComponentProps & {
 
-    /** Renders `${testId}--button`. */
     testId?: TestId;
 
     /*

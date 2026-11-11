@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a long reply draft keeps the expanded reply textbox height after switching threads.
- *
- * Written on the generated page objects: the posts are found by id, and the reply box is the thread composer's.
  */
 test('MM-T212 keeps a long draft expanded in the reply input', {tag: '@messaging'}, async ({pw}) => {
     const {team, user, userClient} = await pw.initSetup();

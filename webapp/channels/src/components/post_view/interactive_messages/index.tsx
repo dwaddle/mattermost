@@ -27,7 +27,6 @@ type Props = {
     /** Preview/read-only surfaces: render blocks but do not dispatch actions. */
     interactionsDisabled?: boolean;
 
-    /** The post's testid scope; action buttons render `<testIdScope>.action:<action id>--button`. */
     testIdScope?: TestId;
 };
 

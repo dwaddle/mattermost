@@ -17,7 +17,6 @@ type Props = {
     onSave: () => void;
     onCancel: () => void;
 
-    // The editor's testid: the buttons are `<testId>.save--button` and `<testId>.cancel--button`.
     testId?: TestId;
 };
 

@@ -310,7 +310,6 @@ export interface RewriteSubMenuHeaderProps {
     onCancelProcessing: () => void;
     customPromptRef: React.RefObject<HTMLInputElement | null>;
 
-    /** The submenu's testid scope: the custom prompt is `<testIdScope>.prompt--textbox`. */
     testIdScope?: TestId;
 }
 

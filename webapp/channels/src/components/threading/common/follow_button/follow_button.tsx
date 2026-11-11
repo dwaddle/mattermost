@@ -21,7 +21,6 @@ type Props = {
     // (not following), matching the other RHS icon buttons.
     iconOnly?: boolean;
 
-    /** The icon-only toggle renders `${testId}--togglebutton`, the text button `${testId}--button`. */
     testId?: TestId;
 };
 

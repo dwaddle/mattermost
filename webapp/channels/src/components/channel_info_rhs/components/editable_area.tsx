@@ -54,7 +54,6 @@ interface EditableAreaProps {
     className?: string;
     editTooltip?: string;
 
-    /** The area's testid; its edit button is `<testId>.edit--button`, the empty state's button `<testId>.add--button`. */
     testId?: TestId;
 }
 

@@ -6,10 +6,6 @@ import {Api, expect, settle, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify a user can view a message's edit history and restore a previous version, and that
  * cancelling the restore confirmation keeps the edited version.
- *
- * Written on the generated page objects: the composer, the inline editor, the post's "Edited" label, the
- * edit history panel (its versions keyed by the ids the server keeps them under) and the restore
- * confirmation come from `app`.
  */
 test('MM-T5537 views message edit history and restores a previous version', {tag: '@messaging'}, async ({pw}) => {
     const {team, user, userClient} = await pw.initSetup();

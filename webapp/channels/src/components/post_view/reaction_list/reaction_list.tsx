@@ -23,7 +23,6 @@ type Props = {
      */
     post: Post;
 
-    /** Testid scope of the list (`center.post_list.post.reactions`): reactions are `<scope>.reaction:<emoji>--button`. */
     testIdScope?: TestId;
 
     /*

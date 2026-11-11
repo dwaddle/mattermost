@@ -6,9 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify a post's images show as gallery tiles, a single image as an image view and a
  * document as a file card, and that a tile opens the image in the preview modal.
- *
- * Written on the generated page objects: the post (keyed by its id), its attachments (tiles and
- * cards keyed by file id) and the preview modal come from `app`.
  */
 test(
     'shows images as gallery tiles, one image as an image view and a document as a file card, and previews a tile',

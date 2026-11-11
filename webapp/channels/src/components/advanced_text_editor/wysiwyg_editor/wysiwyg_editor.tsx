@@ -185,7 +185,6 @@ type Props = {
     readOnly?: boolean;
     id?: string;
 
-    /** Testid path of the editable area; renders `<testId>--textbox`. */
     testId?: TestId;
     useCtrlSend?: boolean;
     sendCodeBlockOnCtrlEnter?: boolean;
@@ -378,8 +377,6 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
             pendingErrorRef.current = null;
         }
     }, []);
-
-    // the scoped testid when the editor has one (`center.post_create.message--textbox`), else its id
 
     const editorTestId = testId ? `${testId}--textbox` : id;
 

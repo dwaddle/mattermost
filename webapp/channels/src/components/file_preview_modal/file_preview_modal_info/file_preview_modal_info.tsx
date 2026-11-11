@@ -28,7 +28,6 @@ interface Props {
     filename: string;
     post?: Post;
 
-    /** The header's or footer's scope: the channel the file was shared in is `<testIdScope>.channel--text`. */
     testIdScope?: TestId;
 }
 

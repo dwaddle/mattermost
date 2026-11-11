@@ -19,7 +19,6 @@ type Props = {
     style?: React.CSSProperties;
     className?: string;
 
-    /** The item's testid (`drafts.list.draft:<channel or thread id>`); the panel renders `<testId>--link`. */
     testId?: TestId;
     dataPostId?: string;
     ariaLabel?: string;

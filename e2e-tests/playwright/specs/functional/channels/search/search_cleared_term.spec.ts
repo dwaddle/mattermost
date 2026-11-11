@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that a cleared search term stays cleared after the search results panel is closed.
- *
- * Written on the generated page objects: the search box, its clear and close buttons, and the results panel.
  */
 test('MM-T352 keeps a cleared search term empty after closing search results', {tag: '@search'}, async ({pw}) => {
     // # Create a user with a searchable post and open the channel

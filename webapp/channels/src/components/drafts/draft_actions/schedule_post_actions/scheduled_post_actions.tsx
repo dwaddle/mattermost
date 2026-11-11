@@ -78,8 +78,6 @@ type Props = {
     onEdit: () => void;
     onCopyText: () => void;
 
-    // The row's scope (`drafts.scheduled.post`): actions are `<scope>.delete--button`, `.edit`, `.copy_text`,
-    // `.reschedule`, `.send_now`.
     testIdScope?: TestId;
 };
 

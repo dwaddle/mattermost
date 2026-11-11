@@ -5,8 +5,6 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the RHS thread refreshes replies when the center channel has changed.
- *
- * Written on the generated page objects: sidebar rows by channel name and the thread's posts by id.
  */
 test('MM-T94 RHS fetches messages on reconnect while a different channel is in center', async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

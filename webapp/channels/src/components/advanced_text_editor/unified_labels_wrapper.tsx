@@ -16,7 +16,6 @@ type Props = {
     onRemoveAll?: () => void;
     canRemove: boolean;
 
-    // The composer's testid scope; the remove-all button is `<scope>.remove_all_labels--button`
     testIdScope?: TestId;
 };
 

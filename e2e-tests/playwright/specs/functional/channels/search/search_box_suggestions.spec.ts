@@ -65,8 +65,6 @@ test('remove extra whitespace when selecting a user', async ({pw}) => {
 /**
  * @objective Verify that grouped search suggestions are trimmed to ten results and retain the selected channel's
  * term/item pairing.
- *
- * Written on the generated page objects: the search box and its suggestions, keyed by channel name.
  */
 test('limits grouped channel suggestions and preserves the selected channel', {tag: '@search'}, async ({pw}) => {
     const {team, user, adminClient} = await pw.initSetup();

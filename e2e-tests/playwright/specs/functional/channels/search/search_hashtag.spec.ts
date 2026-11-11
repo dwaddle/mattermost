@@ -5,8 +5,6 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that hashtag search is not case sensitive and returns all case variants of a hashtag.
- *
- * Written on the generated page objects: the search box and the results by post id.
  */
 test('MM-T359 returns all case variants when searching a hashtag', {tag: ['@search']}, async ({pw}) => {
     // # Post the same hashtag word in three different letter cases
@@ -40,9 +38,6 @@ test('MM-T359 returns all case variants when searching a hashtag', {tag: ['@sear
 
 /**
  * @objective Verify that clicking a hashtag in a Recent Mentions result runs a hashtag search.
- *
- * Written on the generated page objects: Recent mentions, the result by post id, its Markdown hashtag link, and the
- * global header's search button.
  */
 test('MM-T360 searches a hashtag from a recent mention', {tag: '@search'}, async ({pw}) => {
     // # Create the test user plus a second user who will mention them
@@ -76,9 +71,6 @@ test('MM-T360 searches a hashtag from a recent mention', {tag: '@search'}, async
 
 /**
  * @objective Verify that clicking a hashtag in a Saved messages result runs a hashtag search.
- *
- * Written on the generated page objects: Saved messages, the result by post id, its Markdown hashtag link, and the
- * global header's search button.
  */
 test('MM-T361 searches a hashtag from a saved message', {tag: '@search'}, async ({pw}) => {
     // # Create and log in as a test user, and post + save a message with a hashtag

@@ -19,7 +19,6 @@ type Props = {
     /** Renders the Font Awesome spinner. Used inside buttons until they move to the Compass Button. */
     legacy?: boolean;
 
-    // replaces the legacy `loadingSpinner` testid where a host gives the spinner a scoped one
     testId?: string;
 };
 

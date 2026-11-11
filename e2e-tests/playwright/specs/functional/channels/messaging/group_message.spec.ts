@@ -14,9 +14,6 @@ async function lastPostText(app: App) {
 
 /**
  * @objective Verify a group message channel header can be added, posts a system message, and updates read state for participants.
- *
- * Written on the generated page objects: the channel header's add button and text, the edit dialog, the posts by
- * id with their dot menu, and the group message's sidebar link (read state from its accessible name).
  */
 test('MM-T472 Add a channel header to a GM', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -62,9 +59,6 @@ test('MM-T472 Add a channel header to a GM', {tag: '@messaging'}, async ({pw}) =
 
 /**
  * @objective Verify an existing group message channel header can be edited and marks the conversation unread for another participant.
- *
- * Written on the generated page objects: the channel header menu's Settings submenu and its Edit Header item, the
- * edit dialog, the header text, the posts by id, and the group message's sidebar link.
  */
 test('MM-T473_1 Edit GM channel header', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -104,9 +98,6 @@ test('MM-T473_1 Edit GM channel header', {tag: '@messaging'}, async ({pw}) => {
 
 /**
  * @objective Verify a username mention in a group message channel header is interactive without highlighting the current user.
- *
- * Written on the generated page objects: the channel header menu's Settings submenu and its Edit Header item, the
- * edit dialog, and the header text's Markdown mention by user id.
  */
 test('MM-T473_2 Edit GM channel header with a mention', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

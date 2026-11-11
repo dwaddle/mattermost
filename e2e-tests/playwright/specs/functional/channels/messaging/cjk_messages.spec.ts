@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify CJK text can be posted as both a channel message and a thread reply.
- *
- * Written on the generated page objects: each new post is found on the server by its text, then by its id in
- * the page.
  */
 test('MM-T182 Typing using CJK keyboard', {tag: '@messaging'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

@@ -8,8 +8,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  * the center channel and a thread, and that Escape closes the edit box without saving.
  *
  * MM-T1263 covers the same behavior as MM-T1262 and is covered by this test.
- *
- * Written on the generated page objects: the center and RHS composers, the inline editor, and the posts by id.
  */
 test(
     'MM-T1262 MM-T1263 opens and cancels the edit box with Up arrow and Escape',
@@ -67,8 +65,6 @@ test(
  * then posted as a code block.
  *
  * MM-T1268 covers the same behavior as MM-T1267 and is covered by this test.
- *
- * Written on the generated page objects: the composer and the posts by id.
  */
 test(
     'MM-T1267 MM-T1268 composes and posts a code block using Shift+Enter for new lines',

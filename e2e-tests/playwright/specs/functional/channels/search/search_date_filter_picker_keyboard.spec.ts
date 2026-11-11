@@ -23,9 +23,6 @@ function pickerDay(app: App, date: Date) {
 /**
  * @objective Verify the "on:" search date filter can be set by clicking a day in the calendar picker,
  * and that the resulting date-filtered search returns the matching post.
- *
- * Written on the generated page objects: the search box, its date picker's days keyed by date, and the results by
- * post id.
  */
 test('MM-T596 sets the search date with the calendar picker', {tag: '@search'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -71,9 +68,6 @@ test('MM-T596 sets the search date with the calendar picker', {tag: '@search'}, 
 /**
  * @objective Verify editing the "on:" search date by keyboard changes which posts match: the original
  * date returns the post, and a later date does not.
- *
- * Written on the generated page objects: the search box, its date picker's days keyed by date, and the results by
- * post id.
  */
 test('MM-T600 updates the search date with the keyboard', {tag: '@search'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -119,9 +113,6 @@ test('MM-T600 updates the search date with the keyboard', {tag: '@search'}, asyn
 
 /**
  * @objective Verify that pressing Backspace after a completed date filter reopens the calendar day picker.
- *
- * Written on the generated page objects: the search box, its date picker's days keyed by date, and the results by
- * post id.
  */
 test('MM-T3997 reopens the date picker when backspacing after a date filter', {tag: '@search'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

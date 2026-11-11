@@ -40,7 +40,6 @@ type Props = {
     teamUrl: string;
     timestampProps?: ComponentProps<typeof Timestamp>;
 
-    // The time is `<testId>--link` (a permalink), or `<testId>--text` when it isn't one.
     testId?: TestId;
 };
 

@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that while the emoji picker is open over a post, scrolling the center channel with
  * PageUp is disabled (the posts stay in place).
- *
- * Written on the generated page objects: the post by id, its Add Reaction button and the emoji picker.
  */
 test('MM-T2365 disables center channel scrolling while the emoji picker is open', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

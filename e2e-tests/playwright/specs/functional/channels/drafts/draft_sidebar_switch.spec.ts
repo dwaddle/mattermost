@@ -6,9 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify a typed draft on one channel persists, restores after switching away through the sidebar and back,
  * and posts only to the origin channel.
- *
- * Written on the generated page objects: sidebar rows are keyed by channel name, and each sent post is checked by
- * its id, read back from the server.
  */
 test('typed draft stays on the origin channel after switching away and back', {tag: '@messaging'}, async ({pw}) => {
     const {team, user, userClient} = await pw.initSetup();

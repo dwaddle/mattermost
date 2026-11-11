@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a member's name in the channel members RHS opens and closes their profile popover.
- *
- * Written on the generated page objects: the channel menu, the member row by user id, and the popover.
  */
 test('should open and close profile popover from channel members RHS', async ({pw}) => {
     // # Initialize setup with two users in the same team and channel

@@ -561,7 +561,6 @@ function PostComponent(props: Props) {
         },
     );
 
-    // a post is an item of the list it renders in: `center.post_list.post:<id>`, its parts `center.post_list.post.body`
     let postTestIdScope: TestId | undefined;
     if (props.location === Locations.CENTER) {
         postTestIdScope = 'center.post_list.post';

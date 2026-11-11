@@ -31,7 +31,6 @@ type Props = {
     destructive?: boolean;
     appearance?: ButtonAppearance;
 
-    /** Renders `${testId}--button`. */
     testId?: TestId;
 };
 

@@ -28,7 +28,6 @@ export type Props = {
     extraClasses?: string;
     jumpDirection?: 'up' | 'down';
 
-    /** The toasts' scope (`center.post_list.toast`); the toast renders `<testIdScope>:<testKey>`, its controls `<testIdScope>.dismiss--button`. */
     testIdScope?: TestId;
 
     /** Which toast this is (`unread`, `history`...). */

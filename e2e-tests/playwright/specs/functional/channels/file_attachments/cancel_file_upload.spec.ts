@@ -7,8 +7,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a selected file can be removed from the message composer before posting.
- *
- * Written on the generated page objects: the composer's attach button and its file previews, keyed by file id.
  */
 test('MM-T307 cancels a file upload', {tag: '@file_attachments'}, async ({pw}) => {
     const filename = 'vector_image.svg';

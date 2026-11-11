@@ -39,7 +39,6 @@ interface FormattingIconProps {
     disabled?: boolean;
     isActive?: boolean;
 
-    // The button renders `<testId>--togglebutton` (it reports whether its format is on, in the rich-text editor).
     testId?: TestId;
 }
 

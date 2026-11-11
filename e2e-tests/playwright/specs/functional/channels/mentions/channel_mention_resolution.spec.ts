@@ -13,8 +13,6 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
  *
  * `HasPermissionToResolveChannelMention` resolves PUBLIC channels for any team member (independent
  * of Compliance Monitoring), but keeps PRIVATE/DM/GM and cross-team channels stripped.
- *
- * Written on the generated page objects: the post by id and its Markdown channel mention, keyed by channel name.
  */
 test.describe('channel mention resolution', () => {
     /**

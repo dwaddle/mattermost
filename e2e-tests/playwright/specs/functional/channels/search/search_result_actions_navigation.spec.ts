@@ -12,8 +12,6 @@ async function searchFor(app: App, term: string) {
 
 /**
  * @objective Verify that a full username containing '-' or '_' is shown as a mention link in the mentioned user's search results.
- *
- * Written on the generated page objects: Recent mentions, the result by post id and its Markdown mention by user id.
  */
 test('MM-T348 shows a full special-character username as a link in search results', {tag: '@search'}, async ({pw}) => {
     // # Create a user whose username contains '-' and '_', plus a user who mentions them
@@ -41,9 +39,6 @@ test('MM-T348 shows a full special-character username as a link in search result
 
 /**
  * @objective Verify that jumping from a search result opens a post that is not already displayed in the center channel.
- *
- * Written on the generated page objects: the search box, the result by post id and its Jump link, and the center
- * post by id.
  */
 test('MM-T380 jumps from a search result to a post in another channel', {tag: '@search'}, async ({pw}) => {
     // # Create and log in as a test user, and create a channel with many posts
@@ -81,9 +76,6 @@ test('MM-T380 jumps from a search result to a post in another channel', {tag: '@
 
 /**
  * @objective Verify that deleting a parent post from the search results removes both the post and its reply.
- *
- * Written on the generated page objects: the search box, the results by post id with their dot menu, and the
- * delete dialog.
  */
 test('MM-T381 deletes a parent post from the search results', {tag: '@search'}, async ({pw}) => {
     // # Create a channel with a post and a reply to it

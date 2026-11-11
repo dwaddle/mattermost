@@ -90,7 +90,6 @@ export type Props = {
     onCancel?: () => void;
     onDeleteScheduledPost?: () => Promise<{error?: string}>;
 
-    /** The editor's testid; its text area renders `<testId>--textbox`. */
     testId?: TestId;
 };
 

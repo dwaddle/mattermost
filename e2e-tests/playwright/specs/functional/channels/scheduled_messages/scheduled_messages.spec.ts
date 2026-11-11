@@ -8,10 +8,6 @@ import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playw
 
 import {expectIndicator, expectScheduledPost, expectSidebarCount, pickTime, scheduleMessage} from './support';
 
-// Written on the generated page objects: the composers and their send options' schedule menu, the date/time dialog,
-// the scheduled-post indicator, the sidebar's scheduled count, the drafts and scheduled posts pages (rows by draft and
-// by scheduled post, their actions, and the send-now and delete dialogs), and the post lists.
-
 test.beforeEach(async ({pw}) => {
     // Ensure license but skip test if no license which is required for "Scheduled Drafts"
     await pw.ensureLicense();

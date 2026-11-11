@@ -18,7 +18,6 @@ type Props = {
     className?: string;
     size?: React.ComponentProps<typeof IconButton>['size'];
 
-    /** Renders `${testId}--button`. */
     testId?: TestId;
 };
 

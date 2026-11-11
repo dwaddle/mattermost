@@ -37,7 +37,6 @@ type Props = {
     uploadsProgressPercent?: {[clientID: string]: FilePreviewInfo};
     compactMode?: boolean;
 
-    /** The previews' scope (`center.post_create.file_previews`): each file is `<scope>.file:<file id>` with `.details` and `.remove--button`. */
     testIdScope?: TestId;
     disabledRemoveTooltip?: string;
     actions: {

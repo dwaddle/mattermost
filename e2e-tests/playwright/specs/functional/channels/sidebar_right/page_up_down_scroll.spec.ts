@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify Page Up and Page Down scroll an open thread in the RHS.
- *
- * Written on the generated page objects: the post's Reply button, the RHS composer and the thread's scrolling element.
  */
 test('should be able to scroll the RHS with page up and down', async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

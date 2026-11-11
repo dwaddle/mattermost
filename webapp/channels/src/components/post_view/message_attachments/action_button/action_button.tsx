@@ -40,7 +40,6 @@ type Props = {
     actionExecuting?: boolean;
     actionExecutingMessage?: string;
 
-    /** Testid path; the button renders `<testId>--button`. */
     testId?: TestId;
 };
 

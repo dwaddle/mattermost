@@ -6,8 +6,6 @@ import type {PlaywrightExtended} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a system message does not show a user availability status in standard message display.
- *
- * Written on the generated page objects: the system post (found on the server by type) and its avatar's status.
  */
 test('MM-T427_1 system message has no status in standard view', async ({pw}) => {
     await verifySystemMessageHasNoStatus(pw, 'clean');

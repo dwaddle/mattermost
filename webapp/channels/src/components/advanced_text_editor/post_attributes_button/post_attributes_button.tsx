@@ -18,7 +18,6 @@ import type {TestId} from '@mattermost/shared/utils/test_id';
 // shows on hover and the button keeps its tab stop.
 type Props = {
 
-    // the composer's scope: the button is `<scope>.post_attributes--button`
     testIdScope: TestId;
 };
 

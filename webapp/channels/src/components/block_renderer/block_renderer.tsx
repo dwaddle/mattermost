@@ -37,10 +37,6 @@ type BlockRendererProps = {
     /** Preview/read-only surfaces: show controls but block all action dispatch. */
     interactionsDisabled?: boolean;
 
-    /**
-     * The post's testid scope: the blocks are `<testIdScope>.blocks`, an action button `<testIdScope>.action:<action id>--button`,
-     * a select `<testIdScope>.select:<action id>`, a collapsible `<testIdScope>.collapsible`.
-     */
     testIdScope?: TestId;
 };
 

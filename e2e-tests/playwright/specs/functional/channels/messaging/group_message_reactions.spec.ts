@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a reaction can be added to a group message post and its action visibility adapts between desktop and mobile layouts.
- *
- * Written on the generated page objects: the post by id, its menu's Add Reaction button, the emoji picker's
- * emoji by name, and the post's reactions (by emoji name) with their own add button.
  */
 test('MM-T471 add a reaction to a message in a GM', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

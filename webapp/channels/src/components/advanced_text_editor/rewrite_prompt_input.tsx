@@ -14,7 +14,6 @@ type Props = {
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 
-    /** The input is `<testId>--textbox`. */
     testId?: TestId;
 };
 

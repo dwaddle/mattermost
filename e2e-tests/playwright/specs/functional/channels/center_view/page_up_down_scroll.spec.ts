@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify Page Up and Page Down scroll the center post list.
- *
- * Written on the generated page objects: the composer and the post list's scrolling element.
  */
 test('should be able to scroll the post list with page up and down', async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

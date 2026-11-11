@@ -49,7 +49,6 @@ interface Props {
     content: string;
     showMarkdownToggle?: boolean;
 
-    /** The header's or footer's scope: `<testIdScope>.download--link`, `.public_link--button`, `.close--button`. */
     testIdScope?: TestId;
 }
 

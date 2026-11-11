@@ -6,9 +6,6 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify an emoji-only message renders as a jumbo (large) emoji, and that leading/trailing
  * whitespace around the emoji does not stop it from rendering jumbo.
- *
- * Written on the generated page objects: each post by id, and the emoji inside it through `Markdown`
- * constructed on that post.
  */
 test(
     'MM-T2179 renders emoji-only messages as jumbo even when surrounded by whitespace',

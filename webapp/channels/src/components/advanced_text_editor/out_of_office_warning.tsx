@@ -28,7 +28,6 @@ const Icon = styled(CancelIcon)`
 type Props = {
     displayName: string;
 
-    /** Testid path of the warning; renders `<testId>--text`. */
     testId?: TestId;
 };
 

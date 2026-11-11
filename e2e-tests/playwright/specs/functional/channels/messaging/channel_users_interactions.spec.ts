@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify sending a message in a channel with unread content scrolls to the newly sent message.
- *
- * Written on the generated page objects: sidebar rows by channel name, the new-messages separator, and the sent
- * post found on the server by its text, then by id in the page.
  */
 test('MM-T216 scrolls to the bottom when sending a message', {tag: '@messaging'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

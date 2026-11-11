@@ -17,7 +17,6 @@ type ActionsMenuButtonProps = {
     isMenuOpen: boolean;
     popupId: string;
 
-    /** Renders `<testId>--button`. */
     testId?: TestId;
 };
 

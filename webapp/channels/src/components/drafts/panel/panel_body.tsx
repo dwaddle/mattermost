@@ -28,7 +28,6 @@ import './panel_body.scss';
 type Props = {
     channelId?: string;
 
-    /** The item's scope (`drafts.list.draft`): renders `<scope>.body` with `.avatar`, `.post_header` and `.message`. */
     testIdScope?: TestId;
     displayName: string;
     fileInfos: PostDraft['fileInfos'];

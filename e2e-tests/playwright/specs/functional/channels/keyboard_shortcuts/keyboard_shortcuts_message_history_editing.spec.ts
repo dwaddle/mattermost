@@ -7,8 +7,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify Ctrl/Cmd+Up and Ctrl/Cmd+Down cycle through previous messages in the post textbox.
  *
  * MM-T1256, MM-T1257, and MM-T1258 cover the same behavior as MM-T1254 and are covered by this test.
- *
- * Written on the generated page objects: the composer's textbox and Send button, and the posts by id.
  */
 test('MM-T1254 MM-T1256 MM-T1257 MM-T1258 CTRL/CMD+UP and CTRL/CMD+DOWN cycle previous messages', async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();
@@ -50,8 +48,6 @@ test('MM-T1254 MM-T1256 MM-T1257 MM-T1258 CTRL/CMD+UP and CTRL/CMD+DOWN cycle pr
 
 /**
  * @objective Verify Up arrow opens inline edit for the previous message and saving marks the post as edited.
- *
- * Written on the generated page objects: the composer, the inline editor, and the post by id with its edited marker.
  */
 test('MM-T1260 UP arrow edits the previous post', async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

@@ -6,8 +6,6 @@ import {expect, formatMessage, Msg, suggestionTestKey, test} from '@mattermost/p
 /**
  * @objective Verify that the "Other Channels" group in the ~channel autocomplete in the message input prioritizes
  * channels whose DisplayName matches the search term.
- *
- * Written on the generated page objects: the composer's suggestions, keyed by channel name, in the order shown.
  */
 test(
     'MM-67953 channel mention autocomplete prioritizes DisplayName matches in Other Channels',

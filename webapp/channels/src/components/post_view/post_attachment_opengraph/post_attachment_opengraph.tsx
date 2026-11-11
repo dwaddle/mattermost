@@ -52,7 +52,6 @@ export type Props = {
     isInPermalink?: boolean;
     imageCollapsed?: boolean;
 
-    /** The post's testid scope; the preview renders `<testIdScope>.link_preview--link`. */
     testIdScope?: TestId;
 };
 
@@ -213,7 +212,6 @@ type BodyProps = {
     sitename?: string;
     description?: string;
 
-    // The site name, title and description are `<testIdScope>.site_name--text`, `.title--text`, `.description--text`.
     testIdScope?: TestId;
 };
 
@@ -253,7 +251,6 @@ type ImageProps = {
     isEmbedVisible: Props['isEmbedVisible'];
     toggleEmbedVisibility: Props['toggleEmbedVisibility'];
 
-    // The image is `<testIdScope>.image--img`, the show/hide toggle `<testIdScope>.toggle--button`.
     testIdScope?: TestId;
 };
 

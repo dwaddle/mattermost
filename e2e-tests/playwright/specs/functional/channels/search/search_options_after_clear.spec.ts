@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify clearing a completed search displays search options without removing the existing results.
- *
- * Written on the generated page objects: the search box, its hints and clear and close buttons, and the result
- * by post id.
  */
 test('MM-T353 displays search options after clearing the query', {tag: '@search'}, async ({pw}) => {
     // # Create a user with a searchable post and open the channel

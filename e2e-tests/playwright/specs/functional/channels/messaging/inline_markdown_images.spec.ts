@@ -39,9 +39,6 @@ async function textNodeBox(scope: Locator, needle: string): Promise<Box | null> 
 
 /**
  * @objective Verify an inline Markdown image opens in the image preview.
- *
- * Written on the generated page objects: the post by id, and its Markdown image and link through `Markdown`
- * constructed on that post.
  */
 test('MM-T187 Inline markdown images open preview window', {tag: '@messaging'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

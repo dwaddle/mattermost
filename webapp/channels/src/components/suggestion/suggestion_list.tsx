@@ -25,7 +25,6 @@ export interface Props {
     results: SuggestionResults;
     selection: string;
 
-    // The list's scope (`<host>.suggestions`): items are `<testId>.item:<suggestionTestKey(term)>--option`.
     testId?: TestId;
 
     // suggestionBoxAlgn is an optional object that can be passed to align the SuggestionList with the keyboard caret

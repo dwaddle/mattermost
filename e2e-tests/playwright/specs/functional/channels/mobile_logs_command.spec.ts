@@ -3,9 +3,6 @@
 
 import {expect, Msg, test, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the composer (a slash command is sent with the Send button, since Enter
-// picks the highlighted autocomplete suggestion), the post list's last post and its "(Only visible to you)" marker.
-
 /** Sends a slash command from the composer. */
 async function runCommand(app: App, command: string) {
     await app.center.postCreate.fillMessageTextbox(command);

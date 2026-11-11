@@ -30,7 +30,6 @@ type Props = {
     post: Post;
     teamId: string;
 
-    /** Testid scope of the post (`center.post_list.post`): the menu renders `<scope>.menu`, its buttons `<scope>.menu.reply--button`. */
     testIdScope?: TestId;
     isFlagged: boolean;
     removePost: (post: Post) => void;

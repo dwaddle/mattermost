@@ -5,8 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that mentioning a user inside a different pair of users' direct message does not notify the mentioned user.
- *
- * Written on the generated page objects: Recent mentions and the results by post id.
  */
 test('MM-T448 does not notify a user mentioned in a different DM', {tag: '@direct_messages'}, async ({pw}) => {
     // # Create the test user plus two more users on the team
@@ -36,9 +34,6 @@ test('MM-T448 does not notify a user mentioned in a different DM', {tag: '@direc
 
 /**
  * @objective Verify that deleting a parent post from a direct message reply thread removes the post, its reply, and closes the thread.
- *
- * Written on the generated page objects: the posts by id with their Reply button and dot menu, the delete dialog,
- * and the RHS thread.
  */
 test(
     'MM-T454 deletes a parent post in a direct message from the reply thread',
@@ -84,9 +79,6 @@ test(
 
 /**
  * @objective Verify that a direct message can be opened from a user's profile popover on their post.
- *
- * Written on the generated page objects: the post's avatar, the profile popover's Message button, the channel
- * header and the composer.
  */
 test('MM-T455 opens a direct message from a profile popover', {tag: '@direct_messages'}, async ({pw}) => {
     // # Create the test user plus another user who posts in a shared channel

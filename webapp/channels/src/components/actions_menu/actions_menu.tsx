@@ -49,7 +49,6 @@ export type Props = {
     teamId: string;
     canOpenMarketplace: boolean;
 
-    /** The post menu's scope: the button is `<testIdScope>.actions--button`, its menu `<testIdScope>.actions_menu`. */
     testIdScope?: TestId;
 
     /**
