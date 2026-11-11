@@ -66,14 +66,14 @@ test.describe('Channel Category Sorting', () => {
         {tag: '@channel_category_sorting'},
         async ({pw}) => {
             // # Initialize setup and disable channel category sorting
-            const {adminUser, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
+            const {adminUser, adminClient, team, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
             await pw.skipIfNoLicense();
             await disableChannelCategorySorting(adminClient);
             await adminClient.addToTeam(team.id, adminUser.id);
 
             // # Log in and open channel settings
             const {app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
             const settings = await openChannelSettingsInfo(app);
 
             // * Verify the default category selector is not rendered (the tests below see it when sorting is on)
@@ -91,14 +91,14 @@ test.describe('Channel Category Sorting', () => {
         {tag: '@channel_category_sorting'},
         async ({pw}) => {
             // # Initialize setup and enable channel category sorting
-            const {adminUser, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
+            const {adminUser, adminClient, team, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
             await pw.skipIfNoLicense();
             await enableChannelCategorySorting(adminClient);
             await adminClient.addToTeam(team.id, adminUser.id);
 
             // # Log in and open the new channel modal
             const {app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
             const modal = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickCreateChannelMenuItem();
             const displayName = `New Default Cat ${Date.now()}`;
             await modal.fillNameTextbox(displayName);

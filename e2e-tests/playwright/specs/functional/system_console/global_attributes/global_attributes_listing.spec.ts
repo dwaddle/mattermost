@@ -10,7 +10,7 @@
  * Professional-only licenses hide this admin route (React Router redirects away).
  */
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     GLOBAL_ATTRIBUTES_ADMIN_PATH,
@@ -369,7 +369,7 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 // * The expected order renders in profile settings (Settings > Profile)
                 const {channelsPage, app} = await pw.testBrowser.login(user);
-                await channelsPage.goto(team.name, 'town-square');
+                await channelsPage.goto(team.name, DefaultChannel.TownSquare);
                 const profileModal = await channelsPage.openProfileModal();
                 const sectionHeadings = await profileModal.sectionHeadings.allTextContents();
                 expect(sectionHeadings.filter((heading: string) => labels.includes(heading))).toEqual(expectedOrder);

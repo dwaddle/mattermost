@@ -3,7 +3,7 @@
 
 import type {AdminConfig} from '@mattermost/types/config';
 
-import {Api, expect, generated, settle, test} from '@mattermost/playwright-lib';
+import {Api, expect, generated, settle, test, duration} from '@mattermost/playwright-lib';
 
 // Wait for the GET /api/v4/config re-fetch that our config_changed websocket
 // handler triggers. This is the signal that entities.admin.config in the
@@ -11,7 +11,7 @@ import {Api, expect, generated, settle, test} from '@mattermost/playwright-lib';
 async function waitForAdminConfigRefresh(page: import('@playwright/test').Page) {
     return page.waitForResponse(
         (resp) => resp.url().endsWith('/api/v4/config') && resp.request().method() === 'GET' && resp.status() === 200,
-        {timeout: 10000},
+        {timeout: duration.ten_sec},
     );
 }
 

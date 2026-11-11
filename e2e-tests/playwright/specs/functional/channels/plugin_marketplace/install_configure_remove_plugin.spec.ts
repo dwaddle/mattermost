@@ -11,9 +11,9 @@ test(
     'MM-T4023 MM-T1987 system admin can install, configure, and remove a plugin from the Marketplace',
     {tag: '@marketplace'},
     async ({pw}) => {
-        const {adminUser, team} = await pw.initSetup();
+        const {adminUser, team, townSquare} = await pw.initSetup();
         const {app, channelsPage, systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open the App Marketplace and install the first available plugin
         await channelsPage.globalHeader.openAppMarketplace();

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, enableABAC} from '@mattermost/playwright-lib';
+import {expect, test, enableABAC, duration} from '@mattermost/playwright-lib';
 
 import {
     ensureUserAttributes,
@@ -81,7 +81,7 @@ test.describe('Permission Policies - List Page', () => {
 
 test.describe('Permission Policies - Manage Existing Policies', () => {
     test('MM-T5816 admin can delete a permission policy', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
         const {adminUser, adminClient} = await pw.initSetup();
         await ensureUserAttributes(adminClient);
@@ -116,7 +116,7 @@ test.describe('Permission Policies - Manage Existing Policies', () => {
     });
 
     test('MM-T5817 admin can search for a permission policy by name', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
         const {adminUser, adminClient} = await pw.initSetup();
         await ensureUserAttributes(adminClient);

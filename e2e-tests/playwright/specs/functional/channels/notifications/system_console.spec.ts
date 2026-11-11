@@ -4,7 +4,7 @@
 import type {AdminConfig} from '@mattermost/types/config';
 import type {DeepPartial} from '@mattermost/types/utilities';
 
-import {expect, generated, test, type App} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, duration} from '@mattermost/playwright-lib';
 
 /**
  * Patch the Notifications page required fields to known valid values so tests
@@ -36,7 +36,7 @@ async function waitForNotificationsServerPreconditions(adminClient: {getConfig: 
                 const feedbackName = c.EmailSettings?.FeedbackName?.trim();
                 return Boolean(support && feedbackEmail && feedbackName);
             },
-            {timeout: 90_000, intervals: [300, 800, 1500, 3000]},
+            {timeout: duration.two_min, intervals: [300, 800, 1500, 3000]},
         )
         .toBe(true);
 }
@@ -68,7 +68,7 @@ test.describe('System Console Notifications', () => {
      */
     test('Push Notification Contents setting displays correctly and saves all options', async ({pw}) => {
         // Multiple reload/save/retry rounds — default 60 s CI timeout is too tight when shards contend on config.
-        test.setTimeout(240000);
+        test.setTimeout(duration.four_min);
 
         const {adminUser, adminClient} = await pw.getAdminClient();
 
@@ -167,7 +167,7 @@ test.describe('System Console Notifications', () => {
                 await fillRequiredNotificationFields(app);
 
                 // The dropdown change above dirties the form, so Save must become enabled here.
-                await expect(app.admin.saveButton.locator).not.toBeDisabled({timeout: 25000});
+                await expect(app.admin.saveButton.locator).not.toBeDisabled({timeout: duration.half_min});
                 await app.admin.clickSaveButton();
 
                 const {adminClient: pollClient} = await pw.getAdminClient();
@@ -178,7 +178,7 @@ test.describe('System Console Notifications', () => {
                                 const config = await pollClient.getConfig();
                                 return config.EmailSettings?.PushNotificationContents;
                             },
-                            {timeout: 45000, intervals: [500, 1000, 2000, 3000]},
+                            {timeout: duration.one_min, intervals: [500, 1000, 2000, 3000]},
                         )
                         .toBe(option.value);
                     saved = true;

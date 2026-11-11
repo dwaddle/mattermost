@@ -1,10 +1,10 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, getRandomId, test} from '@mattermost/playwright-lib';
+import {expect, generated, getRandomId, test, duration} from '@mattermost/playwright-lib';
 
 test.describe('Single-channel guests', () => {
-    test.setTimeout(180000);
+    test.setTimeout(duration.four_min);
     test.describe.configure({mode: 'serial'});
 
     test.beforeEach(async ({pw}) => {
@@ -87,7 +87,7 @@ test.describe('Single-channel guests', () => {
                 systemConsolePage.page
                     .getByTestId('admin.statistics.stat:singleChannelGuests')
                     .getByTestId('admin.statistics.stat.value--text'),
-            ).toBeVisible({timeout: 30000});
+            ).toBeVisible({timeout: duration.half_min});
 
             // * Verify the count is at least 1.
             // Analytics are indexed asynchronously on the server — poll with reload until
@@ -108,7 +108,7 @@ test.describe('Single-channel guests', () => {
                             .catch(() => '');
                         return Number(text?.match(/(\d+)/)?.[1] ?? 0);
                     },
-                    {timeout: 180000, intervals: [3000, 5000, 8000, 12000]},
+                    {timeout: duration.four_min, intervals: [3000, 5000, 8000, 12000]},
                 )
                 .toBeGreaterThanOrEqual(1);
         },
@@ -278,7 +278,7 @@ test.describe('Single-channel guests', () => {
             const cardTitle = systemConsolePage.page
                 .getByTestId('admin.statistics.stat:singleChannelGuests')
                 .getByTestId('admin.statistics.stat.title--text');
-            await expect(cardTitle).toBeVisible({timeout: 15000});
+            await expect(cardTitle).toBeVisible({timeout: duration.half_min});
             await expect(cardTitle).not.toHaveClass(/team_statistics--error/);
         },
     );
@@ -385,7 +385,7 @@ test.describe('Single-channel guests', () => {
             const cardTitle = systemConsolePage.page
                 .getByTestId('admin.statistics.stat:singleChannelGuests')
                 .getByTestId('admin.statistics.stat.title--text');
-            await expect(cardTitle).toBeVisible({timeout: 15000});
+            await expect(cardTitle).toBeVisible({timeout: duration.half_min});
             await expect(cardTitle).toHaveClass(/team_statistics--error/);
 
             // * Verify the dismissible guest limit banner is visible
@@ -452,7 +452,7 @@ test.describe('Single-channel guests', () => {
             const singleChannelGuestsCard = systemConsolePage.page
                 .getByTestId('admin.statistics.stat:singleChannelGuests')
                 .getByTestId('admin.statistics.stat.value--text');
-            await expect(singleChannelGuestsCard).toBeVisible({timeout: 15000});
+            await expect(singleChannelGuestsCard).toBeVisible({timeout: duration.half_min});
 
             // * Verify the count text is present — multi-channel guest should not increment it
             const readGuestCount = async () => {
@@ -469,7 +469,7 @@ test.describe('Single-channel guests', () => {
                         singleChannelGuestCount = await readGuestCount();
                         return singleChannelGuestCount;
                     },
-                    {timeout: 180000, intervals: [3000, 5000, 8000, 12000]},
+                    {timeout: duration.four_min, intervals: [3000, 5000, 8000, 12000]},
                 )
                 .toBeGreaterThanOrEqual(0);
 
@@ -481,7 +481,7 @@ test.describe('Single-channel guests', () => {
 
             // * Verify the count increased by exactly 1 for the new single-channel guest
             await expect
-                .poll(readGuestCount, {timeout: 180000, intervals: [3000, 5000, 8000, 12000]})
+                .poll(readGuestCount, {timeout: duration.four_min, intervals: [3000, 5000, 8000, 12000]})
                 .toBe(singleChannelGuestCount + 1);
         },
     );

@@ -5,7 +5,17 @@ import type {Client4} from '@mattermost/client';
 import type {Channel} from '@mattermost/types/channels';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, generated, getRandomId, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    expect,
+    generated,
+    getRandomId,
+    Msg,
+    test,
+    type App,
+    type PlaywrightExtended,
+    duration,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 async function enableManagedCategories(adminClient: Client4) {
     await adminClient.patchConfig({
@@ -94,7 +104,12 @@ async function createCategoryIn(selector: generated.CategorySelector, name: stri
 }
 
 /** Logs in and opens the channel (default: the team's town square). */
-async function openChannel(pw: PlaywrightExtended, user: UserProfile, team: {name: string}, channel = 'town-square') {
+async function openChannel(
+    pw: PlaywrightExtended,
+    user: UserProfile,
+    team: {name: string},
+    channel: string = DefaultChannel.TownSquare,
+) {
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
     return app;
@@ -179,7 +194,7 @@ test.describe('Managed Channel Categories', () => {
 
             // * Verify the managed category is visible in the sidebar (the webapp fetches the mappings after load)
             const category = managedCategory(app, 'Removable');
-            await expect(category.headerButton.locator).toContainText('Removable', {timeout: 15000});
+            await expect(category.headerButton.locator).toContainText('Removable', {timeout: duration.half_min});
 
             // # Open channel settings and clear the managed category
             const settings = await openChannelSettingsInfo(app);
@@ -263,7 +278,7 @@ test.describe('Managed Channel Categories', () => {
 
             // * Verify the managed category shows
             await expect(managedCategory(app, 'Alpha Priority').headerButton.locator).toContainText('Alpha Priority', {
-                timeout: 15000,
+                timeout: duration.half_min,
             });
 
             // * Verify it comes before the CHANNELS category in the sidebar
@@ -302,7 +317,7 @@ test.describe('Managed Channel Categories', () => {
             const app = await openChannel(pw, user, team);
 
             // * Verify the sidebar has loaded its categories, and the managed one isn't among them
-            await expect(app.lhs.channelList.channel({name: 'town-square'}).link.locator).toBeVisible();
+            await expect(app.lhs.channelList.channel({name: DefaultChannel.TownSquare}).link.locator).toBeVisible();
             const channelsId = await channelsCategoryId(adminClient, user.id, team.id);
             await expect.poll(() => app.lhs.channelList.categoryKeys()).toContain(channelsId);
             expect(await app.lhs.channelList.categoryKeys()).not.toContain('managed_Secret Ops');
@@ -346,7 +361,7 @@ test.describe('Managed Channel Categories', () => {
 
         // * Verify the category lists Alpha before Bravo
         await expect(managedCategory(app, 'Sorted Category').headerButton.locator).toContainText('Sorted Category', {
-            timeout: 15000,
+            timeout: duration.half_min,
         });
         await expect
             .poll(() => channelsIn(app, 'managed_Sorted Category').channelKeys())
@@ -374,7 +389,7 @@ test.describe('Managed Channel Categories', () => {
 
         // * Verify the managed category shows, then that the channel header's favorite button is disabled
         await expect(managedCategory(app, 'No Favorites').headerButton.locator).toContainText('No Favorites', {
-            timeout: 15000,
+            timeout: duration.half_min,
         });
         await expect(app.channelHeader.favoriteButton.locator).toBeDisabled();
     });
@@ -398,7 +413,7 @@ test.describe('Managed Channel Categories', () => {
         // # Log in as regular user
         const app = await openChannel(pw, user, team);
         const category = managedCategory(app, 'No Menu');
-        await expect(category.headerButton.locator).toContainText('No Menu', {timeout: 15000});
+        await expect(category.headerButton.locator).toContainText('No Menu', {timeout: duration.half_min});
 
         // * The CHANNELS category has its options button; the managed one has none
         const channelsId = await channelsCategoryId(adminClient, user.id, team.id);
@@ -434,7 +449,7 @@ test.describe('Managed Channel Categories', () => {
             // # Log in as regular user
             const app = await openChannel(pw, user, team);
             await expect(managedCategory(app, 'Context Menu').headerButton.locator).toContainText('Context Menu', {
-                timeout: 15000,
+                timeout: duration.half_min,
             });
 
             // # Open the channel's menu from its sidebar row
@@ -470,7 +485,7 @@ test.describe('Managed Channel Categories', () => {
             // # Log in as regular user
             const app = await openChannel(pw, user, team);
             await expect(managedCategory(app, 'No Move').headerButton.locator).toContainText('No Move', {
-                timeout: 15000,
+                timeout: duration.half_min,
             });
 
             // # Open the channel's menu from its sidebar row
@@ -526,7 +541,7 @@ test.describe('Managed Channel Categories', () => {
             await expect(managedCategory(app, 'Shared Category').headerButton.locator).toContainText(
                 'Shared Category',
                 {
-                    timeout: 15000,
+                    timeout: duration.half_min,
                 },
             );
             const keys = await app.lhs.channelList.categoryKeys();
@@ -574,7 +589,7 @@ test.describe('Managed Channel Categories', () => {
             await adminClient.patchChannel(channel.id, {managed_category_name: 'Realtime Ops'} as never);
 
             // * Verify the managed category appears in real-time, with the channel under it
-            await expect(category.headerButton.locator).toContainText('Realtime Ops', {timeout: 10000});
+            await expect(category.headerButton.locator).toContainText('Realtime Ops');
             await expect(channelsIn(app, 'managed_Realtime Ops').channel(channel).link.locator).toBeVisible();
         },
     );

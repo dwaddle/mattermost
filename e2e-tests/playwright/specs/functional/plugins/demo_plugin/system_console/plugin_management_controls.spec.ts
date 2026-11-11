@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test} from '@mattermost/playwright-lib';
+import {expect, generated, test, duration} from '@mattermost/playwright-lib';
 
 const DEMO_PLUGIN_ID = 'com.mattermost.demo-plugin';
 
@@ -13,7 +13,7 @@ const DEMO_PLUGIN_ROW_KEY = 'com_mattermost_demo_plugin';
  * page, which shows the plugin's id and its enable toggle.
  */
 test('disables, enables and opens a plugin from Plugin Management', {tag: '@plugins'}, async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     const {adminUser, adminClient} = await pw.initSetup();
     await pw.ensureDemoPlugin();
 
@@ -31,14 +31,18 @@ test('disables, enables and opens a plugin from Plugin Management', {tag: '@plug
         await row.clickDisableButton();
 
         // * The server stops it, and the row offers Enable
-        await expect.poll(() => pw.isPluginActive(adminClient, DEMO_PLUGIN_ID), {timeout: 30_000}).toBe(false);
+        await expect
+            .poll(() => pw.isPluginActive(adminClient, DEMO_PLUGIN_ID), {timeout: duration.half_min})
+            .toBe(false);
         await expect(row.enableButton.locator).toBeVisible();
 
         // # Enable it again
         await row.clickEnableButton();
 
         // * The server runs it again, and the row offers Disable
-        await expect.poll(() => pw.isPluginActive(adminClient, DEMO_PLUGIN_ID), {timeout: 30_000}).toBe(true);
+        await expect
+            .poll(() => pw.isPluginActive(adminClient, DEMO_PLUGIN_ID), {timeout: duration.half_min})
+            .toBe(true);
         await expect(row.disableButton.locator).toBeVisible();
     } finally {
         if (!(await pw.isPluginActive(adminClient, DEMO_PLUGIN_ID))) {

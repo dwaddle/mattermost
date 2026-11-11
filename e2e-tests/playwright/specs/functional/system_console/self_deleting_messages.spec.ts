@@ -3,7 +3,7 @@
 
 import type {AdminConfig} from '@mattermost/types/config';
 
-import {Api, expect, generated, openChannel, test} from '@mattermost/playwright-lib';
+import {Api, expect, generated, openChannel, test, duration} from '@mattermost/playwright-lib';
 
 import {concealedPost, reveal, sendBorMessage, timeRemaining} from '../channels/burn_on_read/support';
 
@@ -242,25 +242,25 @@ test.describe('System Console > Self-Deleting Messages', () => {
             .locator;
 
         // * Verify feature is disabled (from API config) — use built-in retry to tolerate render lag
-        await expect(enableToggleFalse).toBeChecked({timeout: 10000});
+        await expect(enableToggleFalse).toBeChecked();
 
         // * Verify dropdowns are disabled when feature is off
-        await expect(durationDropdown).toBeDisabled({timeout: 30000});
-        await expect(maxTTLDropdown).toBeDisabled({timeout: 30000});
+        await expect(durationDropdown).toBeDisabled({timeout: duration.half_min});
+        await expect(maxTTLDropdown).toBeDisabled({timeout: duration.half_min});
 
         // # Enable the feature (just toggle, don't save)
         await enableToggleTrue.click();
 
         // * Verify dropdowns are now enabled
-        await expect(durationDropdown).not.toBeDisabled({timeout: 30000});
-        await expect(maxTTLDropdown).not.toBeDisabled({timeout: 30000});
+        await expect(durationDropdown).not.toBeDisabled({timeout: duration.half_min});
+        await expect(maxTTLDropdown).not.toBeDisabled({timeout: duration.half_min});
 
         // # Toggle back to disabled
         await enableToggleFalse.click();
 
         // * Verify dropdowns are disabled again
-        await expect(durationDropdown).toBeDisabled({timeout: 30000});
-        await expect(maxTTLDropdown).toBeDisabled({timeout: 30000});
+        await expect(durationDropdown).toBeDisabled({timeout: duration.half_min});
+        await expect(maxTTLDropdown).toBeDisabled({timeout: duration.half_min});
     });
 
     test('settings persist after page reload', async ({pw}) => {
@@ -342,9 +342,9 @@ test.describe('System Console > Self-Deleting Messages', () => {
         await page.waitForLoadState('networkidle');
 
         // * Verify values persist after reload — toHaveValue has built-in retry
-        await expect(enableToggleTrue).toBeChecked({timeout: 5000});
-        await expect(durationDropdown).toHaveValue('300', {timeout: 5000});
-        await expect(maxTTLDropdown).toHaveValue('259200', {timeout: 5000});
+        await expect(enableToggleTrue).toBeChecked();
+        await expect(durationDropdown).toHaveValue('300');
+        await expect(maxTTLDropdown).toHaveValue('259200');
     });
 
     test('BoR toggle appears in channels when feature is enabled in System Console', async ({pw}) => {
@@ -404,7 +404,7 @@ test.describe('System Console > Self-Deleting Messages', () => {
 
         // * Verify BoR toggle is visible in post create area
         const borButton = app.center.postCreate.burnOnReadButton.locator;
-        await expect(borButton).toBeVisible({timeout: 10000});
+        await expect(borButton).toBeVisible();
     });
 
     test('BoR toggle is hidden when feature is disabled in System Console', async ({pw}) => {
@@ -464,7 +464,7 @@ test.describe('System Console > Self-Deleting Messages', () => {
 
         // * Verify BoR toggle is NOT visible in post create area
         const borButton = app.center.postCreate.burnOnReadButton.locator;
-        await expect(borButton).not.toBeVisible({timeout: 5000});
+        await expect(borButton).not.toBeVisible();
     });
 
     test('configured duration affects timer countdown in channels', async ({pw}) => {
@@ -543,7 +543,7 @@ test.describe('System Console > Self-Deleting Messages', () => {
         await reveal(post);
 
         // * Verify the timer shows about 5 minutes: between 4:10 (250s) and 5:00 (300s), allowing for test time
-        await expect(post.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+        await expect(post.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
         const totalSeconds = await timeRemaining(post);
         expect(totalSeconds).toBeGreaterThanOrEqual(250);
         expect(totalSeconds).toBeLessThanOrEqual(300);

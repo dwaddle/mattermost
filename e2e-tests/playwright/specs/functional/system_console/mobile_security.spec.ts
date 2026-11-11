@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {Api, expect, test, testConfig} from '@mattermost/playwright-lib';
+import {Api, expect, test, testConfig, duration} from '@mattermost/playwright-lib';
 
 import {openMobileSecurity, openMobileSecurityUpsell, openUsers} from './mobile_security_support';
 
@@ -330,7 +330,9 @@ test('should configure new IntuneSettings with Office365 auth provider', async (
     // After enabling Intune MAM the form re-renders; scroll the dropdown into view
     // before selecting so it is both visible and interactive.
     await app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator.scrollIntoViewIfNeeded();
-    await expect(app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator).toBeEnabled({timeout: 15000});
+    await expect(app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator).toBeEnabled({
+        timeout: duration.half_min,
+    });
     await app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator.selectOption('office365');
 
     // # Fill in Intune configuration
