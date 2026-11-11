@@ -65,7 +65,7 @@ test('adds a team member to the channel from the add people modal', {tag: '@chan
     await invite.users.results.user(newcomer).locator.click();
 
     // * The newcomer is selected, with a chip to remove them again
-    expect(await invite.users.removeKeys()).toEqual([newcomer.id]);
+    await expect(invite.users.removeList).toHaveKeys([newcomer.id]);
 
     // # Add them
     await invite.users.clickSaveButton();

@@ -218,7 +218,7 @@ test(
         // # Analyze the team menu for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page, {disableColorContrast: true})
-            .include(`[data-testid="${teamMenu.scope}"]`)
+            .include('[role="menu"]')
             .analyze();
 
         // * Should have no violations

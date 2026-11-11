@@ -3,7 +3,7 @@
 
 import type {Locator} from '@playwright/test';
 
-import {expect, generated, test, type App} from '@mattermost/playwright-lib';
+import {type App, expect, generated, postsOf, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: the composer, the notify-all confirmation, the post list's last post
 // with its Markdown mention highlight, the sidebar's channel links, and Settings > Notifications' keyword checkboxes.
@@ -14,16 +14,7 @@ const NOTIFY_ALL_THRESHOLD = 5;
 /** Waits for a post in the center channel whose text contains `text`, and returns it with its id. */
 async function postContaining(app: App, text: string) {
     const {postList} = app.center;
-    const find = async () => {
-        for (const id of await postList.postKeys()) {
-            if ((await postList.post({id}).messageText.locator.textContent())?.includes(text)) {
-                return id;
-            }
-        }
-        return '';
-    };
-    await expect.poll(find).not.toBe('');
-    const id = await find();
+    const id = await postsOf(postList).keyWith({text});
     return {id, post: postList.post({id})};
 }
 

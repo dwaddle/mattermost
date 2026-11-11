@@ -209,15 +209,6 @@ const CROSS_AREA_IMPORTS = {
     ],
 };
 
-// Files where the spec rules' extended checks (template, variable, hasText and selector locators; pw.wait and timer
-// sleeps) found what the area-fix wave moves: there the two rules stay warnings until then (see the last block).
-const EXTENDED_LINT_PENDING = [
-    'specs/accessibility/channels/add_people_to_channel_dialog.spec.ts',
-    'specs/accessibility/channels/invite_people_dialog.spec.ts',
-    'specs/accessibility/channels/team_menu.spec.ts',
-    'specs/functional/channels/notifications/channel_mentions.spec.ts',
-];
-
 export default [
     {
         ignores: [
@@ -341,13 +332,6 @@ export default [
         files: ['lib/src/ui/generated/**/*.ts'], // page objects locate and act; specs assert
         rules: {
             '@mattermost/e2e-no-expect-in-page-objects': 'warn',
-        },
-    },
-    {
-        files: EXTENDED_LINT_PENDING,
-        rules: {
-            '@mattermost/e2e-no-literal-locators': 'warn',
-            '@mattermost/e2e-no-wait-for-timeout': 'warn',
         },
     },
 ];

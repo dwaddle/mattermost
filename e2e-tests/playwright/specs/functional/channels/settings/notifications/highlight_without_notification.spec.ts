@@ -3,7 +3,7 @@
 
 import type {Locator} from '@playwright/test';
 
-import {expect, generated, test, type App} from '@mattermost/playwright-lib';
+import {type App, expect, generated, postWith, test} from '@mattermost/playwright-lib';
 
 let keywords: string[];
 
@@ -36,11 +36,9 @@ async function send(
     composer: generated.PostCreate,
     message: string,
 ) {
-    const before = (await list.postKeys()).length;
     await composer.fillMessageTextbox(message);
     await composer.clickSendButton();
-    await expect.poll(async () => (await list.postKeys()).length).toBeGreaterThan(before);
-    return list.post({id: (await list.postKeys()).at(-1)!});
+    return postWith(list, {text: message});
 }
 
 /** The highlighted keywords in a post's message. */

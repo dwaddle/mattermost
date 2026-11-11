@@ -90,7 +90,6 @@ test(
 
         // * Verify the Invite People modal is visible
         const inviteModal = modal.locator;
-        await pw.wait(pw.duration.one_sec);
 
         // * Verify aria snapshot of Invite People dialog (key structural elements only)
         await expect(inviteModal).toMatchAriaSnapshot(`
@@ -110,7 +109,7 @@ test(
         // * Analyze the Invite People dialog for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page, {disableColorContrast: true})
-            .include(`[data-testid="${modal.scope}"]`)
+            .include('[role="dialog"]')
             .analyze();
 
         // * Should have no violations

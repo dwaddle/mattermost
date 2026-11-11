@@ -62,7 +62,6 @@ test(
         // * Verify the heading with channel name
         const modalName = `Add people to ${channel.display_name}`;
         await expect(dialog.locator.getByRole('heading', {level: 1})).toHaveText(modalName);
-        await pw.wait(pw.duration.one_sec);
 
         // * Verify the search input has proper accessibility attributes
         const people = dialog.users;
@@ -72,10 +71,8 @@ test(
         await expect(searchInput).toHaveAttribute('aria-autocomplete', 'list');
 
         // # Search for a text and navigate with arrow keys
-        await pw.wait(pw.duration.half_sec);
         await searchInput.fill('u');
         await expect(people.results.userItems.first()).toBeVisible();
-        await pw.wait(pw.duration.half_sec);
 
         // # Navigate down through the list
         await page.keyboard.press('ArrowDown');
@@ -146,7 +143,6 @@ test(
         // # Open channel menu and click Members, then click the Add people button
         // * Verify the Add people dialog is visible
         const dialog = await openAddPeople(app);
-        await pw.wait(pw.duration.one_sec);
 
         // * Verify aria snapshot of Add people to Channel dialog
         await expect(dialog.locator).toMatchAriaSnapshot(`
@@ -164,7 +160,7 @@ test(
         // * Analyze the Add people dialog for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page, {disableColorContrast: true})
-            .include(`[data-testid="${dialog.scope}"]`)
+            .include('[role="dialog"]')
             .analyze();
 
         // * Should have no violations

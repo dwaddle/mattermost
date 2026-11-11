@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test} from '@mattermost/playwright-lib';
+import {expect, generated, openChannelSettings, postWith, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a multi-line channel header is truncated in the header bar, that hovering it opens a
@@ -24,8 +24,7 @@ test(
 
         // # Set a multi-line channel header that contains a markdown link, via Channel Settings
         const header = ['Header text line one', '', '- Two', '- [Google](https://google.com/)', '- Four'].join('\n');
-        const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-        await settings.tabs.infoTab.select();
+        const settings = await openChannelSettings(app, 'info');
         await settings.info.fillHeaderTextbox(header);
         await settings.savePanel.clickSaveButton();
         await expect(settings.savePanel.saveButton.locator).not.toBeVisible();
@@ -35,9 +34,8 @@ test(
         const description = app.channelHeader.description.locator;
         await expect(description).toContainText('Header text line one');
 
-        // # Hover the header text to open the popover. Force the hover because opening the popover mounts a
-        // full-screen floating overlay that would otherwise be reported as intercepting the pointer.
-        await description.hover({force: true});
+        // # Hover the header text to open the popover
+        await app.channelHeader.description.hover();
 
         // * Verify the popover opens with the full header and a link to the correct URL
         const popover = app.channelHeader.descriptionPopoverTooltip.locator;
@@ -49,7 +47,6 @@ test(
 
         // # Move the pointer away from the header to dismiss the popover
         await page.mouse.move(400, 500);
-        await app.center.postCreate.messageTextbox.locator.hover({force: true});
 
         // * Verify the popover closes
         await expect(popover).not.toBeVisible();
@@ -91,12 +88,7 @@ test('MM-T880 adds a channel header from the intro Set header link', {tag: '@cha
     await expect(editor.headerTextbox.locator).not.toBeVisible();
 
     // * Verify the header-change system message is posted
-    await expect
-        .poll(async () => {
-            const lastId = (await app.center.postList.postKeys()).at(-1);
-            return lastId ? app.center.postList.post({id: lastId}).messageText.locator.textContent() : '';
-        })
-        .toContain(`updated the channel header to: ${header}`);
+    await postWith(app.center.postList, {text: `updated the channel header to: ${header}`});
 
     // # Open the channel info panel
     await app.channelHeader.clickInfoButton();

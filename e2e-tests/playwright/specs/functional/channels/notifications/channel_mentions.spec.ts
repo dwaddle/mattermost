@@ -28,8 +28,10 @@ test('MM-T568 Channel Notifications turn off Ignore mentions for @channel, @here
     await expect(notificationPreferences.locator).not.toBeVisible();
 
     // # Move away and post each channel-wide mention from another user. @here only mentions users who
-    // are currently online, so force the receiving user's status online first. Switch channels within
-    // the app: a full page load closes the websocket, which marks the user offline until it reconnects.
+    // are currently online, so force the receiving user's status online first. Switch channels within the app:
+    // a full page load closes the websocket, which marks the user offline until it reconnects. Post the next
+    // mention only once the server has counted the last one: back-to-back posts race the per-post async
+    // mention-count update.
     await adminClient.updateStatus({user_id: user.id, status: 'online'});
     await app.lhs.channelList.channel(channelB).clickLink();
     await expect(app.channelHeader.openMenuButton.locator).toContainText(channelB.display_name);
