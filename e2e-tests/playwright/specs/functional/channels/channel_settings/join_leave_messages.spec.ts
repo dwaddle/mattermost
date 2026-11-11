@@ -132,7 +132,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
         {tag: '@channel_settings'},
         async ({pw}) => {
             // # Initialize test setup
-            const {adminUser, adminClient, team} = await pw.initSetup();
+            const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
 
             // # Create a public channel and immediately disable join/leave messages
             const channel = await adminClient.createChannel({
@@ -150,7 +150,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             // # Login as secondUser and navigate to a channel so the app fully loads and
             // WS connection is established before the add-to-channel event fires
             const {app: secondApp} = await pw.testBrowser.login(secondUser);
-            await secondApp.channelsPage.goto({team, channel: 'town-square'});
+            await secondApp.channelsPage.goto({team, channel: townSquare});
             await expect(secondApp.center.postList.locator).toBeVisible();
 
             // # Admin adds secondUser to the channel — a suppressed add-to-channel system post; the

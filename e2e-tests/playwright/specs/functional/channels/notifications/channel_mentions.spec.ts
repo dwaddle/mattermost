@@ -24,7 +24,7 @@ test('MM-T568 Channel Notifications turn off Ignore mentions for @channel, @here
     const menu = await app.channelHeader.clickOpenMenuButton();
     const notificationPreferences = await menu.clickNotificationPreferencesMenuItem();
     await notificationPreferences.setIgnoreMentionsCheckbox(false);
-    await notificationPreferences.clickSaveButton();
+    await notificationPreferences.saveButton.commit();
     await expect(notificationPreferences.locator).not.toBeVisible();
 
     // # Move away and post each channel-wide mention from another user. @here only mentions users who

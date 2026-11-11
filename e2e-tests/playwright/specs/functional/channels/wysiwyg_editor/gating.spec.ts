@@ -20,7 +20,7 @@ test('MM-69305 WYSIWYG editor is not mounted when user preference is off', TAGS,
     const {user, team, offTopic} = await pw.initSetup();
 
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'off-topic'});
+    await app.channelsPage.goto({team, channel: offTopic});
 
     // * Verify the composer is the Markdown textarea
     await expect(app.center.postCreate.messageTextbox.locator).toHaveJSProperty('tagName', 'TEXTAREA');
@@ -43,7 +43,7 @@ test('preference toggle in Advanced Settings switches between Markdown and Rich 
     const {user, team, offTopic} = await pw.initSetup();
 
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'off-topic'});
+    await app.channelsPage.goto({team, channel: offTopic});
     await expect(app.center.postCreate.messageTextbox.locator).toHaveJSProperty('tagName', 'TEXTAREA');
 
     // # Choose rich text in Settings > Advanced and save

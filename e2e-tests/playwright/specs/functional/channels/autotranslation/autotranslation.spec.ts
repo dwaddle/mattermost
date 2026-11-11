@@ -224,7 +224,7 @@ test(
         await expect(
             configurationTab.container.getByTestId('channel_settings_modal.configuration.autotranslation--switch'),
         ).toBeVisible({
-            timeout: 30000,
+            timeout: duration.half_min,
         });
         await configurationTab.enableChannelAutotranslation();
         await configurationTab.save();

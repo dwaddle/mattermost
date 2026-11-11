@@ -1,12 +1,10 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
+import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the member list of an archived channel is viewable but read-only (no member management).
- *
- * Written on the generated page objects: the channel header menu, the archive modal and the members panel's rows by user.
  */
 test('MM-T1671 shows a read-only member list for an archived channel', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, adminUser, team, user} = await pw.initSetup();
@@ -23,7 +21,7 @@ test('MM-T1671 shows a read-only member list for an archived channel', {tag: '@c
 
     // # Archive the channel
     const archiveModal = await (await app.channelHeader.clickOpenMenuButton()).clickArchiveChannelMenuItem();
-    await archiveModal.clickConfirmButton();
+    await archiveModal.confirmButton.commit();
     await expect(app.center.archivedNotice.locator).toBeVisible();
 
     // # Open the channel members list
@@ -42,23 +40,19 @@ test('MM-T1671 shows a read-only member list for an archived channel', {tag: '@c
 /**
  * @objective Verify a post from an archived channel can be found in search and its Jump link opens the
  * archived channel in read-only mode.
- *
- * Written on the generated page objects: the search box, the result by post id and its Jump link, and the archived notice.
  */
 test('MM-T1679 opens an archived channel by jumping from search results', {tag: '@channels'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const channel = await adminClient.createPublicChannel(team.id, `Archived ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, channel.id);
     const message = `archived post ${pw.random.id()}`;
     const post = await pw.postAs(user, {channel_id: channel.id, message});
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
 
     // # Archive the channel, then move to another channel
     const archiveModal = await (await app.channelHeader.clickOpenMenuButton()).clickArchiveChannelMenuItem();
-    await archiveModal.clickConfirmButton();
+    await archiveModal.confirmButton.commit();
     await expect(app.center.archivedNotice.locator).toBeVisible();
     await app.lhs.channelList.channel(townSquare).clickLink();
     await expect(app.channelHeader.openMenuButton.locator).toContainText(townSquare.display_name);
@@ -66,8 +60,8 @@ test('MM-T1679 opens an archived channel by jumping from search results', {tag: 
 
     // # Search for the message posted in the archived channel
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(message);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(message);
+    await app.searchBox.inputSearchbox.press('Enter');
 
     // # Jump to the post from the search results
     const result = app.search.results.post(post);

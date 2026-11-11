@@ -99,7 +99,7 @@ test.describe('Channel Classification - New channel creation', () => {
         await newChannelModal.enableClassification();
 
         // Open the classification dropdown
-        const dropdownContainer = channelsPage.page.getByTestId('new_channel_modal.classification_level');
+        const dropdownContainer = page.getByTestId('new_channel_modal.classification_level');
         await dropdownContainer.click();
 
         // Verify all test levels are present in the dropdown menu
@@ -126,7 +126,7 @@ test.describe('Channel Classification - New channel creation', () => {
         await newChannelModal.enableClassification();
 
         // Select a classification level
-        const dropdownContainer = channelsPage.page.getByTestId('new_channel_modal.classification_level');
+        const dropdownContainer = page.getByTestId('new_channel_modal.classification_level');
         await dropdownContainer.click();
         const menu = page.locator('.DropDown__menu');
         await menu.getByText(selectedLevel!.name, {exact: true}).click();
@@ -163,7 +163,7 @@ test.describe('Channel Classification - New channel creation', () => {
         await newChannelModal.enableClassification();
 
         // Select the classification level
-        const dropdownContainer = channelsPage.page.getByTestId('new_channel_modal.classification_level');
+        const dropdownContainer = page.getByTestId('new_channel_modal.classification_level');
         await dropdownContainer.click();
         const menu = page.locator('.DropDown__menu');
         await menu.getByText(selectedLevel!.name, {exact: true}).click();
@@ -241,9 +241,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         await configurationTab.enableClassification();
 
         // Classification level dropdown should be visible
-        const dropdownContainer = channelsPage.page.getByTestId(
-            'channel_settings_modal.configuration.classification_level',
-        );
+        const dropdownContainer = page.getByTestId('channel_settings_modal.configuration.classification_level');
         await expect(dropdownContainer).toBeVisible();
 
         // Open dropdown and select a level
@@ -277,9 +275,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         // Enable classification and select a level
         await configurationTab.enableClassification();
 
-        const dropdownContainer = channelsPage.page.getByTestId(
-            'channel_settings_modal.configuration.classification_level',
-        );
+        const dropdownContainer = page.getByTestId('channel_settings_modal.configuration.classification_level');
         await dropdownContainer.click();
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET');
@@ -320,9 +316,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         await configurationTab.enableClassification();
 
-        const dropdownContainer = channelsPage.page.getByTestId(
-            'channel_settings_modal.configuration.classification_level',
-        );
+        const dropdownContainer = page.getByTestId('channel_settings_modal.configuration.classification_level');
         await dropdownContainer.click();
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET')!;
         await page.locator('.DropDown__menu').getByText(selectedLevel.name, {exact: true}).click();
@@ -347,7 +341,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         // Symptom 2 guard: re-enable classification → Save button reappears (panel transitions out of 'saved')
         await configurationTab.enableClassification();
-        const saveButton = channelsPage.page.getByTestId('channel_settings_modal.save_panel.save--button');
+        const saveButton = page.getByTestId('channel_settings_modal.save_panel.save--button');
         await expect(saveButton).toBeVisible();
         await expect(saveButton).toBeEnabled();
 
@@ -372,9 +366,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         // Enable classification and select a level
         await configurationTab.enableClassification();
 
-        const dropdownContainer = channelsPage.page.getByTestId(
-            'channel_settings_modal.configuration.classification_level',
-        );
+        const dropdownContainer = page.getByTestId('channel_settings_modal.configuration.classification_level');
         await dropdownContainer.click();
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'TOP SECRET');
