@@ -4,7 +4,7 @@
 import type {Post} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {PlaywrightClient4} from './playwright_client';
+import {PlaywrightClient4, clearUserClients, clientAs} from './playwright_client';
 
 import {testConfig} from '@/test_config';
 
@@ -20,6 +20,7 @@ export function clearClientCache(): void {
     for (const key of Object.keys(clients)) {
         delete clients[key];
     }
+    clearUserClients();
 }
 
 export async function makeClient(
@@ -71,10 +72,10 @@ type ClientCache = {
 };
 
 /**
- * Creates a post as `user`, through that user's own (cached) client. `adminClient.createPost({user_id})` does the
- * same for users this run created or logged in as (the server always makes the session's user the author).
+ * Creates a post as `user`, through that user's own client: the same per-user cache `adminClient.createPost({user_id})`
+ * uses for users this run created or logged in as (the server always makes the session's user the author).
  */
 export async function postAs(user: UserRequest, post: Parameters<PlaywrightClient4['createPost']>[0]): Promise<Post> {
-    const {client} = await makeClient(user);
+    const client = await clientAs(testConfig.baseURL, user);
     return client.createPost(post);
 }

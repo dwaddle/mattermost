@@ -17,24 +17,63 @@ import {createNewUserProfile} from './user';
 import {getFileFromAsset} from '@/file';
 
 /**
+ * One logged-in client per user and server, shared by `createPost({user_id})` and `postAs`. Module state, so it is
+ * per Playwright worker. A failed login is dropped, so the next call logs in again instead of replaying the failure.
+ */
+const clientsByLogin = new Map<string, Promise<PlaywrightClient4>>();
+
+/** A client logged in as `login` on the server at `url`, from the shared per-user cache. */
+export function clientAs(url: string, login: {username: string; password: string}): Promise<PlaywrightClient4> {
+    const key = [url, login.username, login.password].join('\n');
+    let client = clientsByLogin.get(key);
+    if (!client) {
+        const other = new PlaywrightClient4();
+        other.setUrl(url);
+        const pending = other.login(login.username, login.password).then(() => other);
+        pending.catch(() => {
+            if (clientsByLogin.get(key) === pending) {
+                clientsByLogin.delete(key);
+            }
+        });
+        clientsByLogin.set(key, pending);
+        client = pending;
+    }
+    return client;
+}
+
+/** Forgets every per-user client (after a server restart, see clearClientCache). */
+export function clearUserClients() {
+    clientsByLogin.clear();
+}
+
+/**
  * Client4 extended with Playwright test-setup helpers.
  * Prefer not adding general Mattermost API wrappers here — keep those on Client4 —
  * except for test-only compatibility shims needed against older server images.
  */
 export class PlaywrightClient4 extends Client4 {
-    // Captures Client4.patchConfig, login and createPost; must stay above the overrides.
+    // Captures Client4.patchConfig, login, createUser and createPost; must stay above the overrides.
     private readonly patchConfigRequest = (this as Client4).patchConfig;
     private readonly loginRequest = (this as Client4).login;
+    private readonly createUserRequest = (this as Client4).createUser;
     private readonly createPostRequest = (this as Client4).createPost;
 
     private ownUserId = '';
-    private readonly clientsByUser = new Map<string, Promise<PlaywrightClient4>>();
 
     /** Client4.login that remembers who this client is, and the login for clients acting as that user. */
     login = async (loginId: string, password: string, token = '', ldapOnly = false) => {
         const profile = await this.loginRequest(loginId, password, token, ldapOnly);
         this.ownUserId = profile.id;
         rememberLogin(profile, password);
+        return profile;
+    };
+
+    /** Client4.createUser that remembers the new user's login, so `createPost({user_id})` can post as them. */
+    createUser = async (user: UserProfile, token: string, inviteId: string, redirect?: string) => {
+        const profile = await this.createUserRequest(user, token, inviteId, redirect);
+        if (user.password) {
+            rememberLogin(profile, user.password);
+        }
         return profile;
     };
 
@@ -63,14 +102,7 @@ export class PlaywrightClient4 extends Client4 {
                     'their own client (pw.postAs(user, post)).',
             );
         }
-        let client = this.clientsByUser.get(author);
-        if (!client) {
-            const other = new PlaywrightClient4();
-            other.setUrl(this.getUrl());
-            client = other.login(login.username, login.password).then(() => other);
-            this.clientsByUser.set(author, client);
-        }
-        return (await client).createPost(post);
+        return (await clientAs(this.getUrl(), login)).createPost(post);
     };
 
     private async userIdOfSession() {
