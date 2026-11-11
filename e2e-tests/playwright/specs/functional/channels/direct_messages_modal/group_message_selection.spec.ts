@@ -7,12 +7,12 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify users can be added and removed while creating a group message.
  */
 test('MM-T460 Add and remove users while creating new Group Message', {tag: '@direct_messages'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const participants = await adminClient.createUsers(team.id, 3, 'gm-edit');
 
     // # Open the Direct Messages modal from the LHS "+" menu
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
     const addMenu = await app.lhs.header.clickOpenBrowseOrAddMenuButton();
     const modal = await addMenu.clickOpenDirectMessageMenuItem();
     const picker = modal.list;

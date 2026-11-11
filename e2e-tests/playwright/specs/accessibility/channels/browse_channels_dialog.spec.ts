@@ -21,7 +21,7 @@ test(
         await pw.skipIfNoLicense();
 
         // # Initialize setup
-        const {team, user, adminClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
 
         // # Create two channels with purposes for testing aria-label
         const channel1 = await adminClient.createChannel({
@@ -44,7 +44,7 @@ test(
         const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open the Browse Channels modal
         const dialog = await openBrowseChannels(app);
@@ -103,13 +103,13 @@ test(
         await pw.skipIfNoLicense();
 
         // # Initialize setup
-        const {team, user} = await pw.initSetup();
+        const {team, user, townSquare} = await pw.initSetup();
 
         // # Log in as regular user
         const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open the Browse Channels modal
         const dialog = await openBrowseChannels(app);

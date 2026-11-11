@@ -7,9 +7,7 @@ import {Api, expect, test} from '@mattermost/playwright-lib';
  * @objective Verify a user can open a self direct message, post a message, and does not receive a desktop notification.
  */
 test('MM-T457 Self direct message', {tag: '@direct_messages'}, async ({pw}) => {
-    const {team, user, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {team, user, townSquare} = await pw.initSetup();
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
     await pw.stubNotification(page, 'granted');

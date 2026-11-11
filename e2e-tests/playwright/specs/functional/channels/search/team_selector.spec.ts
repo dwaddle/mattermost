@@ -3,7 +3,7 @@
 
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, DefaultChannel} from '@mattermost/playwright-lib';
 
 /** Opens the search box from the global header. */
 async function openSearch(app: App) {
@@ -27,7 +27,7 @@ async function leaveTeam(app: App, team: Team) {
 
 test('team selector should not be visible if user belongs to only one team', async ({pw}) => {
     // # Create a user with only one team, and a channel with a message
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
     const channel = await adminClient.createChannel(
         pw.random.channel({
             teamId: team.id,
@@ -38,8 +38,6 @@ test('team selector should not be visible if user belongs to only one team', asy
     const message = 'test message for search';
     await adminClient.addToChannel(user.id, channel.id);
     const post = await adminClient.createPost({channel_id: channel.id, message});
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Log in and open the search UI
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -60,7 +58,7 @@ test('team selector should not be visible if user belongs to only one team', asy
 
 test('team selector should be visible if user belongs to multiple teams', async ({pw}) => {
     // # Create a user with a second team, and a channel with a message in the first
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
     const secondTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
     await adminClient.addUsersToTeam(secondTeam.id, [user.id]);
     const channel = await adminClient.createChannel(
@@ -73,8 +71,6 @@ test('team selector should be visible if user belongs to multiple teams', async 
     const message = 'test message for multiple teams search';
     await adminClient.addToChannel(user.id, channel.id);
     const post = await adminClient.createPost({channel_id: channel.id, message});
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Log in and open the search UI
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -101,15 +97,13 @@ test('team selector should be visible if user belongs to multiple teams', async 
 
 test('team selector should show filter input with more than 4 teams', async ({pw}) => {
     // # Create a user and 4 more teams (for a total of 5)
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
     const teams = [team];
     for (let i = 0; i < 4; i++) {
         const newTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
         await adminClient.addUsersToTeam(newTeam.id, [user.id]);
         teams.push(newTeam);
     }
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Log in, open search and the team selector
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -143,15 +137,13 @@ test('team selector should show filter input with more than 4 teams', async ({pw
 
 test('MM-T5802 team filter list updates when a team is left', async ({pw}) => {
     // # Create a user and 4 more teams (5 total) so the team-filter input renders
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const teams = [team];
     for (let i = 0; i < 4; i++) {
         const newTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
         await adminClient.addUsersToTeam(newTeam.id, [user.id]);
         teams.push(newTeam);
     }
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Log in and open the team selector
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -183,13 +175,12 @@ test('MM-T5802 team filter list updates when a team is left', async ({pw}) => {
 
 test('MM-T5803 search results narrow to the selected team and update after leaving that team', async ({pw}) => {
     // # Create a user with two teams, each containing a distinct message
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare: firstChannel} = await pw.initSetup();
     const secondTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
     await adminClient.addUsersToTeam(secondTeam.id, [user.id]);
     const messageInFirstTeam = 'pineapple message in the first team';
     const messageInSecondTeam = 'pineapple message in the second team';
-    const firstChannel = await adminClient.getChannelByName(team.id, 'town-square');
-    const secondChannel = await adminClient.getChannelByName(secondTeam.id, 'town-square');
+    const secondChannel = await adminClient.getChannelByName(secondTeam.id, DefaultChannel.TownSquare);
     const firstPost = await adminClient.createPost({channel_id: firstChannel.id, message: messageInFirstTeam});
     const secondPost = await adminClient.createPost({channel_id: secondChannel.id, message: messageInSecondTeam});
 

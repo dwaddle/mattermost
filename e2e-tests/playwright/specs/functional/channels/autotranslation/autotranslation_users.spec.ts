@@ -11,6 +11,7 @@ import {
     expect,
     test,
     setMockSourceLanguage,
+    duration,
 } from '@mattermost/playwright-lib';
 
 import {disableAutotranslationForMe, postIn} from './support';
@@ -18,7 +19,7 @@ import {disableAutotranslationForMe, postIn} from './support';
 // Autotranslation tests involve real UI interactions with plugin state and can run
 // longer than the default 60 s in loaded CI.  Set per-test timeout to 2 minutes.
 test.beforeEach(async () => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
 });
 
 // Disable AutoTranslationSettings at end of file so leftover state cannot leak
@@ -96,7 +97,7 @@ test.fixme(
         await expect(app.center.composer.locator).toBeVisible();
 
         // * Verify translation badge is visible (indicates autotranslation is ON by default)
-        await expect(app.channelHeader.autotranslationBadgeText.locator).toBeVisible({timeout: 15000});
+        await expect(app.channelHeader.autotranslationBadgeText.locator).toBeVisible({timeout: duration.half_min});
 
         // * Verify post appeared with translation (mock server appends "[translated to en]" to original)
         await expect(
@@ -152,7 +153,7 @@ test(
 
         // Wait for autotranslation state to be reflected in the header before opening the menu,
         // so that the "Disable autotranslation" menu item is present when the menu opens.
-        await expect(app.channelHeader.autotranslationBadgeText.locator).toBeVisible({timeout: 15000});
+        await expect(app.channelHeader.autotranslationBadgeText.locator).toBeVisible({timeout: duration.half_min});
 
         await disableAutotranslationForMe(app);
 
@@ -237,7 +238,7 @@ test.fixme(
         const spanishPost = app.center.postList.postItems.filter({hasText: translatedText});
         await expect
             .poll(async () => spanishPost.isVisible(), {
-                timeout: 60000,
+                timeout: duration.one_min,
                 intervals: [500, 1500, 3000, 5000],
             })
             .toBe(true);
@@ -247,7 +248,7 @@ test.fixme(
         // * After disabling, wait for page to update and verify original text is shown
         // Find the post containing the original text (skip system messages)
         const userPost = app.center.postList.postItems.filter({hasText: originalText});
-        await expect(userPost).toBeVisible({timeout: 15000});
+        await expect(userPost).toBeVisible({timeout: duration.half_min});
         await expect(userPost).toContainText(originalText);
 
         // * Verify translation indicator is no longer present
@@ -342,21 +343,21 @@ test.fixme(
         // Mock server produces "<original> [translated to en]", not real translations.
         // Translation is async — use expect.poll to ride out mock-service latency in CI.
         await expect(app.center.postList.postItems.filter({hasText: 'English only'})).toBeVisible({
-            timeout: 15000,
+            timeout: duration.half_min,
         });
         const translatedSpanishLocator = app.center.postList.postItems.filter({
             hasText: 'Solo español [translated to en]',
         });
         await expect
             .poll(async () => translatedSpanishLocator.isVisible(), {
-                timeout: 45000,
+                timeout: duration.one_min,
                 intervals: [500, 1500, 3000, 5000],
             })
             .toBe(true);
 
         // * Verify both messages are present
         const spanishPost = app.center.postList.postItems.filter({hasText: 'Solo español [translated to en]'});
-        await expect(spanishPost).toBeVisible({timeout: 30000});
+        await expect(spanishPost).toBeVisible({timeout: duration.half_min});
 
         // * Verify English message is present and unchanged
         const englishPost = app.center.postList.postItems.filter({hasText: 'English only'});
@@ -370,7 +371,7 @@ test.fixme(
         tag: ['@autotranslation'],
     },
     async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {adminClient, user, userClient, team} = await pw.initSetup();
 
         const license = await adminClient.getClientLicenseOld();
@@ -462,14 +463,14 @@ test.fixme(
 
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: channelName});
-        await app.center.postCreate.messageTextbox.locator.waitFor({state: 'visible', timeout: 30000});
+        await app.center.postCreate.messageTextbox.locator.waitFor({state: 'visible', timeout: duration.half_min});
 
         // * Verify translated Spanish post is present
         // Mock server produces "<original> [translated to en]"
         const translatedPost = app.center.postList.postItems.filter({hasText: 'Solo español [translated to en]'});
         await expect
             .poll(async () => translatedPost.isVisible(), {
-                timeout: 90000,
+                timeout: duration.two_min,
                 intervals: [500, 1500, 3000, 5000],
             })
             .toBe(true);
@@ -480,7 +481,7 @@ test.fixme(
             .filter({hasNotText: '[translated to en]'});
         await expect
             .poll(async () => notTranslatedPost.isVisible(), {
-                timeout: 60000,
+                timeout: duration.one_min,
                 intervals: [500, 1500, 3000],
             })
             .toBe(true);

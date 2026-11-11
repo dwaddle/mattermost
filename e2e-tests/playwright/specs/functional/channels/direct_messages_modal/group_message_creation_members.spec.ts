@@ -11,10 +11,8 @@ import {getChannelSlugFromUrl} from './helpers';
  * @objective Verify the group message intro, sidebar label, and member count render for participants.
  */
 test('MM-T465 Create a group message and show participant details', async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const participants = await adminClient.createUsers(team.id, 2, 'gm-intro');
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Create a group message from the Direct Messages modal
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -58,10 +56,8 @@ test(
     {tag: '@direct_messages'},
     async ({pw}) => {
         // # Create the test user plus three more users on the team
-        const {user, team, adminClient} = await pw.initSetup();
+        const {user, team, adminClient, townSquare} = await pw.initSetup();
         const [member1, member2, member3] = await adminClient.createUsers(team.id, 3, 'gm');
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
         const {app, page} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 

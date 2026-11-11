@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {
     setupCustomProfileAttributeFields,
@@ -58,7 +58,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
     });
 
     test('MM-68846-T1 - omits a policy-governed team from the directory for non-qualifying users', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminClient, team} = await pw.initSetup();
@@ -114,7 +114,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
         // caught up so the EXISTS subquery in GetAllPage widens correctly.
         await expect
             .poll(async () => (await adminClient.getTeam(team.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
                 message: 'team should show policy_enforced=true before asserting directory visibility',
             })
@@ -166,7 +166,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
     test('MM-68846-T2 - hides a governed team from a non-qualifying system admin in the directory while the management listing stays complete', async ({
         pw,
     }) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -243,7 +243,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
                     }
                 },
                 {
-                    timeout: 60_000,
+                    timeout: duration.one_min,
                     intervals: [1000, 2000, 5000, 5000, 5000],
                     message: 'governed team should be hidden from the admin directory listing',
                 },
@@ -276,7 +276,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
     test('MM-68846-T3 - keeps a public governed team visible to a non-qualifying user (advisory mode)', async ({
         pw,
     }) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminClient} = await pw.initSetup();
@@ -319,7 +319,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
         // and a regression to strict-on-public would go undetected.
         await expect
             .poll(async () => (await adminClient.getTeam(publicGoverned.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
             })
             .toBe(true);
@@ -337,7 +337,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
     test('MM-68846-T4 - join gate forks on privacy mode: advisory public admits, strict private denies', async ({
         pw,
     }) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminUser, adminClient} = await pw.initSetup();
@@ -413,7 +413,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
                         return true;
                     }
                 },
-                {timeout: 60_000, intervals: [1000, 2000, 5000, 5000, 5000]},
+                {timeout: duration.one_min, intervals: [1000, 2000, 5000, 5000, 5000]},
             )
             .toBe(false);
 
@@ -422,7 +422,7 @@ test.describe('ABAC - Team directory hiding', {tag: ['@abac', '@team_membership'
         // and a regression to strict-on-public would slip through.
         await expect
             .poll(async () => (await adminClient.getTeam(publicGoverned.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
             })
             .toBe(true);

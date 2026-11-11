@@ -12,7 +12,7 @@ test(
     {tag: ['@browse_channels']},
     async ({pw}) => {
         // # Initialize setup
-        const {team, user, adminClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
 
         // # Create channels whose DisplayName matches the search term
         const displayMatchA = await adminClient.createChannel({
@@ -46,7 +46,7 @@ test(
 
         // # Log in as regular user and visit town-square
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open Browse Channels from the LHS "+" menu
         const addMenu = await app.lhs.header.clickOpenBrowseOrAddMenuButton();

@@ -8,7 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * can rejoin the team they left.
  */
 test('MM-T2547 leaves a team while viewing it and rejoins it', {tag: '@multi_team'}, async ({pw}) => {
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, townSquare} = await pw.initSetup();
 
     // # Make the team open so it can be rejoined from the team selection page
     await adminClient.patchTeam({id: team.id, allow_open_invite: true});
@@ -23,7 +23,7 @@ test('MM-T2547 leaves a team while viewing it and rejoins it', {tag: '@multi_tea
     await adminClient.addToTeam(secondTeam.id, user.id);
 
     const {app, page} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
     const teamButton = app.teamSidebar.team(team.id);
     await expect(teamButton.locator).toBeVisible();
 
@@ -54,7 +54,7 @@ test(
     'MM-T2548 removes the user from the team they are viewing and re-adds them',
     {tag: '@multi_team'},
     async ({pw}) => {
-        const {user, team, adminClient} = await pw.initSetup();
+        const {user, team, adminClient, townSquare} = await pw.initSetup();
 
         // # Add the user to a second team so there is another team to fall back to when removed
         const secondTeam = await pw.createNewTeam(adminClient, {
@@ -66,7 +66,7 @@ test(
         await adminClient.addToTeam(secondTeam.id, user.id);
 
         const {app, page} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         const teamButton = app.teamSidebar.team(team.id);
         await expect(teamButton.locator).toBeVisible();
 

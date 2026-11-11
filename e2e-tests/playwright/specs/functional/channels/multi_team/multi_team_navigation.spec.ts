@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
+import {expect, formatMessage, Msg, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that a user who belongs to multiple teams can switch between them and log out to the sign-in page.
@@ -10,7 +10,7 @@ import {expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
  */
 test('MM-T430 MM-T432 switches between teams and logs out', {tag: '@multi_team'}, async ({pw}) => {
     // # Create a user in one team, then add them to a second team
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, offTopic} = await pw.initSetup();
     const secondTeam = await pw.createNewTeam(adminClient, {
         name: 'team',
         displayName: 'Second Team',
@@ -18,8 +18,6 @@ test('MM-T430 MM-T432 switches between teams and logs out', {tag: '@multi_team'}
         unique: true,
     });
     await adminClient.addToTeam(secondTeam.id, user.id);
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
-
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: offTopic});
 
@@ -47,7 +45,7 @@ test('MM-T430 MM-T432 switches between teams and logs out', {tag: '@multi_team'}
  */
 test('MM-T431 reopens to the previously viewed team and channel', {tag: '@multi_team'}, async ({pw}) => {
     // # Create a user in one team, then add them to a second team
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, townSquare} = await pw.initSetup();
     const secondTeam = await pw.createNewTeam(adminClient, {
         name: 'team',
         displayName: 'Second Team',
@@ -55,8 +53,7 @@ test('MM-T431 reopens to the previously viewed team and channel', {tag: '@multi_
         unique: true,
     });
     await adminClient.addToTeam(secondTeam.id, user.id);
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-    const secondOffTopic = await adminClient.getChannelByName(secondTeam.id, 'off-topic');
+    const secondOffTopic = await adminClient.getChannelByName(secondTeam.id, DefaultChannel.OffTopic);
 
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -83,8 +80,7 @@ test('MM-T431 reopens to the previously viewed team and channel', {tag: '@multi_
  */
 test('MM-T440 expands and collapses the RHS reply panel', {tag: '@multi_team'}, async ({pw}) => {
     // # Create and log in as a test user, and post a message
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare} = await pw.initSetup();
     const post = await userClient.createPost({channel_id: townSquare.id, message: `rhs expand ${pw.random.id()}`});
 
     const {app} = await pw.testBrowser.login(user);

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify channel drafts on the global Drafts page are scoped to the
@@ -22,10 +22,10 @@ test('MM-T4410 Channel Drafts are scoped to current active team', {tag: '@messag
     });
     await adminClient.addToTeam(team2.id, user.id);
     const [team1TownSquare, team1OffTopic, team2TownSquare, team2OffTopic] = await Promise.all([
-        adminClient.getChannelByName(team1.id, 'town-square'),
-        adminClient.getChannelByName(team1.id, 'off-topic'),
-        adminClient.getChannelByName(team2.id, 'town-square'),
-        adminClient.getChannelByName(team2.id, 'off-topic'),
+        adminClient.getChannelByName(team1.id, DefaultChannel.TownSquare),
+        adminClient.getChannelByName(team1.id, DefaultChannel.OffTopic),
+        adminClient.getChannelByName(team2.id, DefaultChannel.TownSquare),
+        adminClient.getChannelByName(team2.id, DefaultChannel.OffTopic),
     ]);
 
     const {app} = await pw.testBrowser.login(user);

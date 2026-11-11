@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify switching teams preserves direct messages and each team's last channel, while team badges distinguish mentions from ordinary unread messages.
@@ -45,7 +45,7 @@ test(
         await expect(app.lhs.channelList.channel(secondDm).link.locator).toBeVisible();
 
         // # Post in Off-Topic on the second team, then switch back to the first team
-        const secondTeamOffTopic = await adminClient.getChannelByName(secondTeam.id, 'off-topic');
+        const secondTeamOffTopic = await adminClient.getChannelByName(secondTeam.id, DefaultChannel.OffTopic);
         await app.lhs.channelList.channel(secondTeamOffTopic).clickLink();
         await app.center.postCreate.fillMessageTextbox('Hello World');
         await app.center.postCreate.clickSendButton();
@@ -55,7 +55,7 @@ test(
         await firstTeamButton.locator.click();
 
         // * Verify team data does not cross-contaminate and the first team's last DM is restored
-        const firstTeamOffTopic = await adminClient.getChannelByName(team.id, 'off-topic');
+        const firstTeamOffTopic = await adminClient.getChannelByName(team.id, DefaultChannel.OffTopic);
         await expect(app.lhs.channelList.channel(firstTeamOffTopic).link.locator).not.toHaveAccessibleName(
             / (unread|\d+ mentions?)$/,
         );

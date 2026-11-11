@@ -17,7 +17,7 @@ test(
     "MM-65058 Direct Messages modal should load group members for GMs which haven't been loaded otherwise",
     {tag: '@direct_messages'},
     async ({pw}) => {
-        const {adminClient, user, userClient, team} = await pw.initSetup({withDefaultProfileImage: false});
+        const {adminClient, user, userClient, team, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
 
         // Use a lower visible DM limit than the UI normally lets you use to speed up this test
         const totalGms = 2;
@@ -41,7 +41,6 @@ test(
         }
 
         // # Log the user in and open the channels page
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
         const {page, app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 

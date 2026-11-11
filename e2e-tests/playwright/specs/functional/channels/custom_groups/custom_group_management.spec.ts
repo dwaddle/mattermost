@@ -7,7 +7,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify a custom user group can be archived, viewed under the archived filter, and restored.
  */
 test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
+    const {user, team, userClient, townSquare} = await pw.initSetup();
 
     // # Create a custom group owned by the user
     const groupName = `group${pw.random.id()}`.toLowerCase();
@@ -20,7 +20,7 @@ test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async (
     });
 
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the User Groups modal from the product menu
     const productMenu = await app.globalHeader.clickProductMenuButton();
@@ -52,7 +52,7 @@ test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async (
  * the group's members to the channel.
  */
 test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async ({pw}) => {
-    const {user, team, userClient, adminClient} = await pw.initSetup();
+    const {user, team, userClient, adminClient, townSquare} = await pw.initSetup();
 
     // # Create a second team member and a custom group containing both users
     const [member] = await adminClient.createUsers(team.id, 1, 'member');
@@ -66,7 +66,7 @@ test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async (
     });
 
     const {channelsPage, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Create a new channel
     const channelName = `Group Channel ${pw.random.id()}`;
@@ -88,7 +88,7 @@ test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async (
  * and adds all of them to the channel, even after the User Groups list has been opened.
  */
 test('MM-70052 adds every member of a custom group searched by its mention', {tag: '@channels'}, async ({pw}) => {
-    const {user, team, userClient, adminClient} = await pw.initSetup();
+    const {user, team, userClient, adminClient, townSquare} = await pw.initSetup();
 
     // # Create a custom group made up of team members other than the logged in user
     const members = await adminClient.createUsers(team.id, 3, 'member');
@@ -102,7 +102,7 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
     });
 
     const {app, page, channelsPage} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Create a channel that none of the group's members belong to
     const channelName = `Group Channel ${pw.random.id()}`;

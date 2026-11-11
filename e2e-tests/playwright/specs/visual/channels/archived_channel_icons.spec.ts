@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test} from '@mattermost/playwright-lib';
+import {expect, generated, test, duration} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify archived channel icons display correctly for public and private channels in various UI contexts
@@ -11,7 +11,7 @@ test(
     {tag: ['@visual', '@archived_channels', '@snapshots']},
     async ({pw, browserName, viewport}, testInfo) => {
         // # Initialize setup and create test channels
-        const {team, user, adminClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
 
         // # Create public and private channels
         const publicChannel = await adminClient.createChannel(
@@ -40,7 +40,7 @@ test(
         const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town square to ensure we're in a stable state
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open browse channels modal to show archived channels
         await page.keyboard.press('ControlOrMeta+K');
@@ -102,7 +102,7 @@ test(
         await page.goto(`${generated.AdminConsolePage.path()}/user_management/channels`);
 
         // # Wait for channel list to load
-        await expect(channels.searchTextbox.locator).toBeVisible({timeout: 10000});
+        await expect(channels.searchTextbox.locator).toBeVisible();
 
         // # Search for our test channels to bring them into view
         await channels.searchTextbox.locator.fill('Admin');
@@ -145,7 +145,7 @@ test(
 
         // # Wait for channel header to load (archived channels don't have post-create)
         // (the first load of a new team's channel can be slow on this server)
-        await expect(app.channelHeader.openMenuButton.locator).toBeVisible({timeout: 60000});
+        await expect(app.channelHeader.openMenuButton.locator).toBeVisible({timeout: duration.one_min});
 
         // # Verify archived channel message is visible
         await expect(app.center.archivedNotice.closeButton.locator).toBeVisible();

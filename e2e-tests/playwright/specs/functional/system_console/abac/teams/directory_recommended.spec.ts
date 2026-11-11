@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {setupCustomProfileAttributeFields} from '../../../channels/custom_profile_attributes/helpers';
 import {waitForAttributeViewToInclude} from '../../../channels/team_settings/helpers';
@@ -54,7 +54,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
     });
 
     test('MM-69100-T1 - recommends a public governed team to a qualifying non-member only', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminClient} = await pw.initSetup();
@@ -99,7 +99,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
 
         await expect
             .poll(async () => (await adminClient.getTeam(publicGoverned.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
             })
             .toBe(true);
@@ -119,7 +119,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
                     return teams.find((t) => t.id === publicGoverned.id)?.recommended === true;
                 },
                 {
-                    timeout: 60_000,
+                    timeout: duration.one_min,
                     intervals: [1000, 2000, 5000, 5000, 5000],
                     message: 'public governed team should be recommended to the qualifying user',
                 },
@@ -133,7 +133,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
     });
 
     test('MM-69100-T2 - never recommends a private governed team, even to a qualifying user', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminClient} = await pw.initSetup();
@@ -173,7 +173,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
 
         await expect
             .poll(async () => (await adminClient.getTeam(privateGoverned.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
             })
             .toBe(true);
@@ -189,7 +189,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
                     return teams.some((t) => t.id === privateGoverned.id);
                 },
                 {
-                    timeout: 60_000,
+                    timeout: duration.one_min,
                     intervals: [1000, 2000, 5000, 5000, 5000],
                     message: 'qualifying user should see the private governed team before asserting recommendation',
                 },
@@ -204,7 +204,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
     test('MM-69100-T3 - renders the Recommended chip in the team-selection directory for a qualifying user', async ({
         pw,
     }) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         await pw.skipIfNoLicense();
 
         const {adminClient} = await pw.initSetup();
@@ -251,7 +251,7 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
         // caught up so the EXISTS subquery in GetAllPage widens correctly.
         await expect
             .poll(async () => (await adminClient.getTeam(publicGoverned.id)).policy_enforced, {
-                timeout: 60_000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 5000, 5000, 5000],
                 message: 'team should show policy_enforced=true before asserting recommended',
             })
@@ -261,6 +261,6 @@ test.describe('ABAC - Team directory recommended tag', {tag: ['@abac', '@team_me
         const {app} = await pw.testBrowser.login(qualUser);
         await app.selectTeamPage.goto();
         await expect(app.selectTeam.team(publicGoverned).locator).toBeVisible();
-        await expect(app.selectTeam.recommended(publicGoverned).locator).toBeVisible({timeout: 15000});
+        await expect(app.selectTeam.recommended(publicGoverned).locator).toBeVisible({timeout: duration.half_min});
     });
 });
