@@ -100,15 +100,12 @@ export async function ensureUserAttributes(client: Client4, attributeNames?: str
     }
 
     // The policy editor lists attributes from the access control fields, which can trail a new field: wait until they
-    // list every attribute (with attribute-based access off that endpoint fails, and there is nothing to wait for).
+    // list every attribute. The endpoint isn't gated on the attribute-based access setting, so an error is a real
+    // failure (expect.poll retries it and reports the last one).
     await expect
         .poll(async () => {
-            try {
-                const names = new Set((await client.getAccessControlFields('', 100)).map((f) => f.name));
-                return attributesToCreate.every((name) => names.has(name));
-            } catch {
-                return true;
-            }
+            const names = new Set((await client.getAccessControlFields('', 100)).map((f) => f.name));
+            return attributesToCreate.every((name) => names.has(name));
         })
         .toBe(true);
 }
