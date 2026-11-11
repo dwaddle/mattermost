@@ -23,7 +23,7 @@ test('MM-T176 highlights the center post when its timestamp is clicked', {tag: [
     await centerPost.menu.clickReplyButton();
 
     // # Click the root post's timestamp in the thread
-    await app.rhs.thread.post(root).timeLink.locator.click();
+    await app.rhs.thread.post(root).timeLink.click();
 
     // * The matching post is highlighted in the center channel
     await expect(centerPost.locator).toHaveClass(/post--highlight/);
@@ -33,7 +33,7 @@ test('MM-T176 highlights the center post when its timestamp is clicked', {tag: [
     await expect(centerPost.locator).not.toHaveClass(/post--highlight/);
 
     // # Click the same post's timestamp in the center channel
-    await centerPost.timeLink.locator.click();
+    await centerPost.timeLink.click();
 
     // * The post is highlighted again
     await expect(centerPost.locator).toHaveClass(/post--highlight/);
@@ -62,7 +62,7 @@ test('MM-T3308 follows a permalink to the first post without endless loading', {
     const linkPost = await userClient.createPost({channel_id: offTopic.id, message: permalink});
 
     // # Click the permalink in the posted message
-    await new generated.Markdown(page, 'markdown', app.center.postList.post(linkPost).locator).linkLink.locator.click();
+    await new generated.Markdown(page, 'markdown', app.center.postList.post(linkPost).locator).linkLink.click();
 
     // * Navigation lands in the private channel
     await expect

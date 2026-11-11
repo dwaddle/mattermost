@@ -28,7 +28,7 @@ export async function pickTime(
 
     const target = new Date();
     target.setDate(target.getDate() + dayFromToday);
-    await modal.when.dateButton.locator.click();
+    await modal.when.dateButton.click();
     const calendar = modal.when.calendar.locator;
     await goToDisplayedMonth(calendar, target);
     await getDayPickerDayCell(calendar, target.getDate()).click();

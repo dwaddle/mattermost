@@ -9,7 +9,7 @@ import {expect, test, type App} from '@mattermost/playwright-lib';
  * pressed in the message box, which also waits for the app to be up (a generated `goto` returns on page load).
  */
 async function switchTo(app: App, search: string, ...keys: string[]) {
-    await app.center.postCreate.messageTextbox.locator.press('ControlOrMeta+K');
+    await app.center.postCreate.messageTextbox.press('ControlOrMeta+K');
     await app.quickSwitchModal.searchTextbox.fill(search);
     const {suggestions} = app.quickSwitchModal;
     const result = keys.map((key) => suggestions.item(key).locator).reduce((a, b) => a.or(b));

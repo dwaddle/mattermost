@@ -13,8 +13,8 @@ async function openPopout(app: App) {
 /** Searches for the term from the global header. */
 async function searchFor(app: App, term: string) {
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(term);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(term);
+    await app.searchBox.inputSearchbox.press('Enter');
 }
 
 test('MM-65630-1 Search results should show popout button that opens results in a new window', async ({pw}) => {

@@ -50,7 +50,7 @@ test('Post actions tab support', async ({pw, axe}) => {
     await expect(post.menu.dotMenuButton.locator).toBeVisible();
 
     // # Open the dot menu
-    await post.menu.dotMenuButton.locator.press('Enter');
+    await post.menu.dotMenuButton.press('Enter');
 
     // * Dot menu should be visible and have focused
     const dotMenu = app.postDotMenu;
@@ -64,58 +64,58 @@ test('Post actions tab support', async ({pw, axe}) => {
     expect(accessibilityScanResults.violations).toHaveLength(0);
 
     // * Should move focus to Quote after arrow down
-    await dotMenu.replyMenuItem.locator.press('ArrowDown');
+    await dotMenu.replyMenuItem.press('ArrowDown');
     await expect(dotMenu.quoteMenuItem.locator).toBeFocused();
 
     // * Should move focus to Forward after arrow down
-    await dotMenu.quoteMenuItem.locator.press('ArrowDown');
+    await dotMenu.quoteMenuItem.press('ArrowDown');
     await expect(dotMenu.forwardMenuItem.locator).toBeFocused();
 
     // * Should move focus to Follow message after arrow down
-    await dotMenu.forwardMenuItem.locator.press('ArrowDown');
+    await dotMenu.forwardMenuItem.press('ArrowDown');
     await expect(dotMenu.followThreadMenuItem.locator).toBeFocused();
 
     // * Should move focus to Mark as Unread after arrow down
-    await dotMenu.followThreadMenuItem.locator.press('ArrowDown');
+    await dotMenu.followThreadMenuItem.press('ArrowDown');
     await expect(dotMenu.markAsUnreadMenuItem.locator).toBeFocused();
 
     // * Should move focus to Save after arrow down
-    await dotMenu.markAsUnreadMenuItem.locator.press('ArrowDown');
+    await dotMenu.markAsUnreadMenuItem.press('ArrowDown');
     await expect(dotMenu.saveMenuItem.locator).toBeFocused();
 
     // * Should move focus to Remind after arrow down
-    await dotMenu.saveMenuItem.locator.press('ArrowDown');
+    await dotMenu.saveMenuItem.press('ArrowDown');
     await expect(dotMenu.remindMenuItem.locator).toBeFocused();
 
     // * Should move focus to Pin to Channel after arrow down
-    await dotMenu.remindMenuItem.locator.press('ArrowDown');
+    await dotMenu.remindMenuItem.press('ArrowDown');
     await expect(dotMenu.pinMenuItem.locator).toBeFocused();
 
     if (config.FeatureFlags.MoveThreadsEnabled && license.IsLicensed === 'true') {
         // * Should move focus to Move Thread after arrow down
-        await dotMenu.pinMenuItem.locator.press('ArrowDown');
+        await dotMenu.pinMenuItem.press('ArrowDown');
         await expect(dotMenu.moveThreadMenuItem.locator).toBeFocused();
 
         // * Should move focus to Copy Text after arrow down
-        await dotMenu.moveThreadMenuItem.locator.press('ArrowDown');
+        await dotMenu.moveThreadMenuItem.press('ArrowDown');
         await expect(dotMenu.copyTextMenuItem.locator).toBeFocused();
     } else {
         // * Should move focus to Copy Text after arrow down
-        await dotMenu.pinMenuItem.locator.press('ArrowDown');
+        await dotMenu.pinMenuItem.press('ArrowDown');
         await expect(dotMenu.copyTextMenuItem.locator).toBeFocused();
     }
 
     // * Should move focus to Copy Link after arrow down
-    await dotMenu.copyTextMenuItem.locator.press('ArrowDown');
+    await dotMenu.copyTextMenuItem.press('ArrowDown');
     await expect(dotMenu.copyLinkMenuItem.locator).toBeFocused();
 
     // * Should move focus to Edit after arrow down
-    await dotMenu.copyLinkMenuItem.locator.press('ArrowDown');
+    await dotMenu.copyLinkMenuItem.press('ArrowDown');
     await expect(dotMenu.editMenuItem.locator).toBeFocused();
 
     // * Should move focus to Delete after arrow down
     // "Quarantine for Review" is inserted between Edit and Delete when content flagging is on.
-    await dotMenu.editMenuItem.locator.press('ArrowDown');
+    await dotMenu.editMenuItem.press('ArrowDown');
     if (config.ContentFlaggingSettings?.EnableContentFlagging) {
         await expect(dotMenu.flagMenuItem.locator).toBeFocused();
         await page.keyboard.press('ArrowDown');
@@ -123,7 +123,7 @@ test('Post actions tab support', async ({pw, axe}) => {
     await expect(dotMenu.deleteMenuItem.locator).toBeFocused();
 
     // * Then, should move focus back to Reply after arrow down
-    await dotMenu.deleteMenuItem.locator.press('ArrowDown');
+    await dotMenu.deleteMenuItem.press('ArrowDown');
     await expect(dotMenu.replyMenuItem.locator).toBeFocused();
 
     // * Should move focus to Delete after arrow uo
@@ -131,7 +131,7 @@ test('Post actions tab support', async ({pw, axe}) => {
     await expect(dotMenu.deleteMenuItem.locator).toBeFocused();
 
     // # Set focus to Remind
-    await dotMenu.remindMenuItem.locator.focus();
+    await dotMenu.remindMenuItem.focus();
     await expect(dotMenu.remindMenuItem.locator).toBeFocused();
 
     // * Reminder menu should still be hidden
@@ -139,7 +139,7 @@ test('Post actions tab support', async ({pw, axe}) => {
     await expect(reminderMenu.locator).toBeHidden();
 
     // # Press arrow right
-    await dotMenu.remindMenuItem.locator.press('ArrowRight');
+    await dotMenu.remindMenuItem.press('ArrowRight');
 
     // * Reminder menu should be visible
     await expect(reminderMenu.locator).toBeVisible();
@@ -148,23 +148,23 @@ test('Post actions tab support', async ({pw, axe}) => {
     await expect(reminderMenu.option('thirty_minutes').locator).toBeFocused();
 
     // * Should move focus to 1 hour after arrow down
-    await reminderMenu.option('thirty_minutes').locator.press('ArrowDown');
+    await reminderMenu.option('thirty_minutes').press('ArrowDown');
     await expect(reminderMenu.option('one_hour').locator).toBeFocused();
 
     // * Should move focus to 2 hours after arrow down
-    await reminderMenu.option('one_hour').locator.press('ArrowDown');
+    await reminderMenu.option('one_hour').press('ArrowDown');
     await expect(reminderMenu.option('two_hours').locator).toBeFocused();
 
     // * Should move focus to Tomorrow after arrow down
-    await reminderMenu.option('two_hours').locator.press('ArrowDown');
+    await reminderMenu.option('two_hours').press('ArrowDown');
     await expect(reminderMenu.option('tomorrow').locator).toBeFocused();
 
     // * Should move focus to Custom after arrow down
-    await reminderMenu.option('tomorrow').locator.press('ArrowDown');
+    await reminderMenu.option('tomorrow').press('ArrowDown');
     await expect(reminderMenu.option('custom').locator).toBeFocused();
 
     // * Then, should move focus back to 30 mins after arrow down
-    await reminderMenu.option('custom').locator.press('ArrowDown');
+    await reminderMenu.option('custom').press('ArrowDown');
     await expect(reminderMenu.option('thirty_minutes').locator).toBeFocused();
 
     // * Should hide Reminder menu and focus to Remind menu after arrow left

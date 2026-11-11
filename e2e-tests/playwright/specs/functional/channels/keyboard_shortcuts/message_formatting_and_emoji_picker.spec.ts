@@ -73,7 +73,7 @@ test('MM-T4693 opens the emoji picker with the keyboard shortcut', {tag: '@keybo
     await expect(app.emojiPicker.searchTextbox.locator).toBeVisible();
 
     // # Press Escape
-    await app.emojiPicker.searchTextbox.locator.press('Escape');
+    await app.emojiPicker.searchTextbox.press('Escape');
 
     // * Verify the emoji picker closes
     await expect(app.emojiPicker.searchTextbox.locator).not.toBeVisible();

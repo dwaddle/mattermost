@@ -34,7 +34,7 @@ test('typed draft stays on the origin channel after switching away and back', {t
 
     // * The origin draft was kept: Off-Topic's row shows the draft pencil, and the Drafts link appears
     // (the pencil hides while its row is hovered, and the pointer is still over the sidebar after the click)
-    await composer.messageTextbox.locator.hover();
+    await composer.messageTextbox.hover();
     await expect(app.lhs.channelList.channel(offTopic).draftText.locator).toBeVisible();
     await expect(app.lhs.draftsLink.locator).toBeVisible();
 

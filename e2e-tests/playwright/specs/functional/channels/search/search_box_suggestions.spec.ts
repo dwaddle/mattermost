@@ -88,6 +88,6 @@ test('limits grouped channel suggestions and preserves the selected channel', {t
     if (!selectedChannel) {
         throw new Error('Expected at least one created channel to remain in the trimmed suggestions');
     }
-    await suggestions.item(suggestionTestKey(selectedChannel.name)).locator.click();
+    await suggestions.item(suggestionTestKey(selectedChannel.name)).select();
     await expect(input).toHaveValue(new RegExp(`In:${selectedChannel.name}\\s`));
 });

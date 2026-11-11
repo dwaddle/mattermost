@@ -54,7 +54,7 @@ test.describe('WYSIWYG editor - autocomplete suggestions', TAGS, () => {
         await composer.messageTextbox.press('ArrowUp');
 
         // # Take the member's suggestion (which one is highlighted depends on recency, so click it)
-        await suggestion.locator.click();
+        await suggestion.select();
 
         // * Verify the mention is in the editor
         await expect(composer.messageTextbox.locator).toContainText(`@${created.username}`);

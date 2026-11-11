@@ -104,7 +104,7 @@ test(
         await app.channelsPage.goto({team, channel: townSquare});
 
         // # Type a channel mention matching both channels
-        await app.center.postCreate.messageTextbox.locator.pressSequentially('~ac-');
+        await app.center.postCreate.messageTextbox.type('~ac-');
 
         // * Verify the channels the user is a member of are shown without waiting for the search
         await expect.poll(() => groupKeys(app, 'myChannels')).toEqual([localChannel.name]);

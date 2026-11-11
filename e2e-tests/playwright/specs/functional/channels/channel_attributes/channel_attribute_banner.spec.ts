@@ -3,7 +3,7 @@
 
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     DISPLAY_BANNER_TOP,
@@ -316,7 +316,7 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
 
             // * The preview says the banner will not show instead of rendering nothing
             const emptyNotice = configuration.container.getByTestId('bannerPreviewEmptyNotice');
-            await expect(emptyNotice).toContainText('The banner will not be displayed');
+            await expect(emptyNotice).toContainMessage(Msg.channel_attributes.banner.empty_notice.title);
             await expect(configuration.bannerTokenPreview).toHaveCount(0);
 
             await settings.close();

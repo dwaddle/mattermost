@@ -71,7 +71,7 @@ test('MM-T199 Removing a link preview removes it from the views of other users',
 
     // # Remove the link preview as the test user
     await userPage.reload();
-    await userPost.linkPreviewLink.locator.hover();
+    await userPost.linkPreviewLink.hover();
     await userPost.linkPreview.clickRemoveButton();
     await expect(userPost.linkPreviewLink.locator).toHaveCount(0);
 

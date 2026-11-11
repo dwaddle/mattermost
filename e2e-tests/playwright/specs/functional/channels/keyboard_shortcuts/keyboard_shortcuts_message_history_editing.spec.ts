@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify Ctrl/Cmd+Up and Ctrl/Cmd+Down cycle through previous messages in the post textbox.
@@ -72,5 +72,5 @@ test('MM-T1260 UP arrow edits the previous post', async ({pw}) => {
     // * Verify the post shows the edit and its edited marker
     // (the edited marker renders inside the message text)
     await expect(post.messageText.locator).toContainText('Edit Test');
-    await expect(post.editedButton.locator).toContainText('Edited');
+    await expect(post.editedButton.locator).toContainMessage(Msg.post_message_view.edited);
 });

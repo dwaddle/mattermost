@@ -108,7 +108,7 @@ test('MM-T3293 The entire thread appears in the RHS (scrollable)', {tag: ['@mess
     // # Hover over the thread so mouse-wheel events scroll it, then go through the replies from the end, scrolling
     // up to load previous messages. Only every 10th reply is checked, to keep the test fast while still proving the
     // virtualized thread list is scrollable end-to-end.
-    await thread.scroller.locator.hover();
+    await thread.scroller.hover();
     for (let i = replies.length - 1; i >= 0; i -= 10) {
         await scrollUpTo(replies[i]);
         await expect(thread.post(replies[i]).messageText.locator).toHaveText(replies[i].message);

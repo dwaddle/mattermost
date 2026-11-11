@@ -3,7 +3,7 @@
 
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     DISPLAY_BANNER_TOP,
@@ -174,7 +174,7 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             // The empty row is both the signal and the retry path.
             const row = page.getByTestId(`channelInfoAttributeRow-${required.name}`);
             await expect(row).toBeVisible();
-            await expect(row).toContainText('Not set');
+            await expect(row).toContainMessage(Msg.channel_attributes.info.not_set);
 
             // No chip while unset.
             await expect(page.getByTestId('attributeChip')).toHaveCount(0);

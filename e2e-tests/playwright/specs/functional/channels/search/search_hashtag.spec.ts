@@ -21,8 +21,8 @@ test('MM-T359 returns all case variants when searching a hashtag', {tag: ['@sear
 
     // # Search for the lowercase hashtag
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(`#case${suffix}`);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(`#case${suffix}`);
+    await app.searchBox.inputSearchbox.press('Enter');
 
     // * Verify the header's search bar shows the search type (the badge search_box_clear_button expects to be gone)
     await expect(app.globalHeader.search.typeBadgeText.locator).toBeVisible();

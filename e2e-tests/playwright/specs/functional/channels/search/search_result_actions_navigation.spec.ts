@@ -6,8 +6,8 @@ import {expect, generated, test, type App} from '@mattermost/playwright-lib';
 /** Searches from the global header for the term. */
 async function searchFor(app: App, term: string) {
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(term);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(term);
+    await app.searchBox.inputSearchbox.press('Enter');
 }
 
 /**

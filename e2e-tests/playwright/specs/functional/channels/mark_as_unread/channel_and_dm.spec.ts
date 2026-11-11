@@ -104,7 +104,7 @@ test('MM-T248 Mark Direct Message post as Unread', async ({pw}) => {
 /** Marks the post unread with Alt+click on its body. */
 async function markPostAsUnread(app: App, post: {id: string}) {
     const item = app.center.postList.post(post);
-    await item.body.locator.scrollIntoViewIfNeeded();
+    await item.body.scrollIntoView();
 
     // on the message body: the post's middle can land on the author's name, which opens their profile popover
     await item.body.locator.click({modifiers: ['Alt']});

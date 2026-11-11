@@ -30,7 +30,7 @@ test.describe('draft channel switch', () => {
         // # Switch to Town Square using Ctrl/Cmd+K
         await input.press('ControlOrMeta+K');
         await app.quickSwitchModal.searchTextbox.fill('town');
-        await app.quickSwitchModal.suggestions.item(townSquare.id).locator.click();
+        await app.quickSwitchModal.suggestions.item(townSquare.id).select();
         await expect(title).toContainText(townSquare.display_name);
 
         // * Town Square did not inherit the Off-Topic draft
@@ -45,7 +45,7 @@ test.describe('draft channel switch', () => {
         // # Return to Off-Topic using Ctrl/Cmd+K
         await input.press('ControlOrMeta+K');
         await app.quickSwitchModal.searchTextbox.fill('off');
-        await app.quickSwitchModal.suggestions.item(offTopic.id).locator.click();
+        await app.quickSwitchModal.suggestions.item(offTopic.id).select();
         await expect(title).toContainText(offTopic.display_name);
 
         // * The origin draft was restored and the destination message was not misrouted

@@ -35,7 +35,7 @@ test(
 
         // # Type a draft that mentions the other user, picking them from the autocomplete so the mention resolves
         await input.pressSequentially(`@${mentionedUser.username}`);
-        await composer.message.suggestions.item(`@${mentionedUser.username}`).locator.click();
+        await composer.message.suggestions.item(`@${mentionedUser.username}`).select();
         await input.pressSequentially(` ${unique}`);
         const draft = await input.inputValue();
 

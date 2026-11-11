@@ -41,7 +41,7 @@ test('AI Rewrite custom prompt handles Korean IME input correctly', {tag: '@ai_r
 
     // # Open the AI Actions menu and reveal the Rewrite submenu with the custom prompt.
     const menu = await composer.aiActions.clickOpenButton();
-    await menu.rewriteMenuItem.locator.hover();
+    await menu.rewriteMenuItem.hover();
 
     // # Focus the custom prompt input inside the Rewrite submenu.
     const promptInput = composer.aiActions.rewrite.promptTextbox.locator;

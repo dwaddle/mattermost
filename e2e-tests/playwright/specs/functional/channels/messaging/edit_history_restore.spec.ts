@@ -20,10 +20,10 @@ test('MM-T5537 views message edit history and restores a previous version', {tag
     const created = await settle(composer.sendButton, (b) => b.click(), {wait: Api.CreatePost});
 
     // # Open the last post for editing with the up arrow, append text, and save
-    await composer.messageTextbox.locator.press('ArrowUp');
+    await composer.messageTextbox.press('ArrowUp');
     const editor = app.postEdit.editor;
-    await editor.messageTextbox.locator.press('End');
-    await editor.messageTextbox.locator.pressSequentially('. I have now edited this message.');
+    await editor.messageTextbox.press('End');
+    await editor.messageTextbox.type('. I have now edited this message.');
     const edited = await settle(editor.saveButton, (b) => b.click(), {wait: Api.PatchPost});
 
     // * The post shows the edited text
@@ -38,7 +38,7 @@ test('MM-T5537 views message edit history and restores a previous version', {tag
     const [previous] = await userClient.getPostEditHistory(created.id);
     const version = app.rhs.editHistory.version(previous);
     // (the version's title row handles the click and covers its toggle button; Enter on the button reaches it)
-    await version.toggleButton.locator.press('Enter');
+    await version.toggleButton.press('Enter');
 
     // * It shows the original message
     await expect(version.messageText.locator).toContainText(message);

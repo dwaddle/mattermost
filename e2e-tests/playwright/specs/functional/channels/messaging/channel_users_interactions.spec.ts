@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify sending a message in a channel with unread content scrolls to the newly sent message.
@@ -32,7 +32,7 @@ test('MM-T216 scrolls to the bottom when sending a message', {tag: '@messaging'}
     await app.lhs.channelList.channel(testChannel).clickLink();
 
     // * The new-messages separator is shown
-    await expect(app.center.postList.newMessages.locator).toContainText('New Messages');
+    await expect(app.center.postList.newMessages.locator).toContainMessage(Msg.posts_view.newMsg);
 
     // # Send a message in the test channel
     await send('message123');

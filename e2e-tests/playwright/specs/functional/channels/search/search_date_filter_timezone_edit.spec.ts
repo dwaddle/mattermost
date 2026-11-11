@@ -110,8 +110,8 @@ test('MM-T599 Edit date and search again', async ({pw}) => {
 
 async function submitSearch(app: App, query: string) {
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(query);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(query);
+    await app.searchBox.inputSearchbox.press('Enter');
 }
 
 /** The post shows in the results; the search is retried while the server indexes it. */

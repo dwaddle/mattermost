@@ -48,7 +48,7 @@ test(
 
         // # Type a channel mention
         const composer = app.center.postCreate;
-        await composer.messageTextbox.locator.pressSequentially('~gamma');
+        await composer.messageTextbox.type('~gamma');
 
         // * Verify the four channels are suggested under "Other Channels"
         const {suggestions} = composer.message;

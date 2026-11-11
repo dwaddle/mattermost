@@ -23,7 +23,7 @@ test('MM-T2268 Edit Message with Attachment', async ({pw}) => {
     await expect(shown.editedButton.locator).not.toBeVisible();
 
     // # Edit the message with the Up arrow shortcut
-    await app.center.postCreate.messageTextbox.locator.press('ArrowUp');
+    await app.center.postCreate.messageTextbox.press('ArrowUp');
     const editor = app.postEdit.editor.messageTextbox.locator;
     await expect(editor).toHaveValue('Test');
     await editor.fill('Test with some edit');

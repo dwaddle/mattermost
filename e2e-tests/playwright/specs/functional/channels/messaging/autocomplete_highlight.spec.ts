@@ -21,7 +21,7 @@ test('MM-T71 moves the autocomplete highlight with hover and arrow keys', {tag: 
     const [, second, third] = await suggestions.itemKeys();
 
     // # Hover over the second suggestion
-    await suggestions.item(second).locator.hover();
+    await suggestions.item(second).hover();
 
     // * Verify the hovered suggestion becomes highlighted
     await expect(suggestions.item(second).locator).toHaveAttribute('aria-selected', 'true');

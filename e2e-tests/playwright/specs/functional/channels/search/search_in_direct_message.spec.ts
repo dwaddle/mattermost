@@ -22,7 +22,7 @@ test('MM-T358 searches for a message in a direct message channel', {tag: '@searc
     // # Type the in: modifier and select the other user from the autocomplete
     await app.globalHeader.search.clickOpenButton();
     await input.fill('in:');
-    await app.searchBox.suggestions.item(`@${otherUser.username}`).locator.click();
+    await app.searchBox.suggestions.item(`@${otherUser.username}`).select();
 
     // * Verify the direct-message user is placed into the query
     await expect(input).toHaveValue(`in:@${otherUser.username} `);

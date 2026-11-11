@@ -14,7 +14,7 @@ test('MM-T95 Selecting an emoji from emoji picker should insert it at the cursor
     const composer = app.center.postCreate;
     await composer.fillMessageTextbox('HelloWorld!');
     for (let i = 0; i < 'World!'.length; i++) {
-        await composer.messageTextbox.locator.press('ArrowLeft');
+        await composer.messageTextbox.press('ArrowLeft');
     }
 
     // # Select the grinning emoji from the picker

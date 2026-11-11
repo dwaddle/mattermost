@@ -6,7 +6,7 @@ import {expect, test, type App} from '@mattermost/playwright-lib';
 /** Opens the search box empty. */
 async function openEmptySearch(app: App) {
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill('');
+    await app.searchBox.inputSearchbox.fill('');
     return app.searchBox.inputSearchbox.locator;
 }
 

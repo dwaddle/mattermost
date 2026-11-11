@@ -33,7 +33,7 @@ test('MM-T449 edits a direct message body', {tag: '@direct_messages'}, async ({p
     // # Open the direct message as the sender and edit the post with the Up arrow shortcut
     const {app: senderApp} = await pw.testBrowser.login(sender);
     await senderApp.channelsPage.goto({team, channel: `@${recipient.username}`, path: 'messages'});
-    await senderApp.center.postCreate.messageTextbox.locator.press('ArrowUp');
+    await senderApp.center.postCreate.messageTextbox.press('ArrowUp');
     const editor = senderApp.postEdit.editor.messageTextbox.locator;
     await expect(editor).toHaveValue(originalMessage);
     await editor.fill(editedMessage);

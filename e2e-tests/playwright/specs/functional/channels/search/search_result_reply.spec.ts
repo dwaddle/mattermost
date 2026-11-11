@@ -17,8 +17,8 @@ test('MM-T373 replies to a post from search results', {tag: '@search'}, async ({
 
     // # Search for the post and open its thread from the result
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(message);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(message);
+    await app.searchBox.inputSearchbox.press('Enter');
     const result = app.search.results.post(post);
     await expect(result.locator).toContainText(message);
     await result.locator.hover();

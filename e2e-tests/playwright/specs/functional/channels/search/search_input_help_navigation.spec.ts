@@ -18,8 +18,8 @@ test('MM-T351 disregards a wildcard that is not preceded by text', {tag: '@searc
 
     // # Search using a trailing wildcard separated by a space
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(`${token} *`);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(`${token} *`);
+    await app.searchBox.inputSearchbox.press('Enter');
 
     // * Verify the wildcard is disregarded and the exact-term message is returned
     await expect(app.search.results.post(exact).messageText.locator).toContainText(token);
@@ -39,7 +39,7 @@ test('MM-T367 clicks top navigation buttons while the search box has focus', {ta
 
     // # Put focus in the search box and type text, then click Recent mentions
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill('some text');
+    await app.searchBox.inputSearchbox.fill('some text');
     await app.globalHeader.clickRecentMentionsButton();
 
     // * Verify the Recent Mentions panel opens
@@ -47,7 +47,7 @@ test('MM-T367 clicks top navigation buttons while the search box has focus', {ta
 
     // # Focus the search box again and click Saved messages
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill('some text');
+    await app.searchBox.inputSearchbox.fill('some text');
     await app.globalHeader.clickSavedMessagesButton();
 
     // * Verify the Saved messages panel opens
@@ -73,7 +73,7 @@ test('MM-T370 shows search help text when the search box is opened', {tag: '@sea
     await expect(hints).toContainText(formatMessage(Msg.search_hint.filter));
 
     // # Close the search box, then open a thread
-    await app.searchBox.inputSearchbox.locator.press('Escape');
+    await app.searchBox.inputSearchbox.press('Escape');
     await expect(app.searchBox.inputSearchbox.locator).not.toBeVisible();
     const centerPost = app.center.postList.post(post);
     await centerPost.locator.hover();

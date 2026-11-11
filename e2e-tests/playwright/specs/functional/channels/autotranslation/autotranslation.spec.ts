@@ -14,6 +14,7 @@ import {
     expect,
     test,
     duration,
+    Msg,
 } from '@mattermost/playwright-lib';
 
 const POST_TYPE_AUTOTRANSLATION_CHANGE = 'system_autotranslation';
@@ -394,7 +395,9 @@ test(
 
         await expect(channelsPage.centerView.autotranslationBadge).toBeVisible({timeout: duration.half_min});
         await channelsPage.centerView.autotranslationBadge.hover();
-        await expect(page.getByRole('tooltip')).toContainText('Auto-translation is enabled');
+        await expect(page.getByRole('tooltip')).toContainMessage(
+            Msg.channel_header.autotranslationMessage.tooltip.title,
+        );
     },
 );
 

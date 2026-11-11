@@ -198,7 +198,7 @@ test('MM-T5655_1 removing message content and files should delete the post', asy
     // # Remove the file and the message, then save
     const editor = await openEditor(app, post);
     await removeFile(editor, 'sample_text_file.txt');
-    await editor.messageTextbox.locator.clear();
+    await editor.messageTextbox.clear();
     await editor.clickSaveButton();
 
     // # Confirm the deletion it asks for

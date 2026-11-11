@@ -24,7 +24,7 @@ test('MM-T376 MM-T377 completes a from: user search from the autocomplete', {tag
     // # Open search, type the from: modifier, and select the author from the autocomplete
     await app.globalHeader.search.clickOpenButton();
     await input.fill('from:');
-    await app.searchBox.suggestions.item(author.username).locator.click();
+    await app.searchBox.suggestions.item(author.username).select();
 
     // * Verify the username is placed into the query without the leading @
     await expect(input).toHaveValue(new RegExp(`from:${author.username}`));

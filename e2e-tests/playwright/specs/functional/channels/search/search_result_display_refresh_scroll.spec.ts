@@ -3,7 +3,7 @@
 
 import type {Post} from '@mattermost/types/posts';
 
-import {duration, expect, generated, test, type App} from '@mattermost/playwright-lib';
+import {duration, expect, generated, test, type App, Msg} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify message search displays matching results in the right-hand side, rendering markdown
@@ -34,8 +34,12 @@ test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
     // * Verify the matching result appears in the RHS with each markdown element rendered distinctly
     await expectSearchResult(app, post, query);
     const result = app.search.results.post(post);
-    await expect(result.messageText.locator.getByRole('heading', {level: 5})).toContainText('Hello');
-    await expect(result.messageText.locator.getByRole('code')).toContainText('Hello');
+    await expect(result.messageText.locator.getByRole('heading', {level: 5})).toContainMessage(
+        Msg.user.settings.notifications.desktopNotificationSound.soundHello,
+    );
+    await expect(result.messageText.locator.getByRole('code')).toContainMessage(
+        Msg.user.settings.notifications.desktopNotificationSound.soundHello,
+    );
     await expect(new generated.Markdown(page, 'markdown', result.locator).hashtagLink.locator).toHaveText('#hello');
 
     // # Jump to the conversation from the search result
@@ -44,7 +48,7 @@ test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
 
     // # Reopen search and clear the query text
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill('');
+    await app.searchBox.inputSearchbox.fill('');
 
     // * Verify the search results remain visible after clearing the query text
     await expect(result.locator).toBeVisible();
@@ -117,8 +121,8 @@ test('MM-T382 keeps search results unchanged while scrolling the center channel'
 
 async function submitSearch(app: App, query: string) {
     await app.globalHeader.search.clickOpenButton();
-    await app.searchBox.inputSearchbox.locator.fill(query);
-    await app.searchBox.inputSearchbox.locator.press('Enter');
+    await app.searchBox.inputSearchbox.fill(query);
+    await app.searchBox.inputSearchbox.press('Enter');
 }
 
 /** The post shows in the results; the search is retried while the server indexes it. */

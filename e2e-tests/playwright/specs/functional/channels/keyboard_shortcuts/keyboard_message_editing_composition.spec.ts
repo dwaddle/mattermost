@@ -22,7 +22,7 @@ test(
         const editor = app.postEdit.editor.messageTextbox.locator;
 
         // # Press Up arrow from the empty center message box
-        await app.center.postCreate.messageTextbox.locator.press('ArrowUp');
+        await app.center.postCreate.messageTextbox.press('ArrowUp');
 
         // * Verify the edit box opens with the last message
         await expect(editor).toHaveValue(message);
@@ -47,7 +47,7 @@ test(
         await expect(replyPost.messageText.locator).toHaveText(reply);
 
         // # Press Up arrow from the empty thread reply box
-        await app.rhs.postCreate.messageTextbox.locator.press('ArrowUp');
+        await app.rhs.postCreate.messageTextbox.press('ArrowUp');
 
         // * Verify the thread edit box opens with the reply, then closes with Escape
         await expect(editor).toHaveValue(reply);

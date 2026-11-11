@@ -30,10 +30,10 @@ test('MM-T472 Add a channel header to a GM', {tag: '@messaging'}, async ({pw}) =
     await expect(app.channelHeader.addHeaderButton.locator).not.toBeVisible();
 
     // # Hover the header, open the header editor, and save a header
-    await app.channelHeader.openMenuButton.locator.hover();
+    await app.channelHeader.openMenuButton.hover();
     const editor = await app.channelHeader.clickAddHeaderButton();
-    await editor.headerTextbox.locator.fill(header);
-    await editor.headerTextbox.locator.press('Enter');
+    await editor.headerTextbox.fill(header);
+    await editor.headerTextbox.press('Enter');
     await expect(editor.headerTextbox.locator).not.toBeVisible();
 
     // * Verify the header appears and a deletable system message records the update
@@ -77,10 +77,10 @@ test('MM-T473_1 Edit GM channel header', {tag: '@messaging'}, async ({pw}) => {
 
     // # Open the channel menu, choose Edit Header, and save the replacement
     const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.settingsMenuItem.locator.hover(); // a group message keeps Edit Header in the Settings submenu
+    await menu.settingsMenuItem.hover(); // a group message keeps Edit Header in the Settings submenu
     const editor = await menu.clickEditHeaderMenuItem();
-    await editor.headerTextbox.locator.fill(header);
-    await editor.headerTextbox.locator.press('Enter');
+    await editor.headerTextbox.fill(header);
+    await editor.headerTextbox.press('Enter');
     await expect(editor.headerTextbox.locator).not.toBeVisible();
 
     // * Verify the new header appears and a system message records the update
@@ -110,9 +110,9 @@ test('MM-T473_2 Edit GM channel header with a mention', {tag: '@messaging'}, asy
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, path: 'messages', channel: groupChannel});
     const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.settingsMenuItem.locator.hover(); // a group message keeps Edit Header in the Settings submenu
+    await menu.settingsMenuItem.hover(); // a group message keeps Edit Header in the Settings submenu
     const editor = await menu.clickEditHeaderMenuItem();
-    await editor.headerTextbox.locator.fill(header);
+    await editor.headerTextbox.fill(header);
     await editor.clickSaveButton();
     await expect(editor.headerTextbox.locator).not.toBeVisible();
 

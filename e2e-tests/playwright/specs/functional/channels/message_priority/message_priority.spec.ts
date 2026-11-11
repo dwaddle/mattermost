@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, type PlaywrightExtended, Msg} from '@mattermost/playwright-lib';
 
 type Priority = 'important' | 'urgent';
 
@@ -244,7 +244,7 @@ test(
         await removeLabelsButton.hover();
 
         // * Verify its tooltip appears
-        await expect(removeLabelsTooltip).toHaveText('Remove all labels');
+        await expect(removeLabelsTooltip).toHaveMessage(Msg.unified_labels.remove_all);
 
         // # Move the pointer back into the message input and put keyboard focus there
         await input.click();
@@ -260,7 +260,7 @@ test(
         // toBeFocusedWithFocusVisible returns the :focus-visible result rather than asserting it
         expect(await pw.toBeFocusedWithFocusVisible(removeLabelsButton)).toBe(true);
         await expect(removeLabelsButton).toHaveCSS('opacity', '1');
-        await expect(removeLabelsTooltip).toHaveText('Remove all labels');
+        await expect(removeLabelsTooltip).toHaveMessage(Msg.unified_labels.remove_all);
 
         // # Activate the focused control with the keyboard
         await removeLabelsButton.press('Enter');

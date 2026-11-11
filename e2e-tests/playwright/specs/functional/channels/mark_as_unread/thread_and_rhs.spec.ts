@@ -111,7 +111,7 @@ async function openThread(app: App, root: {id: string}) {
 // "Mark as Unread" item — used here since the menu item click is flaky against the virtualized post list.
 async function markRhsPostAsUnread(app: App, post: {id: string}) {
     const item = app.rhs.thread.post(post);
-    await item.messageText.locator.scrollIntoViewIfNeeded();
+    await item.messageText.scrollIntoView();
 
     // on the message text: the post's middle can land on the author's name, which opens their profile popover
     await item.messageText.locator.click({modifiers: ['Alt']});

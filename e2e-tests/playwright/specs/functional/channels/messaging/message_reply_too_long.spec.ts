@@ -38,7 +38,7 @@ test('MM-T106 Webapp: Message too long warning text', {tag: '@messaging'}, async
     // * The character-count warning is shown, without replacing the reply textbox
     await expect(composer.errorText.locator).toHaveText(tooLongWarning);
     await expect(composer.messageTextbox.locator).toBeVisible();
-    await composer.messageTextbox.locator.press('Enter');
+    await composer.messageTextbox.press('Enter');
 
     // * The warning remains, and nothing more was posted
     await expect(composer.errorText.locator).toHaveText(tooLongWarning);

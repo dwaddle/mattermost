@@ -140,7 +140,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
             await expect(receiverApp.burnOnReadConfirmationModal.dontShowAgainCheckbox.locator).toBeVisible();
 
             // # Check "don't show again" and confirm (combined action)
-            await receiverApp.burnOnReadConfirmationModal.dontShowAgainCheckbox.locator.check();
+            await receiverApp.burnOnReadConfirmationModal.dontShowAgainCheckbox.check();
             await receiverApp.burnOnReadConfirmationModal.clickConfirmButton();
 
             // * Verify post is deleted

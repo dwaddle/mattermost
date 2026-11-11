@@ -17,7 +17,7 @@ test(
         // # Log in and open the post for editing with ArrowUp
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: offTopic});
-        await app.center.postCreate.messageTextbox.locator.press('ArrowUp');
+        await app.center.postCreate.messageTextbox.press('ArrowUp');
         const editInput = app.postEdit.editor.messageTextbox.locator;
         await expect(editInput).toHaveValue(message);
         const suggestions = app.postEdit.editor.message.suggestions.itemItems;
@@ -75,7 +75,7 @@ test('MM-T174 Autocomplete should close if tildes are deleted using backspace', 
     // # Log in and open the post for editing with ArrowUp
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: offTopic});
-    await app.center.postCreate.messageTextbox.locator.press('ArrowUp');
+    await app.center.postCreate.messageTextbox.press('ArrowUp');
     const editInput = app.postEdit.editor.messageTextbox.locator;
     await expect(editInput).toHaveValue('foo');
     const suggestions = app.postEdit.editor.message.suggestions.itemItems;

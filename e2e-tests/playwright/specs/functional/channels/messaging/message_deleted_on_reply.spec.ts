@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify deleting a root post while another user drafts a reply removes the original message and does not send the draft.
@@ -36,8 +36,8 @@ test(
         await authorClient.deletePost(root.id);
 
         // * The other user sees the placeholder instead of the message, in the center and in the thread
-        await expect(centerRoot.messageText.locator).toHaveText('(message deleted)');
-        await expect(threadRoot.messageText.locator).toHaveText('(message deleted)');
+        await expect(centerRoot.messageText.locator).toHaveMessage(Msg.post_body.deleted);
+        await expect(threadRoot.messageText.locator).toHaveMessage(Msg.post_body.deleted);
 
         // * The draft wasn't sent: the thread still holds only the root
         expect(await app.rhs.thread.postKeys()).toEqual([root.id]);

@@ -21,7 +21,7 @@ test('moves a channel to Favorites from its sidebar menu', {tag: '@channel_sideb
     const menu = await row.clickOpenMenuButton();
 
     // # Open "Move to" and choose Favorites
-    await menu.moveToMenuItem.locator.hover();
+    await menu.moveToMenuItem.hover();
     await settle(menu.moveToMenu.category(favorites), (i) => i.click(), {
         wait: Api.UpdateSidebarCategoriesForTeamForUser,
     });

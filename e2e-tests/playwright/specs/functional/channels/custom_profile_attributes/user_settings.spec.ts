@@ -7,7 +7,7 @@ import type {Channel} from '@mattermost/types/channels';
 import type {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from './helpers';
 import {
@@ -506,8 +506,8 @@ test('MM-T5772 URL Validation in Custom Profile Attributes @custom_profile_attri
 
     // * Save button doesn't complete the operation with invalid URL
     await expect(profileModal.container.locator(`#error_customAttribute_${fieldId}`)).toBeVisible();
-    await expect(profileModal.container.locator(`#error_customAttribute_${fieldId}`)).toHaveText(
-        'Please enter a valid url.',
+    await expect(profileModal.container.locator(`#error_customAttribute_${fieldId}`)).toHaveMessage(
+        Msg.user.settings.general.validUrl,
     );
 
     // 5. Edit Website field and enter a valid URL
