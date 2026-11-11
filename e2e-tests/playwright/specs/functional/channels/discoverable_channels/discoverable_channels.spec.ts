@@ -11,10 +11,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  * (MM-68764). They only run when the DiscoverableChannels feature flag is
  * enabled on the server (e.g. MM_FEATUREFLAGS_DiscoverableChannels=true);
  * otherwise they self-skip.
- *
- * Written on the generated page objects: Browse Channels (rows keyed by channel name, with Request to join and
- * Withdraw), the channel switcher (results keyed by channel id), and the Request to Join and Join Private Channel
- * dialogs.
  */
 
 async function createDiscoverableChannel(adminClient: Client4, teamId: string): Promise<Channel> {
@@ -46,7 +42,7 @@ test.fixme(
 
         // # Log in as the non-member user and open Browse Channels
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         const browse = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickBrowseChannelsMenuItem();
 
         // # Find the discoverable channel
@@ -59,13 +55,13 @@ test.fixme(
 
         // # Request to join and confirm in the modal
         const requestModal = await row.clickRequestButton();
-        await requestModal.clickConfirmButton();
+        await requestModal.confirmButton.commit();
 
         // * The row flips to the pending "Withdraw" state
         await expect(row.withdrawButton.locator).toBeVisible();
 
         // # Withdraw the request
-        await row.clickWithdrawButton();
+        await row.withdrawButton.commit();
 
         // * The row returns to the "Request to join" state
         await expect(row.requestButton.locator).toBeVisible();
@@ -84,7 +80,7 @@ test(
 
         // # Log in as the non-member user
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open Find Channels and locate the discoverable channel
         const switcher = await app.lhs.header.clickFindChannelsButton();
@@ -93,7 +89,7 @@ test(
         await expect(result.locator).toBeVisible();
 
         // # Select the discoverable channel
-        await result.locator.click();
+        await result.select();
 
         // * The Request to Join modal opens instead of the legacy private-channel join
         // confirmation, and no "Join private channel" dialog is shown.

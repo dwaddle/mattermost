@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import type {ButtonEmphasis, ButtonSize as CompassButtonSize} from '@mattermost/compass-ui/components/button';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type SharedSize = 'xs' | 'sm' | 'md' | 'lg';
@@ -30,7 +31,6 @@ type Props = {
     defaultMessage?: React.ReactNode;
     extraClasses?: string;
 
-    /** Renders `<testId>--button`. */
     testId: TestId;
 };
 
@@ -68,7 +68,7 @@ const SaveButton: React.FC<Props> = ({
     return (
         <Button
             type='submit'
-            data-testid={`${testId}--button`}
+            data-testid={withRole(testId, 'button')}
             id='saveSetting'
             emphasis={emphasis}
             size={mapSize(size)}

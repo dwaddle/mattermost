@@ -4,13 +4,16 @@
 import type {Channel} from '@mattermost/types/channels';
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, generated, getAdminClient, test, type App} from '@mattermost/playwright-lib';
-
-// Written on the generated page objects: the System Console's Users and Teams setting and Save, the sidebar's "+" menu
-// and the new channel dialog (name, URL section, Create / Cancel), the team menu and the create-team form (name, Next,
-// URL, Finish), Channel Settings' and Team Settings' info tabs, the channel header, the channel switcher's results by
-// channel id, the search box and results by post id with their Jump link, the post list, and the channel header's
-// plugin actions (Calls).
+import {
+    expect,
+    generated,
+    getAdminClient,
+    test,
+    type App,
+    duration,
+    DefaultChannel,
+    Msg,
+} from '@mattermost/playwright-lib';
 
 const OBFUSCATED_SLUG_RE = /^[a-z0-9]{26}$/;
 
@@ -36,7 +39,7 @@ function expectReadableSlug(slug: string, expectedSlug?: string) {
 }
 
 /** Opens the channel (default: the team's town square; `@user` or a group channel name for messages). */
-async function goto(app: App, team: Pick<Team, 'name'> | string, channel = 'town-square') {
+async function goto(app: App, team: Pick<Team, 'name'> | string, channel: string = DefaultChannel.TownSquare) {
     const path = channel.startsWith('@') || /^[a-z0-9]{40}$/.test(channel) ? 'messages' : 'channels';
     await app.channelsPage.goto({team, channel, path});
 }
@@ -151,7 +154,7 @@ async function postMessage(app: App, message: string) {
 
 /** Finds a channel with the channel switcher (Ctrl/Cmd+K) and opens it. */
 async function switchTo(app: App, search: string, channel: Pick<Channel, 'id'>) {
-    await app.center.postCreate.messageTextbox.locator.press('ControlOrMeta+K');
+    await app.center.postCreate.messageTextbox.press('ControlOrMeta+K');
     await app.quickSwitchModal.searchTextbox.fill(search);
     const result = app.quickSwitchModal.suggestions.item(channel.id).locator;
     await expect(result).toBeVisible();
@@ -169,7 +172,7 @@ async function openAnonymousUrlsSetting(app: App) {
 /** Saves the System Console page and waits for the button to settle back to "Save". */
 async function saveConsole(app: App) {
     await app.admin.clickSaveButton();
-    await expect(app.admin.saveButton.locator).toHaveText('Save');
+    await expect(app.admin.saveButton.locator).toHaveMessage(Msg.save_button.save);
 }
 
 test.describe('Anonymous URLs', () => {
@@ -207,7 +210,7 @@ test.describe('Anonymous URLs', () => {
             await expect(setting.trueRadio.locator).not.toBeChecked();
 
             // # Enable anonymous URLs by clicking the True radio
-            await setting.trueRadio.locator.check();
+            await setting.trueRadio.check();
 
             // * Verify it is now true
             await expect(setting.trueRadio.locator).toBeChecked();
@@ -242,7 +245,7 @@ test.describe('Anonymous URLs', () => {
             await expect(setting.trueRadio.locator).toBeChecked();
 
             // # Reset to false for cleanup
-            await setting.falseRadio.locator.check();
+            await setting.falseRadio.check();
             await saveConsole(app);
         },
     );
@@ -290,7 +293,7 @@ test.describe('Anonymous URLs', () => {
             await expect(modal.nameTextbox.locator).toHaveValue('Anonymous Test Channel');
             await expect
                 .poll(async () => !(await modal.url.labelText.locator.isVisible()), {
-                    timeout: 30000,
+                    timeout: duration.half_min,
                     intervals: [500, 1500],
                 })
                 .toBe(true);
@@ -831,8 +834,8 @@ test.describe('Anonymous URLs', () => {
         // # Search for it from town square
         await goto(app, team);
         await app.globalHeader.search.clickOpenButton();
-        await app.searchBox.inputSearchbox.locator.fill(message);
-        await app.searchBox.inputSearchbox.locator.press('Enter');
+        await app.searchBox.inputSearchbox.fill(message);
+        await app.searchBox.inputSearchbox.press('Enter');
 
         const result = app.search.results.post({id: postId});
         await expect(result.messageText.locator).toContainText(message);

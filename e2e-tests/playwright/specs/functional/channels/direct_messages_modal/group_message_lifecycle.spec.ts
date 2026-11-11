@@ -29,22 +29,17 @@ async function closeGroupMessage(app: App, channel: {name: string}) {
 
 /**
  * @objective Verify muting a group message suppresses normal unread notification styling but keeps mention counts.
- *
- * Written on the generated page objects: the channel menu's Notification preferences dialog (mute, save) and the
- * group message's sidebar mention badge.
  */
 test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, offTopic} = await pw.initSetup();
     const [sender, secondParticipant] = await adminClient.createUsers(team.id, 2, 'gm-mute');
     const gmChannel = await adminClient.createGroupChannel([user.id, sender.id, secondParticipant.id]);
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
-
     // # Open the GM and mute it through notification preferences
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, path: 'messages', channel: gmChannel});
     const preferences = await (await app.channelHeader.clickOpenMenuButton()).clickNotificationPreferencesMenuItem();
-    await preferences.muteCheckbox.locator.check();
-    await preferences.clickSaveButton();
+    await preferences.muteCheckbox.check();
+    await preferences.saveButton.commit();
     await expect(preferences.saveButton.locator).not.toBeVisible();
 
     // # Post a normal message from another participant while away
@@ -74,9 +69,6 @@ test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
 
 /**
  * @objective Verify a closed group message can be reopened from the Direct Messages modal.
- *
- * Written on the generated page objects: the group message's sidebar item and its menu, the Direct Messages
- * picker's rows by user id, and the channel header.
  */
 test('MM-T478 Closing group message channels and re-opening via Direct Messages modal', async ({pw}) => {
     const {adminClient, userClient, team, user} = await pw.initSetup();
@@ -109,9 +101,6 @@ test('MM-T478 Closing group message channels and re-opening via Direct Messages 
  * @objective Verify that a closed group message can be reopened via a saved message and via the Direct Messages modal.
  *
  * MM-T477 and MM-T479 are duplicates of MM-T476 and are covered by this test.
- *
- * Written on the generated page objects: the Direct Messages picker, the composer and posts by id, the group
- * message's sidebar item and its menu, and Saved messages with the result's Jump link.
  */
 test(
     'MM-T476 MM-T477 MM-T479 closes and reopens a group message via saved messages and the DM modal',
@@ -120,8 +109,6 @@ test(
         // # Create the test user plus two more users on the team
         const {user, team, adminClient, userClient, townSquare} = await pw.initSetup();
         const [member1, member2] = await adminClient.createUsers(team.id, 2, 'gm');
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
         const {app, page} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 

@@ -6,6 +6,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Team} from '@mattermost/types/teams';
 
@@ -62,7 +63,7 @@ export class TeamIcon extends React.PureComponent<Props> {
             if (teamIconUrl) {
                 icon = (
                     <div
-                        data-testid={testIdScope ? `${testIdScope}.icon--img` : undefined}
+                        data-testid={part(testIdScope, 'icon', 'img')}
                         className={`TeamIcon__image TeamIcon__${size}`}
                         aria-label={
                             formatMessage({
@@ -79,7 +80,7 @@ export class TeamIcon extends React.PureComponent<Props> {
             } else {
                 icon = (
                     <div
-                        data-testid={testIdScope ? `${testIdScope}.initials--img` : undefined}
+                        data-testid={part(testIdScope, 'initials', 'img')}
                         className={`TeamIcon__initials TeamIcon__initials__${size}`}
                         aria-label={
                             formatMessage({

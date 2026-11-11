@@ -7,15 +7,11 @@ import {getChannelSlugFromUrl} from './helpers';
 
 /**
  * @objective Verify a mention posted in a group message creates an unread mention for the mentioned participant.
- *
- * Written on the generated page objects: the group message's sidebar link and mention badge, keyed by channel name.
  */
 test('MM-T469 Create a group message and post a mention for another user', async ({pw}) => {
     const {adminClient, team, user, offTopic} = await pw.initSetup();
     const [sender, secondParticipant] = await adminClient.createUsers(team.id, 2, 'gm-mention');
     const gmChannel = await adminClient.createGroupChannel([user.id, sender.id, secondParticipant.id]);
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
-
     // # View another channel, then have a participant mention the test user in the GM
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: offTopic});
@@ -39,9 +35,6 @@ test('MM-T469 Create a group message and post a mention for another user', async
  * @objective Verify that a group message can be created with a mention, closed, and then recreated with the same members.
  *
  * MM-T480 covers the same behavior as MM-T466 and is covered by this test.
- *
- * Written on the generated page objects: the Direct Messages picker's rows by user id, the posts by id, and the
- * group message's sidebar item and its menu, keyed by channel name.
  */
 test(
     'MM-T466 MM-T480 creates a group message with a mention, closes it, and recreates it',
@@ -50,8 +43,6 @@ test(
         // # Create the test user plus two more users on the team
         const {user, team, adminClient, townSquare} = await pw.initSetup();
         const [member1, member2] = await adminClient.createUsers(team.id, 2, 'gm');
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
         const {app, page} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 

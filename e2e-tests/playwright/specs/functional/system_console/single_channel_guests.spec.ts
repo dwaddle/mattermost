@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminItem, expect, generated, getRandomId, test} from '@mattermost/playwright-lib';
+import {AdminItem, expect, generated, getRandomId, test, duration} from '@mattermost/playwright-lib';
 
 test.describe('Single-channel guests', () => {
     test.setTimeout(duration.four_min);
@@ -83,7 +83,7 @@ test.describe('Single-channel guests', () => {
 
             // * Verify the single-channel guests card is visible
             await expect(app.admin.statistics.stat('singleChannelGuests').locator).toBeVisible({
-                timeout: 30000,
+                timeout: duration.half_min,
             });
 
             // * Verify the count is at least 1.
@@ -267,7 +267,7 @@ test.describe('Single-channel guests', () => {
 
             // * Verify the card title does NOT have error class (count is within limit)
             const cardTitle = app.admin.statistics.stat('singleChannelGuests').titleText.locator;
-            await expect(cardTitle).toBeVisible({timeout: 15000});
+            await expect(cardTitle).toBeVisible({timeout: duration.half_min});
             await expect(cardTitle).not.toHaveClass(/team_statistics--error/);
         },
     );
@@ -370,7 +370,7 @@ test.describe('Single-channel guests', () => {
 
             // * Verify the card title has error styling
             const cardTitle = app.admin.statistics.stat('singleChannelGuests').titleText.locator;
-            await expect(cardTitle).toBeVisible({timeout: 15000});
+            await expect(cardTitle).toBeVisible({timeout: duration.half_min});
             await expect(cardTitle).toHaveClass(/team_statistics--error/);
 
             // * Verify the dismissible guest limit banner is visible
@@ -434,7 +434,7 @@ test.describe('Single-channel guests', () => {
 
             // * Verify the single-channel guests card is visible
             const singleChannelGuestsCard = app.admin.statistics.stat('singleChannelGuests').locator;
-            await expect(singleChannelGuestsCard).toBeVisible({timeout: 15000});
+            await expect(singleChannelGuestsCard).toBeVisible({timeout: duration.half_min});
 
             // * Verify the count text is present — multi-channel guest should not increment it
             const readGuestCount = async () => {

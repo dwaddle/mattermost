@@ -6,14 +6,9 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify the keyboard shortcuts modal opens from Ctrl/Cmd+/ and /shortcuts, displays the
  * platform-specific upload shortcut, and can be closed by the shortcut, its close button, or Escape.
- *
- * Written on the generated page objects: the composer, the Keyboard Shortcuts modal, its Files section and its close
- * button.
  */
 test('MM-T1239 CTRL/CMD+/ and /shortcuts open keyboard shortcuts', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {user, team, townSquare: channel} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
     const input = app.center.postCreate.messageTextbox.locator;
@@ -30,7 +25,7 @@ test('MM-T1239 CTRL/CMD+/ and /shortcuts open keyboard shortcuts', async ({pw}) 
 
     // # Press Ctrl/Cmd+/ again
     // * Verify the modal closes
-    await modal.body.locator.press('ControlOrMeta+/');
+    await modal.body.press('ControlOrMeta+/');
     await expect(modal.body.locator).not.toBeVisible();
 
     // # Run /shortcuts, then close the modal with its close button
@@ -46,20 +41,15 @@ test('MM-T1239 CTRL/CMD+/ and /shortcuts open keyboard shortcuts', async ({pw}) 
     await input.fill('/shortcuts');
     await input.press('Enter');
     await expect(modal.body.locator).toBeVisible();
-    await modal.body.locator.press('Escape');
+    await modal.body.press('Escape');
     await expect(modal.body.locator).not.toBeVisible();
 });
 
 /**
  * @objective Verify Ctrl/Cmd+K channel switch keeps focus so typed characters are not lost.
- *
- * Written on the generated page objects: the channel switcher's results keyed by channel id, the channel header and
- * the composer.
  */
 test('MM-T1242 CTRL/CMD+K typed characters are not lost after switching channels', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const {user, team, townSquare, offTopic} = await pw.initSetup();
     const message = 'Hello World!';
 
     const {app, page} = await pw.testBrowser.login(user);
@@ -71,7 +61,7 @@ test('MM-T1242 CTRL/CMD+K typed characters are not lost after switching channels
     await input.press('ControlOrMeta+K');
     const switcher = app.quickSwitchModal;
     await switcher.searchTextbox.fill('off');
-    await switcher.suggestions.item(offTopic.id).locator.click();
+    await switcher.suggestions.item(offTopic.id).select();
     await expect(app.channelHeader.openMenuButton.locator).toContainText(offTopic.display_name);
 
     // # Type without clicking anywhere

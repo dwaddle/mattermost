@@ -9,7 +9,7 @@
  * @reference Public-channel ABAC feature
  */
 
-import {expect, getAdminClient, test} from '@mattermost/playwright-lib';
+import {expect, getAdminClient, test, duration, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {enableABACConfig, enableAPIUserDeletion} from '../team_settings/helpers';
 
@@ -24,9 +24,6 @@ import {
     waitForJobCompletion,
 } from './helpers';
 import {closeSettings, openChannel, openChannelSettings} from './access_rules';
-
-// Written on the generated page objects: Channel Settings' tabs, Team Settings' membership policies tab and policy
-// editor, the channel selector dialog, and Browse Channels' type filter and channel list.
 
 test.describe('ABAC - Public channels', () => {
     let ledger: CleanupLedger;
@@ -57,7 +54,7 @@ test.describe('ABAC - Public channels', () => {
         await enableABACConfig(adminClient);
 
         // # Open Channel Settings on the default (town-square) channel
-        const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+        const app = await openChannel(pw, adminUser, team, {name: DefaultChannel.TownSquare});
         const settings = await openChannelSettings(app);
 
         // * Membership Policy tab is NOT rendered for the default channel —
@@ -78,7 +75,7 @@ test.describe('ABAC - Public channels', () => {
         await adminClient.createPublicChannel(team.id, `Selectable ${pw.random.id()}`);
 
         // # Navigate to Team Settings → Membership Policies → New policy editor
-        const app = await openChannel(pw, adminUser, team, {name: 'town-square'});
+        const app = await openChannel(pw, adminUser, team, {name: DefaultChannel.TownSquare});
         const teamSettings = await (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
         await teamSettings.tabs.tab('access_policies').select();
         await teamSettings.accessPolicies.clickAddPolicyButton();
@@ -93,8 +90,8 @@ test.describe('ABAC - Public channels', () => {
         // (Rows are keyed by channel id. The earlier ids here were never rendered by this list,
         // so the check could not fail; the list's other rows show the ids are there.)
         await expect(results.channelItems.first()).toBeVisible();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-        const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
+        const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
+        const offTopic = await adminClient.getChannelByName(team.id, DefaultChannel.OffTopic);
         await expect(results.channel(townSquare).locator).toHaveCount(0);
         await expect(results.channel(offTopic).locator).toHaveCount(0);
 
@@ -154,7 +151,7 @@ test.describe('ABAC - Public channels', () => {
             'matching user must not be auto-joined when auto-add is OFF (advisory recommendation only)',
         ).not.toContain(matchingUser.id);
 
-        const app = await openChannel(pw, matchingUser, team, {name: 'town-square'});
+        const app = await openChannel(pw, matchingUser, team, {name: DefaultChannel.TownSquare});
 
         // # Open Browse Channels and switch the type filter to "Recommended channels"
         const browse = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickBrowseChannelsMenuItem();
@@ -166,7 +163,7 @@ test.describe('ABAC - Public channels', () => {
         await filter.filter('Recommended').click();
 
         // * The public channel appears in the Recommended results, by its row (keyed by channel name)
-        await expect(browse.list.channel(publicChannel).locator).toBeVisible({timeout: 15000});
+        await expect(browse.list.channel(publicChannel).locator).toBeVisible({timeout: duration.half_min});
     });
 
     test('Public channel with auto-add ON adds matching users; non-matching members are NOT removed', async ({pw}) => {

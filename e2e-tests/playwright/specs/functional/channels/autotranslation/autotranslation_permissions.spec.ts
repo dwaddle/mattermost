@@ -90,9 +90,8 @@ test.describe('autotranslation configuration tests', () => {
                 await adminClient.addToTeam(team.id, peerUser.id);
                 await adminClient.createDirectChannel([user.id, peerUser.id]);
 
-                const {app, channelsPage} = await pw.testBrowser.login(user);
-                await channelsPage.goto(team.name, `@${peerUser.username}`);
-                await channelsPage.toBeVisible();
+                const {app} = await pw.testBrowser.login(user);
+                await app.channelsPage.goto({team, channel: `@${peerUser.username}`, path: 'messages'});
 
                 const menu = await app.channelHeader.clickOpenMenuButton();
                 if (shouldShowEditHeader) {
@@ -153,9 +152,8 @@ test.describe('autotranslation configuration tests', () => {
                 await adminClient.addToTeam(team.id, peerUser.id);
                 await adminClient.createDirectChannel([user.id, peerUser.id]);
 
-                const {app, channelsPage} = await pw.testBrowser.login(user);
-                await channelsPage.goto(team.name, `@${peerUser.username}`);
-                await channelsPage.toBeVisible();
+                const {app} = await pw.testBrowser.login(user);
+                await app.channelsPage.goto({team, channel: `@${peerUser.username}`, path: 'messages'});
 
                 const menu = await app.channelHeader.clickOpenMenuButton();
                 await expect(menu.editHeaderMenuItem.locator).toBeVisible();
@@ -190,9 +188,8 @@ test.describe('autotranslation configuration tests', () => {
             await adminClient.addToTeam(team.id, otherUser.id);
             const dmChannel = await adminClient.createDirectChannel([user.id, otherUser.id]);
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, `@${otherUser.username}`);
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: `@${otherUser.username}`, path: 'messages'});
 
             const settings = await openChannelSettings(app);
 
@@ -234,9 +231,8 @@ test.describe('autotranslation configuration tests', () => {
             });
             await adminClient.addToChannel(user.id, created.id);
 
-            const {app, channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const {app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channelName});
 
             const settings = await openChannelSettings(app);
             const configTabVisible = await settings.tabs.configurationTab.locator.isVisible();

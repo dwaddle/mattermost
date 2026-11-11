@@ -105,7 +105,6 @@ const makeOption = (testId?: string) => (props: any) => {
     );
 };
 
-// The menu is `<testId>.menu` (none without a testId).
 const makeMenu = (testId?: string) => (props: any) => {
     return (
         <components.Menu
