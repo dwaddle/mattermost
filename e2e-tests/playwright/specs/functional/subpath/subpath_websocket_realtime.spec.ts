@@ -16,7 +16,7 @@ test.describe('Subpath - websocket real-time delivery', {tag: '@subpath'}, () =>
         const {user, team, adminClient} = await pw.initSetup();
         const [otherUser] = await adminClient.createUsers(team.id, 1, 'subpathws');
 
-        const {channelsPage} = await pw.testBrowser.login(user);
+        const {app, channelsPage} = await pw.testBrowser.login(user);
         await channelsPage.goto(team.name, 'town-square');
         await channelsPage.toBeVisible();
 
@@ -25,10 +25,10 @@ test.describe('Subpath - websocket real-time delivery', {tag: '@subpath'}, () =>
 
         // # Another user posts to the same channel via API
         const {client: otherUserClient} = await pw.makeClient(otherUser);
-        await otherUserClient.createPost({channel_id: townSquare.id, message});
+        const post = await otherUserClient.createPost({channel_id: townSquare.id, message});
 
         // * Verify the message appears live, without a page reload
-        await expect(channelsPage.centerView.container.getByText(message, {exact: true})).toBeVisible({
+        await expect(app.center.postList.post(post).messageText.locator).toHaveText(message, {
             timeout: pw.duration.ten_sec,
         });
     });

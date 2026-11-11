@@ -35,5 +35,5 @@ export {
     type AdminSettingKey,
     type AdminSettingPath,
 } from './settings';
-export {KeyedList, keyOfTestId, Scope, type ContentFilter} from './scope';
+export {KeyedList, keyOfElement, keyOfTestId, Scope, testIdSelector, type ContentFilter} from './scope';
 export {settle, settleAll, SettleError, type SettleOptions} from './settle';

@@ -122,9 +122,9 @@ export async function select(app: App, attributes: Editable, field: Field, optio
 
 /** Removes a selected option with its chip's remove control (which doesn't open the menu). */
 export async function deselect(attributes: Editable, field: Field, option: string) {
-    await row(attributes, field)
-        .locator.getByRole('button', {name: `Remove ${option}`, exact: true})
-        .click();
+    const exactly = new RegExp(`^${option.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+    const chip = await row(attributes, field).chipList.itemWith({text: exactly});
+    await chip.removeButton.click();
 }
 
 /**

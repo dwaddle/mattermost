@@ -185,6 +185,35 @@ export function keyOfTestId(testId: string): string {
     return /:((?:(?!--)[^.:])+)(?:--[a-z]+)?$/.exec(testId)?.[1] ?? testId;
 }
 
+/** The key of a keyed element found some other way (a list item filtered by its text): `center.post_list.post:abc` -> `abc`. */
+export async function keyOfElement(element: Locator): Promise<string> {
+    const testId = await element.getAttribute('data-testid');
+    if (!testId) {
+        throw new Error(`${String(element)} has no testid to read a key from`);
+    }
+    return keyOfTestId(testId);
+}
+
+/**
+ * A CSS selector for a generated element, for the APIs that take selectors rather than locators (axe's `include()`,
+ * scripts that run in the page): a driver or a scope by its testid, or every item of a keyed list, optionally only the
+ * items rendered as `tag` (`testIdSelector(app.settings.sectionList, {tag: 'section'})`).
+ */
+export function testIdSelector(
+    target: {meta: {testId: string}} | Scope | KeyedList<string, unknown>,
+    opts: {tag?: string} = {},
+): string {
+    const tag = opts.tag ?? '';
+    if (target instanceof KeyedList) {
+        const [prefix, suffix] = target.label.split('{key}');
+        if (suffix === undefined) {
+            throw new Error(`${target.label} is not a keyed testid pattern`);
+        }
+        return `${tag}[data-testid^="${prefix}"]${suffix ? `[data-testid$="${suffix}"]` : ''}`;
+    }
+    return `${tag}[data-testid="${target instanceof Scope ? target.scope : target.meta.testId}"]`;
+}
+
 function filterOf(filter: ContentFilter): {hasText?: string | RegExp; has?: Locator} {
     const hasText = filter.message ? formatMessage(filter.message, filter.values) : filter.text;
     return {...(hasText === undefined ? {} : {hasText}), ...(filter.has ? {has: filter.has} : {})};

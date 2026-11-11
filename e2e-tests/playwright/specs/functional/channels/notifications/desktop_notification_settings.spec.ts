@@ -36,7 +36,7 @@ test(
 
         // * Verify the post is rendered in the focused channel without a desktop notification
         await expect(app.center.postList.post(post).messageText.locator).toContainText(message);
-        await expectNoNotification(pw, page);
+        await expectNoNotification(page);
     },
 );
 

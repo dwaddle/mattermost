@@ -100,10 +100,15 @@ export async function expectSingleNotification(
 }
 
 /** No notification fired. Call it after a signal that the client processed the post (an unread channel, a later post). */
-export async function expectNoNotification(pw: PlaywrightExtended, page: Page) {
-    // eslint-disable-next-line @mattermost/e2e-no-wait-for-timeout -- an absence check: the notification is sent asynchronously after the post is processed
-    await pw.wait(duration.one_sec);
-    expect(await page.evaluate(() => window.getNotifications())).toHaveLength(0);
+export async function expectNoNotification(page: Page) {
+    // a notification shows within a second of the post that triggers it; fail as soon as one does
+    const notified = await page
+        .waitForFunction(() => window.getNotifications().length > 0, undefined, {timeout: duration.one_sec})
+        .then(
+            () => true,
+            () => false,
+        );
+    expect(notified, 'no desktop notification should show').toBe(false);
 }
 
 /**
@@ -205,7 +210,7 @@ export async function runNotificationSettingCase(pw: PlaywrightExtended, testCas
             });
         } else {
             await expectUnread(app, channel);
-            await expectNoNotification(pw, page);
+            await expectNoNotification(page);
         }
 
         await pw.clearCapturedNotifications(page);
@@ -219,6 +224,6 @@ export async function runNotificationSettingCase(pw: PlaywrightExtended, testCas
         const notifications = await pw.waitForNotification(page);
         expect(notifications).toHaveLength(1);
     } else {
-        await expectNoNotification(pw, page);
+        await expectNoNotification(page);
     }
 }

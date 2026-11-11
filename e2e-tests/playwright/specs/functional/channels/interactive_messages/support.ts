@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Locator} from '@playwright/test';
-
-import {expect, type App} from '@mattermost/playwright-lib';
+import {expect, keyOfElement, type App} from '@mattermost/playwright-lib';
 
 /**
  * Posts with mm_blocks on the generated page objects. A post's blocks are `<post>.blocks`, an action button
@@ -13,12 +11,6 @@ import {expect, type App} from '@mattermost/playwright-lib';
 
 export type CenterPost = ReturnType<App['center']['postList']['post']>;
 export type ThreadPost = ReturnType<App['rhs']['thread']['post']>;
-
-/** The id a keyed element's testid ends with (`rhs.thread.post:<id>` -> `<id>`). */
-async function keyOf(item: Locator) {
-    const testId = await item.getAttribute('data-testid');
-    return testId!.slice(testId!.lastIndexOf(':') + 1);
-}
 
 /** The center channel's most recent post, once it shows. */
 export async function lastCenterPost(app: App): Promise<CenterPost> {
@@ -33,7 +25,7 @@ export async function lastCenterPost(app: App): Promise<CenterPost> {
 export async function centerPostContaining(app: App, text: string | RegExp): Promise<CenterPost> {
     const item = app.center.postList.postItems.filter({hasText: text}).last();
     await expect(item).toBeVisible();
-    return app.center.postList.post({id: await keyOf(item)});
+    return app.center.postList.post({id: await keyOfElement(item)});
 }
 
 /** Opens a center post's thread from its Reply button, and waits for the thread to show. */
@@ -47,5 +39,5 @@ export async function openThread(app: App, post: CenterPost) {
 export async function threadPostContaining(app: App, text: string | RegExp): Promise<ThreadPost> {
     const item = app.rhs.thread.postItems.filter({hasText: text}).last();
     await expect(item).toBeVisible();
-    return app.rhs.thread.post({id: await keyOf(item)});
+    return app.rhs.thread.post({id: await keyOfElement(item)});
 }

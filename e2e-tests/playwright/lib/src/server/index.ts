@@ -65,6 +65,8 @@ export {
     removeTestWebappPlugins,
     testWebappPluginMarkerTestId,
     testWebappPluginRoute,
+    testWebappPluginRouteTestId,
+    webappPluginScript,
 } from './test_webapp_plugin';
 export type {WebappPluginBundleOptions} from './test_webapp_plugin';
 export {isWebhookTestServerReachable, setupWebhookTestServer} from './webhook_server';

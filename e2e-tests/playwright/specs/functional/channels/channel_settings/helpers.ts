@@ -22,7 +22,7 @@
 import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {newTestPassword, getRandomId, type PlaywrightClient4} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, getRandomId, type PlaywrightClient4} from '@mattermost/playwright-lib';
 
 import {assignChannelsToPolicy, deletePolicy, unassignChannelsFromPolicy} from '../team_settings/helpers';
 
@@ -240,20 +240,22 @@ export async function waitForJobCompletion(
 ): Promise<any> {
     const timeoutMs = opts.timeoutMs ?? 60_000;
     const pollIntervalMs = opts.pollIntervalMs ?? 1_000;
-    const deadline = Date.now() + timeoutMs;
 
-    while (Date.now() < deadline) {
-        const job: any = await client.getJob(jobId);
-        if (job.status === 'success') {
-            return job;
-        }
-        if (job.status === 'error' || job.status === 'canceled') {
-            const detail = job?.data?.message ?? job?.message ?? job?.error ?? JSON.stringify(job?.data ?? job);
-            throw new Error(`Job ${jobId} finished with status ${job.status}: ${detail}`);
-        }
-        await new Promise((res) => setTimeout(res, pollIntervalMs));
+    let job: any;
+    await expect
+        .poll(
+            async () => {
+                job = await client.getJob(jobId);
+                return job.status;
+            },
+            {timeout: timeoutMs, intervals: [pollIntervalMs], message: `Job ${jobId} should reach a terminal status`},
+        )
+        .toMatch(/^(success|error|canceled)$/);
+    if (job.status !== 'success') {
+        const detail = job?.data?.message ?? job?.message ?? job?.error ?? JSON.stringify(job?.data ?? job);
+        throw new Error(`Job ${jobId} finished with status ${job.status}: ${detail}`);
     }
-    throw new Error(`Job ${jobId} did not reach a terminal status within ${timeoutMs}ms`);
+    return job;
 }
 
 /**

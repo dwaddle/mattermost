@@ -47,7 +47,7 @@ test.describe('WYSIWYG editor - quoting selected text', TAGS, () => {
 
         // * Verify the reply went below the quote, not into it
         await expect(editor.getByRole('blockquote')).toHaveText('Diam sapien pellentesque');
-        await expect(editor.getByRole('paragraph').filter({hasText: 'What do you mean?'})).toBeVisible();
+        await expect(editor.getByRole('paragraph').last()).toHaveText('What do you mean?');
 
         // # Send the message
         await expect(composer.sendButton.locator).toBeEnabled();

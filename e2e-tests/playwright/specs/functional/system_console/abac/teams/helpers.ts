@@ -6,6 +6,8 @@ import type {Locator, Page} from '@playwright/test';
 
 import {expect, generated} from '@mattermost/playwright-lib';
 
+import {expect} from '@mattermost/playwright-lib';
+
 /**
  * Enable team-membership ABAC end to end: the umbrella attribute-based access
  * control setting plus the `TeamMembershipAccessControl` feature flag that gates
@@ -89,13 +91,12 @@ export async function triggerSyncJobAndPoll(
                 return current.status;
             },
             {
-                message: 'access_control_team_sync job did not finish',
                 timeout: timeoutMs,
                 intervals: [pollIntervalMs],
+                message: 'the access_control_team_sync job should finish',
             },
         )
         .toMatch(/^(success|warning|error)$/);
-
     if (current.status === 'error') {
         throw new Error(`access_control_team_sync job failed: ${JSON.stringify(current)}`);
     }

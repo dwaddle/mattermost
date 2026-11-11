@@ -14,7 +14,7 @@ import type {
 } from '@playwright/test';
 
 import type {ExtendedFixtures} from '@mattermost/playwright-lib';
-import {duration, test as base} from '@mattermost/playwright-lib';
+import {duration, expect, test as base} from '@mattermost/playwright-lib';
 
 export {expect} from '@mattermost/playwright-lib';
 
@@ -36,23 +36,33 @@ const LOCK_PATH = path.join(os.tmpdir(), 'mm-e2e-ai-bridge-mock.lock');
 const RETRY_INTERVAL_MS = duration.half_sec;
 const LOCK_ACQUIRE_BUDGET_MS = duration.four_min;
 
-function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+/** Creates the lock file, or returns undefined while another worker holds it. */
+async function tryLock() {
+    try {
+        return await fs.open(LOCK_PATH, 'wx');
+    } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
+            throw error;
+        }
+        return undefined;
+    }
 }
 
 async function acquireAIBridgeLock(): Promise<() => Promise<void>> {
-    let handle: Awaited<ReturnType<typeof fs.open>>;
-    for (;;) {
-        try {
-            handle = await fs.open(LOCK_PATH, 'wx');
-            break;
-        } catch (error) {
-            if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
-                throw error;
-            }
-            await sleep(RETRY_INTERVAL_MS);
-        }
-    }
+    let handle: Awaited<ReturnType<typeof fs.open>> | undefined;
+    await expect
+        .poll(
+            async () => {
+                handle ??= await tryLock();
+                return handle !== undefined;
+            },
+            {
+                timeout: LOCK_ACQUIRE_BUDGET_MS,
+                intervals: [RETRY_INTERVAL_MS],
+                message: `another worker should release the AI bridge mock lock (${LOCK_PATH})`,
+            },
+        )
+        .toBe(true);
 
     let released = false;
     return async () => {
@@ -60,7 +70,7 @@ async function acquireAIBridgeLock(): Promise<() => Promise<void>> {
             return;
         }
         released = true;
-        await handle.close().catch(() => {});
+        await handle?.close().catch(() => {});
         await fs.rm(LOCK_PATH, {force: true});
     };
 }

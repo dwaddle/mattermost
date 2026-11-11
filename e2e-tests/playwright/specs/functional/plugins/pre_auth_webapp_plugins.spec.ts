@@ -15,6 +15,8 @@ import {
     test,
     testWebappPluginMarkerTestId,
     testWebappPluginRoute,
+    testWebappPluginRouteTestId,
+    webappPluginScript,
 } from '@mattermost/playwright-lib';
 
 type WebappPluginsResponse = Array<{id: string; [key: string]: unknown}>;
@@ -148,7 +150,7 @@ test.describe('Pre-auth webapp plugins', () => {
         await expect(page.getByTestId(testWebappPluginMarkerTestId(preAuthTestPluginId))).toBeAttached();
 
         // * Verify the post-auth plugin bundle was not loaded
-        await expect(page.locator(`script[id="plugin_${postAuthTestPluginId}"]`)).toHaveCount(0);
+        await expect(webappPluginScript(page, postAuthTestPluginId)).toHaveCount(0);
         await expect(page.getByTestId(testWebappPluginMarkerTestId(postAuthTestPluginId))).toHaveCount(0);
 
         // * Verify no page errors were raised
@@ -180,7 +182,7 @@ test.describe('Pre-auth webapp plugins', () => {
 
             // * Verify the post-auth plugin's route renders after redirect
             await expect(page).toHaveURL(new RegExp(`${route}$`));
-            await expect(page.getByTestId(`e2e-route-${postAuthTestPluginId}`)).toHaveText(
+            await expect(page.getByTestId(testWebappPluginRouteTestId(postAuthTestPluginId))).toHaveText(
                 `e2e route ${postAuthTestPluginId}`,
             );
 

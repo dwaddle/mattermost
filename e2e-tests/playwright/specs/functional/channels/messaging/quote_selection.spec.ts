@@ -235,6 +235,7 @@ test('does not offer to quote in an archived channel', TAGS, async ({pw}) => {
     // The button decides whether to show in a zero-delay timer after mouseup: let the page run a timer tick
     // and then a frame, so that decision has been made and rendered before checking the button stays hidden.
     await app.page.evaluate(
+        // eslint-disable-next-line @mattermost/e2e-no-wait-for-timeout -- a zero-delay tick queued behind the app's own, not a sleep
         () => new Promise((resolve) => setTimeout(() => requestAnimationFrame(() => resolve(null)))),
     );
     await expect(app.quoteSelection.quoteButton.locator).not.toBeVisible();

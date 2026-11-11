@@ -66,26 +66,9 @@ const CROSS_AREA_IMPORTS = {
 // Files where the spec rules' extended checks (template, variable, hasText and selector locators; pw.wait and timer
 // sleeps) found what the area-fix wave moves: there the two rules stay warnings until then (see the last block).
 const EXTENDED_LINT_PENDING = [
-    'specs/accessibility/channels/settings_dialog/support.ts',
-    'specs/functional/channels/ai/ai_bridge_fixture.ts',
-    'specs/functional/channels/ai/recaps_support.ts',
     'specs/functional/channels/autotranslation/autotranslation.spec.ts',
     'specs/functional/channels/autotranslation/autotranslation_users.spec.ts',
-    'specs/functional/channels/autotranslation/support.ts',
-    'specs/functional/channels/channel_attributes/surface.ts',
-    'specs/functional/channels/channel_settings/helpers.ts',
     'specs/functional/channels/custom_groups/custom_group_management.spec.ts',
-    'specs/functional/channels/interactive_messages/support.ts',
-    'specs/functional/channels/messaging/quote_selection.spec.ts',
-    'specs/functional/channels/notifications/desktop_notification_support.ts',
-    'specs/functional/channels/post_list/scroll_helpers.ts',
-    'specs/functional/channels/search/search_date_filter_helpers.ts',
-    'specs/functional/channels/team_settings/helpers.ts',
-    'specs/functional/channels/wysiwyg_editor/quote_selection.spec.ts',
-    'specs/functional/plugins/pre_auth_webapp_plugins.spec.ts',
-    'specs/functional/saml/ldap_sync_wait.ts',
-    'specs/functional/subpath/subpath_websocket_realtime.spec.ts',
-    'specs/functional/system_console/abac/teams/helpers.ts',
 ];
 
 export default [

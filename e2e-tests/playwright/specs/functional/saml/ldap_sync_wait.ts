@@ -3,7 +3,7 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {duration, expect, wait} from '@mattermost/playwright-lib';
+import {duration, expect} from '@mattermost/playwright-lib';
 
 export async function runLdapSyncAndWait(adminClient: Client4) {
     const existingIds = new Set((await adminClient.getJobsByType('ldap_sync')).map((job) => job.id));
@@ -23,23 +23,25 @@ export async function runLdapSyncAndWait(adminClient: Client4) {
     // in server/channels/jobs/jobs_watcher.go), so pickup alone can take up to that long in the worst
     // case; actual sync work on top of that measured 8-18s total locally across several runs.
     // half_min (30s) covers that worst case (~15s poll wait + up to ~15s of actual work/CI variance).
-    const deadline = Date.now() + duration.half_min;
-    while (true) {
-        const jobs = await Promise.all(createdIds.map((id) => adminClient.getJob(id)));
-        const failed = jobs.find((job) => job.status === 'error' || job.status === 'canceled');
-        if (failed) {
-            throw new Error(
-                `ldap_sync job ${failed.id} ended with status ${failed.status}: ${JSON.stringify(failed.data)}`,
-            );
-        }
-        if (jobs.every((job) => job.status === 'success')) {
-            return;
-        }
-        if (Date.now() >= deadline) {
-            throw new Error(
-                `ldap_sync jobs did not succeed: ${JSON.stringify(jobs.map((job) => ({id: job.id, status: job.status, data: job.data})))}`,
-            );
-        }
-        await wait(duration.two_sec);
+    let jobs: Array<Awaited<ReturnType<typeof adminClient.getJob>>> = [];
+    await expect
+        .poll(
+            async () => {
+                jobs = await Promise.all(createdIds.map((id) => adminClient.getJob(id)));
+                const failed = jobs.find((job) => job.status === 'error' || job.status === 'canceled');
+                return failed ? 'failed' : jobs.every((job) => job.status === 'success');
+            },
+            {
+                timeout: duration.half_min,
+                intervals: [duration.two_sec],
+                message: 'the ldap_sync jobs should finish',
+            },
+        )
+        .not.toBe(false);
+    const failed = jobs.find((job) => job.status !== 'success');
+    if (failed) {
+        throw new Error(
+            `ldap_sync job ${failed.id} ended with status ${failed.status}: ${JSON.stringify(failed.data)}`,
+        );
     }
 }

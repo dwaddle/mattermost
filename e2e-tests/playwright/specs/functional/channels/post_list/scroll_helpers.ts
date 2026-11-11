@@ -3,7 +3,7 @@
 
 import {expect, type Locator, type Page} from '@playwright/test';
 
-import {generated, type App} from '@mattermost/playwright-lib';
+import {generated, testIdSelector, type App} from '@mattermost/playwright-lib';
 
 /** The center channel's most recent post, once the list has one. */
 export async function lastPost(app: App) {
@@ -52,25 +52,26 @@ export type PostListScrollWatcher = {
  */
 export async function watchPostListScroll(page: Page, channelId: string): Promise<PostListScrollWatcher> {
     const SCROLL_WATCHER_KEY = 'postListScrollWatcher';
+    const {postList} = new generated.App(page).center;
+    const scrollerSelector = testIdSelector(postList.scroller);
+    const separatorSelector = testIdSelector(postList.newMessages);
 
     type WatcherState = {observations: ScrollObservation[]; lastKey: string};
 
     await page.addInitScript(
-        ([key, channelId]) => {
+        ([key, channelId, scroller, separatorSel]) => {
             const state: WatcherState = {observations: [], lastKey: ''};
             (window as unknown as Record<string, WatcherState>)[key] = state;
 
             const sample = () => {
-                // the center post list's scroller (`center.post_list.scroller`), for this channel's list only
-                const container = document.querySelector(
-                    `[data-channel-id="${channelId}"] [data-testid="center.post_list.scroller"]`,
-                );
+                // the center post list's scroller, for this channel's list only
+                const container = document.querySelector(`[data-channel-id="${channelId}"] ${scroller}`);
 
                 if (container) {
                     const containerRect = container.getBoundingClientRect();
                     const distanceFromBottom = container.scrollHeight - container.clientHeight - container.scrollTop;
 
-                    const separator = document.querySelector('[data-testid="center.post_list.new_messages"]');
+                    const separator = document.querySelector(separatorSel);
                     const separatorViewportTop = separator ? separator.getBoundingClientRect().top : null;
                     const separatorTop =
                         separator && separatorViewportTop !== null ? separatorViewportTop - containerRect.top : null;
@@ -106,7 +107,7 @@ export async function watchPostListScroll(page: Page, channelId: string): Promis
 
             requestAnimationFrame(sample);
         },
-        [SCROLL_WATCHER_KEY, channelId],
+        [SCROLL_WATCHER_KEY, channelId, scrollerSelector, separatorSelector],
     );
 
     const getObservations = async () => {

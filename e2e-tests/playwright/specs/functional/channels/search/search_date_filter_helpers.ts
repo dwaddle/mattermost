@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, Msg, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
 const FIRST_DATE_EARLY = Date.UTC(2018, 5, 5, 9, 30);
 const FIRST_DATE_LATER = Date.UTC(2018, 5, 5, 9, 45);
@@ -109,7 +109,7 @@ export async function searchAndValidate(search: DateFilterSearch, query: string,
     await input.press('Enter');
 
     if (expectedMessages.length === 0) {
-        await expect(app.page.getByText(`No results for “${query}”`, {exact: true})).toBeVisible();
+        await expect(app.noResults.titleText).toHaveMessage(Msg.no_results.search.title, {channelName: query});
         await expect(app.search.results.postItems).toHaveCount(0);
         return;
     }

@@ -13,6 +13,7 @@ export {
     effect,
     formatMessage,
     KeyedList,
+    keyOfElement,
     keyOfTestId,
     msg,
     pluginKey,
@@ -21,6 +22,7 @@ export {
     Scope,
     settingTestKey,
     suggestionTestKey,
+    testIdSelector,
     textTestKey,
     withElement,
     type AdminSettingIds,
@@ -141,6 +143,8 @@ export {
     removeTestWebappPlugins,
     testWebappPluginMarkerTestId,
     testWebappPluginRoute,
+    testWebappPluginRouteTestId,
+    webappPluginScript,
 } from './server';
 export type {
     EnsureDemoPluginOptions,

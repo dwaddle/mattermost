@@ -3,7 +3,7 @@
 
 import type {Locator} from '@playwright/test';
 
-import {expect, generated, type App} from '@mattermost/playwright-lib';
+import {expect, generated, keyOfElement, type App} from '@mattermost/playwright-lib';
 
 export type CenterPost = ReturnType<App['center']['postList']['post']>;
 
@@ -11,8 +11,7 @@ export type CenterPost = ReturnType<App['center']['postList']['post']>;
 export async function centerPostContaining(app: App, text: string | RegExp, timeout?: number): Promise<CenterPost> {
     const item = app.center.postList.postItems.filter({hasText: text}).last();
     await expect(item).toBeVisible({timeout});
-    const testId = (await item.getAttribute('data-testid'))!;
-    return app.center.postList.post({id: testId.slice(testId.lastIndexOf(':') + 1)});
+    return app.center.postList.post({id: await keyOfElement(item)});
 }
 
 /** A center post found some other way (a filtered list item): the generated post rooted in that element. */

@@ -187,31 +187,19 @@ export async function waitForAttributeViewToInclude(
     timeoutMs = 45_000,
     pollIntervalMs = 1_000,
 ): Promise<void> {
-    const deadline = Date.now() + timeoutMs;
-    let lastSeen = new Set<string>();
-    while (Date.now() < deadline) {
-        const response: any = await (adminClient as any).doFetch(
-            `${adminClient.getBaseRoute()}/access_control_policies/cel/test`,
-            {
-                method: 'post',
-                body: JSON.stringify({
-                    expression,
-                    term: '',
-                    after: '',
-                    limit: 1000,
-                }),
+    await expect
+        .poll(
+            async () => {
+                const seen = await usersMatchingExpression(adminClient, expression);
+                return expectedUserIds.filter((id) => !seen.has(id));
             },
-        );
-        lastSeen = new Set<string>((response?.users || []).map((u: any) => u.id));
-        if (expectedUserIds.every((id) => lastSeen.has(id))) {
-            return;
-        }
-        await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-    }
-    const missing = expectedUserIds.filter((id) => !lastSeen.has(id));
-    throw new Error(
-        `UserAttributeView did not include users [${missing.join(', ')}] for expression "${expression}" within ${timeoutMs}ms`,
-    );
+            {
+                timeout: timeoutMs,
+                intervals: [pollIntervalMs],
+                message: `UserAttributeView should include these users for expression "${expression}"`,
+            },
+        )
+        .toEqual([]);
 }
 
 export async function waitForAttributeViewToExclude(
@@ -221,31 +209,36 @@ export async function waitForAttributeViewToExclude(
     timeoutMs = 45_000,
     pollIntervalMs = 1_000,
 ): Promise<void> {
-    const deadline = Date.now() + timeoutMs;
-    let lastSeen = new Set<string>();
-    while (Date.now() < deadline) {
-        const response: any = await (adminClient as any).doFetch(
-            `${adminClient.getBaseRoute()}/access_control_policies/cel/test`,
-            {
-                method: 'post',
-                body: JSON.stringify({
-                    expression,
-                    term: '',
-                    after: '',
-                    limit: 1000,
-                }),
+    await expect
+        .poll(
+            async () => {
+                const seen = await usersMatchingExpression(adminClient, expression);
+                return excludedUserIds.filter((id) => seen.has(id));
             },
-        );
-        lastSeen = new Set<string>((response?.users || []).map((u: any) => u.id));
-        if (excludedUserIds.every((id) => !lastSeen.has(id))) {
-            return;
-        }
-        await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-    }
-    const stillPresent = excludedUserIds.filter((id) => lastSeen.has(id));
-    throw new Error(
-        `UserAttributeView still includes users [${stillPresent.join(', ')}] for expression "${expression}" after ${timeoutMs}ms`,
+            {
+                timeout: timeoutMs,
+                intervals: [pollIntervalMs],
+                message: `UserAttributeView should no longer include these users for expression "${expression}"`,
+            },
+        )
+        .toEqual([]);
+}
+
+/** The ids of the users the CEL test endpoint matches for `expression`. */
+async function usersMatchingExpression(adminClient: Client4, expression: string): Promise<Set<string>> {
+    const response: any = await (adminClient as any).doFetch(
+        `${adminClient.getBaseRoute()}/access_control_policies/cel/test`,
+        {
+            method: 'post',
+            body: JSON.stringify({
+                expression,
+                term: '',
+                after: '',
+                limit: 1000,
+            }),
+        },
     );
+    return new Set<string>((response?.users || []).map((u: any) => u.id));
 }
 
 export async function createPrivateChannel(client: Client4, teamId: string) {

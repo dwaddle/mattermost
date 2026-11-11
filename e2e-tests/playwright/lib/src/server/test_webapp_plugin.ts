@@ -4,7 +4,7 @@
 import {gzipSync} from 'node:zlib';
 
 import type {Client4} from '@mattermost/client';
-import {expect} from '@playwright/test';
+import {expect, type Locator, type Page} from '@playwright/test';
 
 import {getAdminClient} from './init';
 import {getPluginStatus, isPluginActive} from './plugin';
@@ -30,6 +30,16 @@ export function testWebappPluginMarkerTestId(pluginId: string) {
 /** Path of the custom route a test webapp plugin registers; it renders `e2e route <id>`. */
 export function testWebappPluginRoute(pluginId: string) {
     return `/plug/${pluginId}/e2e`;
+}
+
+/** Test id of the element a test webapp plugin's custom route renders. */
+export function testWebappPluginRouteTestId(pluginId: string) {
+    return `e2e-route-${pluginId}`;
+}
+
+/** The `<script>` the webapp adds to load a plugin's bundle (`plugin_<id>`). */
+export function webappPluginScript(page: Page, pluginId: string): Locator {
+    return page.locator(`script[id="plugin_${pluginId}"]`);
 }
 
 function writeOctal(header: Buffer, value: number, offset: number, length: number) {
@@ -70,6 +80,7 @@ function webappBundleSource(pluginId: string) {
     return `(function () {
     var id = ${id};
     var markerTestId = ${JSON.stringify(testWebappPluginMarkerTestId(pluginId))};
+    var routeTestId = ${JSON.stringify(testWebappPluginRouteTestId(pluginId))};
     window.registerPlugin(id, {
         initialize: function (registry) {
             var marker = document.createElement('div');
@@ -79,7 +90,7 @@ function webappBundleSource(pluginId: string) {
 
             var React = window.React;
             registry.registerCustomRoute('e2e', function () {
-                return React.createElement('div', {'data-testid': 'e2e-route-' + id, style: {gridArea: 'center'}}, 'e2e route ' + id);
+                return React.createElement('div', {'data-testid': routeTestId, style: {gridArea: 'center'}}, 'e2e route ' + id);
             });
         },
         uninitialize: function () {

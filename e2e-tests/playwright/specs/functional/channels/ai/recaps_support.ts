@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Locator} from '@playwright/test';
-
-import {duration, expect, generated, type App, Msg} from '@mattermost/playwright-lib';
+import {duration, expect, generated, keyOfElement, type App, Msg} from '@mattermost/playwright-lib';
 
 /**
  * The Recaps page on the generated page objects. Recaps are created through the UI, so a test knows one by its title:
@@ -17,12 +15,6 @@ type ScheduleDay = generated.CreateRecapModalDay;
 
 function escapeRegExp(value: string) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/** The id a keyed element's testid ends with (`recaps.recap:<id>` -> `<id>`). */
-async function keyOf(item: Locator) {
-    const testId = await item.getAttribute('data-testid');
-    return testId!.slice(testId!.lastIndexOf(':') + 1);
 }
 
 export class CreateRecapDialog {
@@ -162,7 +154,7 @@ export class RecapItem {
 
     private async id() {
         await expect(this.any).toBeVisible({timeout: duration.one_min});
-        return keyOf(this.any);
+        return keyOfElement(this.any);
     }
 
     private async recap() {
@@ -253,7 +245,7 @@ export class ScheduledRecapItem {
 
     private async recap() {
         await expect(this.item).toBeVisible({timeout: duration.one_min});
-        return this.app.recaps.scheduled.recap({id: await keyOf(this.item)});
+        return this.app.recaps.scheduled.recap({id: await keyOfElement(this.item)});
     }
 
     async toBeVisible() {
