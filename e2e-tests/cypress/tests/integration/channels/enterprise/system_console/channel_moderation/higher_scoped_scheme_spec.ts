@@ -270,7 +270,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
     it('MM-T1581 Check if user is allowed to Edit or Delete their own posts on a Read-Only channel', () => {
         visitChannel(regularUser, testChannel, testTeam);
         cy.postMessage(`test message ${Date.now()}`);
-        cy.findByTestId('post_textbox_placeholder').should('not.have.text', 'This channel is read-only. Only members with permission can post here.');
+        cy.findByTestId('center.post_create.message--textbox').should('not.have.attr', 'placeholder', 'This channel is read-only. Only members with permission can post here.');
         cy.findByTestId('center.post_create.message--textbox').should('not.be.disabled');
 
         visitChannelConfigPage(testChannel);
@@ -281,7 +281,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
         visitChannel(regularUser, testChannel, testTeam);
 
         // * user should see a message stating that this channel is read-only and the textbox area should be disabled
-        cy.findByTestId('post_textbox_placeholder').should('have.text', 'This channel is read-only. Only members with permission can post here.');
+        cy.findByTestId('center.post_create.message--textbox').should('have.attr', 'placeholder', 'This channel is read-only. Only members with permission can post here.');
         cy.findByTestId('center.post_create.message--textbox').should('be.disabled');
 
         cy.getLastPostId().then((postId) => {

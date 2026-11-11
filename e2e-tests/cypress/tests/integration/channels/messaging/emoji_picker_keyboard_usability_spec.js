@@ -54,9 +54,7 @@ describe('MM-13064 - Emoji picker keyboard usability', () => {
             type('{rightarrow}l').
             should('have.value', 'smil');
 
-        cy.get('.emoji-picker__item.selected').should('exist').within(() => {
-            cy.findByTestId('smile').should('exist');
-        });
+        cy.get('.emoji-picker__item.selected').should('have.attr', 'data-testid', 'emoji_picker.emoji:smile--button');
         cy.get('.emoji-picker__preview').should('have.text', ':smile:');
 
         // * Should highlight and preview the second emoji ("smile_cat") on second right arrow key
@@ -65,9 +63,7 @@ describe('MM-13064 - Emoji picker keyboard usability', () => {
             and('have.value', 'smil').
             type('{rightarrow}').
             should('have.value', 'smil');
-        cy.get('.emoji-picker__item.selected').should('exist').within(() => {
-            cy.findByTestId('smile_cat').should('exist');
-        });
+        cy.get('.emoji-picker__item.selected').should('have.attr', 'data-testid', 'emoji_picker.emoji:smile_cat--button');
         cy.get('.emoji-picker__preview').should('have.text', ':smile_cat:');
     });
 
