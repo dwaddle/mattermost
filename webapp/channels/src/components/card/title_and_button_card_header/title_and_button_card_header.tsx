@@ -16,7 +16,6 @@ type Props = {
     tooltipText?: string;
     destructive?: boolean;
 
-    // The button renders `<testId>--button`.
     testId?: TestId;
 };
 

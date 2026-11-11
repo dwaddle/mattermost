@@ -6,9 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that a user viewing a team can leave it, is moved to another team they belong to, and
  * can rejoin the team they left.
- *
- * Written on the generated page objects: the team sidebar's buttons by team id, the team menu's Leave item and its
- * dialog, and the team selection page's teams by id.
  */
 test('MM-T2547 leaves a team while viewing it and rejoins it', {tag: '@multi_team'}, async ({pw}) => {
     const {user, team, adminClient} = await pw.initSetup();
@@ -52,8 +49,6 @@ test('MM-T2547 leaves a team while viewing it and rejoins it', {tag: '@multi_tea
 /**
  * @objective Verify that when an admin removes a user from the team they are viewing, the user is moved off
  * that team in real time, and is re-added when the admin invites them back.
- *
- * Written on the generated page objects: the team sidebar's buttons by team id.
  */
 test(
     'MM-T2548 removes the user from the team they are viewing and re-adds them',

@@ -42,8 +42,6 @@ async function expectReadOnlyBookmarks(app: App, first: ChannelBookmark, second:
 
 /**
  * @objective Verify a bookmark's URL and title can be edited and saved.
- *
- * Written on the generated page objects: the bookmark (keyed by id), its menu's Edit item and the bookmark dialog.
  */
 test('MM-T5610 edits a bookmark URL and title', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();
@@ -82,9 +80,6 @@ test('MM-T5610 edits a bookmark URL and title', {tag: '@channels'}, async ({pw})
 
 /**
  * @objective Verify users without bookmark-management permissions can only open or copy bookmarks.
- *
- * Written on the generated page objects: the bookmarks bar's menu button and bookmarks (keyed by id, in order), and
- * the bookmark menu's items.
  */
 test('MM-T5615 restricts bookmark management to users with permission', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();
@@ -114,9 +109,6 @@ test('MM-T5615 restricts bookmark management to users with permission', {tag: '@
 
 /**
  * @objective Verify archived channels allow opening/copying bookmarks but prevent add, edit, delete, and reorder.
- *
- * Written on the generated page objects: the channel header menu's archive dialog, the bookmarks bar's menu button
- * and bookmarks (keyed by id, in order), and the bookmark menu's items.
  */
 test('MM-T5725 prevents bookmark management in an archived channel', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

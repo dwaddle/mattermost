@@ -6,9 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that Browse Channels modal search results prioritize channels whose DisplayName matches the search
  * term over channels that only match on other fields.
- *
- * Written on the generated page objects: the result rows are keyed by channel name, so the whole order is one
- * assertion on the list's keys.
  */
 test(
     'MM-67953 Browse Channels modal prioritizes DisplayName matches in search results',

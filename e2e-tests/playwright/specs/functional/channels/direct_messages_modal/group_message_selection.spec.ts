@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify users can be added and removed while creating a group message.
- *
- * Written on the generated page objects: the picker's rows and the selected users' remove buttons are keyed by
- * user id, so the test never matches on display text.
  */
 test('MM-T460 Add and remove users while creating new Group Message', {tag: '@direct_messages'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

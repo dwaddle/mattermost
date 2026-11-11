@@ -7,8 +7,6 @@ import {createLinkBookmark, createLinkBookmarks} from './support';
 
 /**
  * @objective Verify the bookmarks bar remains visible and usable with an announcement banner present.
- *
- * Written on the generated page objects: the admin announcement banner and the bar's bookmarks by id.
  */
 test('MM-T5609 displays the bookmarks bar correctly with an announcement banner', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

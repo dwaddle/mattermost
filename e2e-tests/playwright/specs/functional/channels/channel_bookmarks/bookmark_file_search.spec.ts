@@ -34,8 +34,6 @@ async function searchFiles(app: App) {
 
 /**
  * @objective Verify a file attached as a bookmark appears in Files search results.
- *
- * Written on the generated page objects: the search box, the Files tab, and file results keyed by file id.
  */
 test('MM-T5613 finds a file bookmark in Files search results', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

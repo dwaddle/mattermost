@@ -7,9 +7,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify channel drafts on the global Drafts page are scoped to the
  * current active team, while each team's Drafts LHS entry and pencil icons stay
  * independent.
- *
- * Written on the generated page objects: the composer, the sidebar's channel rows (draft pencil), the Drafts link
- * and badge, the team sidebar's buttons by team id, and the Drafts page's tab count and drafts keyed by channel id.
  */
 test('MM-T4410 Channel Drafts are scoped to current active team', {tag: '@messaging'}, async ({pw}) => {
     const team1Draft = `team1-draft-${pw.random.id()}`;

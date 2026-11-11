@@ -5,9 +5,6 @@ import type {Team} from '@mattermost/types/teams';
 
 import {expect, test, type App} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the search box and its team selector, the search panel's team selector, the
-// selectors' menus (teams by name, All Teams, the filter), the team sidebar and team menu, and results by post id.
-
 /** Opens the search box from the global header. */
 async function openSearch(app: App) {
     await app.globalHeader.search.clickOpenButton();

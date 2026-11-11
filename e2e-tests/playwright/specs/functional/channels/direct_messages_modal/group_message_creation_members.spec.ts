@@ -9,9 +9,6 @@ import {getChannelSlugFromUrl} from './helpers';
 
 /**
  * @objective Verify the group message intro, sidebar label, and member count render for participants.
- *
- * Written on the generated page objects: the Direct Messages picker's rows by user id, the channel intro and its
- * avatars, the channel header, the group message's sidebar link and member count, and the posts by id.
  */
 test('MM-T465 Create a group message and show participant details', async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
@@ -55,8 +52,6 @@ test('MM-T465 Create a group message and show participant details', async ({pw})
 
 /**
  * @objective Verify that a group message lists its members and that adding another member creates a new group message.
- *
- * Written on the generated page objects: the Direct Messages picker's rows by user id and the channel header.
  */
 test(
     'MM-T467 adds a user to a group message to create a new group message',

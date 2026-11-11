@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a custom user group can be archived, viewed under the archived filter, and restored.
- *
- * Written on the generated page objects: the group list's rows are keyed by group id, and each step returns the
- * dialog it opens.
  */
 test('MM-T5584 views and unarchives a custom group', {tag: '@channels'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

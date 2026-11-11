@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify adding a member to an existing group message starts a new conversation with every selected member and no message history.
- *
- * Written on the generated page objects: the selected members and the members panel are keyed by user id, and the
- * old conversation's posts by post id.
  */
 test('MM-T468 Group Messaging: Add member to existing GM', {tag: '@direct_messages'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

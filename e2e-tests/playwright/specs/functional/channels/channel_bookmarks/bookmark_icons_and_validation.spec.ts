@@ -7,8 +7,6 @@ import {createLinkBookmark} from './support';
 
 /**
  * @objective Verify a bookmark without favicon metadata displays the fallback link icon.
- *
- * Written on the generated page objects: the bookmarks bar's bookmark (keyed by id) and its icon.
  */
 test('MM-T5605 uses a fallback icon when a link has no favicon', {tag: '@channels'}, async ({pw}) => {
     // # Create a link bookmark without favicon metadata
@@ -29,9 +27,6 @@ test('MM-T5605 uses a fallback icon when a link has no favicon', {tag: '@channel
 
 /**
  * @objective Verify a bookmark favicon can be changed to an emoji and reverted to its fallback icon.
- *
- * Written on the generated page objects: the bookmark's menu and its Edit item returning the bookmark dialog, the
- * dialog's emoji button and Remove emoji control, the emoji picker, and the bookmark's icon.
  */
 test(
     'MM-T5606 MM-T5607 changes a bookmark favicon to an emoji and restores the fallback',
@@ -74,9 +69,6 @@ test(
 
 /**
  * @objective Verify an invalid URL shows an error and cannot be saved as a bookmark.
- *
- * Written on the generated page objects: the channel menu's Bookmarks submenu, and the bookmark dialog's link field,
- * its error message and its Add button.
  */
 test('MM-T5608 rejects an invalid bookmark URL', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();

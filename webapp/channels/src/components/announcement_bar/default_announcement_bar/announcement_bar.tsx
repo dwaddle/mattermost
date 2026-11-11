@@ -20,7 +20,6 @@ import './default_announcement_bar.scss';
 type Props = {
     id?: string;
 
-    // The bar is `<testId>` (else its legacy `id`), its message `<testId>.message--text`, its close link `<testId>.close--link`.
     testId?: TestId;
     showCloseButton: boolean;
     className?: string;

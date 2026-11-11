@@ -18,7 +18,6 @@ type Props = {
     title?: string;
     className?: string;
 
-    // the empty state's scope: its button is `<testId>.create--button`
     testId: TestId;
 };
 

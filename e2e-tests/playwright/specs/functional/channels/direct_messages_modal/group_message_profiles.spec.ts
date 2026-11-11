@@ -12,9 +12,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  * has more DMs/GMs than the configured "Number of direct messages to show" limit) still appears in the
  * Direct Messages modal with its members fully loaded — i.e. with a non-zero member count and the
  * participant usernames as its name.
- *
- * Written on the generated page objects: the Direct Messages picker (its group rows keyed by channel id, with their
- * member count and name), the composer, and the sidebar's channel rows by name.
  */
 test(
     "MM-65058 Direct Messages modal should load group members for GMs which haven't been loaded otherwise",

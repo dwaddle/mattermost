@@ -47,7 +47,6 @@ type Props = {
     buttonClassName?: string;
     isInOverflowMenu?: boolean;
 
-    /** The bookmark item's scope, without its key; the menu button is `<testIdScope>.open_menu--button` */
     testIdScope?: TestId;
     onBeforeAction?: () => void;
     onMenuKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>, closeMenu?: () => void) => void;

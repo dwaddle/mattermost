@@ -5,8 +5,6 @@ import {expect, suggestionTestKey, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that pressing Tab completes the highlighted at-mention suggestion in the message box.
- *
- * Written on the generated page objects: the composer and its suggestions, keyed by what they suggest.
  */
 test('MM-T1273 completes at-mention autocomplete with Tab', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();
@@ -30,8 +28,6 @@ test('MM-T1273 completes at-mention autocomplete with Tab', {tag: '@keyboard_sho
 
 /**
  * @objective Verify that pressing Tab completes the highlighted emoji suggestion in the message box.
- *
- * Written on the generated page objects: the composer and its suggestions, keyed by what they suggest.
  */
 test('MM-T1274 completes emoji autocomplete with Tab', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();
@@ -56,8 +52,6 @@ test('MM-T1274 completes emoji autocomplete with Tab', {tag: '@keyboard_shortcut
 
 /**
  * @objective Verify that selecting "Keyboard shortcuts" from the Help menu opens the Keyboard Shortcuts modal.
- *
- * Written on the generated page objects: the Help menu's item returns the Keyboard Shortcuts modal.
  */
 test('MM-T1279 opens keyboard shortcuts modal from the Help menu', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

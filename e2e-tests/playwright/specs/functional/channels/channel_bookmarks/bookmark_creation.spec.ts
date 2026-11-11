@@ -10,9 +10,6 @@ import {expect, test} from '@mattermost/playwright-lib';
  * an "Add a link" action, even when the channel has no bookmarks yet.
  *
  * MM-T5601 covers the same behavior as MM-T5600 and is covered by this test.
- *
- * Written on the generated page objects: the channel menu's bookmarks submenu and the bar's bookmarks
- * (keyed by bookmark id) come from `app`.
  */
 test('MM-T5600 MM-T5601 shows the Bookmarks Bar option in the channel menu', {tag: '@channels'}, async ({pw}) => {
     const {user, team} = await pw.initSetup();

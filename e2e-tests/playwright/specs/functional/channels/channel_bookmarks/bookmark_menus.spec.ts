@@ -8,9 +8,6 @@ import {createLinkBookmarks} from './support';
 /**
  * @objective Verify a bookmark in the bar can be renamed from its menu, and a bookmark in the overflow
  * menu can be deleted from its own menu.
- *
- * Written on the generated page objects: the bar's bookmarks and the overflow menu's bookmarks are
- * keyed by bookmark id, and their menus, the edit modal and the delete modal come from `app`.
  */
 test('renames a bookmark from the bar and deletes one from the overflow menu', {tag: '@channels'}, async ({pw}) => {
     const {adminClient, team, user, userClient} = await pw.initSetup();

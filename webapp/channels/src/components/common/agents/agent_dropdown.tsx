@@ -27,8 +27,6 @@ type Props = {
     // Otherwise the underlying mui popover and GenericModal will exhaust the call stack trying to set focus when this closes
     onMenuToggle?: (isOpen: boolean) => void;
 
-    // The button is `<testIdScope>--button`, the options `<testIdScope>.menu.agent:<bot id>--menuitem`;
-    // without it, the options keep the legacy `agent-option-<bot id>`.
     testIdScope?: TestId;
 };
 

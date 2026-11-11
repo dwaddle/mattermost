@@ -5,10 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify switching teams preserves direct messages and each team's last channel, while team badges distinguish mentions from ordinary unread messages.
- *
- * Written on the generated page objects: the team sidebar's buttons and badges by team id, the team menu button,
- * the sidebar's channel links by name, and the posts by id. The team buttons' accessible names ("… team, 2 mentions")
- * are on the link that wraps the testid'd element, so the badges are checked instead.
  */
 test(
     'MM-T433 MM-T437 MM-T438 switches teams and displays multi-team mentions and unreads',

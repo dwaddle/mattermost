@@ -7,8 +7,6 @@ import {expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
  * @objective Verify that a user who belongs to multiple teams can switch between them and log out to the sign-in page.
  *
  * MM-T432 is a duplicate of MM-T430 and is covered by this test.
- *
- * Written on the generated page objects: the team sidebar's buttons by team id and the account menu's Log out item.
  */
 test('MM-T430 MM-T432 switches between teams and logs out', {tag: '@multi_team'}, async ({pw}) => {
     // # Create a user in one team, then add them to a second team
@@ -46,9 +44,6 @@ test('MM-T430 MM-T432 switches between teams and logs out', {tag: '@multi_team'}
 
 /**
  * @objective Verify that reopening the app returns the user to the previously viewed team and channel.
- *
- * Written on the generated page objects: the team sidebar's buttons by team id, the sidebar's channel links, and the
- * composer.
  */
 test('MM-T431 reopens to the previously viewed team and channel', {tag: '@multi_team'}, async ({pw}) => {
     // # Create a user in one team, then add them to a second team
@@ -85,9 +80,6 @@ test('MM-T431 reopens to the previously viewed team and channel', {tag: '@multi_
 
 /**
  * @objective Verify that the right-hand-side reply panel can be expanded to overlay the center channel and collapsed back while staying open.
- *
- * Written on the generated page objects: the post by id and its Reply button, the RHS thread header's expand button
- * (its state from its accessible name), and the composers.
  */
 test('MM-T440 expands and collapses the RHS reply panel', {tag: '@multi_team'}, async ({pw}) => {
     // # Create and log in as a test user, and post a message

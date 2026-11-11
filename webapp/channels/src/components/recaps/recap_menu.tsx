@@ -26,7 +26,6 @@ interface RecapMenuProps {
     buttonClassName?: string;
     ariaLabel?: string;
 
-    /** The menu's testid scope: its button is `<testIdScope>.open--button`, an action `<testIdScope>.action:<id>--menuitem`. */
     testIdScope?: TestIdScope;
 }
 

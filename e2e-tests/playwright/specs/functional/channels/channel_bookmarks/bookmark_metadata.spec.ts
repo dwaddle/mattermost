@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that entering a link in the bookmark create modal auto-fills the bookmark title from the
  * link.
- *
- * Written on the generated page objects: the channel menu's bookmarks submenu and the bookmark dialog.
  */
 test('MM-T5604 auto-fills the bookmark title from the entered link', {tag: '@channels'}, async ({pw}) => {
     const {user, team, userClient} = await pw.initSetup();

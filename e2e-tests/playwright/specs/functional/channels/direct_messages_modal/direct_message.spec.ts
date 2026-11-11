@@ -5,8 +5,6 @@ import {Api, expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a user can open a self direct message, post a message, and does not receive a desktop notification.
- *
- * Written on the generated page objects: the Direct Messages picker's rows by user id, the channel header and the composer.
  */
 test('MM-T457 Self direct message', {tag: '@direct_messages'}, async ({pw}) => {
     const {team, user, userClient} = await pw.initSetup();
@@ -35,9 +33,6 @@ test('MM-T457 Self direct message', {tag: '@direct_messages'}, async ({pw}) => {
 
 /**
  * @objective Verify a direct message channel header supports multiline text and displays the saved text in its popover.
- *
- * Written on the generated page objects: the header's add button returns the edit dialog, and the header text and its
- * popover.
  */
 test('MM-T458 Edit direct message channel header', {tag: '@direct_messages'}, async ({pw}) => {
     const {adminClient, team, user} = await pw.initSetup();
