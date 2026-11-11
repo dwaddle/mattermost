@@ -41,7 +41,6 @@ export type Props = {
     // The server rejects URL changes on the default channel, so it is shown read-only.
     isDefaultChannel?: boolean;
 
-    /** Testid scope of the owning form: the name renders `<scope>.name--textbox`. */
     testIdScope: TestIdScope;
 };
 

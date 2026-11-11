@@ -30,7 +30,6 @@ type Props = {
     defaultMessage?: React.ReactNode;
     extraClasses?: string;
 
-    /** Renders `<testId>--button`; hosts that don't pass one yet (other areas) keep the legacy `saveSetting`. */
     testId?: TestId;
 };
 

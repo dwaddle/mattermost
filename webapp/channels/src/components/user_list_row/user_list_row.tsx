@@ -55,7 +55,6 @@ type Props = {
     totalUsers?: number;
     userCount?: number;
 
-    // The row is `<testIdScope>:<user id>`; its actions get `testIdScope` for their own parts.
     testIdScope: TestId;
 };
 

@@ -14,9 +14,6 @@ async function openSearch(app: App) {
 /**
  * @objective Verify cross-team search still renders the team selector and returns results correctly
  * when the Onyx (dark) theme is active.
- *
- * Written on the generated page objects: Settings > Display's premade themes, the search box, the search panel's
- * team selector and the result by post id.
  */
 test('MM-T5806 cross-team search works under the Onyx (dark) theme', {tag: '@search'}, async ({pw}) => {
     // # Create a user with two teams and post a message to search for
@@ -51,8 +48,6 @@ test('MM-T5806 cross-team search works under the Onyx (dark) theme', {tag: '@sea
 /**
  * @objective Verify the team filter in the search team-selector menu shows no results for a
  * non-matching query, and correctly narrows to a single team for a partial matching query.
- *
- * Written on the generated page objects: the search box's team selector, its menu's filter and its teams by name.
  */
 test('MM-T5805 team filter shows no results for a non-matching query', {tag: '@search'}, async ({pw}) => {
     // # Create a user and enough teams (5 total) for the team-filter input to render
@@ -97,9 +92,6 @@ test('MM-T5805 team filter shows no results for a non-matching query', {tag: '@s
  * @objective Verify the search team-selector defaults to the active team (not "All Teams"), that a
  * typed query persists across team-selector changes, and that the "Your teams" section header in
  * the dropdown only appears while a specific team (not "All Teams") is selected.
- *
- * Written on the generated page objects: the search box, its team selector and the menu's teams, All Teams item and
- * "Your teams" separator.
  */
 test(
     'MM-T5801 team selector defaults to the active team, preserves the query, and hides "Your teams" for All Teams',
@@ -154,8 +146,6 @@ test(
  * @knownIssue Switching the team selector to "All Teams" does NOT clear the "in:<channel>" clause
  * from the query text — it's left in place, and submitting silently re-scopes the search back to
  * the channel's own team rather than actually searching "All Teams".
- *
- * Written on the generated page objects: the search box, its suggestions by channel name and its team selector.
  */
 test.fixme(
     'MM-T5804 "in:" channel filter is cleared when switching search to All Teams',

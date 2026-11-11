@@ -6,9 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify the channel info panel shows the channel's details, mutes the channel and opens
  * channel settings from its menu.
- *
- * Written on the generated page objects: the header's Info button, the panel (its header, about area,
- * top buttons and menu) and the channel settings modal come from `app`.
  */
 test(
     'shows channel details, mutes the channel and opens settings from the info panel',

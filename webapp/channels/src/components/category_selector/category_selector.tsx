@@ -32,11 +32,6 @@ export type CategorySelectorProps = {
     menuPortalTargetId?: string;
     disabled?: boolean;
 
-    /**
-     * Testid scope: the selector is `<testIdScope>`, its text input `<testIdScope>.input--combobox`, an existing
-     * category's option `<testIdScope>.option:<name>--option`, the "Create new category" option
-     * `<testIdScope>.create--option`, and the clear control `<testIdScope>.clear`.
-     */
     testIdScope?: TestIdScope;
 };
 

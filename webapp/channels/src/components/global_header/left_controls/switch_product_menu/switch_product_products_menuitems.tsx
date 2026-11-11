@@ -60,7 +60,6 @@ export default function ProductSwitcherProductsMenuItems(props: Props) {
 interface ProductSwitcherProductMenuItemProps {
     id: string;
 
-    /** The product's slot testid without the role: the item renders `global_header.product_menu.product:<plugin>--menuitem`. */
     testId: TestId;
     icon: IconGlyphTypes | React.ReactNode;
     label: React.ReactNode;

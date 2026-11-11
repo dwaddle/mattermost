@@ -12,9 +12,6 @@ import {
     type PlaywrightExtended,
 } from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the team menu's Invite People item, and the invite dialog's people input,
-// its suggestions keyed by user id, and the Send button.
-
 /** Logs in as the admin and opens the Invite People dialog from the team menu. */
 async function openInvitePeopleModal(pw: PlaywrightExtended, adminUser: UserProfile, team: {name: string}) {
     const {app} = await pw.testBrowser.login(adminUser);

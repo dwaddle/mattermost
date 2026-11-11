@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that releasing a mouse drag that started inside a modal but ends outside it does not
  * close the modal, while a genuine click outside the modal does close it.
- *
- * Written on the generated page objects.
  */
 test('MM-T841 keeps a modal open when a drag is released outside it', {tag: '@channel_settings'}, async ({pw}) => {
     const {user, team} = await pw.initSetup();
@@ -41,8 +39,6 @@ test('MM-T841 keeps a modal open when a drag is released outside it', {tag: '@ch
 /**
  * @objective Verify that cancelling the create-channel modal does not create or join a channel, and that
  * leaving a channel removes it from the sidebar.
- *
- * Written on the generated page objects: sidebar rows are keyed by channel name.
  */
 test(
     'MM-T861 cancelling the create channel modal does not join a channel',

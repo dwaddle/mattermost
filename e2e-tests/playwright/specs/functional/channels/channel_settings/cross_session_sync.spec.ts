@@ -5,9 +5,6 @@ import type {UserProfile} from '@mattermost/types/users';
 
 import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the new-channel dialog, the channel header (title and menu: Archive,
-// Leave), the archive dialog, and the sidebar's channel links keyed by channel name.
-
 /** Creates a public channel from the sidebar's "+" menu and returns its name (the URL slug the app picked). */
 async function createPublicChannel(app: App, displayName: string) {
     const modal = await (await app.lhs.header.clickOpenBrowseOrAddMenuButton()).clickCreateChannelMenuItem();

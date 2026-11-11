@@ -71,8 +71,6 @@ export type Props<T extends Value> = {
     customNoOptionsMessage?: React.ReactNode;
     required?: boolean;
 
-    // The parts: `.search--combobox`, `.results` (the list), `.remove:<id>--button`, `.help--text`, `.note--text`,
-    // `.error--alert`, `.previous--button`, `.next--button`, `.back--button`, `.save--button`.
     testIdScope: TestIdScope;
 };
 

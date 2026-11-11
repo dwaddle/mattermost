@@ -39,7 +39,6 @@ type Props = {
      */
     section?: string;
 
-    /** The section's testid key (`settings.section:<testKey>`) when `section` isn't passed and no SettingItem around it sets one. */
     testKey?: string;
     updateSection?: (section: string) => void;
     setting?: string;

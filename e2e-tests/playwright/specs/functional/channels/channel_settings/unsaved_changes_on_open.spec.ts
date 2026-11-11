@@ -8,8 +8,6 @@ import {expect, openChannelSettings, test} from '@mattermost/playwright-lib';
  * validation error, and closes on a single click, for a channel whose stored purpose and header carry
  * leading or trailing whitespace. The server keeps that whitespace verbatim, so channels populated
  * outside this form reach it untidy.
- *
- * Written on the generated page objects: the info tab reads all its fields at once.
  */
 test(
     'opens Channel Settings cleanly for a channel whose stored text has surrounding whitespace',

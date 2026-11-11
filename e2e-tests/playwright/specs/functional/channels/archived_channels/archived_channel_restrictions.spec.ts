@@ -5,9 +5,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that after archiving a channel, neither the center message box nor the RHS reply box is available.
- *
- * Written on the generated page objects: the post by id and its Reply button, the composers, the RHS thread header
- * and the channel header menu's archive dialog.
  */
 test('MM-T1716 hides center and RHS message boxes in an archived channel', {tag: '@channels'}, async ({pw}) => {
     // # Create and log in as a test user, then open a new channel
@@ -47,8 +44,6 @@ test('MM-T1716 hides center and RHS message boxes in an archived channel', {tag:
 
 /**
  * @objective Verify that opening the reply thread of a saved post from an archived channel does not offer a reply box.
- *
- * Written on the generated page objects: Saved messages, the result by post id and its Reply button, and the RHS.
  */
 test('MM-T1722 opens a saved post from an archived channel without a reply box', {tag: '@channels'}, async ({pw}) => {
     // # Create and log in as a test user, and prepare a channel they belong to

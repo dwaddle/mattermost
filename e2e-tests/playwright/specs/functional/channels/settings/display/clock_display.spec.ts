@@ -6,9 +6,6 @@ import {expect, Msg, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify the clock display setting switches to the 24-hour clock and is saved as the
  * user's preference.
- *
- * Written on the generated page objects: the global header's settings button, the settings modal's
- * tabs, the `clock` section, its options and its save button all come from `app`.
  */
 test('switches the clock display to 24-hour and saves it', {tag: '@settings'}, async ({pw}) => {
     const {team, user, userClient} = await pw.initSetup();

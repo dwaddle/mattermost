@@ -4,9 +4,6 @@
 /**
  * @objective E2E tests for Team Settings Modal - Info Tab
  * @reference MM-67920
- *
- * Written on the generated page objects: the team menu, the Team Settings tabs, the Info tab's name and description
- * textboxes and team icon (file input, initials, Remove button), the save panel and the modal's close button.
  */
 
 import {getAsset} from '@/asset';

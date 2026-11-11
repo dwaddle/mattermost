@@ -8,9 +8,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify an incoming webhook is listed with its URL and a copy button, and that deleting it
  * from the list (after confirming) removes it.
- *
- * Written on the generated page objects: the integrations page, its options, the installed webhook
- * (keyed by the id the create request returned) and the delete confirmation come from `app`.
  */
 test('lists an incoming webhook with its URL and deletes it after confirming', {tag: '@integrations'}, async ({pw}) => {
     const {adminClient, adminUser, team} = await pw.initSetup();

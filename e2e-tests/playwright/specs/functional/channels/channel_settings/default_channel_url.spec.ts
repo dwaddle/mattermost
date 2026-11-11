@@ -9,8 +9,6 @@ const DEFAULT_CHANNEL_URL_LOCKED_TEXT = 'The URL of the default channel cannot b
  * @objective Verify that Channel Settings does not offer a URL edit for the default channel, whose URL the
  * server always rejects, while its display name can still be saved.
  * @reference MM-67612
- *
- * Written on the generated page objects: the info tab's URL editor and its help text come from `app`.
  */
 test(
     'does not offer a URL edit for the default channel but still saves its display name',

@@ -4,9 +4,6 @@
 /**
  * @objective E2E tests for Team Settings Modal - Unsaved Changes behavior
  * @reference MM-67920
- *
- * Written on the generated page objects: the team menu, the Team Settings tabs, the Info tab's name textbox, the
- * save panel (message, Save, Undo) and the modal's close button.
  */
 
 import {expect, Msg, openTeamSettings, test} from '@mattermost/playwright-lib';

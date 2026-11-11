@@ -29,7 +29,6 @@ export type Props = {
     onMouseMove: (group: GroupValue) => void;
     addUserProfile: (profile: UserProfileValue) => void;
 
-    // The row is `<testIdScope>:<group id>`.
     testIdScope: TestIdScope;
 };
 

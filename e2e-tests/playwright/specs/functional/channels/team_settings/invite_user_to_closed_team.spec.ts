@@ -27,9 +27,6 @@ async function inviteByEmail(app: App, email: string, user?: Pick<UserProfile, '
 /**
  * @objective Verify that a user with a valid email domain can be invited to a closed team,
  * and a user with an invalid email domain is rejected with the correct error message.
- *
- * Written on the generated page objects: the team menu, Team Settings' Access tab (allowed-domains checkbox and
- * input, save panel), and the invite dialog's people input and its suggestions (a user by id, or Add email), Send button and result sections.
  */
 test('MM-T388 Invite new user to closed team with email domain restriction', {tag: '@team_settings'}, async ({pw}) => {
     const emailDomain = 'sample.mattermost.com';

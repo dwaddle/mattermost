@@ -12,7 +12,6 @@ type Props = {
     description: JSX.Element;
     link: string;
 
-    /** Renders `<testId>--link`. */
     testId: TestId;
 };
 

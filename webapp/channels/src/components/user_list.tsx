@@ -36,7 +36,6 @@ type Props = {
         isDisabled?: boolean;
     };
 
-    // Each row is `<testIdScope>.user:<user id>`; the empty state `<testIdScope>.no_users--text`.
     testIdScope: TestIdScope;
 };
 

@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify the keyboard shortcuts for moving to the previous and next channel in the sidebar
  * switch between channels.
- *
- * Written on the generated page objects: the composer and the channel header.
  */
 test(
     'MM-T1259 moves to the previous and next channel with the keyboard',
@@ -39,8 +37,6 @@ test(
 
 /**
  * @objective Verify Ctrl/Cmd+Shift+K opens the Direct Messages modal, and Escape closes it.
- *
- * Written on the generated page objects: the composer and the Direct Messages modal.
  */
 test(
     'MM-T1276 opens the Direct Messages modal with the keyboard shortcut',
@@ -72,8 +68,6 @@ test(
  * @objective Verify Ctrl/Cmd+Shift+F opens the search box prefilled with the current channel filter.
  *
  * MM-T4872 covers the same behavior as MM-T1435 and is covered by this test.
- *
- * Written on the generated page objects: the composer and the search box.
  */
 test(
     'MM-T1435 MM-T4872 prefills the search box with the channel filter using the keyboard shortcut',

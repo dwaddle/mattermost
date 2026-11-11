@@ -29,7 +29,6 @@ type URLInputProps = {
     onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onBlur?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 
-    // The parts' path: `.label--text`, `.value--textbox`, `.edit--button`, `.error--alert`.
     testIdScope: TestId;
 };
 

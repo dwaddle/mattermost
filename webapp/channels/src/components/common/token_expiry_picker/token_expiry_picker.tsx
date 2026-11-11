@@ -13,8 +13,6 @@ import {isExpiryPresetAllowed, isoPlusDays, todayIso} from './token_expiry';
 type Props = {
     idPrefix: string;
 
-    // The preset select is `<testIdScope>.expiry--combobox`, the custom date `<testIdScope>.expiry_date--textbox`, and the
-    // policy hints `<testIdScope>.max_lifetime_hint--text` and `<testIdScope>.expiry_enforced--text`.
     testIdScope?: TestIdScope;
     expiryPreset: ExpiryPreset;
     customExpiryDate: string;

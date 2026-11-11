@@ -6,8 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify that a user already in a channel is shown as "Already in channel" (not addable) in the
  * add-people modal.
- *
- * Written on the generated page objects: the modal's result rows are keyed by user id.
  */
 test(
     'MM-T1809 marks an existing channel member as already in channel in the add people modal',

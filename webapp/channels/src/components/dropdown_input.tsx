@@ -89,7 +89,6 @@ const Control = (props: any) => {
     );
 };
 
-// An option is `<testId>.menu.option:<value>--option` (none without a testId).
 const makeOption = (testId?: string) => (props: any) => {
     return (
         <div
@@ -106,7 +105,6 @@ const makeOption = (testId?: string) => (props: any) => {
     );
 };
 
-// The menu is `<testId>.menu`; hosts without a testId (other areas, for now) keep the legacy `dropdownMenu`.
 const makeMenu = (testId?: string) => (props: any) => {
     return (
         <components.Menu

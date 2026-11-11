@@ -4,9 +4,6 @@
 /**
  * @objective Team Members modal shows membership requirements banner and attribute chips for governed teams
  * @reference MM-69100
- *
- * Written on the generated page objects: the team menu's Members item (View or Manage members, one item) and the
- * Team Members modal's policy banner.
  */
 
 import {expect, Msg, newTestPassword, test, type App} from '@mattermost/playwright-lib';

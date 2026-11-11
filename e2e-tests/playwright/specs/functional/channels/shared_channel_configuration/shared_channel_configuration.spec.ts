@@ -57,9 +57,6 @@ async function ensureConfirmedRemote(adminClient: ClientWithRemotes, teamId: str
     });
 }
 
-// Written on the generated page objects: Channel Settings' configuration tab (the share toggle and the workspaces
-// section with its Add workspace menu) and save panel.
-
 /** Adds the first connected workspace the Add workspace menu offers (the toggle must be on). */
 async function addFirstWorkspace(configuration: generated.ChannelSettingsModalConfiguration) {
     const menu = await configuration.workspaces.clickAddButton();

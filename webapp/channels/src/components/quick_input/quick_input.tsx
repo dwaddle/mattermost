@@ -43,7 +43,6 @@ export type Props = {
      */
     clearClassName?: string;
 
-    /** The clear button renders `${clearTestId}--button`; hosts that don't pass one yet (other areas) keep the legacy `input-clear`. */
     clearTestId?: TestId;
 
     /**

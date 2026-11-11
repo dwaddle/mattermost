@@ -17,7 +17,6 @@ type Props = {
     label: MessageDescriptor;
     value: string;
 
-    /** Renders `<testId>--button`. */
     testId: TestId;
 };
 

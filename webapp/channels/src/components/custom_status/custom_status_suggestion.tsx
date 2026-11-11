@@ -24,7 +24,6 @@ type Props = {
     handleClear?: (status: UserCustomStatus) => void;
     status: UserCustomStatus;
 
-    /** The row renders `<testIdScope>:<testKey>--button`, its clear button `<testIdScope>.clear--button`. */
     testIdScope?: TestId;
 
     /** The row's key: a default suggestion's message id word (`in_a_meeting`), a recent status's `textTestKey(text)`. */

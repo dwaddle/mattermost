@@ -6,9 +6,6 @@ import {expect, test} from '@mattermost/playwright-lib';
 /**
  * @objective Verify an admin can make a team member a Team Admin and back from the team's Members modal, and the
  * server stores each change.
- *
- * Written on the generated page objects: the modal's rows are keyed by user id, and each row's role menu is reached
- * from its role button.
  */
 test('changes a member to Team Admin and back from the Members modal', {tag: '@team_settings'}, async ({pw}) => {
     const {adminUser, adminClient, user, team} = await pw.initSetup();

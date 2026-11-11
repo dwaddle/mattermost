@@ -3,10 +3,6 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the Add Bot form (username, default token expiry with its policy hint, Save),
-// the integrations confirmation page, the bot list (bots keyed by user id, their tokens keyed by token id, with status,
-// expiry, Regenerate and the revealed token) and the regenerate dialog with its expiry picker.
-
 test.describe('Bot account personal access token expiry @bot_accounts @personal_access_tokens', () => {
     test('creates and regenerates a user-owned bot token under an enforced maximum lifetime', async ({pw}) => {
         test.setTimeout(120000);

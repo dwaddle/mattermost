@@ -14,7 +14,6 @@ export interface ColorInputProps {
     value: string;
     isDisabled?: boolean;
 
-    /** The input's testid scope (`settings.section.color`); with `testKey` the root is `<scope>:<key>`. Without it, the legacy testids. */
     testIdScope?: TestIdScope;
     testKey?: string;
 }

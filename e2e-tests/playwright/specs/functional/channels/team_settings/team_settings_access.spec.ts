@@ -7,9 +7,6 @@ test.describe('Team Settings Modal - Access Tab', () => {
     /**
      * MM-67920 Access tab - add and remove allowed domain
      * @objective Verify allowed domains can be added and removed
-     *
-     * Written on the generated page objects: the team menu, the Team Settings tabs, the allowed-domains checkbox,
-     * input and remove button, and the save panel.
      */
     test('MM-67920 Access tab - add and remove allowed domain', async ({pw}) => {
         // # Set up admin user and login
@@ -63,9 +60,6 @@ test.describe('Team Settings Modal - Access Tab', () => {
     /**
      * MM-67920 Access tab - regenerate invite ID
      * @objective Verify team invite ID can be regenerated
-     *
-     * Written on the generated page objects: the team menu, the Team Settings tabs and the invite link's regenerate
-     * button.
      */
     test('MM-67920 Access tab - regenerate invite ID', async ({pw}) => {
         // # Set up admin user and login

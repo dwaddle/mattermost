@@ -5,9 +5,6 @@ import type {Locator} from '@playwright/test';
 
 import {type App, expect, generated, postsOf, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the composer, the notify-all confirmation, the post list's last post
-// with its Markdown mention highlight, the sidebar's channel links, and Settings > Notifications' keyword checkboxes.
-
 // The notify-all confirmation modal appears once a channel has more than this many members.
 const NOTIFY_ALL_THRESHOLD = 5;
 

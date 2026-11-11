@@ -17,9 +17,6 @@ async function postToWebhook(webhookId: string, payload: Record<string, unknown>
 
 /**
  * @objective Verify interactive attachment buttons remain visible across Indigo, Onyx, and Denim themes.
- *
- * Written on the generated page objects: the post by id, its attachment's buttons by action id, and the
- * Display settings' theme section with its premade themes.
  */
 test(
     'MM-T5672 displays attachment buttons correctly across premade themes',

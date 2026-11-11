@@ -3,9 +3,6 @@
 
 import {expect, getRandomId, openChannelSettings, type PlaywrightExtended, test} from '@mattermost/playwright-lib';
 
-// Written on the generated page objects: the channel header menu and Channel Settings' Info tab with its managed
-// category selector.
-
 /**
  * Creates a uniquely-named team and user per test and adds the user to the team.
  */

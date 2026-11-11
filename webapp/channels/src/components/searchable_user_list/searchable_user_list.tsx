@@ -54,7 +54,6 @@ type Props = {
     onTermChange: (term: string) => void;
     intl: IntlShape;
 
-    // The list's scope: `.search--textbox`, `.count--text`, `.next--button`, `.prev--button`, and each row `.user:<user id>`.
     testIdScope: TestIdScope;
 };
 

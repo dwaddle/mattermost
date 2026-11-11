@@ -27,7 +27,6 @@ type Props = {
     userStatuses: RelationOneToOne<UserProfile, string>;
     isSelected: boolean;
 
-    // The row is `<testIdScope>.user:<id>`.
     testIdScope: TestIdScope;
 };
 

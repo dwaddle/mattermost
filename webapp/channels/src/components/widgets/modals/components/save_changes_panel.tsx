@@ -33,10 +33,6 @@ type Props = {
     cancelButtonText?: React.ReactNode;
     saving?: boolean;
 
-    /**
-     * The panel's testid; its parts are `<testId>.message--text`, `.save--button`, `.cancel--button`, `.close--button`.
-     * Hosts that don't pass one yet (the access-control tabs) keep the legacy button testids.
-     */
     testId?: TestId;
 };
 function SaveChangesPanel({

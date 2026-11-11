@@ -7,9 +7,6 @@ import {expect, generated, openChannelSettings, postWith, test} from '@mattermos
  * @objective Verify a multi-line channel header is truncated in the header bar, that hovering it opens a
  * popover with the full header, that a markdown link in the header points to the correct URL, and that the
  * popover closes.
- *
- * Written on the generated page objects: the Channel Settings modal's Info tab, the header text and its popover, and
- * the popover's Markdown links.
  */
 test(
     'MM-T879 opens and closes the channel header popover with a working link',
@@ -56,9 +53,6 @@ test(
 /**
  * @objective Verify a channel header can be added from the "Set header" link in a new channel's intro,
  * that cancelling the modal makes no change, and that the saved header appears in the channel info.
- *
- * Written on the generated page objects: the intro's Set header button returns the edit dialog; the posts by id and
- * the channel info panel's header.
  */
 test('MM-T880 adds a channel header from the intro Set header link', {tag: '@channel_settings'}, async ({pw}) => {
     const {user, team, userClient, adminClient} = await pw.initSetup();

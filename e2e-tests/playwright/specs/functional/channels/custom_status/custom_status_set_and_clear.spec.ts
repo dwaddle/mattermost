@@ -5,9 +5,6 @@ import {expect, settle, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a user can set a custom status with an expiry from the account menu, and clear it again.
- *
- * Written on the generated page objects: the account menu, the custom status modal, its text box, its
- * "Clear after" menu (one item per duration) and its Set and Clear buttons come from `app`.
  */
 test('sets a custom status that clears after an hour, then clears it', {tag: '@custom_status'}, async ({pw}) => {
     const {team, user, userClient} = await pw.initSetup();

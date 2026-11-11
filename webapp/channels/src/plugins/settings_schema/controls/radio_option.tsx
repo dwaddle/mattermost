@@ -16,7 +16,6 @@ type Props = {
     selectedValue: string;
     onSelected: (value: string) => void;
 
-    /** Renders `<testIdScope>.option:<value>--radio`. */
     testIdScope?: TestId;
 };
 

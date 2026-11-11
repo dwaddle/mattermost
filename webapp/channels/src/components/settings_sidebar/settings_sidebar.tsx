@@ -31,7 +31,6 @@ export type Props = {
     updateTab: (name: string) => void;
     isMobileView: boolean;
 
-    /** Testid scope of the owning modal: tabs render as `<scope>.tabs.tab:<name>--tab`, plugin tabs as `<scope>.tabs.plugin:<plugin>--tab`. */
     testIdScope: TestIdScope;
 };
 

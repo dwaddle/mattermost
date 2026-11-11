@@ -20,7 +20,6 @@ type Props = {
     /** Called with the new value whenever the selection changes. */
     onChange: (value: string) => void;
 
-    /** The group renders `<testIdScope>.setting:<name>`, each option `<testIdScope>.setting.option:<value>--radio`. */
     testIdScope?: TestId;
 };
 

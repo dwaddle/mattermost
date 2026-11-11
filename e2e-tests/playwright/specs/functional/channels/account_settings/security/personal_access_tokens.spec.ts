@@ -17,11 +17,6 @@ import {expect, Msg, test, type App, type PlaywrightExtended} from '@mattermost/
  * The expired-status badge is intentionally not covered here: the server rejects
  * creating a token whose expiry is already in the past, so an expired token cannot
  * be seeded via the API. That branch is exercised by the component unit tests.
- *
- * Written on the generated page objects: the account menu's Profile item, the Security tab and its Personal Access
- * Tokens section (the token rows keyed by token id with their status, expiry and links; the create form's
- * description, expiry select, custom date, hints, error and Save; the revealed token; the regenerate dialog and its
- * expiry select).
  */
 
 const TOKEN_ROLES = 'system_user system_user_access_token';
