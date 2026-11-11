@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {openLogin} from '../../functional/auth/support';
+import {expect, openLogin, test} from '@mattermost/playwright-lib';
 
 test('/login accessibility quick check', async ({pw, page, axe}) => {
     // # Go to login page (past the native-app landing page)

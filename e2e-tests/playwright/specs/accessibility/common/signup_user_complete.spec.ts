@@ -1,9 +1,16 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import type {Page} from '@playwright/test';
 
-import {openSignup} from '../../functional/auth/support';
+import {App, expect, generated, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
+
+/** Opens the signup page past the native-app landing page. */
+async function openSignup(pw: PlaywrightExtended, page: Page) {
+    await pw.hasSeenLandingPage();
+    await page.goto(generated.SignupPage.path());
+    return new App(page);
+}
 
 test('/signup_user_complete accessibility quick check', async ({pw, page, axe}) => {
     // # Go to the signup page (past the native-app landing page)
