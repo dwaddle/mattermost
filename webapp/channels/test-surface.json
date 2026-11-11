@@ -85104,9 +85104,9 @@
       "key": {
         "kind": "entity",
         "entity": "Team",
-        "field": "name",
+        "field": "id",
         "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'name'>"
+        "type": "Pick<Team, 'id'>"
       },
       "opens": [
         {
@@ -85923,9 +85923,9 @@
       "key": {
         "kind": "entity",
         "entity": "Team",
-        "field": "name",
+        "field": "id",
         "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'name'>"
+        "type": "Pick<Team, 'id'>"
       },
       "renderedWhen": [
         {

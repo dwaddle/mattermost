@@ -3033,9 +3033,9 @@ export class TeamSelectorMenu extends Scope {
      * Renders only when props.crossTeamSearchEnabled && hasMoreThanOneTeam.
      * Goes to `${window.location.pathname}?${params.toString()}`.
      */
-    team(team: Pick<Team, 'name'>) {
-        return drivers.menuitemradio(this.byTestId(`${this.scope}.team:${team.name}--menuitemradio`), {
-            testId: `${this.scope}.team:${team.name}--menuitemradio`,
+    team(team: Pick<Team, 'id'>) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.team:${team.id}--menuitemradio`), {
+            testId: `${this.scope}.team:${team.id}--menuitemradio`,
             role: 'menuitemradio',
             effects: [
                 Api.GetChannel,

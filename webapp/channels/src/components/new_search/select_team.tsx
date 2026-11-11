@@ -7,7 +7,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import {CheckIcon, ChevronDownIcon, MagnifyIcon as SearchIcon} from '@mattermost/compass-icons/components';
-import type {TestId} from '@mattermost/shared/utils/test_id';
+import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 
 import {get} from 'mattermost-redux/selectors/entities/preferences';
 import {getCurrentTeamId, getMyTeams} from 'mattermost-redux/selectors/entities/teams';
@@ -26,7 +26,7 @@ interface Props {
     selectedTeamId: string;
     onTeamSelected: (team: string) => void;
 
-    /** Where the selector is (`search_box.team_selector`): the trigger is `<scope>.open_menu--button`, teams `<scope>.menu.team:<name>--menuitemradio`. */
+    /** Where the selector is (`search_box.team_selector`): the trigger is `<scope>.open_menu--button`, teams `<scope>.menu.team:<team id>--menuitemradio`. */
     testIdScope: TestId;
 }
 
@@ -81,7 +81,7 @@ const SelectTeam = (props: Props) => {
         return filteredTeams;
     }, [myTeams, locale, userTeamsOrderPreference, filter, showFilter, props.selectedTeamId]);
 
-    const renderTeam = (teamId: string, teamName: string, elementId: string, testId: string, className: string = '') => {
+    const renderTeam = (teamId: string, teamName: string, elementId: string, testId: TestIdWithRole, className: string = '') => {
         return (
             <Menu.Item
                 id={elementId}
@@ -120,7 +120,7 @@ const SelectTeam = (props: Props) => {
         ];
         if (currentlySelectedTeam) {
             elements.push(
-                renderTeam(currentlySelectedTeam.id, currentlySelectedTeam.display_name, currentlySelectedTeam.id, `${props.testIdScope}.menu.team:${currentlySelectedTeam.name}--menuitemradio`, 'search-teams-selector-current-team'),
+                renderTeam(currentlySelectedTeam.id, currentlySelectedTeam.display_name, currentlySelectedTeam.id, `${props.testIdScope}.menu.team:${currentlySelectedTeam.id}--menuitemradio`, 'search-teams-selector-current-team'),
                 <Menu.Title
                     key='your-team-title'
                     role='separator'
@@ -155,7 +155,7 @@ const SelectTeam = (props: Props) => {
             {renderTeam('', allTeamsText, 'all_teams', `${props.testIdScope}.menu.all_teams--menuitemradio`)}
             <Menu.Separator/>
             {showFilter && renderFilterArea()}
-            {teams.map((team) => renderTeam(team.id, team.display_name, team.id, `${props.testIdScope}.menu.team:${team.name}--menuitemradio`))}
+            {teams.map((team) => renderTeam(team.id, team.display_name, team.id, `${props.testIdScope}.menu.team:${team.id}--menuitemradio`))}
         </Menu.Container>
     );
 };

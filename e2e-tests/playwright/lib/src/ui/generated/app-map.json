@@ -14190,7 +14190,7 @@
                 {
                     "testId": "search.team_selector.menu.team:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "Pick<Team, 'name'>",
+                    "key": "Pick<Team, 'id'>",
                     "opens": [
                         {
                             "kind": "page",
@@ -14398,7 +14398,7 @@
                 {
                     "testId": "search_box.team_selector.menu.team:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "Pick<Team, 'name'>",
+                    "key": "Pick<Team, 'id'>",
                     "renderedWhen": ["crossTeamSearchEnabled && hasMoreThanOneTeam"],
                     "source": "channels/src/components/new_search/select_team.tsx#SelectTeam"
                 },
