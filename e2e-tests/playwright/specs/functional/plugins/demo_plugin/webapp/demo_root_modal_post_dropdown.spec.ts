@@ -39,7 +39,7 @@ test('should open Root Modal from post actions menu and all submenu items', asyn
         [demo.postSubmenu.thirdText, 'Third Item'],
     ] as const) {
         menu = await openActionsMenu(app, post.id);
-        await menu.pluginSubmenu(DEMO).locator.hover();
+        await menu.pluginSubmenu(DEMO).hover();
         await item.locator.click({timeout: duration.ten_sec});
 
         // * The Root Modal names the item

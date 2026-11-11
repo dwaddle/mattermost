@@ -93,7 +93,7 @@ test(
         await expect(minimumLength.locator).toHaveValue(String(customLength));
 
         // # Clear the minimum length and save
-        await minimumLength.locator.clear();
+        await minimumLength.clear();
 
         if (isFips) {
             // * Verify FIPS rejects the empty value and keeps the custom length

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openChannel, test, DefaultChannel} from '@mattermost/playwright-lib';
+import {expect, openChannel, test, DefaultChannel, Msg} from '@mattermost/playwright-lib';
 
 import {markdownOf, postContaining, sendCommand} from './support';
 
@@ -23,7 +23,7 @@ test('should parse user and channel mentions from /show_mentions command text', 
 
     // * And the channel mention, linking to the channel
     await expect(body).toContainText('Mentions to public channels');
-    await expect(body).toContainText('Channel name');
+    await expect(body).toContainMessage(Msg.channel_modal.name.label._);
     const channelLink = markdownOf(app, reply).channelMention(DefaultChannel.TownSquare).locator;
     await expect(channelLink).toHaveText('~Town Square');
     await expect(channelLink).toHaveAttribute('href', /\/channels\/town-square$/);

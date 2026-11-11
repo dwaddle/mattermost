@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, getRecentEmail, test} from '@mattermost/playwright-lib';
+import {expect, getRecentEmail, test, Msg} from '@mattermost/playwright-lib';
 
 import {expectOnSelectTeam, openSignup, signUp} from './support';
 
@@ -52,7 +52,7 @@ test(
         const app = await openSignup(pw, page, `?id=${team.invite_id}`);
 
         // * Verify GitLab is offered and email signup fields are hidden
-        await expect(app.signup.card.titleText.locator).toHaveText('Create your account with one of the following:');
+        await expect(app.signup.card.titleText.locator).toHaveMessage(Msg.signup_user_completed.cardtitle.external);
         await expect(app.signup.gitlabLink.locator).toBeVisible();
         await expect(app.signup.card.emailTextbox.locator).toBeHidden();
         await expect(app.signup.card.passwordTextbox.locator).toBeHidden();

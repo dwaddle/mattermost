@@ -3,7 +3,7 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, getFileFromAsset, openChannel, test} from '@mattermost/playwright-lib';
+import {expect, getFileFromAsset, openChannel, test, Msg} from '@mattermost/playwright-lib';
 
 import {closeRootModal, DEMO, expectRootModal, uploadFromYourComputer} from './support';
 
@@ -29,7 +29,7 @@ test('should show "Upload using Demo Plugin" entry in attachment menu and open R
     await composer.clickAttachButton();
 
     // * Both upload entries show
-    await expect(composer.attachMenu.yourComputerLink.locator).toHaveText('Your computer');
+    await expect(composer.attachMenu.yourComputerLink.locator).toHaveMessage(Msg.yourcomputer);
     await expect(composer.attachMenu.plugin(DEMO).locator).toHaveText('Upload using Demo Plugin');
 
     // # Choose the plugin's entry: it opens the Root Modal

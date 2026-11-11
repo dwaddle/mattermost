@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {openAdminConsole, openSignup} from './support';
 
@@ -51,8 +51,6 @@ test('MM-T1783 rejects invalid usernames on signup', {tag: '@authentication'}, a
         await card.clickCreateAccountButton();
 
         // * Verify the username validation error is shown
-        await expect(card.username.messageAlert.locator).toHaveText(
-            'Usernames have to begin with a lowercase letter and be 3-22 characters long. You can use lowercase letters, numbers, periods, dashes, and underscores.',
-        );
+        await expect(card.username.messageAlert.locator).toHaveMessage(Msg.bots.manage.add.invalid_username);
     }
 });

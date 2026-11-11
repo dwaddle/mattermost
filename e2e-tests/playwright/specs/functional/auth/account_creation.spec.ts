@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App, duration} from '@mattermost/playwright-lib';
+import {expect, test, type App, duration, Msg} from '@mattermost/playwright-lib';
 
 import {DOMAIN_NOT_ALLOWED, openLogin, signUp} from './support';
 
@@ -41,9 +41,7 @@ test('MM-T1753 hides signup when user creation is disabled', {tag: '@authenticat
     await app.signupPage.goto();
 
     // * Verify no sign-in methods are offered
-    await expect(app.signup.noMethods.titleText.locator).toHaveText(
-        'This server doesn’t have any sign-in methods enabled',
-    );
+    await expect(app.signup.noMethods.titleText.locator).toHaveMessage(Msg.login.noMethods.title);
 });
 
 /**

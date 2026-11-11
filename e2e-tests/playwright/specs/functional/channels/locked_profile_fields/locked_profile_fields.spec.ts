@@ -12,6 +12,7 @@ import {
     test,
     duration,
     DefaultChannel,
+    Msg,
 } from '@mattermost/playwright-lib';
 
 type LockSetting = 'none' | 'name_and_username' | 'all';
@@ -58,7 +59,7 @@ test(
         const {card} = app.signup;
         await expect(card.usernameTextbox.locator).toHaveValue(invitedUsername);
         await expect(card.usernameTextbox.locator).toBeDisabled();
-        await expect(card.username.messageText.locator).toHaveText('Your username was chosen by your admin.');
+        await expect(card.username.messageText.locator).toHaveMessage(Msg.signup_user_completed.usernameIs);
         await expect(card.presetNameText.locator).toHaveText("You'll join as Jane Doe.");
         await card.fillPasswordTextbox(pw.newTestPassword());
         await card.setTermsCheckbox(true);

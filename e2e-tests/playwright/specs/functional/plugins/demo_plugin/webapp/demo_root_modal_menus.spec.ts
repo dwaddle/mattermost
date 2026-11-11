@@ -33,11 +33,11 @@ test('should open Root Modal from channel header dropdown More actions', async (
 
     // # Open the channel menu and hover "More actions" to show its submenu
     const menu = await app.channelHeader.clickOpenMenuButton();
-    await menu.moreActionsMenuItem.locator.hover();
+    await menu.moreActionsMenuItem.hover();
 
     // # Click the plugin's item in the submenu
     await expect(menu.plugin(DEMO).locator).toBeVisible();
-    await menu.plugin(DEMO).locator.hover();
+    await menu.plugin(DEMO).hover();
     await menu.plugin(DEMO).click();
 
     // * The Root Modal opens, naming the channel the menu was opened in

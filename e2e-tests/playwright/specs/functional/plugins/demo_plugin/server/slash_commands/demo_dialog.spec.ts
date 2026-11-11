@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openChannel, type PlaywrightExtended, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, type PlaywrightExtended, test, Msg} from '@mattermost/playwright-lib';
 
 import {fieldContaining, openDialog, postContaining, radioFieldWith} from './support';
 
@@ -46,7 +46,7 @@ test('should post cancellation notification when /dialog is cancelled', async ({
     // * The dialog offers Cancel and Submit
     await expect(form.titleText.locator).toContainText('Test Title');
     await expect(form.cancelButton.locator).toBeVisible();
-    await expect(form.submitButton.locator).toHaveText('Submit');
+    await expect(form.submitButton.locator).toHaveMessage(Msg.interactive_dialog.submit);
 
     // # Cancel
     await form.clickCancelButton();
@@ -67,8 +67,8 @@ test('should show validation errors when required fields are submitted empty', a
 
     // * The dialog stays open with a form error and the field's own
     await expect(form.titleText.locator).toBeVisible();
-    await expect(form.errorText.locator).toHaveText('Please fix all field errors');
-    await expect(number.locator).toContainText('This field is required.');
+    await expect(form.errorText.locator).toHaveMessage(Msg.apps.error.form.required_fields_empty);
+    await expect(number.locator).toContainMessage(Msg.interactive_dialog.error.required);
 });
 
 test('should show general error and keep dialog open on /dialog error submit', async ({pw}) => {

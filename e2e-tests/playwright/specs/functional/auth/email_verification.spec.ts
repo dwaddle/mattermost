@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, extractEmailLink, getRecentEmail, test} from '@mattermost/playwright-lib';
+import {expect, extractEmailLink, getRecentEmail, test, Msg} from '@mattermost/playwright-lib';
 
 import {logIn, openLogin} from './support';
 
@@ -24,11 +24,11 @@ test(
             const app = await openLogin(pw, page);
             await logIn(app, user.username, user.password);
             const verify = app.shouldVerifyEmail;
-            await expect(verify.titleText.locator).toHaveText('You’re almost done!');
+            await expect(verify.titleText.locator).toHaveMessage(Msg.email_verify.almost);
 
             // # Resend the verification email
             await verify.clickResendButton();
-            await expect(verify.statusText.locator).toHaveText('Verification email sent');
+            await expect(verify.statusText.locator).toHaveMessage(Msg.email_verify.sent);
 
             const mail = await getRecentEmail(user.email, {receivedAfter: started});
             const permalink = extractEmailLink(mail, '/do_verify_email');

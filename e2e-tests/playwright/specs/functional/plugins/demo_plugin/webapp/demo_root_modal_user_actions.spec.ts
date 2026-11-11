@@ -3,7 +3,7 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {type App, expect, openChannel, type PlaywrightExtended, test} from '@mattermost/playwright-lib';
+import {type App, expect, openChannel, type PlaywrightExtended, test, Msg} from '@mattermost/playwright-lib';
 
 import {closeRootModal, expectRootModal} from './support';
 
@@ -40,7 +40,7 @@ test('should open Root Modal from user profile popover Action button', async ({p
 
     // * The plugin's attributes link and Action button show
     await expect(demo.userAttributes.hideButton.locator).toBeVisible();
-    await expect(demo.userActions.actionButton.locator).toHaveText('Action');
+    await expect(demo.userActions.actionButton.locator).toHaveMessage(Msg.audit_table.action);
 
     // # Click Action: the popover closes and the Root Modal opens
     await demo.userActions.clickActionButton();
