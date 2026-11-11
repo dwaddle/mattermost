@@ -5,6 +5,7 @@ import React, {useCallback, useMemo} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CheckIcon, ChevronDownIcon} from '@mattermost/compass-icons/components';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Agent} from '@mattermost/types/agents';
 
@@ -68,7 +69,7 @@ const AgentDropdown = ({
 
     const menuButtonConfig = useMemo(() => ({
         id: 'agent-dropdown-button',
-        dataTestId: testIdScope ? `${testIdScope}--button` : undefined,
+        dataTestId: withRole(testIdScope, 'button'),
         'aria-label': formatMessage({id: 'agent.buttonAriaLabel', defaultMessage: 'Agent selector'}),
         disabled,
         class: 'agent-dropdown-button',

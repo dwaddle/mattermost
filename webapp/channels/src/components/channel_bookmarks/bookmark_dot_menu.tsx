@@ -16,6 +16,7 @@ import {
     DownloadOutlineIcon,
 } from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelBookmark, ChannelBookmarkPatch} from '@mattermost/types/channel_bookmarks';
 
@@ -143,7 +144,7 @@ const BookmarkItemDotMenu = ({
             transformOrigin={{vertical: 'top', horizontal: 'right'}}
             menuButton={{
                 id: `channelBookmarksDotMenuButton-${bookmark.id}`,
-                dataTestId: testIdScope ? `${testIdScope}.open_menu--button` : undefined,
+                dataTestId: part(testIdScope, 'open_menu', 'button'),
                 as: isInOverflowMenu ? BookmarkOverflowDotMenuTrigger : BookmarkBarDotMenuTrigger,
                 class: `channelBookmarksDotMenuButton ${buttonClassName ?? ''}`,
                 children: <Icon glyph={<DotsHorizontalIcon/>}/>,

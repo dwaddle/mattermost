@@ -6,6 +6,7 @@ import type {ReactNode} from 'react';
 
 import {DotsHorizontalIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
@@ -42,7 +43,7 @@ export const RecapMenu: React.FC<RecapMenuProps> = ({
         <Menu.Container
             menuButton={{
                 id: buttonId,
-                dataTestId: testIdScope ? `${testIdScope}.open--button` : undefined,
+                dataTestId: part(testIdScope, 'open', 'button'),
                 as: RecapMenuTrigger,
                 class: buttonClassName,
                 'aria-label': ariaLabel,
@@ -67,7 +68,7 @@ export const RecapMenu: React.FC<RecapMenuProps> = ({
             {actions.map((action) => (
                 <Menu.Item
                     key={action.id}
-                    data-testid={testIdScope ? `${testIdScope}.action:${action.id}--menuitem` : undefined}
+                    data-testid={part(testIdScope, 'action', {key: action.id}, 'menuitem')}
                     leadingElement={action.icon}
                     labels={<span>{action.label}</span>}
                     onClick={action.onClick}

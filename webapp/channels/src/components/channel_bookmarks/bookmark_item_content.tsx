@@ -8,6 +8,7 @@ import {Link, useHistory} from 'react-router-dom';
 import styled, {css} from 'styled-components';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelBookmark} from '@mattermost/types/channel_bookmarks';
 import type {FileInfo} from '@mattermost/types/files';
@@ -121,7 +122,7 @@ export const useBookmarkLink = (
             emoji={bookmark.emoji}
             imageUrl={bookmark.image_url}
             fileInfo={fileInfo}
-            testId={testIdScope ? `${testIdScope}.icon` : undefined}
+            testId={part(testIdScope, 'icon')}
         />
     );
 
@@ -173,7 +174,7 @@ const BookmarkItemContent = ({bookmark, testIdScope, disableInteractions, keyboa
                 isFile={isFile}
                 draggable={false}
                 role='link'
-                data-testid={testIdScope ? `${testIdScope}.open--link` : undefined}
+                data-testid={part(testIdScope, 'open', 'link')}
                 tabIndex={keyboardReorderProps?.tabIndex}
                 onKeyDown={keyboardReorderProps?.onKeyDown}
             >

@@ -8,6 +8,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import FormattedMarkdownMessage from 'components/formatted_markdown_message';
@@ -168,7 +169,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
                 <a
                     href='#'
                     className='announcement-bar__close'
-                    data-testid={this.props.testId ? `${this.props.testId}.close--link` : undefined}
+                    data-testid={part(this.props.testId, 'close', 'link')}
                     style={linkStyle}
                     onClick={this.handleClose}
                 >
@@ -194,7 +195,7 @@ export default class AnnouncementBar extends React.PureComponent<Props, State> {
             <span
                 ref={this.messageRef}
                 onMouseEnter={this.enableToolTipIfNeeded}
-                data-testid={this.props.testId ? `${this.props.testId}.message--text` : undefined}
+                data-testid={part(this.props.testId, 'message', 'text')}
             >
                 {message}
             </span>

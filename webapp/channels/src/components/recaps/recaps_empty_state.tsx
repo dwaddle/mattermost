@@ -6,6 +6,7 @@ import React from 'react';
 import {useIntl} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import AICopilotIntroSvg from './ai_copilot_intro_svg';
@@ -38,7 +39,7 @@ const RecapsEmptyState = ({onCreateClick, disabled, title, className, testId}: P
             </p>
             <Button
                 emphasis='primary'
-                data-testid={`${testId}.create--button`}
+                data-testid={part(testId, 'create', 'button')}
                 onClick={onCreateClick}
                 disabled={disabled}
                 title={disabled ? formatMessage({id: 'recaps.addRecap.disabled', defaultMessage: 'Agents Bridge is not enabled'}) : undefined}

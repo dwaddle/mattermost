@@ -9,6 +9,7 @@ import {Button} from '@mattermost/compass-ui/components/button';
 import type {ButtonEmphasis, ButtonSize} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {GenericModal} from '@mattermost/components';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelJoinRequest, ChannelMembership, ChannelSearchOpts, ChannelsWithTotalCount, GetChannelJoinRequestsOptions} from '@mattermost/types/channels';
 import type {RelationOneToOne} from '@mattermost/types/utilities';
@@ -549,7 +550,7 @@ export default class BrowseChannels extends React.PureComponent<Props, State> {
                     <Button
                         type='button'
                         id='createNewChannelButton'
-                        data-testid={`${testId}--button`}
+                        data-testid={withRole(testId, 'button')}
                         emphasis={emphasis}
                         size={size}
                         onClick={this.handleNewChannel}
