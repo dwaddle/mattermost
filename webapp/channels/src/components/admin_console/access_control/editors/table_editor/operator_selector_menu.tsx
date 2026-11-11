@@ -10,6 +10,7 @@ import {defineMessage, FormattedMessage, useIntl} from 'react-intl';
 import {ArrowDownBoldCircleOutlineIcon, ArrowDownIcon, ArrowUpBoldCircleOutlineIcon, ArrowUpIcon, CheckAllIcon, CheckIcon, ClockOutlineIcon, ElementOfIcon, EqualIcon, FunctionIcon, NotEqualVariantIcon} from '@mattermost/compass-icons/components';
 import type IconProps from '@mattermost/compass-icons/components/props';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {IDMappedObjects} from '@mattermost/types/utilities';
 
@@ -169,7 +170,7 @@ const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeTyp
                 <Menu.Item
                     id={id}
                     key={id}
-                    data-testid={testId ? `${testId}.operator_menu.operator:${id}--menuitemradio` : undefined}
+                    data-testid={part(testId, 'operator_menu.operator', {key: id}, 'menuitemradio')}
                     role='menuitemradio'
                     forceCloseOnSelect={true}
                     aria-checked={id === currentOperatorDescriptor.id}
@@ -184,7 +185,7 @@ const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeTyp
                                         functionName: (
                                             <span
                                                 className='operator-selector-menu__function-name'
-                                                data-testid={testId ? `${testId}.operator_menu.operator.function_name--text` : undefined}
+                                                data-testid={part(testId, 'operator_menu.operator.function_name', 'text')}
                                             >
                                                 {`(${functionName})`}
                                             </span>
@@ -221,7 +222,7 @@ const OperatorSelectorMenu = ({currentOperator, disabled, onChange, attributeTyp
                         </WithTooltip>
                     </>
                 ),
-                dataTestId: testId ? `${testId}.operator--button` : undefined,
+                dataTestId: part(testId, 'operator', 'button'),
                 disabled,
             }}
             menu={{

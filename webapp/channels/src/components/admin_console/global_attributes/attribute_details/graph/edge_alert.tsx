@@ -4,6 +4,7 @@
 import React from 'react';
 import {defineMessages, useIntl} from 'react-intl';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {CheckParentEdgeInvalid} from './graph_utils';
@@ -41,7 +42,7 @@ export function GraphParentEdgeAlert({result, childName, parentName, className, 
         <div
             className={className}
             role='alert'
-            data-testid={`${testId}--alert`}
+            data-testid={withRole(testId, 'alert')}
         >
             {text}
         </div>

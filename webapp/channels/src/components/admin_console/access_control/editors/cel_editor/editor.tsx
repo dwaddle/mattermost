@@ -5,6 +5,7 @@ import * as monaco from 'monaco-editor';
 import React, {useCallback, useEffect, useRef, useState, useMemo, type JSX} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AccessControlTestResult, CELExpressionError} from '@mattermost/types/access_control';
 import {SESSION_ATTRIBUTES_OBJECT_TYPE, USER_OBJECT_TYPE} from '@mattermost/types/properties_user';
@@ -463,7 +464,7 @@ function CELEditor({
                 <div
                     className='cel-editor__masked-banner'
                     role='alert'
-                    data-testid={testId ? `${testId}.masked--alert` : undefined}
+                    data-testid={part(testId, 'masked', 'alert')}
                 >
                     <i className='icon icon-alert-outline'/>
                     <FormattedMessage
@@ -489,7 +490,7 @@ function CELEditor({
                 <div
                     ref={editorRef}
                     className='cel-editor__input'
-                    data-testid={testId ? `${testId}.input` : undefined}
+                    data-testid={part(testId, 'input')}
                 />
                 <div
                     className='cel-editor__status-bar'
@@ -500,7 +501,7 @@ function CELEditor({
                         className='cel-editor__status-message'
                         role='status'
                         aria-live='polite'
-                        data-testid={testId ? `${testId}.status--text` : undefined}
+                        data-testid={part(testId, 'status', 'text')}
                     >
                         {renderStatusMessage(getValidationState())}
                     </div>
@@ -535,7 +536,7 @@ function CELEditor({
                 </div>
                 <div className='access-control-test-controls'>
                     <TestButton
-                        testId={testId ? `${testId}.test` : undefined}
+                        testId={part(testId, 'test')}
                         onClick={onTestClick ?? (() => setEditorState((prev) => ({...prev, showTestResults: true})))}
                         label={testButtonLabel}
                         disabled={testButtonDisabled || disabled || hasMaskedRows || !editorState.expression || !editorState.isValid || editorState.isValidating}

@@ -5,6 +5,7 @@ import React, {useMemo} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 import {matchPath, useLocation} from 'react-router-dom';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import {ContentFlaggingStatus} from '@mattermost/types/content_flagging';
 import type {Post} from '@mattermost/types/posts';
@@ -162,7 +163,7 @@ export function DataSpillageReport({post, isRHS, testIdScope}: Props) {
         return (
             <DataSpillageFooter
                 post={post}
-                testIdScope={testIdScope ? `${testIdScope}.footer` : undefined}
+                testIdScope={part(testIdScope, 'footer')}
             />
         );
     }, [isRHS, post, reportedPostId]);
@@ -188,7 +189,7 @@ export function DataSpillageReport({post, isRHS, testIdScope}: Props) {
             content: (
                 <DataSpillageExposureReport
                     flaggedPostId={reportedPost.id}
-                    testIdScope={testIdScope ? `${testIdScope}.exposure_report` : undefined}
+                    testIdScope={part(testIdScope, 'exposure_report')}
                 />
             ),
             testKey: 'exposure_report',
@@ -205,7 +206,7 @@ export function DataSpillageReport({post, isRHS, testIdScope}: Props) {
             content: (
                 <DataSpillageDownloadReport
                     flaggedPostId={reportedPost.id}
-                    testIdScope={testIdScope ? `${testIdScope}.download_report` : undefined}
+                    testIdScope={part(testIdScope, 'download_report')}
                 />
             ),
         });
@@ -223,7 +224,7 @@ export function DataSpillageReport({post, isRHS, testIdScope}: Props) {
                     <DataSpillageAction
                         flaggedPost={reportedPost}
                         reportingUser={reportingUser}
-                        testIdScope={testIdScope ? `${testIdScope}.actions` : undefined}
+                        testIdScope={part(testIdScope, 'actions')}
                     />
                 ),
             });
@@ -248,7 +249,7 @@ export function DataSpillageReport({post, isRHS, testIdScope}: Props) {
                 mode={mode}
                 metadata={metadata}
                 footer={footer}
-                testIdScope={testIdScope ? `${testIdScope}.card` : undefined}
+                testIdScope={part(testIdScope, 'card')}
             />
         </div>
     );

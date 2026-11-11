@@ -5,6 +5,7 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
 import {CheckIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyFieldOption} from '@mattermost/types/properties';
 import {supportsOptions} from '@mattermost/types/properties';
@@ -66,7 +67,7 @@ const RemovableChip = ({label, value, color, disabled, onRemove, testId, testKey
         >
             {!disabled && (
                 <AttributeChipRemoveButton
-                    testId={`${testId}.remove`}
+                    testId={part(testId, 'remove')}
                     className='ChannelInfoAttributes__chipRemove'
                     onRemove={() => onRemove()}
                     removeLabel={formatMessage(
@@ -216,7 +217,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
                 disabled={saving}
                 autoFocus={true}
                 aria-label={label}
-                data-testid={`${testId}.editor--textbox`}
+                data-testid={part(testId, 'editor', 'textbox')}
             />
         );
     }
@@ -229,7 +230,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
                 onIdsChange={handleGraphIdsChange}
                 menuId={`channelAttributeEdit-${field.name}`}
                 buttonId={`channelInfoAttributeEdit-${field.name}`}
-                buttonDataTestId={`${testId}.edit--button`}
+                buttonDataTestId={part(testId, 'edit', 'button')}
                 placeholder={formatMessage({
                     id: 'channel_attributes.info.not_set',
                     defaultMessage: 'Not set',
@@ -244,7 +245,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
     const emptyPlaceholder = (
         <span
             className='ChannelInfoAttributes__empty'
-            data-testid={`${testId}.unset--text`}
+            data-testid={part(testId, 'unset', 'text')}
         >
             <FormattedMessage
                 id='channel_attributes.info.not_set'
@@ -264,7 +265,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
                     return (
                         <RemovableChip
                             key={optionId}
-                            testId={`${testId}.chip`}
+                            testId={part(testId, 'chip')}
                             testKey={textTestKey(option?.label ?? optionId)}
                             label={label}
                             value={option?.label ?? optionId}
@@ -284,7 +285,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
                 color={color}
                 disabled={saving}
                 onRemove={handleClear}
-                testId={`${testId}.chip`}
+                testId={part(testId, 'chip')}
                 testKey={textTestKey(displayValue!)}
             />
         ) : (
@@ -295,7 +296,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
                 color={color}
                 size='medium'
                 announceLabel={false}
-                testId={`${testId}.chip:${textTestKey(displayValue!)}`}
+                testId={part(testId, 'chip', {key: textTestKey(displayValue!)})}
             />
         );
     } else {
@@ -307,7 +308,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
             <Menu.Container
                 menuButton={{
                     id: menuButtonId,
-                    dataTestId: `${testId}.edit--button`,
+                    dataTestId: part(testId, 'edit', 'button'),
 
                     // div, not button: chip removes are real <button>s.
                     as: 'div',
@@ -336,7 +337,7 @@ const ChannelAttributeRowEditor = ({field, rawValue, displayValue, color, onSubm
                         <Menu.Item
                             key={option.value}
                             id={`channelAttributeEdit-${field.name}-${option.value}`}
-                            data-testid={`${testId}.edit_menu.option:${textTestKey(option.label)}--menuitem`}
+                            data-testid={part(testId, 'edit_menu.option', {key: textTestKey(option.label)}, 'menuitem')}
                             labels={
                                 <span className='ChannelInfoAttributes__optionLabel'>
                                     {option.color ? (

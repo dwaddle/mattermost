@@ -7,6 +7,7 @@ import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 import {PlusIcon} from '@mattermost/compass-icons/components';
 import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
 
 import Input from 'components/widgets/inputs/input/input';
 
@@ -83,7 +84,7 @@ export const AddTopLevelForm = ({
                 customMessage={isDuplicate ?
                     {type: 'error', value: formatMessage(messages.duplicateName, {name: trimmed})} :
                     null}
-                testId={`${testIdScope}.name`}
+                testId={part(testIdScope, 'name')}
             />
             <Button
                 type='button'
@@ -91,7 +92,7 @@ export const AddTopLevelForm = ({
                 size={isEmptyCanvas ? 'small' : 'medium'}
                 onClick={onCommit}
                 disabled={!canAdd}
-                data-testid={`${testIdScope}.add--button`}
+                data-testid={part(testIdScope, 'add', 'button')}
                 leadingIcon={<Icon glyph={<PlusIcon/>}/>}
             >
                 <FormattedMessage {...messages.addValue}/>

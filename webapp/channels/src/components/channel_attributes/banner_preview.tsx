@@ -5,6 +5,7 @@ import React, {useMemo} from 'react';
 import {useIntl} from 'react-intl';
 
 import {SectionNotice} from '@mattermost/compass-ui/components/section-notice';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
@@ -69,7 +70,7 @@ const BannerPreview = ({testId, template, attributes, backgroundColor}: Props) =
                     />
                 </div>
             ) : (
-                <div data-testid={`${testId}.empty_notice`}>
+                <div data-testid={part(testId, 'empty_notice')}>
                     <SectionNotice
                         type='warning'
                         title={formatMessage({

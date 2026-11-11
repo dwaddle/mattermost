@@ -7,6 +7,7 @@ import {useIntl} from 'react-intl';
 
 import {CloseCircleIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
@@ -354,7 +355,7 @@ const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, has
                     tabIndex={disabled ? -1 : 0}
                     aria-multiline='false'
                     aria-label={formatMessage({id: 'channel_banner.banner_text.label', defaultMessage: 'Banner text'})}
-                    data-testid={`${testId}--textbox`}
+                    data-testid={withRole(testId, 'textbox')}
                     data-placeholder={formatMessage(channelKindMessages.bannerTextPlaceholder[channelKind])}
                     onInput={emit}
                     onBlur={rememberCaret}
@@ -379,7 +380,7 @@ const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, has
                                 })}
                                 contentEditable={false}
                                 data-token={segment.name}
-                                data-testid={`${testId}.token:${segments.slice(0, index).filter((s) => s.type !== 'text').length}`}
+                                data-testid={part(testId, 'token', {key: segments.slice(0, index).filter((s) => s.type !== 'text').length})}
                             >
                                 {label}
                                 {!disabled && (
@@ -390,7 +391,7 @@ const BannerTextEditor = ({value, attributes, onChange, disabled, maxLength, has
                                             {id: 'channel_attributes.banner.remove_attribute', defaultMessage: 'Remove {label}'},
                                             {label},
                                         )}
-                                        data-testid={`${testId}.token.remove--button`}
+                                        data-testid={part(testId, 'token.remove', 'button')}
                                         onMouseDown={(event) => event.preventDefault()}
                                         onClick={handleRemoveToken}
                                     >

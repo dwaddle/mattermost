@@ -4,6 +4,7 @@
 import React, {useMemo} from 'react';
 import {defineMessages, FormattedMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {Post} from '@mattermost/types/posts';
@@ -190,7 +191,7 @@ export default function PropertiesCardView({title, propertyFields, fieldOrder, s
         >
             <div
                 className='PropertyCardView_title'
-                data-testid={testIdScope ? `${testIdScope}.title--text` : undefined}
+                data-testid={part(testIdScope, 'title', 'text')}
             >
                 {title}
             </div>
@@ -204,25 +205,25 @@ export default function PropertiesCardView({title, propertyFields, fieldOrder, s
                             <div
                                 key={field.id}
                                 className='row'
-                                data-testid={testIdScope ? `${testIdScope}.field:${field.name}` : undefined}
+                                data-testid={part(testIdScope, 'field', {key: field.name})}
                                 data-field-name={field.name}
                             >
                                 <div
                                     className='field'
-                                    data-testid={testIdScope ? `${testIdScope}.field.label--text` : undefined}
+                                    data-testid={part(testIdScope, 'field.label', 'text')}
                                 >
                                     {translation ? <FormattedMessage {...translation}/> : field.name}
                                 </div>
 
                                 <div
                                     className='value'
-                                    data-testid={testIdScope ? `${testIdScope}.field.value` : undefined}
+                                    data-testid={part(testIdScope, 'field.value')}
                                 >
                                     <PropertyValueRenderer
                                         field={field}
                                         value={value}
                                         metadata={metadata ? metadata[field.name] : undefined}
-                                        testIdScope={testIdScope ? `${testIdScope}.field.value` : undefined}
+                                        testIdScope={part(testIdScope, 'field.value')}
                                     />
                                 </div>
                             </div>

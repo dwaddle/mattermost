@@ -5,6 +5,7 @@ import React from 'react';
 import {defineMessages, useIntl} from 'react-intl';
 
 import {TrashCanOutlineIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
@@ -70,7 +71,7 @@ export default function UserAttributeFields({
                                 type='button'
                                 className='btn btn-icon btn-sm UserAttributeFields__remove'
                                 aria-label={formatMessage(messages.remove, {name: getUserPropertyFieldLabel(field)})}
-                                data-testid={`${testIdScope}.remove--button`}
+                                data-testid={part(testIdScope, 'remove', 'button')}
                                 disabled={disabled}
                                 onClick={() => onRemove?.(field.id)}
                             >

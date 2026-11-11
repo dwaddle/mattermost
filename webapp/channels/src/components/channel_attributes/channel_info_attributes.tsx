@@ -6,6 +6,7 @@ import {FormattedMessage, defineMessage, defineMessages, useIntl} from 'react-in
 import {useDispatch} from 'react-redux';
 
 import {LockOutlineIcon, PlusIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyFieldOption, PropertyValue} from '@mattermost/types/properties';
 import {supportsOptions} from '@mattermost/types/properties';
@@ -489,7 +490,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                                     />
                                 </>
                             ),
-                            dataTestId: `${testId}.add--button`,
+                            dataTestId: part(testId, 'add', 'button'),
                         }}
                         menu={{
                             id: 'channelInfoAddAttributeMenu',
@@ -500,7 +501,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                             <Menu.Item
                                 key={attribute.field.id}
                                 id={`channelInfoAddAttribute-${attribute.field.name}`}
-                                data-testid={`${testId}.add_menu.attribute:${attribute.field.id}--menuitem`}
+                                data-testid={part(testId, 'add_menu.attribute', {key: attribute.field.id}, 'menuitem')}
                                 onClick={() => handleAdd(attribute.field.id)}
                                 labels={<span>{getPropertyFieldLabel(attribute.field)}</span>}
                             />

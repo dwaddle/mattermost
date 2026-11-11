@@ -7,6 +7,7 @@ import type {MessageDescriptor} from 'react-intl';
 import {FormattedMessage} from 'react-intl';
 
 import type IconProps from '@mattermost/compass-icons/components/props';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
@@ -69,11 +70,11 @@ function AttributeSelect<T extends string>({
     const value = (
         <span
             className='AttributeSelect__value'
-            data-testid={`${testId}.value`}
+            data-testid={part(testId, 'value')}
         >
             <SelectedIcon
                 size={18}
-                data-testid={`${testId}.icon`}
+                data-testid={part(testId, 'icon')}
             />
             <FormattedMessage {...selected.label}/>
         </span>
@@ -87,7 +88,7 @@ function AttributeSelect<T extends string>({
                 className='AttributeSelect'
                 disabled={true}
                 aria-label={ariaLabel}
-                data-testid={`${testId}--button`}
+                data-testid={withRole(testId, 'button')}
             >
                 {value}
             </button>
@@ -106,11 +107,11 @@ function AttributeSelect<T extends string>({
                         {value}
                         <i
                             className='icon icon-chevron-down'
-                            data-testid={`${testId}.chevron`}
+                            data-testid={part(testId, 'chevron')}
                         />
                     </>
                 ),
-                dataTestId: `${testId}--button`,
+                dataTestId: withRole(testId, 'button'),
             }}
             menu={{
                 id: `${idPrefix}-menu`,
@@ -123,7 +124,7 @@ function AttributeSelect<T extends string>({
                 return (
                     <Menu.Item
                         id={`${idPrefix}-${option.id}`}
-                        data-testid={`${testId}.option:${option.id}--menuitemradio`}
+                        data-testid={part(testId, 'option', {key: option.id}, 'menuitemradio')}
                         key={option.id}
                         role='menuitemradio'
                         forceCloseOnSelect={true}

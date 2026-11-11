@@ -3,6 +3,7 @@
 
 import React, {type ComponentProps} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
@@ -20,7 +21,7 @@ export default function TimestampPropertyRenderer({value, testIdScope}: Props) {
     return (
         <div
             className='TimestampPropertyRenderer'
-            data-testid={testIdScope ? `${testIdScope}.timestamp--text` : undefined}
+            data-testid={part(testIdScope, 'timestamp', 'text')}
         >
             <Timestamp
                 value={value.value as number}

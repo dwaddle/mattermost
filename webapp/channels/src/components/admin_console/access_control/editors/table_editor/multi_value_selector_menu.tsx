@@ -6,6 +6,7 @@ import React, {useState, useMemo, useCallback} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CheckIcon, ChevronDownIcon, CloseIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
@@ -113,7 +114,7 @@ const MultiValueSelector = ({
             if (hasMaskedValues) {
                 return (
                     <div className='value-selector-menu-button__multi-values-container'>
-                        <MaskedChip testId={testId ? `${testId}.value.masked` : undefined}/>
+                        <MaskedChip testId={part(testId, 'value.masked')}/>
                     </div>
                 );
             }
@@ -138,13 +139,13 @@ const MultiValueSelector = ({
                     <div
                         key={value}
                         className='select__multi-value'
-                        data-testid={testId ? `${testId}.value.chip:${textTestKey(value)}` : undefined}
+                        data-testid={part(testId, 'value.chip', {key: textTestKey(value)})}
                     >
                         <div className='select__multi-value__label'>{value}</div>
                         {!disabled && (
                             <div
                                 className='select__multi-value__remove'
-                                data-testid={testId ? `${testId}.value.chip.remove--button` : undefined}
+                                data-testid={part(testId, 'value.chip.remove', 'button')}
                                 onClick={(e) => handleRemoveValue(e, value)}
                                 role='button'
                                 tabIndex={0}
@@ -159,7 +160,7 @@ const MultiValueSelector = ({
                         )}
                     </div>
                 ))}
-                {hasMaskedValues && <MaskedChip testId={testId ? `${testId}.value.masked` : undefined}/>}
+                {hasMaskedValues && <MaskedChip testId={part(testId, 'value.masked')}/>}
             </div>
         );
     }, [values, disabled, hasMaskedValues]);
@@ -188,7 +189,7 @@ const MultiValueSelector = ({
                             />
                         </span>
                     ),
-                    dataTestId: testId ? `${testId}.value--button` : undefined,
+                    dataTestId: part(testId, 'value', 'button'),
                     disabled,
                 }}
                 menu={{
@@ -200,7 +201,7 @@ const MultiValueSelector = ({
                 <Menu.InputItem
                     key='filter_values'
                     id='filter_values'
-                    testId={testId ? `${testId}.value_menu.filter` : undefined}
+                    testId={part(testId, 'value_menu.filter')}
                     type='text'
                     placeholder={formatMessage(actualAllowCreateForMenu ? {
                         id: 'admin.access_control.table_editor.selector.filter_or_create',
@@ -231,7 +232,7 @@ const MultiValueSelector = ({
                         <Menu.Item
                             id={`value-option-${id}`}
                             key={id}
-                            data-testid={testId ? `${testId}.value_menu.multi_option:${textTestKey(name)}--menuitemcheckbox` : undefined}
+                            data-testid={part(testId, 'value_menu.multi_option', {key: textTestKey(name)}, 'menuitemcheckbox')}
                             role='menuitemcheckbox'
                             forceCloseOnSelect={false}
                             aria-checked={isSelected}
@@ -247,7 +248,7 @@ const MultiValueSelector = ({
                     <Menu.Item
                         id='create-value-option'
                         key='create-value-option'
-                        data-testid={testId ? `${testId}.value_menu.create--menuitem` : undefined}
+                        data-testid={part(testId, 'value_menu.create', 'menuitem')}
                         onClick={() => handleCreateValue(filter)}
                         labels={<span>
                             {formatMessage({

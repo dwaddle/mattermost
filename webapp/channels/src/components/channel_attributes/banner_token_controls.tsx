@@ -5,6 +5,7 @@ import React, {useMemo} from 'react';
 import {FormattedMessage, defineMessage, useIntl} from 'react-intl';
 
 import {PlusIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
@@ -63,7 +64,7 @@ const BannerTokenControls = ({testId, attributes, onInsertToken, disabled, chann
                             />
                         </>
                     ),
-                    dataTestId: `${testId}.insert--button`,
+                    dataTestId: part(testId, 'insert', 'button'),
                     'aria-label': formatMessage({
                         id: 'channel_attributes.banner.insert_attribute_aria',
                         defaultMessage: 'Insert an attribute into the banner text',
@@ -86,7 +87,7 @@ const BannerTokenControls = ({testId, attributes, onInsertToken, disabled, chann
                         <Menu.Item
                             key={suggestion.name}
                             id={`bannerAttributeToken-${suggestion.name}`}
-                            data-testid={`${testId}.insert_menu.attribute:${suggestion.field.id}--menuitem`}
+                            data-testid={part(testId, 'insert_menu.attribute', {key: suggestion.field.id}, 'menuitem')}
                             onClick={() => onInsertToken(attributeToken(suggestion.name))}
 
                             // One child, not two: Menu.Item reads two children as a
@@ -104,7 +105,7 @@ const BannerTokenControls = ({testId, attributes, onInsertToken, disabled, chann
                                 </span>
                             }
                             trailingElements={suggestion.value ? undefined : (
-                                <UnsetValueIndicator testId={`${testId}.insert_menu.attribute.unset`}/>
+                                <UnsetValueIndicator testId={part(testId, 'insert_menu.attribute.unset')}/>
                             )}
                         />
                     );

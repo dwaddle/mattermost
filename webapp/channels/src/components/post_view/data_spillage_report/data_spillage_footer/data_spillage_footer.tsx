@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
 import {Button} from '@mattermost/compass-ui/components/button';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
@@ -33,7 +34,7 @@ export default function DataSpillageFooter({post, testIdScope}: Props) {
             <Button
                 emphasis='primary'
                 size='small'
-                data-testid={testIdScope ? `${testIdScope}.view_details--button` : undefined}
+                data-testid={part(testIdScope, 'view_details', 'button')}
                 onClick={onClick}
             >
                 <FormattedMessage

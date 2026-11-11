@@ -4,6 +4,7 @@
 import React, {useState, useEffect, useCallback, useMemo, type JSX} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AccessControlTestResult, AccessControlVisualAST} from '@mattermost/types/access_control';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
@@ -766,7 +767,7 @@ function TableEditor({
                             <td
                                 colSpan={4}
                                 className='table-editor__blank-state'
-                                data-testid={testId ? `${testId}.blank_state--text` : undefined}
+                                data-testid={part(testId, 'blank_state', 'text')}
                             >
                                 <span>
                                     {emptyStateText ?? formatMessage({
@@ -884,7 +885,7 @@ function TableEditor({
                             className='table-editor__add-button-container'
                         >
                             <AddAttributeButton
-                                testId={testId ? `${testId}.add` : undefined}
+                                testId={part(testId, 'add')}
                                 onClick={addRow}
                                 disabled={disabled || pickerFields.length === 0}
                             />
@@ -902,7 +903,7 @@ function TableEditor({
                 />
                 <div className='access-control-test-controls'>
                     <TestButton
-                        testId={testId ? `${testId}.test` : undefined}
+                        testId={part(testId, 'test')}
                         onClick={onTestClick ?? (() => setShowTestResults(true))}
                         disabled={testButtonDisabled || disabled || (!onTestClick && !value) || userWouldBeExcluded || hasMaskedRows}
                         disabledTooltip={testButtonTooltip ?? (userWouldBeExcluded ? formatMessage({

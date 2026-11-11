@@ -9,6 +9,7 @@ import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {SectionNotice} from '@mattermost/compass-ui/components/section-notice';
 import {GenericModal} from '@mattermost/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {AccessControlPolicy} from '@mattermost/types/access_control';
 import {getAutoAddFromRules} from '@mattermost/types/access_control';
@@ -291,7 +292,7 @@ export default function PolicyList(props: Props): JSX.Element {
                                     menuButton={{
                                         id: `policy-menu-${policy.id}`,
                                         as: PolicyMenuTrigger,
-                                        dataTestId: `${testIdScope}.row.open_menu--button`,
+                                        dataTestId: part(testIdScope, 'row.open_menu', 'button'),
                                         'aria-label': policyMenuLabel,
                                         children: <Icon glyph={<DotsVerticalIcon/>}/>,
                                     }}
@@ -305,7 +306,7 @@ export default function PolicyList(props: Props): JSX.Element {
                                 >
                                     <Menu.Item
                                         id={`policy-menu-edit-${policy.id}`}
-                                        data-testid={`${testIdScope}.row.menu.edit--menuitem`}
+                                        data-testid={part(testIdScope, 'row.menu.edit', 'menuitem')}
                                         onClick={() => {
                                             if (props.onPolicySelected) {
                                                 props.onPolicySelected(policy, getAutoAddFromRules(policy.rules));
@@ -324,7 +325,7 @@ export default function PolicyList(props: Props): JSX.Element {
                                     {!props.hideDeleteAction && (
                                         <Menu.Item
                                             id={`policy-menu-delete-${policy.id}`}
-                                            data-testid={`${testIdScope}.row.menu.delete--menuitem`}
+                                            data-testid={part(testIdScope, 'row.menu.delete', 'menuitem')}
                                             onClick={() => initiateDelete(policy)}
                                             leadingElement={<i className='icon icon-trash-can-outline'/>}
                                             labels={
@@ -486,7 +487,7 @@ export default function PolicyList(props: Props): JSX.Element {
 
     const deleteModal = pendingDeletePolicy && (
         <GenericModal
-            testId={`${testIdScope}.delete_modal`}
+            testId={part(testIdScope, 'delete_modal')}
             onExited={() => {
                 setPendingDeletePolicy(null);
                 setDeleteError(null);
@@ -552,7 +553,7 @@ export default function PolicyList(props: Props): JSX.Element {
             button={
                 <Button
                     emphasis='primary'
-                    data-testid={`${testIdScope}.add--button`}
+                    data-testid={part(testIdScope, 'add', 'button')}
                     onClick={() => {
                         history.push('/admin_console/system_attributes/membership_policies/edit_policy');
                     }}

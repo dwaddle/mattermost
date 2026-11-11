@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
 import {CheckIcon, CodeBracketsIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
@@ -55,7 +56,7 @@ export function channelAttributeMenuItems(
             <Menu.Item
                 id={`channel-attr-${field.id}`}
                 key={`channel-attr-${field.id}`}
-                data-testid={testId ? `${testId}.value_menu.channel_attribute:${field.id}--menuitemradio` : undefined}
+                data-testid={part(testId, 'value_menu.channel_attribute', {key: field.id}, 'menuitemradio')}
                 role='menuitemradio'
                 forceCloseOnSelect={true}
                 aria-checked={isSelected}

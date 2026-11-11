@@ -6,6 +6,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
 import {ChevronRightIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelWithTeamData} from '@mattermost/types/channels';
 
@@ -104,7 +105,7 @@ export default function TestChannelPicker({onSelect, testIdScope}: Props): JSX.E
                 type='button'
                 className='TestChannelPicker__row'
                 onClick={() => onSelect(channel.id)}
-                data-testid={testIdScope ? `${testIdScope}.channel:${channel.id}--button` : undefined}
+                data-testid={part(testIdScope, 'channel', {key: channel.id}, 'button')}
             >
                 <ChannelIcon
                     className='TestChannelPicker__row-icon'
@@ -134,7 +135,7 @@ export default function TestChannelPicker({onSelect, testIdScope}: Props): JSX.E
                     className='TestChannelPicker__search-input'
                     placeholder={placeholder}
                     aria-label={placeholder}
-                    data-testid={testIdScope ? `${testIdScope}.search--textbox` : undefined}
+                    data-testid={part(testIdScope, 'search', 'textbox')}
                     value={term}
                     onChange={(e) => setTerm(e.target.value)}
                 />

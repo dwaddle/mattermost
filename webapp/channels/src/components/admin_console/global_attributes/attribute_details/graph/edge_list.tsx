@@ -13,6 +13,7 @@ import {
     PlusIcon,
 } from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 
 import {getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
@@ -197,7 +198,7 @@ export function EdgeList({
                 {relatedNames.length === 0 && (
                     <p
                         className='attribute-graph-parents-pane__empty'
-                        data-testid={`${testIdScope}.empty--text`}
+                        data-testid={part(testIdScope, 'empty', 'text')}
                     >
                         <FormattedMessage {...labels.empty}/>
                     </p>
@@ -210,7 +211,7 @@ export function EdgeList({
                         <button
                             type='button'
                             className='attribute-graph-parents-pane__row-remove'
-                            data-testid={`${testIdScope}.edge.remove--button`}
+                            data-testid={part(testIdScope, 'edge.remove', 'button')}
                             aria-label={formatMessage(labels.removeAria, removeAriaValues)}
                             disabled={disabled}
                             onClick={() => {
@@ -230,7 +231,7 @@ export function EdgeList({
                         <div
                             key={relatedName}
                             className='attribute-graph-parents-pane__row'
-                            data-testid={`${testIdScope}.edge:${relatedName}`}
+                            data-testid={part(testIdScope, 'edge', {key: relatedName})}
                         >
                             <div className='attribute-graph-parents-pane__row-top'>
                                 <span className='attribute-graph-parents-pane__row-label'>{relatedName}</span>
@@ -276,7 +277,7 @@ export function EdgeList({
                         onKeyUp={(event) => event.stopPropagation()}
                         disabled={disabled || atMax}
                         autoComplete='off'
-                        data-testid={`${testIdScope}.search--textbox`}
+                        data-testid={part(testIdScope, 'search', 'textbox')}
                     />
                 </div>
             </div>
@@ -311,7 +312,7 @@ export function EdgeList({
                     >
                         <ul
                             className='attribute-graph-parents-pane__suggestions'
-                            data-testid={`${testIdScope}.suggestions--list`}
+                            data-testid={part(testIdScope, 'suggestions', 'list')}
                         >
                             {suggestions.map((row) => {
                                 switch (row.kind) {
@@ -321,7 +322,7 @@ export function EdgeList({
                                             <button
                                                 type='button'
                                                 className='attribute-graph-parents-pane__suggestion attribute-graph-parents-pane__suggestion--create'
-                                                data-testid={`${testIdScope}.create--button`}
+                                                data-testid={part(testIdScope, 'create', 'button')}
                                                 disabled={disabled || atMax}
                                                 onMouseDown={(event) => event.preventDefault()}
                                                 onClick={() => onCreate(row.name)}

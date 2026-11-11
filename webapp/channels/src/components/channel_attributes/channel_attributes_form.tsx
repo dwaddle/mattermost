@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React, {useCallback, useMemo, useState} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyFieldOption} from '@mattermost/types/properties';
 import {isTextField, supportsHierarchy, supportsOptions} from '@mattermost/types/properties';
@@ -113,7 +114,7 @@ const ChannelAttributesForm = ({fields, values, onChange, disabled, testId}: Pro
                             placeholder={selectOptionPlaceholder}
                             ariaLabel={label}
                             disabled={disabled}
-                            buttonTestId={`${testId}.attribute.value--button`}
+                            buttonTestId={part(testId, 'attribute.value', 'button')}
                         />
                     );
                 } else if (isTextField(field)) {
@@ -129,7 +130,7 @@ const ChannelAttributesForm = ({fields, values, onChange, disabled, testId}: Pro
                             disabled={disabled}
                             aria-label={label}
                             required={required}
-                            testId={`${testId}.attribute.value`}
+                            testId={part(testId, 'attribute.value')}
                         />
                     );
                 } else {
@@ -138,7 +139,7 @@ const ChannelAttributesForm = ({fields, values, onChange, disabled, testId}: Pro
                     control = (
                         <AttributeCombobox
                             id={comboboxId}
-                            testIdScope={`${testId}.attribute`}
+                            testIdScope={part(testId, 'attribute')}
                             type={comboboxType}
                             label={label}
                             options={getOptions(field)}
@@ -170,7 +171,7 @@ const ChannelAttributesForm = ({fields, values, onChange, disabled, testId}: Pro
                     <div
                         key={field.id}
                         className={classNames('channel-attributes-form__row', {'channel-attributes-form__row--error': showError})}
-                        data-testid={`${testId}.attribute:${field.id}`}
+                        data-testid={part(testId, 'attribute', {key: field.id})}
                     >
                         {hasOptions ? (
                             <label

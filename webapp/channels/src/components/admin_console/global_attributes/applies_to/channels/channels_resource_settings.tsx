@@ -6,6 +6,7 @@ import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import {Checkbox} from '@mattermost/compass-ui/components/checkbox';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {isChannelAttributesRequiredEnabled} from 'mattermost-redux/selectors/entities/general';
@@ -112,7 +113,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled, testIdSco
                                     disabled={disabled}
                                     onChange={handleRequiredToggle}
                                     aria-label={formatMessage(messages.requiredLabel)}
-                                    data-testid={testIdScope ? `${testIdScope}.required--switch` : undefined}
+                                    data-testid={part(testIdScope, 'required', 'switch')}
                                 />
                                 <span
                                     className='ChannelsResourceSettings__switchKnob'
@@ -148,7 +149,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled, testIdSco
                                     checked={checked}
                                     disabled={disabled}
                                     onChange={(e) => handleLocationChange(location, e.target.checked)}
-                                    data-testid={testIdScope ? `${testIdScope}.location:${location}--checkbox` : undefined}
+                                    data-testid={part(testIdScope, 'location', {key: location}, 'checkbox')}
                                 >
                                     {displayLocationLabel(location, intl)}
                                 </Checkbox>
@@ -178,7 +179,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled, testIdSco
                                     <i className='icon icon-chevron-down'/>
                                 </>
                             ),
-                            dataTestId: testIdScope ? `${testIdScope}.change_policy--button` : undefined,
+                            dataTestId: part(testIdScope, 'change_policy', 'button'),
                         }}
                         menu={{
                             id: 'channelsResourceChangePolicyMenu',
@@ -189,7 +190,7 @@ const ChannelsResourceSettings = ({value, onChange, ordered, disabled, testIdSco
                             <Menu.Item
                                 id={`channelsResourceChangePolicy-${policy}`}
                                 key={policy}
-                                data-testid={testIdScope ? `${testIdScope}.change_policy_menu.policy:${policy}--menuitemradio` : undefined}
+                                data-testid={part(testIdScope, 'change_policy_menu.policy', {key: policy}, 'menuitemradio')}
                                 role='menuitemradio'
                                 aria-checked={policy === value.changePolicy}
                                 forceCloseOnSelect={true}

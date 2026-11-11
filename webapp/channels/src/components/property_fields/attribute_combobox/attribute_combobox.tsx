@@ -9,6 +9,7 @@ import type {IntlShape} from 'react-intl';
 
 import {Combobox} from '@mattermost/compass-ui/components/combobox';
 import type {ComboboxOption} from '@mattermost/compass-ui/components/combobox';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FieldType, PropertyFieldOption} from '@mattermost/types/properties';
 
@@ -147,7 +148,7 @@ function toComboboxOptions(
         // Compass hides leading visuals from assistive tech, so the rank goes in the row's name instead.
         const rank = optionRank(option, type);
         comboboxOption.menuItemProps = {
-            'data-testid': testIdScope ? `${testIdScope}.choice:${option.id}--option` : undefined,
+            'data-testid': part(testIdScope, 'choice', {key: option.id}, 'option'),
             'aria-label': rank === undefined ? undefined : formatMessage(messages.rankedOption, {name: option.name, rank}),
         };
         if (visuals[index]) {
@@ -229,7 +230,7 @@ export function AttributeCombobox({
         <>
             <Combobox
                 id={id}
-                data-testid={testIdScope ? `${testIdScope}.value--combobox` : undefined}
+                data-testid={part(testIdScope, 'value', 'combobox')}
                 aria-label={label}
                 aria-describedby={describedBy}
                 className={classNames('AttributeCombobox', className)}
@@ -238,7 +239,7 @@ export function AttributeCombobox({
                 value={multiple ? values : values[0] ?? ''}
                 selectedOptions={selectedOptions}
                 clearable={true}
-                clearButtonProps={{'data-testid': testIdScope ? `${testIdScope}.clear--button` : undefined}}
+                clearButtonProps={{'data-testid': part(testIdScope, 'clear', 'button')}}
                 disabled={disabled}
                 invalid={invalid}
                 required={required}

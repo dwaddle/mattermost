@@ -4,6 +4,7 @@
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
@@ -56,11 +57,11 @@ export default function GraphValueCell({
             disabled={disabled}
             menuId={`value-selector-menu-${rowIndex}`}
             buttonId={`value-selector-button-${rowIndex}`}
-            buttonDataTestId={testId ? `${testId}.value--button` : undefined}
-            menuTestId={testId ? `${testId}.value_menu` : undefined}
+            buttonDataTestId={part(testId, 'value', 'button')}
+            menuTestId={part(testId, 'value_menu')}
             placeholder={placeholder}
             className='values-editor'
-            trailingChips={row.hasMaskedValues ? <MaskedChip testId={testId ? `${testId}.value.masked` : undefined}/> : undefined}
+            trailingChips={row.hasMaskedValues ? <MaskedChip testId={part(testId, 'value.masked')}/> : undefined}
             extraMenuItems={onSelectTarget ? channelAttributeMenuItems(channelFields, row.targetAttribute, onSelectTarget, formatMessage, testId) : undefined}
         />
     );

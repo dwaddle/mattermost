@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
@@ -25,7 +26,7 @@ export default function ChannelPropertyRenderer({value, metadata, testIdScope}: 
     return (
         <div
             className='ChannelPropertyRenderer'
-            data-testid={testIdScope ? `${testIdScope}.channel` : undefined}
+            data-testid={part(testIdScope, 'channel')}
         >
             {
                 channel &&

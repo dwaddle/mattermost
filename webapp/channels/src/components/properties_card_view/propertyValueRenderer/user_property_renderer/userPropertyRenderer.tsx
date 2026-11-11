@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyValue} from '@mattermost/types/properties';
 
@@ -40,7 +41,7 @@ export default function UserPropertyRenderer({field, value, metadata, testIdScop
     return (
         <div
             className='UserPropertyRenderer'
-            data-testid={testIdScope ? `${testIdScope}.user` : undefined}
+            data-testid={part(testIdScope, 'user')}
         >
             {
                 user &&

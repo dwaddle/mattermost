@@ -21,6 +21,7 @@ import {
 } from '@mattermost/compass-icons/components';
 import type IconProps from '@mattermost/compass-icons/components/props';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 import {isSessionAttributeField} from '@mattermost/types/properties_user';
@@ -191,7 +192,7 @@ const AttributeSelectorMenu = ({currentAttribute, currentAttributeObjectType, av
             <Menu.Item
                 id={`attribute-${option.id}`}
                 key={option.id}
-                data-testid={testId ? `${testId}.attribute_menu.attribute:${option.id}--menuitemradio` : undefined}
+                data-testid={part(testId, 'attribute_menu.attribute', {key: option.id}, 'menuitemradio')}
                 role='menuitemradio'
                 forceCloseOnSelect={true}
                 aria-checked={isSelected}
@@ -310,20 +311,20 @@ const AttributeSelectorMenu = ({currentAttribute, currentAttributeObjectType, av
                         </WithTooltip>
                     </>
                 ),
-                dataTestId: testId ? `${testId}.attribute--button` : undefined,
+                dataTestId: part(testId, 'attribute', 'button'),
                 disabled,
             }}
             menu={{
                 id: menuId,
                 'aria-label': 'Select attribute',
                 className: 'select-attribute-mui-menu',
-                testId: testId ? `${testId}.attribute_menu` : undefined,
+                testId: part(testId, 'attribute_menu'),
             }}
         >
             <Menu.InputItem
                 key='filter_attributes'
                 id='filter_attributes'
-                testId={testId ? `${testId}.attribute_menu.filter` : undefined}
+                testId={part(testId, 'attribute_menu.filter')}
                 type='text'
                 placeholder={formatMessage({id: 'admin.access_control.table_editor.selector.filter_attributes', defaultMessage: 'Search attributes...'})}
                 className='attribute-selector-search'

@@ -7,6 +7,7 @@ import {FormattedMessage} from 'react-intl';
 import {AlertOutlineIcon, DownloadOutlineIcon} from '@mattermost/compass-icons/components';
 import {Button, type ButtonEmphasis} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {Client4} from 'mattermost-redux/client';
@@ -130,7 +131,7 @@ export default function DataSpillageDownloadReport({flaggedPostId, testIdScope}:
                 onClick={handleClick}
                 disabled={status === 'generating'}
                 loading={status === 'generating'}
-                data-testid={testIdScope ? `${testIdScope}.download--button` : undefined}
+                data-testid={part(testIdScope, 'download', 'button')}
                 leadingIcon={icon}
             >
                 {label}

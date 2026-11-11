@@ -8,6 +8,7 @@ import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 
 import {PlusIcon} from '@mattermost/compass-icons/components';
 import {buttonClassNames, type ButtonEmphasis} from '@mattermost/shared/components/button';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {FieldVisibility} from '@mattermost/types/properties';
 
 import * as Menu from 'components/menu';
@@ -137,7 +138,7 @@ function AttributeAppliesTo({
                         {label}
                     </>
                 ),
-                dataTestId: `${testId}--button`,
+                dataTestId: withRole(testId, 'button'),
             }}
             menu={{
                 id: `${triggerId}-menu`,
@@ -150,7 +151,7 @@ function AttributeAppliesTo({
                     <Menu.Item
                         id={`${triggerId}-${type}`}
                         key={type}
-                        data-testid={`${testId}.resource:${type}--menuitem`}
+                        data-testid={part(testId, 'resource', {key: type}, 'menuitem')}
                         disabled={Boolean(blockedReason)}
                         leadingElement={<ResourceTypeIcon type={type}/>}
                         onClick={() => onAdd(type)}

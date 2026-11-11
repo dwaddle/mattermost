@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyValue} from '@mattermost/types/properties';
 
@@ -41,7 +42,7 @@ export default function OptionPropertyRenderer({field, value, maxItems, testIdSc
                     <div
                         key={key}
                         className='SelectProperty'
-                        data-testid={testIdScope ? `${testIdScope}.select--text` : undefined}
+                        data-testid={part(testIdScope, 'select', 'text')}
                         style={{backgroundColor, color}}
                     >
                         {chip.label}

@@ -4,6 +4,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField} from '@mattermost/types/properties';
 
@@ -45,7 +46,7 @@ export function SelectableUserPropertyRenderer({field, metadata, initialValue, t
     return (
         <div
             className='SelectableUserPropertyRenderer'
-            data-testid={testIdScope ? `${testIdScope}.selectable_user` : undefined}
+            data-testid={part(testIdScope, 'selectable_user')}
         >
             <UserSelector
                 isMulti={false}

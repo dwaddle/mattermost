@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
@@ -28,7 +29,7 @@ export default function TeamPropertyRenderer({value, metadata, testIdScope}: Pro
     return (
         <div
             className='TeamPropertyRenderer'
-            data-testid={testIdScope ? `${testIdScope}.team` : undefined}
+            data-testid={part(testIdScope, 'team')}
         >
             {
                 team &&
@@ -38,7 +39,7 @@ export default function TeamPropertyRenderer({value, metadata, testIdScope}: Pro
                         content={team.display_name}
                         intl={intl}
                         url={imageURLForTeam(team)}
-                        testIdScope={testIdScope ? `${testIdScope}.team` : undefined}
+                        testIdScope={part(testIdScope, 'team')}
                     />
 
                     {team.display_name}

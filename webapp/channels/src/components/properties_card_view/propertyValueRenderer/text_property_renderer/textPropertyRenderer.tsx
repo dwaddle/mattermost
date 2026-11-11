@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyValue} from '@mattermost/types/properties';
 
@@ -20,7 +21,7 @@ export default function TextPropertyRenderer({value, metadata, testIdScope}: Pro
     return (
         <span
             className='TextProperty'
-            data-testid={testIdScope ? `${testIdScope}.text--text` : undefined}
+            data-testid={part(testIdScope, 'text', 'text')}
         >
             {isSet && String(value.value)}
 

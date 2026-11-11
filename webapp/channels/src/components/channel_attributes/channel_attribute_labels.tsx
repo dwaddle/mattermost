@@ -21,6 +21,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import {textTestKey} from '@mattermost/types/test_id';
 
@@ -214,7 +215,7 @@ const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible =
                             value={spec.value}
                             color={spec.color}
                             size='medium'
-                            testId={`${testId}.chip:${textTestKey(id)}`}
+                            testId={part(testId, 'chip', {key: textTestKey(id)})}
                         />,
                     )}
                 </WithTooltip>
@@ -247,7 +248,7 @@ const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible =
                         {id: 'generic.more_attributes', defaultMessage: '{count, plural, one {# more attribute} other {# more attributes}}', description: 'Accessible label (screen readers only) on the overflow badge that stands in for attribute chips that do not fit, shown on channel attribute labels and on post attribute chips. {count} is the number of hidden attributes.'},
                         {count: overflowIds.length},
                     )}
-                    data-testid={`${testId}.overflow--button`}
+                    data-testid={part(testId, 'overflow', 'button')}
                     {...getReferenceProps()}
                 >
                     <FormattedMessage
@@ -264,7 +265,7 @@ const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible =
                         ref={setFloating}
                         className='ChannelAttributeLabels__popover'
                         style={{...floatingStyles, ...transitionStyles}}
-                        data-testid={`${testId}.overflow_popover`}
+                        data-testid={part(testId, 'overflow_popover')}
                         {...getFloatingProps()}
                     >
                         {overflowIds.map((id) => {
@@ -288,7 +289,7 @@ const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible =
                                             color={spec.color}
                                             size='medium'
                                             announceLabel={false}
-                                            testId={`${testId}.overflow_popover.chip:${textTestKey(id)}`}
+                                            testId={part(testId, 'overflow_popover.chip', {key: textTestKey(id)})}
                                         />,
                                     )}
                                 </div>
@@ -304,7 +305,7 @@ const ChannelAttributeLabels = ({channelId, surface, testId, allowEmptyVisible =
                                     type='button'
                                     className='ChannelAttributeLabels__viewAll'
                                     onClick={openChannelInfo}
-                                    data-testid={`${testId}.overflow_popover.view_all--button`}
+                                    data-testid={part(testId, 'overflow_popover.view_all', 'button')}
                                 >
                                     <FormattedMessage
                                         id='channel_attributes.labels.view_all'
