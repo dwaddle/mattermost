@@ -41,7 +41,7 @@ test.describe('System Console - Board Attributes', {tag: '@board_attributes'}, (
         const statusRow = ba.row(status.id);
         await expect(statusRow.nameTextbox.locator).toHaveValue('status');
         for (const name of ['Todo', 'In Progress', 'Complete']) {
-            await expect(statusRow.lockedOption(optionByName(status, name)).locator).toHaveText(name);
+            await expect(statusRow.option(optionByName(status, name)).lockedText.locator).toHaveText(name);
         }
 
         // * Assignee row is present
@@ -63,7 +63,7 @@ test.describe('System Console - Board Attributes', {tag: '@board_attributes'}, (
         await expect(statusRow.values.locator).toHaveCount(0);
 
         // * Read-only chips render the seeded value names
-        await expect(statusRow.lockedOption(optionByName(status, 'Todo')).locator).toHaveText('Todo');
+        await expect(statusRow.option(optionByName(status, 'Todo')).lockedText.locator).toHaveText('Todo');
 
         // * Status name input is disabled — protected fields cannot be renamed
         await expect(statusRow.nameTextbox.locator).toBeDisabled();

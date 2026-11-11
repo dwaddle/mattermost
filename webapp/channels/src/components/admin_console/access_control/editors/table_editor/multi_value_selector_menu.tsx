@@ -9,6 +9,7 @@ import {CheckIcon, ChevronDownIcon, CloseIcon} from '@mattermost/compass-icons/c
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -42,7 +43,7 @@ const MultiValueSelector = ({
     onSelectTarget?: (name: string) => void;
 
     // The rule row's scope: the value button is `<testId>.value--button` (a free-text value
-    // `<testId>.value--textbox`), its options `<testId>.value_menu.multi_option:<position>` (values are typed by admins).
+    // `<testId>.value--textbox`), its options `<testId>.value_menu.multi_option:<name>` and chips `<testId>.value.chip:<value>`.
     testId?: TestId;
 }) => {
     const {formatMessage} = useIntl();
@@ -114,7 +115,7 @@ const MultiValueSelector = ({
             if (hasMaskedValues) {
                 return (
                     <div className='value-selector-menu-button__multi-values-container'>
-                        <MaskedChip testId={testId ? `${testId}.value.masked--img` : undefined}/>
+                        <MaskedChip testId={testId ? `${testId}.value.masked` : undefined}/>
                     </div>
                 );
             }
@@ -135,11 +136,11 @@ const MultiValueSelector = ({
 
         return (
             <div className='value-selector-menu-button__multi-values-container'>
-                {values.map((value, index) => (
+                {values.map((value) => (
                     <div
                         key={value}
                         className='select__multi-value'
-                        data-testid={testId ? `${testId}.value.chip:${index}` : undefined}
+                        data-testid={testId ? `${testId}.value.chip:${textTestKey(value)}` : undefined}
                     >
                         <div className='select__multi-value__label'>{value}</div>
                         {!disabled && (
@@ -160,7 +161,7 @@ const MultiValueSelector = ({
                         )}
                     </div>
                 ))}
-                {hasMaskedValues && <MaskedChip testId={testId ? `${testId}.value.masked--img` : undefined}/>}
+                {hasMaskedValues && <MaskedChip testId={testId ? `${testId}.value.masked` : undefined}/>}
             </div>
         );
     }, [values, disabled, hasMaskedValues]);
@@ -223,7 +224,7 @@ const MultiValueSelector = ({
                         })}
                     </Menu.Title>
                 )}
-                {filteredOptions.map((option, index) => {
+                {filteredOptions.map((option) => {
                     const name = option.name || '';
                     const id = option.id || name;
                     const isSelected = values.includes(name);
@@ -232,7 +233,7 @@ const MultiValueSelector = ({
                         <Menu.Item
                             id={`value-option-${id}`}
                             key={id}
-                            data-testid={testId ? `${testId}.value_menu.multi_option:${index}--menuitemcheckbox` : undefined}
+                            data-testid={testId ? `${testId}.value_menu.multi_option:${textTestKey(name)}--menuitemcheckbox` : undefined}
                             role='menuitemcheckbox'
                             forceCloseOnSelect={false}
                             aria-checked={isSelected}

@@ -9,6 +9,7 @@ import {LockOutlineIcon, PlusIcon} from '@mattermost/compass-icons/components';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyFieldOption, PropertyValue} from '@mattermost/types/properties';
 import {supportsOptions} from '@mattermost/types/properties';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import type {ResolvedChannelAttribute} from 'mattermost-redux/selectors/entities/properties';
 import {resolveDisplayValue} from 'mattermost-redux/selectors/entities/properties';
@@ -402,7 +403,7 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                             valueControl = values.length === 1 ? (
                                 <AttributeChip
                                     className='ChannelInfoAttributes__chip'
-                                    testId={`${row}.chip:0`}
+                                    testId={`${row}.chip:${textTestKey(values[0])}`}
                                     label={label}
                                     value={values[0]}
                                     color={optionColor(attribute)}
@@ -411,11 +412,11 @@ const ChannelInfoAttributes = forwardRef<ChannelInfoAttributesHandle, Props>(({c
                                 />
                             ) : (
                                 <span className='ChannelInfoAttributes__chips'>
-                                    {values.map((value, index) => (
+                                    {values.map((value) => (
                                         <AttributeChip
                                             key={`${field.id}:${value}`}
                                             className='ChannelInfoAttributes__chip'
-                                            testId={`${row}.chip:${index}`}
+                                            testId={`${row}.chip:${textTestKey(value)}`}
                                             label={label}
                                             value={value}
                                             announceLabel={false}

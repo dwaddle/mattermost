@@ -69,16 +69,16 @@ export function row(attributes: Editable, field: Field) {
     return attributes.attribute(field);
 }
 
-/** A row's first value: its first chip (select fields) or its text value. */
+/** A row's first value: its first chip (select fields; chips are keyed by value) or its text value. */
 export function chip(attributes: Editable, field: Field): Locator {
     const r = row(attributes, field);
-    return r.chip(0).locator.or(r.valueText.locator);
+    return r.chipItems.first().or(r.valueText.locator);
 }
 
 /** A row's open editor: the text box (text fields) or the menu's first option (select fields). */
 export function editor(attributes: Editable, field: Field): Locator {
     const r = row(attributes, field);
-    return r.editorTextbox.locator.or(r.editMenu.option(0).locator);
+    return r.editorTextbox.locator.or(r.editMenu.optionItems.first());
 }
 
 export async function startEditing(attributes: Editable, field: Field) {

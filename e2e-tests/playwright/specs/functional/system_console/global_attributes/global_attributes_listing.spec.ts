@@ -181,19 +181,19 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                     const field = fields[index];
 
                     // * Each seeded field's display name, type, source, and options render correctly
-                    await expect(attributes.name(field).locator).toHaveText(seed.displayName);
-                    await expect(attributes.type(field).locator).toContainText(seed.expectedType);
+                    await expect(attributes.row(field.id).nameText.locator).toHaveText(seed.displayName);
+                    await expect(attributes.row(field.id).typeText.locator).toContainText(seed.expectedType);
                     // * A leading icon renders alongside the label, including for the
                     // unmapped "date" type (fallback icon, not a blank cell)
-                    await expect(attributes.typeIcon(field).locator).toBeVisible();
-                    await expect(attributes.source(field).locator).toContainText('Managed here');
+                    await expect(attributes.row(field.id).typeIcon.locator).toBeVisible();
+                    await expect(attributes.row(field.id).sourceText.locator).toContainText('Managed here');
                     // * "Managed here" is the one source kind reachable through the admin
                     // API (plugin/ldap/saml require server-side attrs the API blocks from
                     // non-plugin callers — those icon mappings are unit-test-only) and it
                     // renders with no leading icon, unlike plugin/ldap/saml sources
-                    await expect(attributes.sourcePluginIcon(field).locator).toHaveCount(0);
-                    await expect(attributes.sourceSyncIcon(field).locator).toHaveCount(0);
-                    await expect(attributes.options(field).locator).toContainText(seed.expectedOptions);
+                    await expect(attributes.row(field.id).sourcePluginIcon.locator).toHaveCount(0);
+                    await expect(attributes.row(field.id).sourceSyncIcon.locator).toHaveCount(0);
+                    await expect(attributes.row(field.id).optionsText.locator).toContainText(seed.expectedOptions);
                 }
             } finally {
                 // # Clean up regardless of assertion outcome, so reruns start from a clean slate
@@ -246,16 +246,16 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 const {app} = await pw.testBrowser.login(adminUser);
                 const attributes = await openAttributeManagement(app);
-                await expect(attributes.name(first).locator).toHaveText(firstDisplayName);
+                await expect(attributes.row(first.id).nameText.locator).toHaveText(firstDisplayName);
 
                 // * The fallback field renders under its internal name, since no display_name was set
-                await expect(attributes.name(third).locator).toHaveText(thirdName);
+                await expect(attributes.row(third.id).nameText.locator).toHaveText(thirdName);
 
                 // * Rendered order follows the displayed Attribute value (Aardvark, then the
                 // fallback name, then Zebra) — not the internal name (which would put "aaa_..."
                 // first if sorted that way)
                 const ids = [first.id, third.id, second.id];
-                expect((await attributes.nameKeys()).filter((id) => ids.includes(id))).toEqual(ids);
+                expect((await attributes.rowKeys()).filter((id) => ids.includes(id))).toEqual(ids);
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, firstName);
                 await deleteGlobalAttributeFieldIfExists(adminClient, secondName);
@@ -290,11 +290,11 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                 const {app} = await pw.testBrowser.login(adminUser);
                 const attributes = await openAttributeManagement(app);
 
-                await expect(attributes.name(field).locator).toHaveText(displayName);
-                await expect(attributes.type(field).locator).toContainText('Hierarchical');
-                await expect(attributes.typeIcon(field).locator).toBeVisible();
-                await expect(attributes.source(field).locator).toContainText('Managed here');
-                await expect(attributes.options(field).locator).toContainText('2 options');
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).typeText.locator).toContainText('Hierarchical');
+                await expect(attributes.row(field.id).typeIcon.locator).toBeVisible();
+                await expect(attributes.row(field.id).sourceText.locator).toContainText('Managed here');
+                await expect(attributes.row(field.id).optionsText.locator).toContainText('2 options');
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
             }
@@ -401,10 +401,10 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 const {app} = await pw.testBrowser.login(adminUser);
                 let attributes = await openAttributeManagement(app);
-                await expect(attributes.name(field).locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
 
                 // # Open the row kebab and click Delete
-                await attributes.actions(field).click();
+                await attributes.row(field.id).actionsButton.click();
                 await attributes.actionsMenu.deleteMenuItem.click();
 
                 // * The confirmation names the specific attribute rather than prompting generically
@@ -414,14 +414,14 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                 await attributes.deleteModal.clickConfirmButton();
 
                 // * The row is gone and no error banner appeared
-                await expect(attributes.name(field).locator).toHaveCount(0);
+                await expect(attributes.row(field.id).nameText.locator).toHaveCount(0);
                 await expect(attributes.deleteError.locator).toHaveCount(0);
 
                 // * The delete really hit the server, not just the client store — a fresh
                 // page load still doesn't show it
                 attributes = await openAttributeManagement(app);
-                await expect(attributes.nameItems.first()).toBeVisible();
-                await expect(attributes.name(field).locator).toHaveCount(0);
+                await expect(attributes.rowItems.first()).toBeVisible();
+                await expect(attributes.row(field.id).nameText.locator).toHaveCount(0);
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
             }
@@ -446,21 +446,21 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 const {app} = await pw.testBrowser.login(adminUser);
                 let attributes = await openAttributeManagement(app);
-                await expect(attributes.name(field).locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
 
                 // # Open the row kebab, click Delete, then back out
-                await attributes.actions(field).click();
+                await attributes.row(field.id).actionsButton.click();
                 await attributes.actionsMenu.deleteMenuItem.click();
                 await expect(attributes.deleteModal.locator).toContainText(`Delete ${displayName} attribute`);
                 await attributes.deleteModal.clickCancelButton();
 
                 // * The modal closed and the row survived
                 await expect(attributes.deleteModal.locator).toHaveCount(0);
-                await expect(attributes.name(field).locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
 
                 // * Nothing was deleted server-side either
                 attributes = await openAttributeManagement(app);
-                await expect(attributes.name(field).locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
             }
@@ -496,10 +496,10 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 const {app} = await pw.testBrowser.login(adminUser);
                 const attributes = await openAttributeManagement(app);
-                await expect(attributes.name(field).locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
 
                 // # Try to delete it
-                await attributes.actions(field).click();
+                await attributes.row(field.id).actionsButton.click();
                 await attributes.actionsMenu.deleteMenuItem.click();
                 await attributes.deleteModal.clickConfirmButton();
 
@@ -510,7 +510,7 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                 await expect(banner.locator).not.toContainText('An error occurred while deleting this attribute');
 
                 // * The row survived the rejected delete
-                await expect(attributes.name(field).locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
 
                 // # The banner is dismissible
                 await banner.clickCloseButton();
@@ -555,10 +555,10 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 // * New attribute is disabled — schema isDisabled wires through the listing
                 await expect(attributes.newButton.locator).toBeDisabled();
-                await expect(attributes.name(field).locator).toHaveText(displayName);
+                await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
 
                 // # Open the row actions menu
-                await attributes.actions(field).click();
+                await attributes.row(field.id).actionsButton.click();
 
                 // * View (not Edit) is offered and navigable; Delete stays disabled
                 const viewItem = attributes.actionsMenu.editMenuItem;

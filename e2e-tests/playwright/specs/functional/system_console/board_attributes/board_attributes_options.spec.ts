@@ -79,7 +79,7 @@ test.describe('Board Attributes - select option values', {tag: '@board_attribute
         let field = await fieldByName(adminClient, attrName);
         const keep = optionByName(field, 'KeepMe');
         const remove = optionByName(field, 'DeleteMe');
-        await ba.row(field.id).optionDelete(remove).click();
+        await ba.row(field.id).option(remove).deleteButton.click();
         await expect(ba.row(field.id).option(remove).locator).toHaveCount(0);
         await expect(ba.row(field.id).option(keep).locator).toHaveText('KeepMe');
         await save(ba);
@@ -108,7 +108,7 @@ test.describe('Board Attributes - select option values', {tag: '@board_attribute
         await addOption(row, 'Beta');
 
         // # Open Alpha's menu and type a new name
-        await row.option({id: alpha}).click();
+        await row.option({id: alpha}).editButton.click();
         const {optionMenu} = row;
         await optionMenu.fillNameTextbox('Gamma');
 

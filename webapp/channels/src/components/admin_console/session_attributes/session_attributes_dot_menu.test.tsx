@@ -79,13 +79,13 @@ function renderMenu(field: SessionAttributeField, onStageChange = jest.fn()) {
 describe('SessionAttributesDotMenu', () => {
     it('renders the kebab button', () => {
         renderMenu(enabledField);
-        expect(screen.getByTestId(`admin.session_attributes.actions:${enabledField.id}--button`)).toBeInTheDocument();
+        expect(screen.getByTestId('admin.session_attributes.row.actions--button')).toBeInTheDocument();
     });
 
     it('shows the TTL and Grace submenus with their current values', async () => {
         renderMenu(enabledField);
 
-        await userEvent.click(screen.getByTestId(`admin.session_attributes.actions:${enabledField.id}--button`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
 
         const ttl = screen.getByRole('menuitem', {name: /Time-to-live/});
         const grace = screen.getByRole('menuitem', {name: /Grace Period/});
@@ -96,7 +96,7 @@ describe('SessionAttributesDotMenu', () => {
     it('stages a TTL preset selection', async () => {
         const onStageChange = renderMenu(enabledField);
 
-        await userEvent.click(screen.getByTestId(`admin.session_attributes.actions:${enabledField.id}--button`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
         await userEvent.hover(screen.getByRole('menuitem', {name: /Time-to-live/}));
 
         const option = await screen.findByTestId('admin.session_attributes.actions_menu.ttl:3600--menuitemradio');
@@ -109,7 +109,7 @@ describe('SessionAttributesDotMenu', () => {
     it('stages a Grace preset selection', async () => {
         const onStageChange = renderMenu(enabledField);
 
-        await userEvent.click(screen.getByTestId(`admin.session_attributes.actions:${enabledField.id}--button`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
         await userEvent.hover(screen.getByRole('menuitem', {name: /Grace Period/}));
 
         const option = await screen.findByTestId('admin.session_attributes.actions_menu.grace:300--menuitemradio');
@@ -122,7 +122,7 @@ describe('SessionAttributesDotMenu', () => {
     it('marks the currently selected TTL preset as checked', async () => {
         renderMenu(enabledField);
 
-        await userEvent.click(screen.getByTestId(`admin.session_attributes.actions:${enabledField.id}--button`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
         await userEvent.hover(screen.getByRole('menuitem', {name: /Time-to-live/}));
 
         const selected = await screen.findByTestId('admin.session_attributes.actions_menu.ttl:300--menuitemradio');
@@ -145,7 +145,7 @@ describe('SessionAttributesDotMenu', () => {
     it('hides the TTL and Grace submenus for server-sourced attributes', async () => {
         renderMenu(serverSourcedField);
 
-        await userEvent.click(screen.getByTestId(`admin.session_attributes.actions:${serverSourcedField.id}--button`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
 
         expect(screen.queryByRole('menuitem', {name: /Time-to-live/})).not.toBeInTheDocument();
         expect(screen.queryByRole('menuitem', {name: /Grace Period/})).not.toBeInTheDocument();
@@ -154,7 +154,7 @@ describe('SessionAttributesDotMenu', () => {
     it('opens the confirmation modal for Disable without staging immediately', async () => {
         const onStageChange = renderMenu(enabledField);
 
-        await userEvent.click(screen.getByTestId(`admin.session_attributes.actions:${enabledField.id}--button`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
         await userEvent.click(screen.getByTestId('admin.session_attributes.actions_menu.disable--menuitem'));
 
         await waitFor(() => {
@@ -171,7 +171,7 @@ describe('SessionAttributesDotMenu', () => {
     it('stages Enable in one click without a modal', async () => {
         const onStageChange = renderMenu(disabledField);
 
-        await userEvent.click(screen.getByTestId(`admin.session_attributes.actions:${disabledField.id}--button`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
 
         expect(screen.queryByTestId('admin.session_attributes.actions_menu.disable--menuitem')).not.toBeInTheDocument();
 

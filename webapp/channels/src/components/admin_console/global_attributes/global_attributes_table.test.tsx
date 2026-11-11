@@ -238,7 +238,7 @@ describe('GlobalAttributesTable', () => {
         renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
         await screen.findByText('zeta_field');
-        const names = screen.getAllByTestId(/^admin\.attributes\.name:/).map((cell) => cell.textContent);
+        const names = screen.getAllByTestId('admin.attributes.row.name--text').map((cell) => cell.textContent);
         expect(names).toEqual(['zeta_field', 'alpha_field']);
     });
 
@@ -257,7 +257,7 @@ describe('GlobalAttributesTable', () => {
             expect(screen.getByText('template_field')).toBeInTheDocument();
             expect(screen.getByText('channel_field')).toBeInTheDocument();
             expect(screen.getByText('post_field')).toBeInTheDocument();
-            expect(screen.getAllByTestId(/^admin\.attributes\.applies_to:/).map((cell) => cell.textContent)).toEqual(['—', 'Users', 'Channels', 'Posts']);
+            expect(screen.getAllByTestId('admin.attributes.row.applies_to').map((cell) => cell.textContent)).toEqual(['—', 'Users', 'Channels', 'Posts']);
         });
 
         it('does not show the empty state when only non-template fields exist', async () => {
@@ -276,7 +276,7 @@ describe('GlobalAttributesTable', () => {
         renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
         await waitFor(() => {
-            expect(screen.getByTestId(/^admin\.attributes\.applies_to:/)).toHaveTextContent('—');
+            expect(screen.getByTestId('admin.attributes.row.applies_to')).toHaveTextContent('—');
         });
         expect(screen.queryByTestId('loadingSpinner')).not.toBeInTheDocument();
     });
@@ -286,7 +286,7 @@ describe('GlobalAttributesTable', () => {
 
         renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-        const appliesTo = await screen.findByTestId(/^admin\.attributes\.applies_to:/);
+        const appliesTo = await screen.findByTestId('admin.attributes.row.applies_to');
         expect(appliesTo).toHaveTextContent('Users');
         expect(appliesTo).toHaveTextContent('Posts');
         expect(appliesTo).not.toHaveTextContent('Channels');
@@ -299,7 +299,7 @@ describe('GlobalAttributesTable', () => {
 
         renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-        const nameCell = await screen.findByTestId(/^admin\.attributes\.name:/);
+        const nameCell = await screen.findByTestId('admin.attributes.row.name--text');
         expect(nameCell).toHaveClass('GlobalAttributesTable__name');
         expect(screen.queryByText('Definition is read-only')).not.toBeInTheDocument();
     });
@@ -482,7 +482,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            await userEvent.click(await screen.findByTestId(/^admin\.attributes\.name:/));
+            await userEvent.click(await screen.findByTestId('admin.attributes.row.name--text'));
 
             expect(mockHistoryPush).toHaveBeenCalledWith('/admin_console/system_attributes/manage_attributes/attribute_details/field-1');
         });
@@ -492,7 +492,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            await userEvent.click(await screen.findByTestId('admin.attributes.actions:field-1--button'));
+            await userEvent.click(await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.actions--button'));
 
             expect(mockHistoryPush).not.toHaveBeenCalled();
             expect(screen.getByRole('menu')).toBeInTheDocument();
@@ -503,7 +503,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getReachableState());
 
-            await userEvent.click(await screen.findByTestId(/^admin\.attributes\.name:/));
+            await userEvent.click(await screen.findByTestId('admin.attributes.row.name--text'));
 
             expect(mockHistoryPush).toHaveBeenCalledWith('/admin_console/system_attributes/manage_attributes/classification');
         });
@@ -513,7 +513,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getReachableState({channelAttributesFlagOn: false}));
 
-            await userEvent.click(await screen.findByTestId(/^admin\.attributes\.name:/));
+            await userEvent.click(await screen.findByTestId('admin.attributes.row.name--text'));
 
             expect(mockHistoryPush).toHaveBeenCalledWith(CLASSIFICATIONS_MARKINGS_ADMIN_URL);
         });
@@ -588,7 +588,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.type:/);
+            const cell = await screen.findByTestId('admin.attributes.row.type--text');
             expect(cell).toHaveTextContent(label);
             expect(cell.querySelector('svg')).toBeInTheDocument();
         });
@@ -602,7 +602,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.type:/);
+            const cell = await screen.findByTestId('admin.attributes.row.type--text');
             expect(cell).toHaveTextContent(label);
             expect(cell.querySelector('svg')).toBeInTheDocument();
         });
@@ -612,7 +612,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.type:/);
+            const cell = await screen.findByTestId('admin.attributes.row.type--text');
             expect(cell).toHaveTextContent('Other');
             expect(cell.querySelector('svg')).toBeInTheDocument();
         });
@@ -641,7 +641,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            expect(await screen.findByTestId(/^admin\.attributes\.options:/)).toHaveTextContent('Free Text');
+            expect(await screen.findByTestId('admin.attributes.row.options--text')).toHaveTextContent('Free Text');
         });
 
         it('renders the option count for a select field', async () => {
@@ -652,7 +652,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            expect(await screen.findByTestId(/^admin\.attributes\.options:/)).toHaveTextContent('3 options');
+            expect(await screen.findByTestId('admin.attributes.row.options--text')).toHaveTextContent('3 options');
         });
 
         it('renders an explicit zero-count rather than a blank cell', async () => {
@@ -660,7 +660,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            expect(await screen.findByTestId(/^admin\.attributes\.options:/)).toHaveTextContent('0 options');
+            expect(await screen.findByTestId('admin.attributes.row.options--text')).toHaveTextContent('0 options');
         });
 
         it('uses the singular "1 option" at the pluralization boundary, not "1 options"', async () => {
@@ -671,7 +671,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            expect(await screen.findByTestId(/^admin\.attributes\.options:/)).toHaveTextContent('1 option');
+            expect(await screen.findByTestId('admin.attributes.row.options--text')).toHaveTextContent('1 option');
             expect(screen.queryByText('1 options')).not.toBeInTheDocument();
         });
 
@@ -688,7 +688,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.options:/);
+            const cell = await screen.findByTestId('admin.attributes.row.options--text');
             expect(cell).toHaveTextContent('2 options');
             expect(cell).not.toHaveTextContent('Free Text');
         });
@@ -701,7 +701,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.options:/);
+            const cell = await screen.findByTestId('admin.attributes.row.options--text');
             expect(cell).toHaveTextContent('0 options');
             expect(cell).not.toHaveTextContent('Free Text');
         });
@@ -718,7 +718,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.options:/);
+            const cell = await screen.findByTestId('admin.attributes.row.options--text');
 
             // ICU formats 1500 as 1,500; exact text so "0 options" is not a substring false-positive.
             expect(cell.textContent).toBe('1,500 options');
@@ -736,7 +736,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.options:/);
+            const cell = await screen.findByTestId('admin.attributes.row.options--text');
             expect(cell.textContent).toBe('1,500 options');
             expect(cell).not.toHaveTextContent('Free Text');
         });
@@ -746,7 +746,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            expect(await screen.findByTestId(/^admin\.attributes\.options:/)).toHaveTextContent('0 options');
+            expect(await screen.findByTestId('admin.attributes.row.options--text')).toHaveTextContent('0 options');
         });
     });
 
@@ -765,7 +765,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, state);
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.source:/);
+            const cell = await screen.findByTestId('admin.attributes.row.source--text');
             expect(cell).toHaveTextContent('Example Plugin');
 
             // PowerPlugOutlineIcon's path contains newlines; jest-dom's
@@ -796,7 +796,7 @@ describe('GlobalAttributesTable', () => {
                 expect(getPluginStatuses).toHaveBeenCalled();
             });
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.source:/);
+            const cell = await screen.findByTestId('admin.attributes.row.source--text');
             expect(cell).toHaveTextContent('Global Attributes Helper');
             expect(cell).not.toHaveTextContent('com.mattermost.gahelper');
 
@@ -810,7 +810,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            await screen.findByTestId(/^admin\.attributes\.source:/);
+            await screen.findByTestId('admin.attributes.row.source--text');
 
             expect(getPluginStatuses).not.toHaveBeenCalled();
 
@@ -839,9 +839,9 @@ describe('GlobalAttributesTable', () => {
                 renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
                 await waitFor(() => {
-                    expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed by SCIM');
+                    expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed by SCIM');
                 });
-                expect(screen.getByTestId(/^admin\.attributes\.source:/).querySelector('svg')).toBeInTheDocument();
+                expect(screen.getByTestId('admin.attributes.row.source--text').querySelector('svg')).toBeInTheDocument();
 
                 getPluginStatuses.mockRestore();
             });
@@ -857,7 +857,7 @@ describe('GlobalAttributesTable', () => {
                 renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
                 await waitFor(() => {
-                    expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed by svc-sync');
+                    expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed by svc-sync');
                 });
             });
 
@@ -872,10 +872,10 @@ describe('GlobalAttributesTable', () => {
                 renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
                 await waitFor(() => {
-                    expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed by svc-sync');
+                    expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed by svc-sync');
                 });
-                expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('SAML');
-                expect(screen.getByTestId(/^admin\.attributes\.source:/)).not.toHaveTextContent('local');
+                expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('SAML');
+                expect(screen.getByTestId('admin.attributes.row.source--text')).not.toHaveTextContent('local');
             });
 
             it('lists every owner in stored order', async () => {
@@ -887,7 +887,7 @@ describe('GlobalAttributesTable', () => {
                 renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
                 await waitFor(() => {
-                    expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed by svc-b and svc-a');
+                    expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed by svc-b and svc-a');
                 });
             });
 
@@ -897,9 +897,9 @@ describe('GlobalAttributesTable', () => {
                 renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
                 await waitFor(() => {
-                    expect(screen.getByTestId(/^admin\.attributes\.applies_to:/)).toHaveTextContent('Users');
+                    expect(screen.getByTestId('admin.attributes.row.applies_to')).toHaveTextContent('Users');
                 });
-                expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed here');
+                expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed here');
             });
         });
 
@@ -908,7 +908,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.source:/);
+            const cell = await screen.findByTestId('admin.attributes.row.source--text');
             expect(cell).toHaveTextContent('AD/LDAP');
             expect(cell.querySelector('svg')).toBeInTheDocument();
         });
@@ -918,7 +918,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.source:/);
+            const cell = await screen.findByTestId('admin.attributes.row.source--text');
             expect(cell).toHaveTextContent('SAML');
             expect(cell.querySelector('svg')).toBeInTheDocument();
         });
@@ -928,7 +928,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.source:/);
+            const cell = await screen.findByTestId('admin.attributes.row.source--text');
             expect(cell).toHaveTextContent('AD/LDAP, SAML');
             expect(cell.querySelector('svg')).toBeInTheDocument();
         });
@@ -938,7 +938,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.source:/);
+            const cell = await screen.findByTestId('admin.attributes.row.source--text');
             expect(cell).toHaveTextContent('OpenID Connect');
             expect(cell.querySelector('svg')).toBeInTheDocument();
         });
@@ -948,7 +948,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const cell = await screen.findByTestId(/^admin\.attributes\.source:/);
+            const cell = await screen.findByTestId('admin.attributes.row.source--text');
             expect(cell).toHaveTextContent('Managed here');
             expect(cell.querySelector('svg')).not.toBeInTheDocument();
         });
@@ -971,7 +971,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const trigger = await screen.findByTestId('admin.attributes.actions:field-1--button');
+            const trigger = await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.actions--button');
             expect(trigger).not.toBeDisabled();
 
             // * Icon-only trigger has an accessible name for screen readers (WCAG 4.1.2)
@@ -1048,7 +1048,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
-            const trigger = await screen.findByTestId('admin.attributes.actions:field-1--button');
+            const trigger = await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.actions--button');
             await userEvent.click(trigger);
 
             const edit = screen.getAllByRole('menuitem').find((el) => el.textContent?.includes('Edit attribute'));
@@ -1064,7 +1064,7 @@ describe('GlobalAttributesTable', () => {
 
             // Managed rows never fetch plugin statuses, so open the menu directly
             // rather than via openActionsMenu (which waits on that fetch).
-            await userEvent.click(await screen.findByTestId('admin.attributes.actions:field-1--button'));
+            await userEvent.click(await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.actions--button'));
             const menuitems = screen.getAllByRole('menuitem');
             expect(menuitems.find((el) => el.textContent?.includes('Edit attribute'))).toBeUndefined();
 
@@ -1151,7 +1151,7 @@ describe('GlobalAttributesTable', () => {
             await userEvent.click(await screen.findByRole('button', {name: /cancel/i}));
 
             expect(deletePropertyField).not.toHaveBeenCalled();
-            expect(screen.getByTestId(/^admin\.attributes\.name:/)).toHaveTextContent('Department');
+            expect(screen.getByTestId('admin.attributes.row.name--text')).toHaveTextContent('Department');
         });
 
         it('deletes a non-template field via its own object type scope', async () => {
@@ -1202,7 +1202,7 @@ describe('GlobalAttributesTable', () => {
             expect(banner).toHaveTextContent('An error occurred while deleting this attribute. Please try again.');
 
             // * The row survives a failed delete
-            expect(screen.getByTestId(/^admin\.attributes\.name:/)).toHaveTextContent('Department');
+            expect(screen.getByTestId('admin.attributes.row.name--text')).toHaveTextContent('Department');
         });
 
         it('explains the blocking dependency rather than showing the generic error on a 409', async () => {
@@ -1403,7 +1403,7 @@ describe('GlobalAttributesTable', () => {
 
             renderTable([makePluginOwnedField()]);
 
-            await userEvent.click(await screen.findByTestId('admin.attributes.actions:field-1--button'));
+            await userEvent.click(await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.actions--button'));
 
             const del = (await screen.findAllByRole('menuitem')).find((el) => el.textContent?.includes('Delete attribute'));
 
@@ -1443,7 +1443,7 @@ describe('GlobalAttributesTable', () => {
 
             // Plugin owners trigger the inventory fetch, which remounts an open menu.
             async function findDeleteOnSettledTemplate() {
-                await waitFor(() => expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed by'));
+                await waitFor(() => expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed by'));
                 await waitFor(() => expect(Client4.getPluginStatuses).toHaveBeenCalled());
                 await act(async () => {
                     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -1504,7 +1504,7 @@ describe('GlobalAttributesTable', () => {
                 mockOwnedTemplate([owner('com.acme.gone')]);
                 renderOwned();
 
-                await waitFor(() => expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed by com.acme.gone'));
+                await waitFor(() => expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed by com.acme.gone'));
                 expect(await clickActionsAndFindDelete('template-1')).toHaveAttribute('aria-disabled', 'true');
 
                 getPluginStatuses.mockRestore();
@@ -1527,7 +1527,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getReachableState());
 
-            expect(await screen.findByTestId(/^admin\.attributes\.name:/)).toHaveTextContent('Classification');
+            expect(await screen.findByTestId('admin.attributes.row.name--text')).toHaveTextContent('Classification');
             expect(await screen.findByTestId('admin.attributes.classification_subtitle:field-1--text')).toHaveTextContent('Definition is read-only');
 
             const link = screen.getByTestId('admin.attributes.classification_link:field-1--link');
@@ -1540,7 +1540,7 @@ describe('GlobalAttributesTable', () => {
 
             // * The Source column also identifies this row's true source, rather than the
             // generic "Managed here" every other native field gets
-            expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Classification Markings');
+            expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Classification Markings');
         });
 
         it('offers the link alone when ChannelAttributes is off, since the attribute page is hidden then', async () => {
@@ -1574,7 +1574,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getReachableState());
 
-            const [classificationName, ordinaryName] = await screen.findAllByTestId(/^admin\.attributes\.name:/);
+            const [classificationName, ordinaryName] = await screen.findAllByTestId('admin.attributes.row.name--text');
             expect(classificationName).toHaveTextContent('Classification');
             expect(ordinaryName).toHaveTextContent('Program');
 
@@ -1590,7 +1590,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getReachableState());
 
-            const trigger = await screen.findByTestId('admin.attributes.actions:field-1--button');
+            const trigger = await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.actions--button');
             expect(trigger).toBeInTheDocument();
 
             expect(screen.queryByTestId('admin.attributes.classification_link:field-1--link')).not.toBeInTheDocument();
@@ -1605,12 +1605,12 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getReachableState());
 
-            expect(await screen.findByTestId(/^admin\.attributes\.name:/)).toHaveTextContent('Classification');
+            expect(await screen.findByTestId('admin.attributes.row.name--text')).toHaveTextContent('Classification');
             expect(screen.queryByTestId('admin.attributes.classification_subtitle:field-1--text')).not.toBeInTheDocument();
             expect(screen.queryByTestId('admin.attributes.classification_link:field-1--link')).not.toBeInTheDocument();
-            expect(screen.getByTestId(/^admin\.attributes\.source:/)).toHaveTextContent('Managed here');
+            expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed here');
 
-            await userEvent.click(screen.getByTestId('admin.attributes.actions:field-1--button'));
+            await userEvent.click(within(screen.getByTestId('admin.attributes.row:field-1')).getByTestId('admin.attributes.row.actions--button'));
 
             const items = (await screen.findAllByRole('menuitem')).map((el) => el.textContent);
             expect(items).toEqual(['Edit attribute', 'Delete attribute']);
@@ -1624,7 +1624,7 @@ describe('GlobalAttributesTable', () => {
         // the <tr> the named Attribute cell sits in — a warning rendered on a
         // neighbouring row cannot then satisfy one of these.
         async function findRowByName(displayName: string): Promise<HTMLElement> {
-            const cells = await screen.findAllByTestId(/^admin\.attributes\.name:/);
+            const cells = await screen.findAllByTestId('admin.attributes.row.name--text');
             const cell = cells.find((candidate) => candidate.textContent === displayName);
             expect(cell).toBeDefined();
             return cell!.closest('tr')!;

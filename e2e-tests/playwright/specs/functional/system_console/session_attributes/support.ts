@@ -80,8 +80,8 @@ export async function openSessionAttributes(app: App) {
  */
 export async function openActions(app: App, field: {id: string}) {
     const sa = app.admin.sessionAttributes;
-    await sa.actions(field).locator.evaluate((el) => el.scrollIntoView({block: 'center'}));
-    await sa.actions(field).click();
+    await sa.row(field.id).actionsButton.locator.evaluate((el) => el.scrollIntoView({block: 'center'}));
+    await sa.row(field.id).actionsButton.click();
     await expect(sa.actionsMenu.enableMenuItem.locator.or(sa.actionsMenu.disableMenuItem.locator)).toBeVisible();
     return sa.actionsMenu;
 }
@@ -98,12 +98,12 @@ export async function choosePreset(app: App, field: {id: string}, kind: 'ttl' | 
     const menu = sa.actionsMenu;
     const trigger = kind === 'ttl' ? menu.ttlOptionsMenuItem : menu.graceOptionsMenuItem;
     const option = kind === 'ttl' ? menu.ttl(seconds) : menu.grace(seconds);
-    await sa.actions(field).locator.evaluate((el) => el.scrollIntoView({block: 'center'}));
+    await sa.row(field.id).actionsButton.locator.evaluate((el) => el.scrollIntoView({block: 'center'}));
 
     await expect(async () => {
         await app.page.keyboard.press('Escape');
         await expect(trigger.locator).toBeHidden({timeout: 2000});
-        await sa.actions(field).click();
+        await sa.row(field.id).actionsButton.click();
         await expect(trigger.locator).toBeVisible({timeout: 2000});
         await trigger.locator.press('ArrowRight');
         await expect(option.locator).toBeVisible({timeout: 2000});

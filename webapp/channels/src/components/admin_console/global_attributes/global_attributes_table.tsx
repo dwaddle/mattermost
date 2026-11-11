@@ -152,7 +152,7 @@ function SourceCell({row}: ClassificationAwareCellProps) {
             <>
                 <PowerPlugOutlineIcon
                     size={16}
-                    data-testid={`admin.attributes.source_plugin_icon:${field.id}`}
+                    data-testid='admin.attributes.row.source_plugin_icon'
                 />
                 {pluginDisplayName}
             </>
@@ -165,7 +165,7 @@ function SourceCell({row}: ClassificationAwareCellProps) {
                     <span className='GlobalAttributesTable__source'>
                         <PowerPlugOutlineIcon
                             size={16}
-                            data-testid={`admin.attributes.source_plugin_icon:${field.id}`}
+                            data-testid='admin.attributes.row.source_plugin_icon'
                         />
                         <FormattedMessage
                             {...sourceLabels.ownedBy}
@@ -178,7 +178,7 @@ function SourceCell({row}: ClassificationAwareCellProps) {
                         {SyncKindIcon && (
                             <SyncKindIcon
                                 size={16}
-                                data-testid={`admin.attributes.source_sync_icon:${field.id}`}
+                                data-testid='admin.attributes.row.source_sync_icon'
                             />
                         )}
                         <FormattedList
@@ -196,31 +196,31 @@ function SourceCell({row}: ClassificationAwareCellProps) {
     return (
         <span
             className='GlobalAttributesTable__source'
-            data-testid={`admin.attributes.source:${field.id}--text`}
+            data-testid='admin.attributes.row.source--text'
         >
             {content}
         </span>
     );
 }
 
-function AppliesToCell({field, types}: {field: PropertyField; types: ResourceObjectType[]}) {
+function AppliesToCell({types}: {types: ResourceObjectType[]}) {
+    // the same element in every state, so the row's applies_to part is one kind of element
     if (types.length === 0) {
-        return <span data-testid={`admin.attributes.applies_to:${field.id}`}>{'—'}</span>;
+        return <div data-testid='admin.attributes.row.applies_to'>{'—'}</div>;
     }
 
     return (
-        <ul
-            className='GlobalAttributesTable__appliesTo'
-            data-testid={`admin.attributes.applies_to:${field.id}`}
-        >
-            {types.map((type) => (
-                <li key={type}>
-                    <span className='GlobalAttributesTable__appliesToChip'>
-                        <FormattedMessage {...resourceTypeLabels[type]}/>
-                    </span>
-                </li>
-            ))}
-        </ul>
+        <div data-testid='admin.attributes.row.applies_to'>
+            <ul className='GlobalAttributesTable__appliesTo'>
+                {types.map((type) => (
+                    <li key={type}>
+                        <span className='GlobalAttributesTable__appliesToChip'>
+                            <FormattedMessage {...resourceTypeLabels[type]}/>
+                        </span>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 }
 
@@ -262,7 +262,7 @@ function AttributeCell({row}: ClassificationAwareCellProps) {
             <span className='GlobalAttributesTable__nameRow'>
                 <span
                     className='GlobalAttributesTable__name'
-                    data-testid={`admin.attributes.name:${field.id}--text`}
+                    data-testid='admin.attributes.row.name--text'
                 >
                     {getDisplayName(field)}
                 </span>
@@ -278,7 +278,7 @@ function AttributeCell({row}: ClassificationAwareCellProps) {
                             // role that admits a name for aria-label to be announced.
                             role='img'
                             aria-label={conflictText}
-                            data-testid={`admin.attributes.name_conflict:${field.id}--img`}
+                            data-testid='admin.attributes.row.name_conflict--img'
                         >
                             <AlertOutlineIcon
                                 size={16}
@@ -292,7 +292,7 @@ function AttributeCell({row}: ClassificationAwareCellProps) {
                 <span
                     id={classificationSubtitleId(field.id)}
                     className='GlobalAttributesTable__subtitle'
-                    data-testid={`admin.attributes.classification_subtitle:${field.id}--text`}
+                    data-testid='admin.attributes.row.classification_subtitle--text'
                 >
                     <FormattedMessage {...messages.classificationSubtitle}/>
                 </span>
@@ -382,7 +382,7 @@ function ActionsCell({row, isMobileView, pluginInventoryLoaded, disabled, onDele
                     className='GlobalAttributesTable__link--classification'
                     aria-label={classificationLinkLabel}
                     aria-describedby={classificationSubtitleId(field.id)}
-                    data-testid={`admin.attributes.classification_link:${field.id}--link`}
+                    data-testid='admin.attributes.row.classification_link--link'
                 >
                     <OpenInNewIcon
                         size={18}
@@ -399,7 +399,7 @@ function ActionsCell({row, isMobileView, pluginInventoryLoaded, disabled, onDele
                 id: `${menuId}-button`,
                 class: 'btn btn-transparent GlobalAttributesTable__actionsButton',
                 children: <DotsHorizontalIcon size={18}/>,
-                dataTestId: `admin.attributes.actions:${field.id}--button`,
+                dataTestId: 'admin.attributes.row.actions--button',
                 'aria-label': formatMessage(actionsLabels.tooltip),
             }}
             menuButtonTooltip={{text: formatMessage(actionsLabels.tooltip)}}
@@ -560,11 +560,11 @@ export default function GlobalAttributesTable({searchQuery = '', source, resourc
                 return (
                     <span
                         className='GlobalAttributesTable__type'
-                        data-testid={`admin.attributes.type:${field.id}--text`}
+                        data-testid='admin.attributes.row.type--text'
                     >
                         <Icon
                             size={16}
-                            data-testid={`admin.attributes.type_icon:${field.id}`}
+                            data-testid='admin.attributes.row.type_icon'
                         />
                         <FormattedMessage {...label}/>
                     </span>
@@ -577,10 +577,7 @@ export default function GlobalAttributesTable({searchQuery = '', source, resourc
             id: 'applies_to',
             header: () => <FormattedMessage {...messages.appliesTo}/>,
             cell: ({row}) => (
-                <AppliesToCell
-                    field={row.original.field}
-                    types={row.original.applies_to}
-                />
+                <AppliesToCell types={row.original.applies_to}/>
             ),
             enableHiding: false,
         }),
@@ -594,7 +591,7 @@ export default function GlobalAttributesTable({searchQuery = '', source, resourc
             id: 'options',
             header: () => <FormattedMessage {...messages.options}/>,
             cell: ({row}) => (
-                <span data-testid={`admin.attributes.options:${row.original.field.id}--text`}>
+                <span data-testid='admin.attributes.row.options--text'>
                     <OptionsCell field={row.original.field}/>
                 </span>
             ),

@@ -5,9 +5,12 @@ import React from 'react';
 
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 
-import {renderWithContext, screen, userEvent} from 'tests/react_testing_utils';
+import {renderWithContext, screen, userEvent, within} from 'tests/react_testing_utils';
 
 import AttributeOptionsRankValues from './attribute_options_rank_values';
+
+// an option's chip is keyed by its name; its parts are unkeyed
+const editButton = (name: string) => within(screen.getByTestId(`admin.attribute.ranks.option:${name}`)).getByTestId('admin.attribute.ranks.option.edit--button');
 
 describe('AttributeOptionsRankValues', () => {
     const baseOptions = (): PropertyFieldOption[] => [
@@ -23,7 +26,7 @@ describe('AttributeOptionsRankValues', () => {
             />,
         );
 
-        const chips = screen.getAllByTestId(/^admin\.attribute\.ranks\.label:/);
+        const chips = screen.getAllByTestId('admin.attribute.ranks.option.label--text');
         expect(chips.map((chip) => chip.textContent)).toEqual(['Low', 'High']);
         expect(screen.getAllByTestId('admin.attribute.ranks.option.badge--text').map((badge) => badge.textContent)).toEqual(['1', '2']);
     });
@@ -82,7 +85,7 @@ describe('AttributeOptionsRankValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.ranks.edit:1--button'));
+        await userEvent.click(editButton('High'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Low{Enter}');
@@ -100,7 +103,7 @@ describe('AttributeOptionsRankValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.ranks.edit:1--button'));
+        await userEvent.click(editButton('High'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Highest{Enter}');
@@ -119,11 +122,11 @@ describe('AttributeOptionsRankValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.ranks.edit:0--button'));
+        await userEvent.click(editButton('Low'));
         expect(screen.getByText('1 (Lowest)')).toBeInTheDocument();
         await userEvent.keyboard('{Escape}');
 
-        await userEvent.click(screen.getByTestId('admin.attribute.ranks.edit:1--button'));
+        await userEvent.click(editButton('High'));
         expect(screen.getByText('2 (Highest)')).toBeInTheDocument();
     });
 
@@ -136,7 +139,7 @@ describe('AttributeOptionsRankValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.ranks.edit:1--button'));
+        await userEvent.click(editButton('High'));
         await userEvent.click(screen.getByText('Rank'));
         await userEvent.click(screen.getByRole('menuitemradio', {name: '1'}));
 

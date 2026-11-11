@@ -9,6 +9,7 @@ import {CheckIcon, ChevronDownIcon} from '@mattermost/compass-icons/components';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import * as Menu from 'components/menu';
 
@@ -45,7 +46,7 @@ const SingleValueSelector = ({
     onSelectTarget?: (name: string) => void;
 
     // The rule row's scope: the value button is `<testId>.value--button` (a free-text value
-    // `<testId>.value--textbox`), its options `<testId>.value_menu.option:<position>` (values are typed by admins).
+    // `<testId>.value--textbox`), its options `<testId>.value_menu.option:<name>`.
     testId?: TestId;
 }) => {
     const {formatMessage} = useIntl();
@@ -138,7 +139,7 @@ const SingleValueSelector = ({
         return (
             <div className='values-editor'>
                 <div className='value-selector-menu-button__multi-values-container'>
-                    <MaskedChip testId={testId ? `${testId}.value.masked--img` : undefined}/>
+                    <MaskedChip testId={testId ? `${testId}.value.masked` : undefined}/>
                 </div>
             </div>
         );
@@ -269,7 +270,7 @@ const SingleValueSelector = ({
                         })}
                     </Menu.Title>
                 )}
-                {hasOptions && filteredOptions.map((option, index) => {
+                {hasOptions && filteredOptions.map((option) => {
                     const name = option.name || '';
                     const id = option.id || name;
                     const isSelected = value === name;
@@ -278,7 +279,7 @@ const SingleValueSelector = ({
                         <Menu.Item
                             id={`value-option-${id}`}
                             key={id}
-                            data-testid={testId ? `${testId}.value_menu.option:${index}--menuitemradio` : undefined}
+                            data-testid={testId ? `${testId}.value_menu.option:${textTestKey(name)}--menuitemradio` : undefined}
                             role='menuitemradio'
                             forceCloseOnSelect={true}
                             aria-checked={isSelected}

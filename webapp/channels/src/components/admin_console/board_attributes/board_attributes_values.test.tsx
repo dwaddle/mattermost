@@ -6,7 +6,7 @@ import React from 'react';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {BoardsPropertyField, BoardsPropertyFieldOption} from '@mattermost/types/properties_board';
 
-import {renderWithContext, screen, userEvent, waitFor} from 'tests/react_testing_utils';
+import {renderWithContext, screen, userEvent, waitFor, within} from 'tests/react_testing_utils';
 import {resolveOptionChipColors} from 'utils/property_option_colors';
 
 import {isPendingId, ValidationWarningOptionsUnique} from './board_attributes_utils';
@@ -41,8 +41,8 @@ describe('BoardAttributesValues', () => {
     // resolver as the post chip, derived from the background, so it holds in every
     // theme.
     describe('option chip colours', () => {
-        // An editable chip's trigger is `row.option:<id>--button`, a protected field's `row.locked_option:<id>--text`.
-        const chipShell = (optionId: string) => screen.getByTestId(new RegExp(`^admin\\.board_attributes\\.row\\.(locked_)?option:${optionId}--`)).closest('span[style]');
+        // Each chip is `row.option:<id>`, editable or protected; its shell is the first styled span inside.
+        const chipShell = (optionId: string) => screen.getByTestId(`admin.board_attributes.row.option:${optionId}`).querySelector('span[style]');
 
         it('sets a derived foreground alongside the background, not a theme variable', () => {
             const field = makeField({
@@ -337,7 +337,7 @@ describe('BoardAttributesValues', () => {
                 />,
             );
 
-            await userEvent.click(screen.getByTestId('admin.board_attributes.row.option_delete:opt-1--button'));
+            await userEvent.click(within(screen.getByTestId('admin.board_attributes.row.option:opt-1')).getByTestId('admin.board_attributes.row.option.delete--button'));
 
             expect(updateField).toHaveBeenCalledTimes(1);
             const next = updateField.mock.calls[0][0] as BoardsPropertyField;
@@ -354,7 +354,7 @@ describe('BoardAttributesValues', () => {
                 />,
             );
 
-            expect(screen.queryByTestId('admin.board_attributes.row.option_delete:only--button')).not.toBeInTheDocument();
+            expect(within(screen.getByTestId('admin.board_attributes.row.option:only')).queryByTestId('admin.board_attributes.row.option.delete--button')).not.toBeInTheDocument();
         });
 
         it('commits a renamed option when the rename input is blurred', async () => {
@@ -372,7 +372,7 @@ describe('BoardAttributesValues', () => {
             );
 
             // Open the chip's edit menu
-            await userEvent.click(screen.getByTestId('admin.board_attributes.row.option:opt-1--button'));
+            await userEvent.click(within(screen.getByTestId('admin.board_attributes.row.option:opt-1')).getByTestId('admin.board_attributes.row.option.edit--button'));
 
             // The rename input is autofocused; clear and type a new name
             const input = screen.getByPlaceholderText(/option name/i) as HTMLInputElement;
@@ -406,7 +406,7 @@ describe('BoardAttributesValues', () => {
                 />,
             );
 
-            await userEvent.click(screen.getByTestId('admin.board_attributes.row.option:opt-1--button'));
+            await userEvent.click(within(screen.getByTestId('admin.board_attributes.row.option:opt-1')).getByTestId('admin.board_attributes.row.option.edit--button'));
 
             const input = screen.getByPlaceholderText(/option name/i) as HTMLInputElement;
             await userEvent.clear(input);
@@ -432,7 +432,7 @@ describe('BoardAttributesValues', () => {
                 />,
             );
 
-            await userEvent.click(screen.getByTestId('admin.board_attributes.row.option:opt-1--button'));
+            await userEvent.click(within(screen.getByTestId('admin.board_attributes.row.option:opt-1')).getByTestId('admin.board_attributes.row.option.edit--button'));
 
             const input = screen.getByPlaceholderText(/option name/i) as HTMLInputElement;
 
@@ -458,7 +458,7 @@ describe('BoardAttributesValues', () => {
                 />,
             );
 
-            await userEvent.click(screen.getByTestId('admin.board_attributes.row.option:opt-1--button'));
+            await userEvent.click(within(screen.getByTestId('admin.board_attributes.row.option:opt-1')).getByTestId('admin.board_attributes.row.option.edit--button'));
 
             const input = screen.getByPlaceholderText(/option name/i) as HTMLInputElement;
             await userEvent.clear(input);
@@ -483,7 +483,7 @@ describe('BoardAttributesValues', () => {
                 />,
             );
 
-            await userEvent.click(screen.getByTestId('admin.board_attributes.row.option:opt-1--button'));
+            await userEvent.click(within(screen.getByTestId('admin.board_attributes.row.option:opt-1')).getByTestId('admin.board_attributes.row.option.edit--button'));
 
             // Color picker items are role=menuitemradio (so onClick fires immediately).
             // Pick a non-default color and verify the new attrs.options carries it.

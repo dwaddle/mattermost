@@ -54,10 +54,10 @@ export default function SessionAttributesTable({data, onStageChange, disabled = 
                         />
                     </div>
                 ),
-                cell: ({getValue, row}) => (
+                cell: ({getValue}) => (
                     <span
                         className='SessionAttributes__display-name'
-                        data-testid={`admin.session_attributes.name:${row.original.id}--text`}
+                        data-testid='admin.session_attributes.row.name--text'
                     >
                         {getValue()}
                     </span>
@@ -84,7 +84,7 @@ export default function SessionAttributesTable({data, onStageChange, disabled = 
                             >
                                 <span
                                     className='SessionAttributes__server-badge'
-                                    data-testid={`admin.session_attributes.server_label:${row.original.id}--text`}
+                                    data-testid='admin.session_attributes.row.server_label--text'
                                 >
                                     <FormattedMessage
                                         id='admin.session_attributes.table.server_label'
@@ -109,14 +109,14 @@ export default function SessionAttributesTable({data, onStageChange, disabled = 
                         />
                     </div>
                 ),
-                cell: ({getValue, row}) => {
+                cell: ({getValue}) => {
                     const displayType = getValue<SessionAttributeDisplayType>();
                     const Icon = TYPE_ICONS[displayType];
 
                     return (
                         <span
                             className='SessionAttributes__type-cell'
-                            data-testid={`admin.session_attributes.type:${row.original.id}--text`}
+                            data-testid='admin.session_attributes.row.type--text'
                         >
                             <Icon size={16}/>
                             <FormattedMessage {...typeLabels[displayType]}/>
@@ -140,7 +140,7 @@ export default function SessionAttributesTable({data, onStageChange, disabled = 
                 cell: ({row}) => (
                     <PlatformIcons
                         platforms={getSessionAttrs(row.original).platforms}
-                        testId={`admin.session_attributes.platforms:${row.original.id}`}
+                        testId='admin.session_attributes.row.platforms'
                     />
                 ),
                 enableHiding: false,
@@ -160,7 +160,7 @@ export default function SessionAttributesTable({data, onStageChange, disabled = 
                 cell: ({row}) => (
                     <span
                         className='SessionAttributes__duration'
-                        data-testid={`admin.session_attributes.ttl:${row.original.id}--text`}
+                        data-testid='admin.session_attributes.row.ttl--text'
                     >
                         {isServerSourced(row.original.name) ? '—' : formatDuration(getSessionAttrs(row.original).ttl_seconds)}
                     </span>
@@ -182,7 +182,7 @@ export default function SessionAttributesTable({data, onStageChange, disabled = 
                 cell: ({row}) => (
                     <span
                         className='SessionAttributes__duration'
-                        data-testid={`admin.session_attributes.grace:${row.original.id}--text`}
+                        data-testid='admin.session_attributes.row.grace--text'
                     >
                         {isServerSourced(row.original.name) ? '—' : formatDuration(getSessionAttrs(row.original).grace_period_seconds)}
                     </span>
@@ -208,7 +208,7 @@ export default function SessionAttributesTable({data, onStageChange, disabled = 
                 cell: ({row}) => (
                     <StatusChip
                         enabled={getSessionAttrs(row.original).enabled}
-                        testId={`admin.session_attributes.status:${row.original.id}`}
+                        testId='admin.session_attributes.row.status'
                     />
                 ),
                 enableHiding: false,

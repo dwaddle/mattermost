@@ -41,7 +41,7 @@ test.describe('Board Attributes - option color picker', {tag: '@board_attributes
         // # Assign the Green color
         const field = await fieldByName(adminClient, attrName);
         const savedRow = ba.row(field.id);
-        await savedRow.option(optionByName(field, optionName)).click();
+        await savedRow.option(optionByName(field, optionName)).editButton.click();
         await savedRow.optionMenu.color(AdminColor.Green).click();
         await closeOptionMenu(savedRow);
         await save(ba);
@@ -64,7 +64,7 @@ test.describe('Board Attributes - option color picker', {tag: '@board_attributes
         // # Assign the Red color and save
         const field = await fieldByName(adminClient, attrName);
         const option = optionByName(field, 'Colored');
-        await ba.row(field.id).option(option).click();
+        await ba.row(field.id).option(option).editButton.click();
         await ba.row(field.id).optionMenu.color(AdminColor.Red).click();
         await closeOptionMenu(ba.row(field.id));
         await save(ba);
@@ -77,7 +77,7 @@ test.describe('Board Attributes - option color picker', {tag: '@board_attributes
         await expect(savedRow.option(option).locator).toHaveText('Colored');
 
         // * The picker reflects the correct checked color
-        await savedRow.option(option).click();
+        await savedRow.option(option).editButton.click();
         await expect(savedRow.optionMenu.color(AdminColor.Red).locator).toHaveAttribute('aria-checked', 'true');
         await expect(savedRow.optionMenu.color(AdminColor.Default).locator).toHaveAttribute('aria-checked', 'false');
     });
@@ -90,7 +90,7 @@ test.describe('Board Attributes - option color picker', {tag: '@board_attributes
         const row = await addAttribute(ba, `Picker_${Date.now()}`);
         await changeType(row, AdminType.Select);
         const id = await addOption(row, 'Pick me');
-        await row.option({id}).click();
+        await row.option({id}).editButton.click();
 
         // * Every named color token is offered
         const colors = Object.values(AdminColor);

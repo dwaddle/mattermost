@@ -6247,8 +6247,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -6644,8 +6644,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -6701,7 +6701,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "renderedWhen": [
@@ -6745,8 +6745,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -12421,91 +12421,6 @@
       ]
     },
     {
-      "template": "admin.attribute.ranks.edit:{key}--button",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attribute",
-        "ranks"
-      ],
-      "name": "edit",
-      "role": "button",
-      "component": {
-        "name": "renderMenuButton",
-        "at": "channels/src/components/menu/menu.tsx#Menu"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip",
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#AttributeOptionsRankValues"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "number",
-        "type": "number"
-      },
-      "opens": [
-        {
-          "kind": "menu",
-          "target": "menu",
-          "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip",
-          "scope": "admin.attribute.ranks.option_menu"
-        },
-        {
-          "kind": "modal",
-          "target": "MenuModal",
-          "at": "channels/src/components/menu/menu.tsx#Menu",
-          "menuForm": true,
-          "scope": "menu_modal"
-        }
-      ],
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/menu/menu.tsx#Menu"
-        ]
-      }
-    },
-    {
-      "template": "admin.attribute.ranks.label:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attribute",
-        "ranks"
-      ],
-      "name": "label",
-      "role": "text",
-      "component": {
-        "name": "RankChip",
-        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#AttributeOptionsRankValues"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "number",
-        "type": "number"
-      }
-    },
-    {
       "template": "admin.attribute.ranks.option.badge--text",
       "grammar": true,
       "scope": [
@@ -12541,6 +12456,110 @@
       ]
     },
     {
+      "template": "admin.attribute.ranks.option.edit--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "ranks",
+        "option"
+      ],
+      "name": "edit",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "menu",
+          "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip",
+          "scope": "admin.attribute.ranks.option_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      }
+    },
+    {
+      "template": "admin.attribute.ranks.option.label--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "ranks",
+        "option"
+      ],
+      "name": "label",
+      "role": "text",
+      "component": {
+        "name": "RankChip",
+        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attribute.ranks.option.remove--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "ranks",
+        "option"
+      ],
+      "name": "remove",
+      "role": "button",
+      "component": {
+        "name": "RankChip",
+        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      }
+    },
+    {
       "template": "admin.attribute.ranks.option:{key}",
       "grammar": true,
       "scope": [
@@ -12556,9 +12575,7 @@
       },
       "instances": [
         {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#AttributeOptionsRankValues"
-          ]
+          "via": []
         }
       ],
       "aria": {
@@ -12567,8 +12584,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       }
     },
     {
@@ -12749,39 +12766,6 @@
         "role": "menuitemradio",
         "native": false,
         "state": []
-      },
-      "key": {
-        "kind": "number",
-        "type": "number"
-      }
-    },
-    {
-      "template": "admin.attribute.ranks.remove:{key}--button",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attribute",
-        "ranks"
-      ],
-      "name": "remove",
-      "role": "button",
-      "component": {
-        "name": "RankChip",
-        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#AttributeOptionsRankValues"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": true,
-        "state": [
-          "disabled"
-        ]
       },
       "key": {
         "kind": "number",
@@ -13552,12 +13536,13 @@
       ]
     },
     {
-      "template": "admin.attribute.values.edit:{key}--button",
+      "template": "admin.attribute.values.option.edit--button",
       "grammar": true,
       "scope": [
         "admin",
         "attribute",
-        "values"
+        "values",
+        "option"
       ],
       "name": "edit",
       "role": "button",
@@ -13568,8 +13553,7 @@
       "instances": [
         {
           "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip",
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
+            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
           ]
         }
       ],
@@ -13577,10 +13561,6 @@
         "role": "button",
         "native": false,
         "state": []
-      },
-      "key": {
-        "kind": "number",
-        "type": "number"
       },
       "opens": [
         {
@@ -13606,40 +13586,57 @@
       }
     },
     {
-      "template": "admin.attribute.values.label:{key}--text",
+      "template": "admin.attribute.values.option.label--text",
       "grammar": true,
       "scope": [
         "admin",
         "attribute",
-        "values"
+        "values",
+        "option"
       ],
       "name": "label",
       "role": "text",
       "component": {
-        "name": "AttributeOptionsValues",
-        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
+        "name": "OptionChip",
+        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
       },
       "instances": [
         {
           "via": []
-        },
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
-          ]
         }
       ],
       "aria": {
         "role": null,
         "native": false,
         "state": []
-      },
-      "alsoAt": [
-        "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
+      }
+    },
+    {
+      "template": "admin.attribute.values.option.remove--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attribute",
+        "values",
+        "option"
       ],
-      "key": {
-        "kind": "number",
-        "type": "number"
+      "name": "remove",
+      "role": "button",
+      "component": {
+        "name": "OptionChip",
+        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
       }
     },
     {
@@ -13659,11 +13656,6 @@
       "instances": [
         {
           "via": []
-        },
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
-          ]
         }
       ],
       "aria": {
@@ -13675,8 +13667,8 @@
         "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
       ],
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       }
     },
     {
@@ -13808,39 +13800,6 @@
       }
     },
     {
-      "template": "admin.attribute.values.remove:{key}--button",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attribute",
-        "values"
-      ],
-      "name": "remove",
-      "role": "button",
-      "component": {
-        "name": "OptionChip",
-        "at": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": true,
-        "state": [
-          "disabled"
-        ]
-      },
-      "key": {
-        "kind": "number",
-        "type": "number"
-      }
-    },
-    {
       "template": "admin.attribute.values.unique_error--alert",
       "grammar": true,
       "scope": [
@@ -13925,62 +13884,6 @@
       }
     },
     {
-      "template": "admin.attributes.actions:{key}--button",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "actions",
-      "role": "button",
-      "component": {
-        "name": "renderMenuButton",
-        "at": "channels/src/components/menu/menu.tsx#Menu"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell",
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      },
-      "opens": [
-        {
-          "kind": "menu",
-          "target": "menu",
-          "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell",
-          "scope": "admin.attributes.actions_menu"
-        },
-        {
-          "kind": "modal",
-          "target": "MenuModal",
-          "at": "channels/src/components/menu/menu.tsx#Menu",
-          "menuForm": true,
-          "scope": "menu_modal"
-        }
-      ],
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/menu/menu.tsx#Menu"
-        ]
-      }
-    },
-    {
       "template": "admin.attributes.actions_menu.delete--menuitem",
       "grammar": true,
       "scope": [
@@ -14042,126 +13945,6 @@
           "kind": "page",
           "target": "attributeDetailsRoute(field.id)",
           "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
-        }
-      ]
-    },
-    {
-      "template": "admin.attributes.applies_to:{key}",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "applies_to",
-      "role": null,
-      "component": {
-        "name": "AppliesToCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "list",
-        "native": true,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      }
-    },
-    {
-      "template": "admin.attributes.classification_link:{key}--link",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "classification_link",
-      "role": "link",
-      "component": {
-        "name": "ActionsCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "link",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      },
-      "opens": [
-        {
-          "kind": "page",
-          "target": "CLASSIFICATIONS_MARKINGS_ADMIN_URL",
-          "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
-        }
-      ],
-      "renderedWhen": [
-        {
-          "expr": "row.is_classification",
-          "explained": "row.is_classification",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "admin.attributes.classification_subtitle:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "classification_subtitle",
-      "role": "text",
-      "component": {
-        "name": "AttributeCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "row.is_classification",
-          "explained": "row.is_classification",
-          "kind": "prop"
         }
       ]
     },
@@ -14838,72 +14621,6 @@
       ]
     },
     {
-      "template": "admin.attributes.name:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "name",
-      "role": "text",
-      "component": {
-        "name": "AttributeCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      }
-    },
-    {
-      "template": "admin.attributes.name_conflict:{key}--img",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "name_conflict",
-      "role": "img",
-      "component": {
-        "name": "AttributeCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "img",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      }
-    },
-    {
       "template": "admin.attributes.new--button",
       "grammar": true,
       "scope": [
@@ -14973,37 +14690,6 @@
       ]
     },
     {
-      "template": "admin.attributes.options:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "options",
-      "role": "text",
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      }
-    },
-    {
       "template": "admin.attributes.resource_type_filter--button",
       "grammar": true,
       "scope": [
@@ -15052,6 +14738,80 @@
       }
     },
     {
+      "template": "admin.attributes.row.actions--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "actions",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "menu",
+          "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell",
+          "scope": "admin.attributes.actions_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      }
+    },
+    {
+      "template": "admin.attributes.row.applies_to",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "applies_to",
+      "role": null,
+      "component": {
+        "name": "AppliesToCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "admin.attributes.row.cell:{key}",
       "grammar": true,
       "scope": [
@@ -15082,6 +14842,77 @@
         "kind": "string",
         "type": "string"
       }
+    },
+    {
+      "template": "admin.attributes.row.classification_link--link",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "classification_link",
+      "role": "link",
+      "component": {
+        "name": "ActionsCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "link",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "CLASSIFICATIONS_MARKINGS_ADMIN_URL",
+          "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "row.is_classification",
+          "explained": "row.is_classification",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.attributes.row.classification_subtitle--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "classification_subtitle",
+      "role": "text",
+      "component": {
+        "name": "AttributeCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "row.is_classification",
+          "explained": "row.is_classification",
+          "kind": "prop"
+        }
+      ]
     },
     {
       "template": "admin.attributes.row.drag_handle--button",
@@ -15129,6 +14960,235 @@
           "kind": "prop"
         }
       ]
+    },
+    {
+      "template": "admin.attributes.row.name--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "name",
+      "role": "text",
+      "component": {
+        "name": "AttributeCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attributes.row.name_conflict--img",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "name_conflict",
+      "role": "img",
+      "component": {
+        "name": "AttributeCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "img",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attributes.row.options--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "options",
+      "role": "text",
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attributes.row.source--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "source",
+      "role": "text",
+      "component": {
+        "name": "SourceCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attributes.row.source_plugin_icon",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "source_plugin_icon",
+      "role": null,
+      "component": {
+        "name": "SourceCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!row.is_classification",
+          "explained": "!row.is_classification",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.attributes.row.source_sync_icon",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "source_sync_icon",
+      "role": null,
+      "component": {
+        "name": "SourceCell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!row.is_classification",
+          "explained": "!row.is_classification",
+          "kind": "prop"
+        },
+        {
+          "expr": "!(kind === 'plugin')",
+          "explained": "!(kind === 'plugin')",
+          "kind": "prop"
+        },
+        {
+          "expr": "owners.length > 0 || syncSources.length > 0",
+          "explained": "owners.length > 0 || syncSources.length > 0",
+          "kind": "prop"
+        },
+        {
+          "expr": "syncSources.length > 0",
+          "explained": "syncSources.length > 0",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.attributes.row.type--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "type",
+      "role": "text",
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.attributes.row.type_icon",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "attributes",
+        "row"
+      ],
+      "name": "type_icon",
+      "role": null,
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
     },
     {
       "template": "admin.attributes.row:{key}",
@@ -15202,39 +15262,6 @@
       }
     },
     {
-      "template": "admin.attributes.source:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "source",
-      "role": "text",
-      "component": {
-        "name": "SourceCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      }
-    },
-    {
       "template": "admin.attributes.source_filter--button",
       "grammar": true,
       "scope": [
@@ -15281,101 +15308,6 @@
           "channels/src/components/menu/menu.tsx#Menu"
         ]
       }
-    },
-    {
-      "template": "admin.attributes.source_plugin_icon:{key}",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "source_plugin_icon",
-      "role": null,
-      "component": {
-        "name": "SourceCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "!row.is_classification",
-          "explained": "!row.is_classification",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "admin.attributes.source_sync_icon:{key}",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "source_sync_icon",
-      "role": null,
-      "component": {
-        "name": "SourceCell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "!row.is_classification",
-          "explained": "!row.is_classification",
-          "kind": "prop"
-        },
-        {
-          "expr": "!(kind === 'plugin')",
-          "explained": "!(kind === 'plugin')",
-          "kind": "prop"
-        },
-        {
-          "expr": "owners.length > 0 || syncSources.length > 0",
-          "explained": "owners.length > 0 || syncSources.length > 0",
-          "kind": "prop"
-        },
-        {
-          "expr": "syncSources.length > 0",
-          "explained": "syncSources.length > 0",
-          "kind": "prop"
-        }
-      ]
     },
     {
       "template": "admin.attributes.subtitle--text",
@@ -15504,68 +15436,6 @@
           "viaLocal": true
         }
       ]
-    },
-    {
-      "template": "admin.attributes.type:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "type",
-      "role": "text",
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      }
-    },
-    {
-      "template": "admin.attributes.type_icon:{key}",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "attributes"
-      ],
-      "name": "type_icon",
-      "role": null,
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "PropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties",
-        "type": "Pick<PropertyField, 'id'>"
-      }
     },
     {
       "template": "admin.auto_translation.agents_config--link",
@@ -17225,52 +17095,6 @@
       ]
     },
     {
-      "template": "admin.board_attributes.row.locked_option:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "board_attributes",
-        "row"
-      ],
-      "name": "locked_option",
-      "role": "text",
-      "component": {
-        "name": "EditableChip",
-        "at": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#BoardAttributesValues"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "BoardsPropertyFieldOption",
-        "field": "id",
-        "module": "@mattermost/types/properties_board",
-        "type": "Pick<BoardsPropertyFieldOption, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "field.protected",
-          "explained": "field.protected",
-          "kind": "prop"
-        },
-        {
-          "expr": "readonly",
-          "explained": "readonly",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
       "template": "admin.board_attributes.row.locked_values",
       "grammar": true,
       "scope": [
@@ -17365,14 +17189,53 @@
       ]
     },
     {
-      "template": "admin.board_attributes.row.option:{key}--button",
+      "template": "admin.board_attributes.row.option.delete--button",
       "grammar": true,
       "scope": [
         "admin",
         "board_attributes",
-        "row"
+        "row",
+        "option"
       ],
-      "name": "option",
+      "name": "delete",
+      "role": "button",
+      "component": {
+        "name": "EditableChip",
+        "at": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "field.protected",
+          "explained": "field.protected",
+          "kind": "prop"
+        },
+        {
+          "expr": "canDelete",
+          "explained": "canDelete",
+          "kind": "permission"
+        }
+      ]
+    },
+    {
+      "template": "admin.board_attributes.row.option.edit--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "board_attributes",
+        "row",
+        "option"
+      ],
+      "name": "edit",
       "role": "button",
       "component": {
         "name": "renderMenuButton",
@@ -17381,8 +17244,7 @@
       "instances": [
         {
           "via": [
-            "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip",
-            "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#BoardAttributesValues"
+            "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
           ]
         }
       ],
@@ -17390,13 +17252,6 @@
         "role": "button",
         "native": false,
         "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "BoardsPropertyFieldOption",
-        "field": "id",
-        "module": "@mattermost/types/properties_board",
-        "type": "Pick<BoardsPropertyFieldOption, 'id'>"
       },
       "opens": [
         {
@@ -17422,15 +17277,53 @@
       }
     },
     {
-      "template": "admin.board_attributes.row.option_delete:{key}--button",
+      "template": "admin.board_attributes.row.option.locked--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "board_attributes",
+        "row",
+        "option"
+      ],
+      "name": "locked",
+      "role": "text",
+      "component": {
+        "name": "EditableChip",
+        "at": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "field.protected",
+          "explained": "field.protected",
+          "kind": "prop"
+        },
+        {
+          "expr": "readonly",
+          "explained": "readonly",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.board_attributes.row.option:{key}",
       "grammar": true,
       "scope": [
         "admin",
         "board_attributes",
         "row"
       ],
-      "name": "option_delete",
-      "role": "button",
+      "name": "option",
+      "role": null,
       "component": {
         "name": "EditableChip",
         "at": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
@@ -17443,8 +17336,8 @@
         }
       ],
       "aria": {
-        "role": "button",
-        "native": true,
+        "role": null,
+        "native": false,
         "state": []
       },
       "key": {
@@ -17453,14 +17346,7 @@
         "field": "id",
         "module": "@mattermost/types/properties_board",
         "type": "Pick<BoardsPropertyFieldOption, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "canDelete",
-          "explained": "canDelete",
-          "kind": "permission"
-        }
-      ]
+      }
     },
     {
       "template": "admin.board_attributes.row.option_menu.color:{key}--menuitemradio",
@@ -19055,8 +18941,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -19437,8 +19323,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -19489,7 +19375,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "renderedWhen": [
@@ -19533,8 +19419,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -33304,8 +33190,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -33700,8 +33586,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "effects": {
         "ops": [],
@@ -33763,7 +33649,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "effects": {
@@ -33813,8 +33699,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "effects": {
         "ops": [],
@@ -43285,62 +43171,6 @@
       }
     },
     {
-      "template": "admin.session_attributes.actions:{key}--button",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "session_attributes"
-      ],
-      "name": "actions",
-      "role": "button",
-      "component": {
-        "name": "renderMenuButton",
-        "at": "channels/src/components/menu/menu.tsx#Menu"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu",
-            "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
-      },
-      "opens": [
-        {
-          "kind": "menu",
-          "target": "menu",
-          "at": "channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu",
-          "scope": "admin.session_attributes.actions_menu"
-        },
-        {
-          "kind": "modal",
-          "target": "MenuModal",
-          "at": "channels/src/components/menu/menu.tsx#Menu",
-          "menuForm": true,
-          "scope": "menu_modal"
-        }
-      ],
-      "effects": {
-        "ops": [],
-        "unknown": false,
-        "delegated": [
-          "channels/src/components/menu/menu.tsx#Menu"
-        ]
-      }
-    },
-    {
       "template": "admin.session_attributes.actions_menu.disable--menuitem",
       "grammar": true,
       "scope": [
@@ -43884,37 +43714,6 @@
       ]
     },
     {
-      "template": "admin.session_attributes.grace:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "session_attributes"
-      ],
-      "name": "grace",
-      "role": "text",
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
-      }
-    },
-    {
       "template": "admin.session_attributes.head",
       "grammar": true,
       "scope": [
@@ -44045,37 +43844,6 @@
       ]
     },
     {
-      "template": "admin.session_attributes.name:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "session_attributes"
-      ],
-      "name": "name",
-      "role": "text",
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
-      }
-    },
-    {
       "template": "admin.session_attributes.no_data--text",
       "grammar": true,
       "scope": [
@@ -44112,36 +43880,52 @@
       ]
     },
     {
-      "template": "admin.session_attributes.platforms:{key}",
+      "template": "admin.session_attributes.row.actions--button",
       "grammar": true,
       "scope": [
         "admin",
-        "session_attributes"
+        "session_attributes",
+        "row"
       ],
-      "name": "platforms",
-      "role": null,
+      "name": "actions",
+      "role": "button",
       "component": {
-        "name": "PlatformIcons",
-        "at": "channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons"
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
       },
       "instances": [
         {
           "via": [
-            "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+            "channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu"
           ]
         }
       ],
       "aria": {
-        "role": null,
+        "role": "button",
         "native": false,
         "state": []
       },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "menu",
+          "at": "channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu",
+          "scope": "admin.session_attributes.actions_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
       }
     },
     {
@@ -44222,6 +44006,192 @@
           "kind": "prop"
         }
       ]
+    },
+    {
+      "template": "admin.session_attributes.row.grace--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "session_attributes",
+        "row"
+      ],
+      "name": "grace",
+      "role": "text",
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.session_attributes.row.name--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "session_attributes",
+        "row"
+      ],
+      "name": "name",
+      "role": "text",
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.session_attributes.row.platforms",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "session_attributes",
+        "row"
+      ],
+      "name": "platforms",
+      "role": null,
+      "component": {
+        "name": "PlatformIcons",
+        "at": "channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.session_attributes.row.server_label--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "session_attributes",
+        "row"
+      ],
+      "name": "server_label",
+      "role": "text",
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "isServerSourced(row.original.name)",
+          "explained": "isServerSourced(row.original.name)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "admin.session_attributes.row.status--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "session_attributes",
+        "row"
+      ],
+      "name": "status",
+      "role": "text",
+      "component": {
+        "name": "StatusChip",
+        "at": "channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.session_attributes.row.ttl--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "session_attributes",
+        "row"
+      ],
+      "name": "ttl",
+      "role": "text",
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.session_attributes.row.type--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "session_attributes",
+        "row"
+      ],
+      "name": "type",
+      "role": "text",
+      "component": {
+        "name": "cell",
+        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
     },
     {
       "template": "admin.session_attributes.row:{key}",
@@ -44388,77 +44358,6 @@
       }
     },
     {
-      "template": "admin.session_attributes.server_label:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "session_attributes"
-      ],
-      "name": "server_label",
-      "role": "text",
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
-      },
-      "renderedWhen": [
-        {
-          "expr": "isServerSourced(row.original.name)",
-          "explained": "isServerSourced(row.original.name)",
-          "kind": "other"
-        }
-      ]
-    },
-    {
-      "template": "admin.session_attributes.status:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "session_attributes"
-      ],
-      "name": "status",
-      "role": "text",
-      "component": {
-        "name": "StatusChip",
-        "at": "channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
-      }
-    },
-    {
       "template": "admin.session_attributes.top_pager.next--button",
       "grammar": true,
       "scope": [
@@ -44561,68 +44460,6 @@
           "viaLocal": true
         }
       ]
-    },
-    {
-      "template": "admin.session_attributes.ttl:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "session_attributes"
-      ],
-      "name": "ttl",
-      "role": "text",
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
-      }
-    },
-    {
-      "template": "admin.session_attributes.type:{key}--text",
-      "grammar": true,
-      "scope": [
-        "admin",
-        "session_attributes"
-      ],
-      "name": "type",
-      "role": "text",
-      "component": {
-        "name": "cell",
-        "at": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "key": {
-        "kind": "entity",
-        "entity": "UserPropertyField",
-        "field": "id",
-        "module": "@mattermost/types/properties_user",
-        "type": "Pick<UserPropertyField, 'id'>"
-      }
     },
     {
       "template": "admin.setting.color",
@@ -51259,8 +51096,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -51656,8 +51493,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -51713,7 +51550,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "renderedWhen": [
@@ -51757,8 +51594,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -63097,73 +62934,6 @@
           "expr": "reserveSlot",
           "explained": "reserveSlot",
           "kind": "other"
-        }
-      ]
-    },
-    {
-      "template": "attributeChip",
-      "grammar": false,
-      "scope": [],
-      "name": "attributeChip",
-      "role": null,
-      "component": {
-        "name": "AttributeChip",
-        "at": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/property_fields/hierarchical_value_menu/hierarchical_value_menu_parts.tsx#SelectedValueChips"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      }
-    },
-    {
-      "template": "attributeChipRemove",
-      "grammar": false,
-      "scope": [],
-      "name": "attributeChipRemove",
-      "role": null,
-      "component": {
-        "name": "AttributeChipRemoveButton",
-        "at": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChipRemoveButton"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/property_fields/hierarchical_value_menu/hierarchical_value_menu_parts.tsx#SelectedValueChips"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": true,
-        "state": [
-          "disabled"
-        ]
-      },
-      "effects": {
-        "ops": [
-          "UpdatePropertyValues"
-        ],
-        "unknown": false,
-        "delegated": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "!disabled",
-          "explained": "!disabled",
-          "kind": "prop"
         }
       ]
     },
@@ -85811,8 +85581,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -86200,8 +85970,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -86256,7 +86026,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "renderedWhen": [
@@ -86299,8 +86069,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -88759,9 +88529,6 @@
             "channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor",
             "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
             "channels/src/components/channel_settings_modal/channel_settings_info_tab.tsx#ChannelSettingsInfoTab"
-          ],
-          "keySet": [
-            "0"
           ]
         },
         {
@@ -88774,28 +88541,8 @@
         },
         {
           "via": [
-            "channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#RemovableChip",
-            "channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor",
             "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
             "channels/src/components/channel_settings_modal/channel_settings_info_tab.tsx#ChannelSettingsInfoTab"
-          ],
-          "keySet": [
-            "0"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
-            "channels/src/components/channel_settings_modal/channel_settings_info_tab.tsx#ChannelSettingsInfoTab"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
-            "channels/src/components/channel_settings_modal/channel_settings_info_tab.tsx#ChannelSettingsInfoTab"
-          ],
-          "keySet": [
-            "0"
           ]
         }
       ],
@@ -88805,11 +88552,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number",
-        "values": [
-          "0"
-        ]
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -88925,8 +88669,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "effects": {
         "ops": [
@@ -92013,8 +91757,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -92410,8 +92154,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -92467,7 +92211,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "renderedWhen": [
@@ -92511,8 +92255,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -115008,9 +114752,9 @@
       "key": {
         "kind": "entity",
         "entity": "Team",
-        "field": "name",
+        "field": "id",
         "module": "@mattermost/types/teams",
-        "type": "Pick<Team, 'name'>"
+        "type": "Pick<Team, 'id'>"
       }
     },
     {
@@ -139558,9 +139302,6 @@
             "channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor",
             "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
             "channels/src/components/channel_info_rhs/about_area_channel.tsx#AboutAreaChannel"
-          ],
-          "keySet": [
-            "0"
           ]
         },
         {
@@ -139573,28 +139314,8 @@
         },
         {
           "via": [
-            "channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#RemovableChip",
-            "channels/src/components/channel_attributes/channel_attribute_row_editor.tsx#ChannelAttributeRowEditor",
             "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
             "channels/src/components/channel_info_rhs/about_area_channel.tsx#AboutAreaChannel"
-          ],
-          "keySet": [
-            "0"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
-            "channels/src/components/channel_info_rhs/about_area_channel.tsx#AboutAreaChannel"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/channel_attributes/channel_info_attributes.tsx#ChannelInfoAttributes",
-            "channels/src/components/channel_info_rhs/about_area_channel.tsx#AboutAreaChannel"
-          ],
-          "keySet": [
-            "0"
           ]
         }
       ],
@@ -139604,11 +139325,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number",
-        "values": [
-          "0"
-        ]
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -139726,8 +139444,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "effects": {
         "ops": [
@@ -181144,8 +180862,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -181526,8 +181244,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -181578,7 +181296,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "renderedWhen": [
@@ -181622,8 +181340,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -184691,8 +184409,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -185080,8 +184798,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {
@@ -185136,7 +184854,7 @@
         "state": []
       },
       "key": {
-        "kind": "string",
+        "kind": "text",
         "type": "string"
       },
       "renderedWhen": [
@@ -185179,8 +184897,8 @@
         "state": []
       },
       "key": {
-        "kind": "number",
-        "type": "number"
+        "kind": "text",
+        "type": "string"
       },
       "renderedWhen": [
         {

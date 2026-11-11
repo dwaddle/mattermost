@@ -61,7 +61,7 @@ export default function GraphValueCell({
             menuTestId={testId ? `${testId}.value_menu` : undefined}
             placeholder={placeholder}
             className='values-editor'
-            trailingChips={row.hasMaskedValues ? <MaskedChip testId={testId ? `${testId}.value.masked--img` : undefined}/> : undefined}
+            trailingChips={row.hasMaskedValues ? <MaskedChip testId={testId ? `${testId}.value.masked` : undefined}/> : undefined}
             extraMenuItems={onSelectTarget ? channelAttributeMenuItems(channelFields, row.targetAttribute, onSelectTarget, formatMessage, testId) : undefined}
         />
     );

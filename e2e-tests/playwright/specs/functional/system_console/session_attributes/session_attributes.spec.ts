@@ -70,25 +70,25 @@ test.describe('System Console - Session Attributes', () => {
 
             // * Verify a representative row is rendered with its platform icons
             await expect(sa.row(ipAddress.id).locator).toBeVisible();
-            await expect(sa.platforms(ipAddress).locator).toBeVisible();
+            await expect(sa.row(ipAddress.id).platforms.locator).toBeVisible();
 
             // * Verify request-derived fields carry the "Server" label
-            await expect(sa.serverLabel(ipAddress).locator).toBeVisible();
+            await expect(sa.row(ipAddress.id).serverLabelText.locator).toBeVisible();
 
             // * Verify a seeded-but-client-native field does NOT carry the Server label
-            await expect(sa.serverLabel(clientIpAddress).locator).toHaveCount(0);
+            await expect(sa.row(clientIpAddress.id).serverLabelText.locator).toHaveCount(0);
 
             // * Verify the derived Type column maps text/select fields correctly. getDisplayType()
             // (session_attributes/utils.ts) only distinguishes Boolean/Enum via select options;
             // every other field type, including ip_address and os_version, renders as String.
-            await expect(sa.type(ipAddress).locator).toContainText('String');
-            await expect(sa.type(vpnActive).locator).toContainText('Boolean');
-            await expect(sa.type(networkInterfaceType).locator).toContainText('Enum');
-            await expect(sa.type(osVersion).locator).toContainText('String');
+            await expect(sa.row(ipAddress.id).typeText.locator).toContainText('String');
+            await expect(sa.row(vpnActive.id).typeText.locator).toContainText('Boolean');
+            await expect(sa.row(networkInterfaceType.id).typeText.locator).toContainText('Enum');
+            await expect(sa.row(osVersion.id).typeText.locator).toContainText('String');
 
             // * Verify seeded fields render as Disabled by default
-            await expect(sa.status(ipAddress).locator).toContainText('Disabled');
-            await expect(sa.status(ipAddress).locator).toHaveAttribute('data-enabled', 'false');
+            await expect(sa.row(ipAddress.id).statusText.locator).toContainText('Disabled');
+            await expect(sa.row(ipAddress.id).statusText.locator).toHaveAttribute('data-enabled', 'false');
         },
     );
 
@@ -107,18 +107,18 @@ test.describe('System Console - Session Attributes', () => {
         await (await openActions(app, field)).clickEnableMenuItem();
 
         // * Verify the staged values are reflected before saving
-        await expect(sa.ttl(field).locator).toHaveText('1h');
-        await expect(sa.grace(field).locator).toHaveText('5m');
-        await expect(sa.status(field).locator).toContainText('Enabled');
+        await expect(sa.row(field.id).ttlText.locator).toHaveText('1h');
+        await expect(sa.row(field.id).graceText.locator).toHaveText('5m');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
 
         // # Save the staged edits (one PATCH per changed field), and reload
         await saveAndSettle(app);
         sa = await openSessionAttributes(app);
 
         // * Verify the edits persisted in the UI after reload
-        await expect(sa.ttl(field).locator).toHaveText('1h');
-        await expect(sa.grace(field).locator).toHaveText('5m');
-        await expect(sa.status(field).locator).toContainText('Enabled');
+        await expect(sa.row(field.id).ttlText.locator).toHaveText('1h');
+        await expect(sa.row(field.id).graceText.locator).toHaveText('5m');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
 
         // * Verify the edits persisted server-side via the property API
         const persisted = await readSessionAttribute(adminClient, field.id);
@@ -145,7 +145,7 @@ test.describe('System Console - Session Attributes', () => {
         let sa = await openSessionAttributes(app);
 
         // * Verify it shows as Enabled
-        await expect(sa.status(field).locator).toContainText('Enabled');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
 
         // # Choose Disable from the actions menu, which asks for confirmation
         await (await openActions(app, field)).clickDisableMenuItem();
@@ -156,14 +156,14 @@ test.describe('System Console - Session Attributes', () => {
         await disableModal.clickConfirmButton();
 
         // * Verify the staged status flips to Disabled before saving
-        await expect(sa.status(field).locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
 
         // # Save the staged change, and reload
         await saveAndSettle(app);
         sa = await openSessionAttributes(app);
 
         // * Verify the disabled state persisted in the UI and server-side
-        await expect(sa.status(field).locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
         const persisted = await readSessionAttribute(adminClient, field.id);
         expect(persisted.enabled).toBe(false);
     });
@@ -184,12 +184,12 @@ test.describe('System Console - Session Attributes', () => {
         const sa = await openSessionAttributes(app);
 
         // # Stage a one-click Enable (dot menu, no duration submenu)
-        await expect(sa.status(field).locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
         await (await openActions(app, field)).clickEnableMenuItem();
 
         // * Verify the edit is staged and Save is enabled
         const {saveButton, cancelButton} = sa.savePanel;
-        await expect(sa.status(field).locator).toContainText('Enabled');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
         await expect(saveButton.locator).toBeEnabled();
 
         // # Attempt to navigate away via the sidebar while dirty
@@ -208,7 +208,7 @@ test.describe('System Console - Session Attributes', () => {
         await cancelButton.click();
 
         // * Verify the status reverted and Save returned to disabled
-        await expect(sa.status(field).locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
         await expect(saveButton.locator).toBeDisabled();
     });
 

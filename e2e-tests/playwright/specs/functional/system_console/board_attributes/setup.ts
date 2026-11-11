@@ -135,7 +135,7 @@ export async function addOption(row: BoardRow, name: string) {
 
 /** Renames an option from its menu (Enter commits the name; Escape in the box would revert it). */
 export async function renameOption(row: BoardRow, id: string, name: string) {
-    await row.option({id}).click();
+    await row.option({id}).editButton.click();
     await row.optionMenu.fillNameTextbox(name);
     await row.optionMenu.nameTextbox.locator.press('Enter');
     await closeOptionMenu(row);

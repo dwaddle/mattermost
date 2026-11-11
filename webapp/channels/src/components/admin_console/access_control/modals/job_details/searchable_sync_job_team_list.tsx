@@ -112,7 +112,7 @@ const SearchableSyncJobTeamList = (props: Props) => {
                 className='more-modal__row job-sync-row'
                 key={team.id}
                 id={`TeamRow-${team.name}`}
-                data-testid={`job_details_modal.teams.team:${team.name}`}
+                data-testid={`job_details_modal.teams.team:${team.id}`}
                 aria-label={ariaLabel}
                 onClick={() => handleRowClick(team)}
                 tabIndex={0}

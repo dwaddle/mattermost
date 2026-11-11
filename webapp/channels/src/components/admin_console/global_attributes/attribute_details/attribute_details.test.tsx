@@ -439,7 +439,7 @@ describe('AttributeDetails', () => {
         await userEvent.click(screen.getByTestId('admin.attribute.type--button'));
         await userEvent.click(screen.getByRole('menuitemradio', {name: /Ranked/}));
 
-        const chips = screen.getAllByTestId(/^admin\.attribute\.ranks\.label:/);
+        const chips = screen.getAllByTestId('admin.attribute.ranks.option.label--text');
         expect(chips.map((chip) => chip.textContent)).toEqual(['Low', 'High']);
         expect(screen.getAllByTestId('admin.attribute.ranks.option.badge--text').map((badge) => badge.textContent)).toEqual(['1', '2']);
     });
@@ -2707,7 +2707,7 @@ describe('AttributeDetails', () => {
             renderEdit();
             await waitForForm();
 
-            const chips = screen.getAllByTestId(/^admin\.attribute\.values\.label:/);
+            const chips = screen.getAllByTestId(/^admin\.attribute\.values\.option:/);
             expect(chips.map((chip) => chip.textContent)).toEqual(['Engineering', 'Sales']);
             expect(screen.queryByTestId('admin.attribute.values.add--textbox')).not.toBeInTheDocument();
             expect(screen.queryByRole('button', {name: 'Remove option'})).not.toBeInTheDocument();

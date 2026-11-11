@@ -5,9 +5,12 @@ import React from 'react';
 
 import type {PropertyFieldOption} from '@mattermost/types/properties';
 
-import {renderWithContext, screen, userEvent} from 'tests/react_testing_utils';
+import {renderWithContext, screen, userEvent, within} from 'tests/react_testing_utils';
 
 import AttributeOptionsValues from './attribute_options_values';
+
+// an option's chip is keyed by its name; its parts are unkeyed
+const editButton = (name: string) => within(screen.getByTestId(`admin.attribute.values.option:${name}`)).getByTestId('admin.attribute.values.option.edit--button');
 
 describe('AttributeOptionsValues', () => {
     const baseOptions = (): PropertyFieldOption[] => [
@@ -101,7 +104,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
+        await userEvent.click(editButton('Sales'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Discarded{Escape}');
@@ -119,7 +122,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
+        await userEvent.click(editButton('Sales'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Engineering{Enter}');
@@ -137,7 +140,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
+        await userEvent.click(editButton('Sales'));
         const input = screen.getByRole('textbox', {name: 'Option label'});
         await userEvent.clear(input);
         await userEvent.type(input, 'Marketing{Enter}');
@@ -157,7 +160,7 @@ describe('AttributeOptionsValues', () => {
             />,
         );
 
-        await userEvent.click(screen.getByTestId('admin.attribute.values.edit:1--button'));
+        await userEvent.click(editButton('Sales'));
         await userEvent.click(screen.getByText('Move to position'));
         await userEvent.click(screen.getByRole('menuitemradio', {name: '1'}));
 

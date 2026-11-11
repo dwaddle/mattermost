@@ -310,6 +310,8 @@ type SingleTraceBlockProps = {
  */
 function SingleTraceBlock({trace, policyIndex}: SingleTraceBlockProps): JSX.Element {
     const isInMultiPolicy = policyIndex !== undefined;
+
+    // keyed by position on purpose: the modal numbers the policies (1, 2, …), and that number is what a reader refers to
     const sectionTestId = policyIndex === undefined ? undefined : `admin.simulate_access.details.action.policy:${policyIndex}`;
     const showHeader = Boolean(trace.policyName) || isInMultiPolicy;
     return (
@@ -754,6 +756,8 @@ function MergedRuleSection({index, rule, policyIndex}: MergedRuleSectionProps): 
     return (
         <div
             className='SimulateAccessModal__detailsMergedRule'
+
+            // keyed by position on purpose: the badge numbers the rules ("1.1", "1.2"), and that number is what a reader refers to
             data-testid={`admin.simulate_access.details.action.merged_rule:${index}`}
         >
             <div className='SimulateAccessModal__detailsMergedRuleHeader'>

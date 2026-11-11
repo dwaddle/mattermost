@@ -8,6 +8,7 @@ import {css} from 'styled-components';
 
 import {CheckIcon, ChevronRightIcon, CloseCircleIcon} from '@mattermost/compass-icons/components';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import RankBadge from 'components/admin_console/system_properties/rank_badge';
 import {moveOptionByAscIndex, nextRank, sortOptionsByRankAsc} from 'components/admin_console/system_properties/rank_utils';
@@ -184,7 +185,7 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
     return (
         <span
             className='attribute-options-rank-values__chip'
-            data-testid={`admin.attribute.ranks.option:${ascIndex}`}
+            data-testid={`admin.attribute.ranks.option:${textTestKey(option.name)}`}
         >
             <RankBadge
                 rank={option.rank}
@@ -198,10 +199,10 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
                     children: (
                         <span
                             className='attribute-options-rank-values__chip-label'
-                            data-testid={`admin.attribute.ranks.label:${ascIndex}--text`}
+                            data-testid='admin.attribute.ranks.option.label--text'
                         >{option.name}</span>
                     ),
-                    dataTestId: `admin.attribute.ranks.edit:${ascIndex}--button`,
+                    dataTestId: 'admin.attribute.ranks.option.edit--button',
                 }}
                 menu={{
                     id: `${chipId}-popover`,
@@ -276,7 +277,7 @@ const RankChip = ({option, ascIndex, sortedRanks, maxOptionNameLength, nameColli
             <button
                 type='button'
                 className='attribute-options-rank-values__chip-remove'
-                data-testid={`admin.attribute.ranks.remove:${ascIndex}--button`}
+                data-testid='admin.attribute.ranks.option.remove--button'
                 onClick={() => onRemove(ascIndex)}
                 aria-label={removeLabel}
                 disabled={disabled}

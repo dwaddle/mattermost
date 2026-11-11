@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import React, {useCallback, useMemo, useState} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
-import type {TestId} from '@mattermost/shared/utils/test_id';
+import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 import type {PropertyField, PropertyFieldOption} from '@mattermost/types/properties';
 import {isTextField, supportsHierarchy, supportsOptions} from '@mattermost/types/properties';
 
@@ -218,8 +218,8 @@ const ChannelAttributesForm = ({fields, values, onChange, disabled, testId}: Pro
 type GraphControlProps = {
     field: PropertyField;
 
-    // The picker's button.
-    buttonTestId: string;
+    // The picker's button (a full id: the picker renders it as given).
+    buttonTestId: TestIdWithRole;
     value: string | string[] | undefined;
     onChange: (fieldId: string, value: string | string[] | undefined) => void;
     placeholder: string;

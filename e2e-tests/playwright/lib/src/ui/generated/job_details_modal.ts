@@ -228,11 +228,11 @@ export class JobDetailsModalTeams extends Scope {
     /**
      * `job_details_modal.teams.team:{key}` — SearchableSyncJobTeamList (channels/src/components/admin_console/access_control/modals/job_details/searchable_sync_job_team_list.tsx)
      */
-    team(team: Pick<Team, 'name'>): JobDetailsModalTeamsTeam {
+    team(team: Pick<Team, 'id'>): JobDetailsModalTeamsTeam {
         return new JobDetailsModalTeamsTeam(
             this.page,
             `${this.scope}.team`,
-            this.byTestId(`${this.scope}.team:${team.name}`),
+            this.byTestId(`${this.scope}.team:${team.id}`),
         );
     }
 

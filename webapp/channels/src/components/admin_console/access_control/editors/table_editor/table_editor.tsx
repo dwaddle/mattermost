@@ -804,6 +804,8 @@ function TableEditor({
                                 <tr
                                     key={index}
                                     className='table-editor__row'
+
+                                    // keyed by position on purpose: rules have no id, and their order is what the policy means
                                     data-testid={rowTestId ? `${rowTestId}:${index}` : undefined}
                                 >
                                     <td className='table-editor__cell'>

@@ -6,7 +6,7 @@ import React, {useMemo} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {CloseCircleIcon} from '@mattermost/compass-icons/components';
-import type {TestId} from '@mattermost/shared/utils/test_id';
+import {withRole, type TestId} from '@mattermost/shared/utils/test_id';
 
 import {getContrastingSimpleColor} from 'mattermost-redux/utils/theme_utils';
 
@@ -34,7 +34,7 @@ type Props = {
 
     className?: string;
 
-    // The chip is `<testId>` (a container: its text is the value). Without it, `attributeChip`.
+    // The chip is `<testId>` (a container: its text is the value). Without it, no testid (a decorative chip).
     testId?: TestId;
 
     // Rendered inside the pill, after the value — a remove control belongs on the
@@ -50,7 +50,7 @@ type RemoveButtonProps = {
     disabled?: boolean;
     className?: string;
 
-    // The button is `<testId>--button`. Without it, `attributeChipRemove`.
+    // The button is `<testId>--button`. Without it, no testid.
     testId?: TestId;
 };
 
@@ -63,7 +63,7 @@ export const AttributeChipRemoveButton = ({onRemove, removeLabel, disabled, clas
     <button
         type='button'
         className={classNames('AttributeChip__remove', className)}
-        data-testid={testId ? `${testId}--button` : 'attributeChipRemove'}
+        data-testid={withRole(testId, 'button')}
         data-menu-prevent-open={true}
         data-menu-prevent-close={true}
         aria-label={removeLabel}
@@ -139,7 +139,7 @@ const AttributeChip = ({
                 className,
             )}
             style={style}
-            data-testid={testId ?? 'attributeChip'}
+            data-testid={testId}
         >
             {announceLabel && (
                 <span className='sr-only'>

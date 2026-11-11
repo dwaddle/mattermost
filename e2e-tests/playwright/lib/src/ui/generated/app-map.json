@@ -2876,7 +2876,7 @@
                 {
                     "testId": "admin.access_control.policy.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -2907,7 +2907,7 @@
                 {
                     "testId": "admin.access_control.policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -2921,7 +2921,7 @@
                 {
                     "testId": "admin.access_control.policy.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },
@@ -4089,11 +4089,22 @@
                         "fieldType === 'rank'"
                     ],
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#AttributeOptionsRankValues"
+                }
+            ]
+        },
+        {
+            "scope": "admin.attribute.ranks.option",
+            "class": "AdminAttributeRanksOption",
+            "elements": [
+                {
+                    "testId": "admin.attribute.ranks.option.badge--text",
+                    "role": "text",
+                    "renderedWhen": ["!(rank === undefined || rank === null)"],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
                 },
                 {
-                    "testId": "admin.attribute.ranks.edit:{key}--button",
+                    "testId": "admin.attribute.ranks.option.edit--button",
                     "role": "button",
-                    "key": "number",
                     "opens": [
                         {
                             "kind": "menu",
@@ -4109,33 +4120,19 @@
                     "source": "channels/src/components/menu/menu.tsx#Menu"
                 },
                 {
-                    "testId": "admin.attribute.ranks.label:{key}--text",
+                    "testId": "admin.attribute.ranks.option.label--text",
                     "role": "text",
-                    "key": "number",
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
                 },
                 {
-                    "testId": "admin.attribute.ranks.remove:{key}--button",
+                    "testId": "admin.attribute.ranks.option.remove--button",
                     "role": "button",
-                    "key": "number",
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
-                }
-            ]
-        },
-        {
-            "scope": "admin.attribute.ranks.option",
-            "class": "AdminAttributeRanksOption",
-            "elements": [
-                {
-                    "testId": "admin.attribute.ranks.option.badge--text",
-                    "role": "text",
-                    "renderedWhen": ["!(rank === undefined || rank === null)"],
-                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
                 },
                 {
                     "testId": "admin.attribute.ranks.option:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip"
                 }
             ]
@@ -4289,9 +4286,26 @@
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
                 },
                 {
-                    "testId": "admin.attribute.values.edit:{key}--button",
+                    "testId": "admin.attribute.values.unique_error--alert",
+                    "role": "alert",
+                    "renderedWhen": [
+                        "!isHierarchical",
+                        "!optionsOwnedBySync",
+                        "optionsOwnedBySync",
+                        "typeSupportsOptions",
+                        "!(fieldType === 'rank')"
+                    ],
+                    "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
+                }
+            ]
+        },
+        {
+            "scope": "admin.attribute.values.option",
+            "class": "AdminAttributeValuesOption",
+            "elements": [
+                {
+                    "testId": "admin.attribute.values.option.edit--button",
                     "role": "button",
-                    "key": "number",
                     "opens": [
                         {
                             "kind": "menu",
@@ -4307,33 +4321,19 @@
                     "source": "channels/src/components/menu/menu.tsx#Menu"
                 },
                 {
-                    "testId": "admin.attribute.values.label:{key}--text",
+                    "testId": "admin.attribute.values.option.label--text",
                     "role": "text",
-                    "key": "number",
-                    "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
+                    "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
+                },
+                {
+                    "testId": "admin.attribute.values.option.remove--button",
+                    "role": "button",
+                    "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
                 },
                 {
                     "testId": "admin.attribute.values.option:{key}",
                     "role": null,
-                    "key": "number",
-                    "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
-                },
-                {
-                    "testId": "admin.attribute.values.remove:{key}--button",
-                    "role": "button",
-                    "key": "number",
-                    "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip"
-                },
-                {
-                    "testId": "admin.attribute.values.unique_error--alert",
-                    "role": "alert",
-                    "renderedWhen": [
-                        "!isHierarchical",
-                        "!optionsOwnedBySync",
-                        "optionsOwnedBySync",
-                        "typeSupportsOptions",
-                        "!(fieldType === 'rank')"
-                    ],
+                    "key": "string",
                     "source": "channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues"
                 }
             ]
@@ -4376,50 +4376,6 @@
             "container": "channels/src/components/admin_console/global_attributes/global_attributes.tsx#GlobalAttributes",
             "elements": [
                 {
-                    "testId": "admin.attributes.actions:{key}--button",
-                    "role": "button",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "opens": [
-                        {
-                            "kind": "menu",
-                            "target": "menu",
-                            "scope": "admin.attributes.actions_menu"
-                        },
-                        {
-                            "kind": "modal",
-                            "target": "MenuModal",
-                            "scope": "menu_modal"
-                        }
-                    ],
-                    "source": "channels/src/components/menu/menu.tsx#Menu"
-                },
-                {
-                    "testId": "admin.attributes.applies_to:{key}",
-                    "role": null,
-                    "key": "Pick<PropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell"
-                },
-                {
-                    "testId": "admin.attributes.classification_link:{key}--link",
-                    "role": "link",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "opens": [
-                        {
-                            "kind": "page",
-                            "target": "CLASSIFICATIONS_MARKINGS_ADMIN_URL"
-                        }
-                    ],
-                    "renderedWhen": ["row.is_classification"],
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
-                },
-                {
-                    "testId": "admin.attributes.classification_subtitle:{key}--text",
-                    "role": "text",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "renderedWhen": ["row.is_classification"],
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
-                },
-                {
                     "testId": "admin.attributes.clear_filters--button",
                     "role": "button",
                     "renderedWhen": ["rows.length === 0"],
@@ -4456,18 +4412,6 @@
                     "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
                 },
                 {
-                    "testId": "admin.attributes.name:{key}--text",
-                    "role": "text",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
-                },
-                {
-                    "testId": "admin.attributes.name_conflict:{key}--img",
-                    "role": "img",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
-                },
-                {
                     "testId": "admin.attributes.new--button",
                     "role": "button",
                     "opens": [
@@ -4483,12 +4427,6 @@
                     "role": "text",
                     "renderedWhen": ["tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0"],
                     "source": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
-                },
-                {
-                    "testId": "admin.attributes.options:{key}--text",
-                    "role": "text",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
                 },
                 {
                     "testId": "admin.attributes.resource_type_filter--button",
@@ -4512,12 +4450,6 @@
                     "source": "channels/src/components/widgets/inputs/input/input.tsx#Input"
                 },
                 {
-                    "testId": "admin.attributes.source:{key}--text",
-                    "role": "text",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
-                },
-                {
                     "testId": "admin.attributes.source_filter--button",
                     "role": "button",
                     "opens": [
@@ -4534,40 +4466,9 @@
                     "source": "channels/src/components/menu/menu.tsx#Menu"
                 },
                 {
-                    "testId": "admin.attributes.source_plugin_icon:{key}",
-                    "role": null,
-                    "key": "Pick<PropertyField, 'id'>",
-                    "renderedWhen": ["!row.is_classification"],
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
-                },
-                {
-                    "testId": "admin.attributes.source_sync_icon:{key}",
-                    "role": null,
-                    "key": "Pick<PropertyField, 'id'>",
-                    "renderedWhen": [
-                        "!row.is_classification",
-                        "!(kind === 'plugin')",
-                        "owners.length > 0 || syncSources.length > 0",
-                        "syncSources.length > 0"
-                    ],
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
-                },
-                {
                     "testId": "admin.attributes.subtitle--text",
                     "role": "text",
                     "source": "channels/src/components/admin_console/global_attributes/global_attributes.tsx#GlobalAttributes"
-                },
-                {
-                    "testId": "admin.attributes.type:{key}--text",
-                    "role": "text",
-                    "key": "Pick<PropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
-                },
-                {
-                    "testId": "admin.attributes.type_icon:{key}",
-                    "role": null,
-                    "key": "Pick<PropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
                 }
             ]
         },
@@ -4682,13 +4583,53 @@
         },
         {
             "scope": "admin.attributes.row",
-            "class": "Row",
+            "class": "AdminAttributesRow",
             "elements": [
+                {
+                    "testId": "admin.attributes.row.actions--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "admin.attributes.actions_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "admin.attributes.row.applies_to",
+                    "role": null,
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell"
+                },
                 {
                     "testId": "admin.attributes.row.cell:{key}",
                     "role": null,
                     "key": "string",
                     "source": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+                },
+                {
+                    "testId": "admin.attributes.row.classification_link--link",
+                    "role": "link",
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "CLASSIFICATIONS_MARKINGS_ADMIN_URL"
+                        }
+                    ],
+                    "renderedWhen": ["row.is_classification"],
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell"
+                },
+                {
+                    "testId": "admin.attributes.row.classification_subtitle--text",
+                    "role": "text",
+                    "renderedWhen": ["row.is_classification"],
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
                 },
                 {
                     "testId": "admin.attributes.row.drag_handle--button",
@@ -4698,6 +4639,53 @@
                         "!(tableMeta.isRowDragDisabled?.(row.original.id) === true)"
                     ],
                     "source": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+                },
+                {
+                    "testId": "admin.attributes.row.name--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
+                },
+                {
+                    "testId": "admin.attributes.row.name_conflict--img",
+                    "role": "img",
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell"
+                },
+                {
+                    "testId": "admin.attributes.row.options--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
+                },
+                {
+                    "testId": "admin.attributes.row.source--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
+                },
+                {
+                    "testId": "admin.attributes.row.source_plugin_icon",
+                    "role": null,
+                    "renderedWhen": ["!row.is_classification"],
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
+                },
+                {
+                    "testId": "admin.attributes.row.source_sync_icon",
+                    "role": null,
+                    "renderedWhen": [
+                        "!row.is_classification",
+                        "!(kind === 'plugin')",
+                        "owners.length > 0 || syncSources.length > 0",
+                        "syncSources.length > 0"
+                    ],
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell"
+                },
+                {
+                    "testId": "admin.attributes.row.type--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
+                },
+                {
+                    "testId": "admin.attributes.row.type_icon",
+                    "role": null,
+                    "source": "channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable"
                 },
                 {
                     "testId": "admin.attributes.row:{key}",
@@ -4914,13 +4902,6 @@
                     "source": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
                 },
                 {
-                    "testId": "admin.board_attributes.row.locked_option:{key}--text",
-                    "role": "text",
-                    "key": "Pick<BoardsPropertyFieldOption, 'id'>",
-                    "renderedWhen": ["field.protected", "readonly"],
-                    "source": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
-                },
-                {
                     "testId": "admin.board_attributes.row.locked_values",
                     "role": null,
                     "renderedWhen": ["field.protected"],
@@ -4936,31 +4917,6 @@
                     "role": "text",
                     "renderedWhen": ["!toDelete && warning"],
                     "source": "channels/src/components/admin_console/board_attributes/board_attributes_table.tsx#BoardAttributesTable"
-                },
-                {
-                    "testId": "admin.board_attributes.row.option:{key}--button",
-                    "role": "button",
-                    "key": "Pick<BoardsPropertyFieldOption, 'id'>",
-                    "opens": [
-                        {
-                            "kind": "menu",
-                            "target": "menu",
-                            "scope": "admin.board_attributes.row.option_menu"
-                        },
-                        {
-                            "kind": "modal",
-                            "target": "MenuModal",
-                            "scope": "menu_modal"
-                        }
-                    ],
-                    "source": "channels/src/components/menu/menu.tsx#Menu"
-                },
-                {
-                    "testId": "admin.board_attributes.row.option_delete:{key}--button",
-                    "role": "button",
-                    "key": "Pick<BoardsPropertyFieldOption, 'id'>",
-                    "renderedWhen": ["canDelete"],
-                    "source": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
                 },
                 {
                     "testId": "admin.board_attributes.row.type--button",
@@ -5021,6 +4977,47 @@
                     "role": "menuitem",
                     "renderedWhen": ["canCreate"],
                     "source": "channels/src/components/admin_console/board_attributes/board_attributes_dot_menu.tsx#DotMenu"
+                }
+            ]
+        },
+        {
+            "scope": "admin.board_attributes.row.option",
+            "class": "AdminBoardAttributesRowOption",
+            "elements": [
+                {
+                    "testId": "admin.board_attributes.row.option.delete--button",
+                    "role": "button",
+                    "renderedWhen": ["field.protected", "canDelete"],
+                    "source": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
+                },
+                {
+                    "testId": "admin.board_attributes.row.option.edit--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "admin.board_attributes.row.option_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
+                {
+                    "testId": "admin.board_attributes.row.option.locked--text",
+                    "role": "text",
+                    "renderedWhen": ["field.protected", "readonly"],
+                    "source": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
+                },
+                {
+                    "testId": "admin.board_attributes.row.option:{key}",
+                    "role": null,
+                    "key": "Pick<BoardsPropertyFieldOption, 'id'>",
+                    "source": "channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip"
                 }
             ]
         },
@@ -5433,7 +5430,7 @@
                 {
                     "testId": "admin.channel.access_rules.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -5464,7 +5461,7 @@
                 {
                     "testId": "admin.channel.access_rules.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -5478,7 +5475,7 @@
                 {
                     "testId": "admin.channel.access_rules.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },
@@ -8416,7 +8413,7 @@
                 {
                     "testId": "admin.permission_policy.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -8447,7 +8444,7 @@
                 {
                     "testId": "admin.permission_policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -8461,7 +8458,7 @@
                 {
                     "testId": "admin.permission_policy.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },
@@ -9764,7 +9761,7 @@
         },
         {
             "scope": "admin.secure_connection.shared_channels.row",
-            "class": "Row",
+            "class": "AdminSecureConnectionSharedChannelsRow",
             "elements": [
                 {
                     "testId": "admin.secure_connection.shared_channels.row.cell:{key}",
@@ -10283,30 +10280,6 @@
             "container": "channels/src/components/admin_console/session_attributes/session_attributes.tsx#SessionAttributesPage",
             "elements": [
                 {
-                    "testId": "admin.session_attributes.actions:{key}--button",
-                    "role": "button",
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "opens": [
-                        {
-                            "kind": "menu",
-                            "target": "menu",
-                            "scope": "admin.session_attributes.actions_menu"
-                        },
-                        {
-                            "kind": "modal",
-                            "target": "MenuModal",
-                            "scope": "menu_modal"
-                        }
-                    ],
-                    "source": "channels/src/components/menu/menu.tsx#Menu"
-                },
-                {
-                    "testId": "admin.session_attributes.grace:{key}--text",
-                    "role": "text",
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-                },
-                {
                     "testId": "admin.session_attributes.load_error--text",
                     "role": "text",
                     "renderedWhen": ["tableMeta.loadingState === LoadingStates.Failed"],
@@ -10319,47 +10292,10 @@
                     "source": "channels/src/components/widgets/loading/loading_spinner.tsx#LoadingSpinner"
                 },
                 {
-                    "testId": "admin.session_attributes.name:{key}--text",
-                    "role": "text",
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-                },
-                {
                     "testId": "admin.session_attributes.no_data--text",
                     "role": "text",
                     "renderedWhen": ["tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0"],
                     "source": "channels/src/components/admin_console/list_table/list_table.tsx#ListTable"
-                },
-                {
-                    "testId": "admin.session_attributes.platforms:{key}",
-                    "role": null,
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons"
-                },
-                {
-                    "testId": "admin.session_attributes.server_label:{key}--text",
-                    "role": "text",
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "renderedWhen": ["isServerSourced(row.original.name)"],
-                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-                },
-                {
-                    "testId": "admin.session_attributes.status:{key}--text",
-                    "role": "text",
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip"
-                },
-                {
-                    "testId": "admin.session_attributes.ttl:{key}--text",
-                    "role": "text",
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
-                },
-                {
-                    "testId": "admin.session_attributes.type:{key}--text",
-                    "role": "text",
-                    "key": "Pick<UserPropertyField, 'id'>",
-                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
                 }
             ]
         },
@@ -10481,8 +10417,25 @@
         },
         {
             "scope": "admin.session_attributes.row",
-            "class": "Row",
+            "class": "AdminSessionAttributesRow",
             "elements": [
+                {
+                    "testId": "admin.session_attributes.row.actions--button",
+                    "role": "button",
+                    "opens": [
+                        {
+                            "kind": "menu",
+                            "target": "menu",
+                            "scope": "admin.session_attributes.actions_menu"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MenuModal",
+                            "scope": "menu_modal"
+                        }
+                    ],
+                    "source": "channels/src/components/menu/menu.tsx#Menu"
+                },
                 {
                     "testId": "admin.session_attributes.row.cell:{key}",
                     "role": null,
@@ -10497,6 +10450,42 @@
                         "!(tableMeta.isRowDragDisabled?.(row.original.id) === true)"
                     ],
                     "source": "channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow"
+                },
+                {
+                    "testId": "admin.session_attributes.row.grace--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+                },
+                {
+                    "testId": "admin.session_attributes.row.name--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+                },
+                {
+                    "testId": "admin.session_attributes.row.platforms",
+                    "role": null,
+                    "source": "channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons"
+                },
+                {
+                    "testId": "admin.session_attributes.row.server_label--text",
+                    "role": "text",
+                    "renderedWhen": ["isServerSourced(row.original.name)"],
+                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+                },
+                {
+                    "testId": "admin.session_attributes.row.status--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip"
+                },
+                {
+                    "testId": "admin.session_attributes.row.ttl--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
+                },
+                {
+                    "testId": "admin.session_attributes.row.type--text",
+                    "role": "text",
+                    "source": "channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable"
                 },
                 {
                     "testId": "admin.session_attributes.row:{key}",
@@ -11672,7 +11661,7 @@
                 {
                     "testId": "admin.team.access_rules.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -11703,7 +11692,7 @@
                 {
                     "testId": "admin.team.access_rules.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -11717,7 +11706,7 @@
                 {
                     "testId": "admin.team.access_rules.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)", "!(editorMode === 'cel')"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },
@@ -18760,7 +18749,7 @@
                 {
                     "testId": "channel_settings_modal.access_rules.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "attributesLoaded && rulesEditable"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -18791,7 +18780,7 @@
                 {
                     "testId": "channel_settings_modal.access_rules.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "attributesLoaded && rulesEditable"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -18805,7 +18794,7 @@
                 {
                     "testId": "channel_settings_modal.access_rules.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)", "attributesLoaded && rulesEditable"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },
@@ -19418,7 +19407,7 @@
                 {
                     "testId": "channel_settings_modal.info.attributes.attribute.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0 && addableAttributes.length === 0)"],
                     "source": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
                 }
@@ -19431,7 +19420,7 @@
                 {
                     "testId": "channel_settings_modal.info.attributes.attribute.edit_menu.option:{key}--menuitem",
                     "role": "menuitem",
-                    "key": "number",
+                    "key": "string",
                     "effects": ["UpdatePropertyValues"],
                     "renderedWhen": [
                         "!(rows.length === 0 && addableAttributes.length === 0)",
@@ -20038,7 +20027,7 @@
                 {
                     "testId": "channel_settings_modal.permissions_policy.editor.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "attributesLoaded"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -20069,7 +20058,7 @@
                 {
                     "testId": "channel_settings_modal.permissions_policy.editor.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "attributesLoaded"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -20083,7 +20072,7 @@
                 {
                     "testId": "channel_settings_modal.permissions_policy.editor.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)", "attributesLoaded"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },
@@ -24961,7 +24950,7 @@
                 {
                     "testId": "job_details_modal.teams.team:{key}",
                     "role": null,
-                    "key": "Pick<Team, 'name'>",
+                    "key": "Pick<Team, 'id'>",
                     "source": "channels/src/components/admin_console/access_control/modals/job_details/searchable_sync_job_team_list.tsx#SearchableSyncJobTeamList"
                 }
             ]
@@ -30930,7 +30919,7 @@
                 {
                     "testId": "rhs.channel_info.about.attributes.attribute.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0 && addableAttributes.length === 0)"],
                     "source": "channels/src/components/channel_attributes/attribute_chip.tsx#AttributeChip"
                 }
@@ -30943,7 +30932,7 @@
                 {
                     "testId": "rhs.channel_info.about.attributes.attribute.edit_menu.option:{key}--menuitem",
                     "role": "menuitem",
-                    "key": "number",
+                    "key": "string",
                     "effects": ["UpdatePropertyValues"],
                     "renderedWhen": [
                         "!(rows.length === 0 && addableAttributes.length === 0)",
@@ -39760,7 +39749,7 @@
                 {
                     "testId": "team_settings_modal.access_policies.editor.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -39791,7 +39780,7 @@
                 {
                     "testId": "team_settings_modal.access_policies.editor.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -39805,7 +39794,7 @@
                 {
                     "testId": "team_settings_modal.access_policies.editor.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },
@@ -40450,7 +40439,7 @@
                 {
                     "testId": "team_settings_modal.membership.rules.row.value.chip:{key}",
                     "role": null,
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "attributesLoaded && rulesEditable"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 }
@@ -40481,7 +40470,7 @@
                 {
                     "testId": "team_settings_modal.membership.rules.row.value_menu.multi_option:{key}--menuitemcheckbox",
                     "role": "menuitemcheckbox",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["!(rows.length === 0)", "isMultiOperator", "attributesLoaded && rulesEditable"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector"
                 },
@@ -40495,7 +40484,7 @@
                 {
                     "testId": "team_settings_modal.membership.rules.row.value_menu.option:{key}--menuitemradio",
                     "role": "menuitemradio",
-                    "key": "number",
+                    "key": "string",
                     "renderedWhen": ["hasOptions", "!(rows.length === 0)", "attributesLoaded && rulesEditable"],
                     "source": "channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx#SingleValueSelector"
                 },

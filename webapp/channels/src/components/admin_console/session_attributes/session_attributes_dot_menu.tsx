@@ -79,7 +79,7 @@ export default function SessionAttributesDotMenu({field, onStageChange, disabled
                 as: SessionAttributesMenuTrigger,
                 'aria-label': buttonLabel,
                 children: <Icon glyph={<DotsVerticalIcon/>}/>,
-                dataTestId: `admin.session_attributes.actions:${field.id}--button`,
+                dataTestId: 'admin.session_attributes.row.actions--button',
                 disabled,
             }}
             menuButtonTooltip={{

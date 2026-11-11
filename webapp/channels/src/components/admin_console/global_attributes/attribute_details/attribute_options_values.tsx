@@ -8,6 +8,7 @@ import {css} from 'styled-components';
 
 import {CheckIcon, CloseCircleIcon} from '@mattermost/compass-icons/components';
 import type {PropertyFieldOption} from '@mattermost/types/properties';
+import {textTestKey} from '@mattermost/types/test_id';
 
 import * as Menu from 'components/menu';
 import type {CustomMessageInputType} from 'components/widgets/inputs/input/input';
@@ -69,16 +70,13 @@ const AttributeOptionsValues = ({options, onOptionsChange, disabled = false, rea
                             defaultMessage: 'Options',
                         })}
                     >
-                        {options.map((option, index) => (
+                        {options.map((option) => (
                             <li
                                 key={option.id || option.name}
                                 className='attribute-options-values__chip'
-                                data-testid={`admin.attribute.values.option:${index}`}
+                                data-testid={`admin.attribute.values.option:${textTestKey(option.name)}`}
                             >
-                                <span
-                                    className='attribute-options-values__chip-label attribute-options-values__chip-label--static'
-                                    data-testid={`admin.attribute.values.label:${index}--text`}
-                                >{option.name}</span>
+                                <span className='attribute-options-values__chip-label attribute-options-values__chip-label--static'>{option.name}</span>
                             </li>
                         ))}
                     </ul>
@@ -200,7 +198,7 @@ const OptionChip = ({option, index, total, maxOptionNameLength, nameCollidesWith
     return (
         <span
             className='attribute-options-values__chip'
-            data-testid={`admin.attribute.values.option:${index}`}
+            data-testid={`admin.attribute.values.option:${textTestKey(option.name)}`}
         >
             <Menu.Container
                 menuButton={{
@@ -210,10 +208,10 @@ const OptionChip = ({option, index, total, maxOptionNameLength, nameCollidesWith
                     children: (
                         <span
                             className='attribute-options-values__chip-label'
-                            data-testid={`admin.attribute.values.label:${index}--text`}
+                            data-testid='admin.attribute.values.option.label--text'
                         >{option.name}</span>
                     ),
-                    dataTestId: `admin.attribute.values.edit:${index}--button`,
+                    dataTestId: 'admin.attribute.values.option.edit--button',
                 }}
                 menu={{
                     id: `${chipId}-popover`,
@@ -283,7 +281,7 @@ const OptionChip = ({option, index, total, maxOptionNameLength, nameCollidesWith
             <button
                 type='button'
                 className='attribute-options-values__chip-remove'
-                data-testid={`admin.attribute.values.remove:${index}--button`}
+                data-testid='admin.attribute.values.option.remove--button'
                 onClick={() => onRemove(index)}
                 aria-label={removeLabel}
                 disabled={disabled}

@@ -9,7 +9,7 @@ import type {AccessControlPolicy, PolicySimulationSession} from '@mattermost/typ
 import type {Group} from '@mattermost/types/groups';
 import type {HealthFinding} from '@mattermost/types/health';
 import type {Job} from '@mattermost/types/jobs';
-import type {PropertyField, PropertyFieldOption} from '@mattermost/types/properties';
+import type {PropertyFieldOption} from '@mattermost/types/properties';
 import type {BoardsPropertyFieldOption} from '@mattermost/types/properties_board';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 import type {Scheme} from '@mattermost/types/schemes';
@@ -17,7 +17,7 @@ import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
 import type {AdminSettingKey, PluginKey} from '../../aria';
-import {Scope, drivers, settingTestKey} from '../../aria';
+import {Scope, drivers, settingTestKey, textTestKey} from '../../aria';
 
 import {Api} from './api';
 import {AddUsersToRoleModal} from './add_users_to_role_modal';
@@ -107,11 +107,28 @@ export type AdminAttributeGraphRowRow = {
 /** The read-only parts of a `admin.attribute.ranks.option` item. */
 export type AdminAttributeRanksOptionRow = {
     badge: string | null;
+    label: string | null;
+};
+/** The read-only parts of a `admin.attribute.values.option` item. */
+export type AdminAttributeValuesOptionRow = {
+    label: string | null;
+};
+/** The read-only parts of a `admin.attributes.row` item. */
+export type AdminAttributesRowRow = {
+    classificationSubtitle: string | null;
+    name: string | null;
+    options: string | null;
+    source: string | null;
+    type: string | null;
 };
 /** The read-only parts of a `admin.board_attributes.row` item. */
 export type AdminBoardAttributesRowRow = {
     nameError: string | null;
     valuesError: string | null;
+};
+/** The read-only parts of a `admin.board_attributes.row.option` item. */
+export type AdminBoardAttributesRowOptionRow = {
+    locked: string | null;
 };
 /** The form fields of `admin.channel`. */
 export type AdminChannelFormValues = {
@@ -202,6 +219,15 @@ export type AdminServerLogsFormValues = {
     logFormat: string;
     node?: string;
     search: string;
+};
+/** The read-only parts of a `admin.session_attributes.row` item. */
+export type AdminSessionAttributesRowRow = {
+    grace: string | null;
+    name: string | null;
+    serverLabel: string | null;
+    status: string | null;
+    ttl: string | null;
+    type: string | null;
 };
 /** The form fields of `admin.setting`. */
 export type AdminSettingFormValues = {
@@ -3764,84 +3790,13 @@ export class AdminAttributeRanks extends Scope {
     }
 
     /**
-     * `admin.attribute.ranks.edit:{key}--button` — Menu (channels/src/components/menu/menu.tsx)
-     * Opens menu menu (`admin.attribute.ranks.option_menu`).
-     * Opens modal MenuModal (`menu_modal`).
-     */
-    edit(edit: number) {
-        return drivers.button(this.byTestId(`${this.scope}.edit:${edit}--button`), {
-            testId: `${this.scope}.edit:${edit}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/menu/menu.tsx#Menu',
-        });
-    }
-
-    /** Every `admin.attribute.ranks.edit:{key}--button` in the scope. */
-    get editItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.edit:`, '--button');
-    }
-
-    /** The keys of every `admin.attribute.ranks.edit:{key}--button` in the scope, in document order. */
-    editKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.edit:`, '--button');
-    }
-
-    /**
-     * `admin.attribute.ranks.label:{key}--text` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
-     */
-    label(label: number) {
-        return drivers.text(this.byTestId(`${this.scope}.label:${label}--text`), {
-            testId: `${this.scope}.label:${label}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
-        });
-    }
-
-    /** Every `admin.attribute.ranks.label:{key}--text` in the scope. */
-    get labelItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.label:`, '--text');
-    }
-
-    /** The keys of every `admin.attribute.ranks.label:{key}--text` in the scope, in document order. */
-    labelKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.label:`, '--text');
-    }
-
-    /**
-     * `admin.attribute.ranks.remove:{key}--button` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
-     */
-    remove(remove: number) {
-        return drivers.button(this.byTestId(`${this.scope}.remove:${remove}--button`), {
-            testId: `${this.scope}.remove:${remove}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
-        });
-    }
-
-    /** Every `admin.attribute.ranks.remove:{key}--button` in the scope. */
-    get removeItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.remove:`, '--button');
-    }
-
-    /** The keys of every `admin.attribute.ranks.remove:{key}--button` in the scope, in document order. */
-    removeKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.remove:`, '--button');
-    }
-
-    /**
      * `admin.attribute.ranks.option:{key}` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
      */
-    option(option: number): AdminAttributeRanksOption {
+    option(option: string): AdminAttributeRanksOption {
         return new AdminAttributeRanksOption(
             this.page,
             `${this.scope}.option`,
-            this.byTestId(`${this.scope}.option:${option}`),
+            this.byTestId(`${this.scope}.option:${textTestKey(option)}`),
         );
     }
 
@@ -3857,45 +3812,6 @@ export class AdminAttributeRanks extends Scope {
 
     get optionMenu(): AdminAttributeRanksOptionMenu {
         return new AdminAttributeRanksOptionMenu(this.page, `${this.scope}.option_menu`);
-    }
-
-    /** Every `admin.attribute.ranks.edit:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.editList).toHaveKeys([…])`. */
-    get editList() {
-        return this.keyedList(`${this.scope}.edit:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.edit:${key}--button`), {
-                testId: `${this.scope}.edit:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/menu/menu.tsx#Menu',
-            }),
-        );
-    }
-
-    /** Every `admin.attribute.ranks.label:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.labelList).toHaveKeys([…])`. */
-    get labelList() {
-        return this.keyedList(`${this.scope}.label:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.label:${key}--text`), {
-                testId: `${this.scope}.label:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
-            }),
-        );
-    }
-
-    /** Every `admin.attribute.ranks.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
-    get removeList() {
-        return this.keyedList(`${this.scope}.remove:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.remove:${key}--button`), {
-                testId: `${this.scope}.remove:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
-            }),
-        );
     }
 
     /** Every `admin.attribute.ranks.option:{key}` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
@@ -3955,10 +3871,66 @@ export class AdminAttributeRanksOption extends Scope {
         return this.badgeText.text();
     }
 
+    /**
+     * `admin.attribute.ranks.option.edit--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attribute.ranks.option_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks editButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickEditButton(): Promise<AdminAttributeRanksOptionMenu> {
+        await this.editButton.click();
+        return new AdminAttributeRanksOptionMenu(this.page, 'admin.attribute.ranks.option_menu');
+    }
+
+    /**
+     * `admin.attribute.ranks.option.label--text` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    get labelText() {
+        return drivers.text(this.byTestId(`${this.scope}.label--text`), {
+            testId: `${this.scope}.label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+        });
+    }
+
+    getLabelText(): Promise<string> {
+        return this.labelText.text();
+    }
+
+    /**
+     * `admin.attribute.ranks.option.remove--button` — RankChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx)
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_rank_values.tsx#RankChip',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
     /** Reads the item's read-only parts (`null` where one isn't rendered). */
     async read(): Promise<AdminAttributeRanksOptionRow> {
         return {
             badge: await this.badgeText.textIfPresent(),
+            label: await this.labelText.textIfPresent(),
         };
     }
 }
@@ -4261,100 +4233,6 @@ export class AdminAttributeValues extends Scope {
     }
 
     /**
-     * `admin.attribute.values.edit:{key}--button` — Menu (channels/src/components/menu/menu.tsx)
-     * Opens menu menu (`admin.attribute.values.option_menu`).
-     * Opens modal MenuModal (`menu_modal`).
-     */
-    edit(edit: number) {
-        return drivers.button(this.byTestId(`${this.scope}.edit:${edit}--button`), {
-            testId: `${this.scope}.edit:${edit}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/menu/menu.tsx#Menu',
-        });
-    }
-
-    /** Every `admin.attribute.values.edit:{key}--button` in the scope. */
-    get editItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.edit:`, '--button');
-    }
-
-    /** The keys of every `admin.attribute.values.edit:{key}--button` in the scope, in document order. */
-    editKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.edit:`, '--button');
-    }
-
-    /**
-     * `admin.attribute.values.label:{key}--text` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
-     */
-    label(label: number) {
-        return drivers.text(this.byTestId(`${this.scope}.label:${label}--text`), {
-            testId: `${this.scope}.label:${label}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
-        });
-    }
-
-    /** Every `admin.attribute.values.label:{key}--text` in the scope. */
-    get labelItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.label:`, '--text');
-    }
-
-    /** The keys of every `admin.attribute.values.label:{key}--text` in the scope, in document order. */
-    labelKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.label:`, '--text');
-    }
-
-    /**
-     * `admin.attribute.values.option:{key}` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
-     */
-    option(option: number) {
-        return drivers.container(this.byTestId(`${this.scope}.option:${option}`), {
-            testId: `${this.scope}.option:${option}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
-        });
-    }
-
-    /** Every `admin.attribute.values.option:{key}` in the scope. */
-    get optionItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.option:`, '');
-    }
-
-    /** The keys of every `admin.attribute.values.option:{key}` in the scope, in document order. */
-    optionKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.option:`, '');
-    }
-
-    /**
-     * `admin.attribute.values.remove:{key}--button` — OptionChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
-     */
-    remove(remove: number) {
-        return drivers.button(this.byTestId(`${this.scope}.remove:${remove}--button`), {
-            testId: `${this.scope}.remove:${remove}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip',
-        });
-    }
-
-    /** Every `admin.attribute.values.remove:{key}--button` in the scope. */
-    get removeItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.remove:`, '--button');
-    }
-
-    /** The keys of every `admin.attribute.values.remove:{key}--button` in the scope, in document order. */
-    removeKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.remove:`, '--button');
-    }
-
-    /**
      * `admin.attribute.values.unique_error--alert` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
      * Renders only when !isHierarchical and !optionsOwnedBySync and optionsOwnedBySync.
      */
@@ -4368,60 +4246,130 @@ export class AdminAttributeValues extends Scope {
         });
     }
 
+    /**
+     * `admin.attribute.values.option:{key}` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    option(option: string): AdminAttributeValuesOption {
+        return new AdminAttributeValuesOption(
+            this.page,
+            `${this.scope}.option`,
+            this.byTestId(`${this.scope}.option:${textTestKey(option)}`),
+        );
+    }
+
+    /** Every `admin.attribute.values.option:{key}` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '');
+    }
+
+    /** The keys of every `admin.attribute.values.option:{key}` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '');
+    }
+
     get optionMenu(): AdminAttributeValuesOptionMenu {
         return new AdminAttributeValuesOptionMenu(this.page, `${this.scope}.option_menu`);
     }
 
-    /** Every `admin.attribute.values.edit:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.editList).toHaveKeys([…])`. */
-    get editList() {
-        return this.keyedList(`${this.scope}.edit:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.edit:${key}--button`), {
-                testId: `${this.scope}.edit:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/menu/menu.tsx#Menu',
-            }),
-        );
-    }
-
-    /** Every `admin.attribute.values.label:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.labelList).toHaveKeys([…])`. */
-    get labelList() {
-        return this.keyedList(`${this.scope}.label:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.label:${key}--text`), {
-                testId: `${this.scope}.label:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
-            }),
-        );
-    }
-
     /** Every `admin.attribute.values.option:{key}` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
     get optionList() {
-        return this.keyedList(`${this.scope}.option:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.option:${key}`), {
-                testId: `${this.scope}.option:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
-            }),
+        return this.keyedList(
+            `${this.scope}.option:`,
+            '',
+            (key: string) =>
+                new AdminAttributeValuesOption(
+                    this.page,
+                    `${this.scope}.option`,
+                    this.byTestId(`${this.scope}.option:${key}`),
+                ),
         );
     }
+}
 
-    /** Every `admin.attribute.values.remove:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.removeList).toHaveKeys([…])`. */
-    get removeList() {
-        return this.keyedList(`${this.scope}.remove:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.remove:${key}--button`), {
-                testId: `${this.scope}.remove:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip',
-            }),
-        );
+/** Scope `admin.attribute.values.option`. */
+export class AdminAttributeValuesOption extends Scope {
+    constructor(page: Page, scope = 'admin.attribute.values.option', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.attribute.values.option:{key}` — AttributeOptionsValues (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.attribute.values.option:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#AttributeOptionsValues',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.attribute.values.option.edit--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attribute.values.option_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks editButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickEditButton(): Promise<AdminAttributeValuesOptionMenu> {
+        await this.editButton.click();
+        return new AdminAttributeValuesOptionMenu(this.page, 'admin.attribute.values.option_menu');
+    }
+
+    /**
+     * `admin.attribute.values.option.label--text` — OptionChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    get labelText() {
+        return drivers.text(this.byTestId(`${this.scope}.label--text`), {
+            testId: `${this.scope}.label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip',
+        });
+    }
+
+    getLabelText(): Promise<string> {
+        return this.labelText.text();
+    }
+
+    /**
+     * `admin.attribute.values.option.remove--button` — OptionChip (channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx)
+     */
+    get removeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.remove--button`), {
+            testId: `${this.scope}.remove--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/attribute_details/attribute_options_values.tsx#OptionChip',
+        });
+    }
+
+    async clickRemoveButton(): Promise<void> {
+        await this.removeButton.click();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminAttributeValuesOptionRow> {
+        return {
+            label: await this.labelText.textIfPresent(),
+        };
     }
 }
 
@@ -4462,103 +4410,6 @@ export class AdminAttributeValuesOptionMenu extends Scope {
 export class AdminAttributes extends Scope {
     constructor(page: Page, scope = 'admin.attributes', root?: Locator) {
         super(page, scope, root);
-    }
-
-    /**
-     * `admin.attributes.actions:{key}--button` — Menu (channels/src/components/menu/menu.tsx)
-     * Opens menu menu (`admin.attributes.actions_menu`).
-     * Opens modal MenuModal (`menu_modal`).
-     */
-    actions(actions: Pick<PropertyField, 'id'>) {
-        return drivers.button(this.byTestId(`${this.scope}.actions:${actions.id}--button`), {
-            testId: `${this.scope}.actions:${actions.id}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/menu/menu.tsx#Menu',
-        });
-    }
-
-    /** Every `admin.attributes.actions:{key}--button` in the scope. */
-    get actionsItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.actions:`, '--button');
-    }
-
-    /** The keys of every `admin.attributes.actions:{key}--button` in the scope, in document order. */
-    actionsKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.actions:`, '--button');
-    }
-
-    /**
-     * `admin.attributes.applies_to:{key}` — AppliesToCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     */
-    appliesTo(appliesTo: Pick<PropertyField, 'id'>) {
-        return drivers.container(this.byTestId(`${this.scope}.applies_to:${appliesTo.id}`), {
-            testId: `${this.scope}.applies_to:${appliesTo.id}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell',
-        });
-    }
-
-    /** Every `admin.attributes.applies_to:{key}` in the scope. */
-    get appliesToItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.applies_to:`, '');
-    }
-
-    /** The keys of every `admin.attributes.applies_to:{key}` in the scope, in document order. */
-    appliesToKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.applies_to:`, '');
-    }
-
-    /**
-     * `admin.attributes.classification_link:{key}--link` — ActionsCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     * Renders only when row.is_classification.
-     * Goes to CLASSIFICATIONS_MARKINGS_ADMIN_URL.
-     */
-    classificationLink(classificationLink: Pick<PropertyField, 'id'>) {
-        return drivers.link(this.byTestId(`${this.scope}.classification_link:${classificationLink.id}--link`), {
-            testId: `${this.scope}.classification_link:${classificationLink.id}--link`,
-            role: 'link',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell',
-        });
-    }
-
-    /** Every `admin.attributes.classification_link:{key}--link` in the scope. */
-    get classificationLinkItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.classification_link:`, '--link');
-    }
-
-    /** The keys of every `admin.attributes.classification_link:{key}--link` in the scope, in document order. */
-    classificationLinkKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.classification_link:`, '--link');
-    }
-
-    /**
-     * `admin.attributes.classification_subtitle:{key}--text` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     * Renders only when row.is_classification.
-     */
-    classificationSubtitle(classificationSubtitle: Pick<PropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.classification_subtitle:${classificationSubtitle.id}--text`), {
-            testId: `${this.scope}.classification_subtitle:${classificationSubtitle.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
-        });
-    }
-
-    /** Every `admin.attributes.classification_subtitle:{key}--text` in the scope. */
-    get classificationSubtitleItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.classification_subtitle:`, '--text');
-    }
-
-    /** The keys of every `admin.attributes.classification_subtitle:{key}--text` in the scope, in document order. */
-    classificationSubtitleKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.classification_subtitle:`, '--text');
     }
 
     /**
@@ -4666,52 +4517,6 @@ export class AdminAttributes extends Scope {
     }
 
     /**
-     * `admin.attributes.name:{key}--text` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     */
-    name(name: Pick<PropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.name:${name.id}--text`), {
-            testId: `${this.scope}.name:${name.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
-        });
-    }
-
-    /** Every `admin.attributes.name:{key}--text` in the scope. */
-    get nameItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.name:`, '--text');
-    }
-
-    /** The keys of every `admin.attributes.name:{key}--text` in the scope, in document order. */
-    nameKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.name:`, '--text');
-    }
-
-    /**
-     * `admin.attributes.name_conflict:{key}--img` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     */
-    nameConflict(nameConflict: Pick<PropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.name_conflict:${nameConflict.id}--img`), {
-            testId: `${this.scope}.name_conflict:${nameConflict.id}--img`,
-            role: 'img',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
-        });
-    }
-
-    /** Every `admin.attributes.name_conflict:{key}--img` in the scope. */
-    get nameConflictItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.name_conflict:`, '--img');
-    }
-
-    /** The keys of every `admin.attributes.name_conflict:{key}--img` in the scope, in document order. */
-    nameConflictKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.name_conflict:`, '--img');
-    }
-
-    /**
      * `admin.attributes.new--button` — GlobalAttributes (channels/src/components/admin_console/global_attributes/global_attributes.tsx)
      * Goes to ATTRIBUTE_DETAILS_ROUTE.
      */
@@ -4745,29 +4550,6 @@ export class AdminAttributes extends Scope {
 
     getNoDataText(): Promise<string> {
         return this.noDataText.text();
-    }
-
-    /**
-     * `admin.attributes.options:{key}--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     */
-    options(options: Pick<PropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.options:${options.id}--text`), {
-            testId: `${this.scope}.options:${options.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
-        });
-    }
-
-    /** Every `admin.attributes.options:{key}--text` in the scope. */
-    get optionsItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.options:`, '--text');
-    }
-
-    /** The keys of every `admin.attributes.options:{key}--text` in the scope, in document order. */
-    optionsKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.options:`, '--text');
     }
 
     /**
@@ -4807,29 +4589,6 @@ export class AdminAttributes extends Scope {
     }
 
     /**
-     * `admin.attributes.source:{key}--text` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     */
-    source(source: Pick<PropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.source:${source.id}--text`), {
-            testId: `${this.scope}.source:${source.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
-        });
-    }
-
-    /** Every `admin.attributes.source:{key}--text` in the scope. */
-    get sourceItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.source:`, '--text');
-    }
-
-    /** The keys of every `admin.attributes.source:{key}--text` in the scope, in document order. */
-    sourceKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.source:`, '--text');
-    }
-
-    /**
      * `admin.attributes.source_filter--button` — Menu (channels/src/components/menu/menu.tsx)
      * Opens menu menu.
      * Opens modal MenuModal (`menu_modal`).
@@ -4849,54 +4608,6 @@ export class AdminAttributes extends Scope {
     }
 
     /**
-     * `admin.attributes.source_plugin_icon:{key}` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     * Renders only when !row.is_classification.
-     */
-    sourcePluginIcon(sourcePluginIcon: Pick<PropertyField, 'id'>) {
-        return drivers.container(this.byTestId(`${this.scope}.source_plugin_icon:${sourcePluginIcon.id}`), {
-            testId: `${this.scope}.source_plugin_icon:${sourcePluginIcon.id}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
-        });
-    }
-
-    /** Every `admin.attributes.source_plugin_icon:{key}` in the scope. */
-    get sourcePluginIconItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.source_plugin_icon:`, '');
-    }
-
-    /** The keys of every `admin.attributes.source_plugin_icon:{key}` in the scope, in document order. */
-    sourcePluginIconKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.source_plugin_icon:`, '');
-    }
-
-    /**
-     * `admin.attributes.source_sync_icon:{key}` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     * Renders only when !row.is_classification and !(kind === 'plugin') and owners.length > 0 || syncSources.length > 0.
-     */
-    sourceSyncIcon(sourceSyncIcon: Pick<PropertyField, 'id'>) {
-        return drivers.container(this.byTestId(`${this.scope}.source_sync_icon:${sourceSyncIcon.id}`), {
-            testId: `${this.scope}.source_sync_icon:${sourceSyncIcon.id}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
-        });
-    }
-
-    /** Every `admin.attributes.source_sync_icon:{key}` in the scope. */
-    get sourceSyncIconItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.source_sync_icon:`, '');
-    }
-
-    /** The keys of every `admin.attributes.source_sync_icon:{key}` in the scope, in document order. */
-    sourceSyncIconKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.source_sync_icon:`, '');
-    }
-
-    /**
      * `admin.attributes.subtitle--text` — GlobalAttributes (channels/src/components/admin_console/global_attributes/global_attributes.tsx)
      */
     get subtitleText() {
@@ -4911,52 +4622,6 @@ export class AdminAttributes extends Scope {
 
     getSubtitleText(): Promise<string> {
         return this.subtitleText.text();
-    }
-
-    /**
-     * `admin.attributes.type:{key}--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     */
-    type(type: Pick<PropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.type:${type.id}--text`), {
-            testId: `${this.scope}.type:${type.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
-        });
-    }
-
-    /** Every `admin.attributes.type:{key}--text` in the scope. */
-    get typeItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.type:`, '--text');
-    }
-
-    /** The keys of every `admin.attributes.type:{key}--text` in the scope, in document order. */
-    typeKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.type:`, '--text');
-    }
-
-    /**
-     * `admin.attributes.type_icon:{key}` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
-     */
-    typeIcon(typeIcon: Pick<PropertyField, 'id'>) {
-        return drivers.container(this.byTestId(`${this.scope}.type_icon:${typeIcon.id}`), {
-            testId: `${this.scope}.type_icon:${typeIcon.id}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
-        });
-    }
-
-    /** Every `admin.attributes.type_icon:{key}` in the scope. */
-    get typeIconItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.type_icon:`, '');
-    }
-
-    /** The keys of every `admin.attributes.type_icon:{key}` in the scope, in document order. */
-    typeIconKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.type_icon:`, '');
     }
 
     get actionsMenu(): AdminAttributesActionsMenu {
@@ -4997,8 +4662,8 @@ export class AdminAttributes extends Scope {
      * `admin.attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
-    row(row: string): Row {
-        return new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminAttributesRow {
+        return new AdminAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
     }
 
     /** Every `admin.attributes.row:{key}` in the scope. */
@@ -5015,168 +4680,13 @@ export class AdminAttributes extends Scope {
         return new TopPager(this.page, `${this.scope}.top_pager`, this.root);
     }
 
-    /** Every `admin.attributes.actions:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.actionsList).toHaveKeys([…])`. */
-    get actionsList() {
-        return this.keyedList(`${this.scope}.actions:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.actions:${key}--button`), {
-                testId: `${this.scope}.actions:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/menu/menu.tsx#Menu',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.applies_to:{key}` in the scope as a list by key, for the list matchers: `expect(x.appliesToList).toHaveKeys([…])`. */
-    get appliesToList() {
-        return this.keyedList(`${this.scope}.applies_to:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.applies_to:${key}`), {
-                testId: `${this.scope}.applies_to:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.classification_link:{key}--link` in the scope as a list by key, for the list matchers: `expect(x.classificationLinkList).toHaveKeys([…])`. */
-    get classificationLinkList() {
-        return this.keyedList(`${this.scope}.classification_link:`, '--link', (key: string) =>
-            drivers.link(this.byTestId(`${this.scope}.classification_link:${key}--link`), {
-                testId: `${this.scope}.classification_link:${key}--link`,
-                role: 'link',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.classification_subtitle:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.classificationSubtitleList).toHaveKeys([…])`. */
-    get classificationSubtitleList() {
-        return this.keyedList(`${this.scope}.classification_subtitle:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.classification_subtitle:${key}--text`), {
-                testId: `${this.scope}.classification_subtitle:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.name:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.nameList).toHaveKeys([…])`. */
-    get nameList() {
-        return this.keyedList(`${this.scope}.name:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.name:${key}--text`), {
-                testId: `${this.scope}.name:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.name_conflict:{key}--img` in the scope as a list by key, for the list matchers: `expect(x.nameConflictList).toHaveKeys([…])`. */
-    get nameConflictList() {
-        return this.keyedList(`${this.scope}.name_conflict:`, '--img', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.name_conflict:${key}--img`), {
-                testId: `${this.scope}.name_conflict:${key}--img`,
-                role: 'img',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.options:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.optionsList).toHaveKeys([…])`. */
-    get optionsList() {
-        return this.keyedList(`${this.scope}.options:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.options:${key}--text`), {
-                testId: `${this.scope}.options:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.source:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.sourceList).toHaveKeys([…])`. */
-    get sourceList() {
-        return this.keyedList(`${this.scope}.source:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.source:${key}--text`), {
-                testId: `${this.scope}.source:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.source_plugin_icon:{key}` in the scope as a list by key, for the list matchers: `expect(x.sourcePluginIconList).toHaveKeys([…])`. */
-    get sourcePluginIconList() {
-        return this.keyedList(`${this.scope}.source_plugin_icon:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.source_plugin_icon:${key}`), {
-                testId: `${this.scope}.source_plugin_icon:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.source_sync_icon:{key}` in the scope as a list by key, for the list matchers: `expect(x.sourceSyncIconList).toHaveKeys([…])`. */
-    get sourceSyncIconList() {
-        return this.keyedList(`${this.scope}.source_sync_icon:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.source_sync_icon:${key}`), {
-                testId: `${this.scope}.source_sync_icon:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.type:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.typeList).toHaveKeys([…])`. */
-    get typeList() {
-        return this.keyedList(`${this.scope}.type:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.type:${key}--text`), {
-                testId: `${this.scope}.type:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
-            }),
-        );
-    }
-
-    /** Every `admin.attributes.type_icon:{key}` in the scope as a list by key, for the list matchers: `expect(x.typeIconList).toHaveKeys([…])`. */
-    get typeIconList() {
-        return this.keyedList(`${this.scope}.type_icon:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.type_icon:${key}`), {
-                testId: `${this.scope}.type_icon:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
-            }),
-        );
-    }
-
     /** Every `admin.attributes.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
     get rowList() {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
         );
     }
 }
@@ -5341,8 +4851,12 @@ export class Head extends Scope {
     }
 }
 
-/** Rendered at `admin.attributes.row`, `admin.secure_connection.shared_channels.row`, `admin.session_attributes.row`: one class, constructed with the scope it is mounted at. */
-export class Row extends Scope {
+/** Scope `admin.attributes.row`. */
+export class AdminAttributesRow extends Scope {
+    constructor(page: Page, scope = 'admin.attributes.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
     /**
      * `admin.attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
@@ -5360,6 +4874,40 @@ export class Row extends Scope {
     /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
     override get locator(): Locator {
         return this.root;
+    }
+
+    /**
+     * `admin.attributes.row.actions--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.attributes.actions_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get actionsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.actions--button`), {
+            testId: `${this.scope}.actions--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks actionsButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickActionsButton(): Promise<AdminAttributesActionsMenu> {
+        await this.actionsButton.click();
+        return new AdminAttributesActionsMenu(this.page, 'admin.attributes.actions_menu');
+    }
+
+    /**
+     * `admin.attributes.row.applies_to` — AppliesToCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get appliesTo() {
+        return drivers.container(this.byTestId(`${this.scope}.applies_to`), {
+            testId: `${this.scope}.applies_to`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AppliesToCell',
+        });
     }
 
     /**
@@ -5386,6 +4934,43 @@ export class Row extends Scope {
     }
 
     /**
+     * `admin.attributes.row.classification_link--link` — ActionsCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when row.is_classification.
+     * Goes to CLASSIFICATIONS_MARKINGS_ADMIN_URL.
+     */
+    get classificationLinkLink() {
+        return drivers.link(this.byTestId(`${this.scope}.classification_link--link`), {
+            testId: `${this.scope}.classification_link--link`,
+            role: 'link',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#ActionsCell',
+        });
+    }
+
+    async clickClassificationLinkLink(): Promise<void> {
+        await this.classificationLinkLink.click();
+    }
+
+    /**
+     * `admin.attributes.row.classification_subtitle--text` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when row.is_classification.
+     */
+    get classificationSubtitleText() {
+        return drivers.text(this.byTestId(`${this.scope}.classification_subtitle--text`), {
+            testId: `${this.scope}.classification_subtitle--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
+        });
+    }
+
+    getClassificationSubtitleText(): Promise<string> {
+        return this.classificationSubtitleText.text();
+    }
+
+    /**
      * `admin.attributes.row.drag_handle--button` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
      * Renders only when tableMeta.onReorder && i === 0 and !(tableMeta.isRowDragDisabled?.(row.original.id) === true).
      */
@@ -5401,6 +4986,139 @@ export class Row extends Scope {
 
     async clickDragHandleButton(): Promise<void> {
         await this.dragHandleButton.click();
+    }
+
+    /**
+     * `admin.attributes.row.name--text` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `admin.attributes.row.name_conflict--img` — AttributeCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get nameConflictImg() {
+        return drivers.text(this.byTestId(`${this.scope}.name_conflict--img`), {
+            testId: `${this.scope}.name_conflict--img`,
+            role: 'img',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#AttributeCell',
+        });
+    }
+
+    /**
+     * `admin.attributes.row.options--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get optionsText() {
+        return drivers.text(this.byTestId(`${this.scope}.options--text`), {
+            testId: `${this.scope}.options--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    getOptionsText(): Promise<string> {
+        return this.optionsText.text();
+    }
+
+    /**
+     * `admin.attributes.row.source--text` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get sourceText() {
+        return drivers.text(this.byTestId(`${this.scope}.source--text`), {
+            testId: `${this.scope}.source--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
+        });
+    }
+
+    getSourceText(): Promise<string> {
+        return this.sourceText.text();
+    }
+
+    /**
+     * `admin.attributes.row.source_plugin_icon` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when !row.is_classification.
+     */
+    get sourcePluginIcon() {
+        return drivers.container(this.byTestId(`${this.scope}.source_plugin_icon`), {
+            testId: `${this.scope}.source_plugin_icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
+        });
+    }
+
+    /**
+     * `admin.attributes.row.source_sync_icon` — SourceCell (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     * Renders only when !row.is_classification and !(kind === 'plugin') and owners.length > 0 || syncSources.length > 0.
+     */
+    get sourceSyncIcon() {
+        return drivers.container(this.byTestId(`${this.scope}.source_sync_icon`), {
+            testId: `${this.scope}.source_sync_icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#SourceCell',
+        });
+    }
+
+    /**
+     * `admin.attributes.row.type--text` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get typeText() {
+        return drivers.text(this.byTestId(`${this.scope}.type--text`), {
+            testId: `${this.scope}.type--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    getTypeText(): Promise<string> {
+        return this.typeText.text();
+    }
+
+    /**
+     * `admin.attributes.row.type_icon` — GlobalAttributesTable (channels/src/components/admin_console/global_attributes/global_attributes_table.tsx)
+     */
+    get typeIcon() {
+        return drivers.container(this.byTestId(`${this.scope}.type_icon`), {
+            testId: `${this.scope}.type_icon`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/global_attributes/global_attributes_table.tsx#GlobalAttributesTable',
+        });
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminAttributesRowRow> {
+        return {
+            classificationSubtitle: await this.classificationSubtitleText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+            options: await this.optionsText.textIfPresent(),
+            source: await this.sourceText.textIfPresent(),
+            type: await this.typeText.textIfPresent(),
+        };
     }
 
     /** Every `admin.attributes.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
@@ -5817,30 +5535,6 @@ export class AdminBoardAttributesRow extends Scope {
     }
 
     /**
-     * `admin.board_attributes.row.locked_option:{key}--text` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
-     * Renders only when field.protected and readonly.
-     */
-    lockedOption(lockedOption: Pick<BoardsPropertyFieldOption, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.locked_option:${lockedOption.id}--text`), {
-            testId: `${this.scope}.locked_option:${lockedOption.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
-        });
-    }
-
-    /** Every `admin.board_attributes.row.locked_option:{key}--text` in the scope. */
-    get lockedOptionItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.locked_option:`, '--text');
-    }
-
-    /** The keys of every `admin.board_attributes.row.locked_option:{key}--text` in the scope, in document order. */
-    lockedOptionKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.locked_option:`, '--text');
-    }
-
-    /**
      * `admin.board_attributes.row.locked_values` — BoardAttributesValues (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
      * Renders only when field.protected.
      */
@@ -5887,55 +5581,6 @@ export class AdminBoardAttributesRow extends Scope {
 
     getNameErrorText(): Promise<string> {
         return this.nameErrorText.text();
-    }
-
-    /**
-     * `admin.board_attributes.row.option:{key}--button` — Menu (channels/src/components/menu/menu.tsx)
-     * Opens menu menu (`admin.board_attributes.row.option_menu`).
-     * Opens modal MenuModal (`menu_modal`).
-     */
-    option(option: Pick<BoardsPropertyFieldOption, 'id'>) {
-        return drivers.button(this.byTestId(`${this.scope}.option:${option.id}--button`), {
-            testId: `${this.scope}.option:${option.id}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/menu/menu.tsx#Menu',
-        });
-    }
-
-    /** Every `admin.board_attributes.row.option:{key}--button` in the scope. */
-    get optionItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.option:`, '--button');
-    }
-
-    /** The keys of every `admin.board_attributes.row.option:{key}--button` in the scope, in document order. */
-    optionKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.option:`, '--button');
-    }
-
-    /**
-     * `admin.board_attributes.row.option_delete:{key}--button` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
-     * Renders only when canDelete.
-     */
-    optionDelete(optionDelete: Pick<BoardsPropertyFieldOption, 'id'>) {
-        return drivers.button(this.byTestId(`${this.scope}.option_delete:${optionDelete.id}--button`), {
-            testId: `${this.scope}.option_delete:${optionDelete.id}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
-        });
-    }
-
-    /** Every `admin.board_attributes.row.option_delete:{key}--button` in the scope. */
-    get optionDeleteItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.option_delete:`, '--button');
-    }
-
-    /** The keys of every `admin.board_attributes.row.option_delete:{key}--button` in the scope, in document order. */
-    optionDeleteKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.option_delete:`, '--button');
     }
 
     /**
@@ -5994,6 +5639,27 @@ export class AdminBoardAttributesRow extends Scope {
         return new AdminBoardAttributesRowActionsMenu(this.page, `${this.scope}.actions_menu`);
     }
 
+    /**
+     * `admin.board_attributes.row.option:{key}` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     */
+    option(option: Pick<BoardsPropertyFieldOption, 'id'>): AdminBoardAttributesRowOption {
+        return new AdminBoardAttributesRowOption(
+            this.page,
+            `${this.scope}.option`,
+            this.byTestId(`${this.scope}.option:${option.id}`),
+        );
+    }
+
+    /** Every `admin.board_attributes.row.option:{key}` in the scope. */
+    get optionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.option:`, '');
+    }
+
+    /** The keys of every `admin.board_attributes.row.option:{key}` in the scope, in document order. */
+    optionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.option:`, '');
+    }
+
     get optionMenu(): AdminBoardAttributesRowOptionMenu {
         return new AdminBoardAttributesRowOptionMenu(this.page, `${this.scope}.option_menu`);
     }
@@ -6023,42 +5689,17 @@ export class AdminBoardAttributesRow extends Scope {
         );
     }
 
-    /** Every `admin.board_attributes.row.locked_option:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.lockedOptionList).toHaveKeys([…])`. */
-    get lockedOptionList() {
-        return this.keyedList(`${this.scope}.locked_option:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.locked_option:${key}--text`), {
-                testId: `${this.scope}.locked_option:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
-            }),
-        );
-    }
-
-    /** Every `admin.board_attributes.row.option:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
+    /** Every `admin.board_attributes.row.option:{key}` in the scope as a list by key, for the list matchers: `expect(x.optionList).toHaveKeys([…])`. */
     get optionList() {
-        return this.keyedList(`${this.scope}.option:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.option:${key}--button`), {
-                testId: `${this.scope}.option:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/menu/menu.tsx#Menu',
-            }),
-        );
-    }
-
-    /** Every `admin.board_attributes.row.option_delete:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.optionDeleteList).toHaveKeys([…])`. */
-    get optionDeleteList() {
-        return this.keyedList(`${this.scope}.option_delete:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.option_delete:${key}--button`), {
-                testId: `${this.scope}.option_delete:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
-            }),
+        return this.keyedList(
+            `${this.scope}.option:`,
+            '',
+            (key: string) =>
+                new AdminBoardAttributesRowOption(
+                    this.page,
+                    `${this.scope}.option`,
+                    this.byTestId(`${this.scope}.option:${key}`),
+                ),
         );
     }
 }
@@ -6110,6 +5751,95 @@ export class AdminBoardAttributesRowActionsMenu extends Scope {
 
     async clickDuplicateMenuItem(): Promise<void> {
         await this.duplicateMenuItem.click();
+    }
+}
+
+/** Scope `admin.board_attributes.row.option`. */
+export class AdminBoardAttributesRowOption extends Scope {
+    constructor(page: Page, scope = 'admin.board_attributes.row.option', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.board_attributes.row.option:{key}` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.board_attributes.row.option:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.board_attributes.row.option.delete--button` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected and canDelete.
+     */
+    get deleteButton() {
+        return drivers.button(this.byTestId(`${this.scope}.delete--button`), {
+            testId: `${this.scope}.delete--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    async clickDeleteButton(): Promise<void> {
+        await this.deleteButton.click();
+    }
+
+    /**
+     * `admin.board_attributes.row.option.edit--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.board_attributes.row.option_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get editButton() {
+        return drivers.button(this.byTestId(`${this.scope}.edit--button`), {
+            testId: `${this.scope}.edit--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks editButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickEditButton(): Promise<AdminBoardAttributesRowOptionMenu> {
+        await this.editButton.click();
+        return new AdminBoardAttributesRowOptionMenu(this.page, 'admin.board_attributes.row.option_menu');
+    }
+
+    /**
+     * `admin.board_attributes.row.option.locked--text` — EditableChip (channels/src/components/admin_console/board_attributes/board_attributes_values.tsx)
+     * Renders only when field.protected and readonly.
+     */
+    get lockedText() {
+        return drivers.text(this.byTestId(`${this.scope}.locked--text`), {
+            testId: `${this.scope}.locked--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/board_attributes/board_attributes_values.tsx#EditableChip',
+        });
+    }
+
+    getLockedText(): Promise<string> {
+        return this.lockedText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminBoardAttributesRowOptionRow> {
+        return {
+            locked: await this.lockedText.textIfPresent(),
+        };
     }
 }
 
@@ -13782,8 +13512,12 @@ export class AdminSecureConnectionSharedChannels extends Scope {
      * `admin.secure_connection.shared_channels.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
-    row(row: string): Row {
-        return new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminSecureConnectionSharedChannelsRow {
+        return new AdminSecureConnectionSharedChannelsRow(
+            this.page,
+            `${this.scope}.row`,
+            this.byTestId(`${this.scope}.row:${row}`),
+        );
     }
 
     /** Every `admin.secure_connection.shared_channels.row:{key}` in the scope. */
@@ -13805,7 +13539,92 @@ export class AdminSecureConnectionSharedChannels extends Scope {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminSecureConnectionSharedChannelsRow(
+                    this.page,
+                    `${this.scope}.row`,
+                    this.byTestId(`${this.scope}.row:${key}`),
+                ),
+        );
+    }
+}
+
+/** Scope `admin.secure_connection.shared_channels.row`. */
+export class AdminSecureConnectionSharedChannelsRow extends Scope {
+    constructor(page: Page, scope = 'admin.secure_connection.shared_channels.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.secure_connection.shared_channels.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.secure_connection.shared_channels.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.secure_connection.shared_channels.row.cell:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** Every `admin.secure_connection.shared_channels.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.secure_connection.shared_channels.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.secure_connection.shared_channels.row.drag_handle--button` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.onReorder && i === 0 and !(tableMeta.isRowDragDisabled?.(row.original.id) === true).
+     */
+    get dragHandleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.drag_handle--button`), {
+            testId: `${this.scope}.drag_handle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    async clickDragHandleButton(): Promise<void> {
+        await this.dragHandleButton.click();
+    }
+
+    /** Every `admin.secure_connection.shared_channels.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+            }),
         );
     }
 }
@@ -14747,54 +14566,6 @@ export class AdminSessionAttributes extends Scope {
     }
 
     /**
-     * `admin.session_attributes.actions:{key}--button` — Menu (channels/src/components/menu/menu.tsx)
-     * Opens menu menu (`admin.session_attributes.actions_menu`).
-     * Opens modal MenuModal (`menu_modal`).
-     */
-    actions(actions: Pick<UserPropertyField, 'id'>) {
-        return drivers.button(this.byTestId(`${this.scope}.actions:${actions.id}--button`), {
-            testId: `${this.scope}.actions:${actions.id}--button`,
-            role: 'button',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/menu/menu.tsx#Menu',
-        });
-    }
-
-    /** Every `admin.session_attributes.actions:{key}--button` in the scope. */
-    get actionsItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.actions:`, '--button');
-    }
-
-    /** The keys of every `admin.session_attributes.actions:{key}--button` in the scope, in document order. */
-    actionsKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.actions:`, '--button');
-    }
-
-    /**
-     * `admin.session_attributes.grace:{key}--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
-     */
-    grace(grace: Pick<UserPropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.grace:${grace.id}--text`), {
-            testId: `${this.scope}.grace:${grace.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-        });
-    }
-
-    /** Every `admin.session_attributes.grace:{key}--text` in the scope. */
-    get graceItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.grace:`, '--text');
-    }
-
-    /** The keys of every `admin.session_attributes.grace:{key}--text` in the scope, in document order. */
-    graceKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.grace:`, '--text');
-    }
-
-    /**
      * `admin.session_attributes.load_error--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
      * Renders only when tableMeta.loadingState === LoadingStates.Failed.
      */
@@ -14827,29 +14598,6 @@ export class AdminSessionAttributes extends Scope {
     }
 
     /**
-     * `admin.session_attributes.name:{key}--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
-     */
-    name(name: Pick<UserPropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.name:${name.id}--text`), {
-            testId: `${this.scope}.name:${name.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-        });
-    }
-
-    /** Every `admin.session_attributes.name:{key}--text` in the scope. */
-    get nameItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.name:`, '--text');
-    }
-
-    /** The keys of every `admin.session_attributes.name:{key}--text` in the scope, in document order. */
-    nameKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.name:`, '--text');
-    }
-
-    /**
      * `admin.session_attributes.no_data--text` — ListTable (channels/src/components/admin_console/list_table/list_table.tsx)
      * Renders only when tableMeta.loadingState === LoadingStates.Loaded && rowCount === 0.
      */
@@ -14865,122 +14613,6 @@ export class AdminSessionAttributes extends Scope {
 
     getNoDataText(): Promise<string> {
         return this.noDataText.text();
-    }
-
-    /**
-     * `admin.session_attributes.platforms:{key}` — PlatformIcons (channels/src/components/admin_console/session_attributes/platform_icons.tsx)
-     */
-    platforms(platforms: Pick<UserPropertyField, 'id'>) {
-        return drivers.container(this.byTestId(`${this.scope}.platforms:${platforms.id}`), {
-            testId: `${this.scope}.platforms:${platforms.id}`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons',
-        });
-    }
-
-    /** Every `admin.session_attributes.platforms:{key}` in the scope. */
-    get platformsItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.platforms:`, '');
-    }
-
-    /** The keys of every `admin.session_attributes.platforms:{key}` in the scope, in document order. */
-    platformsKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.platforms:`, '');
-    }
-
-    /**
-     * `admin.session_attributes.server_label:{key}--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
-     * Renders only when isServerSourced(row.original.name).
-     */
-    serverLabel(serverLabel: Pick<UserPropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.server_label:${serverLabel.id}--text`), {
-            testId: `${this.scope}.server_label:${serverLabel.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-        });
-    }
-
-    /** Every `admin.session_attributes.server_label:{key}--text` in the scope. */
-    get serverLabelItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.server_label:`, '--text');
-    }
-
-    /** The keys of every `admin.session_attributes.server_label:{key}--text` in the scope, in document order. */
-    serverLabelKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.server_label:`, '--text');
-    }
-
-    /**
-     * `admin.session_attributes.status:{key}--text` — StatusChip (channels/src/components/admin_console/session_attributes/status_chip.tsx)
-     */
-    status(status: Pick<UserPropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.status:${status.id}--text`), {
-            testId: `${this.scope}.status:${status.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip',
-        });
-    }
-
-    /** Every `admin.session_attributes.status:{key}--text` in the scope. */
-    get statusItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.status:`, '--text');
-    }
-
-    /** The keys of every `admin.session_attributes.status:{key}--text` in the scope, in document order. */
-    statusKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.status:`, '--text');
-    }
-
-    /**
-     * `admin.session_attributes.ttl:{key}--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
-     */
-    ttl(ttl: Pick<UserPropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.ttl:${ttl.id}--text`), {
-            testId: `${this.scope}.ttl:${ttl.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-        });
-    }
-
-    /** Every `admin.session_attributes.ttl:{key}--text` in the scope. */
-    get ttlItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.ttl:`, '--text');
-    }
-
-    /** The keys of every `admin.session_attributes.ttl:{key}--text` in the scope, in document order. */
-    ttlKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.ttl:`, '--text');
-    }
-
-    /**
-     * `admin.session_attributes.type:{key}--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
-     */
-    type(type: Pick<UserPropertyField, 'id'>) {
-        return drivers.text(this.byTestId(`${this.scope}.type:${type.id}--text`), {
-            testId: `${this.scope}.type:${type.id}--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-        });
-    }
-
-    /** Every `admin.session_attributes.type:{key}--text` in the scope. */
-    get typeItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.type:`, '--text');
-    }
-
-    /** The keys of every `admin.session_attributes.type:{key}--text` in the scope, in document order. */
-    typeKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.type:`, '--text');
     }
 
     get actionsMenu(): AdminSessionAttributesActionsMenu {
@@ -15013,8 +14645,8 @@ export class AdminSessionAttributes extends Scope {
      * `admin.session_attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
-    row(row: string): Row {
-        return new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
+    row(row: string): AdminSessionAttributesRow {
+        return new AdminSessionAttributesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${row}`));
     }
 
     /** Every `admin.session_attributes.row:{key}` in the scope. */
@@ -15038,116 +14670,17 @@ export class AdminSessionAttributes extends Scope {
         return new TopPager(this.page, `${this.scope}.top_pager`, this.root);
     }
 
-    /** Every `admin.session_attributes.actions:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.actionsList).toHaveKeys([…])`. */
-    get actionsList() {
-        return this.keyedList(`${this.scope}.actions:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.actions:${key}--button`), {
-                testId: `${this.scope}.actions:${key}--button`,
-                role: 'button',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/menu/menu.tsx#Menu',
-            }),
-        );
-    }
-
-    /** Every `admin.session_attributes.grace:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.graceList).toHaveKeys([…])`. */
-    get graceList() {
-        return this.keyedList(`${this.scope}.grace:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.grace:${key}--text`), {
-                testId: `${this.scope}.grace:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-            }),
-        );
-    }
-
-    /** Every `admin.session_attributes.name:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.nameList).toHaveKeys([…])`. */
-    get nameList() {
-        return this.keyedList(`${this.scope}.name:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.name:${key}--text`), {
-                testId: `${this.scope}.name:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-            }),
-        );
-    }
-
-    /** Every `admin.session_attributes.platforms:{key}` in the scope as a list by key, for the list matchers: `expect(x.platformsList).toHaveKeys([…])`. */
-    get platformsList() {
-        return this.keyedList(`${this.scope}.platforms:`, '', (key: string) =>
-            drivers.container(this.byTestId(`${this.scope}.platforms:${key}`), {
-                testId: `${this.scope}.platforms:${key}`,
-                role: null,
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons',
-            }),
-        );
-    }
-
-    /** Every `admin.session_attributes.server_label:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.serverLabelList).toHaveKeys([…])`. */
-    get serverLabelList() {
-        return this.keyedList(`${this.scope}.server_label:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.server_label:${key}--text`), {
-                testId: `${this.scope}.server_label:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-            }),
-        );
-    }
-
-    /** Every `admin.session_attributes.status:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.statusList).toHaveKeys([…])`. */
-    get statusList() {
-        return this.keyedList(`${this.scope}.status:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.status:${key}--text`), {
-                testId: `${this.scope}.status:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip',
-            }),
-        );
-    }
-
-    /** Every `admin.session_attributes.ttl:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.ttlList).toHaveKeys([…])`. */
-    get ttlList() {
-        return this.keyedList(`${this.scope}.ttl:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.ttl:${key}--text`), {
-                testId: `${this.scope}.ttl:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-            }),
-        );
-    }
-
-    /** Every `admin.session_attributes.type:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.typeList).toHaveKeys([…])`. */
-    get typeList() {
-        return this.keyedList(`${this.scope}.type:`, '--text', (key: string) =>
-            drivers.text(this.byTestId(`${this.scope}.type:${key}--text`), {
-                testId: `${this.scope}.type:${key}--text`,
-                role: 'text',
-                effects: [],
-                unknownEffects: false,
-                source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
-            }),
-        );
-    }
-
     /** Every `admin.session_attributes.row:{key}` in the scope as a list by key, for the list matchers: `expect(x.rowList).toHaveKeys([…])`. */
     get rowList() {
         return this.keyedList(
             `${this.scope}.row:`,
             '',
-            (key: string) => new Row(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
+            (key: string) =>
+                new AdminSessionAttributesRow(
+                    this.page,
+                    `${this.scope}.row`,
+                    this.byTestId(`${this.scope}.row:${key}`),
+                ),
         );
     }
 }
@@ -15306,6 +14839,235 @@ export class AdminSessionAttributesActionsMenu extends Scope {
                 effects: [],
                 unknownEffects: false,
                 source: 'channels/src/components/admin_console/session_attributes/session_attributes_dot_menu.tsx#SessionAttributesDotMenu',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.session_attributes.row`. */
+export class AdminSessionAttributesRow extends Scope {
+    constructor(page: Page, scope = 'admin.session_attributes.row', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.session_attributes.row:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get element() {
+        return drivers.container(this.root, {
+            testId: 'admin.session_attributes.row:{key}',
+            role: null,
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.session_attributes.row.actions--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu menu (`admin.session_attributes.actions_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get actionsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.actions--button`), {
+            testId: `${this.scope}.actions--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks actionsButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickActionsButton(): Promise<AdminSessionAttributesActionsMenu> {
+        await this.actionsButton.click();
+        return new AdminSessionAttributesActionsMenu(this.page, 'admin.session_attributes.actions_menu');
+    }
+
+    /**
+     * `admin.session_attributes.row.cell:{key}` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     */
+    cell(cell: string) {
+        return drivers.container(this.byTestId(`${this.scope}.cell:${cell}`), {
+            testId: `${this.scope}.cell:${cell}`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    /** Every `admin.session_attributes.row.cell:{key}` in the scope. */
+    get cellItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.cell:`, '');
+    }
+
+    /** The keys of every `admin.session_attributes.row.cell:{key}` in the scope, in document order. */
+    cellKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.cell:`, '');
+    }
+
+    /**
+     * `admin.session_attributes.row.drag_handle--button` — DraggableRow (channels/src/components/admin_console/list_table/list_table.tsx)
+     * Renders only when tableMeta.onReorder && i === 0 and !(tableMeta.isRowDragDisabled?.(row.original.id) === true).
+     */
+    get dragHandleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.drag_handle--button`), {
+            testId: `${this.scope}.drag_handle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
+        });
+    }
+
+    async clickDragHandleButton(): Promise<void> {
+        await this.dragHandleButton.click();
+    }
+
+    /**
+     * `admin.session_attributes.row.grace--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get graceText() {
+        return drivers.text(this.byTestId(`${this.scope}.grace--text`), {
+            testId: `${this.scope}.grace--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getGraceText(): Promise<string> {
+        return this.graceText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.name--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.platforms` — PlatformIcons (channels/src/components/admin_console/session_attributes/platform_icons.tsx)
+     */
+    get platforms() {
+        return drivers.container(this.byTestId(`${this.scope}.platforms`), {
+            testId: `${this.scope}.platforms`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/platform_icons.tsx#PlatformIcons',
+        });
+    }
+
+    /**
+     * `admin.session_attributes.row.server_label--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     * Renders only when isServerSourced(row.original.name).
+     */
+    get serverLabelText() {
+        return drivers.text(this.byTestId(`${this.scope}.server_label--text`), {
+            testId: `${this.scope}.server_label--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getServerLabelText(): Promise<string> {
+        return this.serverLabelText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.status--text` — StatusChip (channels/src/components/admin_console/session_attributes/status_chip.tsx)
+     */
+    get statusText() {
+        return drivers.text(this.byTestId(`${this.scope}.status--text`), {
+            testId: `${this.scope}.status--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/status_chip.tsx#StatusChip',
+        });
+    }
+
+    getStatusText(): Promise<string> {
+        return this.statusText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.ttl--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get ttlText() {
+        return drivers.text(this.byTestId(`${this.scope}.ttl--text`), {
+            testId: `${this.scope}.ttl--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getTtlText(): Promise<string> {
+        return this.ttlText.text();
+    }
+
+    /**
+     * `admin.session_attributes.row.type--text` — SessionAttributesTable (channels/src/components/admin_console/session_attributes/session_attributes_table.tsx)
+     */
+    get typeText() {
+        return drivers.text(this.byTestId(`${this.scope}.type--text`), {
+            testId: `${this.scope}.type--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/session_attributes/session_attributes_table.tsx#SessionAttributesTable',
+        });
+    }
+
+    getTypeText(): Promise<string> {
+        return this.typeText.text();
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminSessionAttributesRowRow> {
+        return {
+            grace: await this.graceText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+            serverLabel: await this.serverLabelText.textIfPresent(),
+            status: await this.statusText.textIfPresent(),
+            ttl: await this.ttlText.textIfPresent(),
+            type: await this.typeText.textIfPresent(),
+        };
+    }
+
+    /** Every `admin.session_attributes.row.cell:{key}` in the scope as a list by key, for the list matchers: `expect(x.cellList).toHaveKeys([…])`. */
+    get cellList() {
+        return this.keyedList(`${this.scope}.cell:`, '', (key: string) =>
+            drivers.container(this.byTestId(`${this.scope}.cell:${key}`), {
+                testId: `${this.scope}.cell:${key}`,
+                role: null,
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/list_table/list_table.tsx#DraggableRow',
             }),
         );
     }

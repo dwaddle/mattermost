@@ -149,8 +149,8 @@ test.describe('System Console - Membership Policy ranked operators', () => {
 
             // # Pick the value "Secret" (the options run Unclassified, Secret, TopSecret)
             const values = await row.clickValueButton();
-            await expect(values.option(1).locator).toHaveText('Secret');
-            await values.option(1).click();
+            await expect(values.option('Secret').locator).toBeVisible();
+            await values.option('Secret').click();
             await expect(row.valueButton.locator).toContainText('Secret');
 
             // # Save the policy and reopen it

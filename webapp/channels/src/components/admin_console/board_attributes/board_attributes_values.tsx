@@ -274,7 +274,10 @@ const EditableChip = ({option, options, setOptions, fieldId, readonly = false}: 
         // delete button, and the chip + dropzone refs stay unset so
         // useBoardOptionDnd never wires up DnD for this option.
         return (
-            <ChipDropZone data-flip-key={option.id}>
+            <ChipDropZone
+                data-flip-key={option.id}
+                data-testid={`admin.board_attributes.row.option:${option.id}`}
+            >
                 <ChipShell
                     $invalid={false}
                     $readonly={true}
@@ -282,7 +285,7 @@ const EditableChip = ({option, options, setOptions, fieldId, readonly = false}: 
                 >
                     <span
                         className='property-option-chip-trigger'
-                        data-testid={`admin.board_attributes.row.locked_option:${option.id}--text`}
+                        data-testid='admin.board_attributes.row.option.locked--text'
                     >
                         <ChipLabel>{option.name}</ChipLabel>
                     </span>
@@ -295,6 +298,7 @@ const EditableChip = ({option, options, setOptions, fieldId, readonly = false}: 
         <ChipDropZone
             ref={setDropZoneElement}
             data-flip-key={option.id}
+            data-testid={`admin.board_attributes.row.option:${option.id}`}
         >
             <ChipShell
                 ref={setChipElement}
@@ -306,7 +310,7 @@ const EditableChip = ({option, options, setOptions, fieldId, readonly = false}: 
                         id: `${menuId}-button`,
                         class: 'property-option-chip-trigger',
                         children: <ChipLabel>{option.name}</ChipLabel>,
-                        dataTestId: `admin.board_attributes.row.option:${option.id}--button`,
+                        dataTestId: 'admin.board_attributes.row.option.edit--button',
                     }}
                     menu={{
                         id: `${menuId}-menu`,
@@ -396,7 +400,7 @@ const EditableChip = ({option, options, setOptions, fieldId, readonly = false}: 
                             id: 'admin.board_attributes.values.delete_option',
                             defaultMessage: 'Delete option {name}',
                         }, {name: option.name})}
-                        data-testid={`admin.board_attributes.row.option_delete:${option.id}--button`}
+                        data-testid='admin.board_attributes.row.option.delete--button'
                     >
                         <CloseCircleIcon
                             size={14}

@@ -65,7 +65,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
             const {policy, row} = await openMaskedPolicy(app, policyId);
 
             // * Alpha (held) is the only value shown; Bravo and Charlie sit behind the masked chip
-            await expect(row.value.chip(0).locator).toContainText('Alpha');
+            await expect(row.value.chip('Alpha').locator).toContainText('Alpha');
             await expect(row.value.chipItems).toHaveCount(1);
             await expect(row.value.maskedImg.locator).toBeVisible();
             await expect(row.locator).not.toContainText('Bravo');
@@ -129,7 +129,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
             const {policy, row} = await openMaskedPolicy(app, policyId);
 
             // * Alpha visible, Bravo + Charlie masked
-            await expect(row.value.chip(0).locator).toContainText('Alpha');
+            await expect(row.value.chip('Alpha').locator).toContainText('Alpha');
             await expect(row.value.maskedImg.locator).toBeVisible();
 
             // # Dirty the form via the policy name field and save. Masked rows are read-only so
@@ -196,7 +196,7 @@ test.describe('Attribute-Value Masking - Table Editor', {tag: ['@abac', '@abac_m
 
             const {row} = await openMaskedPolicy(app, policyId);
 
-            await expect(row.value.chip(0).locator).toContainText('Alpha');
+            await expect(row.value.chip('Alpha').locator).toContainText('Alpha');
             await expect(row.value.maskedImg.locator).toBeVisible();
 
             // * The row's remove (trash) button is disabled on the masked row

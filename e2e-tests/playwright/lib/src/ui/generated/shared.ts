@@ -15,7 +15,7 @@ import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
 import type {PluginKey} from '../../aria';
-import {Scope, drivers, suggestionTestKey} from '../../aria';
+import {Scope, drivers, suggestionTestKey, textTestKey} from '../../aria';
 
 import {Api} from './api';
 import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
@@ -1455,8 +1455,12 @@ export class RulesRowValue extends Scope {
      * `admin.access_control.policy.rules.row.value.chip:{key}` — MultiValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx)
      * Renders only when !(rows.length === 0) and isMultiOperator and !(editorMode === 'cel').
      */
-    chip(chip: number): RulesRowValueChip {
-        return new RulesRowValueChip(this.page, `${this.scope}.chip`, this.byTestId(`${this.scope}.chip:${chip}`));
+    chip(chip: string): RulesRowValueChip {
+        return new RulesRowValueChip(
+            this.page,
+            `${this.scope}.chip`,
+            this.byTestId(`${this.scope}.chip:${textTestKey(chip)}`),
+        );
     }
 
     /** Every `admin.access_control.policy.rules.row.value.chip:{key}` in the scope. */
@@ -1593,14 +1597,17 @@ export class RulesRowValueMenu extends Scope {
      * `admin.access_control.policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox` — MultiValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx)
      * Renders only when !(rows.length === 0) and isMultiOperator and !(editorMode === 'cel').
      */
-    multiOption(multiOption: number) {
-        return drivers.menuitemcheckbox(this.byTestId(`${this.scope}.multi_option:${multiOption}--menuitemcheckbox`), {
-            testId: `${this.scope}.multi_option:${multiOption}--menuitemcheckbox`,
-            role: 'menuitemcheckbox',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector',
-        });
+    multiOption(multiOption: string) {
+        return drivers.menuitemcheckbox(
+            this.byTestId(`${this.scope}.multi_option:${textTestKey(multiOption)}--menuitemcheckbox`),
+            {
+                testId: `${this.scope}.multi_option:${textTestKey(multiOption)}--menuitemcheckbox`,
+                role: 'menuitemcheckbox',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx#MultiValueSelector',
+            },
+        );
     }
 
     /** Every `admin.access_control.policy.rules.row.value_menu.multi_option:{key}--menuitemcheckbox` in the scope. */
@@ -1618,8 +1625,8 @@ export class RulesRowValueMenu extends Scope {
      * Renders only when !statusKind.
      */
     node(node: string) {
-        return drivers.menuitemcheckbox(this.byTestId(`${this.scope}.node:${node}--menuitemcheckbox`), {
-            testId: `${this.scope}.node:${node}--menuitemcheckbox`,
+        return drivers.menuitemcheckbox(this.byTestId(`${this.scope}.node:${textTestKey(node)}--menuitemcheckbox`), {
+            testId: `${this.scope}.node:${textTestKey(node)}--menuitemcheckbox`,
             role: 'menuitemcheckbox',
             effects: [],
             unknownEffects: false,
@@ -1641,9 +1648,9 @@ export class RulesRowValueMenu extends Scope {
      * `admin.access_control.policy.rules.row.value_menu.option:{key}--menuitemradio` — SingleValueSelector (channels/src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx)
      * Renders only when hasOptions and !(rows.length === 0) and !(editorMode === 'cel').
      */
-    option(option: number) {
-        return drivers.menuitemradio(this.byTestId(`${this.scope}.option:${option}--menuitemradio`), {
-            testId: `${this.scope}.option:${option}--menuitemradio`,
+    option(option: string) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.option:${textTestKey(option)}--menuitemradio`), {
+            testId: `${this.scope}.option:${textTestKey(option)}--menuitemradio`,
             role: 'menuitemradio',
             effects: [],
             unknownEffects: false,
@@ -6436,11 +6443,11 @@ export class ChannelInfoAttributesAttribute extends Scope {
      * `channel_settings_modal.info.attributes.attribute.chip:{key}` — AttributeChip (channels/src/components/channel_attributes/attribute_chip.tsx)
      * Renders only when !(rows.length === 0 && addableAttributes.length === 0).
      */
-    chip(chip: number): ChannelInfoAttributesAttributeChip {
+    chip(chip: string): ChannelInfoAttributesAttributeChip {
         return new ChannelInfoAttributesAttributeChip(
             this.page,
             `${this.scope}.chip`,
-            this.byTestId(`${this.scope}.chip:${chip}`),
+            this.byTestId(`${this.scope}.chip:${textTestKey(chip)}`),
         );
     }
 
@@ -6532,9 +6539,9 @@ export class ChannelInfoAttributesAttributeEditMenu extends Scope {
      * `channel_settings_modal.info.attributes.attribute.edit_menu.option:{key}--menuitem` — ChannelAttributeRowEditor (channels/src/components/channel_attributes/channel_attribute_row_editor.tsx)
      * Renders only when !(rows.length === 0 && addableAttributes.length === 0) and showMenu || showTextEditor and !isDMorGroupChannel.
      */
-    option(option: number) {
-        return drivers.menuitem(this.byTestId(`${this.scope}.option:${option}--menuitem`), {
-            testId: `${this.scope}.option:${option}--menuitem`,
+    option(option: string) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.option:${textTestKey(option)}--menuitem`), {
+            testId: `${this.scope}.option:${textTestKey(option)}--menuitem`,
             role: 'menuitem',
             effects: [Api.UpdatePropertyValues],
             unknownEffects: false,

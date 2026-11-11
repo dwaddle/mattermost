@@ -192,7 +192,7 @@ test.describe('Attribute-Value Masking - API Redaction and Delete', {tag: ['@aba
 
             // * The clean policy doesn't
             const clean = await openMaskedPolicy(app, cleanPolicyId);
-            await expect(clean.row.value.chip(0).locator).toContainText('Alpha');
+            await expect(clean.row.value.chip('Alpha').locator).toContainText('Alpha');
             await expect(clean.policy.maskedValuesWarning.locator).toHaveCount(0);
         } finally {
             for (const id of policyIds) {

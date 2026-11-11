@@ -5,13 +5,13 @@ import React, {type JSX} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import type {TestId} from '@mattermost/shared/utils/test_id';
+import {withRole, type TestId} from '@mattermost/shared/utils/test_id';
 
 import './selector_menus.scss';
 
 type Props = {
 
-    // The chip's full testid (`<rule row>.value.masked--img`)
+    // The chip's path (`<rule row>.value.masked`); it renders `<testId>--img`
     testId?: TestId;
 };
 
@@ -35,7 +35,7 @@ const MaskedChip = ({testId}: Props): JSX.Element => {
                 className='select__multi-value select__multi-value--masked'
                 role='img'
                 aria-label={ariaLabel}
-                data-testid={testId}
+                data-testid={withRole(testId, 'img')}
             >
                 <div className='select__multi-value__label'>
                     {'••••••••'}

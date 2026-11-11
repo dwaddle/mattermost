@@ -28,7 +28,8 @@ const T = 'rhs.channel_info.about.attributes';
 const SETTINGS = 'channel_settings_modal.info.attributes';
 
 // Any attribute value chip, whichever row it is in.
-const CHIP = /\.attribute\.chip:\d+$/;
+// chips are keyed by the value they show
+const CHIP = /\.attribute\.chip:[^:]+$/;
 
 // A row's parts (`.edit--button`, `.unset--text`, ...) repeat in every row, so they are found within the
 // row of the field they belong to.

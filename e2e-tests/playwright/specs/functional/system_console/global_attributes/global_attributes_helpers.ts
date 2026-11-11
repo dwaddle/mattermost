@@ -58,11 +58,11 @@ export async function openAttributeManagement(app: App) {
     return app.admin.attributes;
 }
 
-/** The listed attribute showing `displayName`: its field id keys the row's cells. */
+/** The listed attribute showing `displayName`: rows are keyed by field id. */
 export async function listedAttribute(attributes: generated.AdminAttributes, displayName: string) {
-    await expect(attributes.nameItems.filter({hasText: displayName})).toHaveCount(1);
-    for (const id of await attributes.nameKeys()) {
-        if ((await attributes.name({id}).locator.textContent()) === displayName) {
+    await expect(attributes.rowItems.filter({hasText: displayName})).toHaveCount(1);
+    for (const id of await attributes.rowKeys()) {
+        if ((await attributes.row(id).nameText.locator.textContent()) === displayName) {
             return {id};
         }
     }

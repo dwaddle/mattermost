@@ -55,7 +55,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             const {policy, row} = await openMaskedPolicy(app, policyId);
 
             // * Alpha is the row's only value, and nothing is masked
-            await expect(row.value.chip(0).locator).toContainText('Alpha');
+            await expect(row.value.chip('Alpha').locator).toContainText('Alpha');
             await expect(row.value.chipItems).toHaveCount(1);
             await expect(row.value.maskedImg.locator).toHaveCount(0);
             await expect(policy.maskedValuesWarning.locator).toHaveCount(0);
@@ -219,7 +219,7 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             const {row} = await openMaskedPolicy(app, policyId);
 
             // * "Alpha" (held) is the only value shown; "Bravo" and "Charlie" sit behind the masked chip
-            await expect(row.value.chip(0).locator).toContainText('Alpha');
+            await expect(row.value.chip('Alpha').locator).toContainText('Alpha');
             await expect(row.value.chipItems).toHaveCount(1);
             await expect(row.value.maskedImg.locator).toBeVisible();
             await expect(row.locator).not.toContainText('Bravo');

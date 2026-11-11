@@ -81,21 +81,25 @@ test.describe('System Console - Global Attributes listing (Classification Markin
 
                 const {app} = await pw.testBrowser.login(adminUser);
                 let attributes = await openAttributeManagement(app);
-                await expect(attributes.name(classification).locator).toHaveText(classificationDisplayName);
+                await expect(attributes.row(classification.id).nameText.locator).toHaveText(classificationDisplayName);
 
                 // * The read-only subtitle renders under the attribute name
-                await expect(attributes.classificationSubtitle(classification).locator).toContainText(/read-only/i);
+                await expect(attributes.row(classification.id).classificationSubtitleText.locator).toContainText(
+                    /read-only/i,
+                );
 
                 // * The Source column identifies this row's true source, not the generic
                 // "Managed here" every other native field gets
-                await expect(attributes.source(classification).locator).toContainText('Classification Markings');
+                await expect(attributes.row(classification.id).sourceText.locator).toContainText(
+                    'Classification Markings',
+                );
 
                 // * The rightmost cell carries only an open-in-new link to the
                 // Classification Markings admin page — no Edit/More-actions menu
-                const openInNewLink = attributes.classificationLink(classification);
+                const openInNewLink = attributes.row(classification.id).classificationLinkLink;
                 await expect(openInNewLink.locator).toBeVisible();
                 await expect(openInNewLink.locator).toHaveHrefPath(CLASSIFICATION_MARKINGS_ADMIN_PATH);
-                await expect(attributes.actions(classification).locator).toHaveCount(0);
+                await expect(attributes.row(classification.id).actionsButton.locator).toHaveCount(0);
 
                 // # Clicking the link actually navigates to the Classification Markings page
                 await openInNewLink.click();
@@ -105,20 +109,20 @@ test.describe('System Console - Global Attributes listing (Classification Markin
                 attributes = await openAttributeManagement(app);
 
                 // * An unrelated 'rank'-type field is unaffected: ordinary dot-menu, no subtitle
-                await expect(attributes.name(unrelated).locator).toHaveText(unrelatedRankDisplayName);
-                await expect(attributes.actions(unrelated).locator).toBeVisible();
-                await expect(attributes.classificationSubtitle(unrelated).locator).toHaveCount(0);
-                await expect(attributes.classificationLink(unrelated).locator).toHaveCount(0);
-                await expect(attributes.source(unrelated).locator).toContainText('Managed here');
+                await expect(attributes.row(unrelated.id).nameText.locator).toHaveText(unrelatedRankDisplayName);
+                await expect(attributes.row(unrelated.id).actionsButton.locator).toBeVisible();
+                await expect(attributes.row(unrelated.id).classificationSubtitleText.locator).toHaveCount(0);
+                await expect(attributes.row(unrelated.id).classificationLinkLink.locator).toHaveCount(0);
+                await expect(attributes.row(unrelated.id).sourceText.locator).toContainText('Managed here');
 
                 // * Classification's name renders at the same contrast as any other row's:
                 // a definition that lives on another page must not read as a disabled
                 // attribute. Compared against the sibling row rather than a literal colour
                 // so it holds under every theme.
                 const unrelatedNameColor = await attributes
-                    .name(unrelated)
-                    .locator.evaluate((el) => getComputedStyle(el).color);
-                await expect(attributes.name(classification).locator).toHaveCSS('color', unrelatedNameColor);
+                    .row(unrelated.id)
+                    .nameText.locator.evaluate((el) => getComputedStyle(el).color);
+                await expect(attributes.row(classification.id).nameText.locator).toHaveCSS('color', unrelatedNameColor);
             } finally {
                 await deleteClassificationMarkingsFieldIfExists(adminClient);
                 await deleteGlobalAttributeFieldIfExists(adminClient, unrelatedRankName);

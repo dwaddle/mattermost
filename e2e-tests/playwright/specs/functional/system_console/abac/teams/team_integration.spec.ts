@@ -717,9 +717,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         await fillRuleValue(row1, 'Marketing');
 
         // * Both values show as chips
-        await expect(row1.value.chipItems).toHaveCount(2);
-        await expect(row1.value.chip(0).locator).toContainText('Engineering');
-        await expect(row1.value.chip(1).locator).toContainText('Marketing');
+        await expect(row1.value.chipList).toHaveKeys(['Engineering', 'Marketing']);
 
         // # A second row
         await rules.clickAddButton();
