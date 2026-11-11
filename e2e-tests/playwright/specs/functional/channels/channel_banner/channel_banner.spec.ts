@@ -3,7 +3,15 @@
 
 import type {Locator} from '@playwright/test';
 
-import {expect, generated, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    type App,
+    expect,
+    generated,
+    openChannelSettings,
+    type PlaywrightExtended,
+    postWith,
+    test,
+} from '@mattermost/playwright-lib';
 
 const EMOJI_SIZE = 16;
 
@@ -38,14 +46,6 @@ async function openNewChannel(pw: PlaywrightExtended) {
     return app;
 }
 
-/** Opens Channel Settings > Configuration. */
-async function openConfiguration(app: App) {
-    const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-    await settings.tabs.configurationTab.select();
-    await expect(settings.tabs.configurationTab.locator).toHaveAttribute('aria-selected', 'true');
-    return settings;
-}
-
 /** Saves the open tab, and closes Channel Settings. */
 async function saveAndClose(settings: generated.ChannelSettingsModal) {
     await settings.savePanel.clickSaveButton();
@@ -56,7 +56,7 @@ async function saveAndClose(settings: generated.ChannelSettingsModal) {
 
 /** Turns the banner on with `text` and/or a background color, saves, and closes Channel Settings. */
 async function configureBanner(app: App, banner: {text?: string; color?: string}) {
-    const settings = await openConfiguration(app);
+    const settings = await openChannelSettings(app, 'configuration');
     const {configuration} = settings;
     await configuration.bannerSwitch.turnOn();
     if (banner.text !== undefined) {
@@ -113,7 +113,6 @@ async function expectContainedInBanner(banner: generated.ChannelBanner, element:
 /** Sends a message from the center composer and opens its thread. */
 async function replyToNewPost(app: App, message: string) {
     const {postList} = app.center;
-    const before = (await postList.postKeys()).length;
 
     // Focus and type character-by-character to avoid React clearing a programmatic fill()
     const input = app.center.postCreate.messageTextbox.locator;
@@ -121,9 +120,7 @@ async function replyToNewPost(app: App, message: string) {
     await input.pressSequentially(message);
     await app.center.postCreate.clickSendButton();
 
-    await expect.poll(async () => (await postList.postKeys()).length).toBeGreaterThan(before);
-    const post = postList.post({id: (await postList.postKeys()).at(-1)!});
-    await expect(post.locator).toContainText(message);
+    const post = await postWith(postList, {text: message});
     await post.locator.hover();
     await post.menu.clickReplyButton();
     await expect(app.rhs.postCreate.messageTextbox.locator).toBeVisible();
@@ -142,14 +139,14 @@ test('Should show channel banner when configured', async ({pw}) => {
     await expectBanner(banner, 'Example channel banner text', '77DD88');
 
     // Now we'll disable the channel banner
-    let settings = await openConfiguration(app);
+    let settings = await openChannelSettings(app, 'configuration');
     await settings.configuration.bannerSwitch.turnOff();
     await saveAndClose(settings);
     await expect(banner.locator).not.toBeVisible();
 
     // re-enabling channel banner should already have
     // the previously configured text and color
-    settings = await openConfiguration(app);
+    settings = await openChannelSettings(app, 'configuration');
     await settings.configuration.bannerSwitch.turnOn();
     await saveAndClose(settings);
     await expectBanner(banner, 'Example channel banner text', '77DD88');

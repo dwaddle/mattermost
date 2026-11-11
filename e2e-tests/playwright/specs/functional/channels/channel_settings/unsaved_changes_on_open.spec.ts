@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, openChannelSettings, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that Channel Settings opens with no unsaved-changes warning and no channel name
@@ -29,8 +29,7 @@ test(
         await expect(app.center.postList.locator).toBeVisible();
 
         // # Open Channel Settings without touching any field
-        const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-        await settings.tabs.infoTab.select();
+        const settings = await openChannelSettings(app, 'info');
 
         // * The stored text is shown as-is, and the form reports no unsaved changes
         expect(await settings.info.read()).toMatchObject({
@@ -72,8 +71,7 @@ test(
         await expect(app.center.postList.locator).toBeVisible();
 
         // # Open Channel Settings and edit the purpose
-        let settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-        await settings.tabs.infoTab.select();
+        let settings = await openChannelSettings(app, 'info');
         await settings.info.fillPurposeTextbox('A brand new purpose');
 
         // * The edit is recognised as an unsaved change
@@ -88,8 +86,7 @@ test(
 
         // # Close and reopen Channel Settings
         await settings.clickCloseButton();
-        settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-        await settings.tabs.infoTab.select();
+        settings = await openChannelSettings(app, 'info');
 
         // * The saved purpose persisted, the untouched header was left exactly as stored, and the reopened form
         // * is clean

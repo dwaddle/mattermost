@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, openChannelSettings, test} from '@mattermost/playwright-lib';
 
 const DEFAULT_CHANNEL_URL_LOCKED_TEXT = 'The URL of the default channel cannot be changed.';
 
@@ -21,8 +21,7 @@ test(
         await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open the Channel Settings modal on the Info tab
-        const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-        await settings.tabs.infoTab.select();
+        const settings = await openChannelSettings(app, 'info');
         const url = settings.info.url;
 
         // * The URL is shown read-only, with no way to edit it and an explanation why
@@ -60,8 +59,7 @@ test('allows the URL of an ordinary channel to be changed', {tag: '@channel_sett
     await app.channelsPage.goto({team, channel: createdChannel});
 
     // # Open the Channel Settings modal on the Info tab
-    const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-    await settings.tabs.infoTab.select();
+    const settings = await openChannelSettings(app, 'info');
     const url = settings.info.url;
 
     // * An ordinary channel isn't affected by the default-channel restriction

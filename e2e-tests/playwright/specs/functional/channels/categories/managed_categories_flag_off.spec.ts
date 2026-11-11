@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, getRandomId, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, getRandomId, openChannelSettings, type PlaywrightExtended, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: the channel header menu and Channel Settings' Info tab with its managed
 // category selector.
@@ -49,8 +49,7 @@ test.describe('Managed Channel Categories (flag off)', () => {
             // # Log in and open channel settings
             const {app} = await pw.testBrowser.login(adminUser);
             await app.channelsPage.goto({team, channel: 'town-square'});
-            const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-            await settings.tabs.infoTab.select();
+            const settings = await openChannelSettings(app, 'info');
 
             // * Verify managed category selector is not rendered, on an Info tab that has loaded
             await expect(settings.info.nameTextbox.locator).toBeVisible();

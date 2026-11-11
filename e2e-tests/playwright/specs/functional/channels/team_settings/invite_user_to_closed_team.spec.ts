@@ -3,7 +3,7 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, formatMessage, Msg, test, type App} from '@mattermost/playwright-lib';
+import {type App, expect, formatMessage, Msg, openTeamSettings, test} from '@mattermost/playwright-lib';
 
 /**
  * Types the email in the invite dialog's people input, takes its suggestion and sends the invite. The suggestion is
@@ -52,8 +52,7 @@ test('MM-T388 Invite new user to closed team with email domain restriction', {ta
     await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open Team Settings Modal and go to Access tab
-    const settings = await (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
-    await settings.tabs.tab('access').select();
+    const settings = await openTeamSettings(app, 'access');
 
     // # Enable "Allow only users with a specific email domain" and add the domain
     await settings.access.allowedDomainsCheckbox.locator.check();

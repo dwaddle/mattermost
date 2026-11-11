@@ -10,12 +10,7 @@
  */
 
 import {getAsset} from '@/asset';
-import {expect, Msg, test, type App} from '@mattermost/playwright-lib';
-
-/** Opens Team Settings from the team menu (it opens on the Info tab). */
-async function openTeamSettings(app: App) {
-    return (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
-}
+import {expect, Msg, openTeamSettings, test} from '@mattermost/playwright-lib';
 
 test.describe('Team Settings Modal - Info Tab', () => {
     /**

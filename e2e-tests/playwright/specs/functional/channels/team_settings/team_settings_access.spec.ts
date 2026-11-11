@@ -1,18 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, formatMessage, Msg, test, type App} from '@mattermost/playwright-lib';
-
-/** Opens Team Settings from the team menu, on its Access tab. */
-async function openAccessTab(app: App) {
-    const settings = await (await app.lhs.header.clickOpenTeamMenuButton()).clickTeamSettingsMenuItem();
-    const accessTab = settings.tabs.tab('access');
-    await accessTab.select();
-
-    // * Verify Access tab is active
-    await expect(accessTab.locator).toHaveAttribute('aria-selected', 'true');
-    return settings;
-}
+import {expect, formatMessage, Msg, openTeamSettings, test} from '@mattermost/playwright-lib';
 
 test.describe('Team Settings Modal - Access Tab', () => {
     /**
@@ -30,7 +19,7 @@ test.describe('Team Settings Modal - Access Tab', () => {
         await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open Team Settings on the Access tab
-        const settings = await openAccessTab(app);
+        const settings = await openTeamSettings(app, 'access');
         const domains = settings.access.allowedDomains;
         const saved = formatMessage(Msg.saveChangesPanel.saved);
 
@@ -89,7 +78,7 @@ test.describe('Team Settings Modal - Access Tab', () => {
 
         // # Navigate to team and open Team Settings on the Access tab
         await app.channelsPage.goto({team, channel: townSquare});
-        const settings = await openAccessTab(app);
+        const settings = await openTeamSettings(app, 'access');
 
         // # Click regenerate button
         await settings.access.inviteLink.clickRegenerateButton();

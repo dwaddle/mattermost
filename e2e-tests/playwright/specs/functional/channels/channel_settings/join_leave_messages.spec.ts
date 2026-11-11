@@ -19,7 +19,7 @@
  * button fires (`settle`), and messages come from the i18n catalog (`Msg`).
  */
 
-import {Api, expect, formatMessage, Msg, settle, test} from '@mattermost/playwright-lib';
+import {Api, expect, formatMessage, Msg, openChannelSettings, settle, test} from '@mattermost/playwright-lib';
 
 /** The actor in a combined system message when it is the viewer ("… added to the channel by you."). */
 const you = formatMessage(Msg.combined_system_message.you).toLowerCase();
@@ -47,9 +47,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
         await expect(app.center.postList.locator).toBeVisible();
 
         // # Open Channel Settings and navigate to Configuration tab
-        const menu = await app.channelHeader.clickOpenMenuButton();
-        const settings = await menu.clickChannelSettingsMenuItem();
-        await settings.tabs.configurationTab.select();
+        const settings = await openChannelSettings(app, 'configuration');
 
         // * Toggle is visible and defaults to ON (messages shown)
         await expect(settings.configuration.joinLeaveMessagesSwitch.locator).toBeVisible();
@@ -104,8 +102,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             );
 
             // # Open Channel Settings → Configuration tab, turn join/leave messages off and save
-            const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-            await settings.tabs.configurationTab.select();
+            const settings = await openChannelSettings(app, 'configuration');
             await settings.configuration.setJoinLeaveMessagesSwitch(false);
             const saved = await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
             await settings.clickCloseButton();
@@ -216,8 +213,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             await app.channelsPage.goto({team, channel});
             await expect(app.center.postList.locator).toBeVisible();
 
-            const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-            await settings.tabs.configurationTab.select();
+            const settings = await openChannelSettings(app, 'configuration');
             await settings.configuration.fill({joinLeaveMessages: false});
             await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
             await settings.clickCloseButton();
@@ -262,8 +258,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             await expect(app.center.postList.locator).toBeVisible();
 
             // # Disable join/leave messages and save
-            let settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-            await settings.tabs.configurationTab.select();
+            let settings = await openChannelSettings(app, 'configuration');
             await settings.configuration.setJoinLeaveMessagesSwitch(false);
             await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
             await settings.clickCloseButton();
@@ -276,8 +271,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             );
 
             // # Re-open Channel Settings → Configuration tab and re-enable join/leave messages
-            settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
-            await settings.tabs.configurationTab.select();
+            settings = await openChannelSettings(app, 'configuration');
             await settings.configuration.setJoinLeaveMessagesSwitch(true);
             await settle(settings.savePanel.saveButton, (b) => b.click(), {wait: Api.PatchChannel});
             await settings.clickCloseButton();
