@@ -93,9 +93,9 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
          * navigation marks it active, and neither the pointer nor the hover card ever
          * goes near the chip row here.
          */
-        await postOnScreen.messageText.locator.hover();
+        await postOnScreen.messageText.hover();
         await expect(postOnScreen.menu.dotMenuButton.locator).toBeVisible();
-        await postOnScreen.menu.dotMenuButton.locator.focus();
+        await postOnScreen.menu.dotMenuButton.focus();
 
         // * Verify no tab stop is inside the chip row. Asserted on each step rather than
         // only at the end, so a row that takes focus and hands it straight back is still
@@ -110,9 +110,9 @@ test('changes a value by keyboard alone, and never tabs into the chip row', {tag
 
         // # Open the post's menu from the keyboard, the pointer having only uncovered
         // the button
-        await postOnScreen.messageText.locator.hover();
+        await postOnScreen.messageText.hover();
         await expect(postOnScreen.menu.dotMenuButton.locator).toBeVisible();
-        await postOnScreen.menu.dotMenuButton.locator.press('Enter');
+        await postOnScreen.menu.dotMenuButton.press('Enter');
         const dotMenu = app.postDotMenu;
         await expect(dotMenu.locator).toBeVisible();
 
@@ -208,7 +208,7 @@ test('rewrites the chip behind the modal when an option is picked', {tag: '@post
         await openModalFromPostMenu(postOnScreen);
         await expect(app.postAttributesModal.locator).toBeVisible();
 
-        await app.postAttributesModal.attribute(classification).valueButton.locator.click();
+        await app.postAttributesModal.attribute(classification).valueButton.click();
 
         // # Wait on the write itself rather than on elapsed time
         const written = waitForValuesWrite(page, post.id);
@@ -520,7 +520,7 @@ test('opens the modal on a post with no values, listing always fields', {tag: '@
 
         // * Verify it is genuinely writable from here, rather than a label on an
         // empty row
-        await app.postAttributesModal.attribute(classification).valueButton.locator.click();
+        await app.postAttributesModal.attribute(classification).valueButton.click();
         const secretOption = app.postAttributesModal.attribute(classification).valueMenu.option({
             id: optionId(classification, SECRET),
         }).locator;
@@ -623,7 +623,7 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         const add = app.postAttributesModal.addButton.locator;
 
         await add.click();
-        await app.postAttributesModal.addMenu.field(classification).locator.click();
+        await app.postAttributesModal.addMenu.field(classification).click();
 
         // * Verify the row arrived with nothing in it
         await expect(app.postAttributesModal.attribute(classification).locator).toBeVisible();
@@ -648,7 +648,7 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         // # Add the second one too, and leave it empty. It is the control for the
         // reopen below: one added row gets a value and one does not, and only the
         // first has any reason to come back.
-        await app.postAttributesModal.addMenu.field(caveat).locator.click();
+        await app.postAttributesModal.addMenu.field(caveat).click();
         await expect(app.postAttributesModal.attribute(caveat).locator).toBeVisible();
         await expect(app.postAttributesModal.attribute(caveat).valueButton.locator).toHaveText('');
 
@@ -656,7 +656,7 @@ test('adds an attribute from the picker and gives it a first value', {tag: '@pos
         // elapsed time
         const written = waitForValuesWrite(page, post.id);
 
-        await app.postAttributesModal.attribute(classification).valueButton.locator.click();
+        await app.postAttributesModal.attribute(classification).valueButton.click();
         await app.postAttributesModal
             .attribute(classification)
             .valueMenu.option({id: optionId(classification, SECRET)})

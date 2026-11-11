@@ -183,7 +183,7 @@ export function optionChip(attributes: generated.PostItemAttributes, name: strin
  * card is not what opened the modal.
  */
 export async function openModalFromPostMenu(post: generated.PostItem) {
-    await post.messageText.locator.hover();
+    await post.messageText.hover();
     await expect(post.menu.dotMenuButton.locator).toBeVisible();
     const dotMenu = await post.menu.clickDotMenuButton();
     await expect(dotMenu.locator).toBeVisible();
