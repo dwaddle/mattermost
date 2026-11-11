@@ -4,7 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, test, duration} from '@mattermost/playwright-lib';
+import {expect, test, duration, Msg} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
 import {
@@ -124,7 +124,9 @@ test.describe('ABAC Attribute Selector - display_name rendering and filtering', 
 
                 // # The rule is "is engineering"
                 await expect(deptHead.locator).not.toBeVisible();
-                await expect(row.operatorButton.locator).toContainText('is');
+                await expect(row.operatorButton.locator).toContainMessage(
+                    Msg.admin.access_control.table_editor.operator.is,
+                );
                 await fillRuleValue(row, 'engineering');
 
                 // # Save

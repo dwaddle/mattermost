@@ -133,7 +133,7 @@ export async function deselect(attributes: Editable, field: Field, option: strin
  */
 export async function add(app: App, attributes: Editable, field: Field, option?: string) {
     await attributes.clickAddButton();
-    await attributes.addMenu.attribute(field).locator.click();
+    await attributes.addMenu.attribute(field).click();
     const r = row(attributes, field);
     await expect(editor(attributes, field).or(r.unsetText.locator)).toBeVisible();
     if (!(await editor(attributes, field).isVisible())) {

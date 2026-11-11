@@ -6,7 +6,7 @@
 // - [*] indicates an assertion (e.g. * Check the title)
 // ***************************************************************
 
-import {AdminType, expect, test} from '@mattermost/playwright-lib';
+import {AdminType, expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     addAttribute,
@@ -31,14 +31,16 @@ test.describe('Board Attributes - validation', {tag: '@board_attributes'}, () =>
         const row = await addAttribute(ba, '');
 
         // * The "please enter a name" warning is visible
-        await expect(row.nameErrorText.locator).toHaveText('Please enter an attribute name.');
+        await expect(row.nameErrorText.locator).toHaveMessage(
+            Msg.admin.board_attributes.table.validation.name_required,
+        );
 
         // * Save is disabled
         await expect(ba.savePanel.saveButton.locator).toBeDisabled();
 
         // # Name the row
         await row.fillNameTextbox(`Named_${Date.now()}`);
-        await row.nameTextbox.locator.blur();
+        await row.nameTextbox.blur();
 
         // * The warning clears and Save is enabled
         await expect(row.nameErrorText.locator).not.toBeVisible();
@@ -74,7 +76,7 @@ test.describe('Board Attributes - validation', {tag: '@board_attributes'}, () =>
         //   sees both the seeded status (always in the pending collection)
         //   and the new row, so name_unique fires first — name_taken is
         //   reserved for rename-against-a-saved-name conflicts.
-        await expect(row.nameErrorText.locator).toHaveText('Attribute names must be unique.');
+        await expect(row.nameErrorText.locator).toHaveMessage(Msg.admin.board_attributes.table.validation.name_unique);
 
         // * Save is disabled
         await expect(ba.savePanel.saveButton.locator).toBeDisabled();
@@ -106,7 +108,9 @@ test.describe('Board Attributes - validation', {tag: '@board_attributes'}, () =>
         await app.page.keyboard.press('Tab');
 
         // * The "name already taken" warning surfaces
-        await expect(ba.row(fieldB.id).nameErrorText.locator).toHaveText('Attribute name already taken.');
+        await expect(ba.row(fieldB.id).nameErrorText.locator).toHaveMessage(
+            Msg.admin.board_attributes.table.validation.name_taken,
+        );
 
         // * Save is disabled
         await expect(ba.savePanel.saveButton.locator).toBeDisabled();
@@ -129,7 +133,9 @@ test.describe('Board Attributes - validation', {tag: '@board_attributes'}, () =>
         await addOption(row, 'Alpha');
 
         // * Collection-level uniqueness warning surfaces under the chip list
-        await expect(row.valuesErrorText.locator).toHaveText('Values must be unique.');
+        await expect(row.valuesErrorText.locator).toHaveMessage(
+            Msg.admin.board_attributes.table.validation.values_unique,
+        );
 
         // * Save is disabled
         await expect(ba.savePanel.saveButton.locator).toBeDisabled();

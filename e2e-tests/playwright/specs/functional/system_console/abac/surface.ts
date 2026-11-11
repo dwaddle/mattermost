@@ -75,7 +75,7 @@ export async function fillRuleValue(row: generated.RulesRow, value: string) {
     await expect(row.valueTextbox.locator.or(row.valueButton.locator)).toBeVisible();
     if (await row.valueTextbox.locator.isVisible()) {
         await row.fillValueTextbox(value);
-        await row.valueTextbox.locator.press('Tab');
+        await row.valueTextbox.press('Tab');
         await expect(row.valueTextbox.locator).toHaveValue(value);
         return;
     }

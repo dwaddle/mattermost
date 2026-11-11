@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminRole, expect, test, type App, duration} from '@mattermost/playwright-lib';
+import {AdminRole, expect, test, type App, duration, Msg} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes} from '../support';
 import {openPermissionPolicies, setAbacEnabled, setCelExpression} from '../surface';
@@ -34,7 +34,7 @@ test.describe('Permission Policies - Create Policy', () => {
         const {name} = await openNewPermissionPolicy(app);
 
         // * Detail page heading and name input visible
-        await expect(app.admin.header.locator).toContainText('Attribute-Based Permission Policy');
+        await expect(app.admin.header.locator).toContainMessage(Msg.admin.permission_policies.edit.title);
         await expect(name.valueTextbox.locator).toHaveAttribute('placeholder', 'Add a unique policy name');
     });
 
@@ -49,7 +49,7 @@ test.describe('Permission Policies - Create Policy', () => {
         // * Banner explains that permission policies override system permission schemes
         const banner = policy.evaluationInfo.locator;
         await expect(banner).toContainText('The permissions defined in this policy override the');
-        await expect(banner).toContainText('system permission schemes');
+        await expect(banner).toContainMessage(Msg.admin.permission_policies.edit.info_banner.link);
         await expect(banner).toContainText('Permissions evaluation order');
     });
 
@@ -61,7 +61,7 @@ test.describe('Permission Policies - Create Policy', () => {
 
         const {policy} = await openNewPermissionPolicy(app);
 
-        await expect(policy.roleLabelText.locator).toHaveText('Select a role from the predefined list of system roles');
+        await expect(policy.roleLabelText.locator).toHaveMessage(Msg.admin.permission_policies.edit.who.role_label);
 
         // * The dropdown button is visible and shows the default role
         //   (system_user). The label was shortened from "Members and
@@ -87,7 +87,7 @@ test.describe('Permission Policies - Create Policy', () => {
         await (await policy.clickRoleButton()).role(AdminRole.SystemAdmin).click();
 
         // * Dropdown button now shows the selected role
-        await expect(policy.roleButton.locator).toContainText('System administrators');
+        await expect(policy.roleButton.locator).toContainMessage(Msg.admin.permission_policies.role.system_admin.label);
     });
 
     test('MM-T5808 admin can toggle between Simple and Advanced CEL editor modes', async ({pw}) => {
@@ -123,7 +123,7 @@ test.describe('Permission Policies - Create Policy', () => {
         await name.fillValueTextbox('');
         await app.admin.saveButton.click();
 
-        await expect(policy.errorText.locator).toContainText('Please add a name to the policy');
+        await expect(policy.errorText.locator).toContainMessage(Msg.admin.permission_policies.edit.error.name_required);
     });
 
     test('MM-T5810 Save is blocked when CEL expression is empty', async ({pw}) => {
@@ -136,7 +136,9 @@ test.describe('Permission Policies - Create Policy', () => {
         await name.fillValueTextbox(`PP Expr Validate ${pw.random.id()}`);
         await app.admin.saveButton.click();
 
-        await expect(policy.errorText.locator).toContainText('Please add an expression to the policy');
+        await expect(policy.errorText.locator).toContainMessage(
+            Msg.admin.permission_policies.edit.error.expression_required,
+        );
     });
 
     test('MM-T5811 Save is blocked when no permission is selected', async ({pw}) => {
@@ -154,7 +156,9 @@ test.describe('Permission Policies - Create Policy', () => {
         await setCelExpression(app, policy, 'user.attributes.Department == "Engineering"');
         await app.admin.saveButton.click();
 
-        await expect(policy.errorText.locator).toContainText('Please select at least one permission');
+        await expect(policy.errorText.locator).toContainMessage(
+            Msg.admin.permission_policies.edit.error.permissions_required,
+        );
     });
 
     /**

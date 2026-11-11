@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     CLASSIFICATION_MARKINGS_ADMIN_PATH,
@@ -90,8 +90,8 @@ test.describe('System Console - Global Attributes listing (Classification Markin
 
                 // * The Source column identifies this row's true source, not the generic
                 // "Managed here" every other native field gets
-                await expect(attributes.row(classification.id).sourceText.locator).toContainText(
-                    'Classification Markings',
+                await expect(attributes.row(classification.id).sourceText.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.source.classification_markings,
                 );
 
                 // * The rightmost cell carries only an open-in-new link to the
@@ -113,7 +113,9 @@ test.describe('System Console - Global Attributes listing (Classification Markin
                 await expect(attributes.row(unrelated.id).actionsButton.locator).toBeVisible();
                 await expect(attributes.row(unrelated.id).classificationSubtitleText.locator).toHaveCount(0);
                 await expect(attributes.row(unrelated.id).classificationLinkLink.locator).toHaveCount(0);
-                await expect(attributes.row(unrelated.id).sourceText.locator).toContainText('Managed here');
+                await expect(attributes.row(unrelated.id).sourceText.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.source.managed,
+                );
 
                 // * Classification's name renders at the same contrast as any other row's:
                 // a definition that lives on another page must not read as a disabled

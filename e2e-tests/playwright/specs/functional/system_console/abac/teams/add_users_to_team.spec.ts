@@ -8,7 +8,7 @@
 
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, generated, newTestPassword, test, type App, duration} from '@mattermost/playwright-lib';
+import {expect, generated, newTestPassword, test, type App, duration, Msg} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -118,7 +118,7 @@ test.describe('ABAC - Add members to team (System Console)', {tag: ['@abac', '@t
 
         // * mkt1's row is disabled with the blocking message
         await expect(mkt1Row.locator).toHaveAttribute('aria-disabled', 'true');
-        await expect(mkt1Row.deniedText.locator).toHaveText('Does not meet membership requirements');
+        await expect(mkt1Row.deniedText.locator).toHaveMessage(Msg.add_users_to_team.policy_denied);
     });
 
     test('MM-68846-T8 PUBLIC governed team does NOT block candidates (advisory)', async ({pw}) => {

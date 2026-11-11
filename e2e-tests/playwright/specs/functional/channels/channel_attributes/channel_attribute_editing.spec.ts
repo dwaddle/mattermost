@@ -628,7 +628,7 @@ test.describe('Channel attribute editing', {tag: ['@channel_attributes']}, () =>
 
             // * The ordinary attribute beside it is still offered for adding, so the
             // * lock is scoped to the owned one rather than the whole panel
-            await info.attributes.addButton.locator.click();
+            await info.attributes.addButton.click();
             await expect(info.attributes.addMenu.attribute(ordinary).locator).toBeVisible();
             await expect(info.attributes.addMenu.attribute(owned).locator).toHaveCount(0);
 

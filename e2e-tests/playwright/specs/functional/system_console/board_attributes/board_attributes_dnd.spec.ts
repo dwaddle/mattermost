@@ -62,7 +62,7 @@ test.describe('Board Attributes - reorder', {tag: '@board_attributes'}, () => {
         //   The handler in list_table.tsx clamps moves above the protected
         //   region, so moving custom A down by one cannot collide with the
         //   seeded protected rows.
-        await ba.row((await fieldByName(adminClient, a)).id).dragHandleButton.locator.press('ArrowDown');
+        await ba.row((await fieldByName(adminClient, a)).id).dragHandleButton.press('ArrowDown');
         await save(ba);
 
         // * Persisted sort_order reflects the swap: A is now below B

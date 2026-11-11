@@ -309,7 +309,7 @@ export async function addRule(rules: generated.Rules, field: {id: string}, value
     await rules.clickAddButton();
     await row.attributeMenu.attribute(field).click();
     await row.fillValueTextbox(value);
-    await row.valueTextbox.locator.press('Tab');
+    await row.valueTextbox.press('Tab');
     await expect(row.valueTextbox.locator).toHaveValue(value);
 }
 

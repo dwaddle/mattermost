@@ -110,7 +110,7 @@ test.describe('ABAC Policy Management - Edit Policies', () => {
         // # Change the rule's value to Sales
         const rule = policy.rules.row(0);
         await rule.fillValueTextbox('Sales');
-        await rule.valueTextbox.locator.press('Tab');
+        await rule.valueTextbox.press('Tab');
         await expect(rule.valueTextbox.locator).toHaveValue('Sales');
 
         // ===========================================

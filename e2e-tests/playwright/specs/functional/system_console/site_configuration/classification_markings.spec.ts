@@ -11,7 +11,7 @@
 
 import type {Page} from '@playwright/test';
 
-import {expect, test, getAdminClient, licenseTier, duration} from '@mattermost/playwright-lib';
+import {expect, test, getAdminClient, licenseTier, duration, Msg} from '@mattermost/playwright-lib';
 
 import {
     CLASSIFICATION_MARKINGS_ADMIN_PATH,
@@ -230,14 +230,14 @@ test.describe('System Console - Classification markings', () => {
 
             const presetControl = page.getByTestId('admin.classification.preset');
             // * Preset selection switches to custom
-            await expect(presetControl).toContainText('Custom classification levels');
+            await expect(presetControl).toContainMessage(Msg.admin.classification_markings.preset.custom);
 
             // # Save custom levels
             await page.getByRole('button', {name: 'Save', exact: true}).click();
 
             // * No error and preset remains custom
             await expect(page.getByTestId('admin.classification.save_panel.error--text')).toBeEmpty();
-            await expect(presetControl).toContainText('Custom classification levels');
+            await expect(presetControl).toContainMessage(Msg.admin.classification_markings.preset.custom);
         },
     );
 
@@ -477,7 +477,7 @@ test.describe('System Console - Classification markings', () => {
             await firstLevelInput.fill('MY CUSTOM LEVEL');
 
             // * Preset dropdown should now show "Custom classification levels"
-            await expect(presetControl).toContainText('Custom classification levels');
+            await expect(presetControl).toContainMessage(Msg.admin.classification_markings.preset.custom);
 
             // # Open the preset dropdown and verify "Custom classification levels" is listed
             await presetControl.click();
@@ -508,7 +508,7 @@ test.describe('System Console - Classification markings', () => {
             await page.getByRole('button', {name: 'Delete level'}).first().click();
 
             // * Should switch back to Custom
-            await expect(presetControl).toContainText('Custom classification levels');
+            await expect(presetControl).toContainMessage(Msg.admin.classification_markings.preset.custom);
         },
     );
 

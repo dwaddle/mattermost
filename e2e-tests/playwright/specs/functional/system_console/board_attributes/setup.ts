@@ -98,7 +98,7 @@ export async function addAttribute(ba: BoardAttributes, name: string) {
     await expect(ba.rowItems).toHaveCount(before.length + 1);
     const row = ba.row((await ba.rowKeys()).find((key) => !before.includes(key))!);
     await row.fillNameTextbox(name);
-    await row.nameTextbox.locator.blur();
+    await row.nameTextbox.blur();
     return row;
 }
 
@@ -137,7 +137,7 @@ export async function addOption(row: BoardRow, name: string) {
 export async function renameOption(row: BoardRow, id: string, name: string) {
     await row.option({id}).editButton.click();
     await row.optionMenu.fillNameTextbox(name);
-    await row.optionMenu.nameTextbox.locator.press('Enter');
+    await row.optionMenu.nameTextbox.press('Enter');
     await closeOptionMenu(row);
     await expect(row.option({id}).locator).toHaveText(name);
 }

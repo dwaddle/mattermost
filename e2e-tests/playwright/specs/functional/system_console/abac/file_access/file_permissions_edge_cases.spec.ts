@@ -206,8 +206,8 @@ test.describe('ABAC file permissions - redaction across surfaces', () => {
         // # The denied user searches for the post
         const app = await openChannel(pw, deniedUser, {team, channel: {name: channelName}});
         await app.globalHeader.search.clickOpenButton();
-        await app.searchBox.inputSearchbox.locator.fill(searchTerm);
-        await app.searchBox.inputSearchbox.locator.press('Enter');
+        await app.searchBox.inputSearchbox.fill(searchTerm);
+        await app.searchBox.inputSearchbox.press('Enter');
 
         // * Verify the search result shows the redacted placeholder, not the file
         const result = app.search.results.post({id: postId});

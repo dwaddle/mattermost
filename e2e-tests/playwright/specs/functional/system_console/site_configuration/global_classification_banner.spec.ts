@@ -101,7 +101,7 @@ test.describe('Global Classification Banner', () => {
             // Enable classification markings and select a preset to have levels
             await app.admin.setting('classificationEnabled').trueRadio.check();
             await classification.preset.locator.click();
-            await classification.preset.menu.option('us').locator.click();
+            await classification.preset.menu.option('us').select();
 
             // Enable global banner without selecting a level
             await app.admin.setting('globalBannerEnabled').trueRadio.check();

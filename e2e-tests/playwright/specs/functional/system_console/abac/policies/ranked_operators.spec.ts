@@ -13,7 +13,7 @@ import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {AdminOperator, expect, getRandomId, test, type App} from '@mattermost/playwright-lib';
+import {AdminOperator, expect, getRandomId, test, type App, Msg} from '@mattermost/playwright-lib';
 
 import {deleteCustomProfileAttributes} from '../../../channels/custom_profile_attributes/helpers';
 import {assertAccessControlAutocompleteContains} from '../support';
@@ -111,7 +111,9 @@ test.describe('System Console - Membership Policy ranked operators', () => {
         const row = await newPolicyWithAttribute(app, `Ranked Policy ${getRandomId()}`, field!);
 
         // * The row defaults to the canonical ranked operator, "is at least"
-        await expect(row.operatorButton.locator).toContainText('is at least');
+        await expect(row.operatorButton.locator).toContainMessage(
+            Msg.admin.access_control.table_editor.operator.is_at_least,
+        );
 
         // # Open the operator dropdown
         await row.operatorButton.click();
@@ -145,7 +147,9 @@ test.describe('System Console - Membership Policy ranked operators', () => {
             const row = await newPolicyWithAttribute(app, policyName, field!);
 
             // * Defaults to "is at least"
-            await expect(row.operatorButton.locator).toContainText('is at least');
+            await expect(row.operatorButton.locator).toContainMessage(
+                Msg.admin.access_control.table_editor.operator.is_at_least,
+            );
 
             // # Pick the value "Secret" (the options run Unclassified, Secret, TopSecret)
             const values = await row.clickValueButton();
@@ -170,7 +174,9 @@ test.describe('System Console - Membership Policy ranked operators', () => {
             // * The table editor re-parses the rehydrated rule to the same operator
             //   and value (no rank integer surfaced in the value chip)
             const reopened = policy.rules.row(0);
-            await expect(reopened.operatorButton.locator).toContainText('is at least');
+            await expect(reopened.operatorButton.locator).toContainMessage(
+                Msg.admin.access_control.table_editor.operator.is_at_least,
+            );
             await expect(reopened.valueButton.locator).toContainText('Secret');
             await expect(reopened.valueButton.locator).not.toContainText('2');
         } finally {

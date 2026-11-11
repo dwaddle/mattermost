@@ -6,7 +6,7 @@
  * @reference MM-67594
  */
 
-import {expect, newTestPassword, test, type generated, duration} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, test, type generated, duration, Msg} from '@mattermost/playwright-lib';
 
 import {
     enableABACConfig,
@@ -42,7 +42,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // # Click Add policy
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
+        await teamSettings.accessPolicies.addPolicyButton.click();
 
         // * Editor view shown with back button and name input
         await expect(teamSettings.accessPolicies.editor.backButton.locator).toBeVisible();
@@ -68,11 +68,11 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // # Click Add policy
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
+        await teamSettings.accessPolicies.addPolicyButton.click();
 
         // # Fill policy name
         const policyName = `TA Policy ${Date.now()}`;
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill(policyName);
+        await teamSettings.accessPolicies.editor.nameTextbox.fill(policyName);
 
         // # Add a rule row and fill in a value
         await addRule(teamSettings.accessPolicies.editor.rules, department, 'Engineering');
@@ -134,11 +134,11 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         // # Modify name
         const newName = `TA Updated ${Date.now()}`;
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.clear();
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill(newName);
+        await teamSettings.accessPolicies.editor.nameTextbox.clear();
+        await teamSettings.accessPolicies.editor.nameTextbox.fill(newName);
 
         // # Save via SaveChangesPanel (name-only change skips confirmation modal)
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * Auto-navigated back to list, updated name visible
         await expect(policyRow(teamSettings, newName)).toBeVisible();
@@ -191,11 +191,11 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         // # Open editor and modify name
         await policyRow(teamSettings, policy.name).click();
 
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.clear();
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill('Changed Name');
+        await teamSettings.accessPolicies.editor.nameTextbox.clear();
+        await teamSettings.accessPolicies.editor.nameTextbox.fill('Changed Name');
 
         // # Click Undo in SaveChangesPanel
-        await teamSettings.savePanel.cancelButton.locator.click();
+        await teamSettings.savePanel.cancelButton.click();
 
         // * Name reverted to original
         await expect(teamSettings.accessPolicies.editor.nameTextbox.locator).toHaveValue(policy.name);
@@ -221,15 +221,15 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         // # Open editor and make a change so the SaveChangesPanel is shown
         await policyRow(teamSettings, policy.name).click();
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill('Changed Name');
+        await teamSettings.accessPolicies.editor.nameTextbox.fill('Changed Name');
 
         // # Click the back button — sets navigation intent but stays in editor because of unsaved changes
-        await teamSettings.accessPolicies.editor.backButton.locator.click();
+        await teamSettings.accessPolicies.editor.backButton.click();
 
         // # Click Undo — should revert changes AND navigate back to the list.
         // This validates the fix for the bug where the navigation intent expired after 3 seconds,
         // causing Undo to revert changes but leave the user stranded in the editor.
-        await teamSettings.savePanel.cancelButton.locator.click();
+        await teamSettings.savePanel.cancelButton.click();
 
         // * List view restored (back navigation happened)
         await expect(teamSettings.accessPolicies.addPolicyButton.locator).toBeVisible();
@@ -250,8 +250,8 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // # Open editor then click back
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
-        await teamSettings.accessPolicies.editor.backButton.locator.click();
+        await teamSettings.accessPolicies.addPolicyButton.click();
+        await teamSettings.accessPolicies.editor.backButton.click();
 
         // * List view restored
         await expect(teamSettings.accessPolicies.addPolicyButton.locator).toBeVisible();
@@ -310,12 +310,12 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // # Open create editor, add rule + channel but leave name empty
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
+        await teamSettings.accessPolicies.addPolicyButton.click();
         await addRule(teamSettings.accessPolicies.editor.rules, department, 'Engineering');
         await addChannel(teamSettings.accessPolicies.editor, channel);
 
         // # Click Save
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * Error state shown in SaveChangesPanel (name required)
         await expect(teamSettings.savePanel.locator).toHaveClass(/error/);
@@ -337,12 +337,12 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // # Open create editor, add name + rule but no channels
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill(`No Channels ${Date.now()}`);
+        await teamSettings.accessPolicies.addPolicyButton.click();
+        await teamSettings.accessPolicies.editor.nameTextbox.fill(`No Channels ${Date.now()}`);
         await addRule(teamSettings.accessPolicies.editor.rules, department, 'Engineering');
 
         // # Click Save
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * Error state shown in SaveChangesPanel (channels required)
         await expect(teamSettings.savePanel.locator).toHaveClass(/error/);
@@ -434,15 +434,17 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         // # Edit policy name (name-only change — no confirmation modal)
         await policyRow(teamSettings, policy.name).click();
 
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.clear();
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill(`Updated ${Date.now()}`);
+        await teamSettings.accessPolicies.editor.nameTextbox.clear();
+        await teamSettings.accessPolicies.editor.nameTextbox.fill(`Updated ${Date.now()}`);
 
         // # Save
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * Success message visible on list view
         await expect(teamSettings.savePanel.locator).toHaveClass(/saved/);
-        await expect(teamSettings.savePanel.messageText.locator).toHaveText('Policy updated');
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(
+            Msg.team_settings.policy_editor.policy_updated,
+        );
 
         await closeTeamSettings(teamSettings);
     });
@@ -469,10 +471,10 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // # Create policy
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
+        await teamSettings.accessPolicies.addPolicyButton.click();
 
         const policyName = `SysAdmin Policy ${Date.now()}`;
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill(policyName);
+        await teamSettings.accessPolicies.editor.nameTextbox.fill(policyName);
 
         // # Add a rule row and fill in a value
         await addRule(teamSettings.accessPolicies.editor.rules, department, 'Engineering');
@@ -735,7 +737,7 @@ test.describe('Team Settings Modal - Policy Editor', () => {
         const teamSettings = await openAccessPoliciesTab(app);
 
         // # Open the policy editor and click Add channels
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
+        await teamSettings.accessPolicies.addPolicyButton.click();
         await expect(teamSettings.accessPolicies.editor.nameTextbox.locator).toBeVisible();
         const selector = await teamSettings.accessPolicies.editor.clickAddChannelsButton();
         const {results} = selector.channels;
@@ -794,11 +796,11 @@ test.describe('Team Settings Modal - Policy Editor', () => {
 
         const teamSettings = await openAccessPoliciesTab(app);
 
-        await teamSettings.accessPolicies.addPolicyButton.locator.click();
+        await teamSettings.accessPolicies.addPolicyButton.click();
 
         // # Fill policy name and add attribute rule
         const policyName = `Sync Bug Fix ${Date.now()}`;
-        await teamSettings.accessPolicies.editor.nameTextbox.locator.fill(policyName);
+        await teamSettings.accessPolicies.editor.nameTextbox.fill(policyName);
         await addRule(teamSettings.accessPolicies.editor.rules, department, 'Engineering');
 
         // # Add channel

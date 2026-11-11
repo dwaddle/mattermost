@@ -19,7 +19,7 @@
  * FeatureFlags.SessionAttributes flag. Tests skip cleanly when those are not met.
  */
 
-import {expect, test, type App, type generated, duration} from '@mattermost/playwright-lib';
+import {expect, test, type App, type generated, duration, Msg} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, getUserAttributeFieldByName} from '../abac/support';
 import {openMembershipPolicies, openPermissionPolicies, setAbacEnabled} from '../abac/surface';
@@ -81,13 +81,23 @@ test.describe('System Console - Session Attributes', () => {
             // * Verify the derived Type column maps text/select fields correctly. getDisplayType()
             // (session_attributes/utils.ts) only distinguishes Boolean/Enum via select options;
             // every other field type, including ip_address and os_version, renders as String.
-            await expect(sa.row(ipAddress.id).typeText.locator).toContainText('String');
-            await expect(sa.row(vpnActive.id).typeText.locator).toContainText('Boolean');
-            await expect(sa.row(networkInterfaceType.id).typeText.locator).toContainText('Enum');
-            await expect(sa.row(osVersion.id).typeText.locator).toContainText('String');
+            await expect(sa.row(ipAddress.id).typeText.locator).toContainMessage(
+                Msg.admin.session_attributes.type.string,
+            );
+            await expect(sa.row(vpnActive.id).typeText.locator).toContainMessage(
+                Msg.admin.session_attributes.type.boolean,
+            );
+            await expect(sa.row(networkInterfaceType.id).typeText.locator).toContainMessage(
+                Msg.admin.session_attributes.type.enum,
+            );
+            await expect(sa.row(osVersion.id).typeText.locator).toContainMessage(
+                Msg.admin.session_attributes.type.string,
+            );
 
             // * Verify seeded fields render as Disabled by default
-            await expect(sa.row(ipAddress.id).statusText.locator).toContainText('Disabled');
+            await expect(sa.row(ipAddress.id).statusText.locator).toContainMessage(
+                Msg.admin.session_attributes.status.disabled,
+            );
             await expect(sa.row(ipAddress.id).statusText.locator).toHaveAttribute('data-enabled', 'false');
         },
     );
@@ -109,7 +119,7 @@ test.describe('System Console - Session Attributes', () => {
         // * Verify the staged values are reflected before saving
         await expect(sa.row(field.id).ttlText.locator).toHaveText('1h');
         await expect(sa.row(field.id).graceText.locator).toHaveText('5m');
-        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(Msg.admin.session_attributes.status.enabled);
 
         // # Save the staged edits (one PATCH per changed field), and reload
         await saveAndSettle(app);
@@ -118,7 +128,7 @@ test.describe('System Console - Session Attributes', () => {
         // * Verify the edits persisted in the UI after reload
         await expect(sa.row(field.id).ttlText.locator).toHaveText('1h');
         await expect(sa.row(field.id).graceText.locator).toHaveText('5m');
-        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(Msg.admin.session_attributes.status.enabled);
 
         // * Verify the edits persisted server-side via the property API
         const persisted = await readSessionAttribute(adminClient, field.id);
@@ -145,25 +155,29 @@ test.describe('System Console - Session Attributes', () => {
         let sa = await openSessionAttributes(app);
 
         // * Verify it shows as Enabled
-        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(Msg.admin.session_attributes.status.enabled);
 
         // # Choose Disable from the actions menu, which asks for confirmation
         await (await openActions(app, field)).clickDisableMenuItem();
         const {disableModal} = sa;
-        await expect(disableModal.locator).toContainText('Disable attribute');
+        await expect(disableModal.locator).toContainMessage(Msg.admin.session_attributes.disable.title);
 
         // # Confirm the disable
         await disableModal.clickConfirmButton();
 
         // * Verify the staged status flips to Disabled before saving
-        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(
+            Msg.admin.session_attributes.status.disabled,
+        );
 
         // # Save the staged change, and reload
         await saveAndSettle(app);
         sa = await openSessionAttributes(app);
 
         // * Verify the disabled state persisted in the UI and server-side
-        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(
+            Msg.admin.session_attributes.status.disabled,
+        );
         const persisted = await readSessionAttribute(adminClient, field.id);
         expect(persisted.enabled).toBe(false);
     });
@@ -184,12 +198,14 @@ test.describe('System Console - Session Attributes', () => {
         const sa = await openSessionAttributes(app);
 
         // # Stage a one-click Enable (dot menu, no duration submenu)
-        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(
+            Msg.admin.session_attributes.status.disabled,
+        );
         await (await openActions(app, field)).clickEnableMenuItem();
 
         // * Verify the edit is staged and Save is enabled
         const {saveButton, cancelButton} = sa.savePanel;
-        await expect(sa.row(field.id).statusText.locator).toContainText('Enabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(Msg.admin.session_attributes.status.enabled);
         await expect(saveButton.locator).toBeEnabled();
 
         // # Attempt to navigate away via the sidebar while dirty
@@ -198,7 +214,7 @@ test.describe('System Console - Session Attributes', () => {
         // * Verify the unsaved-changes navigation guard appears
         const discard = app.discardChangesModal;
         await expect(discard.locator).toContainText('Discard Changes?');
-        await expect(discard.locator).toContainText('You have unsaved changes');
+        await expect(discard.locator).toContainMessage(Msg.saveChangesPanel.message);
 
         // # Decline the discard prompt to stay on the page
         await discard.clickCancelButton();
@@ -208,7 +224,9 @@ test.describe('System Console - Session Attributes', () => {
         await cancelButton.click();
 
         // * Verify the status reverted and Save returned to disabled
-        await expect(sa.row(field.id).statusText.locator).toContainText('Disabled');
+        await expect(sa.row(field.id).statusText.locator).toContainMessage(
+            Msg.admin.session_attributes.status.disabled,
+        );
         await expect(saveButton.locator).toBeDisabled();
     });
 
@@ -284,7 +302,7 @@ test.describe('System Console - Session Attributes', () => {
             await celMenu.attribute(sessionField).click();
             const row = celPolicy.rules.row(0);
             await row.fillValueTextbox('10.0.0.1');
-            await row.valueTextbox.locator.press('Enter');
+            await row.valueTextbox.press('Enter');
 
             // # Switch to Advanced (CEL) mode
             await celPolicy.clickSwitchModeButton();

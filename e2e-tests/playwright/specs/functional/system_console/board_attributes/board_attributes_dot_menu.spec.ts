@@ -6,7 +6,7 @@
 // - [*] indicates an assertion (e.g. * Check the title)
 // ***************************************************************
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     addAttribute,
@@ -65,7 +65,7 @@ test.describe('Board Attributes - row dot menu', {tag: '@board_attributes'}, () 
         const modal = await (await row.clickActionsButton()).clickDeleteMenuItem();
 
         // * The confirmation modal appears
-        await expect(modal.locator).toContainText('Delete board attribute');
+        await expect(modal.locator).toContainMessage(Msg.admin.board_attributes.delete_modal.title);
 
         // # Confirm
         await modal.clickConfirmButton();

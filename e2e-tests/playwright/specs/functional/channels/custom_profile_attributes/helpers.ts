@@ -186,7 +186,7 @@ export async function editTextAttribute(
 ): Promise<void> {
     const section = attributeSection(app, fieldsMap, attributeName);
     await section.clickEditButton();
-    await section.valueTextbox.locator.clear();
+    await section.valueTextbox.clear();
     if (newValue) {
         await section.fillValueTextbox(newValue);
     }

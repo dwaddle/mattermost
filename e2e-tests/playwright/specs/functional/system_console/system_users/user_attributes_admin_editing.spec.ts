@@ -18,7 +18,16 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, generated, getRandomId, searchSystemUsers, test, type App, duration} from '@mattermost/playwright-lib';
+import {
+    expect,
+    generated,
+    getRandomId,
+    searchSystemUsers,
+    test,
+    type App,
+    duration,
+    Msg,
+} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../channels/custom_profile_attributes/helpers';
 import {
@@ -460,7 +469,7 @@ test.describe('System Console - Admin User Profile Editing', () => {
             // * Verify inline validation error appears
             const fieldError = userDetail.attribute(field(cpaFieldNames.workEmail)).errorAlert.locator;
             await expect(fieldError).toBeVisible({timeout: duration.half_min});
-            await expect(fieldError).toContainText('Invalid email address');
+            await expect(fieldError).toContainMessage(Msg.admin.user_item.invalidEmail);
 
             // * Verify Save button is disabled due to validation error
             await expect(userDetail.saveButton.locator).toBeDisabled();
@@ -560,7 +569,7 @@ test.describe('System Console - Admin User Profile Editing', () => {
             // * Verify inline validation error appears
             const fieldError = userDetail.attribute(field(cpaFieldNames.workEmail)).errorAlert.locator;
             await expect(fieldError).toBeVisible();
-            await expect(fieldError).toContainText('Invalid email address');
+            await expect(fieldError).toContainMessage(Msg.admin.user_item.invalidEmail);
 
             // * Verify Save button is disabled due to validation error
             await expect(userDetail.saveButton.locator).toBeDisabled();
@@ -608,8 +617,8 @@ test.describe('System Console - Admin User Profile Editing', () => {
 
         // # Make changes to both system and custom attributes
         const newEmail = `atomic-test-${testUser.email}`;
-        await userDetail.emailTextbox.locator.clear();
-        await userDetail.emailTextbox.locator.fill(newEmail);
+        await userDetail.emailTextbox.clear();
+        await userDetail.emailTextbox.fill(newEmail);
 
         const departmentInput = attributeInput(cpaFieldNames.department);
         await departmentInput.clear();

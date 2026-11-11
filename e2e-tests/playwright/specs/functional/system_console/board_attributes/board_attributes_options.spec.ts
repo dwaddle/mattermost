@@ -6,7 +6,7 @@
 // - [*] indicates an assertion (e.g. * Check the title)
 // ***************************************************************
 
-import {AdminType, expect, test} from '@mattermost/playwright-lib';
+import {AdminType, expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     addAttribute,
@@ -120,7 +120,9 @@ test.describe('Board Attributes - select option values', {tag: '@board_attribute
         await optionMenu.fillNameTextbox('Beta');
 
         // * In-menu duplicate warning appears
-        await expect(optionMenu.nameErrorAlert.locator).toHaveText('A value with this name already exists.');
+        await expect(optionMenu.nameErrorAlert.locator).toHaveMessage(
+            Msg.admin.board_attributes.values.rename_duplicate,
+        );
 
         // * aria-invalid is set on the input
         await expect(optionMenu.nameTextbox.locator).toHaveAttribute('aria-invalid', 'true');

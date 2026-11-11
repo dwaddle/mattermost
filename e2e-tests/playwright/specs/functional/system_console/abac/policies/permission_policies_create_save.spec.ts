@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminPermission, AdminRole, expect, test, duration} from '@mattermost/playwright-lib';
+import {AdminPermission, AdminRole, expect, test, duration, Msg} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, deletePermissionPolicyByName} from '../support';
 import {
@@ -74,7 +74,9 @@ test.describe('Permission Policies - Create Policy', () => {
 
             const row = list.row(await permissionPolicyIdByName(adminClient, policyName));
             await expect(row.cell('policyActions').locator).toContainText('Download Files');
-            await expect(row.cell('policyActions').locator).toContainText('Upload Files');
+            await expect(row.cell('policyActions').locator).toContainMessage(
+                Msg.admin.permission_policies.permission.upload_file.label,
+            );
         } finally {
             await deletePermissionPolicyByName(adminClient, policyName);
         }
@@ -102,7 +104,7 @@ test.describe('Permission Policies - Create Policy', () => {
             // * Row shows name, Guest role, and Download Files permission
             const row = list.row(await permissionPolicyIdByName(adminClient, policyName));
             await expect(row.cell('name').locator).toHaveText(policyName);
-            await expect(row.cell('role').locator).toHaveText('Guest users');
+            await expect(row.cell('role').locator).toHaveMessage(Msg.admin.permission_policies.role.system_guest.label);
             await expect(row.cell('policyActions').locator).toContainText('Download Files');
         } finally {
             await deletePermissionPolicyByName(adminClient, policyName);
@@ -118,7 +120,7 @@ test.describe('Permission Policies - Create Policy', () => {
 
         const list = await openPermissionPolicies(app);
         await list.clickAddButton();
-        await expect(app.admin.header.locator).toContainText('Attribute-Based Permission Policy');
+        await expect(app.admin.header.locator).toContainMessage(Msg.admin.permission_policies.edit.title);
 
         // # Cancel navigates back to list without saving
         await app.admin.permissionPolicy.cancelLink.click();

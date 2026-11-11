@@ -86,7 +86,7 @@ test.describe('Channel attribute assignment', {tag: ['@channel_attributes']}, ()
             await openControl(caveats);
             await pickListOption(app, 'ORCON');
 
-            await attribute(note).valueTextbox.locator.fill('handle with care');
+            await attribute(note).valueTextbox.fill('handle with care');
 
             await modal.clickConfirmButton();
 

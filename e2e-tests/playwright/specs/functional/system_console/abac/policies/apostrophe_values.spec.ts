@@ -19,7 +19,7 @@ import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, getRandomId, test, duration} from '@mattermost/playwright-lib';
+import {expect, getRandomId, test, duration, Msg} from '@mattermost/playwright-lib';
 
 import {deleteCustomProfileAttributes} from '../../../channels/custom_profile_attributes/helpers';
 import {addRule, openMembershipPolicies, openPolicy, policyIdByName} from '../surface';
@@ -89,7 +89,9 @@ test.describe('System Console - Membership Policy apostrophe values (MM-64357)',
             const row = await addRule(policy.rules, {field: field!, value: APOSTROPHE_VALUE});
 
             // * A text attribute defaults to the "is" operator
-            await expect(row.operatorButton.locator).toContainText('is');
+            await expect(row.operatorButton.locator).toContainMessage(
+                Msg.admin.access_control.table_editor.operator.is,
+            );
             await expect(row.valueTextbox.locator).toHaveValue(APOSTROPHE_VALUE);
 
             // # Save the policy and reopen it
@@ -98,19 +100,25 @@ test.describe('System Console - Membership Policy apostrophe values (MM-64357)',
             const reopened = await openPolicy(app, policyId);
 
             // # Switch to Advanced mode so the "Switch to Simple Mode" toggle is present.
-            await expect(reopened.switchModeButton.locator).toHaveText('Switch to Advanced Mode');
+            await expect(reopened.switchModeButton.locator).toHaveMessage(
+                Msg.admin.access_control.policy.edit_policy.switch_to_advanced,
+            );
             await expect(reopened.switchModeButton.locator).toBeEnabled({timeout: duration.one_min});
             await reopened.switchModeButton.click();
 
             // * The stored apostrophe expression classifies as simple, so the
             //   toggle back to Simple mode stays enabled (before the fix it was
             //   disabled, trapping the admin in Advanced mode).
-            await expect(reopened.switchModeButton.locator).toHaveText('Switch to Simple Mode');
+            await expect(reopened.switchModeButton.locator).toHaveMessage(
+                Msg.admin.access_control.policy.edit_policy.switch_to_simple,
+            );
             await expect(reopened.switchModeButton.locator).toBeEnabled();
 
             // # Return to Simple mode and confirm the value round-tripped intact
             await reopened.switchModeButton.click();
-            await expect(reopened.rules.row(0).operatorButton.locator).toContainText('is');
+            await expect(reopened.rules.row(0).operatorButton.locator).toContainMessage(
+                Msg.admin.access_control.table_editor.operator.is,
+            );
             await expect(reopened.rules.row(0).valueTextbox.locator).toHaveValue(APOSTROPHE_VALUE);
         } finally {
             // Clean up the policy. If we didn't capture the ID from the DOM (e.g. because

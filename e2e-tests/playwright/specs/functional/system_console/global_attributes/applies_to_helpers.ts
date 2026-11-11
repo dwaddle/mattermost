@@ -54,7 +54,7 @@ export async function configureChannelAttribute(
     }
     for (const option of options) {
         await form.values.fillAddTextbox(option);
-        await form.values.addTextbox.locator.press('Enter');
+        await form.values.addTextbox.press('Enter');
     }
 
     const settings = await addChannelResource(form);

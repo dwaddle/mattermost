@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, duration} from '@mattermost/playwright-lib';
+import {expect, test, duration, Msg} from '@mattermost/playwright-lib';
 
 import {enableUserManagedAttributes} from '../support';
 import {openMembershipPolicies, setAbacEnabled, setCelExpression} from '../surface';
@@ -341,8 +341,12 @@ test.describe('Attribute-Value Masking - Visibility and Text Fields', {tag: ['@a
             await expect(row.value.chipItems).toHaveCount(0);
 
             // * The operator on the masked row reads "has any of", not "has all of"
-            await expect(row.operatorButton.locator).toContainText('has any of');
-            await expect(row.operatorButton.locator).not.toContainText('has all of');
+            await expect(row.operatorButton.locator).toContainMessage(
+                Msg.admin.access_control.table_editor.operator.has_any_of,
+            );
+            await expect(row.operatorButton.locator).not.toContainMessage(
+                Msg.admin.access_control.table_editor.operator.has_all_of,
+            );
         } finally {
             for (const id of policyIds) {
                 try {

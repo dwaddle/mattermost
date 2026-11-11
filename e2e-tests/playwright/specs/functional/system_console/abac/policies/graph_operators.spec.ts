@@ -28,7 +28,7 @@
 import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {AdminOperator, expect, getRandomId, test, type App} from '@mattermost/playwright-lib';
+import {AdminOperator, expect, getRandomId, test, type App, Msg} from '@mattermost/playwright-lib';
 
 import {
     createLinkedGraphHierarchy,
@@ -298,9 +298,13 @@ test.describe('System Console - Membership Policy graph operators', () => {
             //   entirely within", whose description ends "(Within All)"
             await row.operatorButton.click();
             const withinAll = row.operatorMenu.operator(AdminOperator.WithinAll);
-            await expect(withinAll.locator).toContainText('is entirely within');
+            await expect(withinAll.locator).toContainMessage(
+                Msg.admin.access_control.table_editor.operator.within_all._,
+            );
             await withinAll.clickMenuItemRadio();
-            await expect(row.operatorButton.locator).toHaveText('is entirely within');
+            await expect(row.operatorButton.locator).toHaveMessage(
+                Msg.admin.access_control.table_editor.operator.within_all._,
+            );
 
             await row.valueButton.click();
             await row.valueMenu.fillSearchTextbox('F-18');
@@ -323,7 +327,9 @@ test.describe('System Console - Membership Policy graph operators', () => {
             // * Reopened on the same operator: the stored identifiers are
             //   independent of the labels, so the saved policy resolves back to
             //   this row
-            await expect(reopened.operatorButton.locator).toHaveText('is entirely within');
+            await expect(reopened.operatorButton.locator).toHaveMessage(
+                Msg.admin.access_control.table_editor.operator.within_all._,
+            );
             await expect(reopened.valueButton.locator).toContainText(f18Program);
         } finally {
             if (policyId) {

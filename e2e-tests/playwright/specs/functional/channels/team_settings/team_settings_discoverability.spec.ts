@@ -6,7 +6,7 @@
  * @reference MM-69100
  */
 
-import {expect, newTestPassword, test} from '@mattermost/playwright-lib';
+import {expect, newTestPassword, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -86,7 +86,9 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
 
         // * Public and Private cards are visible
         const {discoverability} = teamSettings.access;
-        await expect(discoverability.publicButton.locator).toContainText('Public Team');
+        await expect(discoverability.publicButton.locator).toContainMessage(
+            Msg.team_settings.discoverability.public_title,
+        );
         await expect(discoverability.privateButton.locator).toContainText('Private Team');
 
         // * Old open-invite checkboxes are gone
@@ -123,10 +125,10 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         await expect(teamSettings.access.discoverability.privateButton.locator).toHaveClass(/selected/);
 
         // # Click Public Team card
-        await teamSettings.access.discoverability.publicButton.locator.click();
+        await teamSettings.access.discoverability.publicButton.click();
         await expect(teamSettings.savePanel.saveButton.locator).toBeVisible();
         await save(teamSettings);
-        await expect(teamSettings.savePanel.messageText.locator).toHaveText('Settings saved');
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Only allow_open_invite changed; type stays "O" (no normalization without a policy)
         const updatedTeam = await adminClient.getTeam(team.id);
@@ -156,11 +158,11 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         await expect(teamSettings.access.discoverability.publicButton.locator).toHaveClass(/selected/);
 
         // # Click Private Team card (no policy → no mode-flip modal)
-        await teamSettings.access.discoverability.privateButton.locator.click();
+        await teamSettings.access.discoverability.privateButton.click();
         await expect(teamSettings.savePanel.saveButton.locator).toBeVisible();
         await expect(teamSettings.access.modeFlipModal.locator).not.toBeVisible();
         await save(teamSettings);
-        await expect(teamSettings.savePanel.messageText.locator).toHaveText('Settings saved');
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Only allow_open_invite changed; type stays "O" — the legacy contract must not
         // flip a non-policy team to invite-only (would regress getInviteInfo, etc.)
@@ -194,9 +196,9 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         await expect(teamSettings.access.discoverability.privateButton.locator).not.toHaveClass(/disabled/);
 
         // # Clicking Private opens the mode-flip confirmation (card is not blocked)
-        await teamSettings.access.discoverability.privateButton.locator.click();
+        await teamSettings.access.discoverability.privateButton.click();
         const modeFlipModal = teamSettings.access.modeFlipModal;
-        await expect(modeFlipModal.locator).toContainText('Switch to Private Team?');
+        await expect(modeFlipModal.locator).toContainMessage(Msg.team_settings.mode_flip_confirm.title);
         await expect(modeFlipModal.locator).toBeVisible();
 
         // # Back out of the flip, leaving the team public
@@ -220,18 +222,18 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         await expect(teamSettings.access.discoverability.publicButton.locator).toHaveClass(/selected/);
 
         // # Click Private Team card → mode-flip modal should appear (policy is enforced)
-        await teamSettings.access.discoverability.privateButton.locator.click();
+        await teamSettings.access.discoverability.privateButton.click();
 
         // * Mode-flip confirm modal appears
         const modeFlipModal = teamSettings.access.modeFlipModal;
-        await expect(modeFlipModal.locator).toContainText('Switch to Private Team?');
+        await expect(modeFlipModal.locator).toContainMessage(Msg.team_settings.mode_flip_confirm.title);
         await expect(modeFlipModal.locator).toBeVisible();
 
         // * Modal shows the member count (1 marketing user does not meet the Engineering rule)
         await expect(modeFlipModal.locator).toContainText(/1 current member does not meet/i);
 
         // * Switch to Private and Cancel buttons are present
-        await expect(modeFlipModal.confirmButton.locator).toHaveText('Switch to Private');
+        await expect(modeFlipModal.confirmButton.locator).toHaveMessage(Msg.team_settings.mode_flip_confirm.confirm);
         await expect(modeFlipModal.cancelButton.locator).toBeVisible();
 
         // # Cancel → modal closes, team stays public
@@ -256,10 +258,10 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         const teamSettings = await openAccessTab(app);
 
         // # Click Private card → mode-flip modal
-        await teamSettings.access.discoverability.privateButton.locator.click();
+        await teamSettings.access.discoverability.privateButton.click();
 
         const modeFlipModal = teamSettings.access.modeFlipModal;
-        await expect(modeFlipModal.locator).toContainText('Switch to Private Team?');
+        await expect(modeFlipModal.locator).toContainMessage(Msg.team_settings.mode_flip_confirm.title);
         await expect(modeFlipModal.locator).toBeVisible();
 
         // # Click "Switch to Private" — confirming saves immediately (no second click)
@@ -267,7 +269,7 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         await expect(modeFlipModal.locator).not.toBeVisible();
 
         // * The save auto-completes and the panel reports success
-        await expect(teamSettings.savePanel.messageText.locator).toHaveText('Settings saved');
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Team is now private. Privacy is driven by allow_open_invite alone; the
         // feature never mutates team.type, so it stays 'O' from createPublicTeam.
@@ -305,7 +307,7 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         const teamSettings = await openAccessTab(app);
 
         // # Click Public Team card
-        await teamSettings.access.discoverability.publicButton.locator.click();
+        await teamSettings.access.discoverability.publicButton.click();
 
         // * SaveChangesPanel appears immediately — no mode-flip modal
         await expect(teamSettings.savePanel.saveButton.locator).toBeVisible();
@@ -313,7 +315,7 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
 
         // # Save
         await save(teamSettings);
-        await expect(teamSettings.savePanel.messageText.locator).toHaveText('Settings saved');
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Team is now public. The feature never mutates team.type, so it stays
         // 'I' from createPrivateTeam; discoverability is driven by allow_open_invite.
@@ -349,9 +351,9 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
 
         // # Switch the team public and save
         let teamSettings = await openAccessTab(app);
-        await teamSettings.access.discoverability.publicButton.locator.click();
+        await teamSettings.access.discoverability.publicButton.click();
         await save(teamSettings);
-        await expect(teamSettings.savePanel.messageText.locator).toHaveText('Settings saved');
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(Msg.saveChangesPanel.saved);
         await closeTeamSettings(teamSettings);
 
         // # Reopen Team Settings
@@ -362,15 +364,15 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         await expect(teamSettings.access.discoverability.privateButton.locator).not.toHaveClass(/disabled/);
 
         // # Switch back to private via the mode-flip modal
-        await teamSettings.access.discoverability.privateButton.locator.click();
+        await teamSettings.access.discoverability.privateButton.click();
         const modeFlipModal = teamSettings.access.modeFlipModal;
-        await expect(modeFlipModal.locator).toContainText('Switch to Private Team?');
+        await expect(modeFlipModal.locator).toContainMessage(Msg.team_settings.mode_flip_confirm.title);
         await expect(modeFlipModal.locator).toBeVisible();
         await modeFlipModal.clickConfirmButton();
         await expect(modeFlipModal.locator).not.toBeVisible();
 
         // Confirming saves immediately — the panel reports success on its own
-        await expect(teamSettings.savePanel.messageText.locator).toHaveText('Settings saved');
+        await expect(teamSettings.savePanel.messageText.locator).toHaveMessage(Msg.saveChangesPanel.saved);
 
         // * Team is private again
         const updatedTeam = await adminClient.getTeam(team.id);
@@ -417,9 +419,9 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         const teamSettings = await openAccessTab(app);
 
         // # Click Private → mode-flip modal
-        await teamSettings.access.discoverability.privateButton.locator.click();
+        await teamSettings.access.discoverability.privateButton.click();
         const modeFlipModal = teamSettings.access.modeFlipModal;
-        await expect(modeFlipModal.locator).toContainText('Switch to Private Team?');
+        await expect(modeFlipModal.locator).toContainMessage(Msg.team_settings.mode_flip_confirm.title);
         await expect(modeFlipModal.locator).toBeVisible();
 
         // * Modal shows the resolved count, not the generic message
@@ -453,11 +455,11 @@ test.describe('Team Settings Modal - Access Tab - Discoverability', {tag: ['@aba
         const teamSettings = await openAccessTab(app);
 
         // # Click Private Team card
-        await teamSettings.access.discoverability.privateButton.locator.click();
+        await teamSettings.access.discoverability.privateButton.click();
 
         // * Self-exclusion block appears; the mode-flip confirmation does not
         const selfExclusion = teamSettings.access.selfExclusionModal;
-        await expect(selfExclusion.locator).toContainText('Cannot switch to Private Team');
+        await expect(selfExclusion.locator).toContainMessage(Msg.team_settings.mode_flip_self_exclusion.title);
         await expect(teamSettings.access.modeFlipModal.locator).not.toBeVisible();
 
         await expect(selfExclusion.confirmButton.locator).toHaveText('Back to editing');

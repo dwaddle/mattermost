@@ -12,6 +12,7 @@ import {
     test,
     TestBrowser,
     duration,
+    Msg,
 } from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../../channels/custom_profile_attributes/helpers';
@@ -177,7 +178,7 @@ test.describe('ABAC file permissions - attribute-based policy', () => {
             // * Verify the file is replaced by the redacted placeholder
             const post = await postNamed(app, sharedAdminClient, channelId, FIXTURE_MESSAGE);
             await expectFilesRedacted(post);
-            await expect(post.redactedFiles.locator).toContainText('Files not available');
+            await expect(post.redactedFiles.locator).toContainMessage(Msg.post.redacted_files.title);
         },
     );
 
