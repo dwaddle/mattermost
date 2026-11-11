@@ -8,11 +8,11 @@ import {expect, test} from '@mattermost/playwright-lib';
  * server stores each change.
  */
 test('changes a member to Team Admin and back from the Members modal', {tag: '@team_settings'}, async ({pw}) => {
-    const {adminUser, adminClient, user, team} = await pw.initSetup();
+    const {adminUser, adminClient, user, team, townSquare} = await pw.initSetup();
 
     // # Log in as admin and open the team's Members modal from the team menu
     const {app} = await pw.testBrowser.login(adminUser);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
     const teamMenu = await app.lhs.header.clickOpenTeamMenuButton();
     const modal = await teamMenu.clickMembersMenuItem();
     await expect(modal.locator).toBeVisible();

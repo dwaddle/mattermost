@@ -5,7 +5,15 @@ import type {Locator} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    expect,
+    Msg,
+    test,
+    type App,
+    type PlaywrightExtended,
+    duration,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 /**
  * E2E coverage for the Personal Access Token (PAT) expiry UI added in MM-68421.
@@ -53,7 +61,7 @@ async function setTokenPolicy(adminClient: Client4, maximumLifetimeDays: number)
 async function openTokensSection(pw: PlaywrightExtended, user: UserProfile) {
     const {app} = await pw.testBrowser.login(user);
     const team = (await (await pw.makeClient(user)).client.getMyTeams())[0];
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     const modal = await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
     await modal.tabs.tab('security').select();
     await app.settings.section('tokens').clickEditButton();
@@ -75,7 +83,7 @@ async function startCreating(app: App) {
 
 test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     test('shows the expiry picker with all presets and reveals the custom date input', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 0);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);
@@ -94,7 +102,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     });
 
     test('blocks submitting a custom expiry with no date chosen', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 0);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);
@@ -114,7 +122,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     });
 
     test('enforces expiry when a maximum lifetime is configured', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 30);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);
@@ -137,7 +145,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     });
 
     test('creates a token with the default preset under a maximum lifetime', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 30);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);
@@ -155,7 +163,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     });
 
     test('shows status and expiry for existing tokens', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 0);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);
@@ -188,7 +196,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     });
 
     test('regenerates a token and reveals the new secret', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 0);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);
@@ -218,7 +226,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     });
 
     test('lets the user pick a new expiry when regenerating', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 0);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);
@@ -242,7 +250,7 @@ test.describe('Personal Access Tokens expiry @personal_access_tokens', () => {
     });
 
     test('does not offer to regenerate a disabled token', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
         const {user, adminClient} = await pw.initSetup();
         await setTokenPolicy(adminClient, 0);
         await adminClient.updateUserRoles(user.id, TOKEN_ROLES);

@@ -3,7 +3,16 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {type App, expect, formatMessage, Msg, openTeamSettings, test} from '@mattermost/playwright-lib';
+import {
+    type App,
+    expect,
+    formatMessage,
+    Msg,
+    openTeamSettings,
+    test,
+    duration,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 /**
  * Types the email in the invite dialog's people input, takes its suggestion and sends the invite. The suggestion is
@@ -17,7 +26,7 @@ async function inviteByEmail(app: App, email: string, user?: Pick<UserProfile, '
 
     // the menu offers the suggestion once its search finishes; Enter takes it
     const suggestion = user ? invite.users.user(user) : invite.users.emailOption;
-    await expect(suggestion.locator).toBeVisible({timeout: 15000});
+    await expect(suggestion.locator).toBeVisible({timeout: duration.half_min});
     await input.press('Enter');
     await expect(input).toHaveValue('');
     await expect(invite.sendButton.locator).toBeEnabled();
@@ -42,7 +51,7 @@ test('MM-T388 Invite new user to closed team with email domain restriction', {ta
     // # Create a new user NOT on the team (default email is @sample.mattermost.com)
     const newUser = await adminClient.createUser(await pw.random.user(), '', '');
 
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     const {app} = await pw.testBrowser.login(adminUser);
 
     // # Navigate to team

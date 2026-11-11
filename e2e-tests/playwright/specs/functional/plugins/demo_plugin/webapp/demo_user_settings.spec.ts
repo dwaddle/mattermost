@@ -5,12 +5,12 @@ import {expect, test} from '@mattermost/playwright-lib';
 
 test('should show demo plugin settings sections and save changes with alert confirmation', async ({pw}) => {
     // # Setup
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
 
     // # Login and navigate to Town Square
     const {channelsPage, app, page} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open Settings via the library method
     const settingsModal = await channelsPage.openSettings();

@@ -8,9 +8,9 @@ import {expect, test} from '@mattermost/playwright-lib';
  * close the modal, while a genuine click outside the modal does close it.
  */
 test('MM-T841 keeps a modal open when a drag is released outside it', {tag: '@channel_settings'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, team, offTopic} = await pw.initSetup();
     const {app, page} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'off-topic'});
+    await app.channelsPage.goto({team, channel: offTopic});
 
     // # Open the Channel Settings modal
     const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
@@ -44,9 +44,9 @@ test(
     'MM-T861 cancelling the create channel modal does not join a channel',
     {tag: '@channel_settings'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
+        const {user, team, userClient, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         const myChannelNames = async () => (await userClient.getMyChannels(team.id)).map((c) => c.display_name);
 
         // # Create a new public channel via the modal

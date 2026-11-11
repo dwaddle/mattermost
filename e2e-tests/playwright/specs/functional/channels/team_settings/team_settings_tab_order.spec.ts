@@ -6,7 +6,7 @@
  * @reference MM-69100
  */
 
-import {ChannelsPage, expect, test} from '@mattermost/playwright-lib';
+import {ChannelsPage, expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {enableTeamMembershipABACConfig} from './helpers';
 
@@ -18,7 +18,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const teamSettings = await channelsPage.openTeamSettings();
@@ -50,7 +50,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const teamSettings = await channelsPage.openTeamSettings();
@@ -78,7 +78,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const teamSettings = await channelsPage.openTeamSettings();
@@ -87,7 +87,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
         await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:access_policies--tab').click();
 
         // * Channel Membership tab content is functional (shows empty state or policy list)
-        await expect(teamSettings.container.getByText('No policies found')).toBeVisible({timeout: 10000});
+        await expect(teamSettings.container.getByText('No policies found')).toBeVisible();
 
         await teamSettings.close();
     });
@@ -99,7 +99,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const teamSettings = await channelsPage.openTeamSettings();
@@ -110,7 +110,7 @@ test.describe('Team Settings Modal - Tab Order', {tag: ['@abac', '@team_membersh
 
         // # Navigate to Channel Membership tab
         await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:access_policies--tab').click();
-        await expect(teamSettings.container.getByText('No policies found')).toBeVisible({timeout: 10000});
+        await expect(teamSettings.container.getByText('No policies found')).toBeVisible();
         await expect(teamSettings.container.locator('.TeamMembershipTab')).not.toBeVisible();
 
         // # Navigate back to Team Membership tab

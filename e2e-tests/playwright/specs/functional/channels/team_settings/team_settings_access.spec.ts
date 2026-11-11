@@ -10,8 +10,7 @@ test.describe('Team Settings Modal - Access Tab', () => {
      */
     test('MM-67920 Access tab - add and remove allowed domain', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -63,8 +62,7 @@ test.describe('Team Settings Modal - Access Tab', () => {
      */
     test('MM-67920 Access tab - regenerate invite ID', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
 
         // Get original invite ID

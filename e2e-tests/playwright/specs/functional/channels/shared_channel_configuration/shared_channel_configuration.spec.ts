@@ -11,6 +11,7 @@ import {
     openChannel,
     openChannelSettings,
     test,
+    duration,
 } from '@mattermost/playwright-lib';
 
 /**
@@ -127,7 +128,7 @@ test.describe('Shared channel configuration', () => {
                     });
                     return configurationTab.workspaces.locator.isVisible();
                 },
-                {timeout: 60000, intervals: [500, 1500, 3000]},
+                {timeout: duration.one_min, intervals: [500, 1500, 3000]},
             )
             .toBe(true);
         await expect(configurationTab.shareWithWorkspacesSwitch.locator).toBeVisible();
@@ -206,7 +207,7 @@ test.describe('Shared channel configuration', () => {
                     });
                     return configurationTab.workspaces.locator.isVisible();
                 },
-                {timeout: 60000, intervals: [2000, 4000]},
+                {timeout: duration.one_min, intervals: [2000, 4000]},
             )
             .toBe(true);
 
@@ -407,7 +408,7 @@ test.describe('Shared channel configuration', () => {
                     });
                     return configurationTab.workspaces.locator.isVisible();
                 },
-                {timeout: 60000, intervals: [2000, 4000]},
+                {timeout: duration.one_min, intervals: [2000, 4000]},
             )
             .toBe(true);
         await closeChannelSettings(channelSettingsModal);
@@ -425,7 +426,7 @@ test.describe('Shared channel configuration', () => {
         configurationTab = channelSettingsModal.configuration;
         await expect
             .poll(async () => !(await configurationTab.workspaces.locator.isVisible()), {
-                timeout: 45000,
+                timeout: duration.one_min,
                 intervals: [1000, 2000, 3000],
             })
             .toBe(true);

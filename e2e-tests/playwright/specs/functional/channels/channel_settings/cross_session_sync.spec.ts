@@ -3,7 +3,7 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, test, type App, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 /** Creates a public channel from the sidebar's "+" menu and returns its name (the URL slug the app picked). */
 async function createPublicChannel(app: App, displayName: string) {
@@ -17,7 +17,7 @@ async function createPublicChannel(app: App, displayName: string) {
 /** Logs the user in to a new browser session on Town Square. */
 async function openSession(pw: PlaywrightExtended, user: UserProfile, team: {name: string}) {
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     return app;
 }
 
@@ -42,7 +42,7 @@ test('MM-T837 syncs public channel create and archive across sessions', {tag: '@
     // # Archive the channel in the first session, then navigate away from the archived channel
     const archive = await (await first.channelHeader.clickOpenMenuButton()).clickArchiveChannelMenuItem();
     await archive.clickConfirmButton();
-    await first.lhs.channelList.channel({name: 'town-square'}).clickLink();
+    await first.lhs.channelList.channel({name: DefaultChannel.TownSquare}).clickLink();
 
     // * Verify the channel is removed from the sidebar of both sessions
     await expect(first.lhs.channelList.channel({name}).link.locator).not.toBeVisible();
@@ -70,7 +70,7 @@ test(
         await expect(second.lhs.channelList.channel({name}).link.locator).toBeVisible();
 
         // # Move the second session to a different channel
-        await second.lhs.channelList.channel({name: 'off-topic'}).clickLink();
+        await second.lhs.channelList.channel({name: DefaultChannel.OffTopic}).clickLink();
         await expect(second.page).toHaveURL(/\/channels\/off-topic$/);
 
         // # Leave the channel from the first session while still viewing it

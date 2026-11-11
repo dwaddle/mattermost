@@ -1,12 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 test.describe('Bot account personal access token expiry @bot_accounts @personal_access_tokens', () => {
     test('creates and regenerates a user-owned bot token under an enforced maximum lifetime', async ({pw}) => {
-        test.setTimeout(120000);
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        test.setTimeout(duration.two_min);
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
 
         await adminClient.patchConfig({
             ServiceSettings: {
@@ -25,7 +25,7 @@ test.describe('Bot account personal access token expiry @bot_accounts @personal_
         });
 
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Create a user-owned bot account. Add Bot always creates a default token.
         const username = `patbot${Date.now().toString(36).slice(-8)}`;

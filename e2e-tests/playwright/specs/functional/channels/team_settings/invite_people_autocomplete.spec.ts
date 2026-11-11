@@ -10,12 +10,13 @@ import {
     test,
     typeHangulCharacterWithIme,
     type PlaywrightExtended,
+    DefaultChannel,
 } from '@mattermost/playwright-lib';
 
 /** Logs in as the admin and opens the Invite People dialog from the team menu. */
 async function openInvitePeopleModal(pw: PlaywrightExtended, adminUser: UserProfile, team: {name: string}) {
     const {app} = await pw.testBrowser.login(adminUser);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     const modal = await (await app.lhs.header.clickOpenTeamMenuButton()).clickInvitePeopleMenuItem();
     await expect(modal.invite.users.inputCombobox.locator).toBeVisible();
     return {app, invite: modal.invite};

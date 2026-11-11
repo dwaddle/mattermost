@@ -1,7 +1,14 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, getRandomId, openChannelSettings, type PlaywrightExtended, test} from '@mattermost/playwright-lib';
+import {
+    expect,
+    getRandomId,
+    openChannelSettings,
+    type PlaywrightExtended,
+    test,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 /**
  * Creates a uniquely-named team and user per test and adds the user to the team.
@@ -45,7 +52,7 @@ test.describe('Managed Channel Categories (flag off)', () => {
 
             // # Log in and open channel settings
             const {app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
             const settings = await openChannelSettings(app, 'info');
 
             // * Verify managed category selector is not rendered, on an Info tab that has loaded

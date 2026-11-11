@@ -11,9 +11,7 @@ test(
     'MM-T1259 moves to the previous and next channel with the keyboard',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {user, team, offTopic, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: offTopic});
         const title = app.channelHeader.openMenuButton.locator;
@@ -42,8 +40,7 @@ test(
     'MM-T1276 opens the Direct Messages modal with the keyboard shortcut',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {user, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -73,8 +70,7 @@ test(
     'MM-T1435 MM-T4872 prefills the search box with the channel filter using the keyboard shortcut',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+        const {user, team, offTopic} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: offTopic});
 

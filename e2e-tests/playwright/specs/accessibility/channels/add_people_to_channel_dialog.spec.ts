@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, duration} from '@mattermost/playwright-lib';
 
 import {highlightedUser} from './multiselect_support';
 
@@ -53,7 +53,7 @@ test(
         // # Visit the test channel
         await channelsPage.goto(team.name, channel.name);
         // (the first load of a new team's channel can be slow on this server)
-        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: 60000});
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
         // # Open channel menu and click Members, then click the Add people button
         // * Verify the Add people dialog is visible
@@ -138,7 +138,7 @@ test(
         // # Visit the test channel
         await channelsPage.goto(team.name, channel.name);
         // (the first load of a new team's channel can be slow on this server)
-        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: 60000});
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
         // # Open channel menu and click Members, then click the Add people button
         // * Verify the Add people dialog is visible

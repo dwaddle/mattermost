@@ -16,8 +16,7 @@ test.describe('Team Settings Modal - Info Tab', () => {
      */
     test('MM-67920 Open and close Team Settings Modal', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -40,8 +39,7 @@ test.describe('Team Settings Modal - Info Tab', () => {
      */
     test('MM-67920 Edit team name and save changes', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -76,8 +74,7 @@ test.describe('Team Settings Modal - Info Tab', () => {
      */
     test('MM-67920 Edit team description and save changes', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -110,8 +107,7 @@ test.describe('Team Settings Modal - Info Tab', () => {
      */
     test('MM-67920 Upload and Remove team icon', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 

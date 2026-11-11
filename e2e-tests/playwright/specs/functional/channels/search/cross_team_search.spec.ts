@@ -17,11 +17,10 @@ async function openSearch(app: App) {
  */
 test('MM-T5806 cross-team search works under the Onyx (dark) theme', {tag: '@search'}, async ({pw}) => {
     // # Create a user with two teams and post a message to search for
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare: channel} = await pw.initSetup();
     const secondTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
     await adminClient.addUsersToTeam(secondTeam.id, [user.id]);
     const message = 'this is a test post containing the word pineapple';
-    const channel = await adminClient.getChannelByName(team.id, 'town-square');
     const post = await adminClient.createPost({channel_id: channel.id, message});
 
     // # Log in and switch to the Onyx (dark) theme
@@ -52,15 +51,13 @@ test('MM-T5806 cross-team search works under the Onyx (dark) theme', {tag: '@sea
 test('MM-T5805 team filter shows no results for a non-matching query', {tag: '@search'}, async ({pw}) => {
     // # Create a user and enough teams (5 total) for the team-filter input to render
     // (see team_selector.spec.ts: the filter only shows with more than 4 teams)
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const extraTeams: Record<string, Team> = {};
     for (const fruit of ['Apple', 'Banana', 'Peach', 'Grape']) {
         const newTeam = await adminClient.createTeam(await pw.random.team(fruit.toLowerCase(), fruit, 'O', true));
         await adminClient.addUsersToTeam(newTeam.id, [user.id]);
         extraTeams[fruit] = newTeam;
     }
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Log in, open search, and open the team selector
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -99,7 +96,7 @@ test(
     async ({pw}) => {
         // # Create a user and 4 more teams (5 total) so the "Your teams" section renders
         // (see team_selector.spec.ts: the filter/section only shows with more than 4 teams)
-        const {adminClient, team, user} = await pw.initSetup();
+        const {adminClient, team, user, townSquare} = await pw.initSetup();
         const teams = [team];
         for (let i = 0; i < 4; i++) {
             const newTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
@@ -107,8 +104,6 @@ test(
             teams.push(newTeam);
         }
         const secondTeam = teams[1];
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
         const input = await openSearch(app);
@@ -152,11 +147,9 @@ test.fixme(
     {tag: '@search'},
     async ({pw}) => {
         // # Create a user with a second team so "All Teams" is a real, distinct selector choice
-        const {adminClient, team, user} = await pw.initSetup();
+        const {adminClient, team, user, townSquare: channel} = await pw.initSetup();
         const secondTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
         await adminClient.addUsersToTeam(secondTeam.id, [user.id]);
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
-
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel});
         const searchInput = await openSearch(app);

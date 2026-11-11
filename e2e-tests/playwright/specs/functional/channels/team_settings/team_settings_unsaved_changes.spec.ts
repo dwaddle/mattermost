@@ -15,8 +15,7 @@ test.describe('Team Settings Modal - Unsaved Changes', () => {
      */
     test('MM-67920 Warn on close with unsaved changes', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -45,8 +44,7 @@ test.describe('Team Settings Modal - Unsaved Changes', () => {
      */
     test('MM-67920 Prevent tab switch with unsaved changes', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -82,8 +80,7 @@ test.describe('Team Settings Modal - Unsaved Changes', () => {
      */
     test('MM-67920 Save changes and close modal without warning', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 
@@ -115,8 +112,7 @@ test.describe('Team Settings Modal - Unsaved Changes', () => {
      */
     test('MM-67920 Undo changes resets form state', async ({pw}) => {
         // # Set up admin user and login
-        const {adminUser, adminClient, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
         await app.channelsPage.goto({team, channel: townSquare});
 

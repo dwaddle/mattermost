@@ -8,7 +8,7 @@
 
 import type {Page} from '@playwright/test';
 
-import {ChannelsPage, expect, newTestPassword, test} from '@mattermost/playwright-lib';
+import {ChannelsPage, expect, newTestPassword, test, duration, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -28,7 +28,7 @@ async function openTeamMembershipTab(page: Page, channelsPage: ChannelsPage) {
     const teamSettings = await channelsPage.openTeamSettings();
     await teamSettings.container.getByTestId('team_settings_modal.tabs.tab:team_membership--tab').click();
     const tab = teamSettings.container.locator('.TeamMembershipTab');
-    await expect(tab).toBeVisible({timeout: 10000});
+    await expect(tab).toBeVisible();
     return {teamSettings, tab};
 }
 
@@ -59,7 +59,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const teamSettings = await channelsPage.openTeamSettings();
@@ -90,7 +90,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(teamAdmin);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const teamSettings = await channelsPage.openTeamSettings();
@@ -114,7 +114,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -148,7 +148,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -179,7 +179,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(teamAdmin);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -187,7 +187,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         // * Banner is visible to the team admin, not just the system admin (MM-70056),
         // and names the resolved parent policy.
         const banner = tab.locator('.TeamMembershipTab__systemPolicies');
-        await expect(banner).toBeVisible({timeout: 10000});
+        await expect(banner).toBeVisible();
         await expect(banner.getByText(policyName)).toBeVisible();
 
         await teamSettings.close();
@@ -201,7 +201,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -213,7 +213,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await addAttributeRule(tab, page, 'Engineering');
 
         // * Auto-add checkbox becomes enabled
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeEnabled({timeout: 5000});
+        await expect(tab.locator('#autoAddMembersCheckbox')).toBeEnabled();
 
         await teamSettings.close();
     });
@@ -231,14 +231,14 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
 
         // # Add attribute rule (auto-add stays OFF)
         await addAttributeRule(tab, page, 'Engineering');
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeEnabled({timeout: 5000});
+        await expect(tab.locator('#autoAddMembersCheckbox')).toBeEnabled();
 
         // # Snapshot jobs for THIS team before saving. Filter by policy_id so
         // parallel workers and pre-existing jobs from other teams don't skew the count.
@@ -255,15 +255,15 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
 
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: 15000});
+        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
 
         // * Allowed count is at least 1 (adminUser matches Engineering)
-        await expect(confirmModal.getByText(/user.*match.*current rules/i)).toBeVisible({timeout: 10000});
+        await expect(confirmModal.getByText(/user.*match.*current rules/i)).toBeVisible();
 
         // # Confirm save
         await confirmModal.getByRole('button', {name: 'Save'}).click();
-        await expect(confirmModal).not.toBeVisible({timeout: 10000});
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible({timeout: 10000});
+        await expect(confirmModal).not.toBeVisible();
+        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible();
 
         // * Policy is persisted via API
         const policyResult: any = await (adminClient as any).doFetch(
@@ -278,7 +278,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         // on advisory teams the worker no-ops, but the job is still enqueued.
         await expect
             .poll(async () => (await fetchTeamJobs()).length, {
-                timeout: 15000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000, 3000],
                 message: 'saving custom rules should enqueue a team sync job even with auto-add off',
             })
@@ -298,14 +298,14 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
 
         // # Add attribute rule
         await addAttributeRule(tab, page, 'Engineering');
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeEnabled({timeout: 5000});
+        await expect(tab.locator('#autoAddMembersCheckbox')).toBeEnabled();
 
         // # Enable auto-add
         await tab.locator('#autoAddMembersCheckbox').click();
@@ -325,12 +325,12 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
 
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: 15000});
+        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
 
         // # Confirm
         await confirmModal.getByRole('button', {name: 'Save'}).click();
-        await expect(confirmModal).not.toBeVisible({timeout: 10000});
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible({timeout: 10000});
+        await expect(confirmModal).not.toBeVisible();
+        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible();
 
         // * A sync job was created — poll until a newer job appears at the top of the list
         await expect
@@ -342,7 +342,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
                     );
                     return jobs[0]?.id !== latestJobIdBefore;
                 },
-                {timeout: 15000, intervals: [500, 1000, 2000, 3000]},
+                {timeout: duration.half_min, intervals: [500, 1000, 2000, 3000]},
             )
             .toBe(true);
 
@@ -364,13 +364,13 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
 
         // * Auto-add checkbox starts checked (the rule's auto_add was loaded)
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeChecked({timeout: 5000});
+        await expect(tab.locator('#autoAddMembersCheckbox')).toBeChecked();
 
         // # Uncheck auto-add
         await tab.locator('#autoAddMembersCheckbox').click();
@@ -387,11 +387,11 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
 
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: 15000});
+        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
 
         await confirmModal.getByRole('button', {name: 'Save'}).click();
-        await expect(confirmModal).not.toBeVisible({timeout: 10000});
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible({timeout: 10000});
+        await expect(confirmModal).not.toBeVisible();
+        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible();
 
         // * No sync job was created (auto-add was turned OFF, not ON)
         const jobsAfter: any[] = await (adminClient as any).doFetch(
@@ -417,7 +417,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -429,7 +429,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
 
         // * Self-exclusion modal appears, not the save confirmation modal
-        await expect(page.getByText('Cannot save access rules')).toBeVisible({timeout: 15000});
+        await expect(page.getByText('Cannot save access rules')).toBeVisible({timeout: duration.half_min});
         await expect(page.getByText(/you cannot set these rules/i)).toBeVisible();
 
         // * Save confirmation modal did NOT appear
@@ -440,7 +440,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         // # Click Back to editing — self-exclusion modal closes
         await page.getByRole('button', {name: 'Back to editing'}).click();
-        await expect(page.getByText('Cannot save access rules')).not.toBeVisible({timeout: 5000});
+        await expect(page.getByText('Cannot save access rules')).not.toBeVisible();
 
         // * Policy was NOT changed
         try {
@@ -473,7 +473,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -483,7 +483,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         // * No self-exclusion block — the save proceeds to the normal confirmation
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: 15000});
+        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
         await expect(page.getByText('Cannot save access rules')).not.toBeVisible();
 
         // * Confirmation uses advisory copy (no block/removal claims) on a public team
@@ -528,7 +528,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -540,12 +540,12 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
 
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: 15000});
+        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
 
         // * 2 users match (adminUser + user1). 2 members do not match: marketingUser plus
         //   the regular user that initSetup creates and adds to the team (no Department set).
-        await expect(confirmModal.getByText(/2 users match/i)).toBeVisible({timeout: 10000});
-        await expect(confirmModal.getByText(/2 current members do not match/i)).toBeVisible({timeout: 10000});
+        await expect(confirmModal.getByText(/2 users match/i)).toBeVisible();
+        await expect(confirmModal.getByText(/2 current members do not match/i)).toBeVisible();
 
         // # Cancel without saving
         await confirmModal.getByRole('button', {name: 'Cancel'}).click();
@@ -592,7 +592,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -605,11 +605,11 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         // * Confirmation modal appears (self-exclusion passes since adminUser IS Marketing)
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Save team membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: 15000});
+        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
 
         // * 1 user matches (adminUser) and 1 member does not (engUser / Engineering)
-        await expect(confirmModal.getByText(/1 user matches/i)).toBeVisible({timeout: 10000});
-        await expect(confirmModal.getByText(/1 current member does not match/i)).toBeVisible({timeout: 10000});
+        await expect(confirmModal.getByText(/1 user matches/i)).toBeVisible();
+        await expect(confirmModal.getByText(/1 current member does not match/i)).toBeVisible();
 
         // # Cancel — don't save
         await confirmModal.getByRole('button', {name: 'Cancel'}).click();
@@ -628,13 +628,13 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
 
         // * Auto-add is checked (auto_add was loaded from the API)
-        await expect(tab.locator('#autoAddMembersCheckbox')).toBeChecked({timeout: 5000});
+        await expect(tab.locator('#autoAddMembersCheckbox')).toBeChecked();
 
         // * Table editor is present and the panel is NOT shown (nothing is dirty after load)
         await expect(tab.getByTestId('table-editor')).toBeVisible();
@@ -654,7 +654,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
@@ -670,14 +670,14 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         // # Save → the removal warning (not the count modal) is shown
         await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Remove membership rules?'});
-        await expect(confirmModal).toBeVisible({timeout: 15000});
+        await expect(confirmModal).toBeVisible({timeout: duration.half_min});
         await expect(confirmModal.getByText(/no longer be restricted by user attributes/i)).toBeVisible();
         await confirmModal.getByRole('button', {name: 'Remove rules'}).click();
-        await expect(confirmModal).not.toBeVisible({timeout: 10000});
+        await expect(confirmModal).not.toBeVisible();
 
         // * Save succeeds: no "Failed to save access rules" error surfaces
         await expect(tab.getByText('Failed to save access rules')).not.toBeVisible();
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible({timeout: 10000});
+        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible();
 
         // * Policy is actually removed on the server
         const policyResult: any = await (adminClient as any)
@@ -698,14 +698,14 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
 
         // * Sync footer is visible once the job-status fetch resolves
         const syncFooter = tab.locator('.SyncStatusFooter');
-        await expect(syncFooter).toBeVisible({timeout: 10000});
+        await expect(syncFooter).toBeVisible();
 
         // * "Never synced." is shown — no sync job has run for this brand-new team
         await expect(syncFooter.locator('.SyncStatusFooter__text')).toContainText(/Never synced/i);
@@ -726,13 +726,13 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const {teamSettings, tab} = await openTeamMembershipTab(page, channelsPage);
 
         const syncFooter = tab.locator('.SyncStatusFooter');
-        await expect(syncFooter).toBeVisible({timeout: 10000});
+        await expect(syncFooter).toBeVisible();
         await expect(syncFooter.locator('.SyncStatusFooter__link')).toBeVisible();
 
         const testStartTime = Date.now();
@@ -751,7 +751,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
                     return jobs.some((j: any) => j.data?.policy_id === team.id && j.create_at >= testStartTime);
                 },
                 {
-                    timeout: 15000,
+                    timeout: duration.half_min,
                     intervals: [500, 1000, 2000, 3000],
                     message: 'clicking Sync now should enqueue a team sync job scoped to this team',
                 },

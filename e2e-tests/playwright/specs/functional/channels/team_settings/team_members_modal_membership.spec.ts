@@ -6,7 +6,7 @@
  * @reference MM-69100
  */
 
-import {expect, Msg, newTestPassword, test, type App} from '@mattermost/playwright-lib';
+import {expect, Msg, newTestPassword, test, type App, duration, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -41,7 +41,7 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
 
     test('MM-69100_34 governed team shows the policy banner in the Team Members modal', async ({pw}) => {
         await pw.skipIfNoLicense();
-        const {adminClient, team} = await pw.initSetup();
+        const {adminClient, team, townSquare} = await pw.initSetup();
         await enableTeamMembershipABACConfig(adminClient);
         await ensureDepartmentAttribute(adminClient);
 
@@ -51,7 +51,7 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
         await createTeamMembershipPolicy(adminClient, team.id, 'user.attributes.Department == "Engineering"', false);
 
         const {app} = await pw.testBrowser.login(teamAdmin);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
         const modal = await openTeamMembers(app);
@@ -64,7 +64,7 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
 
     test('MM-69100_35 attribute holder sees attribute chips inside the policy banner', async ({pw}) => {
         await pw.skipIfNoLicense();
-        const {adminClient, team} = await pw.initSetup();
+        const {adminClient, team, townSquare} = await pw.initSetup();
         await enableTeamMembershipABACConfig(adminClient);
         await ensureDepartmentAttribute(adminClient);
 
@@ -77,7 +77,7 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
         await createTeamMembershipPolicy(adminClient, team.id, 'user.attributes.Department == "Engineering"', false);
 
         const {app} = await pw.testBrowser.login(teamAdmin);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
         const modal = await openTeamMembers(app);
@@ -87,7 +87,7 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
         await expect(banner).toBeVisible();
 
         // * Attribute chip "Department: Engineering" visible (async — chip text loads after banner)
-        await expect(banner).toContainText(/Department: Engineering/i, {timeout: 15000});
+        await expect(banner).toContainText(/Department: Engineering/i, {timeout: duration.half_min});
     });
 
     test('MM-69100_36 non-admin team member sees the policy banner in the Team Members modal', async ({pw}) => {
@@ -134,7 +134,7 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
         await createTeamMembershipPolicy(adminClient, team.id, 'user.attributes.Department == "Engineering"', false);
 
         const {app} = await pw.testBrowser.login(regularUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
         // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
         const modal = await openTeamMembers(app);
@@ -148,14 +148,14 @@ test.describe('Team Members Modal - Membership Policy Banner', {tag: ['@abac', '
 
     test('MM-69100_37 ungoverned team does not show the policy banner in Team Members modal', async ({pw}) => {
         await pw.skipIfNoLicense();
-        const {adminClient, team} = await pw.initSetup();
+        const {adminClient, team, townSquare} = await pw.initSetup();
         await enableTeamMembershipABACConfig(adminClient);
 
         const teamAdmin = await createTeamAdmin(adminClient, team.id);
         createdUserIds.push(teamAdmin.id);
 
         const {app} = await pw.testBrowser.login(teamAdmin);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open Team Members modal from the team menu (Manage members for admins, View members otherwise)
         const modal = await openTeamMembers(app);

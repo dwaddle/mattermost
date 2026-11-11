@@ -9,7 +9,7 @@
  * @reference Public-channel ABAC feature
  */
 
-import {ChannelsPage, expect, getAdminClient, test} from '@mattermost/playwright-lib';
+import {ChannelsPage, expect, getAdminClient, test, duration, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {enableABACConfig, enableAPIUserDeletion} from '../team_settings/helpers';
 
@@ -55,7 +55,7 @@ test.describe('ABAC - Public channels', () => {
         // # Open Channel Settings on the default (town-square) channel
         const {page} = await pw.testBrowser.login(adminUser);
         const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         await channelsPage.toBeVisible();
 
         const channelSettings = await channelsPage.openChannelSettings();
@@ -172,14 +172,14 @@ test.describe('ABAC - Public channels', () => {
         //   `ChannelRow-${channel.name}` — assert against that, not the display
         //   text, which can be locale-dependent.
         const channelRow = browse.container.locator(`[data-testid="ChannelRow-${publicChannel.name}"]`);
-        await expect(channelRow).toBeVisible({timeout: 15000});
+        await expect(channelRow).toBeVisible({timeout: duration.half_min});
     });
 
     test('Public channel with auto-add ON adds matching users; non-matching members are NOT removed', async ({pw}) => {
         // The sync job is queued and processed asynchronously — give the test
         // enough headroom for the queue + evaluation + member writes. Empirically
         // it finishes in <10s on a quiet dev server, but CI workers are slower.
-        test.setTimeout(120_000);
+        test.setTimeout(duration.two_min);
 
         await pw.skipIfNoLicense();
         const {adminClient, team} = await pw.initSetup();

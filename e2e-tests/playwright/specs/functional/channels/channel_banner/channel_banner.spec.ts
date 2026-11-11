@@ -11,6 +11,7 @@ import {
     type PlaywrightExtended,
     postWith,
     test,
+    duration,
 } from '@mattermost/playwright-lib';
 
 const EMOJI_SIZE = 16;
@@ -42,7 +43,7 @@ async function openNewChannel(pw: PlaywrightExtended) {
 
     const {app, channelsPage} = await pw.testBrowser.login(adminUser);
     await channelsPage.goto(team.name, channel.name);
-    await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: 60000});
+    await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
     return app;
 }
 

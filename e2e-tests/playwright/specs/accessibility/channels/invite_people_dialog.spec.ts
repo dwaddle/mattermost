@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, duration, DefaultChannel} from '@mattermost/playwright-lib';
 
 /** Opens Invite People from the team menu. */
 async function openInvitePeople(app: App) {
@@ -28,9 +28,9 @@ test(
         const {app, page, channelsPage} = await pw.testBrowser.login(adminUser);
 
         // # Visit town-square channel
-        await channelsPage.goto(team.name, 'town-square');
+        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
         // (the first load of a new team's channel can be slow on this server)
-        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: 60000});
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
         // # Open team menu and click Invite people
         const modal = await openInvitePeople(app);
@@ -72,7 +72,7 @@ test(
         await pw.skipIfNoLicense();
 
         // # Initialize setup
-        const {team, user, adminClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
 
         // # Turn off email invitations, which change the invite input's placeholder from
         // # "Add members" to "Enter a name or email address" in the snapshot below
@@ -82,7 +82,7 @@ test(
         const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open team menu and click Invite people
         const modal = await openInvitePeople(app);

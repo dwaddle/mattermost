@@ -23,8 +23,7 @@ test(
     {tag: '@message_attachments'},
     async ({pw}) => {
         // # Post an attachment containing primary, danger, and default buttons
-        const {adminClient, team, user} = await pw.initSetup();
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminClient, team, user, townSquare: channel} = await pw.initSetup();
         const actions = [
             {id: 'primary', name: 'Primary action', type: 'button', style: 'primary'},
             {id: 'danger', name: 'Danger action', type: 'button', style: 'danger'},

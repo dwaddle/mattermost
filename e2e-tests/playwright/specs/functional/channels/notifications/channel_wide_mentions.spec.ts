@@ -44,12 +44,10 @@ test(
     {tag: '@notifications'},
     async ({pw}) => {
         // # Initialize setup and get the required users and team
-        const {team, adminUser, adminClient, user} = await pw.initSetup();
-        const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
-
+        const {team, adminUser, user, offTopic, townSquare} = await pw.initSetup();
         // # Log in as the admin in one browser session and navigate to the "town-square" channel
         const {app: adminApp, page: adminPage} = await pw.testBrowser.login(adminUser);
-        await adminApp.channelsPage.goto({team, channel: 'town-square'});
+        await adminApp.channelsPage.goto({team, channel: townSquare});
         await expect(adminApp.center.postCreate.messageTextbox.locator).toBeVisible();
 
         // # Stub the Notification in the admin's browser to capture notifications
@@ -102,7 +100,7 @@ test(
     'MM-T484 recognizes a mixed-case @channEL channel-wide mention and preserves its casing',
     {tag: '@notifications'},
     async ({pw}) => {
-        const {adminClient, team, user} = await pw.initSetup();
+        const {adminClient, team, user, townSquare} = await pw.initSetup();
 
         // # Add enough members so the channel exceeds the notify-all threshold
         for (let i = 0; i < NOTIFY_ALL_THRESHOLD; i++) {
@@ -111,7 +109,7 @@ test(
         }
 
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Type a mixed-case channel-wide mention, send it and confirm the notify-all prompt
         const message = `@channEL mixed case mention ${pw.random.id()}`;
@@ -130,10 +128,7 @@ test(
     'MM-T485 recognizes an uppercase @HERE channel-wide mention and preserves its casing',
     {tag: '@notifications'},
     async ({pw}) => {
-        const {adminClient, team, user} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-        const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
-
+        const {adminClient, team, user, townSquare, offTopic} = await pw.initSetup();
         // # Add enough members so the channel exceeds the notify-all threshold
         for (let i = 0; i < NOTIFY_ALL_THRESHOLD; i++) {
             const extraUser = await pw.createNewUserProfile(adminClient, {prefix: 'channel-wide'});

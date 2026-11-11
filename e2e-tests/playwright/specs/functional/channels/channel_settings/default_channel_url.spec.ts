@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openChannelSettings, test} from '@mattermost/playwright-lib';
+import {expect, openChannelSettings, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 const DEFAULT_CHANNEL_URL_LOCKED_TEXT = 'The URL of the default channel cannot be changed.';
 
@@ -14,16 +14,16 @@ test(
     'does not offer a URL edit for the default channel but still saves its display name',
     {tag: '@channel_settings'},
     async ({pw}) => {
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open the Channel Settings modal on the Info tab
         const settings = await openChannelSettings(app, 'info');
         const url = settings.info.url;
 
         // * The URL is shown read-only, with no way to edit it and an explanation why
-        await expect(url.labelText.locator).toContainText('town-square');
+        await expect(url.labelText.locator).toContainText(DefaultChannel.TownSquare);
         await expect(url.editButton.locator).toHaveCount(0);
         await expect(url.valueTextbox.locator).toHaveCount(0);
         await expect(url.helpText.locator).toHaveText(DEFAULT_CHANNEL_URL_LOCKED_TEXT);
@@ -38,8 +38,8 @@ test(
         await expect(app.channelHeader.openMenuButton.locator).toContainText('Company Wide');
 
         // * The server kept the default channel URL and applied the new display name
-        const channel = await adminClient.getChannelByName(team.id, 'town-square');
-        expect(channel.name).toBe('town-square');
+        const channel = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
+        expect(channel.name).toBe(DefaultChannel.TownSquare);
         expect(channel.display_name).toBe('Company Wide');
     },
 );

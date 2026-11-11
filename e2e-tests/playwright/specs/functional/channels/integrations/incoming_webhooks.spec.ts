@@ -3,7 +3,7 @@
 
 import type {IncomingWebhook} from '@mattermost/types/integrations';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify an incoming webhook is listed with its URL and a copy button, and that deleting it
@@ -15,7 +15,7 @@ test('lists an incoming webhook with its URL and deletes it after confirming', {
         throw new Error('the setup has no admin user');
     }
     await adminClient.patchConfig({ServiceSettings: {EnableIncomingWebhooks: true}} as any);
-    const channel = await adminClient.getChannelByName(team.id, 'town-square');
+    const channel = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     const hook = await adminClient.createIncomingWebhook({
         channel_id: channel.id,
         display_name: `Hook ${pw.random.id()}`,

@@ -180,15 +180,13 @@ test('MM-T5465-4 Highlighted keywords should not appear in the Recent Mentions',
 test('MM-T5465-5 Should highlight keywords in message sent from another user', async ({pw}) => {
     await pw.skipIfNoLicense();
 
-    const {adminClient, team, adminUser, user} = await pw.initSetup();
+    const {adminClient, team, adminUser, user, townSquare: channel} = await pw.initSetup();
 
     if (!adminUser) {
         throw new Error('Failed to create admin user');
     }
 
     // # Get the default channel of the team for getting the channel id
-    const channel = await adminClient.getChannelByName(team.id, 'town-square');
-
     const highlightKeyword = keywords[0];
     const messageWithKeyword = `This received message contains the ${highlightKeyword} keyword `;
 

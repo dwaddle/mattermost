@@ -65,9 +65,7 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
         await permissionsTab.click();
 
         // * The list view renders: header, search, table, Add rule button.
-        await expect(channelSettings.container.locator('.ChannelSettingsModal__permissionsPolicyTab')).toBeVisible({
-            timeout: 10000,
-        });
+        await expect(channelSettings.container.locator('.ChannelSettingsModal__permissionsPolicyTab')).toBeVisible();
         await expect(channelSettings.container.getByTestId('permissions-policy-add-rule')).toBeVisible();
         await expect(channelSettings.container.getByTestId('permissions-policy-search')).toBeVisible();
         await expect(channelSettings.container.getByTestId('permissions-policy-rules-table')).toBeVisible();
@@ -97,12 +95,12 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
         await permissionsTab.click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__permissionsPolicyTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Click "Add rule" → editor view appears
         await tab.getByTestId('permissions-policy-add-rule').click();
         const editor = channelSettings.container.getByTestId('permissions-policy-editor');
-        await expect(editor).toBeVisible({timeout: 5000});
+        await expect(editor).toBeVisible();
 
         // * Mirror system-console layout: name → role → user-attribute conditions → permissions list.
         const expressionSection = editor.getByTestId('permissions-policy-editor-expression-section');
@@ -120,7 +118,7 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
 
         // # Cancel → back to list view
         await channelSettings.container.getByTestId('permissions-policy-editor-cancel').click();
-        await expect(tab).toBeVisible({timeout: 5000});
+        await expect(tab).toBeVisible();
         await expect(channelSettings.container.getByTestId('permissions-policy-editor')).not.toBeVisible();
 
         await channelSettings.close();
@@ -146,16 +144,14 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
         await permissionsTab.click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__permissionsPolicyTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Open the editor without filling the name
         await tab.getByTestId('permissions-policy-add-rule').click();
         await channelSettings.container.getByTestId('permissions-policy-editor-save').click();
 
         // * Inline error mentions name uniqueness/required.
-        await expect(channelSettings.container.getByTestId('permissions-policy-editor-error')).toBeVisible({
-            timeout: 5000,
-        });
+        await expect(channelSettings.container.getByTestId('permissions-policy-editor-error')).toBeVisible();
 
         await channelSettings.close();
     });
@@ -187,12 +183,12 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
             await permissionsTab.click();
 
             const tab = channelSettings.container.locator('.ChannelSettingsModal__permissionsPolicyTab');
-            await expect(tab).toBeVisible({timeout: 10000});
+            await expect(tab).toBeVisible();
 
             // # Open the rule editor and start a draft
             await tab.getByTestId('permissions-policy-add-rule').click();
             const editor = channelSettings.container.getByTestId('permissions-policy-editor');
-            await expect(editor).toBeVisible({timeout: 5000});
+            await expect(editor).toBeVisible();
             await editor.getByTestId('permissions-policy-editor-name').fill('Block external uploads');
 
             // # Try to leave the editor by selecting the Info section
@@ -202,7 +198,7 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
             // footer in its error state, with saving from there disabled. The
             // modal withdraws it after 3s, so assert inside that window.
             const savePanel = channelSettings.container.locator('.SaveChangesPanel');
-            await expect(savePanel).toContainText('You have unsaved changes', {timeout: 2000});
+            await expect(savePanel).toContainText('You have unsaved changes');
             await expect(savePanel).toHaveClass(/error/);
             await expect(savePanel.getByTestId('SaveChangesPanel__save-btn')).toBeDisabled();
 

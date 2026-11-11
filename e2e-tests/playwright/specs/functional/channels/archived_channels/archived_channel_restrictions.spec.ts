@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that after archiving a channel, neither the center message box nor the RHS reply box is available.
@@ -59,7 +59,7 @@ test('MM-T1722 opens a saved post from an archived channel without a reply box',
         {user_id: user.id, category: 'flagged_post', name: post.id, value: 'true'},
     ]);
 
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const townSquare = await userClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
 
