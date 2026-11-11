@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminItem, expect, getRandomId, test} from '@mattermost/playwright-lib';
+import {AdminItem, expect, generated, getRandomId, test} from '@mattermost/playwright-lib';
 
 test.describe('Single-channel guests', () => {
     test.setTimeout(duration.four_min);
@@ -74,7 +74,12 @@ test.describe('Single-channel guests', () => {
 
             // Re-apply patch after initial load + reload to counter WebSocket config resets
             // from concurrent initSetup() calls (default_config has Enable: false).
-            await navigateWithGuestPatch(app.page, adminClient, '/admin_console/reporting/system_analytics', true);
+            await navigateWithGuestPatch(
+                app.page,
+                adminClient,
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
+                true,
+            );
 
             // * Verify the single-channel guests card is visible
             await expect(app.admin.statistics.stat('singleChannelGuests').locator).toBeVisible({
@@ -139,7 +144,12 @@ test.describe('Single-channel guests', () => {
             await app.adminConsolePage.goto();
 
             // Re-apply patch after initial load + reload to counter WebSocket config resets.
-            await navigateWithGuestPatch(app.page, adminClient, '/admin_console/about/license', true);
+            await navigateWithGuestPatch(
+                app.page,
+                adminClient,
+                generated.AdminConsolePage.path({section: 'about/license'}),
+                true,
+            );
 
             // * Verify the single-channel guests row is visible
             await expect(app.admin.license.enterprisePanel.item(AdminItem.SingleChannelGuests).locator).toContainText(
@@ -169,7 +179,12 @@ test.describe('Single-channel guests', () => {
             await app.adminConsolePage.goto();
 
             // Re-apply patch (disabled) + reload to ensure the browser reads the fresh config.
-            await navigateWithGuestPatch(app.page, adminClient, '/admin_console/reporting/system_analytics', false);
+            await navigateWithGuestPatch(
+                app.page,
+                adminClient,
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
+                false,
+            );
 
             // * Verify the single-channel guests card is not in the DOM
             await expect(app.admin.statistics.stat('singleChannelGuests').locator).not.toBeVisible();
@@ -243,7 +258,12 @@ test.describe('Single-channel guests', () => {
             await app.adminConsolePage.goto();
 
             // Re-apply patch + reload to counter WebSocket config resets.
-            await navigateWithGuestPatch(app.page, adminClient, '/admin_console/reporting/system_analytics', true);
+            await navigateWithGuestPatch(
+                app.page,
+                adminClient,
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
+                true,
+            );
 
             // * Verify the card title does NOT have error class (count is within limit)
             const cardTitle = app.admin.statistics.stat('singleChannelGuests').titleText.locator;
@@ -341,7 +361,12 @@ test.describe('Single-channel guests', () => {
 
             // # Navigate to site statistics page, re-applying patch to counter concurrent resets.
             await app.adminConsolePage.goto();
-            await navigateWithGuestPatch(app.page, adminClient, '/admin_console/reporting/system_analytics', true);
+            await navigateWithGuestPatch(
+                app.page,
+                adminClient,
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
+                true,
+            );
 
             // * Verify the card title has error styling
             const cardTitle = app.admin.statistics.stat('singleChannelGuests').titleText.locator;
@@ -400,7 +425,12 @@ test.describe('Single-channel guests', () => {
             // concurrent initSetup() resets (default_config has GuestAccountsSettings.Enable: false).
             const {app} = await pw.testBrowser.login(adminUser);
             await app.adminConsolePage.goto();
-            await navigateWithGuestPatch(app.page, adminClient, '/admin_console/reporting/system_analytics', true);
+            await navigateWithGuestPatch(
+                app.page,
+                adminClient,
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
+                true,
+            );
 
             // * Verify the single-channel guests card is visible
             const singleChannelGuestsCard = app.admin.statistics.stat('singleChannelGuests').locator;

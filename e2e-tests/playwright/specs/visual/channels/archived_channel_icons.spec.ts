@@ -107,8 +107,8 @@ test(
 
         // # Search for our test channels to bring them into view
         await channels.searchTextbox.locator.fill('Admin');
-        await expect(channels.icon(publicChannel).locator).toBeVisible();
-        await expect(channels.icon(privateChannel).locator).toBeVisible();
+        await expect(channels.row(publicChannel.id).icon.locator).toBeVisible();
+        await expect(channels.row(privateChannel.id).icon.locator).toBeVisible();
 
         // * Verify both archived channels are visible with correct icons
         const testArgs = {page, browserName, viewport};
