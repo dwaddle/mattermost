@@ -22,7 +22,7 @@ describe('components/Toast', () => {
         ),
         width: 1000,
         testIdScope: 'center.post_list.toast',
-        testIdKey: 'unread',
+        testKey: 'unread',
     };
 
     test('should render for showing toast', () => {

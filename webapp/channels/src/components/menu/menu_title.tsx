@@ -7,12 +7,14 @@ import type {
 import React from 'react';
 import styled from 'styled-components';
 
+import type {TestId} from '@mattermost/shared/utils/test_id';
+
 export interface Props {
     children: ReactNode;
     role?: string;
 
     /** The title's testid path: it renders `<testId>--separator` with `role="separator"`, else `<testId>`. */
-    testId?: string;
+    testId?: TestId;
 }
 
 export function MenuTitle(props: Props) {

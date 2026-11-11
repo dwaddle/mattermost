@@ -28,11 +28,11 @@ export type Props = {
     extraClasses?: string;
     jumpDirection?: 'up' | 'down';
 
-    /** The toasts' scope (`center.post_list.toast`); the toast renders `<testIdScope>:<testIdKey>`, its controls `<testIdScope>.dismiss--button`. */
+    /** The toasts' scope (`center.post_list.toast`); the toast renders `<testIdScope>:<testKey>`, its controls `<testIdScope>.dismiss--button`. */
     testIdScope?: TestId;
 
     /** Which toast this is (`unread`, `history`...). */
-    testIdKey?: string;
+    testKey?: string;
 };
 
 export default function Toast({
@@ -46,7 +46,7 @@ export default function Toast({
     extraClasses = '',
     jumpDirection = 'down',
     testIdScope,
-    testIdKey,
+    testKey,
 }: Props) {
     function handleDismiss() {
         if (typeof onDismiss === 'function') {
@@ -66,7 +66,7 @@ export default function Toast({
     return (
         <div
             className={toastClass}
-            data-testid={testIdScope && testIdKey ? `${testIdScope}:${testIdKey}` : undefined}
+            data-testid={testIdScope && testKey ? `${testIdScope}:${testKey}` : undefined}
         >
             <div
                 className={toastActionClass}

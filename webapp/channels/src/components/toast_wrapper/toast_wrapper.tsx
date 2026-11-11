@@ -401,7 +401,7 @@ export class ToastWrapperClass extends React.PureComponent<Props, State> {
             show: true,
             width,
             testIdScope: 'center.post_list.toast' as const,
-            testIdKey: 'unread',
+            testKey: 'unread',
             onDismiss: this.hideUnreadToast,
             onClick: this.scrollToLatestMessages,
             onClickMessage: (
@@ -425,7 +425,7 @@ export class ToastWrapperClass extends React.PureComponent<Props, State> {
             show: true,
             width,
             testIdScope: 'center.post_list.toast' as const,
-            testIdKey: 'unread_above',
+            testKey: 'unread_above',
             onDismiss: this.hideUnreadWithBottomStartToast,
             onClick: this.scrollToUnreadMessages,
             onClickMessage: (
@@ -448,7 +448,7 @@ export class ToastWrapperClass extends React.PureComponent<Props, State> {
 
         if (showNewMessagesToast) {
             const showNewMessagesToastOverrides = {
-                testIdKey: 'new_messages',
+                testKey: 'new_messages',
                 onDismiss: this.hideNewMessagesToast,
                 onClick: this.scrollToNewMessage,
                 onClickMessage: (
@@ -474,7 +474,7 @@ export class ToastWrapperClass extends React.PureComponent<Props, State> {
                 show: true,
                 width,
                 testIdScope: 'center.post_list.toast' as const,
-                testIdKey: 'history',
+                testKey: 'history',
                 onDismiss: this.hideArchiveToast,
                 onClick: this.scrollToLatestMessages,
                 onClickMessage: (

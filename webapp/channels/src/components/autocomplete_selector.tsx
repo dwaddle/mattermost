@@ -42,10 +42,10 @@ type Props = {
 
     /**
      * The selector's testid scope: its input is `<testIdScope>.value--textbox`, its suggestion list
-     * `<testIdScope>.suggestions`; with `testIdKey` the root is `<testIdScope>:<testIdKey>`. Without it, the legacy testid.
+     * `<testIdScope>.suggestions`; with `testKey` the root is `<testIdScope>:<testKey>`. Without it, the legacy testid.
      */
     testIdScope?: TestIdScope;
-    testIdKey?: string;
+    testKey?: string;
 };
 
 type State = {
@@ -141,7 +141,7 @@ export default class AutocompleteSelector extends React.PureComponent<Props, Sta
             listComponent,
             listPosition: listPositionProp,
             testIdScope,
-            testIdKey,
+            testKey,
         } = this.props;
 
         const listPosition = listPositionProp === 'auto' ? this.state.computedListPosition : listPositionProp;
@@ -175,7 +175,7 @@ export default class AutocompleteSelector extends React.PureComponent<Props, Sta
 
         return (
             <div
-                data-testid={testIdScope ? `${testIdScope}:${testIdKey}` : 'autoCompleteSelector'}
+                data-testid={testIdScope ? `${testIdScope}:${testKey}` : 'autoCompleteSelector'}
                 className='form-group'
             >
                 {labelContent}

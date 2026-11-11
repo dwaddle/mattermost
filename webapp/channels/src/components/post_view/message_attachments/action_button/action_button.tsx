@@ -6,6 +6,7 @@ import React, {memo, useCallback, useMemo} from 'react';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostAction, PostActionOption} from '@mattermost/types/integration_actions';
 
 import type {Theme} from 'mattermost-redux/selectors/entities/preferences';
@@ -40,7 +41,7 @@ type Props = {
     actionExecutingMessage?: string;
 
     /** Testid path; the button renders `<testId>--button`. */
-    testId?: string;
+    testId?: TestId;
 };
 
 const ActionButton = ({
