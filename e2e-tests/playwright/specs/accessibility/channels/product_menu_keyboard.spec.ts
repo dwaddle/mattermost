@@ -9,14 +9,14 @@ test('MM-55271 should be able to navigate the product menu with the keyboard aft
     pw,
 }) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Click on the product menu button
     await app.globalHeader.productMenuButton.locator.click();
@@ -28,14 +28,14 @@ test('MM-55271 should be able to navigate the product menu with the keyboard aft
     pw,
 }) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Focus the product menu button and open it with the keyboard
     await app.globalHeader.productMenuButton.locator.focus();
@@ -47,14 +47,14 @@ test('MM-55271 should be able to navigate the product menu with the keyboard aft
 
 test('MM-55271 should be able to select a product menu item with the keyboard', async ({pw}) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Open the product menu with the keyboard
     await app.globalHeader.productMenuButton.locator.focus();
@@ -69,7 +69,7 @@ test('MM-55271 should be able to select a product menu item with the keyboard', 
 
     // * Should close the menu and stay on the channels product
     await expect(page.getByRole('menuitem')).toHaveCount(0);
-    await channelsPage.toBeVisible();
+    await expect(app.center.composer.locator).toBeVisible();
 });
 
 async function testProductMenuWithKeyboard(app: App, page: Page) {

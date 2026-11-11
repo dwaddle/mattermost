@@ -11,15 +11,15 @@ test(
     {tag: ['@visual', '@settings', '@snapshots']},
     async ({pw, browserName, viewport}, testInfo) => {
         // # Create and sign in a new user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
         await app.globalHeader.settingsButton.locator.focus();

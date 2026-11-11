@@ -4,10 +4,10 @@
 import {expect, test} from '@mattermost/playwright-lib';
 
 test('Settings sidebar should be keyboard accessible', async ({axe, pw}) => {
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Initialize Axe
     const ab = axe.builder(page).disableRules([
@@ -18,8 +18,8 @@ test('Settings sidebar should be keyboard accessible', async ({axe, pw}) => {
     ]);
 
     // # Visit default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Open settings modal
     await app.globalHeader.clickSettingsButton();

@@ -247,9 +247,8 @@ test.describe('autotranslation configuration tests', () => {
             });
             await adminClient.addToChannel(user.id, created.id);
 
-            const {channelsPage} = await pw.testBrowser.login(user);
-            await channelsPage.goto(team.name, channelName);
-            await channelsPage.toBeVisible();
+            const {channelsPage, app} = await pw.testBrowser.login(user);
+            await app.channelsPage.goto({team, channel: channelName});
 
             const channelSettingsModal = await channelsPage.openChannelSettings();
             const configTabVisible = await channelSettingsModal.configurationTab.isVisible();

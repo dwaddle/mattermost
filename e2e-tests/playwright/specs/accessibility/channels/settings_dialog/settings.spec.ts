@@ -11,16 +11,16 @@ test(
     {tag: ['@accessibility', '@settings']},
     async ({pw}) => {
         // # Create and sign in a new user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
         const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
         await globalHeader.settingsButton.locator.focus();
@@ -55,15 +55,15 @@ test(
  */
 test('navigates between settings tabs using arrow keys', {tag: ['@accessibility', '@settings']}, async ({pw}) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
     const settingsModal = app.userSettingsModal;
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Set focus to Settings button and press Enter
     await app.globalHeader.settingsButton.locator.focus();
@@ -123,15 +123,15 @@ test(
     {tag: ['@accessibility', '@settings']},
     async ({pw, axe}) => {
         // # Create and sign in a new user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
         await app.globalHeader.settingsButton.locator.focus();
@@ -167,15 +167,15 @@ test(
     {tag: ['@accessibility', '@settings']},
     async ({pw, axe}) => {
         // # Create and sign in a new user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
         await app.globalHeader.settingsButton.locator.focus();
@@ -217,15 +217,15 @@ test(
     {tag: ['@accessibility', '@settings']},
     async ({pw, axe}) => {
         // # Create and sign in a new user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
         await app.globalHeader.settingsButton.locator.focus();
@@ -267,15 +267,15 @@ test(
     {tag: ['@accessibility', '@settings']},
     async ({pw, axe}) => {
         // # Create and sign in a new user
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus to Settings button and press Enter
         await app.globalHeader.settingsButton.locator.focus();

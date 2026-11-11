@@ -11,9 +11,9 @@ test('switches the clock display to 24-hour and saves it', {tag: '@settings'}, a
     const {team, user, userClient} = await pw.initSetup();
 
     // # Log in and open Settings > Display
-    const {app, channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name);
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
     await app.globalHeader.clickSettingsButton();
     await app.userSettingsModal.tabs.tab('display').select();
 

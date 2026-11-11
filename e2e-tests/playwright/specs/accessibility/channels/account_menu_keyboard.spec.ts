@@ -9,14 +9,14 @@ test('MM-63451 should be able to navigate the account settings menu with the key
     pw,
 }) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Click on the account menu button
     await app.globalHeader.openAccountMenuButton.locator.click();
@@ -28,14 +28,14 @@ test('MM-63451 should be able to navigate the account settings menu with the key
     pw,
 }) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in a user in new browser context
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Focus the account menu button
     await app.globalHeader.openAccountMenuButton.locator.focus();

@@ -79,11 +79,10 @@ test(
         await adminClient.patchConfig({ServiceSettings: {EnableEmailInvitations: false}});
 
         // # Log in as user
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
 
         // # Visit town-square channel
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open team menu and click Invite people
         const modal = await openInvitePeople(app);

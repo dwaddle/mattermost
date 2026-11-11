@@ -9,9 +9,8 @@ test('should show demo plugin settings sections and save changes with alert conf
     await pw.ensureDemoPlugin();
 
     // # Login and navigate to Town Square
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {channelsPage, app, page} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: 'town-square'});
 
     // # Open Settings via the library method
     const settingsModal = await channelsPage.openSettings();
@@ -41,11 +40,11 @@ test('should show demo plugin settings sections and save changes with alert conf
         alerts.push(dialog.message());
         await dialog.accept();
     };
-    channelsPage.page.on('dialog', dialogHandler);
+    page.on('dialog', dialogHandler);
 
     await editButtons.first().click();
     await settingsModal.container.getByRole('radio', {name: 'Option 2'}).first().click();
-    await channelsPage.page.getByTestId('settings.section.save--button').click();
+    await page.getByTestId('settings.section.save--button').click();
 
     // * Verify the save alert fired with the expected message
     expect(alerts[0]).toBe('saving {setting1}: 2');
@@ -53,10 +52,10 @@ test('should show demo plugin settings sections and save changes with alert conf
     // # Expand Section 2, select Option 1, save
     await editButtons.nth(1).click();
     await settingsModal.container.getByRole('radio', {name: 'Option 1'}).first().click();
-    await channelsPage.page.getByTestId('settings.section.save--button').click();
+    await page.getByTestId('settings.section.save--button').click();
 
     // * Verify the save alert fired with the expected message
     expect(alerts[1]).toBe('saving {setting3}: 1');
 
-    channelsPage.page.off('dialog', dialogHandler);
+    page.off('dialog', dialogHandler);
 });

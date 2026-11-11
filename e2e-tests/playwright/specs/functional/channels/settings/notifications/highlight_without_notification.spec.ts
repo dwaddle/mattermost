@@ -52,14 +52,14 @@ function highlightsIn(app: App, post: {locator: Locator}) {
 test('MM-T5465-1 Should add the keyword when enter, comma or tab is pressed on the textbox', async ({pw}) => {
     await pw.skipIfNoLicense();
 
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     await send(app.center.postList, app.center.postCreate, 'Hello World');
 
@@ -87,14 +87,14 @@ test('MM-T5465-1 Should add the keyword when enter, comma or tab is pressed on t
 test('MM-T5465-2 Should highlight the keywords when a message is sent with the keyword in center', async ({pw}) => {
     await pw.skipIfNoLicense();
 
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Save a highlight keyword
     await saveHighlightKeyword(app, keywords[3]);
@@ -122,14 +122,14 @@ test('MM-T5465-2 Should highlight the keywords when a message is sent with the k
 test('MM-T5465-3 Should highlight the keywords when a message is sent with the keyword in rhs', async ({pw}) => {
     await pw.skipIfNoLicense();
 
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Save a highlight keyword
     await saveHighlightKeyword(app, keywords[3]);
@@ -155,14 +155,14 @@ test('MM-T5465-3 Should highlight the keywords when a message is sent with the k
 test('MM-T5465-4 Highlighted keywords should not appear in the Recent Mentions', async ({pw}) => {
     await pw.skipIfNoLicense();
 
-    const {user} = await pw.initSetup();
+    const {user, team} = await pw.initSetup();
 
     // # Log in as a user in new browser context
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Save a highlight keyword
     await saveHighlightKeyword(app, keywords[0]);
@@ -202,11 +202,11 @@ test('MM-T5465-5 Should highlight keywords in message sent from another user', a
     );
 
     // # Now log in as a user in new browser context
-    const {app, channelsPage} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Save the highlight keyword
     await saveHighlightKeyword(app, highlightKeyword);

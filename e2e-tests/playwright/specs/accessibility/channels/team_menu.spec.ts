@@ -19,13 +19,13 @@ test(
         await adminClient.createTeam({...openTeam, allow_open_invite: true});
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const header = app.lhs.header;
         const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus on team menu button and press Enter to open the menu
         await header.openTeamMenuButton.locator.focus();
@@ -72,14 +72,14 @@ test(
     {tag: ['@accessibility', '@team_menu', '@keyboard_navigation']},
     async ({pw}) => {
         // # Create and sign in a new user
-        const {user} = await pw.initSetup();
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {user, team} = await pw.initSetup();
+        const {app, page} = await pw.testBrowser.login(user);
         const header = app.lhs.header;
         const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Set focus on team menu button and press Enter to open the menu
         await header.openTeamMenuButton.locator.focus();
@@ -113,13 +113,13 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const header = app.lhs.header;
         const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Click on team menu button to open the menu
         await header.openTeamMenuButton.locator.focus();
@@ -161,14 +161,14 @@ test(
  */
 test('close menu using Escape key', {tag: ['@accessibility', '@team_menu', '@keyboard_navigation']}, async ({pw}) => {
     // # Create and sign in a new user
-    const {user} = await pw.initSetup();
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {user, team} = await pw.initSetup();
+    const {app, page} = await pw.testBrowser.login(user);
     const header = app.lhs.header;
     const teamMenu = app.lhs.teamMenu;
 
     // # Visit a default channel page
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Click on team menu button to open the menu
     await header.openTeamMenuButton.locator.click();
@@ -198,13 +198,13 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {app, page, channelsPage} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         const header = app.lhs.header;
         const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Click on team menu button to open the menu
         await header.openTeamMenuButton.locator.click();
@@ -238,13 +238,13 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
         const header = app.lhs.header;
         const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Click on team menu button to open the menu
         await header.openTeamMenuButton.locator.click();
@@ -299,13 +299,13 @@ test(
         await adminClient.updateTeamMemberSchemeRoles(team.id, user.id, true, true);
 
         // # Log in a user in new browser context
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
         const header = app.lhs.header;
         const teamMenu = app.lhs.teamMenu;
 
         // # Visit a default channel page
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // # Open the menu from the keyboard (after a mouse click, a focused item never shows the keyboard focus ring)
         await header.openTeamMenuButton.locator.focus();
