@@ -25,7 +25,7 @@ async function openChannels(app: App, channel: {id: string; display_name: string
     await app.page.goto(`${generated.AdminConsolePage.path()}/user_management/channels`);
     const {channels} = app.admin;
     await channels.fillSearchTextbox(channel.display_name);
-    await expect(channels.name(channel).locator).toContainText(channel.display_name);
+    await expect(channels.row(channel.id).nameText.locator).toContainText(channel.display_name);
     return channels;
 }
 
@@ -86,7 +86,7 @@ test.describe('ABAC Policies - Channel Integration', () => {
         // STEP 1-2: Navigate to Channel Configuration
         // ============================================================
         const channels = await openChannels(app, channel);
-        await channels.edit(channel).click();
+        await channels.row(channel.id).clickEditLink();
 
         // ============================================================
         // STEP 3: Toggle on "Enable attribute based channel access"
@@ -206,7 +206,7 @@ test.describe('ABAC Policies - Channel Integration', () => {
         await expect(channels.row(groupSyncChannel.id).cell('management').locator).toContainText('Group Sync');
 
         // # Open its configuration
-        await channels.edit(groupSyncChannel).click();
+        await channels.row(groupSyncChannel.id).clickEditLink();
         const configuration = app.admin.channel;
 
         // * STEP 1.3: the attribute-based access toggle is NOT available while Group Sync is on

@@ -22,9 +22,17 @@ import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, getRandomId, licenseTier, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    expect,
+    test,
+    getRandomId,
+    licenseTier,
+    openChannel,
+    type App,
+    type PlaywrightExtended,
+} from '@mattermost/playwright-lib';
 
-import {lastPost, openChannel} from '../../../channels/burn_on_read/support';
+import {lastPost} from '../../../channels/burn_on_read/support';
 import {scheduleMessage} from '../../../channels/scheduled_messages/support';
 
 import {
@@ -79,7 +87,7 @@ async function grantAndOpenTownSquare(
     const {app: console} = await pw.testBrowser.login(adminUser);
     grantPolicyName = await grantBurnOnRead(console, adminClient, adminUser);
     await ensureABACEnabled(adminClient);
-    const app = await openChannel(pw, adminUser, team, 'town-square');
+    const app = await openChannel(pw, adminUser, {team, channel: 'town-square'});
     return {console, app};
 }
 

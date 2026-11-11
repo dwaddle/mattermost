@@ -18,7 +18,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, generated, getRandomId, test, type App} from '@mattermost/playwright-lib';
+import {expect, generated, getRandomId, searchSystemUsers, test, type App} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../channels/custom_profile_attributes/helpers';
 import {
@@ -28,8 +28,6 @@ import {
     getFieldIdByName,
 } from '../../channels/custom_profile_attributes/helpers';
 import {optionId} from '../../channels/channel_attributes/helpers';
-
-import {search} from './support';
 
 // Written on the generated page objects: System Console > Users' search and row by user id, and the user detail page
 // (system fields, attribute rows by field id with their inputs and errors, the fields layout, Save with its
@@ -223,7 +221,7 @@ test.describe('System Console - Admin User Profile Editing', () => {
         await expect(app.admin.users.searchTextbox.locator).toBeVisible();
 
         // Search for target user and navigate to user detail page
-        await search(app, testUser.email, testUser);
+        await searchSystemUsers(app, testUser.email, testUser);
         await app.admin.users.table.row(testUser.id).cell('emailColumn').locator.click();
 
         // Wait for the initial navigation to the user detail page.

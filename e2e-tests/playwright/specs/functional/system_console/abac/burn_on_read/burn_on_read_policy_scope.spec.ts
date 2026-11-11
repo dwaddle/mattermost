@@ -19,9 +19,9 @@
 import type {Client4} from '@mattermost/client';
 import type {Team} from '@mattermost/types/teams';
 
-import {expect, test, getRandomId, licenseTier, type App} from '@mattermost/playwright-lib';
+import {type App, expect, getRandomId, licenseTier, openChannel, test} from '@mattermost/playwright-lib';
 
-import {openChannel, sendBorMessage} from '../../../channels/burn_on_read/support';
+import {sendBorMessage} from '../../../channels/burn_on_read/support';
 import {createPrivateChannelForABAC, createUserForABAC} from '../support';
 
 import {
@@ -122,7 +122,7 @@ test(
         await ensureABACEnabled(adminClient);
 
         // # View town-square as the user the policy matches
-        const allowed = await openChannel(pw, allowedUser, team, 'town-square');
+        const allowed = await openChannel(pw, allowedUser, {team, channel: 'town-square'});
 
         // * Verify the control is offered
         await expectBurnOnReadOffered(allowed);
@@ -136,7 +136,7 @@ test(
         await expect(post.burnOnReadButton.locator).toBeVisible();
 
         // # View the same channel as the user the policy does not match
-        const denied = await openChannel(pw, deniedUser, team, 'town-square');
+        const denied = await openChannel(pw, deniedUser, {team, channel: 'town-square'});
 
         // * Verify the control is withheld, so no burn-on-read post can be composed
         await expectBurnOnReadWithheld(denied);
@@ -182,7 +182,7 @@ test('governs burn-on-read in DMs and GMs under a system-scoped policy', {tag: '
     });
     await ensureABACEnabled(adminClient);
 
-    const app = await openChannel(pw, sender, team, 'town-square');
+    const app = await openChannel(pw, sender, {team, channel: 'town-square'});
 
     // * Verify the control is offered in the DM and in the GM while granted
     await gotoChannel(app, team, `@${other1.username}`, 'messages');
@@ -256,7 +256,7 @@ test(
         });
         await ensureABACEnabled(adminClient);
 
-        const app = await openChannel(pw, user, team, governed.name);
+        const app = await openChannel(pw, user, {team, channel: governed.name});
 
         // * Verify the control is withheld in the channel the policy is pinned to
         await expectBurnOnReadWithheld(app);

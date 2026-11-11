@@ -18,9 +18,9 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {expect, test, getRandomId, licenseTier} from '@mattermost/playwright-lib';
+import {expect, getRandomId, licenseTier, openChannel, test} from '@mattermost/playwright-lib';
 
-import {lastPost, openChannel} from '../../../channels/burn_on_read/support';
+import {lastPost} from '../../../channels/burn_on_read/support';
 import {createUserForABAC} from '../support';
 
 import {
@@ -103,7 +103,7 @@ test(
         });
         await ensureABACEnabled(adminClient);
 
-        const app = await openChannel(pw, user, team, 'town-square');
+        const app = await openChannel(pw, user, {team, channel: 'town-square'});
 
         // * Verify the composer agrees the user may create one, so a later failure points
         // at the send path rather than at the grant
