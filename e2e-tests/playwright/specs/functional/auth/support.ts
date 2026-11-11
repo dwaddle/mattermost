@@ -3,73 +3,37 @@
 
 import type {Page} from '@playwright/test';
 
-import {App, expect, generated, testConfig, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    App,
+    expect,
+    generated,
+    loginPageUrl,
+    openSignedOut,
+    signedInUrl,
+    type PlaywrightExtended,
+} from '@mattermost/playwright-lib';
 
 /**
  * The login and signup pages on the generated page objects, for a browser that isn't logged in. Errors from the
  * server show in each page's banner; a signup field's own error is its message.
  */
 
-/** Opens the login page (past the native-app landing page). */
-export async function openLogin(pw: PlaywrightExtended, page: Page) {
-    await pw.hasSeenLandingPage();
-    const app = new App(page);
-    await app.loginPage.goto();
-    await expect(app.login.loginIdTextbox.locator).toBeVisible();
-    return app;
-}
+// the login flows are shared with the LDAP, SAML and OpenID specs, so they live in the lib
+export {logIn, logInWithKeycloak, openLogin} from '@mattermost/playwright-lib';
 
-/** Fills the login form and submits it. */
-export async function logIn(app: App, loginId: string, password: string) {
-    await app.login.fillLoginIdTextbox(loginId);
-    await app.login.fillPasswordTextbox(password);
-    await app.login.card.clickLogInButton();
-}
-
-/**
- * Opens the login page, follows its SAML or OpenID button and signs in on Keycloak's hosted form (outside the
- * webapp: `pw.keycloakLoginPage`). With `ifFormShown`, a reused Keycloak session that skips the form is fine.
- */
-export async function logInWithKeycloak(
-    pw: PlaywrightExtended,
-    page: Page,
-    service: 'saml' | 'openid',
-    user: {username: string; password: string},
-    {ifFormShown = false} = {},
-) {
-    const app = await openLogin(pw, page);
-    await app.login.external(service).click();
-    if (ifFormShown) {
-        await pw.keycloakLoginPage.loginIfFormShown(user.username, user.password);
-    } else {
-        await pw.keycloakLoginPage.login(user.username, user.password);
-    }
-    return app;
-}
-
-const onServer = (url: URL) => url.origin === new URL(testConfig.baseURL).origin;
-
-/**
- * Back on the Mattermost server and past its login page. (A bare `not.toHaveURL(/\/login/)` also matches while the
- * browser is still on the identity provider, before it redirects back.)
- */
+/** Back on the Mattermost server and past its login page (not still on the identity provider). */
 export async function expectSignedIn(page: Page) {
-    await expect(page).toHaveURL((url) => onServer(url) && !url.pathname.startsWith('/login'));
+    await expect(page).toHaveURL(signedInUrl);
 }
 
 /** On the Mattermost server's login page (not an identity provider's `/login-actions/…` page). */
 export async function expectOnLoginPage(page: Page) {
-    await expect(page).toHaveURL((url) => onServer(url) && url.pathname === '/login');
+    await expect(page).toHaveURL(loginPageUrl);
 }
 
 /** Opening `path` sends a signed-out browser to the login page. */
 export async function expectLoginRedirectFrom(page: Page, path: string) {
-    // the app may redirect before the navigation commits, which aborts it
-    await page.goto(path, {waitUntil: 'commit'}).catch((error: unknown) => {
-        if (!/interrupted|ERR_ABORTED/i.test(String(error))) {
-            throw error;
-        }
-    });
+    await openSignedOut(page, path);
     await expectOnLoginPage(page);
 }
 

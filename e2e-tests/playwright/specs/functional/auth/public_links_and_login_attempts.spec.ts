@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {Api, expect, test} from '@mattermost/playwright-lib';
 
 import {openAdminConsole} from './support';
 
@@ -33,7 +33,7 @@ test(
     'MM-T1775 resets Maximum Login Attempts to the default after an invalid value',
     {tag: '@authentication'},
     async ({pw}) => {
-        const {adminUser, adminClient} = await pw.initSetup();
+        const {adminUser} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(adminUser);
 
         await openAdminConsole(app, '/authentication/password');
@@ -41,11 +41,11 @@ test(
 
         // # Save a non-numeric value
         await attempts.fill('ten');
-        await app.admin.clickSaveButton();
+        const config = await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
         // * Verify the save completes and the value falls back to the default
         await expect(app.admin.saveButton.locator).toBeSaved();
-        await expect.poll(async () => (await adminClient.getConfig()).ServiceSettings.MaximumLoginAttempts).toBe(10);
+        expect(config.ServiceSettings.MaximumLoginAttempts).toBe(10);
         await expect(attempts.locator).toHaveValue('10');
     },
 );
@@ -54,7 +54,7 @@ test(
  * @objective Verify a valid Maximum Login Attempts change is saved.
  */
 test('MM-T1776 saves a valid Maximum Login Attempts change', {tag: '@authentication'}, async ({pw}) => {
-    const {adminUser, adminClient} = await pw.initSetup();
+    const {adminUser} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(adminUser);
 
     await openAdminConsole(app, '/authentication/password');
@@ -62,10 +62,10 @@ test('MM-T1776 saves a valid Maximum Login Attempts change', {tag: '@authenticat
 
     // # Save a valid value
     await attempts.fill('2');
-    await app.admin.clickSaveButton();
+    const config = await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
     // * Verify the value is saved
     await expect(app.admin.saveButton.locator).toBeSaved();
-    await expect.poll(async () => (await adminClient.getConfig()).ServiceSettings.MaximumLoginAttempts).toBe(2);
+    expect(config.ServiceSettings.MaximumLoginAttempts).toBe(2);
     await expect(attempts.locator).toHaveValue('2');
 });

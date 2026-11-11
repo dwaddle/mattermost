@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {duration, expect, test} from '@mattermost/playwright-lib';
-
-import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+import {duration, expect, logInWithKeycloak, signedInUrl, test} from '@mattermost/playwright-lib';
 
 import {runLdapSyncAndWait} from './ldap_sync_wait';
 
@@ -49,7 +47,7 @@ test(
 
         // # Log in once via SAML to provision the account
         await logInWithKeycloak(pw, page, 'saml', {username: sharedUsername, password: 'Password1'});
-        await expectSignedIn(page);
+        await expect(page).toHaveURL(signedInUrl);
 
         const provisionedUser = await adminClient.getUserByUsername(sharedUsername);
         expect(provisionedUser.delete_at).toBe(0);

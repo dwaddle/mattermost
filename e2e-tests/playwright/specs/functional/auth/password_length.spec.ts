@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {Api, expect, test} from '@mattermost/playwright-lib';
 
 import {expectOnSelectTeam, openAdminConsole, openSignup} from './support';
 
@@ -87,24 +87,23 @@ test(
 
         // # Save a custom minimum length and reload
         await minimumLength.fill(String(customLength));
-        await app.admin.clickSaveButton();
-        await expect
-            .poll(async () => (await adminClient.getConfig()).PasswordSettings.MinimumLength)
-            .toBe(customLength);
+        const saved = await app.admin.saveButton.commit({wait: Api.PatchConfig});
+        expect(saved.PasswordSettings.MinimumLength).toBe(customLength);
         await app.page.reload();
         await expect(minimumLength.locator).toHaveValue(String(customLength));
 
         // # Clear the minimum length and save
         await minimumLength.locator.clear();
-        await app.admin.clickSaveButton();
 
         if (isFips) {
             // * Verify FIPS rejects the empty value and keeps the custom length
+            await app.admin.saveButton.commit({wait: Api.PatchConfig, status: 400});
             await expect(app.admin.saveError.locator).toHaveText(LENGTH_ERROR);
             expect((await adminClient.getConfig()).PasswordSettings.MinimumLength).toBe(customLength);
         } else {
             // * Verify the length resets to the default
-            await expect.poll(async () => (await adminClient.getConfig()).PasswordSettings.MinimumLength).toBe(5);
+            const reset = await app.admin.saveButton.commit({wait: Api.PatchConfig});
+            expect(reset.PasswordSettings.MinimumLength).toBe(5);
             await app.page.reload();
             await expect(minimumLength.locator).toHaveValue('5');
         }

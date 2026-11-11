@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {logInWithKeycloak, openLogin} from '../auth/support';
+import {expect, logInWithKeycloak, openLogin, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a wrong password on Keycloak's hosted login page never creates a Mattermost

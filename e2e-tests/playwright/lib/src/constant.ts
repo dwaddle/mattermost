@@ -15,6 +15,10 @@ export const demoPluginUrl =
     process.env.PW_DEMO_PLUGIN_URL ||
     `https://github.com/mattermost/mattermost-plugin-demo/releases/download/v${demoPluginVersion}/mattermost-plugin-demo-v${demoPluginVersion}.tar.gz`;
 
+// The oldest demo plugin whose testids the page objects in plugins/com_mattermost_demo_plugin were generated from: an
+// older plugin renders none of them, so `pw.ensureDemoPlugin()` skips the spec rather than let it fail on missing elements.
+export const demoPluginMinVersion = '0.12.1';
+
 // License SKU short names — mirrored from webapp/channels/src/utils/constants.tsx LicenseSkus
 export const LicenseSkus = {
     E10: 'E10',

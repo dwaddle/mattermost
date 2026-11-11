@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+import {expect, logInWithKeycloak, signedInUrl, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a user who only exists in Keycloak is provisioned via SAML SSO on first login
@@ -27,7 +25,7 @@ test('logs in a directory-only user through Keycloak SAML SSO', {tag: '@saml'}, 
     const app = await logInWithKeycloak(pw, page, 'saml', keycloakUser);
 
     // * Verify the server provisioned the account via SAML
-    await expectSignedIn(page);
+    await expect(page).toHaveURL(signedInUrl);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     expect(provisionedUser.auth_service).toBe('saml');
     expect(provisionedUser.email).toBe(keycloakUser.email);
@@ -87,7 +85,7 @@ test('MM-T3280 SAML login records an audit trail entry', {tag: '@saml'}, async (
 
     // # Log in through the SAML SSO button
     await logInWithKeycloak(pw, page, 'saml', keycloakUser);
-    await expectSignedIn(page);
+    await expect(page).toHaveURL(signedInUrl);
 
     // * Verify the server's audit trail recorded the SAML provisioning event
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);

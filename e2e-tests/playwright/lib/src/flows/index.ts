@@ -4,6 +4,7 @@
 // Flows: short sequences on the generated page objects that many specs share. They act and wait for elements
 // (`locator.waitFor()`); specs assert.
 
+export {loginPageUrl, logIn, logInWithKeycloak, openLogin, openSignedOut, signedInUrl} from './auth';
 export {calendarDayKey, pickDate, showMonth, type Calendar} from './calendar';
 export {removeChip} from './chips';
 export {openChannel} from './channels';

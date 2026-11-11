@@ -3,13 +3,13 @@
 
 import path from 'node:path';
 
-import {expect, type App} from '@mattermost/playwright-lib';
+import {expect, pluginKey, settle, type App} from '@mattermost/playwright-lib';
 
 // the demo plugin's own UI (`app.plugins.comMattermostDemoPlugin`), generated from its repo
 import '../../../../../plugins/com_mattermost_demo_plugin';
 
 /** The demo plugin's key in the host's plugin slots (`app.appBar.plugin(DEMO)`). */
-export const DEMO = 'com_mattermost_demo_plugin';
+export const DEMO = pluginKey('com.mattermost.demo-plugin');
 
 const assetPath = path.resolve(__dirname, '../../../../../asset');
 
@@ -39,13 +39,10 @@ export async function closeRootModal(app: App) {
 /** Uploads an asset through the attachment menu's "Your computer" entry (the plugin turns the button into a menu). */
 export async function uploadFromYourComputer(app: App, filename: string) {
     const composer = app.center.postCreate;
-    const upload = app.page.waitForResponse(
-        (r) => r.url().includes('/api/v4/files') && r.request().method() === 'POST' && r.ok(),
-        {timeout: 60_000},
-    );
     const chooser = app.page.waitForEvent('filechooser');
     await composer.clickAttachButton();
-    await composer.attachMenu.clickYourComputerLink();
-    await (await chooser).setFiles(path.join(assetPath, filename));
-    await upload;
+    await settle(composer.attachMenu.yourComputerLink, async (link) => {
+        await link.click();
+        await (await chooser).setFiles(path.join(assetPath, filename));
+    });
 }

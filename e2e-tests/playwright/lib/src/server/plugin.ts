@@ -4,7 +4,7 @@
 import {ClientError} from '@mattermost/client';
 import type {Client4} from '@mattermost/client';
 import type {PluginManifest} from '@mattermost/types/plugins';
-import {expect} from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 import {getAdminClient} from './init';
 
@@ -13,6 +13,7 @@ import {
     aiPluginId,
     callsPluginId,
     demoPluginId,
+    demoPluginMinVersion,
     demoPluginUrl,
     demoPluginVersion,
     npsPluginId,
@@ -113,6 +114,22 @@ async function installAndEnableDemoPluginWithRetry(adminClient: Client4): Promis
     }
 }
 
+/** Whether `version` (`major.minor.patch`, any suffix ignored) is older than `min`. */
+function isOlderVersion(version: string, min: string): boolean {
+    const parts = (v: string) =>
+        v
+            .split(/[.+-]/)
+            .slice(0, 3)
+            .map((n) => parseInt(n, 10) || 0);
+    const [a, b] = [parts(version), parts(min)];
+    for (let i = 0; i < 3; i++) {
+        if (a[i] !== b[i]) {
+            return a[i] < b[i];
+        }
+    }
+    return false;
+}
+
 export type EnsureDemoPluginOptions = {
     /** Enable the plugin after installing/configuring it. Defaults to true. */
     activate?: boolean;
@@ -183,4 +200,11 @@ export async function ensureDemoPlugin(options: EnsureDemoPluginOptions = {}): P
 
     // Activation is asynchronous server-side, so poll rather than assert immediately.
     await expect.poll(() => isPluginActive(adminClient, demoPluginId), {timeout: duration.half_min}).toBe(true);
+
+    // The demo plugin's page objects are generated from one release; an older one renders none of their testids.
+    const active = await getInstalledPluginVersion(adminClient, demoPluginId);
+    test.skip(
+        !active || isOlderVersion(active, demoPluginMinVersion),
+        `the demo plugin is ${active ?? 'missing'}; its page objects need ${demoPluginMinVersion} or later (set PW_DEMO_PLUGIN_URL and PW_DEMO_PLUGIN_VERSION)`,
+    );
 }

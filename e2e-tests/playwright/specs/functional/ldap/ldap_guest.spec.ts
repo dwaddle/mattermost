@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {logIn, openLogin} from '../auth/support';
+import {expect, logIn, openLogin, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify demoting an LDAP user to guest changes their role but keeps their team membership.

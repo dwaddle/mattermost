@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, testConfig} from '@mattermost/playwright-lib';
-
-import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+import {expect, logInWithKeycloak, signedInUrl, test, testConfig} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a SAML user who is not present in LDAP cannot log in while
@@ -63,7 +61,7 @@ test('MM-T3664 SAML login is rejected when the user is not registered in LDAP', 
         await logInWithKeycloak(pw, page, 'saml', {username, password: 'Password1'}, {ifFormShown: true});
 
         // * Verify the login succeeds once the user exists in LDAP
-        await expectSignedIn(page);
+        await expect(page).toHaveURL(signedInUrl);
         const provisionedUser = await adminClient.getUserByUsername(username);
         expect(provisionedUser.auth_service).toBe('saml');
     } finally {

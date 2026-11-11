@@ -1,9 +1,15 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, testConfig} from '@mattermost/playwright-lib';
-
-import {expectLoginRedirectFrom, expectOnLoginPage, expectSignedIn, logInWithKeycloak} from '../auth/support';
+import {
+    expect,
+    loginPageUrl,
+    logInWithKeycloak,
+    openSignedOut,
+    signedInUrl,
+    test,
+    testConfig,
+} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a user who only exists in Keycloak is provisioned via OpenID SSO on first
@@ -27,7 +33,7 @@ test('logs in a directory-only user through Keycloak OpenID SSO', {tag: '@openid
     const app = await logInWithKeycloak(pw, page, 'openid', keycloakUser);
 
     // * Verify the server provisioned the account via OpenID
-    await expectSignedIn(page);
+    await expect(page).toHaveURL(signedInUrl);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     expect(provisionedUser.auth_service).toBe('openid');
     expect(provisionedUser.email).toBe(keycloakUser.email);
@@ -106,7 +112,7 @@ test('logout invalidates a session created via OpenID', {tag: '@openid'}, async 
 
     // # Log in through OpenID and open the team's channel
     const app = await logInWithKeycloak(pw, page, 'openid', keycloakUser);
-    await expectSignedIn(page);
+    await expect(page).toHaveURL(signedInUrl);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     await adminClient.addToTeam(team.id, provisionedUser.id);
 
@@ -118,6 +124,7 @@ test('logout invalidates a session created via OpenID', {tag: '@openid'}, async 
     await (await app.globalHeader.clickOpenAccountMenuButton()).clickLogOutMenuItem();
 
     // * Verify the session is cleared, and revisiting the team's channel redirects back to login
-    await expectOnLoginPage(page);
-    await expectLoginRedirectFrom(page, `/${team.name}`);
+    await expect(page).toHaveURL(loginPageUrl);
+    await openSignedOut(page, `/${team.name}`);
+    await expect(page).toHaveURL(loginPageUrl);
 });

@@ -1,12 +1,9 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test, duration} from '@mattermost/playwright-lib';
+import {expect, generated, pluginKey, test} from '@mattermost/playwright-lib';
 
 const DEMO_PLUGIN_ID = 'com.mattermost.demo-plugin';
-
-// The list keys a row by the plugin id with every character outside [a-z0-9_] made `_`.
-const DEMO_PLUGIN_ROW_KEY = 'com_mattermost_demo_plugin';
 
 /**
  * @objective Verify a system admin can disable and re-enable a plugin from Plugin Management, and open its settings
@@ -22,7 +19,7 @@ test('disables, enables and opens a plugin from Plugin Management', {tag: '@plug
     await page.goto(generated.AdminConsolePage.path({section: 'plugins/plugin_management'}));
 
     // * The demo plugin's row shows its id, and offers Disable since it is running
-    const row = app.admin.plugins.plugin(DEMO_PLUGIN_ROW_KEY);
+    const row = app.admin.plugins.plugin(pluginKey(DEMO_PLUGIN_ID));
     await expect(row.metadata.idButton.locator).toHaveText(DEMO_PLUGIN_ID);
     await expect(row.disableButton.locator).toBeVisible();
 

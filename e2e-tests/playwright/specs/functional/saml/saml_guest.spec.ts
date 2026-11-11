@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+import {expect, logInWithKeycloak, signedInUrl, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a directory user that does not match SamlSettings.GuestAttribute is
@@ -34,7 +32,7 @@ test(
         await logInWithKeycloak(pw, page, 'saml', keycloakUser);
 
         // * Verify the user was provisioned as a regular member
-        await expectSignedIn(page);
+        await expect(page).toHaveURL(signedInUrl);
         const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
         expect(provisionedUser.roles.split(' ')).not.toContain('system_guest');
     },
@@ -65,7 +63,7 @@ test('MM-T1426_2 SAML guest attribute provisions the user as a guest', {tag: '@s
     await logInWithKeycloak(pw, page, 'saml', keycloakUser);
 
     // * Verify the user was provisioned as a guest
-    await expectSignedIn(page);
+    await expect(page).toHaveURL(signedInUrl);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     expect(provisionedUser.roles.split(' ')).toContain('system_guest');
 });

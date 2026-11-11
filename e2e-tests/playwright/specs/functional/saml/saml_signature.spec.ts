@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {expectSignedIn, logInWithKeycloak} from '../auth/support';
+import {expect, logInWithKeycloak, signedInUrl, test} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify SAML login succeeds when the SP request-signing algorithm is RSAwithSHA256.
@@ -27,7 +25,7 @@ test('MM-T3281 SAML login succeeds with signature algorithm RSAwithSHA256', {tag
     await logInWithKeycloak(pw, page, 'saml', keycloakUser);
 
     // * Verify the login succeeded
-    await expectSignedIn(page);
+    await expect(page).toHaveURL(signedInUrl);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     expect(provisionedUser.auth_service).toBe('saml');
 });
@@ -54,7 +52,7 @@ test('MM-T3281_2 SAML login succeeds with signature algorithm RSAwithSHA512', {t
     await logInWithKeycloak(pw, page, 'saml', keycloakUser);
 
     // * Verify the login succeeded
-    await expectSignedIn(page);
+    await expect(page).toHaveURL(signedInUrl);
     const provisionedUser = await adminClient.getUserByUsername(keycloakUser.username);
     expect(provisionedUser.auth_service).toBe('saml');
 });
