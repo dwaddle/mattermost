@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
-
-import {openUsers, search} from './support';
+import {type App, expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' columns menu (its items by column id), the table's
 // header columns by column id, and a row's cells by column id.
@@ -22,7 +20,7 @@ test('MM-T5523-3 Should list the column names with checkboxes in the correct ord
     const {adminUser} = await pw.initSetup();
 
     // # Log in as admin, open System Console > Users and its columns menu
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
     const menu = await app.admin.users.clickColumnsButton();
 
     // * Verify menu items exist in the correct order
@@ -45,7 +43,7 @@ test('MM-T5523-4 Should allow certain columns to be checked and others to be dis
     const {adminUser} = await pw.initSetup();
 
     // # Log in as admin, open System Console > Users and its columns menu
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
     const menu = await app.admin.users.clickColumnsButton();
 
     // * Verify that 'User details' and 'Actions' are disabled
@@ -60,7 +58,7 @@ test('MM-T5523-5 Should show/hide the columns which are toggled on/off', async (
     const {adminUser} = await pw.initSetup();
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
     const {head} = app.admin.users.table;
     await expect(head.column('emailColumn').locator).toBeVisible();
     await expect(head.column('lastLoginColumn').locator).toBeVisible();
@@ -116,14 +114,14 @@ test(
         await adminClient.addToChannel(guestUser.id, channel2.id);
 
         // # Log in as admin, open System Console > Users and show the Channel count column
-        const app = await openUsers(pw, adminUser);
+        const app = await openSystemUsers(pw, adminUser);
         await toggleColumns(app, 'channelCountColumn');
 
         // * The column shows
         await expect(app.admin.users.table.head.column('channelCountColumn').locator).toBeVisible();
 
         // # Search for the guest
-        await search(app, guestUser.email, guestUser);
+        await searchSystemUsers(app, guestUser.email, guestUser);
 
         // * Verify the guest's channel count is 2
         await expect(app.admin.users.table.row(guestUser.id).cell('channelCountColumn').locator).toHaveText('2');
@@ -137,7 +135,7 @@ test('toggles Channel count column visibility on and off', {tag: '@system_users'
     const {adminUser} = await pw.initSetup();
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
     const column = app.admin.users.table.head.column('channelCountColumn').locator;
 
     // # Show the Channel count column

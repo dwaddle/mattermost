@@ -4,9 +4,7 @@
 import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
-
-import {openUsers, search} from './support';
+import {expect, openSystemUsers, type PlaywrightExtended, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' row by user id and its actions menu, and the Manage
 // Roles dialog (role radios, the delegated roles section and its checkboxes by role, Save).
@@ -22,8 +20,8 @@ const SYSTEM_MANAGER_ROLE = 'system_manager';
  * Open the Manage Roles modal for the given user from System Console > User Management > Users.
  */
 async function openManageRolesModal(pw: PlaywrightExtended, admin: UserProfile, user: UserProfile) {
-    const app = await openUsers(pw, admin);
-    await search(app, user.email, user);
+    const app = await openSystemUsers(pw, admin);
+    await searchSystemUsers(app, user.email, user);
     const roles = await (await app.admin.users.table.row(user.id).clickActionsButton()).clickManageRolesMenuItem();
     await expect(roles.saveButton.locator).toBeVisible();
     return roles;

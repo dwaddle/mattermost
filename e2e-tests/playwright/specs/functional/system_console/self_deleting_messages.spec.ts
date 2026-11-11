@@ -3,9 +3,9 @@
 
 import type {AdminConfig} from '@mattermost/types/config';
 
-import {Api, expect, generated, test} from '@mattermost/playwright-lib';
+import {Api, expect, generated, openChannel, test} from '@mattermost/playwright-lib';
 
-import {concealedPost, openChannel, reveal, sendBorMessage, timeRemaining} from '../channels/burn_on_read/support';
+import {concealedPost, reveal, sendBorMessage, timeRemaining} from '../channels/burn_on_read/support';
 
 /**
  * Patch the Posts page required fields to known valid values so tests that
@@ -515,7 +515,7 @@ test.describe('System Console > Self-Deleting Messages', () => {
         await adminClient.addToChannel(receiver.id, channel.id);
 
         // # Log in as admin (sender) and post a BoR message
-        const senderApp = await openChannel(pw, adminUser, team, channelName);
+        const senderApp = await openChannel(pw, adminUser, {team, channel: channelName});
         await adminClient.patchConfig({
             ServiceSettings: {
                 EnableBurnOnRead: true,
@@ -526,7 +526,7 @@ test.describe('System Console > Self-Deleting Messages', () => {
         await sendBorMessage(senderApp, `Duration test ${Date.now()}`);
 
         // # Log in as the receiver and find the concealed message
-        const receiverApp = await openChannel(pw, receiver as any, team, channelName);
+        const receiverApp = await openChannel(pw, receiver as any, {team, channel: channelName});
         const {post} = await concealedPost(receiverApp);
 
         // Re-apply guard: TTL is set by the server at reveal time; ensure BurnOnReadDurationSeconds

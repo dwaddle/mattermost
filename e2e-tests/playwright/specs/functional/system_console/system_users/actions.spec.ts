@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
-
-import {openUsers, search} from './support';
+import {expect, openSystemUsers, type PlaywrightExtended, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' table row by user id and its actions menu, with the
 // dialogs it opens (deactivate, manage roles, manage teams, reset password, update email, revoke sessions).
@@ -140,8 +138,8 @@ async function setupAndGetRandomUser(pw: PlaywrightExtended) {
     await adminClient.addToTeam(team.id, user.id);
 
     // # Log in as admin, open System Console > Users and search for the user
-    const app = await openUsers(pw, adminUser);
-    await search(app, user.email, user);
+    const app = await openSystemUsers(pw, adminUser);
+    await searchSystemUsers(app, user.email, user);
     const row = app.admin.users.table.row(user.id);
     await expect(row.cell('emailColumn').locator).toHaveText(user.email);
 

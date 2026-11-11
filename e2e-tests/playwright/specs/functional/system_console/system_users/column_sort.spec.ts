@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
-
-import {openUsers} from './support';
+import {type App, expect, openSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' table header columns by column id (their sort state)
 // and the rows' email cells, read in document order.
@@ -63,7 +61,7 @@ test.describe('System Console - Users table sorting', () => {
         }
 
         // # Log in as admin and open System Console > Users
-        const app = await openUsers(pw, adminUser);
+        const app = await openSystemUsers(pw, adminUser);
 
         // * Verify that 'Email' column is sortable
         const emailHeader = app.admin.users.table.head.column('emailColumn').locator;
@@ -93,7 +91,7 @@ test.describe('System Console - Users table sorting', () => {
         }
 
         // # Log in as admin and open System Console > Users
-        const app = await openUsers(pw, adminUser);
+        const app = await openSystemUsers(pw, adminUser);
 
         // * Verify that 'Last login' column is not sortable
         const lastLoginHeader = app.admin.users.table.head.column('lastLoginColumn').locator;

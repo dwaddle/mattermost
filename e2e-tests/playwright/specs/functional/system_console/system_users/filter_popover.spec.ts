@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
-
-import {openUsers, search} from './support';
+import {type App, expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' filters popover (team search and options by team id,
 // role and status dropdowns with options by value, Apply), the search box and the table's rows by user id.
@@ -47,7 +45,7 @@ test('MM-T5521-7 Should be able to filter users with team filter', async ({pw}) 
     await adminClient.addToTeam(team2.id, user2.id);
 
     // # Open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Open the filter's popover
     const filters = await openFilters(app);
@@ -77,7 +75,7 @@ test('MM-T5521-8 Should be able to filter users with role filter', async ({pw}) 
     const regularUser = await adminClient.createUser(await pw.random.user(), '', '');
 
     // # Open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Open the filter popover
     const filters = await openFilters(app);
@@ -89,7 +87,7 @@ test('MM-T5521-8 Should be able to filter users with role filter', async ({pw}) 
     await apply(app);
 
     // # Search for the guest user with the filter already applied
-    await search(app, guestUser.email, guestUser);
+    await searchSystemUsers(app, guestUser.email, guestUser);
 
     // * Verify that guest user is visible as a 'Guest' role filter was applied
     await expect(app.admin.users.table.row(guestUser.id).cell('emailColumn').locator).toHaveText(guestUser.email);
@@ -114,7 +112,7 @@ test('MM-T5521-9 Should be able to filter users with status filter', async ({pw}
     const regularUser = await adminClient.createUser(await pw.random.user(), '', '');
 
     // # Open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Open the filter popover
     const filters = await openFilters(app);
@@ -126,7 +124,7 @@ test('MM-T5521-9 Should be able to filter users with status filter', async ({pw}
     await apply(app);
 
     // # Search for the deactivated user with the filter already applied
-    await search(app, deactivatedUser.email, deactivatedUser);
+    await searchSystemUsers(app, deactivatedUser.email, deactivatedUser);
 
     // * Verify that deactivated user is visible as a 'Deactivated' status filter was applied
     await expect(app.admin.users.table.row(deactivatedUser.id).cell('emailColumn').locator).toHaveText(
@@ -149,7 +147,7 @@ test('displays all guest filter variants in the role filter dropdown', {tag: '@s
     const {adminUser} = await pw.initSetup();
 
     // # Open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Open the filter popover
     const filters = await openFilters(app);
@@ -200,7 +198,7 @@ test(
 
         // # Open System Console > Users
 
-        const app = await openUsers(pw, adminUser);
+        const app = await openSystemUsers(pw, adminUser);
 
         // # Open the filter popover and filter by single-channel guests
         const filters = await openFilters(app);
@@ -208,7 +206,7 @@ test(
         await apply(app);
 
         // # Search for the guest user
-        await search(app, guestUser.email, guestUser);
+        await searchSystemUsers(app, guestUser.email, guestUser);
 
         // * Verify the single-channel guest is visible
         await expect(app.admin.users.table.row(guestUser.id).cell('emailColumn').locator).toHaveText(guestUser.email);
@@ -259,7 +257,7 @@ test(
 
         // # Open System Console > Users
 
-        const app = await openUsers(pw, adminUser);
+        const app = await openSystemUsers(pw, adminUser);
 
         // # Open the filter popover and filter by multi-channel guests
         const filters = await openFilters(app);
@@ -267,7 +265,7 @@ test(
         await apply(app);
 
         // # Search for the multi-channel guest
-        await search(app, multiChannelGuest.email, multiChannelGuest);
+        await searchSystemUsers(app, multiChannelGuest.email, multiChannelGuest);
 
         // * Verify the multi-channel guest is visible
         await expect(app.admin.users.table.row(multiChannelGuest.id).cell('emailColumn').locator).toHaveText(

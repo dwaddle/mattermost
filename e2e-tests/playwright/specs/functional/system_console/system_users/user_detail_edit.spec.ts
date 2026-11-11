@@ -3,9 +3,7 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
-
-import {openUsers, search} from './support';
+import {expect, openSystemUsers, type PlaywrightExtended, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' row by user id, and the user detail page (email,
 // username and auth data fields with their errors, Save and its confirmation dialog).
@@ -189,8 +187,8 @@ test('allows cancelling save confirmation dialog', {tag: '@user_management'}, as
  * Navigate to the user detail page for a given user.
  */
 async function navigateToUserDetail(pw: PlaywrightExtended, admin: UserProfile, user: UserProfile) {
-    const app = await openUsers(pw, admin);
-    await search(app, user.email, user);
+    const app = await openSystemUsers(pw, admin);
+    await searchSystemUsers(app, user.email, user);
     await app.admin.users.table.row(user.id).cell('emailColumn').locator.click();
     await expect(app.admin.user.emailTextbox.locator).toBeVisible();
     return app.admin.user;

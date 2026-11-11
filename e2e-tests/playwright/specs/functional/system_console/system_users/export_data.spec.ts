@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
-
-import {openUsers} from './support';
+import {type App, expect, openSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' date range menu, Export button and the export
 // dialogs it opens, and the post list of the system bot's direct message.
@@ -23,7 +21,7 @@ test.fixme('MM-T5522 Should begin export of data when export button is pressed',
     const {adminUser} = await pw.initSetup();
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
     const {users} = app.admin;
 
     // # Change the export duration to All time, export and confirm

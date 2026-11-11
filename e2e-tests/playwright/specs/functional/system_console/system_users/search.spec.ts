@@ -1,9 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
-
-import {openUsers, search} from './support';
+import {expect, openSystemUsers, searchSystemUsers, test} from '@mattermost/playwright-lib';
 
 // Written on the generated page objects: System Console > Users' search box and its table's rows by user id, with
 // their email cells, and the table's empty state.
@@ -16,10 +14,10 @@ test('MM-T5521-1 Should be able to search users with their first names', async (
     const user2 = await adminClient.createUser(await pw.random.user(), '', '');
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Search for the first user's first name
-    await search(app, user1.first_name, user1);
+    await searchSystemUsers(app, user1.first_name, user1);
 
     // * Only the first user is listed
     const {table} = app.admin.users;
@@ -36,10 +34,10 @@ test('MM-T5521-2 Should be able to search users with their last names', async ({
     const user2 = await adminClient.createUser(await pw.random.user(), '', '');
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Search for the first user's last name
-    await search(app, user1.last_name, user1);
+    await searchSystemUsers(app, user1.last_name, user1);
 
     // * Only the first user is listed
     const {table} = app.admin.users;
@@ -56,10 +54,10 @@ test('MM-T5521-3 Should be able to search users with their emails', async ({pw})
     const user2 = await adminClient.createUser(await pw.random.user(), '', '');
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Search for the first user's email
-    await search(app, user1.email, user1);
+    await searchSystemUsers(app, user1.email, user1);
 
     // * Only the first user is listed
     const {table} = app.admin.users;
@@ -76,10 +74,10 @@ test('MM-T5521-4 Should be able to search users with their usernames', async ({p
     const user2 = await adminClient.createUser(await pw.random.user(), '', '');
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Search for the first user's username
-    await search(app, user1.username, user1);
+    await searchSystemUsers(app, user1.username, user1);
 
     // * Only the first user is listed
     const {table} = app.admin.users;
@@ -96,10 +94,10 @@ test('MM-T5521-5 Should be able to search users with their nick names', async ({
     const user2 = await adminClient.createUser(await pw.random.user(), '', '');
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Search for the first user's nickname
-    await search(app, user1.nickname, user1);
+    await searchSystemUsers(app, user1.nickname, user1);
 
     // * Only the first user is listed
     const {table} = app.admin.users;
@@ -112,7 +110,7 @@ test('MM-T5521-6 Should show no user is found when user doesnt exists', async ({
     const {adminUser} = await pw.initSetup();
 
     // # Log in as admin and open System Console > Users
-    const app = await openUsers(pw, adminUser);
+    const app = await openSystemUsers(pw, adminUser);
 
     // # Search for random text
     await app.admin.users.fillSearchTextbox(`!${pw.random.id(15)}_^^^_${pw.random.id(15)}!`);
