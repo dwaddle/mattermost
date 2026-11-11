@@ -1,7 +1,15 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, Api} from '@mattermost/playwright-lib';
+import {Api, expect, openNewChannelModal, postWith, test, type App} from '@mattermost/playwright-lib';
+
+/** Creates a public channel through the sidebar's new channel dialog and waits for the app to open it. */
+async function createChannel(app: App, displayName: string) {
+    const modal = await openNewChannelModal(app);
+    await modal.fillNameTextbox(displayName);
+    await modal.confirmButton.commit({wait: Api.CreateChannel});
+    await expect(app.channelHeader.openMenuButton.locator).toContainText(displayName);
+}
 
 /**
  * @objective Verify a custom user group can be archived, viewed under the archived filter, and restored.
@@ -65,22 +73,21 @@ test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async (
         user_ids: [user.id, member.id],
     });
 
-    const {channelsPage, app} = await pw.testBrowser.login(user);
+    const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
 
     // # Create a new channel
     const channelName = `Group Channel ${pw.random.id()}`;
-    await channelsPage.newChannel(channelName, 'O');
-    await channelsPage.centerView.header.toHaveTitle(channelName);
+    await createChannel(app, channelName);
 
     // # Invite the custom group to the channel with the slash command
-    await channelsPage.centerView.postCreate.writeMessage(`/invite @${groupName} `);
-    await channelsPage.centerView.postCreate.sendMessage();
+    await app.center.postCreate.fillMessageTextbox(`/invite @${groupName} `);
+    await app.center.postCreate.messageTextbox.press('Enter');
 
     // * Verify the group's member was added to the channel. The system message and the ephemeral
     // * "already in the channel" reply for the inviter arrive in either order, so don't rely on the last post.
-    const addedPost = await channelsPage.centerView.getPostByText('added to the channel');
-    await expect(addedPost.container).toContainText(member.username);
+    const added = await postWith(app.center.postList, {text: /added to the channel/});
+    await expect(added.locator).toContainText(member.username);
 });
 
 /**
@@ -101,40 +108,38 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
         user_ids: members.map((member) => member.id),
     });
 
-    const {app, page, channelsPage} = await pw.testBrowser.login(user);
+    const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
 
     // # Create a channel that none of the group's members belong to
     const channelName = `Group Channel ${pw.random.id()}`;
-    await channelsPage.newChannel(channelName, 'O');
-    await channelsPage.centerView.header.toHaveTitle(channelName);
+    await createChannel(app, channelName);
 
     // # Browse the User Groups list, which refreshes the locally cached groups
-    await channelsPage.globalHeader.openUserGroups();
-    await channelsPage.userGroupsModal.toBeVisible();
-    await expect(channelsPage.userGroupsModal.getGroup(group.display_name)).toBeVisible();
+    const groups = await (await app.globalHeader.clickProductMenuButton()).clickUserGroupsMenuItem();
+    await groups.fillSearchTextbox(group.display_name);
+    await expect(groups.group(group).locator).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(channelsPage.userGroupsModal.container).not.toBeVisible();
+    await expect(groups.locator).not.toBeVisible();
 
-    // # Open the Add people dialog for the channel
-    const channelMenu = await channelsPage.openChannelMenu();
-    await channelMenu.members.click();
-    await channelsPage.sidebarRight.toBeVisible();
-    await channelsPage.sidebarRight.addMembersButton.click();
-    const addPeopleToChannelModal = channelsPage.getAddPeopleToChannelModal();
-    await addPeopleToChannelModal.toBeVisible();
+    // # Open the Add people dialog for the channel from the channel's members panel
+    await (await app.channelHeader.clickOpenMenuButton()).clickMembersMenuItem();
+    const channelMembers = app.rhs.channelMembers;
+    await channelMembers.clickAddButton();
+    const invite = app.channelInviteModal.users;
+    await expect(invite.searchCombobox.locator).toBeVisible();
 
     // # Search for the group by its mention
-    await addPeopleToChannelModal.search(`@${groupName}`);
+    await invite.searchCombobox.locator.fill(`@${groupName}`);
 
     // * Verify the group is offered with its current member count
-    const addGroupMembers = addPeopleToChannelModal.container.getByText(`Add ${members.length} people`);
-    await expect(addGroupMembers).toBeVisible();
+    const addGroupMembers = invite.results.group(group).addMembersText;
+    await expect(addGroupMembers.locator).toHaveText(`Add ${members.length} people`);
 
     // # Hover the shortcut. Its tooltip renders in a portal outside the dialog, where the open modal
     // # keeps it out of the accessibility tree, and tooltips carry no testids yet; while it shows, it is the
     // # only place the members' usernames appear.
-    await addGroupMembers.hover();
+    await addGroupMembers.locator.hover();
 
     // * Verify the tooltip names every member of the group
     for (const member of members) {
@@ -142,13 +147,10 @@ test('MM-70052 adds every member of a custom group searched by its mention', {ta
     }
 
     // # Select the whole group and add it to the channel
-    await addGroupMembers.click();
-    await app.channelInviteModal.users.saveButton.commit({wait: Api.AddChannelMember});
+    await invite.results.group(group).locator.click();
+    await invite.saveButton.commit({wait: Api.AddChannelMember});
 
     // * Verify every member of the group joined the channel
-    await channelsPage.centerView.waitUntilLastPostContains('added to the channel');
-    await expect(channelsPage.sidebarRight.container).toContainText(`${members.length + 1} members`);
-    for (const member of members) {
-        await expect(channelsPage.sidebarRight.container).toContainText(member.username);
-    }
+    await postWith(app.center.postList, {text: /added to the channel/});
+    await expect(channelMembers.memberList).toContainKeys([user.id, ...members.map((member) => member.id)]);
 });

@@ -460,9 +460,10 @@ const CROSS_AREA_IMPORTS = {
 // Files where the spec rules' extended checks (template, variable, hasText and selector locators; pw.wait and timer
 // sleeps) found what the area-fix wave moves: there the two rules stay warnings until then (see the last block).
 const EXTENDED_LINT_PENDING = [
+    // the two autotranslation specs find translated posts by text (filter({hasText})); moving them to postWith() needs a
+    // run against the mock translator to check, which this pass didn't have
     'specs/functional/channels/autotranslation/autotranslation.spec.ts',
     'specs/functional/channels/autotranslation/autotranslation_users.spec.ts',
-    'specs/functional/channels/custom_groups/custom_group_management.spec.ts',
 ];
 
 export default [
