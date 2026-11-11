@@ -12,6 +12,7 @@ import {useRouteMatch} from 'react-router-dom';
 
 import {GenericModal} from '@mattermost/components';
 import type {Emoji} from '@mattermost/types/emojis';
+import {textTestKey} from '@mattermost/types/test_id';
 import type {UserCustomStatus} from '@mattermost/types/users';
 import {CustomStatusDuration} from '@mattermost/types/users';
 
@@ -53,6 +54,9 @@ type DefaultUserCustomStatus = {
     emoji: string;
     message: MessageDescriptor;
     duration: CustomStatusDuration;
+
+    /** The suggestion's testid key: its message id's last word, the same in every language. */
+    testKey: 'in_a_meeting' | 'out_for_lunch' | 'out_sick' | 'working_from_home' | 'on_a_vacation';
 };
 
 const {
@@ -68,6 +72,7 @@ const {
 
 const defaultCustomStatusSuggestions: DefaultUserCustomStatus[] = [
     {
+        testKey: 'in_a_meeting',
         emoji: 'calendar',
         message: defineMessage({
             id: 'custom_status.suggestions.in_a_meeting',
@@ -76,6 +81,7 @@ const defaultCustomStatusSuggestions: DefaultUserCustomStatus[] = [
         duration: ONE_HOUR,
     },
     {
+        testKey: 'out_for_lunch',
         emoji: 'hamburger',
         message: defineMessage({
             id: 'custom_status.suggestions.out_for_lunch',
@@ -84,6 +90,7 @@ const defaultCustomStatusSuggestions: DefaultUserCustomStatus[] = [
         duration: THIRTY_MINUTES,
     },
     {
+        testKey: 'out_sick',
         emoji: 'sneezing_face',
         message: defineMessage({
             id: 'custom_status.suggestions.out_sick',
@@ -92,6 +99,7 @@ const defaultCustomStatusSuggestions: DefaultUserCustomStatus[] = [
         duration: TODAY,
     },
     {
+        testKey: 'working_from_home',
         emoji: 'house',
         message: defineMessage({
             id: 'custom_status.suggestions.working_from_home',
@@ -100,6 +108,7 @@ const defaultCustomStatusSuggestions: DefaultUserCustomStatus[] = [
         duration: TODAY,
     },
     {
+        testKey: 'on_a_vacation',
         emoji: 'palm_tree',
         message: defineMessage({
             id: 'custom_status.suggestions.on_a_vacation',
@@ -274,11 +283,12 @@ const CustomStatusModal: React.FC<Props> = (props: Props) => {
             {
                 recentCustomStatuses.map((status: UserCustomStatus) => (
                     <CustomStatusSuggestion
-                        key={status.text}
+                        key={textTestKey(status.text)}
                         handleSuggestionClick={handleSuggestionClick}
                         handleClear={handleRecentCustomStatusClear}
                         status={status}
                         testIdScope='custom_status_modal.recent'
+                        testKey={textTestKey(status.text)}
                     />
                 ))
             }
@@ -289,17 +299,21 @@ const CustomStatusModal: React.FC<Props> = (props: Props) => {
         const recentCustomStatusTexts = recentCustomStatuses.map((status: UserCustomStatus) => status.text);
         const customStatusSuggestions = defaultCustomStatusSuggestions.
             map((status) => ({
-                emoji: status.emoji,
-                text: formatMessage(status.message),
-                duration: status.duration,
+                status: {
+                    emoji: status.emoji,
+                    text: formatMessage(status.message),
+                    duration: status.duration,
+                },
+                testKey: status.testKey,
             })).
-            filter((status: UserCustomStatus) => !recentCustomStatusTexts.includes(status.text)).
-            map((status: UserCustomStatus, index: number) => (
+            filter(({status}) => !recentCustomStatusTexts.includes(status.text)).
+            map(({status, testKey}) => (
                 <CustomStatusSuggestion
-                    key={index}
+                    key={testKey}
                     handleSuggestionClick={handleSuggestionClick}
                     status={status}
                     testIdScope='custom_status_modal.suggestion'
+                    testKey={testKey}
                 />
             ));
 

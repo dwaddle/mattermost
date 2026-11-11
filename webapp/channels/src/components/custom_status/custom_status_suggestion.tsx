@@ -6,6 +6,7 @@ import React, {useState} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {keyed, part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserCustomStatus} from '@mattermost/types/users';
 import {CustomStatusDuration} from '@mattermost/types/users';
@@ -23,12 +24,15 @@ type Props = {
     handleClear?: (status: UserCustomStatus) => void;
     status: UserCustomStatus;
 
-    /** The row renders `${testIdScope}:${status.text}--button`, its clear button `${testIdScope}.clear--button`. */
+    /** The row renders `<testIdScope>:<testKey>--button`, its clear button `<testIdScope>.clear--button`. */
     testIdScope?: TestId;
+
+    /** The row's key: a default suggestion's message id word (`in_a_meeting`), a recent status's `textTestKey(text)`. */
+    testKey?: string;
 };
 
 const CustomStatusSuggestion: React.FC<Props> = (props: Props) => {
-    const {handleSuggestionClick, handleClear, status, testIdScope} = props;
+    const {handleSuggestionClick, handleClear, status, testIdScope, testKey} = props;
     const {emoji, text, duration} = status;
     const [show, setShow] = useState(false);
 
@@ -57,7 +61,7 @@ const CustomStatusSuggestion: React.FC<Props> = (props: Props) => {
                 <button
                     className='style--none input-clear-x'
                     onClick={handleRecentCustomStatusClear}
-                    data-testid={testIdScope ? `${testIdScope}.clear--button` : undefined}
+                    data-testid={part(testIdScope, 'clear', 'button')}
                 >
                     <i className='icon icon-close-circle'/>
                 </button>
@@ -72,7 +76,7 @@ const CustomStatusSuggestion: React.FC<Props> = (props: Props) => {
             onMouseLeave={hideClearButton}
             onClick={() => handleSuggestionClick(status)}
             tabIndex={0}
-            data-testid={testIdScope ? `${testIdScope}:${status.text}--button` : undefined}
+            data-testid={keyed(testIdScope, testKey, 'button')}
         >
             <div className='statusSuggestion__icon'>
                 <RenderEmoji

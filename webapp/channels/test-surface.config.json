@@ -614,11 +614,6 @@
                     "entity": "Emoji",
                     "field": "short_name",
                     "reason": "an emoji's short name is unique and the same in every language."
-                },
-                {
-                    "entity": "UserCustomStatus",
-                    "field": "text",
-                    "reason": "(to review) the suggestions are keyed by their text, which is translated for the default ones: key them with textTestKey (the area-fix wave)."
                 }
             ]
         }

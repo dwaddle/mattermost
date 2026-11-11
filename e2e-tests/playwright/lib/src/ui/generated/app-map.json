@@ -6542,7 +6542,7 @@
                 {
                     "testId": "custom_status_modal.suggestion:{key}--button",
                     "role": "button",
-                    "key": "Pick<UserCustomStatus, 'text'>",
+                    "key": "\"in_a_meeting\" | \"on_a_vacation\" | \"out_for_lunch\" | \"out_sick\" | \"working_from_home\"",
                     "source": "channels/src/components/custom_status/custom_status_suggestion.tsx#CustomStatusSuggestion"
                 },
                 {
@@ -6665,7 +6665,7 @@
                 {
                     "testId": "custom_status_modal.recent:{key}--button",
                     "role": "button",
-                    "key": "Pick<UserCustomStatus, 'text'>",
+                    "key": "string",
                     "source": "channels/src/components/custom_status/custom_status_suggestion.tsx#CustomStatusSuggestion"
                 }
             ]

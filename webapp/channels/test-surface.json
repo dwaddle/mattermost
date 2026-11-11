@@ -39107,11 +39107,8 @@
         "state": []
       },
       "key": {
-        "kind": "entity",
-        "entity": "UserCustomStatus",
-        "field": "text",
-        "module": "@mattermost/types/users",
-        "type": "Pick<UserCustomStatus, 'text'>"
+        "kind": "text",
+        "type": "string"
       }
     },
     {
@@ -39130,6 +39127,13 @@
         {
           "via": [
             "channels/src/components/custom_status/custom_status_modal.tsx#CustomStatusModal"
+          ],
+          "keySet": [
+            "in_a_meeting",
+            "on_a_vacation",
+            "out_for_lunch",
+            "out_sick",
+            "working_from_home"
           ]
         }
       ],
@@ -39139,11 +39143,16 @@
         "state": []
       },
       "key": {
-        "kind": "entity",
-        "entity": "UserCustomStatus",
-        "field": "text",
-        "module": "@mattermost/types/users",
-        "type": "Pick<UserCustomStatus, 'text'>"
+        "kind": "set",
+        "type": "\"in_a_meeting\" | \"on_a_vacation\" | \"out_for_lunch\" | \"out_sick\" | \"working_from_home\"",
+        "values": [
+          "in_a_meeting",
+          "on_a_vacation",
+          "out_for_lunch",
+          "out_sick",
+          "working_from_home"
+        ],
+        "set": "CustomStatusModalSuggestion"
       }
     },
     {
@@ -128697,6 +128706,17 @@
         "today"
       ],
       "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
+    },
+    {
+      "name": "CustomStatusModalSuggestion",
+      "values": [
+        "in_a_meeting",
+        "on_a_vacation",
+        "out_for_lunch",
+        "out_sick",
+        "working_from_home"
+      ],
+      "source": "channels/src/components/custom_status/custom_status_suggestion.tsx#CustomStatusSuggestion"
     },
     {
       "name": "EmojiGifPickerTab",

@@ -5,13 +5,12 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
-import type {UserCustomStatus} from '@mattermost/types/users';
 
-import {Scope, drivers} from '../../aria';
+import {Scope, drivers, textTestKey} from '../../aria';
 
 import {Api} from './api';
 import {CustomStatusModalExpiryCustom} from './shared';
-import type {CustomStatusModalDuration} from './sets';
+import type {CustomStatusModalDuration, CustomStatusModalSuggestion} from './sets';
 
 /** Scope `custom_status_modal`. */
 export class CustomStatusModal extends Scope {
@@ -109,9 +108,9 @@ export class CustomStatusModal extends Scope {
     /**
      * `custom_status_modal.suggestion:{key}--button` — CustomStatusSuggestion (channels/src/components/custom_status/custom_status_suggestion.tsx)
      */
-    suggestion(suggestion: Pick<UserCustomStatus, 'text'>) {
-        return drivers.button(this.byTestId(`${this.scope}.suggestion:${suggestion.text}--button`), {
-            testId: `${this.scope}.suggestion:${suggestion.text}--button`,
+    suggestion(suggestion: CustomStatusModalSuggestion) {
+        return drivers.button(this.byTestId(`${this.scope}.suggestion:${suggestion}--button`), {
+            testId: `${this.scope}.suggestion:${suggestion}--button`,
             role: 'button',
             effects: [],
             unknownEffects: false,
@@ -127,6 +126,26 @@ export class CustomStatusModal extends Scope {
     /** The keys of every `custom_status_modal.suggestion:{key}--button` in the scope, in document order. */
     suggestionKeys(): Promise<string[]> {
         return this.keysOf(`${this.scope}.suggestion:`, '--button');
+    }
+
+    get inAMeetingButton() {
+        return this.suggestion('in_a_meeting');
+    }
+
+    get onAVacationButton() {
+        return this.suggestion('on_a_vacation');
+    }
+
+    get outForLunchButton() {
+        return this.suggestion('out_for_lunch');
+    }
+
+    get outSickButton() {
+        return this.suggestion('out_sick');
+    }
+
+    get workingFromHomeButton() {
+        return this.suggestion('working_from_home');
     }
 
     /**
@@ -153,11 +172,11 @@ export class CustomStatusModal extends Scope {
     /**
      * `custom_status_modal.recent:{key}--button` — CustomStatusSuggestion (channels/src/components/custom_status/custom_status_suggestion.tsx)
      */
-    recent(recent: Pick<UserCustomStatus, 'text'>): CustomStatusModalRecent {
+    recent(recent: string): CustomStatusModalRecent {
         return new CustomStatusModalRecent(
             this.page,
             `${this.scope}.recent`,
-            this.byTestId(`${this.scope}.recent:${recent.text}--button`),
+            this.byTestId(`${this.scope}.recent:${textTestKey(recent)}--button`),
         );
     }
 
@@ -173,7 +192,7 @@ export class CustomStatusModal extends Scope {
 
     /** Every `custom_status_modal.suggestion:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.suggestionList).toHaveKeys([…])`. */
     get suggestionList() {
-        return this.keyedList(`${this.scope}.suggestion:`, '--button', (key: string) =>
+        return this.keyedList(`${this.scope}.suggestion:`, '--button', (key: CustomStatusModalSuggestion) =>
             drivers.button(this.byTestId(`${this.scope}.suggestion:${key}--button`), {
                 testId: `${this.scope}.suggestion:${key}--button`,
                 role: 'button',

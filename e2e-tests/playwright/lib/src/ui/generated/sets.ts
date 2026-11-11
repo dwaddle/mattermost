@@ -58,6 +58,17 @@ export const CustomStatusModalDuration = {
 } as const;
 export type CustomStatusModalDuration = (typeof CustomStatusModalDuration)[keyof typeof CustomStatusModalDuration];
 
+/** Keys of CustomStatusModalSuggestion (from channels/src/components/custom_status/custom_status_suggestion.tsx#CustomStatusSuggestion). */
+export const CustomStatusModalSuggestion = {
+    InAMeeting: 'in_a_meeting',
+    OnAVacation: 'on_a_vacation',
+    OutForLunch: 'out_for_lunch',
+    OutSick: 'out_sick',
+    WorkingFromHome: 'working_from_home',
+} as const;
+export type CustomStatusModalSuggestion =
+    (typeof CustomStatusModalSuggestion)[keyof typeof CustomStatusModalSuggestion];
+
 /** Keys of EmojiGifPickerTab (from channels/src/components/emoji_picker/emoji_picker_tabs.tsx#EmojiPickerTabs). */
 export const EmojiGifPickerTab = {
     Emojis: 'emojis',
