@@ -18,7 +18,7 @@ import {
     MonitorAccountIcon,
 } from '@mattermost/compass-icons/components';
 import {buttonClassNames} from '@mattermost/shared/components/button';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 import type {Team} from '@mattermost/types/teams';
 
 import {Permissions} from 'mattermost-redux/constants';
@@ -506,7 +506,7 @@ function PluginMenuItems() {
                 <Menu.Item
                     id={`${plugin.id}_pluginmenuitem`}
                     key={plugin.id}
-                    data-testid={`lhs.team_menu.plugin:${pluginTestKey(plugin.pluginId)}--menuitem`}
+                    data-testid={pluginSlotTestId('lhs_team_menu_item', plugin.pluginId)}
                     onClick={handleClick}
                     labels={<span>{plugin.text}</span>}
                 />

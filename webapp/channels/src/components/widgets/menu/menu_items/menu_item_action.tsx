@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import type {TestId} from '@mattermost/shared/utils/test_id';
+import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 
 import menuItem from './menu_item';
 
@@ -22,6 +22,12 @@ type Props = {
 
     /** Renders `<testId>--button`; without it the button's testid is its id. */
     testId?: TestId;
+
+    /**
+     * A plugin slot's whole testid (`pluginSlotTestId(...)`), in place of `testId`: the slot's contract ends in the
+     * role menu items have (`--menuitem`), not this button's.
+     */
+    slotTestId?: TestIdWithRole;
 };
 export const MenuItemActionImpl = ({
     onClick,
@@ -35,10 +41,11 @@ export const MenuItemActionImpl = ({
     sibling,
     iconClassName,
     testId,
+    slotTestId,
 }: Props) => (
     <>
         <button
-            data-testid={testId ? `${testId}--button` : id}
+            data-testid={slotTestId ?? (testId ? `${testId}--button` : id)}
             id={id}
             className={classNames('style--none', buttonClass, {
                 'MenuItem__with-help': extraText,

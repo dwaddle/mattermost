@@ -13246,7 +13246,7 @@
       ]
     },
     {
-      "template": "center.post_create.attach_menu.plugin:{key}--link",
+      "template": "center.post_create.attach_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "center",
@@ -13254,7 +13254,7 @@
         "attach_menu"
       ],
       "name": "plugin",
-      "role": "link",
+      "role": "menuitem",
       "component": {
         "name": "FileUpload",
         "at": "channels/src/components/file_upload/file_upload.tsx#FileUpload"
@@ -15840,7 +15840,7 @@
       ]
     },
     {
-      "template": "center.post_list.post.attachments.file_card.menu.plugin:{key}--button",
+      "template": "center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "center",
@@ -15851,7 +15851,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -18242,7 +18242,7 @@
       ]
     },
     {
-      "template": "center.post_list.post.menu.actions_menu.plugin:{key}--button",
+      "template": "center.post_list.post.menu.actions_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "center",
@@ -18252,7 +18252,7 @@
         "actions_menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -18302,7 +18302,7 @@
       ]
     },
     {
-      "template": "center.post_list.post.menu.actions_menu.plugin_submenu:{key}--button",
+      "template": "center.post_list.post.menu.actions_menu.plugin_submenu:{key}--menuitem",
       "grammar": true,
       "scope": [
         "center",
@@ -18312,7 +18312,7 @@
         "actions_menu"
       ],
       "name": "plugin_submenu",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "SubMenuItem",
         "at": "channels/src/components/widgets/menu/menu_items/submenu_item.tsx#SubMenuItem"
@@ -19242,7 +19242,7 @@
       ]
     },
     {
-      "template": "center.post_list.post.permalink_preview.attachments.file_card.menu.plugin:{key}--button",
+      "template": "center.post_list.post.permalink_preview.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "center",
@@ -19254,7 +19254,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -26004,7 +26004,7 @@
       }
     },
     {
-      "template": "channel_header.plugin_actions.menu.action:{key}--link",
+      "template": "channel_header.plugin_actions.menu.action:{key}--menuitem",
       "grammar": true,
       "scope": [
         "channel_header",
@@ -26012,7 +26012,7 @@
         "menu"
       ],
       "name": "action",
-      "role": "link",
+      "role": "menuitem",
       "component": {
         "name": "(anonymous)",
         "at": "channels/src/plugins/channel_header_plug/channel_header_plug.tsx#ChannelHeaderPlug"
@@ -37301,7 +37301,7 @@
       ]
     },
     {
-      "template": "forward_post_modal.preview.attachments.file_card.menu.plugin:{key}--button",
+      "template": "forward_post_modal.preview.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "forward_post_modal",
@@ -37311,7 +37311,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -48431,7 +48431,7 @@
       ]
     },
     {
-      "template": "modal.post_create.attach_menu.plugin:{key}--link",
+      "template": "modal.post_create.attach_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "modal",
@@ -48439,7 +48439,7 @@
         "attach_menu"
       ],
       "name": "plugin",
-      "role": "link",
+      "role": "menuitem",
       "component": {
         "name": "FileUpload",
         "at": "channels/src/components/file_upload/file_upload.tsx#FileUpload"
@@ -53483,7 +53483,7 @@
       ]
     },
     {
-      "template": "plugin.post_create.attach_menu.plugin:{key}--link",
+      "template": "plugin.post_create.attach_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "plugin",
@@ -53491,7 +53491,7 @@
         "attach_menu"
       ],
       "name": "plugin",
-      "role": "link",
+      "role": "menuitem",
       "component": {
         "name": "FileUpload",
         "at": "channels/src/components/file_upload/file_upload.tsx#FileUpload"
@@ -57325,7 +57325,7 @@
       ]
     },
     {
-      "template": "post_edit.editor.attach_menu.plugin:{key}--link",
+      "template": "post_edit.editor.attach_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "post_edit",
@@ -57333,7 +57333,7 @@
         "attach_menu"
       ],
       "name": "plugin",
-      "role": "link",
+      "role": "menuitem",
       "component": {
         "name": "FileUpload",
         "at": "channels/src/components/file_upload/file_upload.tsx#FileUpload"
@@ -62634,7 +62634,7 @@
       ]
     },
     {
-      "template": "restore_post_modal.attachments.file_card.menu.plugin:{key}--button",
+      "template": "restore_post_modal.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "restore_post_modal",
@@ -62643,7 +62643,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -65840,7 +65840,7 @@
       ]
     },
     {
-      "template": "rhs.edit_history.version.attachments.file_card.menu.plugin:{key}--button",
+      "template": "rhs.edit_history.version.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "rhs",
@@ -65851,7 +65851,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -67622,7 +67622,7 @@
       ]
     },
     {
-      "template": "rhs.post_create.attach_menu.plugin:{key}--link",
+      "template": "rhs.post_create.attach_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "rhs",
@@ -67630,7 +67630,7 @@
         "attach_menu"
       ],
       "name": "plugin",
-      "role": "link",
+      "role": "menuitem",
       "component": {
         "name": "FileUpload",
         "at": "channels/src/components/file_upload/file_upload.tsx#FileUpload"
@@ -70294,7 +70294,7 @@
       ]
     },
     {
-      "template": "rhs.thread.post.attachments.file_card.menu.plugin:{key}--button",
+      "template": "rhs.thread.post.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "rhs",
@@ -70305,7 +70305,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -72696,7 +72696,7 @@
       ]
     },
     {
-      "template": "rhs.thread.post.menu.actions_menu.plugin:{key}--button",
+      "template": "rhs.thread.post.menu.actions_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "rhs",
@@ -72706,7 +72706,7 @@
         "actions_menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -72756,7 +72756,7 @@
       ]
     },
     {
-      "template": "rhs.thread.post.menu.actions_menu.plugin_submenu:{key}--button",
+      "template": "rhs.thread.post.menu.actions_menu.plugin_submenu:{key}--menuitem",
       "grammar": true,
       "scope": [
         "rhs",
@@ -72766,7 +72766,7 @@
         "actions_menu"
       ],
       "name": "plugin_submenu",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "SubMenuItem",
         "at": "channels/src/components/widgets/menu/menu_items/submenu_item.tsx#SubMenuItem"
@@ -73696,7 +73696,7 @@
       ]
     },
     {
-      "template": "rhs.thread.post.permalink_preview.attachments.file_card.menu.plugin:{key}--button",
+      "template": "rhs.thread.post.permalink_preview.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "rhs",
@@ -73708,7 +73708,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -77734,7 +77734,7 @@
       ]
     },
     {
-      "template": "search.results.file.menu.plugin:{key}--button",
+      "template": "search.results.file.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "search",
@@ -77743,7 +77743,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -78233,7 +78233,7 @@
       ]
     },
     {
-      "template": "search.results.post.attachments.file_card.menu.plugin:{key}--button",
+      "template": "search.results.post.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "search",
@@ -78244,7 +78244,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -80635,7 +80635,7 @@
       ]
     },
     {
-      "template": "search.results.post.menu.actions_menu.plugin:{key}--button",
+      "template": "search.results.post.menu.actions_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "search",
@@ -80645,7 +80645,7 @@
         "actions_menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -80695,7 +80695,7 @@
       ]
     },
     {
-      "template": "search.results.post.menu.actions_menu.plugin_submenu:{key}--button",
+      "template": "search.results.post.menu.actions_menu.plugin_submenu:{key}--menuitem",
       "grammar": true,
       "scope": [
         "search",
@@ -80705,7 +80705,7 @@
         "actions_menu"
       ],
       "name": "plugin_submenu",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "SubMenuItem",
         "at": "channels/src/components/widgets/menu/menu_items/submenu_item.tsx#SubMenuItem"
@@ -81635,7 +81635,7 @@
       ]
     },
     {
-      "template": "search.results.post.permalink_preview.attachments.file_card.menu.plugin:{key}--button",
+      "template": "search.results.post.permalink_preview.attachments.file_card.menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "search",
@@ -81647,7 +81647,7 @@
         "menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -101290,7 +101290,7 @@
     },
     {
       "slot": "channel_header_dropdown_item",
-      "template": "channel_header.plugin_actions.menu.action:{key}--link",
+      "template": "channel_header.plugin_actions.menu.action:{key}--menuitem",
       "registry": [
         "registerChannelHeaderButtonAction"
       ],
@@ -101306,7 +101306,7 @@
     },
     {
       "slot": "file_menu_item",
-      "template": "*.attachments.file_card.menu.plugin:{key}--button",
+      "template": "*.file_card.menu.plugin:{key}--menuitem",
       "registry": [
         "registerFileDropdownMenuAction"
       ],
@@ -101314,7 +101314,7 @@
     },
     {
       "slot": "file_upload_method",
-      "template": "*.attach_menu.plugin:{key}--link",
+      "template": "*.attach_menu.plugin:{key}--menuitem",
       "registry": [
         "registerFileUploadMethod"
       ],
@@ -101338,7 +101338,7 @@
     },
     {
       "slot": "post_menu_item",
-      "template": "*.actions_menu.plugin:{key}--button",
+      "template": "*.actions_menu.plugin:{key}--menuitem",
       "registry": [
         "registerPostDropdownMenuAction"
       ],
@@ -101346,7 +101346,7 @@
     },
     {
       "slot": "post_submenu",
-      "template": "*.actions_menu.plugin_submenu:{key}--button",
+      "template": "*.actions_menu.plugin_submenu:{key}--menuitem",
       "registry": [
         "registerPostDropdownSubMenuAction"
       ],
@@ -101362,7 +101362,7 @@
     },
     {
       "slot": "search_file_menu_item",
-      "template": "search.results.file.menu.plugin:{key}--button",
+      "template": "search.results.file.menu.plugin:{key}--menuitem",
       "registry": [
         "registerFileDropdownMenuAction"
       ],

@@ -129,26 +129,31 @@ export function pluginSlotPath<S extends PluginSlot>(slot: S, pluginId: string, 
  * This is a published contract, like the published modals: plugin test packages locate their buttons
  * through it, and the test-surface scan fails if the webapp stops rendering a slot listed here, or
  * renders a plugin-keyed testid that isn't listed.
+ *
+ * A menu item's slot ends in `--menuitem` whatever renders it today, so moving a menu to the menu library renames
+ * nothing plugins rely on. The older menus still render those items as buttons or links (allow-listed in the scan's
+ * role-fit check until they move).
  */
 export const PLUGIN_SLOT_TEST_IDS = {
     app_bar_button: 'app_bar.plugin:{plugin}--button',
     channel_header_button: 'channel_header.plugin_actions.action:{plugin}--button',
-    channel_header_dropdown_item: 'channel_header.plugin_actions.menu.action:{plugin}--link',
+    channel_header_dropdown_item: 'channel_header.plugin_actions.menu.action:{plugin}--menuitem',
     channel_header_menu_item: 'channel_header.menu.plugin:{plugin}--menuitem',
 
-    // a file's "..." menu wherever an attachment renders (a post, a thread, a preview…): `*.` is any scope
-    file_menu_item: '*.attachments.file_card.menu.plugin:{plugin}--button',
+    // a file's "..." menu wherever an attachment renders (a post, a thread, a preview…): `*` is the attachment
+    // list's scope (`<post>.attachments`)
+    file_menu_item: '*.file_card.menu.plugin:{plugin}--menuitem',
 
     // the composer's attachment menu, in the center and the thread panel
-    file_upload_method: '*.attach_menu.plugin:{plugin}--link',
+    file_upload_method: '*.attach_menu.plugin:{plugin}--menuitem',
     lhs_browse_or_add_menu_item: 'lhs.browse_or_add_menu.plugin:{plugin}--menuitem',
     lhs_team_menu_item: 'lhs.team_menu.plugin:{plugin}--menuitem',
 
     // a post's actions menu wherever a post renders (the center, a thread, search results…)
-    post_menu_item: '*.actions_menu.plugin:{plugin}--button',
-    post_submenu: '*.actions_menu.plugin_submenu:{plugin}--button',
+    post_menu_item: '*.actions_menu.plugin:{plugin}--menuitem',
+    post_submenu: '*.actions_menu.plugin_submenu:{plugin}--menuitem',
     rhs_panel: 'rhs.plugin:{plugin}',
-    search_file_menu_item: 'search.results.file.menu.plugin:{plugin}--button',
+    search_file_menu_item: 'search.results.file.menu.plugin:{plugin}--menuitem',
     search_type: 'search_box.plugin_type:{plugin}--radio',
 
     // each area's PR lists the slots it renders, once it renders them

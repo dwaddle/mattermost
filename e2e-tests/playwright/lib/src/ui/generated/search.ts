@@ -311,35 +311,35 @@ export class SearchResultsFileMenu extends Scope {
     }
 
     /**
-     * `search.results.file.menu.plugin:{key}--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * `search.results.file.menu.plugin:{key}--menuitem` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     plugin(plugin: PluginKey) {
-        return drivers.button(this.byTestId(`${this.scope}.plugin:${plugin as string}--button`), {
-            testId: `${this.scope}.plugin:${plugin as string}--button`,
-            role: 'button',
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin:${plugin as string}--menuitem`), {
+            testId: `${this.scope}.plugin:${plugin as string}--menuitem`,
+            role: 'menuitem',
             effects: [],
             unknownEffects: true,
             source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
         });
     }
 
-    /** Every `search.results.file.menu.plugin:{key}--button` in the scope. */
+    /** Every `search.results.file.menu.plugin:{key}--menuitem` in the scope. */
     get pluginItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.plugin:`, '--button');
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--menuitem');
     }
 
-    /** The keys of every `search.results.file.menu.plugin:{key}--button` in the scope, in document order. */
+    /** The keys of every `search.results.file.menu.plugin:{key}--menuitem` in the scope, in document order. */
     pluginKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.plugin:`, '--button');
+        return this.keysOf(`${this.scope}.plugin:`, '--menuitem');
     }
 
-    /** Every `search.results.file.menu.plugin:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    /** Every `search.results.file.menu.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
     get pluginList() {
-        return this.keyedList(`${this.scope}.plugin:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.plugin:${key}--button`), {
-                testId: `${this.scope}.plugin:${key}--button`,
-                role: 'button',
+        return this.keyedList(`${this.scope}.plugin:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin:${key}--menuitem`), {
+                testId: `${this.scope}.plugin:${key}--menuitem`,
+                role: 'menuitem',
                 effects: [],
                 unknownEffects: true,
                 source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',

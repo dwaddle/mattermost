@@ -6,7 +6,7 @@ import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 
 import {getCurrentChannel, getMyCurrentChannelMembership} from 'mattermost-redux/selectors/entities/channels';
 
@@ -61,7 +61,7 @@ const AppBarPluginComponent = ({
     };
 
     const buttonId = `app-bar-icon-${component.pluginId}`;
-    const testId = `app_bar.plugin:${pluginTestKey(component.pluginId)}--button` as const;
+    const testId = pluginSlotTestId('app_bar_button', component.pluginId);
     const tooltipText = component.tooltipText || dropdownText || component.pluginId;
 
     let content: React.ReactNode = (

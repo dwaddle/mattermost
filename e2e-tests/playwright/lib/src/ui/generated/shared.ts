@@ -617,27 +617,27 @@ export class Prompt extends Scope {
 /** Rendered at `center.post_create.attach_menu`, `modal.post_create.attach_menu`, `plugin.post_create.attach_menu`, `post_edit.editor.attach_menu`, `rhs.post_create.attach_menu`: one class, constructed with the scope it is mounted at. */
 export class PostCreateAttachMenu extends Scope {
     /**
-     * `center.post_create.attach_menu.plugin:{key}--link` — FileUpload (channels/src/components/file_upload/file_upload.tsx)
+     * `center.post_create.attach_menu.plugin:{key}--menuitem` — FileUpload (channels/src/components/file_upload/file_upload.tsx)
      * Renders only when !(isDisabled || editAttachmentsDisabled) and !disabledByPolicy and !(this.props.pluginFileUploadMethods.length === 0).
      */
     plugin(plugin: PluginKey) {
-        return drivers.link(this.byTestId(`${this.scope}.plugin:${plugin as string}--link`), {
-            testId: `${this.scope}.plugin:${plugin as string}--link`,
-            role: 'link',
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin:${plugin as string}--menuitem`), {
+            testId: `${this.scope}.plugin:${plugin as string}--menuitem`,
+            role: 'menuitem',
             effects: [],
             unknownEffects: false,
             source: 'channels/src/components/file_upload/file_upload.tsx#FileUpload',
         });
     }
 
-    /** Every `center.post_create.attach_menu.plugin:{key}--link` in the scope. */
+    /** Every `center.post_create.attach_menu.plugin:{key}--menuitem` in the scope. */
     get pluginItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.plugin:`, '--link');
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--menuitem');
     }
 
-    /** The keys of every `center.post_create.attach_menu.plugin:{key}--link` in the scope, in document order. */
+    /** The keys of every `center.post_create.attach_menu.plugin:{key}--menuitem` in the scope, in document order. */
     pluginKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.plugin:`, '--link');
+        return this.keysOf(`${this.scope}.plugin:`, '--menuitem');
     }
 
     /**
@@ -658,12 +658,12 @@ export class PostCreateAttachMenu extends Scope {
         await this.yourComputerLink.click();
     }
 
-    /** Every `center.post_create.attach_menu.plugin:{key}--link` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    /** Every `center.post_create.attach_menu.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
     get pluginList() {
-        return this.keyedList(`${this.scope}.plugin:`, '--link', (key: string) =>
-            drivers.link(this.byTestId(`${this.scope}.plugin:${key}--link`), {
-                testId: `${this.scope}.plugin:${key}--link`,
-                role: 'link',
+        return this.keyedList(`${this.scope}.plugin:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin:${key}--menuitem`), {
+                testId: `${this.scope}.plugin:${key}--menuitem`,
+                role: 'menuitem',
                 effects: [],
                 unknownEffects: false,
                 source: 'channels/src/components/file_upload/file_upload.tsx#FileUpload',
@@ -1787,28 +1787,28 @@ export class AttachmentsFileCard extends Scope {
 /** Rendered at `center.post_list.post.attachments.file_card.menu`, `center.post_list.post.permalink_preview.attachments.file_card.menu`, `forward_post_modal.preview.attachments.file_card.menu`, `restore_post_modal.attachments.file_card.menu`, `rhs.edit_history.version.attachments.file_card.menu`, `rhs.thread.post.attachments.file_card.menu`, `rhs.thread.post.permalink_preview.attachments.file_card.menu`, `search.results.post.attachments.file_card.menu`, `search.results.post.permalink_preview.attachments.file_card.menu`: one class, constructed with the scope it is mounted at. */
 export class AttachmentsFileCardMenu extends Scope {
     /**
-     * `center.post_list.post.attachments.file_card.menu.plugin:{key}--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * `center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
      * Renders only when !(fileInfos.length === 0) and sortedFileInfos && sortedFileInfos.length > 0 and showFileAttachments.
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     plugin(plugin: PluginKey) {
-        return drivers.button(this.byTestId(`${this.scope}.plugin:${plugin as string}--button`), {
-            testId: `${this.scope}.plugin:${plugin as string}--button`,
-            role: 'button',
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin:${plugin as string}--menuitem`), {
+            testId: `${this.scope}.plugin:${plugin as string}--menuitem`,
+            role: 'menuitem',
             effects: [],
             unknownEffects: true,
             source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
         });
     }
 
-    /** Every `center.post_list.post.attachments.file_card.menu.plugin:{key}--button` in the scope. */
+    /** Every `center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem` in the scope. */
     get pluginItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.plugin:`, '--button');
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--menuitem');
     }
 
-    /** The keys of every `center.post_list.post.attachments.file_card.menu.plugin:{key}--button` in the scope, in document order. */
+    /** The keys of every `center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem` in the scope, in document order. */
     pluginKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.plugin:`, '--button');
+        return this.keysOf(`${this.scope}.plugin:`, '--menuitem');
     }
 
     /**
@@ -1830,12 +1830,12 @@ export class AttachmentsFileCardMenu extends Scope {
         await this.publicLinkButton.click();
     }
 
-    /** Every `center.post_list.post.attachments.file_card.menu.plugin:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    /** Every `center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
     get pluginList() {
-        return this.keyedList(`${this.scope}.plugin:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.plugin:${key}--button`), {
-                testId: `${this.scope}.plugin:${key}--button`,
-                role: 'button',
+        return this.keyedList(`${this.scope}.plugin:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin:${key}--menuitem`), {
+                testId: `${this.scope}.plugin:${key}--menuitem`,
+                role: 'menuitem',
                 effects: [],
                 unknownEffects: true,
                 source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
@@ -2262,61 +2262,61 @@ export class PostItemMenuActionsMenu extends Scope {
     }
 
     /**
-     * `center.post_list.post.menu.actions_menu.plugin:{key}--button` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
+     * `center.post_list.post.menu.actions_menu.plugin:{key}--menuitem` — MenuItemActionImpl (channels/src/components/widgets/menu/menu_items/menu_item_action.tsx)
      * Renders only when !isSystemMessage and !isModal && !props.isPostBeingEdited and showActionsMenuIcon.
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     plugin(plugin: PluginKey) {
-        return drivers.button(this.byTestId(`${this.scope}.plugin:${plugin as string}--button`), {
-            testId: `${this.scope}.plugin:${plugin as string}--button`,
-            role: 'button',
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin:${plugin as string}--menuitem`), {
+            testId: `${this.scope}.plugin:${plugin as string}--menuitem`,
+            role: 'menuitem',
             effects: [],
             unknownEffects: true,
             source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
         });
     }
 
-    /** Every `center.post_list.post.menu.actions_menu.plugin:{key}--button` in the scope. */
+    /** Every `center.post_list.post.menu.actions_menu.plugin:{key}--menuitem` in the scope. */
     get pluginItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.plugin:`, '--button');
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--menuitem');
     }
 
-    /** The keys of every `center.post_list.post.menu.actions_menu.plugin:{key}--button` in the scope, in document order. */
+    /** The keys of every `center.post_list.post.menu.actions_menu.plugin:{key}--menuitem` in the scope, in document order. */
     pluginKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.plugin:`, '--button');
+        return this.keysOf(`${this.scope}.plugin:`, '--menuitem');
     }
 
     /**
-     * `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--button` — SubMenuItem (channels/src/components/widgets/menu/menu_items/submenu_item.tsx)
+     * `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--menuitem` — SubMenuItem (channels/src/components/widgets/menu/menu_items/submenu_item.tsx)
      * Renders only when !isSystemMessage and !isModal && !props.isPostBeingEdited and showActionsMenuIcon.
      * Opens modal SubMenuModal (`submenu_modal.body`).
      */
     pluginSubmenu(pluginSubmenu: PluginKey) {
-        return drivers.button(this.byTestId(`${this.scope}.plugin_submenu:${pluginSubmenu as string}--button`), {
-            testId: `${this.scope}.plugin_submenu:${pluginSubmenu as string}--button`,
-            role: 'button',
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin_submenu:${pluginSubmenu as string}--menuitem`), {
+            testId: `${this.scope}.plugin_submenu:${pluginSubmenu as string}--menuitem`,
+            role: 'menuitem',
             effects: [],
             unknownEffects: false,
             source: 'channels/src/components/widgets/menu/menu_items/submenu_item.tsx#SubMenuItem',
         });
     }
 
-    /** Every `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--button` in the scope. */
+    /** Every `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--menuitem` in the scope. */
     get pluginSubmenuItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.plugin_submenu:`, '--button');
+        return this.byTestIdPattern(`${this.scope}.plugin_submenu:`, '--menuitem');
     }
 
-    /** The keys of every `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--button` in the scope, in document order. */
+    /** The keys of every `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--menuitem` in the scope, in document order. */
     pluginSubmenuKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.plugin_submenu:`, '--button');
+        return this.keysOf(`${this.scope}.plugin_submenu:`, '--menuitem');
     }
 
-    /** Every `center.post_list.post.menu.actions_menu.plugin:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    /** Every `center.post_list.post.menu.actions_menu.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
     get pluginList() {
-        return this.keyedList(`${this.scope}.plugin:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.plugin:${key}--button`), {
-                testId: `${this.scope}.plugin:${key}--button`,
-                role: 'button',
+        return this.keyedList(`${this.scope}.plugin:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin:${key}--menuitem`), {
+                testId: `${this.scope}.plugin:${key}--menuitem`,
+                role: 'menuitem',
                 effects: [],
                 unknownEffects: true,
                 source: 'channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl',
@@ -2324,12 +2324,12 @@ export class PostItemMenuActionsMenu extends Scope {
         );
     }
 
-    /** Every `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.pluginSubmenuList).toHaveKeys([…])`. */
+    /** Every `center.post_list.post.menu.actions_menu.plugin_submenu:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginSubmenuList).toHaveKeys([…])`. */
     get pluginSubmenuList() {
-        return this.keyedList(`${this.scope}.plugin_submenu:`, '--button', (key: string) =>
-            drivers.button(this.byTestId(`${this.scope}.plugin_submenu:${key}--button`), {
-                testId: `${this.scope}.plugin_submenu:${key}--button`,
-                role: 'button',
+        return this.keyedList(`${this.scope}.plugin_submenu:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin_submenu:${key}--menuitem`), {
+                testId: `${this.scope}.plugin_submenu:${key}--menuitem`,
+                role: 'menuitem',
                 effects: [],
                 unknownEffects: false,
                 source: 'channels/src/components/widgets/menu/menu_items/submenu_item.tsx#SubMenuItem',

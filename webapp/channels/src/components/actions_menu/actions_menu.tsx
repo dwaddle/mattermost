@@ -6,7 +6,7 @@ import {createPortal} from 'react-dom';
 import type {IntlShape} from 'react-intl';
 import {injectIntl} from 'react-intl';
 
-import {pluginTestKey, type TestId} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId, type TestId} from '@mattermost/shared/utils/test_id';
 import type {AppBinding} from '@mattermost/types/apps';
 import type {Post} from '@mattermost/types/posts';
 
@@ -263,7 +263,7 @@ export class ActionMenuClass extends React.PureComponent<Props, State> {
                             subMenu={item.subMenu}
                             action={item.action}
                             root={true}
-                            testId={menuScope ? `${menuScope}.plugin_submenu:${pluginTestKey(item.pluginId)}` : undefined}
+                            slotTestId={pluginSlotTestId('post_submenu', item.pluginId, this.props.testIdScope)}
                         />
                     );
                 }
@@ -271,7 +271,7 @@ export class ActionMenuClass extends React.PureComponent<Props, State> {
                     <Menu.ItemAction
                         key={item.id + '_pluginmenuitem'}
                         text={item.text}
-                        testId={menuScope ? `${menuScope}.plugin:${pluginTestKey(item.pluginId)}` : undefined}
+                        slotTestId={pluginSlotTestId('post_menu_item', item.pluginId, this.props.testIdScope)}
                         onClick={() => {
                             if (item.action) {
                                 item.action(this.props.post.id);

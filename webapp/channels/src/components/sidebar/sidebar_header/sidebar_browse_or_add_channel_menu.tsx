@@ -14,7 +14,7 @@ import {
     AccountOutlineIcon,
 } from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 
 import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
 
@@ -187,7 +187,7 @@ export default function SidebarBrowserOrAddChannelMenu(props: Props) {
                 <Menu.Item
                     id={item.id + '_pluginmenuitem'}
                     key={item.id + '_pluginmenuitem'}
-                    data-testid={`lhs.browse_or_add_menu.plugin:${pluginTestKey(item.pluginId)}--menuitem`}
+                    data-testid={pluginSlotTestId('lhs_browse_or_add_menu_item', item.pluginId)}
                     onClick={handlePluginItemClick}
                     leadingElement={item.icon}
                     labels={<span>{item.text}</span>}

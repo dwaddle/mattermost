@@ -972,16 +972,16 @@ export class ChannelHeaderPluginActionsMenu extends Scope {
     }
 
     /**
-     * `channel_header.plugin_actions.menu.action:{key}--link` — ChannelHeaderPlug (channels/src/plugins/channel_header_plug/channel_header_plug.tsx)
+     * `channel_header.plugin_actions.menu.action:{key}--menuitem` — ChannelHeaderPlug (channels/src/plugins/channel_header_plug/channel_header_plug.tsx)
      * Opens modal AppsFormContainer.
      * Goes to navigateURL.
      * Goes to url.
      * Calls through data (registries, plugin hooks): pass `wait` to settle.
      */
     action(action: PluginKey) {
-        return drivers.link(this.byTestId(`${this.scope}.action:${action as string}--link`), {
-            testId: `${this.scope}.action:${action as string}--link`,
-            role: 'link',
+        return drivers.menuitem(this.byTestId(`${this.scope}.action:${action as string}--menuitem`), {
+            testId: `${this.scope}.action:${action as string}--menuitem`,
+            role: 'menuitem',
             effects: [
                 Api.GetChannel,
                 Api.GetChannelMemberMe,
@@ -1001,22 +1001,22 @@ export class ChannelHeaderPluginActionsMenu extends Scope {
         });
     }
 
-    /** Every `channel_header.plugin_actions.menu.action:{key}--link` in the scope. */
+    /** Every `channel_header.plugin_actions.menu.action:{key}--menuitem` in the scope. */
     get actionItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.action:`, '--link');
+        return this.byTestIdPattern(`${this.scope}.action:`, '--menuitem');
     }
 
-    /** The keys of every `channel_header.plugin_actions.menu.action:{key}--link` in the scope, in document order. */
+    /** The keys of every `channel_header.plugin_actions.menu.action:{key}--menuitem` in the scope, in document order. */
     actionKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.action:`, '--link');
+        return this.keysOf(`${this.scope}.action:`, '--menuitem');
     }
 
-    /** Every `channel_header.plugin_actions.menu.action:{key}--link` in the scope as a list by key, for the list matchers: `expect(x.actionList).toHaveKeys([…])`. */
+    /** Every `channel_header.plugin_actions.menu.action:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.actionList).toHaveKeys([…])`. */
     get actionList() {
-        return this.keyedList(`${this.scope}.action:`, '--link', (key: string) =>
-            drivers.link(this.byTestId(`${this.scope}.action:${key}--link`), {
-                testId: `${this.scope}.action:${key}--link`,
-                role: 'link',
+        return this.keyedList(`${this.scope}.action:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.action:${key}--menuitem`), {
+                testId: `${this.scope}.action:${key}--menuitem`,
+                role: 'menuitem',
                 effects: [
                     Api.GetChannel,
                     Api.GetChannelMemberMe,

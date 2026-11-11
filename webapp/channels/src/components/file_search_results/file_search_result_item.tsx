@@ -5,7 +5,7 @@ import React from 'react';
 import {defineMessage, FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 
 import {getFileDownloadUrl} from 'mattermost-redux/utils/file_utils';
 
@@ -67,7 +67,7 @@ export default class FileSearchResultItem extends React.PureComponent<Props, Sta
                 <Menu.ItemAction
                     id={item.id + '_pluginmenuitem'}
                     key={item.id + '_pluginmenuitem'}
-                    testId={`search.results.file.menu.plugin:${pluginTestKey(item.pluginId)}`}
+                    slotTestId={pluginSlotTestId('search_file_menu_item', item.pluginId)}
                     onClick={() => item.action?.(fileInfo)}
                     text={item.text}
                 />

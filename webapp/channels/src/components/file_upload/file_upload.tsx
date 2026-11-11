@@ -10,7 +10,7 @@ import {PaperclipIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginTestKey, type TestId} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId, type TestId} from '@mattermost/shared/utils/test_id';
 import type {ServerError} from '@mattermost/types/errors';
 import type {FileInfo, FileUploadResponse} from '@mattermost/types/files';
 
@@ -721,7 +721,7 @@ export class FileUpload extends PureComponent<Props, State> {
                     >
                         <a
                             href='#'
-                            data-testid={this.props.testIdScope ? `${this.props.testIdScope}.attach_menu.plugin:${pluginTestKey(item.pluginId)}--link` : undefined}
+                            data-testid={pluginSlotTestId('file_upload_method', item.pluginId, this.props.testIdScope)}
                         >
                             <span className='mr-2'>
                                 {item.icon}

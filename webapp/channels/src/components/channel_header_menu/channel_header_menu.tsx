@@ -8,7 +8,7 @@ import {defineMessage, useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import ChevronDownIcon from '@mattermost/compass-icons/components/chevron-down';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
 import {
@@ -115,7 +115,7 @@ export default function ChannelHeaderMenu({dmUser, gmMembers, isMobile, archived
             <Menu.Item
                 id={item.id + '_pluginmenuitem'}
                 key={item.id + '_pluginmenuitem'}
-                data-testid={`channel_header.menu.plugin:${pluginTestKey(item.pluginId)}--menuitem`}
+                data-testid={pluginSlotTestId('channel_header_menu_item', item.pluginId)}
                 onClick={handlePluginItemClick}
                 labels={<span>{item.text}</span>}
             />

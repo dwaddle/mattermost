@@ -1879,8 +1879,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "center.post_create.attach_menu.plugin:{key}--link",
-                    "role": "link",
+                    "testId": "center.post_create.attach_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "renderedWhen": [
                         "!(isDisabled || editAttachmentsDisabled)",
@@ -2542,8 +2542,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "center.post_list.post.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "center.post_list.post.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -2929,8 +2929,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "center.post_list.post.menu.actions_menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "center.post_list.post.menu.actions_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -2938,8 +2938,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "center.post_list.post.menu.actions_menu.plugin_submenu:{key}--button",
-                    "role": "button",
+                    "testId": "center.post_list.post.menu.actions_menu.plugin_submenu:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "opens": [
                         {
@@ -3198,8 +3198,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "center.post_list.post.permalink_preview.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "center.post_list.post.permalink_preview.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -4204,8 +4204,8 @@
             "class": "ChannelHeaderPluginActionsMenu",
             "elements": [
                 {
-                    "testId": "channel_header.plugin_actions.menu.action:{key}--link",
-                    "role": "link",
+                    "testId": "channel_header.plugin_actions.menu.action:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "opens": [
                         {
@@ -5651,8 +5651,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "forward_post_modal.preview.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "forward_post_modal.preview.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -7197,8 +7197,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "modal.post_create.attach_menu.plugin:{key}--link",
-                    "role": "link",
+                    "testId": "modal.post_create.attach_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "renderedWhen": [
                         "!(isDisabled || editAttachmentsDisabled)",
@@ -8019,8 +8019,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "plugin.post_create.attach_menu.plugin:{key}--link",
-                    "role": "link",
+                    "testId": "plugin.post_create.attach_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "renderedWhen": [
                         "!(isDisabled || editAttachmentsDisabled)",
@@ -8898,8 +8898,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "post_edit.editor.attach_menu.plugin:{key}--link",
-                    "role": "link",
+                    "testId": "post_edit.editor.attach_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "renderedWhen": [
                         "!(isDisabled || editAttachmentsDisabled)",
@@ -9499,8 +9499,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "restore_post_modal.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "restore_post_modal.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -10267,8 +10267,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "rhs.edit_history.version.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "rhs.edit_history.version.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -10972,8 +10972,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "rhs.post_create.attach_menu.plugin:{key}--link",
-                    "role": "link",
+                    "testId": "rhs.post_create.attach_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "renderedWhen": [
                         "!(isDisabled || editAttachmentsDisabled)",
@@ -11657,8 +11657,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "rhs.thread.post.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "rhs.thread.post.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -12044,8 +12044,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "rhs.thread.post.menu.actions_menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "rhs.thread.post.menu.actions_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -12053,8 +12053,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "rhs.thread.post.menu.actions_menu.plugin_submenu:{key}--button",
-                    "role": "button",
+                    "testId": "rhs.thread.post.menu.actions_menu.plugin_submenu:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "opens": [
                         {
@@ -12313,8 +12313,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "rhs.thread.post.permalink_preview.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "rhs.thread.post.permalink_preview.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -12787,8 +12787,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "search.results.file.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "search.results.file.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -13147,8 +13147,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "search.results.post.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "search.results.post.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -13534,8 +13534,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "search.results.post.menu.actions_menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "search.results.post.menu.actions_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -13543,8 +13543,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "search.results.post.menu.actions_menu.plugin_submenu:{key}--button",
-                    "role": "button",
+                    "testId": "search.results.post.menu.actions_menu.plugin_submenu:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "opens": [
                         {
@@ -13803,8 +13803,8 @@
             "container": "channels/src/components/widgets/menu/menu.tsx#Menu",
             "elements": [
                 {
-                    "testId": "search.results.post.permalink_preview.attachments.file_card.menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "search.results.post.permalink_preview.attachments.file_card.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
@@ -15548,7 +15548,7 @@
         },
         {
             "slot": "channel_header_dropdown_item",
-            "testId": "channel_header.plugin_actions.menu.action:{key}--link",
+            "testId": "channel_header.plugin_actions.menu.action:{key}--menuitem",
             "key": "PluginKey",
             "registry": ["registerChannelHeaderButtonAction"]
         },
@@ -15560,13 +15560,13 @@
         },
         {
             "slot": "file_menu_item",
-            "testId": "*.attachments.file_card.menu.plugin:{key}--button",
+            "testId": "*.file_card.menu.plugin:{key}--menuitem",
             "key": "PluginKey",
             "registry": ["registerFileDropdownMenuAction"]
         },
         {
             "slot": "file_upload_method",
-            "testId": "*.attach_menu.plugin:{key}--link",
+            "testId": "*.attach_menu.plugin:{key}--menuitem",
             "key": "PluginKey",
             "registry": ["registerFileUploadMethod"]
         },
@@ -15584,13 +15584,13 @@
         },
         {
             "slot": "post_menu_item",
-            "testId": "*.actions_menu.plugin:{key}--button",
+            "testId": "*.actions_menu.plugin:{key}--menuitem",
             "key": "PluginKey",
             "registry": ["registerPostDropdownMenuAction"]
         },
         {
             "slot": "post_submenu",
-            "testId": "*.actions_menu.plugin_submenu:{key}--button",
+            "testId": "*.actions_menu.plugin_submenu:{key}--menuitem",
             "key": "PluginKey",
             "registry": ["registerPostDropdownSubMenuAction"]
         },
@@ -15602,7 +15602,7 @@
         },
         {
             "slot": "search_file_menu_item",
-            "testId": "search.results.file.menu.plugin:{key}--button",
+            "testId": "search.results.file.menu.plugin:{key}--menuitem",
             "key": "PluginKey",
             "registry": ["registerFileDropdownMenuAction"]
         },

@@ -6,7 +6,7 @@ import React, {useRef, useState, useEffect} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -214,7 +214,7 @@ export default function FileAttachment(props: Props) {
                 <Menu.ItemAction
                     id={item.id + '_pluginmenuitem'}
                     key={item.id + '_pluginmenuitem'}
-                    testId={props.testIdScope ? `${props.testIdScope}.file_card.menu.plugin:${pluginTestKey(item.pluginId)}` : undefined}
+                    slotTestId={pluginSlotTestId('file_menu_item', item.pluginId, props.testIdScope)}
                     onClick={() => item?.action(fileInfo)}
                     text={item.text}
                 />

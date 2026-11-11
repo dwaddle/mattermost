@@ -353,6 +353,16 @@
                 "reason": "the toast's jump action is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."
             },
             {
+                "rule": "role-fit",
+                "template": "*.attach_menu.plugin:{key}--menuitem",
+                "reason": "a plugin slot ends in the role menu items have (Q69); the composer's attachment menu is an older menu that renders each item as a link inside a role=menuitem <li>. Moving it to the menu library makes the role fit without renaming the testid."
+            },
+            {
+                "rule": "role-fit",
+                "template": "channel_header.plugin_actions.menu.action:{key}--menuitem",
+                "reason": "a plugin slot ends in the role menu items have (Q69); the channel header's plugin dropdown is an older menu that renders each item as a link inside an <li>. Moving it to the menu library makes the role fit without renaming the testid."
+            },
+            {
                 "rule": "aria",
                 "template": "center.post_list.search_hint.dismiss--button",
                 "reason": "the toast's dismiss control is a <div> with a click handler: keyboard and screen reader users can't reach it (Esc dismisses toasts). Making it a <button> is an a11y fix for its own review."

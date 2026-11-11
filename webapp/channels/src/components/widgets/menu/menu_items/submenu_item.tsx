@@ -7,7 +7,7 @@ import type {CSSProperties, JSX} from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
-import type {TestId} from '@mattermost/shared/utils/test_id';
+import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 
 import {showMobileSubMenuModal} from 'actions/global_actions';
 
@@ -65,6 +65,12 @@ export type Props = WrappedComponentProps & {
 
     /** Renders `<testId>--button` on the item that opens the submenu. */
     testId?: TestId;
+
+    /**
+     * A plugin slot's whole testid (`pluginSlotTestId(...)`), in place of `testId`: the slot's contract ends in the
+     * role menu items have (`--menuitem`), not this control's.
+     */
+    slotTestId?: TestIdWithRole;
 };
 
 type State = {
@@ -157,7 +163,7 @@ export class SubMenuItem extends React.PureComponent<Props, State> {
     };
 
     public render() {
-        const {id, postId, text, selectedValueText, subMenu, icon, filter, ariaLabel, direction, styleSelectableItem, extraText, renderSelected, rightDecorator, tabIndex, intl, testId} = this.props;
+        const {id, postId, text, selectedValueText, subMenu, icon, filter, ariaLabel, direction, styleSelectableItem, extraText, renderSelected, rightDecorator, tabIndex, intl, testId, slotTestId} = this.props;
         const isMobile = isMobileViewHack();
 
         if (filter && !filter(id || '')) {
@@ -246,7 +252,7 @@ export class SubMenuItem extends React.PureComponent<Props, State> {
                 <div
                     className={classNames([{styleSelectableItemDiv: styleSelectableItem}])}
                     id={id}
-                    data-testid={testId ? `${testId}--button` : undefined}
+                    data-testid={slotTestId ?? (testId ? `${testId}--button` : undefined)}
                     aria-label={ariaLabel}
                     onMouseEnter={this.show}
                     role='button'

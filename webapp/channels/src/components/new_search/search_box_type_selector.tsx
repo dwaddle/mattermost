@@ -6,7 +6,7 @@ import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 import styled from 'styled-components';
 
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
@@ -73,7 +73,7 @@ const SearchTypeSelector = ({searchType, setSearchType}: Props) => {
                 onClick={() => setSearchType(pluginId)}
                 role='radio'
                 aria-checked={searchType === pluginId}
-                data-testid={`search_box.plugin_type:${pluginTestKey(pluginId)}--radio`}
+                data-testid={pluginSlotTestId('search_type', pluginId)}
             >
                 <ErrorBoundary pluginId={pluginId}>
                     <Component/>
