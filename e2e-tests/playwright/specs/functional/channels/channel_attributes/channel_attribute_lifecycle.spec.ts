@@ -3,7 +3,7 @@
 
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test, Msg} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     DISPLAY_BANNER_TOP,
@@ -57,7 +57,7 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, () 
             });
             created.push(required, optional);
 
-            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
             const modal = await openNewChannelModal(app);
 
             // Required is asked for; optional is not.

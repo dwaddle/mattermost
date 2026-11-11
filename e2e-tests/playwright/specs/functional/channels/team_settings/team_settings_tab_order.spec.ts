@@ -4,9 +4,6 @@
 /**
  * @objective E2E tests for Team Settings Modal - four-tab layout and Channel Membership label
  * @reference MM-69100
- *
- * Written on the generated page objects: the team menu, the Team Settings tabs keyed by tab id, the Team Membership
- * rules editor and the Channel Membership policy list.
  */
 
 import {expect, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
@@ -16,10 +13,8 @@ import {enableTeamMembershipABACConfig} from './helpers';
 /** Logs in as the admin with team membership ABAC on, and opens Team Settings from the team menu. */
 async function openTeamSettings(pw: PlaywrightExtended) {
     await pw.skipIfNoLicense();
-    const {adminUser, adminClient, team} = await pw.initSetup();
+    const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
     await enableTeamMembershipABACConfig(adminClient);
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     const {app} = await pw.testBrowser.login(adminUser);
     await app.channelsPage.goto({team, channel: townSquare});
     return openSettings(app);

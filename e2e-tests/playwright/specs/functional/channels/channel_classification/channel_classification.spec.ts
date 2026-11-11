@@ -8,7 +8,7 @@
  * Prerequisites: Enterprise-tier license + ClassificationMarkings feature flag enabled.
  */
 
-import {expect, test, getAdminClient, licenseTier} from '@mattermost/playwright-lib';
+import {expect, test, getAdminClient, licenseTier, duration} from '@mattermost/playwright-lib';
 import type {App, generated, PlaywrightExtended} from '@mattermost/playwright-lib';
 
 import {setupClassificationWithChannelField, deleteClassificationFieldsIfExist} from './helpers';
@@ -75,9 +75,9 @@ function level(name: string) {
 /** Logs in as an admin and opens a team. */
 async function openTeam(pw: PlaywrightExtended) {
     const {adminUser, team} = await initSetupTracked(pw);
-    const {app, channelsPage} = await pw.testBrowser.login(adminUser);
-    await channelsPage.goto(team.name);
-    await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: 60000});
+    const {app} = await pw.testBrowser.login(adminUser);
+    await app.teamPage.goto({team});
+    await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
     return app;
 }
 
@@ -100,7 +100,7 @@ async function openConfigurationOfNewChannel(pw: PlaywrightExtended) {
 
     const {app, channelsPage} = await pw.testBrowser.login(adminUser);
     await channelsPage.goto(team.name, channel.name);
-    await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: 60000});
+    await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
     const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();
     await settings.tabs.configurationTab.select();
@@ -111,7 +111,7 @@ async function openConfigurationOfNewChannel(pw: PlaywrightExtended) {
 /** Opens a classification dropdown and picks a level. */
 async function pickLevel(dropdown: generated.DropdownInput, picked: {id: string}) {
     await dropdown.locator.click();
-    await dropdown.menu.option(picked.id).locator.click();
+    await dropdown.menu.option(picked.id).select();
 }
 
 /** Saves the open Channel Settings tab and waits for the save panel to settle. */
@@ -124,7 +124,7 @@ test.describe('Channel Classification - New channel creation', () => {
     test('Enabling classification toggle without selecting values prevents channel creation', async ({pw}) => {
         const app = await openTeam(pw);
         const modal = await openNewChannel(pw, app, 'test');
-        await modal.type.publicButton.locator.click();
+        await modal.type.publicButton.click();
 
         // Create button should be enabled before toggling classification
         await expect(modal.confirmButton.locator).toBeEnabled();
@@ -182,7 +182,7 @@ test.describe('Channel Classification - New channel creation', () => {
         const app = await openTeam(pw);
         const selectedLevel = level('SECRET');
         const modal = await openNewChannel(pw, app, 'classified');
-        await modal.type.publicButton.locator.click();
+        await modal.type.publicButton.click();
 
         // Enable classification toggle
         await modal.classificationSwitch.toggle();
@@ -198,12 +198,12 @@ test.describe('Channel Classification - New channel creation', () => {
         await modal.clickConfirmButton();
 
         // Should be redirected to the new channel and center view loads
-        await expect(app.page).toHaveURL(/\/channels\//, {timeout: 30000});
-        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: 30000});
+        await expect(app.page).toHaveURL(/\/channels\//, {timeout: duration.half_min});
+        await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.half_min});
 
         // Channel banner should be visible (allow extra time for property value fetch)
         const banner = app.center.channelBanner.locator;
-        await expect(banner).toBeVisible({timeout: 30000});
+        await expect(banner).toBeVisible({timeout: duration.half_min});
 
         // Verify the banner has the correct background color
         await expect(banner).toHaveCSS('background-color', hexToRgb(selectedLevel.color));
@@ -244,7 +244,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
         await expect(dropdown.menu.optionItems.first()).toBeVisible();
 
         const selectedLevel = level('CONFIDENTIAL');
-        await dropdown.menu.option(selectedLevel.id).locator.click();
+        await dropdown.menu.option(selectedLevel.id).select();
 
         // The dropdown should now show the selected value
         await expect(dropdown.locator).toContainText(selectedLevel.name);
@@ -331,7 +331,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         // The channel banner should now show the custom text with the classification color
         const banner = app.center.channelBanner.locator;
-        await expect(banner).toBeVisible({timeout: 30000});
+        await expect(banner).toBeVisible({timeout: duration.half_min});
         await expect(banner).toContainText(customBannerText);
         await expect(banner).toHaveCSS('background-color', hexToRgb(selectedLevel.color));
     });

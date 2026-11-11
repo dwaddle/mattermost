@@ -3,10 +3,7 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, Msg, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
-
-// Written on the generated page objects: the composer, posts by id with their dot menu (Quarantine for Review),
-// the quarantine dialog (post preview, reason, comment, errors) and the system message that follows.
+import {expect, Msg, test, type App, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 // NOTE: No global afterAll disabling content flagging here. A global afterAll
 // that writes shared server config races with reviewer-* tests running in a
@@ -27,7 +24,7 @@ const systemMessageForUser = (username: string): string =>
 // Logs the user in and opens the team's Town Square.
 async function loginAndNavigate(pw: PlaywrightExtended, user: UserProfile, team: {name: string}): Promise<App> {
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
     return app;
 }
 
@@ -74,7 +71,7 @@ async function flagPostFlow(
     await expect(dialog.postPreview.messageText.locator).toContainText(message);
     await dialog.chooseReasonCombobox(reason);
     await dialog.fillCommentTextbox(comment);
-    await dialog.clickConfirmButton();
+    await dialog.confirmButton.commit();
     await expect(dialog.confirmButton.locator).not.toBeVisible();
 }
 

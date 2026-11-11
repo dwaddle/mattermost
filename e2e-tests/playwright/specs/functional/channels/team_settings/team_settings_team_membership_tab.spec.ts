@@ -6,7 +6,7 @@
  * @reference MM-69100
  */
 
-import {expect, newTestPassword, test} from '@mattermost/playwright-lib';
+import {duration, expect, Msg, newTestPassword, test} from '@mattermost/playwright-lib';
 
 import {
     enableTeamMembershipABACConfig,
@@ -22,9 +22,6 @@ import {
     assignTeamToParentPolicy,
 } from './helpers';
 import {closeTeamSettings, openTeam, openTeamMembershipTab, openTeamSettings} from './surface';
-
-// Written on the generated page objects: Team Settings' tabs and membership tab (title, rules, auto-add, system
-// policies, sync status, save panel, confirm and self-exclusion dialogs).
 
 test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@team_membership']}, () => {
     const createdPolicyIds: string[] = [];
@@ -64,7 +61,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await expect(tab).toBeVisible();
 
         // * Tab title is visible
-        await expect(teamSettings.membership.titleText.locator).toHaveText('Team Membership Rules');
+        await expect(teamSettings.membership.titleText.locator).toHaveMessage(Msg.team_settings.membership_tab.title);
 
         await closeTeamSettings(teamSettings);
     });
@@ -165,7 +162,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         // * Banner is visible to the team admin, not just the system admin (MM-70056),
         // and names the resolved parent policy.
         const banner = tab.systemPolicies.locator;
-        await expect(banner).toBeVisible({timeout: 10000});
+        await expect(banner).toBeVisible();
         await expect(banner).toContainText(policyName);
 
         await closeTeamSettings(teamSettings);
@@ -189,7 +186,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await addRule(tab.rules, department, 'Engineering');
 
         // * Auto-add checkbox becomes enabled
-        await expect(tab.autoAddCheckbox.locator).toBeEnabled({timeout: 5000});
+        await expect(tab.autoAddCheckbox.locator).toBeEnabled();
 
         await closeTeamSettings(teamSettings);
     });
@@ -212,7 +209,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         // # Add attribute rule (auto-add stays OFF)
         await addRule(tab.rules, department, 'Engineering');
-        await expect(tab.autoAddCheckbox.locator).toBeEnabled({timeout: 5000});
+        await expect(tab.autoAddCheckbox.locator).toBeEnabled();
 
         // # Snapshot jobs for THIS team before saving. Filter by policy_id so
         // parallel workers and pre-existing jobs from other teams don't skew the count.
@@ -226,10 +223,10 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const teamJobCountBefore = (await fetchTeamJobs()).length;
 
         // # Click Save → confirmation modal appears
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         const confirmModal = tab.confirmModal;
-        await expect(confirmModal.locator).toContainText('Save team membership rules?');
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
         await expect(confirmModal.locator).toBeVisible();
 
         // * Allowed count is at least 1 (adminUser matches Engineering)
@@ -238,7 +235,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         // # Confirm save
         await confirmModal.clickConfirmButton();
         await expect(confirmModal.locator).not.toBeVisible();
-        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible({timeout: 10000});
+        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible();
 
         // * Policy is persisted via API
         const policyResult: any = await (adminClient as any).doFetch(
@@ -278,7 +275,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         // # Add attribute rule
         await addRule(tab.rules, department, 'Engineering');
-        await expect(tab.autoAddCheckbox.locator).toBeEnabled({timeout: 5000});
+        await expect(tab.autoAddCheckbox.locator).toBeEnabled();
 
         // # Enable auto-add
         await tab.autoAddCheckbox.locator.click();
@@ -295,16 +292,16 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const latestJobIdBefore = jobsBefore[0]?.id ?? null;
 
         // # Save → confirmation modal
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         const confirmModal = tab.confirmModal;
-        await expect(confirmModal.locator).toContainText('Save team membership rules?');
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
         await expect(confirmModal.locator).toBeVisible();
 
         // # Confirm
         await confirmModal.clickConfirmButton();
         await expect(confirmModal.locator).not.toBeVisible();
-        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible({timeout: 10000});
+        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible();
 
         // * A sync job was created — poll until a newer job appears at the top of the list
         await expect
@@ -342,7 +339,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const tab = teamSettings.membership;
 
         // * Auto-add checkbox starts checked (the rule's auto_add was loaded)
-        await expect(tab.autoAddCheckbox.locator).toBeChecked({timeout: 5000});
+        await expect(tab.autoAddCheckbox.locator).toBeChecked();
 
         // # Uncheck auto-add
         await tab.autoAddCheckbox.locator.click();
@@ -356,15 +353,15 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const jobCountBefore = jobsBefore.length;
 
         // # Save → confirmation modal
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         const confirmModal = tab.confirmModal;
-        await expect(confirmModal.locator).toContainText('Save team membership rules?');
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
         await expect(confirmModal.locator).toBeVisible();
 
         await confirmModal.clickConfirmButton();
         await expect(confirmModal.locator).not.toBeVisible();
-        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible({timeout: 10000});
+        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible();
 
         // * No sync job was created (auto-add was turned OFF, not ON)
         const jobsAfter: any[] = await (adminClient as any).doFetch(
@@ -397,7 +394,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await addRule(tab.rules, department, 'Engineering');
 
         // # Click Save
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * Self-exclusion modal appears, not the save confirmation modal
         const selfExclusion = tab.selfExclusionModal;
@@ -449,11 +446,11 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const tab = teamSettings.membership;
 
         await addRule(tab.rules, department, 'Engineering');
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * No self-exclusion block — the save proceeds to the normal confirmation
         const confirmModal = tab.confirmModal;
-        await expect(confirmModal.locator).toContainText('Save team membership rules?');
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
         await expect(confirmModal.locator).toBeVisible();
         await expect(tab.selfExclusionModal.locator).not.toBeVisible();
 
@@ -509,10 +506,10 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await addRule(tab.rules, department, 'Engineering');
 
         // # Click Save
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         const confirmModal = tab.confirmModal;
-        await expect(confirmModal.locator).toContainText('Save team membership rules?');
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
         await expect(confirmModal.locator).toBeVisible();
 
         // * 2 users match (adminUser + user1). 2 members do not match: marketingUser plus
@@ -572,11 +569,11 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await addRule(tab.rules, department, 'Marketing');
 
         // # Click Save
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
 
         // * Confirmation modal appears (self-exclusion passes since adminUser IS Marketing)
         const confirmModal = tab.confirmModal;
-        await expect(confirmModal.locator).toContainText('Save team membership rules?');
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.title);
         await expect(confirmModal.locator).toBeVisible();
 
         // * 1 user matches (adminUser) and 1 member does not (engUser / Engineering)
@@ -604,7 +601,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const tab = teamSettings.membership;
 
         // * Auto-add is checked (auto_add was loaded from the API)
-        await expect(tab.autoAddCheckbox.locator).toBeChecked({timeout: 5000});
+        await expect(tab.autoAddCheckbox.locator).toBeChecked();
 
         // * Table editor is present and the panel is NOT shown (nothing is dirty after load)
         await expect(tab.rules.locator).toBeVisible();
@@ -629,16 +626,16 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         await expect(tab.autoAddCheckbox.locator).toBeChecked();
 
         // # Remove the only rule via the trash icon
-        await tab.rules.row(0).removeButton.locator.click();
+        await tab.rules.row(0).removeButton.click();
 
         // * Auto-add is unchecked and disabled once no rules remain
         await expect(tab.autoAddCheckbox.locator).not.toBeChecked();
         await expect(tab.autoAddCheckbox.locator).toBeDisabled();
 
         // # Save → the removal warning (not the count modal) is shown
-        await teamSettings.savePanel.saveButton.locator.click();
+        await teamSettings.savePanel.saveButton.click();
         const confirmModal = tab.confirmModal;
-        await expect(confirmModal.locator).toContainText('Remove membership rules?');
+        await expect(confirmModal.locator).toContainMessage(Msg.team_settings.membership_tab.confirm.remove_title);
         await expect(confirmModal.locator).toBeVisible();
         await expect(confirmModal.locator).toContainText(/no longer be restricted by user attributes/i);
         await confirmModal.clickConfirmButton();
@@ -646,7 +643,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         // * Save succeeds: no "Failed to save access rules" error surfaces
         await expect(teamSettings.savePanel.locator).not.toContainText('Failed to save access rules');
-        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible({timeout: 10000});
+        await expect(teamSettings.savePanel.saveButton.locator).not.toBeVisible();
 
         // * Policy is actually removed on the server
         const policyResult: any = await (adminClient as any)
@@ -672,7 +669,7 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
 
         // * Sync footer is visible once the job-status fetch resolves
         const syncFooter = tab.syncStatus.locator;
-        await expect(syncFooter).toBeVisible({timeout: 10000});
+        await expect(syncFooter).toBeVisible();
 
         // * "Never synced." is shown — no sync job has run for this brand-new team
         await expect(tab.syncStatus.timeText.locator).toContainText(/Never synced/i);
@@ -697,13 +694,13 @@ test.describe('Team Settings Modal - Team Membership Tab', {tag: ['@abac', '@tea
         const tab = teamSettings.membership;
 
         const syncFooter = tab.syncStatus.locator;
-        await expect(syncFooter).toBeVisible({timeout: 10000});
+        await expect(syncFooter).toBeVisible();
         await expect(tab.syncStatus.syncNowButton.locator).toBeVisible();
 
         const testStartTime = Date.now();
 
         // # Click "Sync now"
-        await tab.syncStatus.syncNowButton.locator.click();
+        await tab.syncStatus.syncNowButton.click();
 
         // * A new team sync job scoped to this team is enqueued
         await expect

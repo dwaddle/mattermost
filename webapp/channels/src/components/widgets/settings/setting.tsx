@@ -14,10 +14,6 @@ type Props = {
     helpText?: React.ReactNode;
     footer?: React.ReactNode;
 
-    /**
-     * The row's parts render under it (`${testIdScope}.label--text`, `.help--text`); without it (the apps form, for
-     * now), the legacy ids.
-     */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row: `admin.setting:<key>`). */

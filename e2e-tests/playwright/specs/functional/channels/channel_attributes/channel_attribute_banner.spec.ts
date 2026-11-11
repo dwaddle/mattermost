@@ -29,9 +29,6 @@ import {
     typeBannerText,
 } from './surface';
 
-// Written on the generated page objects (through ./surface): Channel Settings' Configuration tab (banner toggle and
-// colour, the banner text editor with its attribute tokens by name and its preview), the save panel, and the banner.
-
 const BANNER_COLOR = '#1e325c';
 
 test.describe('Channel attribute banner composition', {tag: ['@channel_attributes']}, () => {
@@ -325,7 +322,7 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
 
             // * The preview says the banner will not show instead of rendering nothing
             const emptyNotice = configuration.bannerPreview.emptyNotice.locator;
-            await expect(emptyNotice).toContainText('The banner will not be displayed');
+            await expect(emptyNotice).toContainMessage(Msg.channel_attributes.banner.empty_notice.title);
             await expect(configuration.bannerPreview.locator).toHaveCount(0);
 
             // # Close without saving: the first close warns about the unsaved edit, the second closes
@@ -435,7 +432,7 @@ test.describe('Channel attribute banner composition', {tag: ['@channel_attribute
 
             // * The same marking is offered as an ordinary banner token instead
             await configuration.setBannerSwitch(true);
-            await configuration.bannerText.insertButton.locator.click();
+            await configuration.bannerText.insertButton.click();
             await expect(configuration.bannerText.insertMenu.attribute(classification).menuItem.locator).toBeVisible();
         } finally {
             await deleteAttributes(adminClient, created);

@@ -24,6 +24,7 @@ import {
     test,
     type App,
     type generated,
+    DefaultChannel,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -130,7 +131,7 @@ test.describe(
 
                 // # Create a channel as the same admin, who is a member of a team
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
                 const field = await channelFieldNamed(adminClient, name);
                 const modal = await openNewChannelModal(app);
@@ -170,7 +171,7 @@ test.describe(
                 });
 
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
                 const field = await channelFieldNamed(adminClient, name);
                 const modal = await openNewChannelModal(app);
@@ -206,7 +207,7 @@ test.describe(
                 });
 
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
                 const displayName = `Attr Quiet ${suffix}`;
                 const field = await channelFieldNamed(adminClient, name);
@@ -264,7 +265,7 @@ test.describe(
                 expect(channelField?.attrs?.editable).toBe(false);
 
                 const {team} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
                 const field = await channelFieldNamed(adminClient, name);
                 const modal = await openNewChannelModal(app);
@@ -308,7 +309,7 @@ test.describe(
                 expect(channelField?.permission_values).toBe('admin');
 
                 const {team, user} = await pw.initSetup();
-                const app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+                const app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
                 const channelDisplayName = `Attr Restricted ${suffix}`;
                 const field = await channelFieldNamed(adminClient, name);

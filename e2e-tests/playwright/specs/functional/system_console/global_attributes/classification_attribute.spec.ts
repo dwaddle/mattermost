@@ -19,6 +19,8 @@ import {
     openNewChannelModal,
     pickListOption,
     test,
+    DefaultChannel,
+    Msg,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -121,7 +123,7 @@ test.describe(
             const {levels, channelFieldId} = await setupClassificationWithChannelField(adminClient);
             const {team} = await pw.initSetup();
 
-            let app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+            let app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
 
             // * Optional attributes are not asked for at creation, so Create is free
             let modal = await openNewChannelModal(app);
@@ -138,7 +140,7 @@ test.describe(
             await expect(settings.requiredSwitch.locator).toBeChecked();
             await saveInPlace(app);
 
-            app = await openChannel(pw, adminUser, {team, channel: {name: 'town-square'}});
+            app = await openChannel(pw, adminUser, {team, channel: {name: DefaultChannel.TownSquare}});
             modal = await openNewChannelModal(app);
             await modal.fillNameTextbox(`Required Classification ${pw.random.id()}`);
 
@@ -213,7 +215,9 @@ test.describe(
 
             // # Ask again and confirm
             confirm = await channel.clickRemoveButton();
-            await expect(confirm.confirmButton.locator).toHaveText('Remove and delete values');
+            await expect(confirm.confirmButton.locator).toHaveMessage(
+                Msg.admin.global_attributes.classification.remove_channels.confirm,
+            );
             await confirm.clickConfirmButton();
 
             // * The field is gone, and the card offers to add it back

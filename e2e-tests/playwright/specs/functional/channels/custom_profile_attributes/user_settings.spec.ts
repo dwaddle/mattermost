@@ -7,7 +7,7 @@ import type {Channel} from '@mattermost/types/channels';
 import type {Client4} from '@mattermost/client';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, test, type App, type PlaywrightExtended, Msg} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from './helpers';
 import {
@@ -124,10 +124,6 @@ test.afterAll(async () => {
     // Clean up by deleting custom profile attributes
     await deleteCustomProfileAttributes(adminClient, attributeFieldsMap);
 });
-
-// Written on the generated page objects: the account menu's Profile item, Profile settings' sections keyed by
-// section (an attribute's is `customAttribute_<field id>`: title, value, Edit, textbox or picker, Save, Cancel,
-// the field's error), the composer, posts by id with their avatar, and the profile popover's attributes.
 
 /** Logs the user in on the test channel and opens Profile settings. */
 async function openProfile(pw: PlaywrightExtended, who: UserProfile) {
@@ -396,7 +392,7 @@ test('MM-T5770 Cancelling Changes to Custom Profile Attributes @custom_profile_a
 
     // 2. Edit DepartmentUS field and change to "Changed Value"
     await section.clickEditButton();
-    await section.valueTextbox.locator.clear();
+    await section.valueTextbox.clear();
     await section.fillValueTextbox(TEST_CHANGED_VALUE);
 
     // 3. Click Cancel button
@@ -461,15 +457,15 @@ test('MM-T5772 URL Validation in Custom Profile Attributes @custom_profile_attri
 
     // 2. Edit WebsiteUS field and enter an invalid URL
     await section.clickEditButton();
-    await section.valueTextbox.locator.clear();
+    await section.valueTextbox.clear();
     await section.fillValueTextbox(TEST_INVALID_URL);
-    await section.valueTextbox.locator.blur();
+    await section.valueTextbox.blur();
 
     // * The field shows the invalid URL error
-    await expect(section.value.messageAlert.locator).toHaveText('Please enter a valid url.');
+    await expect(section.value.messageAlert.locator).toHaveMessage(Msg.user.settings.general.validUrl);
 
     // 3. Enter a valid URL and save
-    await section.valueTextbox.locator.clear();
+    await section.valueTextbox.clear();
     await section.fillValueTextbox(TEST_VALID_URL);
     await section.clickSaveButton();
 

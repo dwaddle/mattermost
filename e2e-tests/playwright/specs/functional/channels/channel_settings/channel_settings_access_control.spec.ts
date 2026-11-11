@@ -8,7 +8,7 @@
 
 import type {Client4} from '@mattermost/client';
 
-import {Api, expect, test} from '@mattermost/playwright-lib';
+import {Api, expect, test, duration, Msg} from '@mattermost/playwright-lib';
 
 import {
     enableABACConfig,
@@ -25,10 +25,6 @@ import {
 
 import {closeSettings, openAccessRules, openChannel, openChannelSettings, saveRules} from './access_rules';
 import {waitForJobCompletion} from './helpers';
-
-// Written on the generated page objects: Channel Settings' tabs and access rules tab (rules table, auto-add
-// checkbox, system policies, save panel, self-exclusion dialog), the membership changes dialog (summary, View
-// users, Allowed / Restricted, Cancel / Save), the post list, and the RHS channel members.
 
 /** Unique CPA value so only users this test sets match the rule (avoids clashing with leftover Engineering users on the server). */
 function uniqueDepartmentValue(testId: string): string {
@@ -265,14 +261,16 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
 
         // # Save — confirmation modal appears because targetUser will be added; confirm it ("Save and apply")
         const confirm = await saveRules(app, settings);
-        await expect(confirm.confirmButton.locator).toHaveText('Save and apply');
+        await expect(confirm.confirmButton.locator).toHaveMessage(
+            Msg.channel_settings.access_rules.confirm_modal.save_and_apply,
+        );
         await confirm.clickConfirmButton();
         await expect(confirm.confirmButton.locator).not.toBeVisible();
 
         // * Target user becomes a channel member (sync job runs asynchronously)
         await expect
             .poll(() => isChannelMember(adminClient, channel.id, targetUser.id), {
-                timeout: 30000,
+                timeout: duration.half_min,
                 message: `${targetUser.username} should be added to the channel`,
             })
             .toBe(true);
@@ -498,7 +496,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await expect(confirm.messageText.locator).toContainText('remove 1 current channel member');
 
         // # Confirm ("Save", auto-add being off) and wait for the access-control sync job that applies the removal
-        await expect(confirm.confirmButton.locator).toHaveText('Save');
+        await expect(confirm.confirmButton.locator).toHaveMessage(Msg.channel_settings.access_rules.confirm_modal.save);
         const syncJob = await confirm.confirmButton.commit({wait: Api.CreateJob});
         await expect(confirm.confirmButton.locator).not.toBeVisible();
         const syncJobId = syncJob.id;
@@ -508,7 +506,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         // * memberToRemove is no longer a channel member
         await expect
             .poll(() => isChannelMember(adminClient, channel.id, memberToRemove.id), {
-                timeout: 15000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 1000, 2000],
                 message: `${memberToRemove.username} should be removed from the channel`,
             })
@@ -519,7 +517,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         // * The ABAC removal system message is the last post in the channel
         const {postList} = app.center;
         const lastPost = async () => postList.post({id: (await postList.postKeys()).at(-1)!}).locator.textContent();
-        await expect.poll(lastPost, {timeout: 30000}).toContain('was removed from the channel');
+        await expect.poll(lastPost, {timeout: duration.half_min}).toContain('was removed from the channel');
         await expect.poll(lastPost).toContain(memberToRemove.username);
 
         // # Open channel members RHS from the channel menu

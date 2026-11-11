@@ -14,6 +14,8 @@ import {
     settle,
     test,
     waitForApi,
+    duration,
+    Msg,
 } from '@mattermost/playwright-lib';
 
 import {
@@ -302,7 +304,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
      * ABAC back off cleanly rather than erroring — the team is never left enforced-but-empty.
      */
     test('MM-68846-T5 - enabling the toggle with nothing defined saves cleanly and leaves ABAC off', async ({pw}) => {
-        test.setTimeout(120000);
+        test.setTimeout(duration.two_min);
 
         // Known bug: with nothing defined, Save tries to delete a team policy that doesn't exist. The server answers
         // "Unable to retrieve the access control policy.", which team_details.tsx only treats as harmless when the
@@ -779,7 +781,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         // * A team sync job for this team was created
         await expect
             .poll(async () => teamSyncJobSince(adminClient, team, testStartTime), {
-                timeout: 15000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000, 3000],
                 message: 'linking a parent policy should enqueue a team sync job on save',
             })
@@ -876,7 +878,7 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         // * A team sync job for this team was created
         await expect
             .poll(async () => teamSyncJobSince(adminClient, team, testStartTime), {
-                timeout: 15000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 2000, 3000],
                 message: 'clicking Sync now in Team Details should enqueue a team sync job for this team',
             })
@@ -946,14 +948,14 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         await linked.clickOpenLink();
 
         // * The policy editor opens
-        await expect(app.page).toHaveURL(/membership_policies\/edit_policy\//, {timeout: 15000});
-        await expect(app.admin.header.locator).toContainText('Edit Membership Policy');
+        await expect(app.page).toHaveURL(/membership_policies\/edit_policy\//, {timeout: duration.half_min});
+        await expect(app.admin.header.locator).toContainMessage(Msg.admin.access_control.policy.edit_policy.title);
 
         // # Go back to the list
         await app.admin.accessControl.policy.backLink.click();
 
         // * No stale "Discard Changes?" prompt; the list opens
-        await expect(app.page).toHaveURL(/membership_policies$/, {timeout: 10000});
+        await expect(app.page).toHaveURL(/membership_policies$/);
         await expect(app.admin.accessControl.policies.searchTextbox.locator).toBeVisible();
     });
 
@@ -984,12 +986,16 @@ test.describe('ABAC - Team Membership console', {tag: ['@abac', '@team_membershi
         await expect(accessPolicy.policy(policy).nameText.locator).toHaveText(policyName);
 
         // * The policy list has Policy Name and Actions columns, and no Auto-add column or checkboxes
-        await expect(accessPolicy.header.locator).toContainText('Policy Name');
-        await expect(accessPolicy.header.locator).toContainText('Actions');
+        await expect(accessPolicy.header.locator).toContainMessage(
+            Msg.admin.team_settings.team_detail.access_control_policy_name,
+        );
+        await expect(accessPolicy.header.locator).toContainMessage(
+            Msg.admin.team_settings.team_detail.access_control_policy_actions,
+        );
         await expect(accessPolicy.header.locator).not.toContainText('Auto-add');
 
         // * The rules section is called "Team-specific membership rules"
-        await expect(page.accessRules.titleText.locator).toHaveText('Team-specific membership rules');
+        await expect(page.accessRules.titleText.locator).toHaveMessage(Msg.admin.team_settings.team_detail.rules.title);
     });
 
     /**

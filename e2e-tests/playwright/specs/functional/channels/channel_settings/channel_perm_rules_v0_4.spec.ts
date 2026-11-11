@@ -23,14 +23,11 @@
  * button additionally requires `MM_FEATUREFLAGS_POLICYSIMULATION=true`.
  */
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, Msg} from '@mattermost/playwright-lib';
 
 import {enableABACConfig, ensureDepartmentAttribute, createPrivateChannel} from '../team_settings/helpers';
 
 import {closeSettings, openChannel, openChannelSettings} from './access_rules';
-
-// Written on the generated page objects: Channel Settings' tabs, its permissions policy tab (list, search, rules,
-// Add rule) and rule editor (name, expression, permissions, Save / Cancel, error), and the save panel.
 
 /** Opens Channel Settings on its permissions policy tab, showing the rules list. */
 async function openPermissionsPolicy(app: App) {
@@ -171,7 +168,7 @@ test.describe('Channel Settings Modal - Permissions Policy tab (v0.4)', () => {
             // * The blocked switch is reported through the modal's floating
             // footer in its error state, with saving from there disabled. The
             // modal withdraws it after 3s, so assert inside that window.
-            await expect(savePanel.messageText.locator).toContainText('You have unsaved changes', {timeout: 2000});
+            await expect(savePanel.messageText.locator).toContainMessage(Msg.saveChangesPanel.message);
             await expect(savePanel.locator).toHaveClass(/error/);
             await expect(savePanel.saveButton.locator).toBeDisabled();
 

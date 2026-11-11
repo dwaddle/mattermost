@@ -48,7 +48,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                 saving={saving}
                 disabled={isDisabled || !saveNeeded}
                 onClick={onClick}
-                testId={`${testId}.save`}
+                testId={part(testId, 'save')}
                 savingMessage={savingMessage ?? formatMessage({id: 'admin.team_channel_settings.saving', defaultMessage: 'Saving Config...'})}
             />
             {showCancel && (
@@ -60,7 +60,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                     >
                         <BlockableLink
                             to={cancelLink}
-                            data-testid={`${testId}.cancel--link`}
+                            data-testid={part(testId, 'cancel', 'link')}
                         >
                             {cancelLabel}
                         </BlockableLink>
@@ -68,7 +68,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
                 ) : (
                     <Button
                         id='cancelButtonSettings'
-                        data-testid={`${testId}.cancel--button`}
+                        data-testid={part(testId, 'cancel', 'button')}
                         type='button'
                         emphasis='tertiary'
                         onClick={() => onCancel?.()}
@@ -79,7 +79,7 @@ const SaveChangesPanel = ({saveNeeded, onClick, saving, serverError, cancelLink,
             )}
             <div
                 className='error-message'
-                data-testid={`${testId}.error--text`}
+                data-testid={part(testId, 'error', 'text')}
             >
                 {serverError}
             </div>

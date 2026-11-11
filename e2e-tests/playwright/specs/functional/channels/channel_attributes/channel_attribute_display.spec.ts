@@ -4,7 +4,7 @@
 import {CollapsedThreads} from '@mattermost/types/config';
 import type {PropertyField} from '@mattermost/types/properties';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     DISPLAY_BANNER_TOP,
@@ -509,7 +509,7 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(optional);
 
-            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
             const modal = await openNewChannelModal(app);
             const displayName = `Attr Optional ${suffix}`;
             await modal.fillNameTextbox(displayName);
@@ -601,7 +601,7 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(caveats);
 
-            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
             const modal = await openNewChannelModal(app);
             await modal.fillNameTextbox(`Attr Banner Multi ${suffix}`);
 
@@ -646,7 +646,7 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
             });
             created.push(note);
 
-            const app = await openChannel(pw, user, team, {name: 'town-square'});
+            const app = await openChannel(pw, user, team, {name: DefaultChannel.TownSquare});
             const modal = await openNewChannelModal(app);
             await modal.fillNameTextbox(`Attr Banner Text ${suffix}`);
             await modal.attributes.attribute(note).fillValueTextbox('HANDLE WITH CARE');

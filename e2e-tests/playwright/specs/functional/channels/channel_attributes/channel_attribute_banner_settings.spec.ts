@@ -33,9 +33,6 @@ import {
     typeBannerText,
 } from './surface';
 
-// Written on the generated page objects (through ./surface): Channel Settings' Configuration tab (banner toggle, the
-// banner text editor and its attribute tokens by name, the colour input), the save panel, and the channel banner.
-
 const BANNER_COLOR = '#1e325c';
 const CUSTOM_COLOR = '#3a7d44';
 

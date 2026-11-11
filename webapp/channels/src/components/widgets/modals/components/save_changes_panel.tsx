@@ -106,7 +106,7 @@ function SaveChangesPanel({
                     <WithTooltip title={intl.formatMessage({id: 'saveChangesPanel.dismiss', defaultMessage: 'Dismiss'})}>
                         <IconButton
                             id='panelCloseButton'
-                            data-testid={`${testId}.close--button`}
+                            data-testid={part(testId, 'close', 'button')}
                             size='small'
                             icon={<Icon glyph={<CloseIcon/>}/>}
                             onClick={handleClose}
@@ -122,7 +122,7 @@ function SaveChangesPanel({
         return (
             <div className='SaveChangesPanel__btn-ctr'>
                 <Button
-                    data-testid={`${testId}.cancel--button`}
+                    data-testid={part(testId, 'cancel', 'button')}
                     emphasis='tertiary'
                     size='small'
                     className={classNames('SaveChangesPanel__cancel-btn', {error: tabChangeError || state === 'error'})}
@@ -137,7 +137,7 @@ function SaveChangesPanel({
                     )}
                 </Button>
                 <Button
-                    data-testid={`${testId}.save--button`}
+                    data-testid={part(testId, 'save', 'button')}
                     emphasis='primary'
                     size='small'
                     className={classNames('SaveChangesPanel__save-btn', {error: tabChangeError || state === 'error'})}
@@ -168,7 +168,7 @@ function SaveChangesPanel({
         >
             <p
                 className={messageClassName}
-                data-testid={`${testId}.message--text`}
+                data-testid={part(testId, 'message', 'text')}
             >
                 <AlertCircleOutlineIcon
                     size={18}

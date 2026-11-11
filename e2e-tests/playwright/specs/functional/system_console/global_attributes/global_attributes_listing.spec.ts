@@ -10,7 +10,7 @@
  * Professional-only licenses hide this admin route (React Router redirects away).
  */
 
-import {expect, test, DefaultChannel, Msg} from '@mattermost/playwright-lib';
+import {expect, test, Msg} from '@mattermost/playwright-lib';
 
 import {
     GLOBAL_ATTRIBUTES_ADMIN_PATH,
@@ -48,9 +48,7 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
             await expect(systemAttributes.section('user_attributes_redirect').locator).not.toBeVisible();
             await expect(systemAttributes.section('user_attributes_feature_discovery').locator).not.toBeVisible();
             // * Page frame's static subtitle is present (renders regardless of fetch state)
-            await expect(app.admin.attributes.subtitleText.locator).toHaveText(
-                'Define an attribute once, then choose which resources can use it.',
-            );
+            await expect(app.admin.attributes.subtitleText.locator).toHaveMessage(Msg.admin.global_attributes.subtitle);
         });
     });
 
@@ -186,7 +184,9 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                     // * A leading icon renders alongside the label, including for the
                     // unmapped "date" type (fallback icon, not a blank cell)
                     await expect(attributes.row(field.id).typeIcon.locator).toBeVisible();
-                    await expect(attributes.row(field.id).sourceText.locator).toContainText('Managed here');
+                    await expect(attributes.row(field.id).sourceText.locator).toContainMessage(
+                        Msg.admin.global_attributes.table.source.managed,
+                    );
                     // * "Managed here" is the one source kind reachable through the admin
                     // API (plugin/ldap/saml require server-side attrs the API blocks from
                     // non-plugin callers — those icon mappings are unit-test-only) and it
@@ -291,9 +291,13 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                 const attributes = await openAttributeManagement(app);
 
                 await expect(attributes.row(field.id).nameText.locator).toHaveText(displayName);
-                await expect(attributes.row(field.id).typeText.locator).toContainText('Hierarchical');
+                await expect(attributes.row(field.id).typeText.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.type.graph,
+                );
                 await expect(attributes.row(field.id).typeIcon.locator).toBeVisible();
-                await expect(attributes.row(field.id).sourceText.locator).toContainText('Managed here');
+                await expect(attributes.row(field.id).sourceText.locator).toContainMessage(
+                    Msg.admin.global_attributes.table.source.managed,
+                );
                 await expect(attributes.row(field.id).optionsText.locator).toContainText('2 options');
             } finally {
                 await deleteGlobalAttributeFieldIfExists(adminClient, name);
@@ -309,7 +313,7 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
             pw,
         }) => {
             await requireGlobalAttributesEnabled(pw);
-            const {adminClient, team, user} = await pw.initSetup();
+            const {adminClient, team, user, townSquare} = await pw.initSetup();
 
             const timestamp = Date.now();
             const labels = [`PW Sort First ${timestamp}`, `PW Sort Second ${timestamp}`, `PW Sort Third ${timestamp}`];
@@ -346,7 +350,7 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
                 // * The expected order renders in profile settings (Settings > Profile), whose
                 // sections are keyed `customAttribute_<field id>`
                 const {app} = await pw.testBrowser.login(user);
-                await app.channelsPage.goto({team, channel: 'town-square'});
+                await app.channelsPage.goto({team, channel: townSquare});
                 const settings = await (await app.globalHeader.clickOpenAccountMenuButton()).clickProfileMenuItem();
                 const sectionKeys = expectedOrder.map((id) => `customAttribute_${id}`);
                 await expect
@@ -562,11 +566,11 @@ test.describe('System Console - Global Attributes listing', {tag: '@system_conso
 
                 // * View (not Edit) is offered and navigable; Delete stays disabled
                 const viewItem = attributes.actionsMenu.editMenuItem;
-                await expect(viewItem.locator).toContainText('View attribute');
+                await expect(viewItem.locator).toContainMessage(Msg.admin.global_attributes.table.actions.view);
                 await expect(viewItem.locator).not.toHaveAttribute('aria-disabled', 'true');
 
                 const deleteItem = attributes.actionsMenu.deleteMenuItem;
-                await expect(deleteItem.locator).toContainText('Delete attribute');
+                await expect(deleteItem.locator).toContainMessage(Msg.admin.global_attributes.table.actions.delete);
                 await expect(deleteItem.locator).toHaveAttribute('aria-disabled', 'true');
 
                 // # View opens the details page (read-only via the same schema isDisabled)

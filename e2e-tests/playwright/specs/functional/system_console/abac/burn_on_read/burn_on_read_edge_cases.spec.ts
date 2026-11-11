@@ -30,6 +30,7 @@ import {
     openChannel,
     type App,
     type PlaywrightExtended,
+    DefaultChannel,
 } from '@mattermost/playwright-lib';
 
 import {lastPost} from '../../../channels/burn_on_read/support';
@@ -87,7 +88,7 @@ async function grantAndOpenTownSquare(
     const {app: console} = await pw.testBrowser.login(adminUser);
     grantPolicyName = await grantBurnOnRead(console, adminClient, adminUser);
     await ensureABACEnabled(adminClient);
-    const app = await openChannel(pw, adminUser, {team, channel: 'town-square'});
+    const app = await openChannel(pw, adminUser, {team, channel: DefaultChannel.TownSquare});
     return {console, app};
 }
 
@@ -129,7 +130,7 @@ async function lastScheduledPost(app: App, team: Team) {
 test('shows only the remove-all control on a burn-on-read draft label', {tag: '@abac_burn_on_read'}, async ({pw}) => {
     test.setTimeout(pw.duration.four_min);
 
-    const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
+    const {adminUser, adminClient, team} = await pw.initSetup();
     savedAdminClient = adminClient;
     await ensureBurnOnReadEnabled(adminClient);
     await ensureABACEnabled(adminClient);
@@ -211,7 +212,7 @@ test(
         await expect(draft.rescheduleButton.locator).toHaveCount(0);
 
         // # Back to the composer, and clear the burn-on-read label
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await expect(composer.burnOnReadLabel.locator).toBeVisible();
         await composer.clickRemoveAllLabelsButton();
 
@@ -248,7 +249,7 @@ test(
     async ({pw}) => {
         test.setTimeout(pw.duration.four_min);
 
-        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
+        const {adminUser, adminClient, team} = await pw.initSetup();
         savedAdminClient = adminClient;
         await ensureBurnOnReadEnabled(adminClient);
         await ensureABACEnabled(adminClient);
@@ -297,7 +298,7 @@ test(
     async ({pw}) => {
         test.setTimeout(pw.duration.four_min);
 
-        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
+        const {adminUser, adminClient, team} = await pw.initSetup();
         savedAdminClient = adminClient;
         await ensureBurnOnReadEnabled(adminClient);
         await ensureABACEnabled(adminClient);

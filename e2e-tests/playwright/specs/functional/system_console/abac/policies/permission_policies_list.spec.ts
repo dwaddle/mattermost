@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminPermission, expect, test} from '@mattermost/playwright-lib';
+import {AdminPermission, Api, duration, expect, test} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes, deletePermissionPolicyByName} from '../support';
 import {createPermissionPolicy, openPermissionPolicies, permissionPolicyIdByName, setAbacEnabled} from '../surface';
@@ -90,7 +90,7 @@ test.describe('Permission Policies - Manage Existing Policies', () => {
         await expect(row.locator).toContainText(policyName);
 
         // # Open the row's action menu and delete — deletion from the list fires immediately, with no confirmation
-        await (await row.clickOpenMenuButton()).deleteMenuItem.click();
+        await (await row.clickOpenMenuButton()).deleteMenuItem.commit({wait: Api.DeleteAccessControlPolicy});
 
         // * Policy no longer in list
         await expect(row.locator).toHaveCount(0);
