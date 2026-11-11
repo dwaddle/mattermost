@@ -20,14 +20,14 @@ test('MM-T1771 rejects a minimum password length outside the allowed range', {ta
 
     // # Save a minimum length above the maximum
     await minimumLength.fill('88');
-    await app.admin.clickSaveButton();
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
     // * Verify the length error is shown
     await expect(app.admin.saveError.locator).toHaveText(LENGTH_ERROR);
 
     // # Save a minimum length below the minimum
     await minimumLength.fill('3');
-    await app.admin.clickSaveButton();
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
     // * Verify the length error is shown
     await expect(app.admin.saveError.locator).toHaveText(LENGTH_ERROR);
@@ -43,7 +43,7 @@ test('MM-T1772 applies a new minimum password length on signup', {tag: '@authent
     // # Set the minimum password length to 15
     await openAdminConsole(app, '/authentication/password');
     await app.admin.setting('passwordMinimumLength').valueTextbox.fill('15');
-    await app.admin.clickSaveButton();
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
     // * Verify the preview reflects the new length
     await expect(app.admin.password.previewText.locator).toHaveText('Your password must be 15-72 characters long.');

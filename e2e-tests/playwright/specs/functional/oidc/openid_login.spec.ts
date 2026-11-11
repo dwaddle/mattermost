@@ -122,7 +122,7 @@ test('logout invalidates a session created via OpenID', {tag: '@openid'}, async 
     await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
     // # Log out from the account menu
-    await (await app.globalHeader.clickOpenAccountMenuButton()).clickLogOutMenuItem();
+    await (await app.globalHeader.clickOpenAccountMenuButton()).logOutMenuItem.commit();
 
     // * Verify the session is cleared, and revisiting the team's channel redirects back to login
     await expect(page).toHaveURL(loginPageUrl);

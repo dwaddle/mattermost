@@ -27,7 +27,7 @@ test(
             await expect(verify.titleText.locator).toHaveMessage(Msg.email_verify.almost);
 
             // # Resend the verification email
-            await verify.clickResendButton();
+            await verify.resendButton.commit();
             await expect(verify.statusText.locator).toHaveMessage(Msg.email_verify.sent);
 
             const mail = await getRecentEmail(user.email, {receivedAfter: started});

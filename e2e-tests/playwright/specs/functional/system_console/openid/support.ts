@@ -26,7 +26,7 @@ export async function save(app: App) {
 /** Logs out from the System Console menu, landing on the login page. */
 export async function logOut(app: App) {
     const menu = await app.admin.sidebar.header.clickMenuButton();
-    await menu.clickLogOutMenuItem();
+    await menu.logOutMenuItem.commit();
     await expect(app.login.loginIdTextbox.locator).toBeVisible();
 }
 

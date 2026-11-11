@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openSystemUsers, searchSystemUsers, test, testConfig, duration} from '@mattermost/playwright-lib';
+import {expect, openSystemUsers, searchSystemUsers, test, testConfig, duration, Api} from '@mattermost/playwright-lib';
 
 import {expectOnSelectTeam, logIn, openAdminConsole, openLogin} from './support';
 
@@ -28,7 +28,7 @@ test(
             await openAdminConsole(adminApp, '/authentication/mfa');
             await adminApp.admin.setting('ServiceSettings.EnableMultifactorAuthentication').trueRadio.check();
             await adminApp.admin.setting('ServiceSettings.EnforceMultifactorAuthentication').trueRadio.check();
-            await adminApp.admin.clickSaveButton();
+            await adminApp.admin.saveButton.commit({wait: Api.PatchConfig});
 
             // the admin has no MFA either, so once enforcement is saved its API calls are refused: wait on the page
             await expect(adminApp.admin.saveButton.locator).toBeSaved();
