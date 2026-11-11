@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, getRandomId, test} from '@mattermost/playwright-lib';
+import {expect, generated, getRandomId, test} from '@mattermost/playwright-lib';
 
 test.describe('Single-channel guests', () => {
     test.setTimeout(180000);
@@ -78,7 +78,7 @@ test.describe('Single-channel guests', () => {
             await navigateWithGuestPatch(
                 systemConsolePage.page,
                 adminClient,
-                '/admin_console/reporting/system_analytics',
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
                 true,
             );
 
@@ -149,7 +149,12 @@ test.describe('Single-channel guests', () => {
             await systemConsolePage.toBeVisible();
 
             // Re-apply patch after initial load + reload to counter WebSocket config resets.
-            await navigateWithGuestPatch(systemConsolePage.page, adminClient, '/admin_console/about/license', true);
+            await navigateWithGuestPatch(
+                systemConsolePage.page,
+                adminClient,
+                generated.AdminConsolePage.path({section: 'about/license'}),
+                true,
+            );
 
             // * Verify the single-channel guests row is visible
             await expect(systemConsolePage.page.getByText('SINGLE-CHANNEL GUESTS:')).toBeVisible();
@@ -181,7 +186,7 @@ test.describe('Single-channel guests', () => {
             await navigateWithGuestPatch(
                 systemConsolePage.page,
                 adminClient,
-                '/admin_console/reporting/system_analytics',
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
                 false,
             );
 
@@ -265,7 +270,7 @@ test.describe('Single-channel guests', () => {
             await navigateWithGuestPatch(
                 systemConsolePage.page,
                 adminClient,
-                '/admin_console/reporting/system_analytics',
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
                 true,
             );
 
@@ -372,7 +377,7 @@ test.describe('Single-channel guests', () => {
             await navigateWithGuestPatch(
                 systemConsolePage.page,
                 adminClient,
-                '/admin_console/reporting/system_analytics',
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
                 true,
             );
 
@@ -439,7 +444,7 @@ test.describe('Single-channel guests', () => {
             await navigateWithGuestPatch(
                 systemConsolePage.page,
                 adminClient,
-                '/admin_console/reporting/system_analytics',
+                generated.AdminConsolePage.path({section: 'reporting/system_analytics'}),
                 true,
             );
 

@@ -18,7 +18,7 @@ test('saves the site name from Customization', {tag: '@system_console'}, async (
     try {
         // # Log in as admin and open Site Configuration > Customization
         const {app, page} = await pw.testBrowser.login(adminUser);
-        await page.goto(`${generated.AdminConsolePage.path()}/site_config/customization`);
+        await page.goto(generated.AdminConsolePage.path({section: 'site_config/customization'}));
 
         // # Change the site name and save
         const setting = app.admin.setting('TeamSettings.SiteName');

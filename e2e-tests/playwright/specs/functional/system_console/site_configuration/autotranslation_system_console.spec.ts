@@ -31,9 +31,8 @@ function enableSwitch(app: App) {
 async function openWithAutoTranslation(app: App) {
     await openLocalization(app);
     const at = app.admin.autoTranslation;
-    // compass's switch input is hidden under a sibling <label for>, which takes the pointer
-    const id = await enableSwitch(app).getAttribute('id');
-    await app.page.locator(`label[for="${id}"]`).click();
+    // compass's switch input is hidden under a sibling <label for>, which takes the pointer: click the input itself
+    await enableSwitch(app).dispatchEvent('click');
     await expect(enableSwitch(app)).toBeChecked();
     return at;
 }

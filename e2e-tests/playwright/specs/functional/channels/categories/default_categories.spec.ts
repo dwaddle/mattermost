@@ -232,7 +232,7 @@ test.describe('Channel Category Sorting', () => {
 
             // # Log in and navigate to Users and Teams in the System Console
             const {app, page} = await pw.testBrowser.login(adminUser);
-            await page.goto(`${generated.AdminConsolePage.path()}/site_config/users_and_teams`);
+            await page.goto(generated.AdminConsolePage.path({section: 'site_config/users_and_teams'}));
 
             // * Verify the setting is visible
             await expect(

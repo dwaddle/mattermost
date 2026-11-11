@@ -34,7 +34,7 @@ test.describe('System Console > Concurrent config saves', () => {
 
         // # Open the Emoji settings page
         const {app, page} = await pw.testBrowser.login(adminUser);
-        await page.goto(`${generated.AdminConsolePage.path()}/site_config/emoji`);
+        await page.goto(generated.AdminConsolePage.path({section: 'site_config/emoji'}));
         await expect(app.admin.pageElement('EmojiSettings').locator).toBeVisible();
 
         // # Simulate another admin saving an unrelated section via API.
@@ -74,7 +74,7 @@ test.describe('System Console > Concurrent config saves', () => {
 
         // # Open the Announcement Banner settings page
         const {app, page} = await pw.testBrowser.login(adminUser);
-        await page.goto(`${generated.AdminConsolePage.path()}/site_config/announcement_banner`);
+        await page.goto(generated.AdminConsolePage.path({section: 'site_config/announcement_banner'}));
         await expect(app.admin.pageElement('AnnouncementSettings').locator).toBeVisible();
 
         // # Simulate another admin saving an unrelated section via API.
@@ -114,7 +114,7 @@ test.describe('System Console > Concurrent config saves', () => {
 
         // # Open the Users and Teams settings page
         const {app, page} = await pw.testBrowser.login(adminUser);
-        await page.goto(`${generated.AdminConsolePage.path()}/site_config/users_and_teams`);
+        await page.goto(generated.AdminConsolePage.path({section: 'site_config/users_and_teams'}));
         await expect(app.admin.pageElement('UserAndTeamsSettings').locator).toBeVisible();
 
         // # Simulate another admin saving an unrelated section via API.

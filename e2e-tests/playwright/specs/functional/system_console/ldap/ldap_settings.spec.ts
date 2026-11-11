@@ -5,7 +5,7 @@ import {expect, generated, test, type App} from '@mattermost/playwright-lib';
 
 /** Opens System Console > AD/LDAP, once its Test Connection button shows. */
 async function openAdLdap(app: App) {
-    await app.page.goto(`${generated.AdminConsolePage.path()}/authentication/ldap`);
+    await app.page.goto(generated.AdminConsolePage.path({section: 'authentication/ldap'}));
     await expect(app.admin.setting('LdapSettings.TestConnection').requestButton.locator).toBeVisible();
 }
 

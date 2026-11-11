@@ -1,9 +1,9 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, testConfig} from '@mattermost/playwright-lib';
+import {Api, expect, test, testConfig} from '@mattermost/playwright-lib';
 
-import {MobileSecurity} from './mobile_security_support';
+import {openMobileSecurity, openMobileSecurityUpsell, openUsers} from './mobile_security_support';
 
 test('should be able to enable mobile security settings when licensed', async ({pw}) => {
     const {adminUser, adminClient} = await pw.initSetup();
@@ -21,132 +21,142 @@ test('should be able to enable mobile security settings when licensed', async ({
 
     // # Log in as admin
     const {app} = await pw.testBrowser.login(adminUser);
-    const security = new MobileSecurity(app);
 
     // # Go to Mobile Security section
-    await security.open();
+    await openMobileSecurity(app);
 
     // # Enable Biometric Authentication
-    await security.enableBiometricAuthentication.selectTrue();
+    await app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.check();
 
     // * Verify only Biometric Authentication is enabled
-    await security.enableBiometricAuthentication.toBeTrue();
-    await security.preventScreenCapture.toBeFalse();
-    await security.enableJailbreakProtection.toBeFalse();
+    await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').falseRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').falseRadio.locator).toBeChecked();
 
     // # Save settings
-    await security.save();
-    // # Wait until the save button has settled
-    await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
+    await expect(app.admin.saveButton).toBeSaved();
 
     // # Go to any other section and come back to Mobile Security
-    await security.openUsers();
+    await openUsers(app);
 
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Biometric Authentication is still enabled
-    await security.enableBiometricAuthentication.toBeTrue();
-    await security.preventScreenCapture.toBeFalse();
-    await security.enableJailbreakProtection.toBeFalse();
+    await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').falseRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').falseRadio.locator).toBeChecked();
 
     // # Enable Prevent Screen Capture
-    await security.preventScreenCapture.selectTrue();
+    await app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.check();
 
     // * Verify only Biometric Authentication and Prevent Screen Capture are enabled
-    await security.enableBiometricAuthentication.toBeTrue();
-    await security.preventScreenCapture.toBeTrue();
-    await security.enableJailbreakProtection.toBeFalse();
+    await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').falseRadio.locator).toBeChecked();
 
     // # Save settings
-    await security.save();
-    // # Wait until the save button has settled
-    await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
+    await expect(app.admin.saveButton).toBeSaved();
 
     // # Go to any other section and come back to Mobile Security
-    await security.openUsers();
+    await openUsers(app);
 
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Biometric Authentication and Prevent Screen Capture are still enabled
-    await security.enableBiometricAuthentication.toBeTrue();
-    await security.preventScreenCapture.toBeTrue();
-    await security.enableJailbreakProtection.toBeFalse();
+    await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').falseRadio.locator).toBeChecked();
 
     // # Enable Jailbreak Protection
-    await security.enableJailbreakProtection.selectTrue();
+    await app.admin.setting('NativeAppSettings.MobileJailbreakProtection').trueRadio.check();
 
     // * Verify all toggles are enabled
-    await security.enableBiometricAuthentication.toBeTrue();
-    await security.preventScreenCapture.toBeTrue();
-    await security.enableJailbreakProtection.toBeTrue();
+    await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').trueRadio.locator).toBeChecked();
 
     // # Save settings
-    await security.save();
-    // # Wait until the save button has settled
-    await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
+    await expect(app.admin.saveButton).toBeSaved();
 
     // # Go to any other section and come back to Mobile Security
-    await security.openUsers();
+    await openUsers(app);
 
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify all toggles are still enabled
-    await security.enableBiometricAuthentication.toBeTrue();
-    await security.preventScreenCapture.toBeTrue();
-    await security.enableJailbreakProtection.toBeTrue();
+    await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').trueRadio.locator).toBeChecked();
 
     if (license.SkuShortName === 'advanced') {
         // # Enable Secure File Preview
-        await security.enableSecureFilePreviewMode.selectTrue();
+        await app.admin.setting('NativeAppSettings.MobileEnableSecureFilePreview').trueRadio.check();
 
         // * Verify all toggles are enabled
-        await security.enableBiometricAuthentication.toBeTrue();
-        await security.preventScreenCapture.toBeTrue();
-        await security.enableJailbreakProtection.toBeTrue();
-        await security.enableSecureFilePreviewMode.toBeTrue();
-        await security.allowPdfLinkNavigation.toBeFalse();
+        await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').trueRadio.locator).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileEnableSecureFilePreview').trueRadio.locator,
+        ).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileAllowPdfLinkNavigation').falseRadio.locator,
+        ).toBeChecked();
 
         // # Save settings
-        await security.save();
-        // # Wait until the save button has settled
-        await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+        await app.admin.saveButton.commit({wait: Api.PatchConfig});
+        await expect(app.admin.saveButton).toBeSaved();
 
         // # Go to any other section and come back to Mobile Security
-        await security.openUsers();
-        await security.open();
+        await openUsers(app);
+        await openMobileSecurity(app);
 
         // * Verify all toggles are still enabled
-        await security.enableBiometricAuthentication.toBeTrue();
-        await security.preventScreenCapture.toBeTrue();
-        await security.enableJailbreakProtection.toBeTrue();
-        await security.enableSecureFilePreviewMode.toBeTrue();
-        await security.allowPdfLinkNavigation.toBeFalse();
+        await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').trueRadio.locator).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileEnableSecureFilePreview').trueRadio.locator,
+        ).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileAllowPdfLinkNavigation').falseRadio.locator,
+        ).toBeChecked();
 
         // # Enable Allow PDF Link Navigation
-        await security.allowPdfLinkNavigation.selectTrue();
+        await app.admin.setting('NativeAppSettings.MobileAllowPdfLinkNavigation').trueRadio.check();
 
         // * Verify all toggles are enabled
-        await security.enableBiometricAuthentication.toBeTrue();
-        await security.preventScreenCapture.toBeTrue();
-        await security.enableJailbreakProtection.toBeTrue();
-        await security.enableSecureFilePreviewMode.toBeTrue();
-        await security.allowPdfLinkNavigation.toBeTrue();
+        await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').trueRadio.locator).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileEnableSecureFilePreview').trueRadio.locator,
+        ).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileAllowPdfLinkNavigation').trueRadio.locator,
+        ).toBeChecked();
 
         // # Save settings
-        await security.save();
-        // # Wait until the save button has settled
-        await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+        await app.admin.saveButton.commit({wait: Api.PatchConfig});
+        await expect(app.admin.saveButton).toBeSaved();
 
         // # Go to any other section and come back to Mobile Security
-        await security.openUsers();
-        await security.open();
+        await openUsers(app);
+        await openMobileSecurity(app);
 
         // * Verify all toggles are still enabled
-        await security.enableBiometricAuthentication.toBeTrue();
-        await security.preventScreenCapture.toBeTrue();
-        await security.enableJailbreakProtection.toBeTrue();
-        await security.enableSecureFilePreviewMode.toBeTrue();
-        await security.allowPdfLinkNavigation.toBeTrue();
+        await expect(app.admin.setting('NativeAppSettings.MobileEnableBiometrics').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobilePreventScreenCapture').trueRadio.locator).toBeChecked();
+        await expect(app.admin.setting('NativeAppSettings.MobileJailbreakProtection').trueRadio.locator).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileEnableSecureFilePreview').trueRadio.locator,
+        ).toBeChecked();
+        await expect(
+            app.admin.setting('NativeAppSettings.MobileAllowPdfLinkNavigation').trueRadio.locator,
+        ).toBeChecked();
     }
 });
 
@@ -167,10 +177,9 @@ test('should show mobile security upsell when not licensed', async ({pw}) => {
 
     // # Log in as admin
     const {app} = await pw.testBrowser.login(adminUser);
-    const security = new MobileSecurity(app);
 
     // # Go to Mobile Security section
-    await security.openUpsell();
+    await openMobileSecurityUpsell(app);
 
     // * Verify title is correct
     await expect(app.admin.featureDiscovery.titleText.locator).toContainText(
@@ -201,40 +210,37 @@ test('should show and enable Intune MAM when Enterprise Advanced licensed and Of
 
     // # Log in as admin
     const {app} = await pw.testBrowser.login(adminUser);
-    const security = new MobileSecurity(app);
 
     // # Go to Mobile Security section
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Intune MAM toggle is visible
-    await expect(security.enableIntuneMAM.trueOption).toBeVisible();
-    await expect(security.enableIntuneMAM.falseOption).toBeVisible();
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeVisible();
+    await expect(app.admin.setting('IntuneSettings.Enable').falseRadio.locator).toBeVisible();
 
     // # Enable Intune MAM
-    await security.enableIntuneMAM.selectTrue();
+    await app.admin.setting('IntuneSettings.Enable').trueRadio.check();
 
     // * Verify Intune MAM is enabled
-    await security.enableIntuneMAM.toBeTrue();
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeChecked();
 
-    await security.authProvider.select('office365');
+    await app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator.selectOption('office365');
 
     // # Fill in Intune configuration
-    await security.tenantId.fill('12345678-1234-1234-1234-123456789012');
-    await security.clientId.fill('87654321-4321-4321-4321-210987654321');
+    await app.admin.setting('IntuneSettings.TenantId').valueTextbox.fill('12345678-1234-1234-1234-123456789012');
+    await app.admin.setting('IntuneSettings.ClientId').valueTextbox.fill('87654321-4321-4321-4321-210987654321');
 
     // # Save settings
-    await security.save();
-
-    // # Wait until the save button has settled
-    await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
+    await expect(app.admin.saveButton).toBeSaved();
 
     // # Go to any other section and come back to Mobile Security
-    await security.openUsers();
+    await openUsers(app);
 
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Intune MAM is still enabled
-    await security.enableIntuneMAM.toBeTrue();
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeChecked();
 });
 
 test('should hide Intune MAM when Office365 is not configured', async ({pw}) => {
@@ -261,15 +267,14 @@ test('should hide Intune MAM when Office365 is not configured', async ({pw}) => 
 
     // # Log in as admin
     const {app} = await pw.testBrowser.login(adminUser);
-    const security = new MobileSecurity(app);
 
     // # Go to Mobile Security section
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Intune MAM toggle is visible
-    await expect(security.enableIntuneMAM.trueOption).toBeVisible();
-    await expect(security.enableIntuneMAM.falseOption).toBeVisible();
-    await expect(security.authProvider.dropdown).toBeDisabled();
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeVisible();
+    await expect(app.admin.setting('IntuneSettings.Enable').falseRadio.locator).toBeVisible();
+    await expect(app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator).toBeDisabled();
 });
 
 test('should configure new IntuneSettings with Office365 auth provider', async ({pw}) => {
@@ -295,54 +300,60 @@ test('should configure new IntuneSettings with Office365 auth provider', async (
             EmailAttribute: 'useremail',
         },
     } as any);
-    await pw.waitUntil(async () => {
-        const cfg = await adminClient.getConfig();
-        return cfg.Office365Settings?.Enable === true && Boolean(cfg.Office365Settings?.Id);
-    });
+    await expect
+        .poll(
+            async () => {
+                const cfg = await adminClient.getConfig();
+                return cfg.Office365Settings?.Enable === true && Boolean(cfg.Office365Settings?.Id);
+            },
+            {message: 'the server has the Office 365 settings'},
+        )
+        .toBe(true);
 
     // # Log in as admin
     const {app} = await pw.testBrowser.login(adminUser);
-    const security = new MobileSecurity(app);
 
     // # Go to Mobile Security section
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify new Intune toggle is visible
-    await expect(security.enableIntuneMAM.trueOption).toBeVisible();
-    await expect(security.enableIntuneMAM.falseOption).toBeVisible();
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeVisible();
+    await expect(app.admin.setting('IntuneSettings.Enable').falseRadio.locator).toBeVisible();
 
     // # Enable Intune
-    await security.enableIntuneMAM.selectTrue();
+    await app.admin.setting('IntuneSettings.Enable').trueRadio.check();
 
     // * Verify Intune is enabled
-    await security.enableIntuneMAM.toBeTrue();
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeChecked();
 
     // # Select Office365 as auth provider.
     // After enabling Intune MAM the form re-renders; scroll the dropdown into view
     // before selecting so it is both visible and interactive.
-    await security.authProvider.dropdown.scrollIntoViewIfNeeded();
-    await expect(security.authProvider.dropdown).toBeEnabled({timeout: 15000});
-    await security.authProvider.select('office365');
+    await app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator.scrollIntoViewIfNeeded();
+    await expect(app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator).toBeEnabled({timeout: 15000});
+    await app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator.selectOption('office365');
 
     // # Fill in Intune configuration
-    await security.tenantId.fill('12345678-1234-1234-1234-123456789012');
-    await security.clientId.fill('87654321-4321-4321-4321-210987654321');
+    await app.admin.setting('IntuneSettings.TenantId').valueTextbox.fill('12345678-1234-1234-1234-123456789012');
+    await app.admin.setting('IntuneSettings.ClientId').valueTextbox.fill('87654321-4321-4321-4321-210987654321');
 
     // # Save settings
-    await security.save();
-
-    // # Wait until the save button has settled
-    await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
+    await expect(app.admin.saveButton).toBeSaved();
 
     // # Go to any other section and come back to Mobile Security
-    await security.openUsers();
+    await openUsers(app);
 
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Intune is still enabled and configured
-    await security.enableIntuneMAM.toBeTrue();
-    expect(await security.tenantId.getValue()).toBe('12345678-1234-1234-1234-123456789012');
-    expect(await security.clientId.getValue()).toBe('87654321-4321-4321-4321-210987654321');
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('IntuneSettings.TenantId').valueTextbox.locator).toHaveValue(
+        '12345678-1234-1234-1234-123456789012',
+    );
+    await expect(app.admin.setting('IntuneSettings.ClientId').valueTextbox.locator).toHaveValue(
+        '87654321-4321-4321-4321-210987654321',
+    );
 });
 
 test('should configure new IntuneSettings with SAML auth provider', async ({pw}) => {
@@ -403,39 +414,40 @@ test('should configure new IntuneSettings with SAML auth provider', async ({pw})
 
     // # Log in as admin
     const {app} = await pw.testBrowser.login(adminUser);
-    const security = new MobileSecurity(app);
 
     // # Go to Mobile Security section
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify new Intune toggle is visible
-    await expect(security.enableIntuneMAM.trueOption).toBeVisible();
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeVisible();
 
     // # Enable Intune
-    await security.enableIntuneMAM.selectTrue();
+    await app.admin.setting('IntuneSettings.Enable').trueRadio.check();
 
     // # Select SAML as auth provider
-    await security.authProvider.select('saml');
+    await app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator.selectOption('saml');
 
     // # Fill in Intune configuration
-    await security.tenantId.fill('abcdef01-2345-6789-abcd-ef0123456789');
-    await security.clientId.fill('fedcba98-7654-3210-fedc-ba9876543210');
+    await app.admin.setting('IntuneSettings.TenantId').valueTextbox.fill('abcdef01-2345-6789-abcd-ef0123456789');
+    await app.admin.setting('IntuneSettings.ClientId').valueTextbox.fill('fedcba98-7654-3210-fedc-ba9876543210');
 
     // # Save settings
-    await security.save();
-
-    // # Wait until the save button has settled
-    await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
+    await expect(app.admin.saveButton).toBeSaved();
 
     // # Go to any other section and come back to Mobile Security
-    await security.openUsers();
+    await openUsers(app);
 
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Intune is still enabled and configured with SAML
-    await security.enableIntuneMAM.toBeTrue();
-    expect(await security.tenantId.getValue()).toBe('abcdef01-2345-6789-abcd-ef0123456789');
-    expect(await security.clientId.getValue()).toBe('fedcba98-7654-3210-fedc-ba9876543210');
+    await expect(app.admin.setting('IntuneSettings.Enable').trueRadio.locator).toBeChecked();
+    await expect(app.admin.setting('IntuneSettings.TenantId').valueTextbox.locator).toHaveValue(
+        'abcdef01-2345-6789-abcd-ef0123456789',
+    );
+    await expect(app.admin.setting('IntuneSettings.ClientId').valueTextbox.locator).toHaveValue(
+        'fedcba98-7654-3210-fedc-ba9876543210',
+    );
 });
 
 test('should disable Intune inputs when toggle is off', async ({pw}) => {
@@ -464,23 +476,22 @@ test('should disable Intune inputs when toggle is off', async ({pw}) => {
 
     // # Log in as admin
     const {app} = await pw.testBrowser.login(adminUser);
-    const security = new MobileSecurity(app);
 
     // # Go to Mobile Security section
-    await security.open();
+    await openMobileSecurity(app);
 
     // * Verify Intune inputs are disabled when toggle is off
-    expect(await security.authProvider.dropdown.isDisabled()).toBe(true);
-    expect(await security.tenantId.input.isDisabled()).toBe(true);
-    expect(await security.clientId.input.isDisabled()).toBe(true);
+    await expect(app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator).toBeDisabled();
+    await expect(app.admin.setting('IntuneSettings.TenantId').valueTextbox.locator).toBeDisabled();
+    await expect(app.admin.setting('IntuneSettings.ClientId').valueTextbox.locator).toBeDisabled();
 
     // # Enable Intune
-    await security.enableIntuneMAM.selectTrue();
+    await app.admin.setting('IntuneSettings.Enable').trueRadio.check();
 
     // * Verify Intune inputs are now enabled
-    expect(await security.authProvider.dropdown.isDisabled()).toBe(false);
-    expect(await security.tenantId.input.isDisabled()).toBe(false);
-    expect(await security.clientId.input.isDisabled()).toBe(false);
+    await expect(app.admin.setting('IntuneSettings.AuthService').valueCombobox.locator).toBeEnabled();
+    await expect(app.admin.setting('IntuneSettings.TenantId').valueTextbox.locator).toBeEnabled();
+    await expect(app.admin.setting('IntuneSettings.ClientId').valueTextbox.locator).toBeEnabled();
 });
 
 /**
@@ -511,26 +522,37 @@ test(
 
         // # Log in as admin
         const {app} = await pw.testBrowser.login(adminUser);
-        const security = new MobileSecurity(app);
 
         // # Go to Mobile Security section
-        await security.open();
+        await openMobileSecurity(app);
 
         // * Verify Mobile Ephemeral Mode toggle is off by default
-        await security.enableMobileEphemeralMode.toBeFalse();
+        await expect(app.admin.setting('MobileEphemeralModeSettings.Enable').falseRadio.locator).toBeChecked();
 
         // * Verify all sub-settings are disabled
-        expect(await security.disconnectionTimeout.input.isDisabled()).toBe(true);
-        expect(await security.offlinePersistenceTimer.input.isDisabled()).toBe(true);
-        expect(await security.autoCacheCleanup.input.isDisabled()).toBe(true);
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.DisconnectionTimeoutSeconds').valueSpinButton.locator,
+        ).toBeDisabled();
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.locator,
+        ).toBeDisabled();
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.locator,
+        ).toBeDisabled();
 
         // # Enable Mobile Ephemeral Mode toggle
-        await security.enableMobileEphemeralMode.selectTrue();
+        await app.admin.setting('MobileEphemeralModeSettings.Enable').trueRadio.check();
 
         // * Verify all sub-settings are now enabled
-        expect(await security.disconnectionTimeout.input.isDisabled()).toBe(false);
-        expect(await security.offlinePersistenceTimer.input.isDisabled()).toBe(false);
-        expect(await security.autoCacheCleanup.input.isDisabled()).toBe(false);
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.DisconnectionTimeoutSeconds').valueSpinButton.locator,
+        ).toBeEnabled();
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.locator,
+        ).toBeEnabled();
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.locator,
+        ).toBeEnabled();
     },
 );
 
@@ -566,31 +588,36 @@ test(
 
         // # Log in as admin
         const {app} = await pw.testBrowser.login(adminUser);
-        const security = new MobileSecurity(app);
 
         // # Go to Mobile Security section
-        await security.open();
+        await openMobileSecurity(app);
 
         // # Set custom values
-        await security.disconnectionTimeout.fill('120');
-        await security.offlinePersistenceTimer.fill('48');
-        await security.autoCacheCleanup.fill('14');
+        await app.admin.setting('MobileEphemeralModeSettings.DisconnectionTimeoutSeconds').valueSpinButton.fill('120');
+        await app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.fill('48');
+        await app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.fill('14');
 
         // # Save settings
-        await security.save();
-        await pw.waitUntil(async () => (await security.saveButton.textContent()) === 'Save');
+        await app.admin.saveButton.commit({wait: Api.PatchConfig});
+        await expect(app.admin.saveButton).toBeSaved();
 
         // # Navigate away and back
-        await security.openUsers();
-        await security.open();
+        await openUsers(app);
+        await openMobileSecurity(app);
 
         // * Verify Mobile Ephemeral Mode is still enabled
-        await security.enableMobileEphemeralMode.toBeTrue();
+        await expect(app.admin.setting('MobileEphemeralModeSettings.Enable').trueRadio.locator).toBeChecked();
 
         // * Verify all values persisted correctly
-        expect(await security.disconnectionTimeout.getValue()).toBe('120');
-        expect(await security.offlinePersistenceTimer.getValue()).toBe('48');
-        expect(await security.autoCacheCleanup.getValue()).toBe('14');
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.DisconnectionTimeoutSeconds').valueSpinButton.locator,
+        ).toHaveValue('120');
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.locator,
+        ).toHaveValue('48');
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.locator,
+        ).toHaveValue('14');
     },
 );
 
@@ -626,27 +653,32 @@ test(
 
         // # Log in as admin
         const {app} = await pw.testBrowser.login(adminUser);
-        const security = new MobileSecurity(app);
 
         // # Go to Mobile Security section
-        await security.open();
+        await openMobileSecurity(app);
 
         // * Verify offline persistence timer is enabled
-        expect(await security.offlinePersistenceTimer.input.isDisabled()).toBe(false);
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.locator,
+        ).toBeEnabled();
 
         // # Set auto cache cleanup to 0
-        await security.autoCacheCleanup.clear();
-        await security.autoCacheCleanup.fill('0');
+        await app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.clear();
+        await app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.fill('0');
 
         // * Verify offline persistence timer is now disabled
-        expect(await security.offlinePersistenceTimer.input.isDisabled()).toBe(true);
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.locator,
+        ).toBeDisabled();
 
         // # Set auto cache cleanup back to 7
-        await security.autoCacheCleanup.clear();
-        await security.autoCacheCleanup.fill('7');
+        await app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.clear();
+        await app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.fill('7');
 
         // * Verify offline persistence timer is enabled again
-        expect(await security.offlinePersistenceTimer.input.isDisabled()).toBe(false);
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.locator,
+        ).toBeEnabled();
     },
 );
 
@@ -678,17 +710,22 @@ test(
 
         // # Log in as admin
         const {app} = await pw.testBrowser.login(adminUser);
-        const security = new MobileSecurity(app);
 
         // # Go to Mobile Security section
-        await security.open();
+        await openMobileSecurity(app);
 
         // # Enable Mobile Ephemeral Mode
-        await security.enableMobileEphemeralMode.selectTrue();
+        await app.admin.setting('MobileEphemeralModeSettings.Enable').trueRadio.check();
 
         // * Verify default values
-        expect(await security.disconnectionTimeout.getValue()).toBe('60');
-        expect(await security.offlinePersistenceTimer.getValue()).toBe('24');
-        expect(await security.autoCacheCleanup.getValue()).toBe('7');
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.DisconnectionTimeoutSeconds').valueSpinButton.locator,
+        ).toHaveValue('60');
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.OfflinePersistenceTimerHours').valueSpinButton.locator,
+        ).toHaveValue('24');
+        await expect(
+            app.admin.setting('MobileEphemeralModeSettings.AutoCacheCleanupDays').valueSpinButton.locator,
+        ).toHaveValue('7');
     },
 );

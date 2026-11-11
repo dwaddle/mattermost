@@ -16,13 +16,20 @@ async function visibleEmails(app: App) {
     return emails.map((email) => (email ?? '').trim()).filter(Boolean);
 }
 
-/** Clicks a sortable column's header and returns the direction it settles on. */
+/** Clicks a sortable column's header and returns the direction it settles on, once the sorted list has loaded. */
 async function sortBy(app: App, column: string): Promise<'ascending' | 'descending'> {
     const header = app.admin.users.table.head.column(column).locator;
     await expect(header).toBeEnabled();
     const previous = await header.getAttribute('aria-sort');
     const expected = previous === 'ascending' ? 'descending' : 'ascending';
+
+    // The table refetches its page sorted (GET /api/v4/reports/users). The generated Api has no op for that route
+    // yet, so wait for the response by path; registered before the click so it can't miss a fast one.
+    const listed = app.page.waitForResponse(
+        (r) => new URL(r.url()).pathname.endsWith('/api/v4/reports/users') && r.request().method() === 'GET',
+    );
     await header.click();
+    expect((await listed).ok(), 'the sorted users list loads').toBe(true);
 
     // aria-sort updates with Redux; the header is disabled while the fetch runs
     await expect(header).toHaveAttribute('aria-sort', expected);
@@ -30,17 +37,18 @@ async function sortBy(app: App, column: string): Promise<'ascending' | 'descendi
     return expected;
 }
 
-/** Checks the visible emails are sorted in the direction (the table can still be refetching rows other workers add). */
+/** Checks the visible emails are sorted in the direction. */
 async function expectSortedEmails(app: App, direction: 'ascending' | 'descending') {
-    await expect(async () => {
-        const emails = await visibleEmails(app);
-        expect(emails.length).toBeGreaterThan(3);
+    const isSorted = (emails: string[]) => {
         const sorted = [...emails].sort((a, b) => a.localeCompare(b, undefined, {ignorePunctuation: true}));
         if (direction === 'descending') {
             sorted.reverse();
         }
-        expect(emails).toEqual(sorted);
-    }).toPass({timeout: 120_000});
+        return emails.length > 3 && emails.every((email, i) => email === sorted[i]);
+    };
+    await expect
+        .poll(async () => isSorted(await visibleEmails(app)), {message: `the users table lists emails ${direction}`})
+        .toBe(true);
 }
 
 test.describe('System Console - Users table sorting', () => {

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, generated, test} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes} from '../support';
 
@@ -93,20 +93,26 @@ test('MM-T5782 System admin can enable or disable system-wide ABAC', async ({pw}
         const cfg = await adminClient.getConfig();
         return cfg.AccessControlSettings?.EnableAttributeBasedAccessControl === true;
     });
-    await systemConsolePage.page.goto('/admin_console/system_attributes/membership_policies');
+    await systemConsolePage.page.goto(
+        generated.AdminConsolePage.path({section: 'system_attributes/membership_policies'}),
+    );
     await systemConsolePage.page.waitForLoadState('networkidle');
     await expect(systemConsolePage.page.getByRole('button', {name: 'Add policy'})).toBeVisible();
 
     // * Verify Permission Policies page shows "Add policy" when ABAC is enabled
     // This section is only testable when the PermissionPolicies feature flag is on.
     if (await isPermissionPoliciesEnabled(adminClient)) {
-        await systemConsolePage.page.goto('/admin_console/system_attributes/permission_policies');
+        await systemConsolePage.page.goto(
+            generated.AdminConsolePage.path({section: 'system_attributes/permission_policies'}),
+        );
         await systemConsolePage.page.waitForLoadState('networkidle');
         await expect(systemConsolePage.page.getByRole('button', {name: 'Add policy'})).toBeVisible();
     }
 
     // # Navigate back to Attribute-Based Access to test disable
-    await systemConsolePage.page.goto('/admin_console/system_attributes/attribute_based_access_control');
+    await systemConsolePage.page.goto(
+        generated.AdminConsolePage.path({section: 'system_attributes/attribute_based_access_control'}),
+    );
     await systemConsolePage.page.waitForLoadState('networkidle');
 
     // # Test disable ABAC
@@ -116,7 +122,9 @@ test('MM-T5782 System admin can enable or disable system-wide ABAC', async ({pw}
     await systemConsolePage.page.waitForLoadState('networkidle');
 
     // * Verify Membership Policies no longer shows "Add policy" when ABAC is disabled
-    await systemConsolePage.page.goto('/admin_console/system_attributes/membership_policies');
+    await systemConsolePage.page.goto(
+        generated.AdminConsolePage.path({section: 'system_attributes/membership_policies'}),
+    );
     await systemConsolePage.page.waitForLoadState('networkidle');
     await expect(systemConsolePage.page.getByRole('button', {name: 'Add policy'})).not.toBeVisible();
 

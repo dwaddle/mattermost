@@ -13,7 +13,7 @@ import {expect, generated, type App, type PlaywrightExtended} from '@mattermost/
 /** Logs the admin in and opens System Console > Users, waiting for the table to load. */
 export async function openUsers(pw: PlaywrightExtended, admin: UserProfile): Promise<App> {
     const {app} = await pw.testBrowser.login(admin);
-    await app.page.goto(`${generated.AdminConsolePage.path()}/user_management/users`);
+    await app.page.goto(generated.AdminConsolePage.path({section: 'user_management/users'}));
     await expect(app.admin.users.searchTextbox.locator).toBeVisible();
     await expect(app.admin.users.table.rowItems.first()).toBeVisible();
     return app;
