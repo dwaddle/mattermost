@@ -5,7 +5,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 import {isDesktopApp} from '@mattermost/shared/utils/user_agent';
 
 import {Permissions} from 'mattermost-redux/constants';
@@ -80,7 +80,7 @@ export class MobileSidebarRightItems extends React.PureComponent<Props> {
             <Menu.ItemAction
                 id={item.id + '_pluginmenuitem'}
                 key={item.id + '_pluginmenuitem'}
-                testId={`mobile_menu.plugin:${pluginTestKey(item.pluginId)}`}
+                slotTestId={pluginSlotTestId('mobile_menu_item', item.pluginId)}
                 onClick={() => {
                     if (item.action) {
                         item.action();

@@ -16,6 +16,7 @@ const baseProps: Props = {
     tabs: [],
     updateTab: jest.fn(),
     pluginTabs: [],
+    testIdScope: 'user_settings_modal',
 };
 
 const makeTab = (overrides: Partial<Props['tabs'][number]> = {}) => ({

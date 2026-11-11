@@ -9,7 +9,7 @@ import {HelpCircleOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 
 import KeyboardShortcutsModal from 'components/keyboard_shortcuts/keyboard_shortcuts_modal/keyboard_shortcuts_modal';
 import Menu from 'components/widgets/menu/menu';
@@ -77,7 +77,7 @@ class UserGuideDropdown extends React.PureComponent<Props, State> {
             return (
                 <Menu.ItemAction
                     id={item.id + '_pluginmenuitem'}
-                    testId={`global_header.help_menu.plugin:${pluginTestKey(item.pluginId)}`}
+                    slotTestId={pluginSlotTestId('help_menu_item', item.pluginId)}
                     iconClassName='icon-thumbs-up-down'
                     key={item.id + '_pluginmenuitem'}
                     onClick={item.action}

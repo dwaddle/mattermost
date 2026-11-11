@@ -53759,14 +53759,14 @@
       ]
     },
     {
-      "template": "global_header.help_menu.plugin:{key}--button",
+      "template": "global_header.help_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "global_header",
         "help_menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -66320,13 +66320,13 @@
       }
     },
     {
-      "template": "mobile_menu.plugin:{key}--button",
+      "template": "mobile_menu.plugin:{key}--menuitem",
       "grammar": true,
       "scope": [
         "mobile_menu"
       ],
       "name": "plugin",
-      "role": "button",
+      "role": "menuitem",
       "component": {
         "name": "MenuItemActionImpl",
         "at": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
@@ -125546,84 +125546,7 @@
       "instances": [
         {
           "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/actions/command.ts#executeCommand"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/admin_console/system_users/system_users_list_actions/index.tsx#SystemUsersListAction"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/header_footer_route/header_footer_route.tsx#HFRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/header_footer_template_route.tsx#HFTRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/header_footer_template_route.tsx#LoggedInHFTRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/logged_in_route/index.tsx#LoggedInRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/global_header/right_controls/settings_button/settings_button.tsx#SettingsButton"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/mobile_sidebar_right/mobile_sidebar_right_items/mobile_sidebar_right_items.tsx#MobileSidebarRightItems"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/profile_popover/profile_popover_self_user_row.tsx#ProfilePopoverSelfUserRow"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/sidebar/sidebar.tsx#Sidebar"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/user_account_menu/user_account_name_menuitem.tsx#UserAccountNameMenuItem"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/user_account_menu/user_account_profile_menuitem.tsx#UserAccountProfileMenuItem"
+            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal"
           ]
         }
       ],
@@ -125684,88 +125607,6 @@
             "profile",
             "security",
             "sidebar"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/actions/command.ts#executeCommand"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/admin_console/system_users/system_users_list_actions/index.tsx#SystemUsersListAction"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/header_footer_route/header_footer_route.tsx#HFRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/header_footer_template_route.tsx#HFTRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/header_footer_template_route.tsx#LoggedInHFTRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/async_load.tsx#makeAsyncComponent",
-            "channels/src/components/logged_in_route/index.tsx#LoggedInRoute"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/global_header/right_controls/settings_button/settings_button.tsx#SettingsButton"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/mobile_sidebar_right/mobile_sidebar_right_items/mobile_sidebar_right_items.tsx#MobileSidebarRightItems"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/profile_popover/profile_popover_self_user_row.tsx#ProfilePopoverSelfUserRow"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/sidebar/sidebar.tsx#Sidebar"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/user_account_menu/user_account_name_menuitem.tsx#UserAccountNameMenuItem"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/user_settings/modal/user_settings_modal.tsx#UserSettingsModal",
-            "channels/src/components/user_account_menu/user_account_profile_menuitem.tsx#UserAccountProfileMenuItem"
           ]
         }
       ],
@@ -131292,8 +131133,7 @@
         "profile_popover",
         "profile_popover.actions",
         "profile_popover.url_icon",
-        "reset_status_modal",
-        "user_settings_modal.tabs"
+        "reset_status_modal"
       ],
       "component": {
         "name": "TeamController",

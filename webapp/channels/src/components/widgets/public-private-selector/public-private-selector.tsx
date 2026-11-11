@@ -6,7 +6,7 @@ import React, {useCallback, type JSX} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotPath} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelType} from '@mattermost/types/channels';
 
@@ -44,7 +44,7 @@ type BigButtonSelectorProps = {
     onClick: (id: string) => void;
 
     /** Renders `${testId}--button`. */
-    testId?: string;
+    testId?: TestId;
 };
 
 const BigButtonSelector = ({
@@ -131,10 +131,10 @@ type PublicPrivateSelectorProps = {
     testIdScope?: TestId;
 
     /**
-     * Where plugin types are a published slot (`new_channel_modal.type`): `<scope>.plugin_type:<plugin>--button`. Separate
-     * from `testIdScope` so a selector that never offers plugin types (Team Settings) doesn't declare a slot.
+     * Plugin types render the published `new_channel_type` slot (`new_channel_modal.type.plugin_type:<plugin>--button`).
+     * Only the new channel modal sets it, so a selector that never offers plugin types (Team Settings) doesn't declare the slot.
      */
-    pluginTypesTestIdScope?: TestId;
+    pluginTypesSlot?: boolean;
 };
 
 const PublicPrivateSelector = ({
@@ -164,7 +164,7 @@ const PublicPrivateSelector = ({
     hideBuiltInOptions = false,
     onChange,
     testIdScope,
-    pluginTypesTestIdScope,
+    pluginTypesSlot,
 }: PublicPrivateSelectorProps) => {
     const {formatMessage} = useIntl();
 
@@ -233,7 +233,7 @@ const PublicPrivateSelector = ({
                     disabled={false}
                     locked={false}
                     onClick={handleOnClick}
-                    testId={pluginTypesTestIdScope && option.pluginId ? `${pluginTypesTestIdScope}.plugin_type:${pluginTestKey(option.pluginId)}` : undefined}
+                    testId={pluginTypesSlot && option.pluginId ? pluginSlotPath('new_channel_type', option.pluginId) : undefined}
                 />
             ))}
         </div>

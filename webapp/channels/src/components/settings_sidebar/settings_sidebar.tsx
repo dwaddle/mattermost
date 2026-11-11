@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {part, pluginTestKey} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import Constants from 'utils/constants';
@@ -31,8 +31,8 @@ export type Props = {
     updateTab: (name: string) => void;
     isMobileView: boolean;
 
-    /** Testid scope of the owning modal: tabs render as `<scope>.tabs.tab:<name>--tab`. */
-    testIdScope?: TestIdScope;
+    /** Testid scope of the owning modal: tabs render as `<scope>.tabs.tab:<name>--tab`, plugin tabs as `<scope>.tabs.plugin:<plugin>--tab`. */
+    testIdScope: TestIdScope;
 };
 
 export function normalizePluginIcon(icon?: string, basePath = ''): Tab['icon'] {
@@ -128,7 +128,7 @@ export default class SettingsSidebar extends React.PureComponent<Props> {
         const key = `${tab.name}_li`;
 
         // a plugin's tab (only modals that take plugin tabs have one) is keyed by the plugin, which tests know
-        const tabKey = this.props.pluginTabs && tab.pluginId ? `plugin:${pluginTestKey(tab.pluginId)}` : `tab:${tab.name}`;
+        const testId = this.props.pluginTabs && tab.pluginId ? part(this.props.testIdScope, 'tabs.plugin', {key: pluginTestKey(tab.pluginId)}, 'tab') : part(this.props.testIdScope, 'tabs.tab', {key: tab.name}, 'tab');
 
         const isActive = this.props.activeTab === tab.name;
 
@@ -154,7 +154,7 @@ export default class SettingsSidebar extends React.PureComponent<Props> {
             <React.Fragment key={key}>
                 {tab.newGroup && <hr/>}
                 <button
-                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.tabs.${tabKey}--tab` : `${tab.name}-tab-button`}
+                    data-testid={testId}
                     ref={(element: HTMLButtonElement) => {
                         if (element) {
                             this.buttonRefs.set(tab.name, element);

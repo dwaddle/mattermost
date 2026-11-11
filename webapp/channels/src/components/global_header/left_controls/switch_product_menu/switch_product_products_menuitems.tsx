@@ -9,7 +9,8 @@ import {useHistory} from 'react-router-dom';
 import glyphMap, {CheckIcon, OpenInNewIcon} from '@mattermost/compass-icons/components';
 import type {IconGlyphTypes} from '@mattermost/compass-icons/IconGlyphs';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginTestKey, type PluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotPath, withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ProductIdentifier} from '@mattermost/types/products';
 
 import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
@@ -44,7 +45,7 @@ export default function ProductSwitcherProductsMenuItems(props: Props) {
                     <ProductSwitcherProductMenuItem
                         key={product.id}
                         id={`product-menu-item-${product.pluginId || product.id}`}
-                        testKey={pluginTestKey(product.pluginId || product.id)}
+                        testId={pluginSlotPath('product_menu_product', product.pluginId || product.id)}
                         icon={product.switcherIcon}
                         label={product.switcherText}
                         link={link}
@@ -59,8 +60,8 @@ export default function ProductSwitcherProductsMenuItems(props: Props) {
 interface ProductSwitcherProductMenuItemProps {
     id: string;
 
-    // The item is `global_header.product_menu.product:<testKey>--menuitem`.
-    testKey: PluginTestKey;
+    /** The product's slot testid without the role: the item renders `global_header.product_menu.product:<plugin>--menuitem`. */
+    testId: TestId;
     icon: IconGlyphTypes | React.ReactNode;
     label: React.ReactNode;
     link: string;
@@ -90,7 +91,7 @@ function ProductSwitcherProductMenuItem(props: ProductSwitcherProductMenuItemPro
     return (
         <Menu.Item
             id={props.id}
-            data-testid={`global_header.product_menu.product:${props.testKey}--menuitem`}
+            data-testid={withRole(props.testId, 'menuitem')}
             className='globalHeader-leftControls-productSwitcherMenu-productMenuItem'
             leadingElement={Icon ? (
                 <Icon

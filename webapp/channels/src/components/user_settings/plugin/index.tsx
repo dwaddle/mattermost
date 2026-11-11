@@ -4,7 +4,7 @@
 import React from 'react';
 import {useIntl} from 'react-intl';
 
-import {pluginTestKey} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 
 import PluggableErrorBoundary from 'plugins/pluggable/error_boundary';
 
@@ -43,7 +43,7 @@ const PluginTab = ({
             id={`${settings.id}Settings`}
             aria-labelledby={`${settings.id}Button`}
             role='tabpanel'
-            data-testid={`settings.plugin_panel:${pluginTestKey(settings.id)}--tabpanel`}
+            data-testid={pluginSlotTestId('user_settings_panel', settings.id)}
         >
             <SettingMobileHeader
                 closeModal={closeModal}

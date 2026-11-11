@@ -630,7 +630,7 @@ const NewChannelModal = ({channelTypePluginId, modalHeaderText, nameLabel, nameP
                     hideBuiltInOptions={Boolean(channelTypePluginId)}
                     onChange={handleOnTypeChange}
                     testIdScope='new_channel_modal.type'
-                    pluginTypesTestIdScope='new_channel_modal.type'
+                    pluginTypesSlot={true}
                 />
                 {showDiscoverableOption && (
                     <div

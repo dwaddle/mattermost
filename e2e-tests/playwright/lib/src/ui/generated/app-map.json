@@ -775,8 +775,7 @@
                 "profile_popover",
                 "profile_popover.actions",
                 "profile_popover.url_icon",
-                "reset_status_modal",
-                "user_settings_modal.tabs"
+                "reset_status_modal"
             ]
         },
         {
@@ -8854,8 +8853,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "global_header.help_menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "global_header.help_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
@@ -10944,8 +10943,8 @@
                     "source": "channels/src/components/widgets/menu/menu_items/menu_item_action.tsx#MenuItemActionImpl"
                 },
                 {
-                    "testId": "mobile_menu.plugin:{key}--button",
-                    "role": "button",
+                    "testId": "mobile_menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
                     "key": "PluginKey",
                     "effects": [],
                     "unknownEffects": true,
