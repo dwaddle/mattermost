@@ -105,7 +105,6 @@ const makeOption = (testId?: string) => (props: any) => {
     );
 };
 
-// The menu is `<testId>.menu`; hosts without a testId (the recap schedule's pickers, for now) keep the legacy `dropdownMenu`.
 const makeMenu = (testId?: string) => (props: any) => {
     return (
         <components.Menu

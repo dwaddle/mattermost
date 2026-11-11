@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, pluginKey, test} from '@mattermost/playwright-lib';
+import {duration, expect, generated, pluginKey, test} from '@mattermost/playwright-lib';
 
 const DEMO_PLUGIN_ID = 'com.mattermost.demo-plugin';
 

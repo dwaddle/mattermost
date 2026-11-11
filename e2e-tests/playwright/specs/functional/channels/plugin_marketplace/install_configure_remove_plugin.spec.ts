@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a system admin can install a plugin from the Marketplace, configure it
@@ -11,10 +11,9 @@ test(
     'MM-T4023 MM-T1987 system admin can install, configure, and remove a plugin from the Marketplace',
     {tag: '@marketplace'},
     async ({pw}) => {
-        const {adminUser, team} = await pw.initSetup();
-        const {app, channelsPage, page} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {adminUser, team, townSquare} = await pw.initSetup();
+        const {app, page} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open the App Marketplace and install the first plugin that isn't installed yet
         const productMenu = await app.globalHeader.clickProductMenuButton();
@@ -31,7 +30,7 @@ test(
         expect(key).not.toBe('');
         const item = marketplace.item(key);
         await item.clickInstallButton();
-        await expect(item.configureLink.locator).toBeVisible({timeout: 60_000});
+        await expect(item.configureLink.locator).toBeVisible({timeout: duration.one_min});
 
         // # Click "Configure", which navigates to the plugin's System Console settings page
         await item.clickConfigureLink();

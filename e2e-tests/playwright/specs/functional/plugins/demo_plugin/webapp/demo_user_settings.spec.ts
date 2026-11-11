@@ -7,9 +7,9 @@ import {DEMO} from './support';
 
 test('should show demo plugin settings sections and save changes with alert confirmation', async ({pw}) => {
     // # Set up the demo plugin and open Town Square
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     await pw.ensureDemoPlugin();
-    const app = await openChannel(pw, user, {team, channel: 'town-square'});
+    const app = await openChannel(pw, user, {team, channel: townSquare});
 
     // # Open Settings and the plugin's tab
     const modal = await app.globalHeader.clickSettingsButton();

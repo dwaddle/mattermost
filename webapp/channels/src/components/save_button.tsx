@@ -30,7 +30,6 @@ type Props = {
     defaultMessage?: React.ReactNode;
     extraClasses?: string;
 
-    /** Renders `<testId>--button`; the user group edit modal, which doesn't pass one yet, keeps the legacy `saveSetting`. */
     testId?: TestId;
 };
 
