@@ -28,7 +28,7 @@ test('disables, enables and opens a plugin from Plugin Management', {tag: '@plug
 
     try {
         // # Disable it
-        await row.clickDisableButton();
+        await row.disableButton.commit();
 
         // * The server stops it, and the row offers Enable
         await expect
@@ -37,7 +37,7 @@ test('disables, enables and opens a plugin from Plugin Management', {tag: '@plug
         await expect(row.enableButton.locator).toBeVisible();
 
         // # Enable it again
-        await row.clickEnableButton();
+        await row.enableButton.commit();
 
         // * The server runs it again, and the row offers Disable
         await expect

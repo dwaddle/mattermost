@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test, type App, Msg} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, Msg, Api} from '@mattermost/playwright-lib';
 
 /** Opens System Console > AD/LDAP, once its Test Connection button shows. */
 async function openAdLdap(app: App) {
@@ -52,14 +52,14 @@ test('MM-T2700 requires Username Attribute before saving AD/LDAP settings', {tag
 
     // # Clear Username Attribute and save
     await usernameAttribute.clear();
-    await app.admin.clickSaveButton();
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
     // * Verify the save is refused
     await expect(app.admin.saveError.locator).toContainText('AD/LDAP field "Username Attribute" is required.');
 
     // # Set it again and save
     await usernameAttribute.fill('uid');
-    await app.admin.clickSaveButton();
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
     // * Verify the save completes
     await expect(app.admin.saveButton.locator).toBeSaved();
@@ -83,7 +83,7 @@ test('MM-T2701 requires Login ID Attribute before saving AD/LDAP settings', {tag
 
     // # Clear Login ID Attribute and save
     await app.admin.setting('LdapSettings.LoginIdAttribute').valueTextbox.clear();
-    await app.admin.clickSaveButton();
+    await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
     // * Verify the save is refused
     await expect(app.admin.saveError.locator).toContainText('AD/LDAP field "Login ID Attribute" is required.');

@@ -3,7 +3,7 @@
 
 import {Client4} from '@mattermost/client';
 
-import {expect, test, testConfig, type App, Msg} from '@mattermost/playwright-lib';
+import {expect, test, testConfig, type App, Msg, Api} from '@mattermost/playwright-lib';
 
 /**
  * E2E coverage for the "Revoke non-compliant tokens" admin console control added in
@@ -194,7 +194,7 @@ test.describe('System Console > Integrations > Revoke non-compliant tokens @syst
 
         // # Set a maximum lifetime and save, without leaving the page
         await app.admin.setting('ServiceSettings.MaximumPersonalAccessTokenLifetimeDays').fillValueSpinButton('30');
-        await app.admin.saveButton.click();
+        await app.admin.saveButton.commit({wait: Api.PatchConfig});
 
         // * The banner refreshes to flag the newly non-compliant token, without a page reload
         await expect(revoke.status.locator).toContainText(VIOLATION);

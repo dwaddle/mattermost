@@ -57,7 +57,7 @@ test(
         const userManagerCheckbox = manageRolesModal.systemUserManagerCheckbox.locator;
         await expect(userManagerCheckbox).not.toBeChecked();
         await userManagerCheckbox.check();
-        await manageRolesModal.clickSaveButton();
+        await manageRolesModal.saveButton.commit();
         await expect(manageRolesModal.saveButton.locator).not.toBeVisible();
 
         // * Verify the role was persisted via the API

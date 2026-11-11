@@ -15,7 +15,7 @@ test('MM-T5520-1 should activate and deactivate users', async ({pw}) => {
     await expect.poll(async () => (await getUser()).delete_at).toBeGreaterThan(0);
 
     // # Open menu and reactivate the user
-    await (await row.clickActionsButton()).clickActivateMenuItem();
+    await (await row.clickActionsButton()).activateMenuItem.commit();
 
     // * Verify user is activated
     await expect(row.locator).toContainText('Member');
@@ -30,7 +30,7 @@ test('MM-T5520-2 should change user roles', async ({pw}) => {
 
     // # Change to System Admin and click Save
     await roles.systemAdminRadio.check();
-    await roles.clickSaveButton();
+    await roles.saveButton.commit();
 
     // * Verify that the role was updated
     await expect(row.locator).toContainText('System Admin');
@@ -41,7 +41,7 @@ test('MM-T5520-2 should change user roles', async ({pw}) => {
 
     // # Change to Member and click Save
     await roles.memberRadio.check();
-    await roles.clickSaveButton();
+    await roles.saveButton.commit();
 
     // * Verify that the role was updated
     await expect(row.locator).toContainText('Member');
@@ -73,7 +73,7 @@ test('MM-T5520-3 should be able to manage teams', async ({pw}) => {
 
     // # Click Remove from Team
     roleMenu = await teamRow.clickRoleButton();
-    await roleMenu.clickRemoveMenuItem();
+    await roleMenu.removeMenuItem.commit();
 
     // * The team row is gone
     await expect(teamRow.locator).toHaveCount(0);
@@ -87,7 +87,7 @@ test('MM-T5520-4 should reset the users password', async ({pw}) => {
 
     // # Enter a random password and click Reset
     await modal.fillNewPasswordTextbox(pw.newTestPassword());
-    await modal.clickConfirmButton();
+    await modal.confirmButton.commit();
 
     // * The dialog closes
     await expect(modal.newPasswordTextbox.locator).not.toBeVisible();
@@ -102,7 +102,7 @@ test('MM-T5520-5 should change the users email', async ({pw}) => {
 
     // # Enter new email and click Update
     await modal.fillNewEmailTextbox(newEmail);
-    await modal.clickConfirmButton();
+    await modal.confirmButton.commit();
 
     // * Verify that the email updated
     await expect(row.cell('emailColumn').locator).toHaveText(newEmail);
