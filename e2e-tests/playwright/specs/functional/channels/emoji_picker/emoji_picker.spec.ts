@@ -15,9 +15,7 @@ test(
     {tag: '@emoji_picker'},
     async ({pw}) => {
         // # Initialize a test user
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+        const {user, team, townSquare} = await pw.initSetup();
         // # Log in as a user in new browser context and navigate to the default channel
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});

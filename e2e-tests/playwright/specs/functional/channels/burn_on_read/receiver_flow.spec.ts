@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration} from '@mattermost/playwright-lib';
 
 import {BOR_TAG, createSecondUser, lastPost, openDm, parseTimeRemaining, sendMessage, setupBorTest} from './support';
 
@@ -83,7 +83,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
         await expect(borPost.body.locator).toContainText(message);
 
         // * Wait for timer chip to appear (WebSocket update)
-        await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+        await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
 
         // # Click timer chip to manually burn
         await borPost.clickBurnOnReadTimerButton();
@@ -128,7 +128,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
             await expect(borPost.revealButton.locator).not.toBeVisible();
 
             // * Wait for timer chip to be visible
-            await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+            await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
 
             // # Click timer to burn
             await borPost.clickBurnOnReadTimerButton();
@@ -144,7 +144,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
             await receiverApp.burnOnReadConfirmationModal.clickConfirmButton();
 
             // * Verify post is deleted
-            await expect(borPost.locator).not.toBeVisible({timeout: 10000});
+            await expect(borPost.locator).not.toBeVisible();
         },
     );
 
@@ -179,7 +179,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
         await expect(borPost.revealButton.locator).not.toBeVisible();
 
         // * Verify timer chip is visible (wait for WebSocket update)
-        await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+        await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
 
         // * Get initial time
         const initialTime = (await borPost.burnOnReadTimerButton.locator.textContent()) ?? '';
@@ -195,7 +195,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
     });
 
     test('MM-66742_13 message auto-deletes after timer expires', {tag: [BOR_TAG]}, async ({pw}, testInfo) => {
-        testInfo.setTimeout(120000);
+        testInfo.setTimeout(duration.two_min);
         // # Initialize setup with very short duration (10 seconds)
         const {
             user: sender,
@@ -265,7 +265,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
 
         // * Verify message is visible and timer is running (wait for WebSocket update)
         await expect(borPost.body.locator).toContainText(message);
-        await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+        await expect(borPost.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
 
         // # Wait for timer to expire (10 seconds + buffer)
         // Use polling to check for post removal
@@ -273,7 +273,7 @@ test.describe('Burn-on-Read Receiver Flow', () => {
             const postLocator = receiverApp.center.postList.post({id: postId}).locator;
             await expect(postLocator).not.toBeVisible();
         }).toPass({
-            timeout: 30000,
+            timeout: duration.half_min,
             intervals: [1000],
         });
 

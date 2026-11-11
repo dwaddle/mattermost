@@ -34,13 +34,13 @@ async function openThread(app: App, post: ReturnType<App['center']['postList']['
 
 async function postWithPriorityAndVerify(pw: PlaywrightExtended, priority: Priority) {
     // # Setup test environment
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
 
     // # Log in as a user in new browser context
     const {app} = await pw.testBrowser.login(user);
 
     // # Visit default channel page
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open priority menu
     const composer = app.center.postCreate;
@@ -97,13 +97,13 @@ test(
     {tag: ['@smoke', '@message_priority']},
     async ({pw}) => {
         // # Setup test environment
-        const {user, team} = await pw.initSetup();
+        const {user, team, townSquare} = await pw.initSetup();
 
         // # Log in as a user in new browser context
         const {app} = await pw.testBrowser.login(user);
 
         // # Visit default channel page
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // * Verify the priority control is available while the system setting is enabled
         const picker = pickerOf(app, app.center.postCreate);
@@ -147,7 +147,7 @@ test(
     {tag: '@message_priority'},
     async ({pw}) => {
         // # Setup test environment
-        const {user, team, adminClient} = await pw.initSetup();
+        const {user, team, adminClient, townSquare} = await pw.initSetup();
         const originalPostPriority = (await adminClient.getConfig()).ServiceSettings.PostPriority;
 
         try {
@@ -156,7 +156,7 @@ test(
 
             // # Log in as a user after the setting is disabled
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // * Verify the priority control is hidden
             await expect(app.center.postCreate.messageTextbox.locator).toBeVisible();
@@ -205,13 +205,13 @@ test(
     {tag: ['@message_priority', '@accessibility']},
     async ({pw, isMobile}) => {
         // # Setup test environment
-        const {user, team} = await pw.initSetup();
+        const {user, team, townSquare} = await pw.initSetup();
 
         // # Log in as a user in new browser context
         const {app} = await pw.testBrowser.login(user);
 
         // # Visit default channel page
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         const composer = app.center.postCreate;
         const input = composer.messageTextbox.locator;

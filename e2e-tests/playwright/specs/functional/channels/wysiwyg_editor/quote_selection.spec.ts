@@ -17,16 +17,15 @@ test.describe('WYSIWYG editor - quoting selected text', TAGS, () => {
      * the reply typed right after it goes below the quote rather than into it.
      */
     test('quotes selected text and types the reply below the quote', async ({pw}) => {
-        const {user, userClient, team} = await pw.initSetup();
+        const {user, userClient, team, townSquare} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
         await userClient.createPost({
             channel_id: townSquare.id,
             message: 'Ullamcorper eu mi, dictumst nec. Diam sapien pellentesque vestibulum pretium eget massa.',
         });
 
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();

@@ -13,7 +13,7 @@ import {
 test('Find Channels modal handles Korean IME input correctly', async ({pw, browserName}) => {
     test.skip(browserName !== 'chromium', 'The API used to test this is only available in Chrome');
 
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
 
     // # Create a channel named after the test phrase
     const fullMatchChannel = await adminClient.createChannel(
@@ -34,7 +34,6 @@ test('Find Channels modal handles Korean IME input correctly', async ({pw, brows
     );
 
     // # Log in and go to Channels
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const {app, page} = await pw.testBrowser.login(user);
 
     await app.channelsPage.goto({team, channel: townSquare});
@@ -77,7 +76,7 @@ test('Find Channels autocomplete lists channel after each incomplete Korean char
     // likely fail because it seems to handle input value differently when there incomplete IME characters that haven't
     // been committed yet.
 
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
 
     const randomPrefix = await pw.random.id(8);
 
@@ -91,7 +90,6 @@ test('Find Channels autocomplete lists channel after each incomplete Korean char
     );
 
     // # Log in and go to Channels
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
 

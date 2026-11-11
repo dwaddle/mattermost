@@ -12,7 +12,7 @@ test(
     {tag: ['@mentions']},
     async ({pw}) => {
         // # Initialize setup
-        const {team, user, adminClient, userClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
 
         // # Create channels whose DisplayName matches the search term (user is NOT a member)
         const conversation = await adminClient.createChannel({
@@ -43,8 +43,6 @@ test(
             type: 'O',
             purpose: 'beta release of gamma',
         });
-
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 

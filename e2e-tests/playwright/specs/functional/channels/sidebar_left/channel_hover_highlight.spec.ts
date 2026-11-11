@@ -17,7 +17,7 @@ test(
     'MM-T842 highlights public channel and direct message items on hover',
     {tag: '@channels_sidebar'},
     async ({pw}) => {
-        const {adminClient, adminUser, team, user} = await pw.initSetup();
+        const {adminClient, adminUser, team, user, townSquare} = await pw.initSetup();
 
         // # Create a public channel the user is a member of but is not currently viewing
         const publicChannel = await adminClient.createPublicChannel(team.id, `Highlight ${pw.random.id()}`);
@@ -29,7 +29,7 @@ test(
 
         // # Log in and view Town Square so the other items are not the active channel
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         for (const channel of [publicChannel, dmChannel]) {
             // * The item's background changes on hover

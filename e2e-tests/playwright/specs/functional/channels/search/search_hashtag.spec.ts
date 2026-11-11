@@ -8,8 +8,7 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
  */
 test('MM-T359 returns all case variants when searching a hashtag', {tag: ['@search']}, async ({pw}) => {
     // # Post the same hashtag word in three different letter cases
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare} = await pw.initSetup();
     const suffix = pw.random.id();
     const posts = await Promise.all(
         [`#CASE${suffix}`, `#Case${suffix}`, `#case${suffix}`].map((message) =>
@@ -41,9 +40,8 @@ test('MM-T359 returns all case variants when searching a hashtag', {tag: ['@sear
  */
 test('MM-T360 searches a hashtag from a recent mention', {tag: '@search'}, async ({pw}) => {
     // # Create the test user plus a second user who will mention them
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, townSquare} = await pw.initSetup();
     const [mentioner] = await adminClient.createUsers(team.id, 1, 'mentioner');
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     await adminClient.addToChannel(mentioner.id, townSquare.id);
 
     // # The second user posts a message with a hashtag that mentions the test user
@@ -74,9 +72,8 @@ test('MM-T360 searches a hashtag from a recent mention', {tag: '@search'}, async
  */
 test('MM-T361 searches a hashtag from a saved message', {tag: '@search'}, async ({pw}) => {
     // # Create and log in as a test user, and post + save a message with a hashtag
-    const {user, team, userClient} = await pw.initSetup();
+    const {user, team, userClient, townSquare} = await pw.initSetup();
     const hashtag = `#hello${pw.random.id()}`;
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     const post = await userClient.createPost({channel_id: townSquare.id, message: `${hashtag} World`});
     await userClient.savePreferences(user.id, [
         {user_id: user.id, category: 'flagged_post', name: post.id, value: 'true'},

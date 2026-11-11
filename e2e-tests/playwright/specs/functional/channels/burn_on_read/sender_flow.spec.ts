@@ -4,7 +4,15 @@
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, openChannel, test, type PlaywrightClient4, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    expect,
+    openChannel,
+    test,
+    type PlaywrightClient4,
+    type PlaywrightExtended,
+    duration,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 import {BOR_TAG, createSecondUser, lastPost, recipientCount, reveal, sendBorMessage, setupBorTest} from './support';
 
@@ -44,7 +52,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         await createSecondUser(pw, adminClient, team);
 
         // # Login as sender, turn burn-on-read on (its label shows) and send a message
-        const app = await openChannel(pw, user, {team, channel: 'town-square'});
+        const app = await openChannel(pw, user, {team, channel: DefaultChannel.TownSquare});
         const message = `BoR Test ${pw.random.id()}`;
         const {post} = await sendBorMessage(app, message);
 
@@ -58,7 +66,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
     });
 
     test('MM-66742_16 sender sees read receipts in tooltip', {tag: [BOR_TAG]}, async ({pw}, testInfo) => {
-        testInfo.setTimeout(120000);
+        testInfo.setTimeout(duration.two_min);
         // # Initialize setup with BoR enabled
         const {user, team, adminClient} = await setupBorTest(pw);
 
@@ -80,7 +88,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
 
         // # Refresh sender's view and check updated count
         await senderApp.page.reload();
-        await expect(senderPost.burnOnReadButton.locator).toBeVisible({timeout: 15000});
+        await expect(senderPost.burnOnReadButton.locator).toBeVisible({timeout: duration.half_min});
         expect((await recipientCount(senderPost)).revealed).toBe(1);
 
         // # Login as second recipient and reveal the message
@@ -91,7 +99,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         await senderApp.page.reload();
 
         // * After all recipients reveal, badge transitions to timer chip
-        await expect(senderPost.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+        await expect(senderPost.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
     });
 
     test('MM-66742_17 sender manually deletes for all recipients', {tag: [BOR_TAG]}, async ({pw}) => {
@@ -102,7 +110,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         const recipient = await createSecondUser(pw, adminClient, team);
 
         // # Login as sender and post BoR message
-        const senderApp = await openChannel(pw, user, {team, channel: 'town-square'});
+        const senderApp = await openChannel(pw, user, {team, channel: DefaultChannel.TownSquare});
         const message = `To be deleted ${pw.random.id()}`;
         const {id: postId, post: senderPost} = await sendBorMessage(senderApp, message);
 
@@ -115,7 +123,7 @@ test.describe('Burn-on-Read Sender Flow', () => {
         await expect(senderPost.locator).not.toBeVisible();
 
         // # Login as recipient
-        const recipientApp = await openChannel(pw, recipient, {team, channel: 'town-square'});
+        const recipientApp = await openChannel(pw, recipient, {team, channel: DefaultChannel.TownSquare});
 
         // * Verify the deleted message is not in the channel (the channel's posts have loaded)
         await lastPost(recipientApp);

@@ -4,7 +4,13 @@
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, setWysiwygUserPreference, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {
+    expect,
+    setWysiwygUserPreference,
+    type App,
+    type PlaywrightExtended,
+    DefaultChannel,
+} from '@mattermost/playwright-lib';
 
 /**
  * The rich-text (WYSIWYG) composer on the generated page objects. It is the same composer as the Markdown one
@@ -22,7 +28,7 @@ export async function openRichComposer(
 ) {
     await setWysiwygUserPreference(setup.userClient, setup.user.id, true);
     const {app} = await pw.testBrowser.login(setup.user);
-    await app.channelsPage.goto({team: setup.team, channel: 'off-topic'});
+    await app.channelsPage.goto({team: setup.team, channel: DefaultChannel.OffTopic});
     await expectRich(app.center.postCreate);
     return app;
 }

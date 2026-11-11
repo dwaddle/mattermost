@@ -9,13 +9,13 @@ import {getChannelSlugFromUrl} from './helpers';
  * @objective Verify a mention posted in a group message creates an unread mention for the mentioned participant.
  */
 test('MM-T469 Create a group message and post a mention for another user', async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, offTopic} = await pw.initSetup();
     const [sender, secondParticipant] = await adminClient.createUsers(team.id, 2, 'gm-mention');
     const gmChannel = await adminClient.createGroupChannel([user.id, sender.id, secondParticipant.id]);
 
     // # View another channel, then have a participant mention the test user in the GM
     const {channelsPage, page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'off-topic'});
+    await app.channelsPage.goto({team, channel: offTopic});
     await pw.stubNotification(page, 'granted');
     await pw.postAs(sender, {
         channel_id: gmChannel.id,
@@ -41,11 +41,11 @@ test(
     {tag: '@direct_messages'},
     async ({pw}) => {
         // # Create the test user plus two more users on the team
-        const {user, team, adminClient} = await pw.initSetup();
+        const {user, team, adminClient, townSquare} = await pw.initSetup();
         const [member1, member2] = await adminClient.createUsers(team.id, 2, 'gm');
 
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Create a group message with the two members
         const dmModal = await channelsPage.openDirectChannelsModal();

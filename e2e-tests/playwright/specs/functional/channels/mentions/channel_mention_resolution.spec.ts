@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test} from '@mattermost/playwright-lib';
+import {expect, generated, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * Coverage for MM-68952 / PR #36815 — per-viewer resolution of `~channel` mentions.
@@ -112,7 +112,7 @@ test.describe('channel mention resolution', () => {
                 await adminClient.addToTeam(team.id, viewer.id);
 
                 // # Author posts the mention in town-square (both users are members)
-                const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+                const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
                 const post = await userClient.createPost({
                     channel_id: townSquare.id,
                     message: `Please see ~${channelName}`,

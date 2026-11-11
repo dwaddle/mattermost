@@ -11,9 +11,7 @@ test(
     'shows images as gallery tiles, one image as an image view and a document as a file card, and previews a tile',
     {tag: '@file_attachments'},
     async ({pw}) => {
-        const {team, user, userClient} = await pw.initSetup();
-        const channel = await userClient.getChannelByName(team.id, 'town-square');
-
+        const {team, user, userClient, townSquare: channel} = await pw.initSetup();
         // # Post two images (a gallery) and a document
         const images = await userClient.createTestPost({channel_id: channel.id, message: 'two images'}, [
             'mattermost.png',

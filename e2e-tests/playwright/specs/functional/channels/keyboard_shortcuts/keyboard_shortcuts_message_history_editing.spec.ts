@@ -9,8 +9,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * MM-T1256, MM-T1257, and MM-T1258 cover the same behavior as MM-T1254 and are covered by this test.
  */
 test('MM-T1254 MM-T1256 MM-T1257 MM-T1258 CTRL/CMD+UP and CTRL/CMD+DOWN cycle previous messages', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, townSquare: channel} = await pw.initSetup();
     const messages = ['post 1', 'post 2', 'post 3', 'post 4', 'post 5'];
 
     // # Post five messages from the message box
@@ -50,9 +49,7 @@ test('MM-T1254 MM-T1256 MM-T1257 MM-T1258 CTRL/CMD+UP and CTRL/CMD+DOWN cycle pr
  * @objective Verify Up arrow opens inline edit for the previous message and saving marks the post as edited.
  */
 test('MM-T1260 UP arrow edits the previous post', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {user, team, townSquare: channel} = await pw.initSetup();
     // # Post a message from the message box
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});

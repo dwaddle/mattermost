@@ -24,7 +24,7 @@ test(
     'MM-T1247 finds and opens a direct message, group message, and channel with Ctrl/Cmd+K',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {adminClient, team, user} = await pw.initSetup();
+        const {adminClient, team, user, townSquare} = await pw.initSetup();
         const [member1, member2] = await adminClient.createUsers(team.id, 2, 'switch');
 
         // # Create a direct message, a group message, and a public channel for the user
@@ -36,7 +36,7 @@ test(
         await adminClient.addToChannel(user.id, publicChannel.id);
 
         const {app, page} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         const title = app.channelHeader.openMenuButton.locator;
 
         // # Open the quick switcher and open the direct message with member1 (a direct message's result is keyed by
@@ -78,8 +78,7 @@ test(
         test.skip(testInfo.project.name === 'ipad', 'Skipping test on iPad');
 
         // # Initialize setup with admin and user, and have the admin post the root message
-        const {adminUser, adminClient, user, team} = await pw.initSetup();
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const {adminUser, adminClient, user, team, townSquare} = await pw.initSetup();
         const root = await adminClient.createPost({channel_id: townSquare.id, message: ROOT_MESSAGE});
 
         // # Log in as admin, open the thread and post a series of long replies
@@ -152,8 +151,7 @@ test(
     'MM-T4692 opens and closes the right sidebar with the keyboard shortcut',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, userClient, team} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {user, userClient, team, townSquare} = await pw.initSetup();
         const message = 'this post is from today';
         const created = await userClient.createPost({channel_id: townSquare.id, message});
 

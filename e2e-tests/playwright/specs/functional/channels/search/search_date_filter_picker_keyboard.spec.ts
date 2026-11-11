@@ -25,9 +25,7 @@ function pickerDay(app: App, date: Date) {
  * and that the resulting date-filtered search returns the matching post.
  */
 test('MM-T596 sets the search date with the calendar picker', {tag: '@search'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const channel = await adminClient.getChannelByName(team.id, 'town-square');
-
+    const {adminClient, team, user, townSquare: channel} = await pw.initSetup();
     // # Pin the user's timezone and clock so "today" in the picker is a fixed, known date
     await adminClient.patchUser({
         id: user.id,
@@ -70,9 +68,7 @@ test('MM-T596 sets the search date with the calendar picker', {tag: '@search'}, 
  * date returns the post, and a later date does not.
  */
 test('MM-T600 updates the search date with the keyboard', {tag: '@search'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const channel = await adminClient.getChannelByName(team.id, 'off-topic');
-
+    const {adminClient, team, user, offTopic: channel} = await pw.initSetup();
     // # Pin the user's timezone and post a message on a known date
     await adminClient.patchUser({
         id: user.id,
@@ -115,8 +111,7 @@ test('MM-T600 updates the search date with the keyboard', {tag: '@search'}, asyn
  * @objective Verify that pressing Backspace after a completed date filter reopens the calendar day picker.
  */
 test('MM-T3997 reopens the date picker when backspacing after a date filter', {tag: '@search'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, townSquare} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
 

@@ -20,8 +20,7 @@ test('MM-T427_2 system message has no status in compact view', async ({pw}) => {
 
 async function verifySystemMessageHasNoStatus(pw: PlaywrightExtended, messageDisplay: 'clean' | 'compact') {
     // # Create a channel header system message and set the user's message display preference
-    const {user, team, adminClient, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, adminClient, userClient, townSquare: channel} = await pw.initSetup();
     const userPost = await userClient.createPost({
         channel_id: channel.id,
         message: 'Test for no status of a system message',

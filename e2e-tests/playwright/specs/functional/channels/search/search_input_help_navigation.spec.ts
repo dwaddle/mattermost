@@ -8,8 +8,7 @@ import {expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
  */
 test('MM-T351 disregards a wildcard that is not preceded by text', {tag: '@search'}, async ({pw}) => {
     // # Post two messages, one with a longer variant of the search term
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare} = await pw.initSetup();
     const token = `qwerty${pw.random.id()}`;
     await userClient.createPost({channel_id: townSquare.id, message: `${token}jkl`});
     const exact = await userClient.createPost({channel_id: townSquare.id, message: token});
@@ -30,8 +29,7 @@ test('MM-T351 disregards a wildcard that is not preceded by text', {tag: '@searc
  * @objective Verify that the top navigation buttons remain clickable and open their panels while focus is in the search box.
  */
 test('MM-T367 clicks top navigation buttons while the search box has focus', {tag: '@search'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, townSquare} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
 
@@ -61,8 +59,7 @@ test('MM-T367 clicks top navigation buttons while the search box has focus', {ta
  */
 test('MM-T370 shows search help text when the search box is opened', {tag: '@search'}, async ({pw}) => {
     // # Post a message
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare} = await pw.initSetup();
     const post = await userClient.createPost({channel_id: townSquare.id, message: `help text ${pw.random.id()}`});
 
     const {app} = await pw.testBrowser.login(user);

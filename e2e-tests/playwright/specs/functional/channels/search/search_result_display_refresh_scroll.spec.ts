@@ -10,8 +10,7 @@ import {duration, expect, generated, test, type App} from '@mattermost/playwrigh
  * content correctly, and that jumping to the conversation and clearing the query keep results intact.
  */
 test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const channel = await adminClient.getChannelByName(team.id, 'off-topic');
+    const {team, user, offTopic: channel} = await pw.initSetup();
     const identifier = pw.random.id();
     const message = [
         `Basic word search: Hello world! #hello ${identifier}`,
@@ -56,9 +55,7 @@ test('MM-T350 Searching displays results in the RHS', async ({pw}) => {
  */
 test('MM-T355 replaces old search results with new results', {tag: '@search'}, async ({pw}) => {
     // # Create a message in Town Square and one in Off-Topic
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const {user, team, userClient, townSquare, offTopic} = await pw.initSetup();
     const helloToken = `hello${pw.random.id()}`;
     const writingToken = `writing${pw.random.id()}`;
     const hello = await userClient.createPost({channel_id: townSquare.id, message: `${helloToken} there everyone`});

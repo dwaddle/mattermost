@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, testConfig, type App} from '@mattermost/playwright-lib';
+import {expect, test, testConfig, type App, duration} from '@mattermost/playwright-lib';
 
 async function postToWebhook(webhookId: string, payload: Record<string, unknown>) {
     const hookUrl = `${testConfig.baseURL}/hooks/${webhookId}`;
@@ -50,7 +50,7 @@ test.describe('Silent notification webhook delivery', () => {
                 'In headless mode, Notification stubbing is only reliable in Firefox (and WebKit when configured). Use npm run playwright-ui (headed), --project=firefox, or PW_HEADLESS=false.',
             );
 
-            const {team, user, adminClient} = await pw.initSetup();
+            const {team, user, adminClient, offTopic} = await pw.initSetup();
 
             const channel = await adminClient.createChannel(
                 pw.random.channel({
@@ -71,7 +71,7 @@ test.describe('Silent notification webhook delivery', () => {
 
             // # Mark the webhook channel as read, then view another channel
             await app.channelsPage.goto({team, channel: channel.name});
-            await app.channelsPage.goto({team, channel: 'off-topic'});
+            await app.channelsPage.goto({team, channel: offTopic});
 
             await pw.stubNotification(page, 'granted');
 
@@ -80,7 +80,7 @@ test.describe('Silent notification webhook delivery', () => {
             // # Post a normal webhook message with @mention to verify unread + notification baseline
             const normalMessage = `normal webhook @${user.username} ${Date.now()}`;
             await postToWebhook(webhook.id, {text: normalMessage});
-            await expect(channelLink).toHaveClass(/unread-title/, {timeout: 15000});
+            await expect(channelLink).toHaveClass(/unread-title/, {timeout: duration.half_min});
             await expect
                 .poll(async () => (await page.evaluate(() => window.getNotifications())).length)
                 .toBeGreaterThan(0);
@@ -88,7 +88,7 @@ test.describe('Silent notification webhook delivery', () => {
             await app.lhs.channelList.channel(channel).clickLink();
             await expectLastPostContains(app, normalMessage);
 
-            await app.channelsPage.goto({team, channel: 'off-topic'});
+            await app.channelsPage.goto({team, channel: offTopic});
             await expect(channelLink).not.toHaveClass(/unread-title/);
 
             const syncChannel = await adminClient.createChannel(
@@ -115,7 +115,7 @@ test.describe('Silent notification webhook delivery', () => {
             const pulseMessage = `pulse ${Date.now()}`;
             await adminClient.createPost({channel_id: syncChannel.id, message: pulseMessage});
 
-            await expect(syncChannelLink).toHaveClass(/unread-title/, {timeout: 15000});
+            await expect(syncChannelLink).toHaveClass(/unread-title/, {timeout: duration.half_min});
             await expect(channelLink).not.toHaveClass(/unread-title/);
 
             const notificationsAfterSilent = await page.evaluate(() => window.getNotifications());
@@ -140,7 +140,7 @@ test.describe('Silent notification webhook delivery', () => {
                 'Desktop notification stubbing is only reliable in headless Firefox and WebKit.',
             );
 
-            const {team, user, adminClient} = await pw.initSetup();
+            const {team, user, adminClient, offTopic} = await pw.initSetup();
 
             const mentionedUser = await pw.createNewUserProfile(adminClient);
             await adminClient.addToTeam(team.id, mentionedUser.id);
@@ -163,10 +163,10 @@ test.describe('Silent notification webhook delivery', () => {
 
             const {app: posterApp} = await pw.testBrowser.login(user);
             await posterApp.channelsPage.goto({team, channel: channel.name});
-            await posterApp.channelsPage.goto({team, channel: 'off-topic'});
+            await posterApp.channelsPage.goto({team, channel: offTopic});
 
             const {app: mentionee, page: mentioneePage} = await pw.testBrowser.login(mentionedUser);
-            await mentionee.channelsPage.goto({team, channel: 'off-topic'});
+            await mentionee.channelsPage.goto({team, channel: offTopic});
             await pw.stubNotification(mentioneePage, 'granted');
 
             const channelLink = mentionee.lhs.channelList.channel(channel).link.locator;
@@ -174,7 +174,7 @@ test.describe('Silent notification webhook delivery', () => {
             // # Baseline: normal @mention webhook should notify the mentioned user and mark channel unread
             const normalMessage = `normal mention @${mentionedUser.username} ${Date.now()}`;
             await postToWebhook(webhook.id, {text: normalMessage});
-            await expect(channelLink).toHaveClass(/unread-title/, {timeout: 15000});
+            await expect(channelLink).toHaveClass(/unread-title/, {timeout: duration.half_min});
             await expect
                 .poll(async () => (await mentioneePage.evaluate(() => window.getNotifications())).length)
                 .toBeGreaterThan(0);
@@ -182,7 +182,7 @@ test.describe('Silent notification webhook delivery', () => {
             // # Mark the channel read by opening it, then return to off-topic for a clean baseline
             await mentionee.lhs.channelList.channel(channel).clickLink();
             await expect(mentionee.center.composer.locator).toBeVisible();
-            await mentionee.channelsPage.goto({team, channel: 'off-topic'});
+            await mentionee.channelsPage.goto({team, channel: offTopic});
             await expect(channelLink).not.toHaveClass(/unread-title/);
 
             await pw.clearCapturedNotifications(mentioneePage);

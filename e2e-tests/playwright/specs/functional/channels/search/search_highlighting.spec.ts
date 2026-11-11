@@ -23,8 +23,7 @@ function highlightsIn(app: App, post: Pick<Post, 'id'>) {
  */
 test('MM-T354 highlights only the searched terms when searching with double quotes', {tag: '@search'}, async ({pw}) => {
     // # Post a message that contains the two search words plus an unrelated unique word
-    const {user, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare} = await pw.initSetup();
     const marker = `zzz${pw.random.id()}`;
     const post = await userClient.createPost({channel_id: townSquare.id, message: `test tool ${marker}`});
 
@@ -49,8 +48,7 @@ test(
     {tag: '@search'},
     async ({pw}) => {
         // # Post a message that contains two distinct words
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {user, team, userClient, townSquare} = await pw.initSetup();
         const suffix = pw.random.id();
         const firstWord = `apple${suffix}`;
         const secondWord = `banana${suffix}`;

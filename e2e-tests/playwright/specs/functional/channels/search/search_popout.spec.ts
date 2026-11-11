@@ -45,7 +45,7 @@ test('MM-65630-1 Search results should show popout button that opens results in 
     expect(popoutUrl).toContain(`q=${encodeURIComponent(uniqueText)}`);
     expect(popoutUrl).toContain('mode=search');
 
-    await expect(popout.search.results.post(post).messageText.locator).toHaveText(uniqueText, {timeout: 10000});
+    await expect(popout.search.results.post(post).messageText.locator).toHaveText(uniqueText);
 
     await popout.page.close();
 });
@@ -78,7 +78,7 @@ test('MM-65630-2 Recent mentions popout should open with the right results', asy
     expect(popoutUrl).toContain('/search');
     expect(popoutUrl).toContain('mode=mention');
 
-    await expect(popout.search.results.post(post).messageText.locator).toContainText(mentionText, {timeout: 10000});
+    await expect(popout.search.results.post(post).messageText.locator).toContainText(mentionText);
 
     await popout.page.close();
 });
@@ -119,7 +119,7 @@ test('MM-65630-3 Saved messages popout should open with the right results', asyn
     expect(popoutUrl).toContain('/search');
     expect(popoutUrl).toContain('mode=flag');
 
-    await expect(popout.search.results.post(post).messageText.locator).toHaveText(savedText, {timeout: 10000});
+    await expect(popout.search.results.post(post).messageText.locator).toHaveText(savedText);
 
     await popout.page.close();
 });
@@ -147,7 +147,7 @@ test('MM-65630-4 Search popout should not show popout button in the popout windo
     await expect(app.search.header.closeButton.locator).toBeVisible();
     const popout = await openPopout(app);
 
-    await expect(popout.search.results.post(post).messageText.locator).toHaveText(uniqueText, {timeout: 10000});
+    await expect(popout.search.results.post(post).messageText.locator).toHaveText(uniqueText);
     await expect(popout.search.header.popoutButton.locator).not.toBeVisible();
     await expect(popout.search.header.closeButton.locator).not.toBeVisible();
 

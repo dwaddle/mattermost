@@ -7,12 +7,11 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify sending a message in a channel with unread content scrolls to the newly sent message.
  */
 test('MM-T216 scrolls to the bottom when sending a message', {tag: '@messaging'}, async ({pw}) => {
-    const {adminClient, team, user, userClient} = await pw.initSetup();
+    const {adminClient, team, user, userClient, offTopic} = await pw.initSetup();
     const [sender] = await adminClient.createUsers(team.id, 1, 'sender');
     const testChannel = await adminClient.createPublicChannel(team.id, 'Channel Users Interactions');
     await adminClient.addToChannel(user.id, testChannel.id);
     await adminClient.addToChannel(sender.id, testChannel.id);
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
     const send = async (message: string) => {
         await app.center.postCreate.fillMessageTextbox(message);
         await app.center.postCreate.clickSendButton();

@@ -4,7 +4,7 @@
 import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, test, type App, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {expectIndicator, expectScheduledPost, expectSidebarCount, pickTime, scheduleMessage} from './support';
 
@@ -15,7 +15,12 @@ test.beforeEach(async ({pw}) => {
 });
 
 /** Logs the user in on a channel (town square unless given), waiting for the app to be up. */
-async function open(pw: PlaywrightExtended, user: UserProfile, team: Team, channel = 'town-square') {
+async function open(
+    pw: PlaywrightExtended,
+    user: UserProfile,
+    team: Team,
+    channel: string = DefaultChannel.TownSquare,
+) {
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel, path: channel.startsWith('@') ? 'messages' : 'channels'});
     return app;
@@ -210,7 +215,7 @@ test(
         const draftMessage = `Scheduled Draft ${pw.random.id()}`;
 
         // # Initialize test user, login and navigate to a channel
-        const {user, team} = await pw.initSetup();
+        const {user, team, townSquare} = await pw.initSetup();
         const app = await open(pw, user, team);
 
         // # Create a scheduled message for tomorrow
@@ -233,7 +238,7 @@ test(
         const rescheduled = await pickTime(await scheduledPost.clickRescheduleButton(), 2);
 
         // # Return to channel page
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // * Verify indicator shows the updated scheduled time
         await expectIndicator(app.center.postCreate.scheduledPostIndicator, rescheduled);
@@ -255,7 +260,7 @@ test(
         const draftMessage = `Weekly Scheduled Draft ${pw.random.id()}`;
 
         // # Initialize test user, login and navigate to a channel
-        const {user, team} = await pw.initSetup();
+        const {user, team, townSquare} = await pw.initSetup();
         const app = await open(pw, user, team);
 
         // # Create a weekly recurring scheduled message for tomorrow
@@ -294,7 +299,7 @@ test(
         await expect(scheduledPost.sendNowButton.locator).toHaveCount(0);
 
         // # Return to channel page
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // * Verify the channel indicator stays hidden since every scheduled post is recurring
         await expectSidebarCount(app, 1);

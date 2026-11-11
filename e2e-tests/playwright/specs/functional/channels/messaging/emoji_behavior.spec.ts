@@ -7,9 +7,7 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
  * @objective Verify selecting an emoji from the picker inserts it at the current caret position.
  */
 test('MM-T95 Selecting an emoji from emoji picker should insert it at the cursor position', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
-
+    const {user, team, userClient, offTopic: channel} = await pw.initSetup();
     // # Log in and place the caret between "Hello" and "World"
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
@@ -44,8 +42,7 @@ test('MM-T95 Selecting an emoji from emoji picker should insert it at the cursor
  * @objective Verify an emoji followed by punctuation renders as an emoji without separating the punctuation.
  */
 test('MM-T222 Emoji characters followed by punctuation', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const {user, team, userClient, offTopic: channel} = await pw.initSetup();
     const post = await userClient.createPost({channel_id: channel.id, message: ':)='});
 
     // # Open the channel with an emoticon followed by punctuation
@@ -63,8 +60,7 @@ test('MM-T222 Emoji characters followed by punctuation', async ({pw}) => {
  * @objective Verify that a leading colon is ignored when searching in the emoji picker.
  */
 test('MM-T156 ignores a leading colon when searching the emoji picker', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare: channel} = await pw.initSetup();
     const post = await userClient.createPost({
         channel_id: channel.id,
         message: `emoji picker search ${pw.random.id()}`,

@@ -3,7 +3,7 @@
 
 import type {UserProfile} from '@mattermost/types/users';
 
-import {expect, generated, test, type App} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, duration} from '@mattermost/playwright-lib';
 
 /** Opens the profile popover from the user's mention in the post, and returns it. */
 async function openFromMention(app: App, postId: string, user: Pick<UserProfile, 'id'>) {
@@ -28,9 +28,9 @@ async function closePopover(app: App) {
  * 2. Two user accounts, with one user able to see their own information
  */
 test('Profile popover should show correct fields after at-mention autocomplete @user_profile', async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     // Initialize with user's privacy settings set to hide email and full name
-    const {user, adminClient, team} = await pw.initSetup();
+    const {user, adminClient, team, townSquare} = await pw.initSetup();
     const hidePrivateFields = async () => {
         await adminClient.patchConfig({
             PrivacySettings: {
@@ -51,7 +51,7 @@ test('Profile popover should show correct fields after at-mention autocomplete @
 
     // 1. Login as the first user
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // 2. Post a message with mentions of both users
     const message = `@${user.username} @${testUser2.username}`;

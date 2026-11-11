@@ -8,7 +8,7 @@
  * Prerequisites: Enterprise-tier license + ClassificationMarkings feature flag enabled.
  */
 
-import {expect, test, getAdminClient, licenseTier} from '@mattermost/playwright-lib';
+import {expect, test, getAdminClient, licenseTier, duration} from '@mattermost/playwright-lib';
 import type {PlaywrightExtended} from '@mattermost/playwright-lib';
 
 import {TEST_LEVELS, setupClassificationWithChannelField, deleteClassificationFieldsIfExist} from './helpers';
@@ -70,7 +70,7 @@ test.describe('Channel Classification - New channel creation', () => {
         const {adminUser, team} = await initSetupTracked(pw);
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await app.teamPage.goto({team});
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const newChannelModal = await channelsPage.openNewChannelModal();
         await newChannelModal.fillDisplayName(`test-${pw.random.id()}`);
@@ -90,7 +90,7 @@ test.describe('Channel Classification - New channel creation', () => {
         const {adminUser, team} = await initSetupTracked(pw);
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await app.teamPage.goto({team});
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const newChannelModal = await channelsPage.openNewChannelModal();
         await newChannelModal.fillDisplayName(`test-${pw.random.id()}`);
@@ -114,7 +114,7 @@ test.describe('Channel Classification - New channel creation', () => {
         const {adminUser, team} = await initSetupTracked(pw);
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await app.teamPage.goto({team});
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET');
         expect(selectedLevel).toBeDefined();
@@ -150,7 +150,7 @@ test.describe('Channel Classification - New channel creation', () => {
         const {adminUser, team} = await initSetupTracked(pw);
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await app.teamPage.goto({team});
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const selectedLevel = classificationLevels.find((l) => l.name === 'SECRET');
         expect(selectedLevel).toBeDefined();
@@ -176,12 +176,12 @@ test.describe('Channel Classification - New channel creation', () => {
         await newChannelModal.create();
 
         // Should be redirected to the new channel and center view loads
-        await expect(page).toHaveURL(/\/channels\//, {timeout: 30000});
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 30000});
+        await expect(page).toHaveURL(/\/channels\//, {timeout: duration.half_min});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.half_min});
 
         // Channel banner should be visible (allow extra time for property value fetch)
         const banner = page.getByTestId('center.channel_banner');
-        await expect(banner).toBeVisible({timeout: 30000});
+        await expect(banner).toBeVisible({timeout: duration.half_min});
 
         // Verify the banner has the correct background color
         const actualBackgroundColor = await banner.evaluate((el) => {
@@ -206,7 +206,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -232,7 +232,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -267,7 +267,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -308,7 +308,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         // Step 1: enable classification, select a level, save
         const channelSettingsModal = await channelsPage.openChannelSettings();
@@ -358,7 +358,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
         await channelsPage.goto(team.name, channel.name);
-        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: 60000});
+        await expect(page.getByTestId('channel_view')).toBeVisible({timeout: duration.one_min});
 
         const channelSettingsModal = await channelsPage.openChannelSettings();
         const configurationTab = await channelSettingsModal.openConfigurationTab();
@@ -386,7 +386,7 @@ test.describe('Channel Classification - Existing channel settings', () => {
 
         // The channel banner should now show the custom text with the classification color
         const banner = page.getByTestId('center.channel_banner');
-        await expect(banner).toBeVisible({timeout: 30000});
+        await expect(banner).toBeVisible({timeout: duration.half_min});
         await expect(banner).toContainText(customBannerText);
 
         const actualBackgroundColor = await banner.evaluate((el) => {

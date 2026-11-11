@@ -9,7 +9,7 @@ import {expect, koreanTestPhrase, test, typeHangulWithIme} from '@mattermost/pla
 test('Search box handles Korean IME correctly', async ({pw, browserName}) => {
     test.skip(browserName !== 'chromium', 'The API used to test this is only available in Chrome');
 
-    const {userClient, user, team} = await pw.initSetup();
+    const {userClient, user, team, townSquare} = await pw.initSetup();
 
     // # Create a channel named after the test phrase
     const testChannel = await userClient.createChannel(
@@ -19,8 +19,6 @@ test('Search box handles Korean IME correctly', async ({pw, browserName}) => {
             displayName: koreanTestPhrase,
         }),
     );
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
     // # Log in and open a default channel
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});

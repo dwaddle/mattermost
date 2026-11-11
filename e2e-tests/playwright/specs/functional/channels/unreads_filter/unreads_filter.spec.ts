@@ -8,7 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('unreads filter will show and hide unread channels', {tag: ['@smoke', '@filters']}, async ({pw}) => {
     // # Create a user with only one team
-    const {adminClient, user, team} = await pw.initSetup();
+    const {adminClient, user, team, townSquare} = await pw.initSetup();
 
     // # Create 10 channels in the team
     const channelPromises = [];
@@ -45,7 +45,6 @@ test('unreads filter will show and hide unread channels', {tag: ['@smoke', '@fil
     await Promise.all(postPromises);
 
     // # Log in as the user
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
 

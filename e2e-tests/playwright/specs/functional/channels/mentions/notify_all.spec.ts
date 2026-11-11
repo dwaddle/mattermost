@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, formatMessage, Msg, test} from '@mattermost/playwright-lib';
+import {expect, formatMessage, Msg, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 // NOTIFY_ALL_MEMBERS threshold from webapp constants — modal triggers when member count > 5.
 const NOTIFY_ALL_THRESHOLD = 5;
@@ -20,7 +20,7 @@ test(
 
         // # Log in and go to Town Square (all team members are in it by default)
         const {app} = await pw.testBrowser.login(user);
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+        const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
         await app.channelsPage.goto({team, channel: townSquare});
 
         // # Send a message with @all, which asks for confirmation instead of posting

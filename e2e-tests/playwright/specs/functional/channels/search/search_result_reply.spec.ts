@@ -8,8 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T373 replies to a post from search results', {tag: '@search'}, async ({pw}) => {
     // # Create a uniquely searchable post and open its channel
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const {user, team, userClient, offTopic: channel} = await pw.initSetup();
     const message = `asparagus${pw.random.id()}`;
     const post = await userClient.createPost({channel_id: channel.id, message});
 

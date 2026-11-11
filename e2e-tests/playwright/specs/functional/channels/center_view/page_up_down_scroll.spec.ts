@@ -7,9 +7,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify Page Up and Page Down scroll the center post list.
  */
 test('should be able to scroll the post list with page up and down', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {user, team, userClient, townSquare: channel} = await pw.initSetup();
     // # Fill the channel with tall posts so the list can scroll
     for (let i = 0; i < 10; i++) {
         await userClient.createPost({channel_id: channel.id, message: `post ${i}\n` + 'a\n'.repeat(10)});

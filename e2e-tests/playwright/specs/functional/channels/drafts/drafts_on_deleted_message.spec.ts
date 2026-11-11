@@ -6,10 +6,9 @@ import {expect, Msg, test} from '@mattermost/playwright-lib';
 test('MM-T5435_1 Global Drafts link in sidebar should be hidden when another user deleted root post and user removes the deleted post ', async ({
     pw,
 }) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare: channel} = await pw.initSetup();
 
     // # Create a post in the default channel by admin
-    const channel = await adminClient.getChannelByName(team.id, 'town-square');
     const adminPost = await adminClient.createPost({
         channel_id: channel.id,
         message: `Admin root post ${pw.random.id()}`,
@@ -66,9 +65,7 @@ test(
     'MM-T5435_2 Global Drafts link in sidebar should be hidden when user deletes root post ',
     {tag: '@smoke'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+        const {user, team, userClient, townSquare} = await pw.initSetup();
         // # Post a message in the channel, then log in and visit it
         const root = await userClient.createPost({channel_id: townSquare.id, message: 'Message which will be deleted'});
         const {app} = await pw.testBrowser.login(user);

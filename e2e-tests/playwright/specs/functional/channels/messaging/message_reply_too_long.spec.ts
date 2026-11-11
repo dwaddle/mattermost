@@ -7,7 +7,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify an overlong thread reply shows the character-count warning and is not posted.
  */
 test('MM-T106 Webapp: Message too long warning text', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, adminClient, userClient} = await pw.initSetup();
+    const {user, team, adminClient, userClient, offTopic: channel} = await pw.initSetup();
     // MaxPostSize is a computed client-config value, so read it rather than hardcoding.
     const clientConfig = await adminClient.getClientConfig();
     const maxReplyLength = parseInt(clientConfig.MaxPostSize, 10);
@@ -16,7 +16,6 @@ test('MM-T106 Webapp: Message too long warning text', {tag: '@messaging'}, async
     const tooLongWarning = `Your message is too long. Character count: ${tooLongReply.length}/${maxReplyLength}`;
 
     // # Post a root message in Off-Topic, log in, and open its thread
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
     const root = await userClient.createPost({channel_id: channel.id, message: `Hello ${pw.random.id()}`});
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});

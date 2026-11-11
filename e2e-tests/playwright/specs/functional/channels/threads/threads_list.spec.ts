@@ -9,9 +9,7 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
 test('Should be able to change threads with arrow keys', {tag: ['@smoke']}, async ({pw}, testInfo) => {
     test.skip(testInfo.project.name === 'ipad');
 
-    const {team, user, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {team, user, userClient, townSquare: channel} = await pw.initSetup();
     // # Start three threads, oldest first, and leave a draft reply in the middle one
     const startThread = async (message: string) => {
         const root = await userClient.createPost({channel_id: channel.id, message} as any);

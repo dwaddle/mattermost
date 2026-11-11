@@ -8,8 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T352 keeps a cleared search term empty after closing search results', {tag: '@search'}, async ({pw}) => {
     // # Create a user with a searchable post and open the channel
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const {user, team, userClient, offTopic: channel} = await pw.initSetup();
     const term = `London${pw.random.id()}`;
     const post = await userClient.createPost({channel_id: channel.id, message: term});
 

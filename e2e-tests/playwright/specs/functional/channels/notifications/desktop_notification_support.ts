@@ -6,7 +6,7 @@ import type {Page} from '@playwright/test';
 import type {UserProfile} from '@mattermost/types/users';
 import type {Channel} from '@mattermost/types/channels';
 
-import {duration, expect, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {duration, expect, type App, type PlaywrightExtended, DefaultChannel} from '@mattermost/playwright-lib';
 
 type DesktopNotificationLevel = 'all' | 'mention' | 'none';
 type NameFormat = 'username' | 'nickname_full_name' | 'full_name';
@@ -141,8 +141,8 @@ export async function runDisplayNameCase(pw: PlaywrightExtended, testCase: Displ
         sender.nickname = '';
     }
 
-    const channel = await adminClient.getChannelByName(team.id, 'off-topic');
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const channel = await adminClient.getChannelByName(team.id, DefaultChannel.OffTopic);
+    const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     const {page, app} = await pw.testBrowser.login(receiver);
     await app.channelsPage.goto({team, channel: townSquare});
     await pw.stubNotification(page, 'granted');
@@ -168,12 +168,17 @@ async function waitForDirectMessageProcessing(senderClient: Client4, app: App, s
 }
 
 export async function runNotificationSettingCase(pw: PlaywrightExtended, testCase: NotificationSettingCase) {
-    const {adminClient, team, user: sender, userClient: senderClient} = await pw.initSetup();
+    const {
+        adminClient,
+        team,
+        user: sender,
+        userClient: senderClient,
+        offTopic: channel,
+        townSquare,
+    } = await pw.initSetup();
     const receiver = await pw.createNewUserProfile(adminClient, {prefix: 'notification-receiver'});
     await adminClient.addToTeam(team.id, receiver.id);
     await setDesktopNotificationLevel(adminClient, receiver, testCase.desktop);
-
-    const channel = await adminClient.getChannelByName(team.id, 'off-topic');
     const syncChannel = await adminClient.createChannel(
         pw.random.channel({
             teamId: team.id,
@@ -184,8 +189,6 @@ export async function runNotificationSettingCase(pw: PlaywrightExtended, testCas
     );
     await adminClient.addToChannel(receiver.id, syncChannel.id);
     await adminClient.addToChannel(sender.id, syncChannel.id);
-
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const {page, app} = await pw.testBrowser.login(receiver);
     await app.channelsPage.goto({team, channel: townSquare});
     await pw.stubNotification(page, 'granted');

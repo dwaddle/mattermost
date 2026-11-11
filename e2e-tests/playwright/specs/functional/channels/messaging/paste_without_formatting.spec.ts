@@ -9,8 +9,7 @@ import {expect, pasteHtml, test} from '@mattermost/playwright-lib';
  * paste which applies it.
  */
 test('MM-T1434 pasting with Ctrl/Cmd+Shift+V skips Mattermost paste formatting', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, townSquare: channel} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
 

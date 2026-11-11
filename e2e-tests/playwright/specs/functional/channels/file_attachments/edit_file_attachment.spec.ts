@@ -22,9 +22,9 @@ async function attach(app: App, composer: Composer, files: string[]) {
 
 /** Opens the user's town square. */
 async function open(pw: PlaywrightExtended) {
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
     return app;
 }
 

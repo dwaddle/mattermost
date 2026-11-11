@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that multiple user mentions are displayed properly in the Recent Mentions section.
@@ -27,7 +27,7 @@ test('displays multiple mentions correctly in Recent Mentions panel', {tag: ['@s
 
     // # Get the town-square channel data
     const channels = await userClient.getMyChannels(team.id);
-    const townSquare = channels.find((channel) => channel.name === 'town-square');
+    const townSquare = channels.find((channel) => channel.name === DefaultChannel.TownSquare);
 
     if (!townSquare) {
         throw new Error('Town Square channel not found');

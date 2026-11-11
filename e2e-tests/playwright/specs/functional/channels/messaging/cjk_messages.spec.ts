@@ -7,8 +7,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify CJK text can be posted as both a channel message and a thread reply.
  */
 test('MM-T182 Typing using CJK keyboard', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const {user, team, userClient, offTopic: channel} = await pw.initSetup();
     const postIdWithText = async (text: string) => {
         const {order, posts} = await userClient.getPosts(channel.id);
         return order.find((id) => posts[id].message === text);

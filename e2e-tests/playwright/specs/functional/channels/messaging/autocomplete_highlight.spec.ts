@@ -8,8 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T71 moves the autocomplete highlight with hover and arrow keys', {tag: '@messaging'}, async ({pw}) => {
     // # Create and log in as a test user
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, townSquare: channel} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
 

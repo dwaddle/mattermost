@@ -8,8 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * that the posted message renders the formatting.
  */
 test('MM-T3405 formats text as bold and italic with keyboard shortcuts', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, townSquare: channel} = await pw.initSetup();
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});
 
@@ -60,8 +59,7 @@ test('MM-T3405 formats text as bold and italic with keyboard shortcuts', {tag: '
  * and that it can be dismissed.
  */
 test('MM-T4693 opens the emoji picker with the keyboard shortcut', {tag: '@keyboard_shortcuts'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare: channel} = await pw.initSetup();
     await userClient.createPost({channel_id: channel.id, message: 'this is a test'});
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});

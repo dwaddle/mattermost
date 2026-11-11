@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, test, type App} from '@mattermost/playwright-lib';
+import {expect, generated, test, type App, DefaultChannel} from '@mattermost/playwright-lib';
 
 // A sidebar link's accessible name ends in "unread", or "N mention(s)", while the channel has unread messages
 const UNREAD = / (unread|\d+ mentions?)$/;
@@ -49,7 +49,7 @@ test('MM-T472 Add a channel header to a GM', {tag: '@messaging'}, async ({pw}) =
     await expect(app.lhs.channelList.channel(groupChannel).link.locator).not.toHaveAccessibleName(UNREAD);
 
     // # Sign in as another group member and view Town Square
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     const {app: memberApp} = await pw.testBrowser.login(members[0]);
     await memberApp.channelsPage.goto({team, channel: townSquare});
 
@@ -88,7 +88,7 @@ test('MM-T473_1 Edit GM channel header', {tag: '@messaging'}, async ({pw}) => {
     await expect.poll(() => lastPostText(app)).toContain('updated the channel header');
 
     // # Sign in as another group member and view Town Square
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
+    const townSquare = await adminClient.getChannelByName(team.id, DefaultChannel.TownSquare);
     const {app: memberApp} = await pw.testBrowser.login(members[0]);
     await memberApp.channelsPage.goto({team, channel: townSquare});
 

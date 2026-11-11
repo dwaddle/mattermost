@@ -14,9 +14,7 @@ test.use({timezoneId: 'UTC'});
  * @reference MM-60727
  */
 test('MM-60727 relabels date separators when local midnight passes', {tag: '@messaging'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const channel = await adminClient.getChannelByName(team.id, 'off-topic');
-
+    const {adminClient, team, user, offTopic: channel} = await pw.initSetup();
     // The upcoming UTC midnight, so the posts the harness itself creates share a calendar day
     // with the one below and the client's clock never runs more than a day ahead of the server.
     const now = new Date();

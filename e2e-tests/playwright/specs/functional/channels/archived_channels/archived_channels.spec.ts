@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify the member list of an archived channel is viewable but read-only (no member management).
@@ -46,7 +46,7 @@ test('MM-T1679 opens an archived channel by jumping from search results', {tag: 
 
     // # Archive the channel, then move to another channel
     await channelsPage.archiveChannel();
-    await channelsPage.sidebarLeft.goToItem('town-square');
+    await channelsPage.sidebarLeft.goToItem(DefaultChannel.TownSquare);
     await channelsPage.centerView.header.toHaveTitle('Town Square');
 
     // # Search for the message posted in the archived channel

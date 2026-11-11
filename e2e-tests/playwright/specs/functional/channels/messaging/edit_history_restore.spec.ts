@@ -8,9 +8,7 @@ import {Api, expect, settle, test} from '@mattermost/playwright-lib';
  * cancelling the restore confirmation keeps the edited version.
  */
 test('MM-T5537 views message edit history and restores a previous version', {tag: '@messaging'}, async ({pw}) => {
-    const {team, user, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {team, user, userClient, townSquare: channel} = await pw.initSetup();
     // # Log in and open the channel
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify clicking a desktop notification for a message in another team's channel navigates
@@ -15,7 +15,7 @@ test(
     'MM-T492 navigates to the originating team and channel when a desktop notification is clicked',
     {tag: '@notifications'},
     async ({pw}) => {
-        const {adminClient, adminUser, team, user} = await pw.initSetup();
+        const {adminClient, adminUser, team, user, townSquare} = await pw.initSetup();
 
         // # Add the user to a second team that hosts the channel the notification will come from
         const secondTeam = await pw.createNewTeam(adminClient, {
@@ -26,7 +26,7 @@ test(
         });
         await adminClient.addToTeam(secondTeam.id, user.id);
         await adminClient.addToTeam(secondTeam.id, adminUser.id);
-        const otherChannel = await adminClient.getChannelByName(secondTeam.id, 'off-topic');
+        const otherChannel = await adminClient.getChannelByName(secondTeam.id, DefaultChannel.OffTopic);
 
         // # Set the user's desktop notifications to fire for all new messages
         await adminClient.patchUser({
@@ -40,7 +40,7 @@ test(
 
         // # Log in and view the first team's Town Square, then stub notifications
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await pw.stubNotification(page, 'granted');
 
         // # Post a message from the admin in the second team's channel
@@ -73,14 +73,14 @@ test(
     'MM-T493 navigates to the direct message when its desktop notification is clicked',
     {tag: '@notifications'},
     async ({pw}) => {
-        const {adminClient, adminUser, team, user} = await pw.initSetup();
+        const {adminClient, adminUser, team, user, townSquare} = await pw.initSetup();
 
         // # Create a direct message channel between the admin and the user
         const dmChannel = await adminClient.createDirectChannel([adminUser.id, user.id]);
 
         // # Log in and view Town Square, then stub notifications
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await pw.stubNotification(page, 'granted');
 
         // # Send a direct message from the admin to the user
@@ -113,14 +113,14 @@ test(
     'MM-T495 suppresses desktop notifications while Do Not Disturb is enabled',
     {tag: '@notifications'},
     async ({pw}) => {
-        const {adminClient, adminUser, team, user} = await pw.initSetup();
+        const {adminClient, adminUser, team, user, townSquare} = await pw.initSetup();
 
         // # Create a direct message channel between the admin and the user
         const dmChannel = await adminClient.createDirectChannel([adminUser.id, user.id]);
 
         // # Log in and view Town Square (not the DM), then stub notifications
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await pw.stubNotification(page, 'granted');
 
         // # Send a direct message from the admin while the user is available

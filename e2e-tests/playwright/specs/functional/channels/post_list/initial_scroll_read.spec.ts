@@ -6,7 +6,7 @@ import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 import type {Page} from '@playwright/test';
 
-import {duration, expect, setupFileServer, test, testConfig} from '@mattermost/playwright-lib';
+import {duration, expect, setupFileServer, test, testConfig, DefaultChannel} from '@mattermost/playwright-lib';
 import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
 
 import {lastPost, watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
@@ -172,7 +172,7 @@ test.describe('Post list initial scroll in read channel', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Start in Town Square and wait for its contents to load
-                await channelsPage.goto(team.name, 'town-square');
+                await channelsPage.goto(team.name, DefaultChannel.TownSquare);
                 await lastPost(app);
 
                 // # Switch to the channel

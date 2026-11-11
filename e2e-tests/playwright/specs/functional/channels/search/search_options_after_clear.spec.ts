@@ -8,8 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T353 displays search options after clearing the query', {tag: '@search'}, async ({pw}) => {
     // # Create a user with a searchable post and open the channel
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare: channel} = await pw.initSetup();
     const searchWord = `Hello${pw.random.id()}`;
     const post = await userClient.createPost({channel_id: channel.id, message: searchWord});
 

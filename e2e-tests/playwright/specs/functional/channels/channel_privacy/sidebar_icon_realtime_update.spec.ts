@@ -58,7 +58,7 @@ test(
         await adminClient.updateChannelPrivacy(channel.id, 'P');
 
         // * Verify the sidebar link updates to a private channel (the lock icon) without page refresh
-        await expect(sidebarLink).toHaveAccessibleName(/ private channel/, {timeout: 10000});
+        await expect(sidebarLink).toHaveAccessibleName(/ private channel/);
     },
 );
 
@@ -93,6 +93,6 @@ test(
         await adminClient.updateChannelPrivacy(channel.id, 'O');
 
         // * Verify the sidebar link updates to a public channel (the globe icon) without page refresh
-        await expect(sidebarLink).toHaveAccessibleName(/ public channel/, {timeout: 10000});
+        await expect(sidebarLink).toHaveAccessibleName(/ public channel/);
     },
 );

@@ -15,10 +15,7 @@ test.describe('draft channel switch', () => {
      * messages to the selected channel.
      */
     test('quick switcher keeps drafts and messages scoped to their channels', {tag: '@messaging'}, async ({pw}) => {
-        const {team, user, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-        const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
-
+        const {team, user, townSquare, offTopic} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: offTopic});
         const input = app.center.postCreate.messageTextbox.locator;
@@ -68,11 +65,9 @@ test.describe('draft channel switch', () => {
         'sending /msg to an existing DM clears the origin draft instead of restoring it',
         {tag: '@slash_commands'},
         async ({pw}) => {
-            const {adminClient, userClient, team, user} = await pw.initSetup();
+            const {adminClient, userClient, team, user, offTopic} = await pw.initSetup();
             const [target] = await adminClient.createUsers(team.id, 1, 'draft-msg');
             await userClient.createDirectChannel([user.id, target.id]);
-            const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
-
             const {app, page} = await pw.testBrowser.login(user);
             await app.channelsPage.goto({team, channel: offTopic});
             const input = app.center.postCreate.messageTextbox.locator;
@@ -108,15 +103,13 @@ test.describe('draft channel switch', () => {
         'posts a later message to the DM rather than the origin channel after /msg',
         {tag: '@slash_commands'},
         async ({pw}) => {
-            const {adminClient, userClient, team, user} = await pw.initSetup();
+            const {adminClient, userClient, team, user, offTopic} = await pw.initSetup();
             const [target] = await adminClient.createUsers(team.id, 1, 'stale-dm');
             const dmChannel = await userClient.createDirectChannel([user.id, target.id]);
             await userClient.createPost({
                 channel_id: dmChannel.id,
                 message: 'seeding the existing DM',
             } as Parameters<typeof userClient.createPost>[0]);
-            const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
-
             const {app, page} = await pw.testBrowser.login(user);
             await app.channelsPage.goto({team, channel: offTopic});
             const title = app.channelHeader.openMenuButton.locator;

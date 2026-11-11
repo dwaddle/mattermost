@@ -67,7 +67,7 @@ test.afterEach(async () => {
 test('shows only the remove-all control on a burn-on-read draft label', {tag: '@abac_burn_on_read'}, async ({pw}) => {
     test.setTimeout(pw.duration.four_min);
 
-    const {adminUser, adminClient, team} = await pw.initSetup();
+    const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
     savedAdminClient = adminClient;
     await ensureBurnOnReadEnabled(adminClient);
     await ensureABACEnabled(adminClient);
@@ -79,7 +79,7 @@ test('shows only the remove-all control on a burn-on-read draft label', {tag: '@
 
     // # Mark a draft as burn-on-read
     const {channelsPage, app, page} = await pw.testBrowser.login(adminUser);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
     await channelsPage.centerView.postCreate.writeMessage(`draft ${getRandomId()}`);
     await channelsPage.centerView.postCreate.toggleBurnOnRead();
     await channelsPage.centerView.postCreate.toHaveBurnOnReadLabel();
@@ -116,7 +116,7 @@ test(
     async ({pw}) => {
         test.setTimeout(pw.duration.four_min);
 
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         savedAdminClient = adminClient;
         await ensureBurnOnReadEnabled(adminClient);
         await ensureABACEnabled(adminClient);
@@ -130,7 +130,7 @@ test(
 
         // # Mark a draft as burn-on-read while still allowed
         const {channelsPage, draftsPage, app, page} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await channelsPage.centerView.postCreate.writeMessage(message);
         await channelsPage.centerView.postCreate.toggleBurnOnRead();
         await channelsPage.centerView.postCreate.toHaveBurnOnReadLabel();
@@ -165,7 +165,7 @@ test(
         await expect(draft.deleteButton).toBeVisible();
 
         // # Back to the composer, and clear the burn-on-read label
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await channelsPage.centerView.postCreate.removeAllLabelsButton.click();
 
         // * Verify sending is offered again once the draft is no longer burn-on-read
@@ -207,7 +207,7 @@ test(
     async ({pw}) => {
         test.setTimeout(pw.duration.four_min);
 
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         savedAdminClient = adminClient;
         await ensureBurnOnReadEnabled(adminClient);
         await ensureABACEnabled(adminClient);
@@ -221,7 +221,7 @@ test(
 
         // # Schedule a burn-on-read post two days out so it cannot fire mid-test
         const {channelsPage, scheduledPostsPage, app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await channelsPage.centerView.postCreate.toggleBurnOnRead();
         await channelsPage.scheduleMessage(original, 2, 0);
 
@@ -268,7 +268,7 @@ test(
     async ({pw}) => {
         test.setTimeout(pw.duration.four_min);
 
-        const {adminUser, adminClient, team} = await pw.initSetup();
+        const {adminUser, adminClient, team, townSquare} = await pw.initSetup();
         savedAdminClient = adminClient;
         await ensureBurnOnReadEnabled(adminClient);
         await ensureABACEnabled(adminClient);
@@ -282,7 +282,7 @@ test(
 
         // # Schedule a burn-on-read post two days out so it cannot fire mid-test
         const {channelsPage, scheduledPostsPage, app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await channelsPage.centerView.postCreate.toggleBurnOnRead();
         await channelsPage.scheduleMessage(message, 2, 0);
 

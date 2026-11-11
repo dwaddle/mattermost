@@ -14,6 +14,7 @@ import {
     type App,
     type PlaywrightClient4,
     type PlaywrightExtended,
+    DefaultChannel,
 } from '@mattermost/playwright-lib';
 
 test.describe('Reply notifications', () => {
@@ -66,7 +67,7 @@ test.describe('Reply notifications', () => {
                 response.request().method() === 'POST' &&
                 response.ok(),
         );
-        await app.lhs.channelList.channel({name: 'town-square'}).clickLink();
+        await app.lhs.channelList.channel({name: DefaultChannel.TownSquare}).clickLink();
         await channelViewResponse;
     }
 

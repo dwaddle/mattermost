@@ -30,9 +30,7 @@ test.describe('Mobile view RHS auto-focus', () => {
         'opens thread in mobile view without ever focusing the mobile search input',
         {tag: '@search'},
         async ({pw, isMobile}) => {
-            const {user, team, userClient} = await pw.initSetup();
-            const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+            const {user, team, userClient, townSquare} = await pw.initSetup();
             // # Make a post, then log in and go to its channel
             const root = await userClient.createPost({
                 channel_id: townSquare.id,
@@ -75,9 +73,7 @@ test.describe('Mobile view RHS auto-focus', () => {
      * @objective Opening the search RHS auto-focuses the search input in the RHS
      */
     test('opens search RHS in mobile view and focuses the mobile search input', {tag: '@search'}, async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+        const {user, team, townSquare} = await pw.initSetup();
         // # Log in as the test user and visit a default channel page
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
@@ -93,9 +89,7 @@ test.describe('Mobile view RHS auto-focus', () => {
      * @objective Tapping the mobile menu backdrop should dismiss/close the modal
      */
     test('closes mobile menu when clicking the backdrop layer', {tag: '@mobile'}, async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+        const {user, team, townSquare} = await pw.initSetup();
         // # Log in as the test user and navigate to channels page
         const {app, page} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
@@ -127,9 +121,7 @@ test.describe('Mobile view RHS auto-focus', () => {
         'MM-T349 MM-T369 search icon in narrow view opens search, searches, and closes back to icon',
         {tag: '@search'},
         async ({pw}) => {
-            const {user, team, userClient} = await pw.initSetup();
-            const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+            const {user, team, userClient, townSquare} = await pw.initSetup();
             // # Post a message to search for, then log in and visit a default channel page
             const message = `test message for narrow view search ${pw.random.id()}`;
             const post = await userClient.createPost({channel_id: townSquare.id, message});

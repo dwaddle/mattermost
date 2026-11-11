@@ -9,8 +9,7 @@ import {duration, expect, test, type App} from '@mattermost/playwright-lib';
  * @objective Verify changing timezone changes which posts match an on: date filter.
  */
 test('MM-T595 Changing timezone changes day search results appears', async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const channel = await adminClient.getChannelByName(team.id, 'off-topic');
+    const {adminClient, team, user, offTopic: channel} = await pw.initSetup();
     const identifier = `timezone-${pw.random.id()}`;
     const targetMessage = `targetAM ${identifier}`;
     const targetTimestamp = Date.UTC(2018, 9, 31, 23, 59);
@@ -54,8 +53,7 @@ test('MM-T595 Changing timezone changes day search results appears', async ({pw}
  * @objective Verify editing a date-filtered search query, via the interactive day picker, updates the search results.
  */
 test('MM-T599 Edit date and search again', async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const channel = await adminClient.getChannelByName(team.id, 'off-topic');
+    const {adminClient, team, user, offTopic: channel} = await pw.initSetup();
     const targetMessage = `calendarUpdate-${pw.random.id()}`;
     const targetTimestamp = Date.UTC(2019, 0, 15, 9, 30);
 

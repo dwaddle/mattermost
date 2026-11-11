@@ -15,12 +15,11 @@ const MESSAGE =
  * and that the quote and the reply typed below it are posted together.
  */
 test('quotes text selected in a post into the channel message box', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
     const {channelsPage, page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     const post = await channelsPage.getLastPost();
     const quoteButton = page.getByRole('button', {name: 'Quote selection'});
@@ -56,12 +55,11 @@ test('quotes text selected in a post into the channel message box', TAGS, async 
  * added after what's already in the message box.
  */
 test('adds a quote of a right to left selection after the existing draft', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
     const {channelsPage, page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     const post = await channelsPage.getLastPost();
     const quoteButton = page.getByRole('button', {name: 'Quote selection'});
@@ -83,8 +81,7 @@ test('adds a quote of a right to left selection after the existing draft', TAGS,
  * reply box rather than the channel's message box.
  */
 test('quotes text selected in the RHS into the thread reply box', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     const root = await userClient.createPost({
         channel_id: townSquare.id,
         message: 'What are we doing for the logging points?',
@@ -92,7 +89,7 @@ test('quotes text selected in the RHS into the thread reply box', TAGS, async ({
     await userClient.createPost({channel_id: townSquare.id, root_id: root.id, message: MESSAGE});
 
     const {channelsPage, page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the thread in the RHS
     const rootPost = await channelsPage.centerView.getPostById(root.id);
@@ -114,8 +111,7 @@ test('quotes text selected in the RHS into the thread reply box', TAGS, async ({
  * lists, code blocks and links.
  */
 test('keeps the Markdown formatting of the quoted text', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     await userClient.createPost({
         channel_id: townSquare.id,
         message: [
@@ -135,7 +131,7 @@ test('keeps the Markdown formatting of the quoted text', TAGS, async ({pw}) => {
     });
 
     const {channelsPage, page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Select the whole message and quote it
     const post = await channelsPage.getLastPost();
@@ -167,12 +163,11 @@ test('keeps the Markdown formatting of the quoted text', TAGS, async ({pw}) => {
  * @objective Verify that the quote button can be reached with Tab and used with the keyboard.
  */
 test('quotes the selection with the keyboard', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
     const {channelsPage, page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Select part of the message
     const post = await channelsPage.getLastPost();
@@ -221,12 +216,11 @@ test('does not offer to quote in an archived channel', TAGS, async ({pw}) => {
  * @objective Verify that text can be quoted in a channel opened in a pop-out window.
  */
 test('quotes text selected in a channel pop-out window', TAGS, async ({pw}) => {
-    const {user, userClient, team} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, userClient, team, townSquare} = await pw.initSetup();
     const post = await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
     const {page, app} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the channel in a pop-out window
     const [popout] = await Promise.all([

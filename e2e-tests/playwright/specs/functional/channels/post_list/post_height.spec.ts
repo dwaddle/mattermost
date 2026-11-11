@@ -8,7 +8,15 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Disposable, Locator, Page} from '@playwright/test';
 import type {Post} from '@mattermost/types/posts';
 
-import {expect, generated, setupFileServer, test, testConfig, watchElementSize} from '@mattermost/playwright-lib';
+import {
+    expect,
+    generated,
+    setupFileServer,
+    test,
+    testConfig,
+    watchElementSize,
+    duration,
+} from '@mattermost/playwright-lib';
 import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
 
 type CenterPost = ReturnType<App['center']['postList']['post']>;
@@ -442,7 +450,7 @@ test.describe('Post height', () => {
                 // arrives; extend past the default 10s to leave headroom under loaded CI.
                 // (the preview's Show more only renders when its message overflows)
                 const showMoreButton = postComponent.permalinkPreview.message.showMoreButton.locator;
-                await expect(showMoreButton).toBeVisible({timeout: 20000});
+                await expect(showMoreButton).toBeVisible({timeout: duration.half_min});
             },
         },
     ];

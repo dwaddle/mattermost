@@ -15,9 +15,8 @@ async function searchFor(app: App, term: string) {
  */
 test('MM-T348 shows a full special-character username as a link in search results', {tag: '@search'}, async ({pw}) => {
     // # Create a user whose username contains '-' and '_', plus a user who mentions them
-    const {team, adminClient, userClient} = await pw.initSetup();
+    const {team, adminClient, userClient, townSquare} = await pw.initSetup();
     const [specialUser] = await adminClient.createUsers(team.id, 1, 'test-user_');
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     await adminClient.addToChannel(specialUser.id, townSquare.id);
 
     // # The first user posts a message mentioning the special-character username
@@ -42,7 +41,7 @@ test('MM-T348 shows a full special-character username as a link in search result
  */
 test('MM-T380 jumps from a search result to a post in another channel', {tag: '@search'}, async ({pw}) => {
     // # Create and log in as a test user, and create a channel with many posts
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, offTopic} = await pw.initSetup();
     const linkChannel = await adminClient.createPublicChannel(team.id, 'Link Test', 'link-test');
     await adminClient.addToChannel(user.id, linkChannel.id);
 
@@ -55,8 +54,6 @@ test('MM-T380 jumps from a search result to a post in another channel', {tag: '@
     for (let i = 0; i < 8; i++) {
         await adminClient.createPost({channel_id: linkChannel.id, message: `RF Random Post after ${i}`});
     }
-
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: offTopic});
 

@@ -9,8 +9,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T2268 Edit Message with Attachment', async ({pw}) => {
     // # Post a message with an image attachment
-    const {team, user, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {team, user, userClient, townSquare: channel} = await pw.initSetup();
     const post = await userClient.createTestPost({channel_id: channel.id, message: 'Test'}, ['mattermost.png']);
 
     const {app} = await pw.testBrowser.login(user);

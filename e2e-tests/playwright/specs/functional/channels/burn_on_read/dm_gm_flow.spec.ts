@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openChannel, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, test, duration} from '@mattermost/playwright-lib';
 
 import {
     BOR_TAG,
@@ -87,14 +87,14 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
         await expect(receiverPost.body.locator).toContainText(secretMessage);
 
         // * Verify timer chip appears (wait for WebSocket update)
-        await expect(receiverPost.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+        await expect(receiverPost.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
     });
 
     test(
         'MM-66742_3 BoR message in group message with multiple recipients',
         {tag: [BOR_TAG]},
         async ({pw}, testInfo) => {
-            testInfo.setTimeout(120000);
+            testInfo.setTimeout(duration.two_min);
             // # Initialize setup with BoR enabled
             const {user: sender, team, adminClient} = await setupBorTest(pw);
 
@@ -150,7 +150,7 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
 
             // * Verify first recipient sees message and timer (wait for WebSocket update)
             await expect(recipient1Post.body.locator).toContainText(secretMessage);
-            await expect(recipient1Post.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+            await expect(recipient1Post.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
 
             // # Refresh sender and verify updated count
             await senderApp.page.reload();
@@ -169,7 +169,7 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
 
             // * Verify second recipient sees message and timer (wait for WebSocket update)
             await expect(recipient2Post.body.locator).toContainText(secretMessage);
-            await expect(recipient2Post.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+            await expect(recipient2Post.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
         },
     );
 
@@ -251,7 +251,7 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
         await expect(receiverPost.body.locator).toContainText(secretMessage);
 
         // * Wait for timer chip to appear (WebSocket update)
-        await expect(receiverPost.burnOnReadTimerButton.locator).toBeVisible({timeout: 15000});
+        await expect(receiverPost.burnOnReadTimerButton.locator).toBeVisible({timeout: duration.half_min});
 
         // # Click timer to burn
         await receiverPost.clickBurnOnReadTimerButton();
@@ -264,7 +264,7 @@ test.describe('Burn-on-Read in DMs and GMs', () => {
 
         // * Verify post is removed from receiver's view
         const deletedPostReceiver = receiverApp.center.postList.post({id: postId}).locator;
-        await expect(deletedPostReceiver).not.toBeVisible({timeout: 15000});
+        await expect(deletedPostReceiver).not.toBeVisible({timeout: duration.half_min});
 
         // * Verify message content is not visible in the channel
         await expect(receiverApp.center.postList.locator).not.toContainText(secretMessage);

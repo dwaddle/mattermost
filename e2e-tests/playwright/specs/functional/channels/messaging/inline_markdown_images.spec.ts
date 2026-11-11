@@ -41,10 +41,9 @@ async function textNodeBox(scope: Locator, needle: string): Promise<Box | null> 
  * @objective Verify an inline Markdown image opens in the image preview.
  */
 test('MM-T187 Inline markdown images open preview window', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
+    const {user, team, userClient, offTopic: channel} = await pw.initSetup();
     const imageUrl =
         'https://raw.githubusercontent.com/mattermost/mattermost/master/e2e-tests/cypress/tests/fixtures/image-small-height.png';
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
     const post = await userClient.createPost({channel_id: channel.id, message: `Hello ![test image](${imageUrl})`});
 
     // # Log in and open the channel
@@ -67,12 +66,11 @@ test('MM-T187 Inline markdown images open preview window', {tag: '@messaging'}, 
  * @objective Verify an inline Markdown image nested in a link renders correctly and points to the external destination.
  */
 test('MM-T188 Inline markdown image that is a link, opens the link', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
+    const {user, team, userClient, offTopic: channel} = await pw.initSetup();
     const linkUrl = 'https://www.google.com';
     const imageUrl =
         'https://raw.githubusercontent.com/mattermost/mattermost/master/e2e-tests/cypress/tests/fixtures/mattermost-icon_128x128.png';
     const label = 'Build Status';
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
     const post = await userClient.createPost({
         channel_id: channel.id,
         message: `[![${label}](${imageUrl})](${linkUrl})`,
@@ -97,9 +95,7 @@ test('MM-T188 Inline markdown image that is a link, opens the link', {tag: '@mes
  * @objective Verify inline Markdown images stay in the text flow instead of each starting a new line.
  */
 test('inline markdown images share a line with the surrounding text', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
-
+    const {user, team, offTopic: channel} = await pw.initSetup();
     // Stay under EXPANDABLE_INLINE_IMAGE_MIN_HEIGHT so the images aren't wrapped in the
     // block-level collapse control, which legitimately takes a line of its own.
     const imageUrl = `${fileServerUrl}/small-image.png`;

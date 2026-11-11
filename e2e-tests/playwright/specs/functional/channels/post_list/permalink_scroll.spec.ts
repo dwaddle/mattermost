@@ -7,7 +7,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Page} from '@playwright/test';
 import type {Post} from '@mattermost/types/posts';
 
-import {expect, setupFileServer, test, testConfig} from '@mattermost/playwright-lib';
+import {expect, setupFileServer, test, testConfig, duration, DefaultChannel} from '@mattermost/playwright-lib';
 import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
 
 import {lastPost, linkIn, sendMessage, watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
@@ -200,7 +200,7 @@ test.describe('Post list scroll to permalink', () => {
 
                 await testCase.setupPostsAfter();
 
-                test.setTimeout(30000);
+                test.setTimeout(duration.half_min);
             });
 
             test(`${testCase.name} - should stay at the linked post during initial load`, async ({}) => {
@@ -222,7 +222,7 @@ test.describe('Post list scroll to permalink', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Start in Town Square and wait for its contents to load
-                await channelsPage.goto(team.name, 'town-square');
+                await channelsPage.goto(team.name, DefaultChannel.TownSquare);
                 await lastPost(app);
 
                 // # Post a permalink pointing to the other channel

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, openChannel, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {
     BOR_TAG,
@@ -215,7 +215,7 @@ test.describe('Burn-on-Read Restrictions', () => {
         await receiverApp.page.keyboard.press('Shift+ArrowUp');
 
         // * Verify RHS does not open with the BoR message
-        await expect(receiverApp.rhs.thread.post({id: borPostId}).locator).not.toBeVisible({timeout: 2000});
+        await expect(receiverApp.rhs.thread.post({id: borPostId}).locator).not.toBeVisible();
     });
 
     test('MM-66742_28 delete option available for revealed BoR post', {tag: [BOR_TAG]}, async ({pw}) => {
@@ -255,7 +255,7 @@ test.describe('Burn-on-Read Restrictions', () => {
 
             const {user, team} = await setupBorTest(pw);
 
-            const app = await openChannel(pw, user, {team, channel: 'town-square'});
+            const app = await openChannel(pw, user, {team, channel: DefaultChannel.TownSquare});
 
             /** Opens the custom schedule time dialog from the send button's schedule menu. */
             const openScheduleModal = async () =>

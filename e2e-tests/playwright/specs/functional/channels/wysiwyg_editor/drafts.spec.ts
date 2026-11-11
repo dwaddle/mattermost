@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, setWysiwygUserPreference, test, WysiwygEditor} from '@mattermost/playwright-lib';
+import {expect, setWysiwygUserPreference, test, WysiwygEditor, DefaultChannel} from '@mattermost/playwright-lib';
 
 const TAGS = {tag: ['@channels', '@wysiwyg_editor']};
 
@@ -15,11 +15,11 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
      * even when the next channel's draft changes before the first one is saved.
      */
     test('keeps drafts typed right before quick channel switches', async ({pw}) => {
-        const {user, userClient, team} = await pw.initSetup();
+        const {user, userClient, team, offTopic} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'off-topic'});
+        await app.channelsPage.goto({team, channel: offTopic});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
@@ -29,18 +29,18 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
 
         // # Type in Off-Topic and switch away without waiting for the draft to save
         await editor.type(offTopicDraft);
-        await channelsPage.sidebarLeft.goToItem('town-square');
+        await channelsPage.sidebarLeft.goToItem(DefaultChannel.TownSquare);
         await channelsPage.centerView.header.toHaveTitle('Town Square');
 
         // # Type in Town Square and switch back right away
         await editor.type(townSquareDraft);
-        await channelsPage.sidebarLeft.goToItem('off-topic');
+        await channelsPage.sidebarLeft.goToItem(DefaultChannel.OffTopic);
         await channelsPage.centerView.header.toHaveTitle('Off-Topic');
 
         // * Each channel restores its own draft
         await expect(editor.input).toHaveText(offTopicDraft);
 
-        await channelsPage.sidebarLeft.goToItem('town-square');
+        await channelsPage.sidebarLeft.goToItem(DefaultChannel.TownSquare);
         await channelsPage.centerView.header.toHaveTitle('Town Square');
         await expect(editor.input).toHaveText(townSquareDraft);
     });
@@ -49,11 +49,11 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
      * @objective Verify pressing Enter immediately after typing sends the full text.
      */
     test('Enter sends text typed just before it', async ({pw}) => {
-        const {user, userClient, team} = await pw.initSetup();
+        const {user, userClient, team, offTopic} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'off-topic'});
+        await app.channelsPage.goto({team, channel: offTopic});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
@@ -74,11 +74,11 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
      * @objective Verify a restored draft places the cursor at the end so typing continues it.
      */
     test('continues a restored draft at its end', async ({pw}) => {
-        const {user, userClient, team} = await pw.initSetup();
+        const {user, userClient, team, offTopic} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'off-topic'});
+        await app.channelsPage.goto({team, channel: offTopic});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         await editor.toBeVisible();
@@ -87,9 +87,9 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
 
         // # Leave a draft, then switch away and back
         await editor.type(draft);
-        await channelsPage.sidebarLeft.goToItem('town-square');
+        await channelsPage.sidebarLeft.goToItem(DefaultChannel.TownSquare);
         await channelsPage.centerView.header.toHaveTitle('Town Square');
-        await channelsPage.sidebarLeft.goToItem('off-topic');
+        await channelsPage.sidebarLeft.goToItem(DefaultChannel.OffTopic);
         await channelsPage.centerView.header.toHaveTitle('Off-Topic');
         await expect(editor.input).toHaveText(draft);
 
@@ -105,11 +105,11 @@ test.describe('WYSIWYG editor - drafts', TAGS, () => {
      * @objective Verify editing a post places the cursor at the end of its message.
      */
     test('continues a message opened for editing at its end', async ({pw}) => {
-        const {user, userClient, team} = await pw.initSetup();
+        const {user, userClient, team, offTopic} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
 
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'off-topic'});
+        await app.channelsPage.goto({team, channel: offTopic});
 
         const editor = new WysiwygEditor(page.getByTestId('center.post_create'));
         const msg = `edit-me ${pw.random.id()}`;

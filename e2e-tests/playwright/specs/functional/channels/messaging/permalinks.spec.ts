@@ -8,8 +8,7 @@ import {expect, generated, test, testConfig} from '@mattermost/playwright-lib';
  */
 test('MM-T176 highlights the center post when its timestamp is clicked', {tag: ['@messaging']}, async ({pw}) => {
     // # Create a root post with a reply, and log in
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
+    const {user, team, userClient, townSquare: channel} = await pw.initSetup();
     const root = await userClient.createPost({
         channel_id: channel.id,
         message: `timestamp highlight ${pw.random.id()}`,
@@ -48,7 +47,7 @@ test('MM-T3308 follows a permalink to the first post without endless loading', {
     const base = `permalink-${pw.random.id()}`;
 
     // # Create a private channel with several posts
-    const {user, team, adminClient, userClient} = await pw.initSetup();
+    const {user, team, adminClient, userClient, offTopic} = await pw.initSetup();
     const privateChannel = await adminClient.createPrivateChannel(team.id, 'Permalink First');
     await adminClient.addToChannel(user.id, privateChannel.id);
     const created = [];
@@ -57,7 +56,6 @@ test('MM-T3308 follows a permalink to the first post without endless loading', {
     }
 
     // # Log in to Off-Topic and post a permalink to the first (oldest) post there
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: offTopic});
     const permalink = `${testConfig.baseURL}/${team.name}/pl/${created[0].id}`;

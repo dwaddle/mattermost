@@ -66,7 +66,7 @@ test(
     {tag: ['@mentions']},
     async ({pw}) => {
         // # Initialize setup
-        const {team, user, adminClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
 
         // # Create a public channel that the user is a member of, so it comes from the local store
         const localChannel = await adminClient.createChannel({
@@ -101,7 +101,7 @@ test(
         const releaseSearch = await holdChannelSearch(page);
 
         // # Visit town-square channel
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Type a channel mention matching both channels
         await app.center.postCreate.messageTextbox.locator.pressSequentially('~ac-');
@@ -136,7 +136,7 @@ test(
  */
 test('channel mention autocomplete ignores a search that finishes out of order', {tag: ['@mentions']}, async ({pw}) => {
     // # Initialize setup
-    const {team, user, adminClient} = await pw.initSetup();
+    const {team, user, adminClient, townSquare} = await pw.initSetup();
 
     // # Create channels that the user is not a member of, so they can only come from the search
     const alpha = await adminClient.createChannel({
@@ -170,7 +170,7 @@ test('channel mention autocomplete ignores a search that finishes out of order',
     });
 
     // # Visit town-square channel
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Note when the delayed search for the shortest mention finishes
     const staleSearch = page.waitForResponse(

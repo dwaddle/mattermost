@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import type {ChannelsPage} from '@mattermost/playwright-lib';
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 // The LHS Drafts entry itself stays rendered for as long as the /drafts URL matches, so only
 // its count badge can show that the last draft is gone.
@@ -20,7 +20,7 @@ test.describe('sending a draft from the Drafts panel', () => {
     test('channel draft does not come back after switching teams', {tag: '@messaging'}, async ({pw}) => {
         const draftMessage = `panel-send-${pw.random.id()}`;
 
-        const {user, team: team1, adminClient, userClient} = await pw.initSetup();
+        const {user, team: team1, adminClient, userClient, townSquare} = await pw.initSetup();
         const team2 = await pw.createNewTeam(adminClient, {
             name: 'team',
             displayName: 'Team',
@@ -32,11 +32,11 @@ test.describe('sending a draft from the Drafts panel', () => {
         const {channelsPage, draftsPage, app} = await pw.testBrowser.login(user);
 
         // # Type a draft in Town Square without sending it
-        await app.channelsPage.goto({team: team1, channel: 'town-square'});
+        await app.channelsPage.goto({team: team1, channel: townSquare});
         await channelsPage.centerView.postCreate.writeMessage(draftMessage);
 
         // # Switch channels so the draft is synced to the server
-        await channelsPage.sidebarLeft.goToItem('off-topic');
+        await channelsPage.sidebarLeft.goToItem(DefaultChannel.OffTopic);
         await channelsPage.centerView.header.toHaveTitle('Off-Topic');
 
         // * The draft is registered in the LHS
@@ -66,14 +66,14 @@ test.describe('sending a draft from the Drafts panel', () => {
 
         // * The sent draft did not reappear
         await channelsPage.sidebarLeft.draftsNotVisible();
-        await expect(channelsPage.sidebarLeft.draftIcon('town-square')).not.toBeAttached();
+        await expect(channelsPage.sidebarLeft.draftIcon(DefaultChannel.TownSquare)).not.toBeAttached();
 
         // * The Drafts page itself is empty, and the message is still posted
         await draftsPage.goto(team1.name);
         await expect(draftsPage.noDrafts).toBeVisible();
         await draftsPage.expectDraftCount(0);
 
-        await channelsPage.goto(team1.name, 'town-square');
+        await channelsPage.goto(team1.name, DefaultChannel.TownSquare);
         await channelsPage.centerView.waitUntilLastPostContains(draftMessage);
     });
 
@@ -85,10 +85,10 @@ test.describe('sending a draft from the Drafts panel', () => {
         const rootMessage = `thread-root-${pw.random.id()}`;
         const replyDraft = `thread-reply-draft-${pw.random.id()}`;
 
-        const {user, team, userClient} = await pw.initSetup();
+        const {user, team, userClient, townSquare} = await pw.initSetup();
         const {channelsPage, draftsPage, app} = await pw.testBrowser.login(user);
 
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Start a thread and leave a reply draft in it
         await channelsPage.centerView.postCreate.postMessage(rootMessage);

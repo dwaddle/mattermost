@@ -11,9 +11,7 @@ test(
     'MM-T2179 renders emoji-only messages as jumbo even when surrounded by whitespace',
     {tag: '@messaging'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const channel = await userClient.getChannelByName(team.id, 'off-topic');
-
+        const {user, team, userClient, offTopic: channel} = await pw.initSetup();
         // # Post the emoji inline with text, then on its own surrounded by whitespace
         const inline = await userClient.createPost({channel_id: channel.id, message: 'jumbo test :taco:'});
         const alone = await userClient.createPost({channel_id: channel.id, message: ' :taco: '});

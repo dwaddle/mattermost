@@ -8,9 +8,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * and posts only to the origin channel.
  */
 test('typed draft stays on the origin channel after switching away and back', {tag: '@messaging'}, async ({pw}) => {
-    const {team, user, userClient} = await pw.initSetup();
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+    const {team, user, userClient, offTopic, townSquare} = await pw.initSetup();
     const lastPost = async (channelId: string) => {
         const posts = await userClient.getPosts(channelId);
         return posts.posts[posts.order[0]];

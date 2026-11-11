@@ -18,12 +18,11 @@ test(
     {tag: '@mentions'},
     async ({pw}) => {
         // # Create two users on the same team and disable the WYSIWYG editor so preview is available
-        const {adminClient, user, userClient, team} = await pw.initSetup();
+        const {adminClient, user, userClient, team, townSquare} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, false);
 
         const mentionedUser = await adminClient.createUser(await pw.random.user('mentioned'), '', '');
         await adminClient.addToTeam(team.id, mentionedUser.id);
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
         await adminClient.addToChannel(mentionedUser.id, townSquare.id);
 
         const {app, channelsPage} = await pw.testBrowser.login(user);

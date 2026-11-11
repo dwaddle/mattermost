@@ -7,6 +7,7 @@ import {
     setupWebhookTestServer,
     test,
     testConfig,
+    DefaultChannel,
 } from '@mattermost/playwright-lib';
 
 import {centerPostContaining, lastCenterPost, openThread, threadPostContaining} from './support';
@@ -32,7 +33,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -51,7 +52,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             await expect(lastPost.blocks.locator).toBeVisible();
@@ -66,7 +67,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -88,7 +89,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             await expect(lastPost.blocks.locator).toBeVisible();
@@ -103,7 +104,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -132,7 +133,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
 
@@ -149,7 +150,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -201,7 +202,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             await expect(lastPost.blocks.locator).toBeVisible();
@@ -239,7 +240,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -274,7 +275,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             await lastPost.action('pw_mm_blocks_integration').click();
@@ -312,7 +313,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -347,7 +348,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             await lastPost.action('pw_mm_blocks_apply_update').click();
@@ -379,7 +380,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             await adminClient.patchConfig({ServiceSettings: {EnablePostUsernameOverride: true}});
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -417,7 +418,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
 
@@ -453,7 +454,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -492,7 +493,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -542,7 +543,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -578,7 +579,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -629,7 +630,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {adminClient, team, user} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -665,7 +666,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -713,7 +714,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -753,7 +754,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -777,8 +778,8 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
-            const offTopic = channels.find((ch) => ch.name === 'off-topic');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
+            const offTopic = channels.find((ch) => ch.name === DefaultChannel.OffTopic);
             if (!townSquare || !offTopic) {
                 throw new Error('Town Square or Off-Topic channel not found');
             }
@@ -814,7 +815,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             await lastPost.action('pw_mm_blocks_openurl').click();
@@ -846,7 +847,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -887,7 +888,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -925,7 +926,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -962,7 +963,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -995,7 +996,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -1036,7 +1037,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
             const anchorPost = lastPost;
@@ -1068,7 +1069,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -1096,7 +1097,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
 
@@ -1130,7 +1131,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -1159,7 +1160,7 @@ test.describe('Interactive mm_blocks (incoming webhook)', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const lastPost = await lastCenterPost(app);
 

@@ -137,7 +137,7 @@ export async function watchPostListScroll(page: Page, channelId: string): Promis
                     const now = await page.evaluate(() => Math.round(performance.now()));
                     return now - observations[observations.length - 1].at >= quietMs;
                 },
-                {timeout: 5000, intervals: [100, 200, 300]},
+                {intervals: [100, 200, 300]},
             )
             .toBe(true);
 

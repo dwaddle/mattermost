@@ -8,11 +8,11 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-64155 search box clear button should not leave type badge after closing the search box', async ({pw}) => {
     // # Set up test with a user
-    const {team, user} = await pw.initSetup();
+    const {team, user, townSquare} = await pw.initSetup();
 
     // # Log in as the test user and open the town square
     const {app, page} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the search box from the header
     await app.globalHeader.search.clickOpenButton();

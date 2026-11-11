@@ -21,12 +21,10 @@ test(
     'MM-T491 Channel notifications do not send a desktop notification when in focus',
     {tag: '@notifications'},
     async ({pw}) => {
-        const {adminClient, team, userClient: senderClient} = await pw.initSetup();
+        const {adminClient, team, userClient: senderClient, offTopic: channel} = await pw.initSetup();
         const receiver = await pw.createNewUserProfile(adminClient, {prefix: 'notification-receiver'});
         await adminClient.addToTeam(team.id, receiver.id);
         await setDesktopNotificationLevel(adminClient, receiver, 'all');
-
-        const channel = await adminClient.getChannelByName(team.id, 'off-topic');
         const {page, app} = await pw.testBrowser.login(receiver);
         await app.channelsPage.goto({team, channel});
         await pw.stubNotification(page, 'granted');

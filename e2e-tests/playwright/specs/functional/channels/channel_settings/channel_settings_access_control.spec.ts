@@ -154,7 +154,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // * Auto-add checkbox is disabled — no rules or system policies defined
         const autoAddCheckbox = tab.locator('#autoSyncMembersCheckbox');
@@ -186,10 +186,10 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // * System policy banner is visible
-        await expect(tab.locator('.ChannelSettingsModal__systemPolicies')).toBeVisible({timeout: 10000});
+        await expect(tab.locator('.ChannelSettingsModal__systemPolicies')).toBeVisible();
 
         await channelSettings.close();
     });
@@ -216,22 +216,22 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Add an attribute rule: Department == Engineering
         await addAttributeRule(tab, page, 'Engineering');
 
         // # Save (auto-add remains off — no confirmation modal for first-time rules with no member changes)
         const saveBtn = tab.locator('[data-testid="SaveChangesPanel__save-btn"]');
-        await expect(saveBtn).toBeEnabled({timeout: 10000});
+        await expect(saveBtn).toBeEnabled();
         await saveBtn.click();
 
         // * SaveChangesPanel disappears — rules were saved
-        await expect(saveBtn).not.toBeVisible({timeout: 15000});
+        await expect(saveBtn).not.toBeVisible({timeout: duration.half_min});
 
         // The dialog may auto-close after save or the Close button may take a moment to stabilise
         // after the panel removal re-render. Only close if the dialog is still open.
-        const isOpen = await channelSettings.container.isVisible({timeout: 2000}).catch(() => false);
+        const isOpen = await channelSettings.container.isVisible({timeout: duration.two_sec}).catch(() => false);
         if (isOpen) {
             await channelSettings.close();
         }
@@ -256,7 +256,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // * Checkbox starts disabled — no rules or system policies
         const autoAddCheckbox = tab.locator('#autoSyncMembersCheckbox');
@@ -266,7 +266,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await addAttributeRule(tab, page, 'Engineering');
 
         // * Checkbox is now enabled
-        await expect(autoAddCheckbox).toBeEnabled({timeout: 5000});
+        await expect(autoAddCheckbox).toBeEnabled();
 
         await channelSettings.close();
     });
@@ -311,30 +311,32 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Add attribute rule (unique value → preview lists only targetUser to add)
         await addAttributeRule(tab, page, departmentValue);
 
         // * Unsaved changes must be committed before save; otherwise handleSave can skip the confirmation path
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).toBeVisible({timeout: 15000});
+        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).toBeVisible({
+            timeout: duration.half_min,
+        });
 
         // # Enable auto-add members
         const autoAddCheckbox = tab.locator('#autoSyncMembersCheckbox');
-        await expect(autoAddCheckbox).toBeEnabled({timeout: 5000});
+        await expect(autoAddCheckbox).toBeEnabled();
         await autoAddCheckbox.click();
         await expect(autoAddCheckbox).toBeChecked();
 
         // # Save — confirmation modal appears because targetUser will be added
         const saveBtn = tab.locator('[data-testid="SaveChangesPanel__save-btn"]');
-        await expect(saveBtn).toBeEnabled({timeout: 10000});
+        await expect(saveBtn).toBeEnabled();
         await saveBtn.click();
 
         // # Confirm in the membership changes modal
         const confirmModal = page.locator('#channel-access-rules-confirm-modal');
-        await confirmModal.waitFor({state: 'visible', timeout: 30000});
+        await confirmModal.waitFor({state: 'visible', timeout: duration.half_min});
         await confirmModal.getByRole('button', {name: /Save and apply/}).click();
-        await confirmModal.waitFor({state: 'hidden', timeout: 15000});
+        await confirmModal.waitFor({state: 'hidden', timeout: duration.half_min});
 
         // * Poll until target user appears as a channel member (sync job runs asynchronously)
         await expect
@@ -369,19 +371,19 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Add a rule that excludes the admin: Department == Sales
         await addAttributeRule(tab, page, 'Sales');
 
         // # Attempt to save
         const saveBtn = tab.locator('[data-testid="SaveChangesPanel__save-btn"]');
-        await expect(saveBtn).toBeEnabled({timeout: 10000});
+        await expect(saveBtn).toBeEnabled();
         await saveBtn.click();
 
         // * Self-exclusion error modal appears
         const selfExclusionModal = page.locator('#confirmModal').filter({hasText: 'Cannot save access rules'});
-        await expect(selfExclusionModal).toBeVisible({timeout: 15000});
+        await expect(selfExclusionModal).toBeVisible({timeout: duration.half_min});
 
         // # Dismiss the modal to go back to editing
         await selfExclusionModal.getByRole('button', {name: 'Back to editing'}).click();
@@ -409,21 +411,21 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Add a rule to create unsaved changes
         await addAttributeRule(tab, page, 'Engineering');
 
         // * SaveChangesPanel is visible — there are unsaved changes
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).toBeVisible({timeout: 5000});
+        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).toBeVisible();
 
         // # First close click — modal stays open (unsaved-changes two-step close)
         await channelSettings.closeButton.click();
-        await expect(channelSettings.container).toBeVisible({timeout: 15000});
+        await expect(channelSettings.container).toBeVisible({timeout: duration.half_min});
 
         // # Second click — modal closes
         await channelSettings.closeButton.click();
-        await expect(channelSettings.container).not.toBeVisible({timeout: 30000});
+        await expect(channelSettings.container).not.toBeVisible({timeout: duration.half_min});
     });
 
     test('MM-67326_c12 View users — Restricted tab shows member count and user when rule removes a channel member', async ({
@@ -455,18 +457,18 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Add rule: Department == Engineering (memberToRemove doesn't match → will be removed)
         await addAttributeRule(tab, page, 'Engineering');
 
         // # Click Save — confirmation modal appears because memberToRemove will be removed
         const saveBtn = tab.locator('[data-testid="SaveChangesPanel__save-btn"]');
-        await expect(saveBtn).toBeEnabled({timeout: 10000});
+        await expect(saveBtn).toBeEnabled();
         await saveBtn.click();
 
         const confirmModal = page.locator('#channel-access-rules-confirm-modal');
-        await confirmModal.waitFor({state: 'visible', timeout: 30000});
+        await confirmModal.waitFor({state: 'visible', timeout: duration.half_min});
 
         // * Summary message shows 0 users added and 1 member removed
         await expect(confirmModal).toContainText('remove 1 current channel member');
@@ -475,17 +477,17 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await confirmModal.getByRole('button', {name: 'View users'}).click();
 
         // * "Restricted (1)" tab is visible — one member will be removed
-        await expect(confirmModal.getByRole('button', {name: /Restricted \(1\)/})).toBeVisible({timeout: 5000});
+        await expect(confirmModal.getByRole('button', {name: /Restricted \(1\)/})).toBeVisible();
 
         // # Switch to the Restricted tab
         await confirmModal.getByRole('button', {name: /Restricted \(1\)/}).click();
 
         // * memberToRemove's username appears in the restricted list
-        await expect(confirmModal).toContainText(memberToRemove.username, {timeout: 5000});
+        await expect(confirmModal).toContainText(memberToRemove.username);
 
         // # Cancel — don't actually apply
         await confirmModal.getByRole('button', {name: 'Cancel'}).click();
-        await confirmModal.waitFor({state: 'hidden', timeout: 10000});
+        await confirmModal.waitFor({state: 'hidden', timeout: duration.ten_sec});
 
         await channelSettings.close();
     });
@@ -528,25 +530,27 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Add rule (unique value → only memberToAdd appears in "to add" with this server data)
         await addAttributeRule(tab, page, departmentValue);
-        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).toBeVisible({timeout: 15000});
+        await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).toBeVisible({
+            timeout: duration.half_min,
+        });
 
         // # Enable auto-add so memberToAdd appears in the "to add" list
         const autoAddCheckbox = tab.locator('#autoSyncMembersCheckbox');
-        await expect(autoAddCheckbox).toBeEnabled({timeout: 5000});
+        await expect(autoAddCheckbox).toBeEnabled();
         await autoAddCheckbox.click();
         await expect(autoAddCheckbox).toBeChecked();
 
         // # Click Save — confirmation modal appears because memberToAdd will be added
         const saveBtn = tab.locator('[data-testid="SaveChangesPanel__save-btn"]');
-        await expect(saveBtn).toBeEnabled({timeout: 10000});
+        await expect(saveBtn).toBeEnabled();
         await saveBtn.click();
 
         const confirmModal = page.locator('#channel-access-rules-confirm-modal');
-        await confirmModal.waitFor({state: 'visible', timeout: 30000});
+        await confirmModal.waitFor({state: 'visible', timeout: duration.half_min});
 
         // * Summary shows 0 members removed (no one in this channel lacks the attribute)
         await expect(confirmModal).toContainText('remove 0 current channel members');
@@ -555,16 +559,14 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await confirmModal.getByRole('button', {name: 'View users'}).click();
 
         // * Allowed tab is visible with at least one user (memberToAdd)
-        await expect(confirmModal.locator('.ChannelAccessRulesConfirmModal__tab', {hasText: /Allowed/})).toBeVisible({
-            timeout: 5000,
-        });
+        await expect(confirmModal.locator('.ChannelAccessRulesConfirmModal__tab', {hasText: /Allowed/})).toBeVisible();
 
         // # The Allowed tab is active by default — verify memberToAdd's username is shown (unique Dept avoids other matches)
-        await expect(confirmModal).toContainText(memberToAdd.username, {timeout: 5000});
+        await expect(confirmModal).toContainText(memberToAdd.username);
 
         // # Cancel — don't actually apply
         await confirmModal.getByRole('button', {name: 'Cancel'}).click();
-        await confirmModal.waitFor({state: 'hidden', timeout: 10000});
+        await confirmModal.waitFor({state: 'hidden', timeout: duration.ten_sec});
 
         await channelSettings.close();
     });
@@ -606,18 +608,18 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelSettings.container.getByTestId('access_rules-tab-button').click();
 
         const tab = channelSettings.container.locator('.ChannelSettingsModal__accessRulesTab');
-        await expect(tab).toBeVisible({timeout: 10000});
+        await expect(tab).toBeVisible();
 
         // # Add rule (unique value -> only admin remains allowed in the private channel)
         await addAttributeRule(tab, page, departmentValue);
 
         // # Click Save - confirmation modal appears because memberToRemove will be removed
         const saveBtn = tab.locator('[data-testid="SaveChangesPanel__save-btn"]');
-        await expect(saveBtn).toBeEnabled({timeout: 10000});
+        await expect(saveBtn).toBeEnabled();
         await saveBtn.click();
 
         const confirmModal = page.locator('#channel-access-rules-confirm-modal');
-        await confirmModal.waitFor({state: 'visible', timeout: 30000});
+        await confirmModal.waitFor({state: 'visible', timeout: duration.half_min});
 
         // * Summary message shows 0 users added and 1 member removed
         await expect(confirmModal).toContainText('remove 1 current channel member');
@@ -626,11 +628,11 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         const [syncJobResponse] = await Promise.all([
             page.waitForResponse(
                 (response) => response.url().includes('/api/v4/jobs') && response.request().method() === 'POST',
-                {timeout: 10000},
+                {timeout: duration.ten_sec},
             ),
             confirmModal.getByRole('button', {name: 'Save'}).click(),
         ]);
-        await confirmModal.waitFor({state: 'hidden', timeout: 15000});
+        await confirmModal.waitFor({state: 'hidden', timeout: duration.half_min});
 
         if (!syncJobResponse.ok()) {
             throw new Error(`Failed to create access-control sync job: ${syncJobResponse.status()}`);
@@ -643,7 +645,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         // * Poll until memberToRemove is no longer a channel member
         await expect
             .poll(() => isChannelMember(adminClient, channel.id, memberToRemove.id), {
-                timeout: 15000,
+                timeout: duration.half_min,
                 intervals: [500, 1000, 1000, 2000],
                 message: `${memberToRemove.username} should be removed from the channel`,
             })
@@ -663,7 +665,7 @@ test.describe('Channel Settings Modal - Access Control Tab', () => {
         await channelsPage.sidebarRight.toBeVisible();
 
         // * Admin remains in the RHS members list, and removed member is absent
-        await expect(page.getByTestId(`rhs.channel_members.member:${adminUser.id}`)).toBeVisible({timeout: 10000});
+        await expect(page.getByTestId(`rhs.channel_members.member:${adminUser.id}`)).toBeVisible();
         await expect(page.getByTestId(`rhs.channel_members.member:${memberToRemove.id}`)).not.toBeVisible();
     });
 });

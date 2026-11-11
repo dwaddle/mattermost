@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, type App} from '@mattermost/playwright-lib';
+import {expect, test, type App, DefaultChannel} from '@mattermost/playwright-lib';
 
 // A sidebar link's accessible name ends in "unread", or "N mention(s)", while the channel has unread messages
 const UNREAD = / (unread|\d+ mentions?)$/;
@@ -90,7 +90,7 @@ test('MM-T248 Mark Direct Message post as Unread', async ({pw}) => {
     await expect(dm.mentionBadgeText.locator).toHaveText('4');
 
     // # Leave and return to the DM channel
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
+    const offTopic = await adminClient.getChannelByName(team.id, DefaultChannel.OffTopic);
     await app.lhs.channelList.channel(offTopic).clickLink();
     await expect(dm.link.locator).toHaveAccessibleName(UNREAD);
     await expect(dm.mentionBadgeText.locator).toHaveText('4');

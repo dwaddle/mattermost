@@ -4,10 +4,7 @@
 import {expect, suggestionTestKey, test} from '@mattermost/playwright-lib';
 
 test('Search box suggestion must be case insensitive', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {user, team, offTopic, townSquare} = await pw.initSetup();
     // # Log in a user in new browser context and visit a default channel page
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -38,9 +35,7 @@ test('Search box suggestion must be case insensitive', async ({pw}) => {
 
 test('remove extra whitespace when selecting a user', async ({pw}) => {
     // # Set up test with two users
-    const {user, adminUser: admin, team, userClient} = await pw.initSetup();
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {user, adminUser: admin, team, townSquare} = await pw.initSetup();
     // # Log in as the test user and visit a default channel page
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
@@ -67,7 +62,7 @@ test('remove extra whitespace when selecting a user', async ({pw}) => {
  * term/item pairing.
  */
 test('limits grouped channel suggestions and preserves the selected channel', {tag: '@search'}, async ({pw}) => {
-    const {team, user, adminClient} = await pw.initSetup();
+    const {team, user, adminClient, townSquare} = await pw.initSetup();
     const prefix = `search-trim-${pw.random.id()}`;
     const channels = [];
 
@@ -77,8 +72,6 @@ test('limits grouped channel suggestions and preserves the selected channel', {t
         await adminClient.addToChannel(user.id, channel.id);
         channels.push(channel);
     }
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     const {app} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel: townSquare});
     await app.globalHeader.search.clickOpenButton();

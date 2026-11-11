@@ -8,10 +8,9 @@ import {expect, test} from '@mattermost/playwright-lib';
  * forwards the post there.
  */
 test('forward post channel selector searches and selects a destination channel', {tag: '@channels'}, async ({pw}) => {
-    const {team, user, userClient, adminClient} = await pw.initSetup();
+    const {team, user, userClient, adminClient, townSquare} = await pw.initSetup();
     const target = await adminClient.createPublicChannel(team.id, `Forward Target ${pw.random.id()}`);
     await adminClient.addToChannel(user.id, target.id);
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     const message = `forward-selector-${pw.random.id()}`;
     const post = await userClient.createPost({channel_id: townSquare.id, message});
 

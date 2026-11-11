@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, setupFileServer, test} from '@mattermost/playwright-lib';
+import {expect, setupFileServer, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 let fileServerUrl: string;
 setupFileServer().then((serverUrl) => {
@@ -33,7 +33,7 @@ test('MM-T199 Removing a link preview removes it from the views of other users',
             {user_id: adminUser.id, category: 'display_settings', name: 'collapse_previews', value: 'false'},
         ]),
     ]);
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const offTopic = await userClient.getChannelByName(team.id, DefaultChannel.OffTopic);
 
     // # The test user posts a link
     const post = await userClient.createPost({

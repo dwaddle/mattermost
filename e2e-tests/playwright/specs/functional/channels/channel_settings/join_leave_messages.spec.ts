@@ -13,7 +13,7 @@
  * channel, so tests use `adminClient.addToChannel()` to produce them.
  */
 
-import {ChannelsPage, expect, test} from '@mattermost/playwright-lib';
+import {ChannelsPage, expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
     /**
@@ -144,7 +144,7 @@ test.describe('Channel Settings Modal - Join/Leave System Messages', () => {
             // WS connection is established before the add-to-channel event fires
             const {page: secondPage} = await pw.testBrowser.login(secondUser);
             const secondChannelsPage = new ChannelsPage(secondPage);
-            await secondChannelsPage.goto(team.name, 'town-square');
+            await secondChannelsPage.goto(team.name, DefaultChannel.TownSquare);
             await secondChannelsPage.toBeVisible();
 
             // # Admin adds secondUser to the channel — this triggers a suppressed add-to-channel

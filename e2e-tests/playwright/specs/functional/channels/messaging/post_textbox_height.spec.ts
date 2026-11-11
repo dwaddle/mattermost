@@ -7,8 +7,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify a long reply draft keeps the expanded reply textbox height after switching threads.
  */
 test('MM-T212 keeps a long draft expanded in the reply input', {tag: '@messaging'}, async ({pw}) => {
-    const {team, user, userClient} = await pw.initSetup();
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const {team, user, userClient, offTopic} = await pw.initSetup();
     const firstPost = await userClient.createPost({channel_id: offTopic.id, message: 'test post 1'});
     const secondPost = await userClient.createPost({channel_id: offTopic.id, message: 'test post 2'});
     const draft = `test${'\n'.repeat(8)}test`;

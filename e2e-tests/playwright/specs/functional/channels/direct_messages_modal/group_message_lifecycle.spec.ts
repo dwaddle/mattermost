@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 import {getChannelSlugFromUrl} from './helpers';
 
@@ -23,7 +23,7 @@ test('MM-T475 Group Message Channel Preferences Mute channel', async ({pw}) => {
 
     // # Post a normal message from another participant while away
     // `goto` is a full page navigation, so (re-)stub notifications only once settled on the away channel
-    await channelsPage.goto(team.name, 'off-topic');
+    await channelsPage.goto(team.name, DefaultChannel.OffTopic);
     await pw.stubNotification(page, 'granted');
     await pw.postAs(sender, {channel_id: gmChannel.id, message: 'Muted normal GM message'});
 
@@ -83,11 +83,11 @@ test(
     {tag: '@direct_messages'},
     async ({pw}) => {
         // # Create the test user plus two more users on the team
-        const {user, team, adminClient, userClient} = await pw.initSetup();
+        const {user, team, adminClient, userClient, townSquare} = await pw.initSetup();
         const [member1, member2] = await adminClient.createUsers(team.id, 2, 'gm');
 
         const {channelsPage, page, app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Create a group message and post a message, then save that message
         const dmModal = await channelsPage.openDirectChannelsModal();

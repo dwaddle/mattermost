@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, test, testConfig, type App} from '@mattermost/playwright-lib';
+import {expect, test, testConfig, type App, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * Posts a JSON payload to an incoming webhook URL.
@@ -50,7 +50,7 @@ test.describe('Message attachment special character decoding', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -75,7 +75,7 @@ test.describe('Message attachment special character decoding', () => {
 
             // # Log in and navigate to the channel
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             // # Get the last post which should contain the webhook attachment
             const post = await lastPost(app);
@@ -95,7 +95,7 @@ test.describe('Message attachment special character decoding', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -117,7 +117,7 @@ test.describe('Message attachment special character decoding', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const post = await lastPost(app);
 
@@ -133,7 +133,7 @@ test.describe('Message attachment special character decoding', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -153,7 +153,7 @@ test.describe('Message attachment special character decoding', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const post = await lastPost(app);
 
@@ -169,7 +169,7 @@ test.describe('Message attachment special character decoding', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -192,7 +192,7 @@ test.describe('Message attachment special character decoding', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const post = await lastPost(app);
 
@@ -209,7 +209,7 @@ test.describe('Message attachment special character decoding', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -231,7 +231,7 @@ test.describe('Message attachment special character decoding', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const post = await lastPost(app);
 
@@ -248,7 +248,7 @@ test.describe('Message attachment special character decoding', () => {
             const {team, user, adminClient} = await pw.initSetup();
 
             const channels = await adminClient.getMyChannels(team.id);
-            const townSquare = channels.find((ch) => ch.name === 'town-square');
+            const townSquare = channels.find((ch) => ch.name === DefaultChannel.TownSquare);
             if (!townSquare) {
                 throw new Error('Town Square channel not found');
             }
@@ -271,7 +271,7 @@ test.describe('Message attachment special character decoding', () => {
             });
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
 
             const post = await lastPost(app);
 

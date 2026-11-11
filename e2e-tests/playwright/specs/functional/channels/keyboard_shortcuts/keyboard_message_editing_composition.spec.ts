@@ -13,8 +13,7 @@ test(
     'MM-T1262 MM-T1263 opens and cancels the edit box with Up arrow and Escape',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {user, team, userClient, townSquare} = await pw.initSetup();
         const message = `edit shortcut ${pw.random.id()}`;
         const root = await userClient.createPost({channel_id: townSquare.id, message});
 
@@ -70,8 +69,7 @@ test(
     'MM-T1267 MM-T1268 composes and posts a code block using Shift+Enter for new lines',
     {tag: '@keyboard_shortcuts'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const townSquare = await userClient.getChannelByName(team.id, 'town-square');
+        const {user, team, townSquare} = await pw.initSetup();
         const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 

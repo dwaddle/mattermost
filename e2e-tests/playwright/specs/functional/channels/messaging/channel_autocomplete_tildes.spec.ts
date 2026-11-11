@@ -10,8 +10,7 @@ test(
     'MM-T173 Edit a post with strikethrough and close channel autocomplete after the second tilde',
     {tag: '@messaging'},
     async ({pw}) => {
-        const {user, team, userClient} = await pw.initSetup();
-        const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+        const {user, team, userClient, offTopic} = await pw.initSetup();
         const message = `Hello${pw.random.id()}`;
         const post = await userClient.createPost({channel_id: offTopic.id, message});
 
@@ -70,8 +69,7 @@ test(
  * @objective Verify channel autocomplete closes when the tilde that opened it is deleted.
  */
 test('MM-T174 Autocomplete should close if tildes are deleted using backspace', {tag: '@messaging'}, async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
+    const {user, team, userClient, offTopic} = await pw.initSetup();
     await userClient.createPost({channel_id: offTopic.id, message: 'foo'});
 
     // # Log in and open the post for editing with ArrowUp

@@ -8,11 +8,9 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T448 does not notify a user mentioned in a different DM', {tag: '@direct_messages'}, async ({pw}) => {
     // # Create the test user plus two more users on the team
-    const {user, team, adminClient, userClient} = await pw.initSetup();
+    const {user, team, adminClient, userClient, townSquare} = await pw.initSetup();
     const [partner, mentioned] = await adminClient.createUsers(team.id, 2, 'dmuser');
     const token = `dmmention${pw.random.id()}`;
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # As the test user, mention the third user in a DM with the partner, and mention them in Town Square too
     // (the Town Square mention shows Recent mentions works, so the missing DM mention means something)
     const dm = await userClient.createDirectChannel([user.id, partner.id]);
@@ -82,9 +80,8 @@ test(
  */
 test('MM-T455 opens a direct message from a profile popover', {tag: '@direct_messages'}, async ({pw}) => {
     // # Create the test user plus another user who posts in a shared channel
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, offTopic} = await pw.initSetup();
     const [author] = await adminClient.createUsers(team.id, 1, 'author');
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
     await adminClient.addToChannel(author.id, offTopic.id);
     const token = `popover dm ${pw.random.id()}`;
     const {client: authorClient} = await pw.makeClient(author);

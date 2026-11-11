@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {Api, expect, generated, Msg, settle, test} from '@mattermost/playwright-lib';
+import {Api, expect, generated, Msg, settle, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify a thread the user follows is listed in Threads, opens in the thread pane, and leaves
@@ -15,7 +15,7 @@ test(
 
         // # Threads need collapsed reply threads (an earlier spec may have turned them off on this server)
         await adminClient.patchConfig({ServiceSettings: {CollapsedThreads: 'always_on'}} as any);
-        const channel = await userClient.getChannelByName(team.id, 'town-square');
+        const channel = await userClient.getChannelByName(team.id, DefaultChannel.TownSquare);
 
         // # Start a thread: the author follows it
         const root = await userClient.createPost({channel_id: channel.id, message: 'Thread root'} as any);

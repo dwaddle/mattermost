@@ -41,11 +41,11 @@ test.describe('/mobile-logs slash command', () => {
         {tag: '@slash_commands'},
         async ({pw}) => {
             // # Initialize setup
-            const {team, user, userClient} = await pw.initSetup();
+            const {team, user, userClient, townSquare} = await pw.initSetup();
 
             // # Log in as the user and navigate to town-square
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // # Execute /mobile-logs on
             await runCommand(app, '/mobile-logs on');
@@ -69,7 +69,7 @@ test.describe('/mobile-logs slash command', () => {
      */
     test('MM-T67880 disables mobile logs for self after enabling via API', {tag: '@slash_commands'}, async ({pw}) => {
         // # Initialize setup
-        const {team, user, userClient} = await pw.initSetup();
+        const {team, user, userClient, townSquare} = await pw.initSetup();
 
         // # Pre-enable the preference via API to avoid back-to-back commands
         await userClient.savePreferences(user.id, [
@@ -78,7 +78,7 @@ test.describe('/mobile-logs slash command', () => {
 
         // # Log in as the user and navigate to town-square
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Execute /mobile-logs off
         await runCommand(app, '/mobile-logs off');
@@ -100,11 +100,11 @@ test.describe('/mobile-logs slash command', () => {
         {tag: '@slash_commands'},
         async ({pw}) => {
             // # Initialize setup
-            const {team, user} = await pw.initSetup();
+            const {team, user, townSquare} = await pw.initSetup();
 
             // # Log in as the user and navigate to town-square
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // # Execute /mobile-logs status
             await runCommand(app, '/mobile-logs status');
@@ -123,7 +123,7 @@ test.describe('/mobile-logs slash command', () => {
         {tag: '@slash_commands'},
         async ({pw}) => {
             // # Initialize setup
-            const {team, user, userClient} = await pw.initSetup();
+            const {team, user, userClient, townSquare} = await pw.initSetup();
 
             // # Pre-enable the preference via API
             await userClient.savePreferences(user.id, [
@@ -132,7 +132,7 @@ test.describe('/mobile-logs slash command', () => {
 
             // # Log in as the user and navigate to town-square
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // # Execute /mobile-logs status
             await runCommand(app, '/mobile-logs status');
@@ -148,11 +148,11 @@ test.describe('/mobile-logs slash command', () => {
      */
     test('MM-T67880 displays usage hint for invalid or missing arguments', {tag: '@slash_commands'}, async ({pw}) => {
         // # Initialize setup
-        const {team, user} = await pw.initSetup();
+        const {team, user, townSquare} = await pw.initSetup();
 
         // # Log in as the user and navigate to town-square
         const {app} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Execute /mobile-logs with an invalid action
         await runCommand(app, '/mobile-logs invalid');
@@ -170,11 +170,11 @@ test.describe('/mobile-logs slash command', () => {
         {tag: '@slash_commands'},
         async ({pw}) => {
             // # Initialize setup
-            const {team, adminUser, user, userClient} = await pw.initSetup();
+            const {team, adminUser, user, userClient, townSquare} = await pw.initSetup();
 
             // # Log in as admin and navigate to town-square
             const {app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // # Execute /mobile-logs on for the regular user
             await runCommand(app, `/mobile-logs on @${user.username}`);
@@ -198,7 +198,7 @@ test.describe('/mobile-logs slash command', () => {
         {tag: '@slash_commands'},
         async ({pw}) => {
             // # Initialize setup
-            const {team, adminUser, user, userClient} = await pw.initSetup();
+            const {team, adminUser, user, userClient, townSquare} = await pw.initSetup();
 
             // # Pre-enable the preference for the target user via API
             const {adminClient} = await pw.getAdminClient();
@@ -208,7 +208,7 @@ test.describe('/mobile-logs slash command', () => {
 
             // # Log in as admin and navigate to town-square
             const {app} = await pw.testBrowser.login(adminUser);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // # Disable for the regular user
             await runCommand(app, `/mobile-logs off @${user.username}`);
@@ -232,7 +232,7 @@ test.describe('/mobile-logs slash command', () => {
         {tag: '@slash_commands'},
         async ({pw}) => {
             // # Initialize setup with two regular users
-            const {team, adminClient, user} = await pw.initSetup();
+            const {team, adminClient, user, townSquare} = await pw.initSetup();
 
             const otherUser = await pw.random.user('other');
             const {id: otherUserId} = await adminClient.createUser(otherUser, '', '');
@@ -240,7 +240,7 @@ test.describe('/mobile-logs slash command', () => {
 
             // # Log in as the first regular user
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // # Try to enable mobile logs for the other user
             await runCommand(app, `/mobile-logs on @${otherUser.username}`);
@@ -258,10 +258,10 @@ test.describe('/mobile-logs slash command', () => {
         'MM-T67880 regular user gets permission denial for nonexistent cross-user target',
         {tag: '@slash_commands'},
         async ({pw}) => {
-            const {team, user} = await pw.initSetup();
+            const {team, user, townSquare} = await pw.initSetup();
 
             const {app} = await pw.testBrowser.login(user);
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
 
             // # Post the mobile-logs command
             await runCommand(app, '/mobile-logs on @nonexistentuser12345');
@@ -277,11 +277,11 @@ test.describe('/mobile-logs slash command', () => {
      */
     test('MM-T67880 admin checks mobile logs status for another user', {tag: '@slash_commands'}, async ({pw}) => {
         // # Initialize setup
-        const {team, adminUser, user} = await pw.initSetup();
+        const {team, adminUser, user, townSquare} = await pw.initSetup();
 
         // # Log in as admin and navigate to town-square
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Check status (default off)
         await runCommand(app, `/mobile-logs status @${user.username}`);
@@ -296,11 +296,11 @@ test.describe('/mobile-logs slash command', () => {
      */
     test('MM-T67880 returns error for nonexistent target user', {tag: '@slash_commands'}, async ({pw}) => {
         // # Initialize setup
-        const {team, adminUser} = await pw.initSetup();
+        const {team, adminUser, townSquare} = await pw.initSetup();
 
         // # Log in as admin
         const {app} = await pw.testBrowser.login(adminUser);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Try to enable for a nonexistent user
         await runCommand(app, '/mobile-logs on @nonexistentuser12345');

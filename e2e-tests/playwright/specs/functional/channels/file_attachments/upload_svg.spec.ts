@@ -3,7 +3,7 @@
 
 import path from 'node:path';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that an SVG file can be uploaded and posted when SVG support is enabled.
@@ -15,7 +15,7 @@ test('MM-T309 uploads and posts an SVG file when SVG support is enabled', {tag: 
     // # Create and log in as a test user, and enable SVG support
     const {user, team, adminClient, userClient} = await pw.initSetup();
     await adminClient.patchConfig({ServiceSettings: {EnableSVGs: true}});
-    const channel = await userClient.getChannelByName(team.id, 'off-topic');
+    const channel = await userClient.getChannelByName(team.id, DefaultChannel.OffTopic);
 
     const {app, page} = await pw.testBrowser.login(user);
     await app.channelsPage.goto({team, channel});

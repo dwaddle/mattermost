@@ -8,10 +8,9 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T358 searches for a message in a direct message channel', {tag: '@search'}, async ({pw}) => {
     // # Create a direct message and a uniquely searchable post
-    const {user, team, adminClient} = await pw.initSetup();
+    const {user, team, adminClient, townSquare} = await pw.initSetup();
     const [otherUser] = await adminClient.createUsers(team.id, 1, 'dm-user');
     const dmChannel = await adminClient.createDirectChannel([user.id, otherUser.id]);
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const message = `Hello${pw.random.id()}`;
     const dmPost = await pw.postAs(user, {channel_id: dmChannel.id, message});
     const channelPost = await pw.postAs(user, {channel_id: townSquare.id, message});

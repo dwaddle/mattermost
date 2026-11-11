@@ -18,10 +18,9 @@ export const searchFilterDates = {
 };
 
 export async function setupSearchDateFilter(pw: PlaywrightExtended) {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, offTopic} = await pw.initSetup();
     const [anotherAdmin] = await adminClient.createUsers(team.id, 1, 'other-admin');
     const channel = await adminClient.createPublicChannel(team.id, 'Search Date Filter');
-    const offTopic = await adminClient.getChannelByName(team.id, 'off-topic');
     await adminClient.addToChannel(user.id, channel.id);
     await adminClient.addToChannel(anotherAdmin.id, channel.id);
     await adminClient.updateUserRoles(user.id, 'system_user system_admin');

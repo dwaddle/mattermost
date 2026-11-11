@@ -23,15 +23,12 @@ async function openRecentMentions(pw: PlaywrightExtended, user: UserProfile, tea
  * channel filter has something to exclude and an unfiltered search has two hits.
  */
 async function setupMentionsInTwoChannels(pw: PlaywrightExtended) {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const [mentioningUser] = await adminClient.createUsers(team.id, 1, 'mentioner');
 
     const otherChannel = await adminClient.createPublicChannel(team.id, 'Filtered Mentions');
     await adminClient.addToChannel(user.id, otherChannel.id);
     await adminClient.addToChannel(mentioningUser.id, otherChannel.id);
-
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // Each mention carries a unique token so a result can be attributed to one channel.
     const townSquareMention = `@${user.username} townsquare${pw.random.id()}`;
     const otherChannelMention = `@${user.username} otherchannel${pw.random.id()}`;
@@ -111,10 +108,8 @@ test('removing a filter chip restores the excluded mentions', {tag: '@search'}, 
  * both arrive through the same search.
  */
 test('mention type filter separates direct mentions from keyword mentions', {tag: '@search'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const [mentioningUser] = await adminClient.createUsers(team.id, 1, 'mentioner');
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Give the user a notification keyword, so keyword mentions have something to match
     const keyword = `kw${pw.random.id()}`;
     await adminClient.patchUser({id: user.id, notify_props: {...user.notify_props, mention_keys: keyword}});
@@ -149,7 +144,7 @@ test('mention type filter separates direct mentions from keyword mentions', {tag
  * channels picked after it.
  */
 test('a team and its channels picked together are both applied', {tag: '@search'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const [mentioningUser] = await adminClient.createUsers(team.id, 1, 'mentioner');
 
     // # Put the user on a second team, so the popover offers the team selector
@@ -159,8 +154,6 @@ test('a team and its channels picked together are both applied', {tag: '@search'
     const secondTeamChannel = await adminClient.createPublicChannel(secondTeam.id, 'Second Team Mentions');
     await adminClient.addToChannel(user.id, secondTeamChannel.id);
     await adminClient.addToChannel(mentioningUser.id, secondTeamChannel.id);
-
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
     const townSquareMention = `@${user.username} townsquare${pw.random.id()}`;
     const secondTeamMention = `@${user.username} secondteam${pw.random.id()}`;
 
@@ -217,11 +210,9 @@ test('popping out a filtered mentions panel keeps the filters', {tag: '@search'}
     expect(popoutPage.url()).toContain(`mentionChannels=${otherChannel.id}`);
 
     // * Verify the popped out window shows the same filtered results, with the chip still on it
-    await expect(popoutPanel.mentionFilters.chips).toContainText(otherChannel.display_name, {
-        timeout: 10000,
-    });
-    await expect(popoutPanel.getResultItems()).toHaveCount(1, {timeout: 10000});
-    await expect(popoutPanel.getResultByText(otherChannelMention)).toBeVisible({timeout: 10000});
+    await expect(popoutPanel.mentionFilters.chips).toContainText(otherChannel.display_name);
+    await expect(popoutPanel.getResultItems()).toHaveCount(1);
+    await expect(popoutPanel.getResultByText(otherChannelMention)).toBeVisible();
     await expect(popoutPanel.getResultByText(townSquareMention)).toHaveCount(0);
 
     await popoutPage.close();
@@ -232,7 +223,7 @@ test('popping out a filtered mentions panel keeps the filters', {tag: '@search'}
  * town-square, so a filter that spans teams has something to pick from either side.
  */
 async function setupMentionsOnTwoTeams(pw: PlaywrightExtended) {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const [mentioningUser] = await adminClient.createUsers(team.id, 1, 'mentioner');
 
     const secondTeam = await adminClient.createTeam(await pw.random.team('team', 'Team', 'O', true));
@@ -244,9 +235,6 @@ async function setupMentionsOnTwoTeams(pw: PlaywrightExtended) {
         await adminClient.addToChannel(user.id, channel.id);
         await adminClient.addToChannel(mentioningUser.id, channel.id);
     }
-
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     const townSquareMention = `@${user.username} townsquare${pw.random.id()}`;
     const firstTeamMention = `@${user.username} firstteam${pw.random.id()}`;
     const secondTeamMention = `@${user.username} secondteam${pw.random.id()}`;
@@ -276,9 +264,7 @@ async function setupMentionsOnTwoTeams(pw: PlaywrightExtended) {
  * from the wider Last 7 days.
  */
 test('the date filter narrows mentions by when they arrived', {tag: '@search'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const day = 24 * 60 * 60 * 1000;
     const todayMention = `@${user.username} today${pw.random.id()}`;
     const threeDaysMention = `@${user.username} threedays${pw.random.id()}`;
@@ -517,8 +503,8 @@ test('popping out an unfiltered mentions panel keeps every team', {tag: '@search
     expect(popoutPage.url()).not.toContain('mentionChannels=');
 
     // * Verify the popped out window still spans both teams rather than the one it was opened from
-    await expect(popoutPanel.getResultByText(townSquareMention)).toBeVisible({timeout: 10000});
-    await expect(popoutPanel.getResultByText(secondTeamMention)).toBeVisible({timeout: 10000});
+    await expect(popoutPanel.getResultByText(townSquareMention)).toBeVisible();
+    await expect(popoutPanel.getResultByText(secondTeamMention)).toBeVisible();
     await expect(popoutPanel.mentionFilters.chips).toHaveCount(0);
 
     await popoutPage.close();
@@ -530,10 +516,8 @@ test('popping out an unfiltered mentions panel keeps every team', {tag: '@search
  * result away.
  */
 test('a keyword shaped like a search modifier still finds mentions', {tag: '@search'}, async ({pw}) => {
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, townSquare} = await pw.initSetup();
     const [mentioningUser] = await adminClient.createUsers(team.id, 1, 'mentioner');
-    const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
-
     // # Give the user a keyword that reads as a modifier
     await adminClient.patchUser({id: user.id, notify_props: {...user.notify_props, mention_keys: 'on:call'}});
 

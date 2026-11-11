@@ -22,13 +22,17 @@ test(
     'MM-T487 Desktop Notifications for all activity with apostrophe, emoji, and markdown',
     {tag: '@notifications'},
     async ({pw}) => {
-        const {adminClient, team, user: sender, userClient: senderClient} = await pw.initSetup();
+        const {
+            adminClient,
+            team,
+            user: sender,
+            userClient: senderClient,
+            offTopic: channel,
+            townSquare,
+        } = await pw.initSetup();
         const receiver = await pw.createNewUserProfile(adminClient, {prefix: 'notification-receiver'});
         await adminClient.addToTeam(team.id, receiver.id);
         await setDesktopNotificationLevel(adminClient, receiver, 'all');
-
-        const channel = await adminClient.getChannelByName(team.id, 'off-topic');
-        const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
         const {page, app} = await pw.testBrowser.login(receiver);
         await app.channelsPage.goto({team, channel: townSquare});
         await pw.stubNotification(page, 'granted');

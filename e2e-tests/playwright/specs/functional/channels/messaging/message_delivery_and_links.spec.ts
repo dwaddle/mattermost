@@ -7,11 +7,9 @@ import {expect, generated, test} from '@mattermost/playwright-lib';
  * @objective Verify the RHS thread refreshes replies when the center channel has changed.
  */
 test('MM-T94 RHS fetches messages on reconnect while a different channel is in center', async ({pw}) => {
-    const {adminClient, team, user, userClient} = await pw.initSetup();
+    const {adminClient, team, user, offTopic, townSquare} = await pw.initSetup();
     const [author] = await adminClient.createUsers(team.id, 1, 'reconnect-author');
     const threadChannel = await adminClient.createPublicChannel(team.id, 'RHS Reconnect');
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
-    const townSquare = await userClient.getChannelByName(team.id, 'town-square');
     await adminClient.addToChannel(user.id, threadChannel.id);
     await adminClient.addToChannel(author.id, threadChannel.id);
     const {client: authorClient} = await pw.makeClient({username: author.username, password: author.password});
@@ -55,10 +53,9 @@ test('MM-T94 RHS fetches messages on reconnect while a different channel is in c
  * @objective Verify channel short-linking still works when the channel reference is surrounded by brackets.
  */
 test('MM-T175 Channel short-linking still works when placed in brackets', async ({pw}) => {
-    const {adminClient, team, user, userClient} = await pw.initSetup();
+    const {adminClient, team, user, userClient, offTopic} = await pw.initSetup();
     const linkedChannel = await adminClient.createPublicChannel(team.id, 'Shortlink Target');
     await adminClient.addToChannel(user.id, linkedChannel.id);
-    const offTopic = await userClient.getChannelByName(team.id, 'off-topic');
     const post = await userClient.createPost({channel_id: offTopic.id, message: `(~${linkedChannel.name})`});
 
     // # Open Off-Topic, where a bracketed channel shortlink was posted

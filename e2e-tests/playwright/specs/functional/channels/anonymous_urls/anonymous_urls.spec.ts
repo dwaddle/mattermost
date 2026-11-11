@@ -3,7 +3,7 @@
 
 import type {Channel} from '@mattermost/types/channels';
 
-import {expect, getAdminClient, test} from '@mattermost/playwright-lib';
+import {expect, getAdminClient, test, duration} from '@mattermost/playwright-lib';
 
 const OBFUSCATED_SLUG_RE = /^[a-z0-9]{26}$/;
 
@@ -77,7 +77,7 @@ async function createAnonymousUrlChannel(
                 const cfg = await adminClient.getConfig();
                 return cfg.PrivacySettings?.UseAnonymousURLs;
             },
-            {timeout: 15000, intervals: [500, 1000, 2000]},
+            {timeout: duration.half_min, intervals: [500, 1000, 2000]},
         )
         .toBe(true);
 
@@ -150,7 +150,7 @@ test.describe('Anonymous URLs', () => {
             await pw.waitUntil(async () => (await systemConsolePage.usersAndTeams.saveButton.textContent()) === 'Save');
             await expect
                 .poll(async () => (await adminClient.getConfig()).PrivacySettings?.UseAnonymousURLs === true, {
-                    timeout: 30_000,
+                    timeout: duration.half_min,
                     intervals: [500, 1500, 3000],
                 })
                 .toBe(true);
@@ -165,7 +165,7 @@ test.describe('Anonymous URLs', () => {
             await adminClient.patchConfig({PrivacySettings: {UseAnonymousURLs: true}});
             await expect
                 .poll(async () => (await adminClient.getConfig()).PrivacySettings?.UseAnonymousURLs === true, {
-                    timeout: 20_000,
+                    timeout: duration.half_min,
                     intervals: [500, 1000, 2000],
                 })
                 .toBe(true);
@@ -179,7 +179,6 @@ test.describe('Anonymous URLs', () => {
             await adminClient.patchConfig({PrivacySettings: {UseAnonymousURLs: true}});
             await expect
                 .poll(async () => (await adminClient.getConfig()).PrivacySettings?.UseAnonymousURLs === true, {
-                    timeout: 10_000,
                     intervals: [500, 1000],
                 })
                 .toBe(true);
@@ -221,7 +220,7 @@ test.describe('Anonymous URLs', () => {
                         const cfg = await adminClient.getConfig();
                         return cfg.PrivacySettings?.UseAnonymousURLs === true;
                     },
-                    {timeout: 30000, intervals: [500, 1500, 3000]},
+                    {timeout: duration.half_min, intervals: [500, 1500, 3000]},
                 )
                 .toBe(true);
 
@@ -247,7 +246,7 @@ test.describe('Anonymous URLs', () => {
             // * Verify the URL editor section is not visible (wait for client config to apply)
             await expect
                 .poll(async () => !(await channelsPage.newChannelModal.urlSection.isVisible()), {
-                    timeout: 30000,
+                    timeout: duration.half_min,
                     intervals: [500, 1500],
                 })
                 .toBe(true);
@@ -801,7 +800,7 @@ test.describe('Anonymous URLs', () => {
      */
     test('channel search finds channels with obfuscated URLs', {tag: '@anonymous_urls'}, async ({pw}) => {
         // # Initialize setup and enable anonymous URLs
-        const {adminClient, team, user} = await pw.initSetup({withDefaultProfileImage: false});
+        const {adminClient, team, user, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
         await skipIfNoAdvancedLicense(adminClient);
         await setAnonymousUrls(adminClient, true);
 
@@ -826,7 +825,7 @@ test.describe('Anonymous URLs', () => {
         const targetChannel = createdChannels[0];
 
         // # Open Find Channels and search by display name
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await channelsPage.sidebarLeft.findChannelButton.click();
         await channelsPage.findChannelsModal.toBeVisible();
         await channelsPage.findChannelsModal.input.fill(targetChannel.displayName.substring(0, 15));
@@ -849,7 +848,7 @@ test.describe('Anonymous URLs', () => {
      */
     test('navigates post search results back to anonymous URL channels', {tag: '@anonymous_urls'}, async ({pw}) => {
         // # Initialize setup and enable anonymous URLs
-        const {adminClient, team, user} = await pw.initSetup({withDefaultProfileImage: false});
+        const {adminClient, team, user, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
         await skipIfNoAdvancedLicense(adminClient);
         await setAnonymousUrls(adminClient, true);
 
@@ -867,7 +866,7 @@ test.describe('Anonymous URLs', () => {
         const postId = await lastPost.getId();
 
         // # Open message search from another channel
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
         await channelsPage.globalHeader.openSearch();
         await channelsPage.searchBox.searchInput.fill(message);
         await channelsPage.searchBox.searchInput.press('Enter');
@@ -875,7 +874,7 @@ test.describe('Anonymous URLs', () => {
         const searchItem = page.getByTestId(/^search\.results\.(post|file):/).first();
 
         // * Verify the post appears in results
-        await expect(searchItem).toContainText(message, {timeout: 15000});
+        await expect(searchItem).toContainText(message, {timeout: duration.half_min});
 
         // # Jump from the search result back to the anonymous URL channel
         await searchItem.getByRole('link', {name: 'Jump'}).click();
@@ -894,7 +893,7 @@ test.describe('Anonymous URLs', () => {
         {tag: '@anonymous_urls'},
         async ({pw}) => {
             // # Initialize setup and enable anonymous URLs
-            const {user, adminClient, team} = await pw.initSetup({withDefaultProfileImage: false});
+            const {user, adminClient, team, townSquare} = await pw.initSetup({withDefaultProfileImage: false});
             await skipIfNoAdvancedLicense(adminClient);
             await setAnonymousUrls(adminClient, true);
 
@@ -933,7 +932,7 @@ test.describe('Anonymous URLs', () => {
             const searchableChannel = createdChannels[1];
 
             // # Reopen the channel from Find Channels using its display name
-            await app.channelsPage.goto({team, channel: 'town-square'});
+            await app.channelsPage.goto({team, channel: townSquare});
             await channelsPage.sidebarLeft.findChannelButton.click();
             await channelsPage.findChannelsModal.toBeVisible();
             await channelsPage.findChannelsModal.input.fill(searchableChannel.displayName);

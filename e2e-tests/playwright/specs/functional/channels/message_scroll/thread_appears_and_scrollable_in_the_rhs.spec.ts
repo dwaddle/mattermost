@@ -3,7 +3,7 @@
 
 import {CollapsedThreads} from '@mattermost/types/config';
 
-import {expect, test} from '@mattermost/playwright-lib';
+import {expect, test, duration, DefaultChannel} from '@mattermost/playwright-lib';
 
 /**
  * @objective Verify that the entire thread appears in the RHS and is scrollable
@@ -12,7 +12,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * Test requires creating a thread with 100+ replies and 40+ unrelated channel messages
  */
 test('MM-T3293 The entire thread appears in the RHS (scrollable)', {tag: ['@messaging']}, async ({pw}) => {
-    test.setTimeout(120000);
+    test.setTimeout(duration.two_min);
     const NUMBER_OF_REPLIES = 100;
     const NUMBER_OF_MAIN_THREAD_MESSAGES = 40;
 
@@ -32,7 +32,7 @@ test('MM-T3293 The entire thread appears in the RHS (scrollable)', {tag: ['@mess
 
     // # Get the town-square channel
     const channels = await userClient.getMyChannels(team.id);
-    const townSquare = channels.find((channel) => channel.name === 'town-square');
+    const townSquare = channels.find((channel) => channel.name === DefaultChannel.TownSquare);
     if (!townSquare) {
         throw new Error('Town Square channel not found');
     }
@@ -100,7 +100,7 @@ test('MM-T3293 The entire thread appears in the RHS (scrollable)', {tag: ['@mess
                     await page.mouse.wheel(0, -400);
                     return false;
                 },
-                {timeout: 20000, intervals: [300]},
+                {timeout: duration.half_min, intervals: [300]},
             )
             .toBeTruthy();
     };

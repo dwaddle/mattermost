@@ -7,9 +7,7 @@ import {expect, test} from '@mattermost/playwright-lib';
  * @objective Verify Page Up and Page Down scroll an open thread in the RHS.
  */
 test('should be able to scroll the RHS with page up and down', async ({pw}) => {
-    const {user, team, userClient} = await pw.initSetup();
-    const channel = await userClient.getChannelByName(team.id, 'town-square');
-
+    const {user, team, userClient, townSquare: channel} = await pw.initSetup();
     // # Create a thread with tall replies so it can scroll
     const root = await userClient.createPost({channel_id: channel.id, message: 'post'});
     for (let i = 0; i < 10; i++) {

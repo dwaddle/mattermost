@@ -34,12 +34,12 @@ test.fixme(
         await pw.ensureFeatureFlag('DiscoverableChannels', true);
 
         // # Initialize setup and create a discoverable private channel the user is not a member of
-        const {team, user, adminClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
         const channel = await createDiscoverableChannel(adminClient, team.id);
 
         // # Log in as the non-member user and open Browse Channels
         const {channelsPage, app, page} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         const dialog = await channelsPage.openBrowseChannelsModal();
         await dialog.toBeVisible();
@@ -74,12 +74,12 @@ test(
         await pw.ensureFeatureFlag('DiscoverableChannels', true);
 
         // # Initialize setup and create a discoverable private channel the user is not a member of
-        const {team, user, adminClient} = await pw.initSetup();
+        const {team, user, adminClient, townSquare} = await pw.initSetup();
         const channel = await createDiscoverableChannel(adminClient, team.id);
 
         // # Log in as the non-member user
         const {channelsPage, app, page} = await pw.testBrowser.login(user);
-        await app.channelsPage.goto({team, channel: 'town-square'});
+        await app.channelsPage.goto({team, channel: townSquare});
 
         // # Open Find Channels (Cmd/Ctrl+K) and locate the discoverable channel
         await channelsPage.sidebarLeft.findChannelButton.click();

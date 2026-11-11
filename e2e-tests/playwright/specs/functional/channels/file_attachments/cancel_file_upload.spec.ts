@@ -10,12 +10,12 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 test('MM-T307 cancels a file upload', {tag: '@file_attachments'}, async ({pw}) => {
     const filename = 'vector_image.svg';
-    const {adminClient, team, user} = await pw.initSetup();
+    const {adminClient, team, user, offTopic} = await pw.initSetup();
     await adminClient.patchConfig({ServiceSettings: {EnableSVGs: true}});
 
     // # Log in and open Off-Topic
     const {app, page} = await pw.testBrowser.login(user);
-    await app.channelsPage.goto({team, channel: 'off-topic'});
+    await app.channelsPage.goto({team, channel: offTopic});
     const previews = app.center.postCreate.filePreviews;
 
     // # Select a file in the center-channel message composer

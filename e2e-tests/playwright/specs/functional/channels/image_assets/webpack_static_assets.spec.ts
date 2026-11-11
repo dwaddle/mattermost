@@ -17,11 +17,11 @@ import {expect, test} from '@mattermost/playwright-lib';
  */
 
 test('app loads without any broken image assets on the main channel view', {tag: '@image_assets'}, async ({pw}) => {
-    const {user, team} = await pw.initSetup();
+    const {user, team, townSquare} = await pw.initSetup();
     const {app, page} = await pw.testBrowser.login(user);
     const messageBox = app.center.postCreate.messageTextbox.locator;
 
-    await app.channelsPage.goto({team, channel: 'town-square'});
+    await app.channelsPage.goto({team, channel: townSquare});
     await expect(messageBox).toBeVisible();
 
     // # Collect image/font load errors on reload so the response listener is
