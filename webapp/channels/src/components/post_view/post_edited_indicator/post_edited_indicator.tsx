@@ -7,6 +7,7 @@ import {useIntl} from 'react-intl';
 
 import {PencilOutlineIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 
 import {getDateForTimezone} from 'mattermost-redux/utils/timezone_utils';
 
@@ -94,7 +95,7 @@ const PostEditedIndicator = ({postId, isMilitaryTime, timeZone, editedAt = 0, po
     const editedIndicator = opensHistory ? (
         <button
             className={'style--none'}
-            data-testid={testId ? `${testId}--button` : undefined}
+            data-testid={withRole(testId, 'button')}
             tabIndex={0}
             onClick={showPostEditHistory}
             onKeyUp={handleKeyPress}

@@ -21,6 +21,7 @@ import type IconProps from '@mattermost/compass-icons/components/props';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import KeyboardShortcutSequence, {
@@ -113,7 +114,7 @@ const FormattingIcon = forwardRef<HTMLButtonElement, FormattingIconProps>((props
                 toggled={isActive === true}
                 className={classNames(className)}
                 {...otherProps}
-                data-testid={testId ? `${testId}--togglebutton` : undefined}
+                data-testid={withRole(testId, 'togglebutton')}
             />
         </WithTooltip>
     );

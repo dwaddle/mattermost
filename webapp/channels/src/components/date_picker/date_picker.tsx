@@ -16,6 +16,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {DayPicker} from 'react-day-picker';
 import type {DayPickerProps} from 'react-day-picker';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {getDatePickerLocalesForDateFns} from 'utils/utils';
@@ -90,7 +91,7 @@ const DatePicker = ({children, datePickerProps, isPopperOpen, handlePopperOpenSt
                 onClick={handleWrapperClick}
                 className={isPopperOpen ? 'date-time-input date-time-input--open' : 'date-time-input'}
                 role='button'
-                data-testid={testIdScope ? `${testIdScope}.date--button` : undefined}
+                data-testid={part(testIdScope, 'date', 'button')}
                 tabIndex={0}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {

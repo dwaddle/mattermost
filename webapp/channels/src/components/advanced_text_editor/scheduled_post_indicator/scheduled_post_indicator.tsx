@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {showChannelOrThreadScheduledPostIndicator} from 'mattermost-redux/selectors/entities/scheduled_posts';
@@ -107,13 +108,13 @@ export default function ScheduledPostIndicator({location, channelId, postId, rem
             data-testid={testId}
         >
             <i
-                data-testid={`${testId}.icon`}
+                data-testid={part(testId, 'icon')}
                 className='icon icon-draft-indicator icon-clock-send-outline'
             />
             {scheduledPostText}
             <Link
                 to={scheduledPostLinkURL}
-                data-testid={`${testId}.see_all--link`}
+                data-testid={part(testId, 'see_all', 'link')}
             >
                 <FormattedMessage
                     id='scheduled_post.channel_indicator.link_to_scheduled_posts.text'

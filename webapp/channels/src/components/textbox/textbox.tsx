@@ -6,6 +6,7 @@ import React from 'react';
 import type {ChangeEvent, ElementType, FocusEvent, JSX, KeyboardEvent, MouseEvent} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Agent} from '@mattermost/types/agents';
 import type {Channel} from '@mattermost/types/channels';
@@ -319,7 +320,7 @@ export default class Textbox extends React.PureComponent<Props> {
                 <SuggestionBox
                     ref={this.message}
                     id={this.props.id}
-                    data-testid={this.props.testId ? `${this.props.testId}--textbox` : undefined}
+                    data-testid={withRole(this.props.testId, 'textbox')}
                     className={textboxClassName}
                     spellCheck='true'
                     placeholder={this.props.createMessage}
@@ -337,7 +338,7 @@ export default class Textbox extends React.PureComponent<Props> {
                     style={this.getStyle()}
                     inputComponent={this.props.inputComponent}
                     listComponent={this.props.suggestionList}
-                    listTestId={this.props.testId ? `${this.props.testId}.suggestions` : undefined}
+                    listTestId={part(this.props.testId, 'suggestions')}
                     listPosition={this.props.suggestionListPosition}
                     providers={this.suggestionProviders}
                     value={this.props.value}

@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 
 import {FireIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
@@ -225,7 +226,7 @@ function BurnOnReadBadge({
                     <button
                         type='button'
                         className='BurnOnReadBadge'
-                        data-testid={testIdScope ? `${testIdScope}.burn_on_read--button` : undefined}
+                        data-testid={part(testIdScope, 'burn_on_read', 'button')}
                         aria-label={getAriaLabel()}
                         onClick={isInteractive ? handleClick : undefined}
                         disabled={!isInteractive}

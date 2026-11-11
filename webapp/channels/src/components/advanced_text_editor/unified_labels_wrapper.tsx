@@ -6,6 +6,7 @@ import {useIntl} from 'react-intl';
 
 import {CloseIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './unified_labels_wrapper.scss';
@@ -56,7 +57,7 @@ const UnifiedLabelsWrapper = ({
                         className='UnifiedLabelsWrapper__close'
                         onClick={handleClick}
                         aria-label={removeAllLabel}
-                        data-testid={testIdScope ? `${testIdScope}.remove_all_labels--button` : undefined}
+                        data-testid={part(testIdScope, 'remove_all_labels', 'button')}
                     >
                         <CloseIcon size={14}/>
                     </button>

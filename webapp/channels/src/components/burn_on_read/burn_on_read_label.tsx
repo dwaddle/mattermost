@@ -5,6 +5,7 @@ import React, {memo} from 'react';
 import {useIntl} from 'react-intl';
 
 import {CloseIcon, FireIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './burn_on_read_label.scss';
@@ -78,7 +79,7 @@ const BurnOnReadLabel = ({canRemove, onRemove, durationMinutes, testId}: Props) 
                 <button
                     className='BurnOnReadLabel__close'
                     onClick={onRemove}
-                    data-testid={testId ? `${testId}.remove--button` : undefined}
+                    data-testid={part(testId, 'remove', 'button')}
                     aria-label={formatMessage({
                         id: 'burn_on_read.label.remove',
                         defaultMessage: 'Remove burn-on-read',

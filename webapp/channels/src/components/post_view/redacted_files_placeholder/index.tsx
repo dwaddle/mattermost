@@ -4,6 +4,7 @@
 import React, {memo} from 'react';
 import {useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './redacted_files_placeholder.scss';
@@ -32,7 +33,7 @@ function RedactedFilesPlaceholder({compactDisplay, testIdScope}: Props) {
         return (
             <div
                 className='post-image__column post-image__column--redacted post-image__column--redacted-compact'
-                data-testid={testIdScope ? `${testIdScope}.redacted_files` : undefined}
+                data-testid={part(testIdScope, 'redacted_files')}
                 title={`${title} — ${subtitle}`}
             >
                 <div className='post-image__redacted-icon'>
@@ -58,7 +59,7 @@ function RedactedFilesPlaceholder({compactDisplay, testIdScope}: Props) {
         <div className='post-image__columns clearfix'>
             <div
                 className='post-image__column post-image__column--redacted'
-                data-testid={testIdScope ? `${testIdScope}.redacted_files` : undefined}
+                data-testid={part(testIdScope, 'redacted_files')}
             >
                 <div className='post-image__redacted-icon'>
                     <svg

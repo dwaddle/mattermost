@@ -12,6 +12,7 @@ import {DotsHorizontalIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {MarkdownMode} from 'utils/markdown/apply_markdown';
@@ -305,7 +306,7 @@ const FormattingBar = forwardRef<FormattingBarHandle, FormattingBarProps>((props
                 onClick={makeFormattingHandler(mode)}
                 disabled={disableControls}
                 isActive={isActive}
-                testId={testId ? `${testId}.control:${mode}` : undefined}
+                testId={part(testId, 'control', {key: mode})}
             />
         );
     };

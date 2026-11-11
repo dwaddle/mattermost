@@ -7,6 +7,7 @@ import type {ReactNode, MouseEventHandler} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import CloseIcon from 'components/widgets/icons/close_icon';
@@ -100,7 +101,7 @@ export default function Toast({
                 <div
                     className='toast__dismiss'
                     onClick={handleDismiss}
-                    data-testid={testIdScope ? `${testIdScope}.dismiss--button` : undefined}
+                    data-testid={part(testIdScope, 'dismiss', 'button')}
                 >
                     <CloseIcon
                         className='close-btn'

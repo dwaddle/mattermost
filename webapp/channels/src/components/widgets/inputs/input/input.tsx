@@ -8,6 +8,7 @@ import {useIntl} from 'react-intl';
 
 import {CloseCircleIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {ItemStatus} from 'utils/constants';
@@ -286,7 +287,7 @@ const Input = React.forwardRef((
                     Input_fieldset___error: hasError || customInputLabel?.type === 'error',
                     Input_fieldset___legend: showLegend,
                 })}
-                data-testid={testId ? `${testId}.field` : undefined}
+                data-testid={part(testId, 'field')}
             >
                 {useLegend && (
                     <label

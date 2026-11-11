@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {MmButtonBlock} from '@mattermost/types/mm_blocks';
 
@@ -57,7 +58,7 @@ export const ButtonElement = ({element, onAction, testIdScope}: ButtonElementPro
             emphasis={element.style === 'primary' ? 'primary' : 'tertiary'}
             destructive={element.style === 'danger'}
             className={mmBlocksButtonClassName(element.style)}
-            data-testid={testIdScope ? `${testIdScope}.action:${element.action_id}--button` : undefined}
+            data-testid={part(testIdScope, 'action', {key: element.action_id}, 'button')}
             style={mmBlocksButtonInlineStyle(element.style, theme)}
             onClick={handleClick}
             disabled={interactionsDisabled || element.disabled === true}

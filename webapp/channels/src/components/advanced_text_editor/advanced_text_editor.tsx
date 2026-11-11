@@ -6,6 +6,7 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ServerError} from '@mattermost/types/errors';
 import type {SchedulingInfo} from '@mattermost/types/schedule_post';
@@ -458,7 +459,7 @@ const AdvancedTextEditor = ({
         additionalControl: priorityAdditionalControl,
         isValidPersistentNotifications,
         onSubmitCheck: prioritySubmitCheck,
-    } = usePriority(draft, handleDraftChange, focusTextbox, showPreview, false, `${testIdScope}.priority_labels`);
+    } = usePriority(draft, handleDraftChange, focusTextbox, showPreview, false, part(testIdScope, 'priority_labels'));
     const {
         labels: burnOnReadLabels,
         additionalControl: burnOnReadAdditionalControl,
@@ -734,7 +735,7 @@ const AdvancedTextEditor = ({
     const disableSendButton = Boolean(isDisabled || (!draft.message.trim().length && !draft.fileInfos.length)) || !isDraftSendable;
     const sendButton = readOnlyChannel || isInEditMode ? null : (
         <SendButton
-            testId={`${testIdScope}.send`}
+            testId={part(testIdScope, 'send')}
             disabled={disableSendButton}
             handleSubmit={handleSubmitPostAndScheduledMessage}
             channelId={channelId}
@@ -746,7 +747,7 @@ const AdvancedTextEditor = ({
         <ShowFormat
             onClick={handleShowPreview}
             active={showPreview}
-            testId={`${testIdScope}.preview`}
+            testId={part(testIdScope, 'preview')}
         />
     );
 
@@ -830,7 +831,7 @@ const AdvancedTextEditor = ({
                 isRHS={location === Locations.RHS_COMMENT}
                 rewriteMenuProps={rewriteMenuProps}
                 aiRewriteEnabled={aiRewriteEnabled}
-                testIdScope={`${testIdScope}.ai_actions`}
+                testIdScope={part(testIdScope, 'ai_actions')}
             />
         );
     }, [draft, getSelectedText, updateText, channelId, location, rewriteMenuProps, aiRewriteEnabled, hasAIActionsMenu, testIdScope]);
@@ -840,7 +841,7 @@ const AdvancedTextEditor = ({
             showSlot={showFormattingBar ? 1 : 2}
             slot1={(
                 <FormattingBar
-                    testId={`${testIdScope}.formatting_bar`}
+                    testId={part(testIdScope, 'formatting_bar')}
                     ref={formattingBarRef}
                     applyFormatting={applyFormatting}
                     disableControls={showPreview}
@@ -890,7 +891,7 @@ const AdvancedTextEditor = ({
             {showDndWarning && <DoNotDisturbWarning displayName={teammateDisplayName}/>}
             {showOooWarning && (
                 <OutOfOfficeWarning
-                    testId={`${testIdScope}.out_of_office_warning`}
+                    testId={part(testIdScope, 'out_of_office_warning')}
                     displayName={teammateDisplayName}
                 />
             )}
@@ -958,7 +959,7 @@ const AdvancedTextEditor = ({
                                 channelId={channelId}
                                 rootId={rootId}
                                 id={textboxId}
-                                testId={`${testIdScope}.message`}
+                                testId={part(testIdScope, 'message')}
                                 disabled={isDisabled && !rewriteIsProcessing}
                                 useCtrlSend={ctrlSend}
                                 sendCodeBlockOnCtrlEnter={codeBlockOnCtrlEnter}
@@ -981,7 +982,7 @@ const AdvancedTextEditor = ({
                                 createMessage={createMessage}
                                 channelId={channelId}
                                 id={textboxId}
-                                testId={`${testIdScope}.message`}
+                                testId={part(testIdScope, 'message')}
                                 ref={textboxRef!}
                                 disabled={isDisabled && !rewriteIsProcessing}
                                 characterLimit={maxPostSize}

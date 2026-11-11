@@ -4,6 +4,7 @@
 import memoize from 'memoize-one';
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
@@ -168,7 +169,7 @@ export default class PostMarkdown extends React.PureComponent<Props> {
                         imagesMetadata={this.props.post?.metadata?.images}
                         postId={this.props.post?.id}
                         editedAt={this.props.showPostEditedIndicator ? this.props.post?.edit_at : undefined}
-                        editedTestId={this.props.postTestIdScope ? `${this.props.postTestIdScope}.edited` : undefined}
+                        editedTestId={part(this.props.postTestIdScope, 'edited')}
                         allowInlineActions={allowInlineActions}
                         mmBlocksActionCookie={mmBlocksActionsCookie}
                         integrationFormat={integrationFormat}

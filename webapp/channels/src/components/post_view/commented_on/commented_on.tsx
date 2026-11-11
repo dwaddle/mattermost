@@ -4,6 +4,7 @@
 import React, {memo, useMemo} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import {isMessageAttachmentArray} from '@mattermost/types/message_attachments';
 
@@ -58,7 +59,7 @@ function CommentedOn({onCommentClick, rootId, enablePostUsernameOverride, testId
         message = (
             <CommentedOnFilesMessage
                 parentPostId={rootPost.id}
-                testId={testIdScope ? `${testIdScope}.commented_on.files` : undefined}
+                testId={part(testIdScope, 'commented_on.files')}
             />
         );
     } else if (isMessageAttachmentArray(rootPost.props?.attachments) && rootPost.props.attachments.length > 0) {
@@ -76,7 +77,7 @@ function CommentedOn({onCommentClick, rootId, enablePostUsernameOverride, testId
 
     return (
         <div
-            data-testid={testIdScope ? `${testIdScope}.commented_on` : undefined}
+            data-testid={part(testIdScope, 'commented_on')}
             className='post__link'
         >
             <span>

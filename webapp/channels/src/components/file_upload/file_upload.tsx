@@ -10,7 +10,7 @@ import {PaperclipIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginSlotTestId, type TestId} from '@mattermost/shared/utils/test_id';
+import {part, pluginSlotTestId, type TestId} from '@mattermost/shared/utils/test_id';
 import type {ServerError} from '@mattermost/types/errors';
 import type {FileInfo, FileUploadResponse} from '@mattermost/types/files';
 
@@ -676,7 +676,7 @@ export class FileUpload extends PureComponent<Props, State> {
                     <button
                         id='fileUploadButton'
                         type='button'
-                        data-testid={this.props.testIdScope ? `${this.props.testIdScope}.attach--button` : undefined}
+                        data-testid={part(this.props.testIdScope, 'attach', 'button')}
                         onClick={onActivate}
                         onTouchEnd={onActivate}
                     />
@@ -749,12 +749,12 @@ export class FileUpload extends PureComponent<Props, State> {
                             openUp={true}
                             ariaLabel={formatMessage({id: 'file_upload.menuAriaLabel', defaultMessage: 'Upload type selector'})}
                             customStyles={customStyles}
-                            testId={this.props.testIdScope ? `${this.props.testIdScope}.attach_menu` : undefined}
+                            testId={part(this.props.testIdScope, 'attach_menu')}
                         >
                             <li>
                                 <a
                                     href='#'
-                                    data-testid={this.props.testIdScope ? `${this.props.testIdScope}.attach_menu.your_computer--link` : undefined}
+                                    data-testid={part(this.props.testIdScope, 'attach_menu.your_computer', 'link')}
                                     onClick={this.simulateInputClick}
                                     onTouchEnd={this.simulateInputClick}
                                 >

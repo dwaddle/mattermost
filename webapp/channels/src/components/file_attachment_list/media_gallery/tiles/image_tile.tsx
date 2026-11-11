@@ -5,6 +5,7 @@ import React, {useCallback} from 'react';
 import type {CSSProperties} from 'react';
 import {useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -67,7 +68,7 @@ const ImageTile = ({fileInfo, index, total, enablePublicLink, onClick, testIdSco
             role='button'
             tabIndex={0}
             aria-label={label}
-            data-testid={testIdScope ? `${testIdScope}.file:${fileInfo.id}--button` : undefined}
+            data-testid={part(testIdScope, 'file', {key: fileInfo.id}, 'button')}
             data-file-name={fileInfo.name || ''}
             style={tileSizeVars(fileInfo)}
             onKeyDown={handleKeyDown}

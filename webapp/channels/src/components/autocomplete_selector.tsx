@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {UserProfile} from '@mattermost/types/users';
@@ -197,8 +198,8 @@ export default class AutocompleteSelector extends React.PureComponent<Props, Sta
                         replaceAllInputOnSelect={true}
                         disabled={disabled}
                         listPosition={listPosition}
-                        data-testid={testIdScope ? `${testIdScope}.value--textbox` : undefined}
-                        listTestId={testIdScope ? `${testIdScope}.suggestions` : undefined}
+                        data-testid={part(testIdScope, 'value', 'textbox')}
+                        listTestId={part(testIdScope, 'suggestions')}
                     />
                     {helpTextContent}
                 </div>

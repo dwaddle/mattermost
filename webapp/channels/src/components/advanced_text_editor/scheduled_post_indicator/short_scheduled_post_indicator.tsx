@@ -5,6 +5,7 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import {Link} from 'react-router-dom';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import type {ChannelScheduledPostIndicatorData} from 'mattermost-redux/selectors/entities/scheduled_posts';
@@ -33,7 +34,7 @@ export function ShortScheduledPostIndicator({scheduledPostData, scheduledPostLin
                     a: (chunks) => (
                         <Link
                             to={scheduledPostLinkURL}
-                            data-testid={`${testId}.see_all--link`}
+                            data-testid={part(testId, 'see_all', 'link')}
                         >
                             {chunks}
                         </Link>

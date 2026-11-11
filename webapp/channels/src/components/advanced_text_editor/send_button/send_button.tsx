@@ -10,6 +10,7 @@ import {SendIcon} from '@mattermost/compass-icons/components';
 import {ShortcutKeys} from '@mattermost/shared/components/shortcut_key';
 import type {ShortcutDefinition} from '@mattermost/shared/components/tooltip';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {SchedulingInfo} from '@mattermost/types/schedule_post';
 
@@ -71,7 +72,7 @@ const SendButton = ({disabled, handleSubmit, channelId, repeatDisabledReason, te
             >
                 <button
                     className={classNames('SendMessageButton', {disabled}, {singleAction: !isScheduledPostEnabled})}
-                    data-testid={testId ? `${testId}--button` : undefined}
+                    data-testid={withRole(testId, 'button')}
                     tabIndex={0}
                     aria-label={formatMessage({
                         id: 'create_post_button.option.send_now',

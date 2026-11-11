@@ -10,6 +10,7 @@ import {EmoticonHappyOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji, SystemEmoji} from '@mattermost/types/emojis';
 
@@ -120,7 +121,7 @@ const useEditorEmojiPicker = (
                 >
                     <IconButton
                         id='emojiPickerButton'
-                        data-testid={`${testIdScope}.emoji--button`}
+                        data-testid={part(testIdScope, 'emoji', 'button')}
                         ref={setReference}
                         size='small'
                         icon={

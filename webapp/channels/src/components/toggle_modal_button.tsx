@@ -5,6 +5,7 @@ import React, {type ComponentType, type MouseEvent, type ReactNode} from 'react'
 import {useDispatch} from 'react-redux';
 
 import {Button, type ButtonAppearance, type ButtonEmphasis, type ButtonSize} from '@mattermost/compass-ui/components/button';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {openModal} from 'actions/views/modals';
@@ -89,7 +90,7 @@ const ToggleModalButton = ({
                 id={id}
                 disabled={disabled}
                 role={role}
-                data-testid={testId ? `${testId}--button` : undefined}
+                data-testid={withRole(testId, 'button')}
             >
                 {children}
                 {badge}
@@ -105,7 +106,7 @@ const ToggleModalButton = ({
             id={id}
             disabled={disabled}
             role={role}
-            data-testid={testId ? `${testId}--button` : undefined}
+            data-testid={withRole(testId, 'button')}
         >
             {children}
             {badge}

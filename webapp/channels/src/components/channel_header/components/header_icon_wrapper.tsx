@@ -6,6 +6,7 @@ import React, {useLayoutEffect, useRef} from 'react';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import type {ShortcutDefinition} from '@mattermost/shared/components/tooltip';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import NewChannelWithBoardTourTip from 'components/app_bar/new_channel_with_board_tour_tip';
@@ -88,7 +89,7 @@ const HeaderIconWrapper = (props: Props) => {
                 <IconButton
                     ref={buttonRef}
                     id={buttonId}
-                    data-testid={testId ? `${testId}--button` : undefined}
+                    data-testid={withRole(testId, 'button')}
                     size={size}
                     className={buttonClass || 'channel-header__icon'}
                     icon={children}

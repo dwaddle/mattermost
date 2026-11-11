@@ -12,6 +12,7 @@
 
 import React, {useMemo} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {MmBlock} from '@mattermost/types/mm_blocks';
 import type {PostImage} from '@mattermost/types/posts';
@@ -53,7 +54,7 @@ export const BlockRenderer = ({blocks, postId, onAction, imagesMetadata, inlineM
                     <div
                         className='mm-blocks'
                         role='group'
-                        data-testid={testIdScope ? `${testIdScope}.blocks` : undefined}
+                        data-testid={part(testIdScope, 'blocks')}
                     >
                         <ContainerBlock
                             block={{

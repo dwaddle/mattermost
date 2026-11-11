@@ -6,6 +6,7 @@ import React, {useCallback, useState} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 import type {Post} from '@mattermost/types/posts';
@@ -64,7 +65,7 @@ export default function AddReactionButton({
                 <WithTooltip title={ariaLabel}>
                     <button
                         id={`addReaction-${post.id}`}
-                        data-testid={testId ? `${testId}--button` : undefined}
+                        data-testid={withRole(testId, 'button')}
                         ref={setReference}
                         aria-label={ariaLabel}
                         className={classNames('Reaction Reaction__add', {

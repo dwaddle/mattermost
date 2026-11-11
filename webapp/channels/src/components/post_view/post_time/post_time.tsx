@@ -6,6 +6,7 @@ import type {ComponentProps} from 'react';
 import {Link} from 'react-router-dom';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import {isMobile} from '@mattermost/shared/utils/user_agent';
 
@@ -79,7 +80,7 @@ export default class PostTime extends React.PureComponent<Props> {
             <div
                 role='presentation'
                 className='post__permalink post_permalink_mobile_view'
-                data-testid={testId ? `${testId}--text` : undefined}
+                data-testid={withRole(testId, 'text')}
             >
                 {postTime}
             </div>
@@ -88,7 +89,7 @@ export default class PostTime extends React.PureComponent<Props> {
                 id={`${location}_time_${postId}`}
                 to={`${teamUrl}/pl/${postId}`}
                 className='post__permalink'
-                data-testid={testId ? `${testId}--link` : undefined}
+                data-testid={withRole(testId, 'link')}
                 onClick={this.handleClick}
                 aria-labelledby={eventTime.toString()}
             >

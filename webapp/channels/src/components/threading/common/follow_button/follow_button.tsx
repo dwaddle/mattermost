@@ -10,6 +10,7 @@ import {BellOffOutlineIcon, BellOutlineIcon} from '@mattermost/compass-icons/com
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Button from '../button';
@@ -53,7 +54,7 @@ function FollowButton({
                     aria-label={label}
                     aria-pressed={following}
                     onClick={onClick}
-                    data-testid={testId ? `${testId}--togglebutton` : undefined}
+                    data-testid={withRole(testId, 'togglebutton')}
                 />
             </WithTooltip>
         );
@@ -61,7 +62,7 @@ function FollowButton({
 
     return (
         <Button
-            data-testid={testId ? `${testId}--button` : undefined}
+            data-testid={withRole(testId, 'button')}
             {...props}
             className={classNames(props.className, 'FollowButton')}
             disabled={Boolean(props.disabled)}

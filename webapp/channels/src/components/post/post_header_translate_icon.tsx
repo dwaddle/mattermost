@@ -7,6 +7,7 @@ import {useDispatch} from 'react-redux';
 
 import {TranslateIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostTranslation, PostType} from '@mattermost/types/posts';
 
@@ -56,7 +57,7 @@ function PostHeaderTranslateIcon({
             >
                 <button
                     className='btn btn-icon btn-xs btn-compact'
-                    data-testid={testIdScope ? `${testIdScope}.translation--button` : undefined}
+                    data-testid={part(testIdScope, 'translation', 'button')}
                     onClick={handleTranslationClick}
                     aria-label={formatMessage({id: 'post_info.translation_icon', defaultMessage: 'This post has been translated'})}
                 >
@@ -92,7 +93,7 @@ function PostHeaderTranslateIcon({
             >
                 <div
                     className='post__translation-icon-unavailable'
-                    data-testid={testIdScope ? `${testIdScope}.translation_unavailable` : undefined}
+                    data-testid={part(testIdScope, 'translation_unavailable')}
                 >
                     <TranslateIcon
                         size={12}

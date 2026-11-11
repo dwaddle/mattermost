@@ -6,6 +6,7 @@ import {useIntl} from 'react-intl';
 
 import {FireIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {useBurnOnReadTimer} from 'hooks/useBurnOnReadTimer';
@@ -93,7 +94,7 @@ const BurnOnReadTimerChip = ({expireAt, onClick, testIdScope}: Props) => {
                 <button
                     type='button'
                     className={`BurnOnReadTimerChip ${isWarning ? 'BurnOnReadTimerChip--warning' : ''} ${isExpired ? 'BurnOnReadTimerChip--expired' : ''}`}
-                    data-testid={testIdScope ? `${testIdScope}.burn_on_read_timer--button` : undefined}
+                    data-testid={part(testIdScope, 'burn_on_read_timer', 'button')}
                     onClick={handleClick}
                     onKeyDown={handleKeyDown}
                     aria-label={ariaLabel}

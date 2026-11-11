@@ -6,7 +6,7 @@ import React, {useRef, useState, useEffect} from 'react';
 import {useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
-import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
+import {part, pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -200,7 +200,7 @@ export default function FileAttachment(props: Props) {
                 <Menu.ItemAction
                     data-title='Public Image'
                     key={fileInfo.id + '_publiclinkmenuitem'}
-                    testId={props.testIdScope ? `${props.testIdScope}.file_card.menu.public_link` : undefined}
+                    testId={part(props.testIdScope, 'file_card.menu.public_link')}
                     onClick={handleGetPublicLink}
                     ariaLabel={formatMessage({id: 'view_image_popover.publicLink', defaultMessage: 'Get a public link'})}
                     text={formatMessage({id: 'view_image_popover.publicLink', defaultMessage: 'Get a public link'})}
@@ -248,7 +248,7 @@ export default function FileAttachment(props: Props) {
                     <button
                         ref={buttonRef}
                         id={`file_action_button_${props.fileInfo.id}`}
-                        data-testid={props.testIdScope ? `${props.testIdScope}.file_card.more_actions--button` : undefined}
+                        data-testid={part(props.testIdScope, 'file_card.more_actions', 'button')}
                         aria-label={formatMessage({id: 'file_search_result_item.more_actions', defaultMessage: 'More Actions'}).toLowerCase()}
                         className={classNames(
                             'file-dropdown-icon', 'dots-icon', 'btn', 'btn-icon', 'btn-sm',
@@ -261,7 +261,7 @@ export default function FileAttachment(props: Props) {
                 </WithTooltip>
                 <Menu
                     id={`file_dropdown_${props.fileInfo.id}`}
-                    testId={props.testIdScope ? `${props.testIdScope}.file_card.menu` : undefined}
+                    testId={part(props.testIdScope, 'file_card.menu')}
                     ariaLabel={'file menu'}
                     openLeft={true}
                     openUp={openUp}
@@ -285,7 +285,7 @@ export default function FileAttachment(props: Props) {
         fileThumbnail = (
             <a
                 aria-label={ariaLabelImage}
-                data-testid={props.testIdScope ? `${props.testIdScope}.file_card.thumbnail--link` : undefined}
+                data-testid={part(props.testIdScope, 'file_card.thumbnail', 'link')}
                 className='post-image__thumbnail'
                 href='#'
                 onClick={onAttachmentClick}
@@ -342,7 +342,7 @@ export default function FileAttachment(props: Props) {
 
     return (
         <div
-            data-testid={props.testIdScope ? `${props.testIdScope}.file_card:${props.fileInfo.id}` : undefined}
+            data-testid={part(props.testIdScope, 'file_card', {key: props.fileInfo.id})}
             className={classNames([
                 'post-image__column',
                 {'keep-open': keepOpen},

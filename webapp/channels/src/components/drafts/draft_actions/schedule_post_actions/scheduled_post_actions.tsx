@@ -6,6 +6,7 @@ import React, {memo, useCallback, useEffect} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import {isRecurringScheduledPost} from '@mattermost/types/schedule_post';
@@ -169,7 +170,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                 icon='icon-trash-can-outline'
                 id='delete'
                 name='delete'
-                testId={testIdScope ? `${testIdScope}.delete` : undefined}
+                testId={part(testIdScope, 'delete')}
                 tooltipText={deleteTooltipText}
                 onClick={handleDelete}
             />
@@ -180,7 +181,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                     icon='icon-pencil-outline'
                     id='edit'
                     name='edit'
-                    testId={testIdScope ? `${testIdScope}.edit` : undefined}
+                    testId={part(testIdScope, 'edit')}
                     tooltipText={editTooltipText}
                     onClick={onEdit}
 
@@ -191,7 +192,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                 icon='icon-content-copy'
                 id='copy_text'
                 name='copy_text'
-                testId={testIdScope ? `${testIdScope}.copy_text` : undefined}
+                testId={part(testIdScope, 'copy_text')}
                 tooltipText={copyTextTooltipText}
                 onClick={onCopyText}
             />
@@ -202,7 +203,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                     icon='icon-clock-send-outline'
                     id='reschedule'
                     name='reschedule'
-                    testId={testIdScope ? `${testIdScope}.reschedule` : undefined}
+                    testId={part(testIdScope, 'reschedule')}
                     tooltipText={rescheduleTooltipText}
                     onClick={handleReschedulePost}
                 />
@@ -214,7 +215,7 @@ function ScheduledPostActions({scheduledPost, channel, onReschedule, onDelete, o
                     icon='icon-send-outline'
                     id='sendNow'
                     name='sendNow'
-                    testId={testIdScope ? `${testIdScope}.send_now` : undefined}
+                    testId={part(testIdScope, 'send_now')}
                     tooltipText={sendNowTooltipText}
                     onClick={handleSend}
                 />

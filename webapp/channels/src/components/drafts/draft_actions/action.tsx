@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React from 'react';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './action.scss';
@@ -39,7 +40,7 @@ function Action({
                         {'DraftAction__button--delete': name === 'delete'},
                     )}
                     id={`draft_${icon}_${id}`}
-                    data-testid={testId ? `${testId}--button` : undefined}
+                    data-testid={withRole(testId, 'button')}
                     onClick={onClick}
                     aria-labelledby={`draft_tooltip_${id}`}
                 >

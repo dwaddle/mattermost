@@ -9,6 +9,7 @@ import {AppsIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type ActionsMenuButtonProps = {
@@ -43,7 +44,7 @@ const ActionsMenuButton = React.forwardRef<HTMLButtonElement, ActionsMenuButtonP
                 key='more-actions-button'
                 ref={ref}
                 id={buttonId}
-                data-testid={testId ? `${testId}--button` : undefined}
+                data-testid={withRole(testId, 'button')}
                 size='small'
                 padding='compact'
                 type='button'

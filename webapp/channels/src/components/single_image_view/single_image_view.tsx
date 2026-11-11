@@ -7,6 +7,7 @@ import type {KeyboardEvent, MouseEvent} from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -222,7 +223,7 @@ class SingleImageView extends React.PureComponent<Props & WrappedComponentProps,
             <button
                 key='toggle'
                 className='style--none single-image-view__toggle'
-                data-testid={this.props.testIdScope ? `${this.props.testIdScope}.image.toggle--button` : undefined}
+                data-testid={part(this.props.testIdScope, 'image.toggle', 'button')}
                 data-expanded={this.props.isEmbedVisible}
                 aria-label={this.props.intl.formatMessage({id: 'accessibility.toggle_embed_visibility', defaultMessage: 'Toggle Embed Visibility'})}
                 onClick={this.toggleEmbedVisibility}
@@ -245,7 +246,7 @@ class SingleImageView extends React.PureComponent<Props & WrappedComponentProps,
                 {toggle}
                 {!this.props.isEmbedVisible && (
                     <div
-                        data-testid={this.props.testIdScope ? `${this.props.testIdScope}.image.name` : undefined}
+                        data-testid={part(this.props.testIdScope, 'image.name')}
                         className={classNames('image-name', {
                             'compact-display': compactDisplay,
                         })}
@@ -296,7 +297,7 @@ class SingleImageView extends React.PureComponent<Props & WrappedComponentProps,
         return (
             <div
                 className={classNames('file-view--single', permalinkClass)}
-                data-testid={this.props.testIdScope ? `${this.props.testIdScope}.image:${fileInfo.id}` : undefined}
+                data-testid={part(this.props.testIdScope, 'image', {key: fileInfo.id})}
             >
                 <div
                     className='file__image'
@@ -323,7 +324,7 @@ class SingleImageView extends React.PureComponent<Props & WrappedComponentProps,
                                     showLoader={this.props.isEmbedVisible}
                                     renderPlaceholderOnly={renderPlaceholderOnly}
                                     handleSmallImageContainer={true}
-                                    testId={this.props.testIdScope ? `${this.props.testIdScope}.image.picture` : undefined}
+                                    testId={part(this.props.testIdScope, 'image.picture')}
                                     enablePublicLink={this.props.enablePublicLink}
                                     getFilePublicLink={this.getFilePublicLink}
                                     hideUtilities={this.props.disableActions}

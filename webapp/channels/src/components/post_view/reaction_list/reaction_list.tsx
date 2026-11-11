@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 import type {Post} from '@mattermost/types/posts';
@@ -105,7 +106,7 @@ export default class ReactionList extends React.PureComponent<Props, State> {
                         key={emojiName}
                         post={this.props.post}
                         emojiName={emojiName}
-                        testId={this.props.testIdScope ? `${this.props.testIdScope}.reaction:${emojiName}` : undefined}
+                        testId={part(this.props.testIdScope, 'reaction', {key: emojiName})}
                         reactions={reactionsByName.get(emojiName) || []}
                     />
                 );
@@ -120,7 +121,7 @@ export default class ReactionList extends React.PureComponent<Props, State> {
                     post={this.props.post}
                     teamId={this.props.teamId}
                     onEmojiClick={this.handleEmojiClick}
-                    testId={this.props.testIdScope ? `${this.props.testIdScope}.add` : undefined}
+                    testId={part(this.props.testIdScope, 'add')}
                 />
             );
         }

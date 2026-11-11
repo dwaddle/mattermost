@@ -4,6 +4,7 @@
 import React, {useCallback, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {PostTypes} from 'mattermost-redux/constants/posts';
@@ -114,7 +115,7 @@ const useBurnOnRead = (
     const labels = useMemo(() => (
         (hasBurnOnReadSet && !rootId) ? (
             <BurnOnReadLabel
-                testId={testIdScope ? `${testIdScope}.burn_on_read_label` : undefined}
+                testId={part(testIdScope, 'burn_on_read_label')}
                 canRemove={showIndividualCloseButton && !shouldShowPreview}
                 onRemove={handleRemoveBurnOnRead}
                 durationMinutes={durationMinutes}

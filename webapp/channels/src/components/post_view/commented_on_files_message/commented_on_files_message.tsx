@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -39,7 +40,7 @@ const CommentedOnFilesMessage = ({
     }
 
     return (
-        <span data-testid={testId ? `${testId}--text` : undefined}>
+        <span data-testid={withRole(testId, 'text')}>
             {fileInfos[0].name}
             {plusMore}
         </span>

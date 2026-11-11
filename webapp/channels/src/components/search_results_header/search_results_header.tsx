@@ -13,6 +13,7 @@ import {
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import KeyboardShortcutSequence, {KEYBOARD_SHORTCUTS} from 'components/keyboard_shortcuts/keyboard_shortcuts_sequence';
@@ -79,7 +80,7 @@ function SearchResultsHeader(props: Props) {
                             className='sidebar--right__back'
                             icon={<Icon glyph={<ArrowBackIosIcon/>}/>}
                             onClick={props.actions.goBack}
-                            data-testid={`${testIdScope}.back--button`}
+                            data-testid={part(testIdScope, 'back', 'button')}
                             aria-label={formatMessage({id: 'rhs_header.back.icon', defaultMessage: 'Back Icon'})}
                         />
                     </WithTooltip>
@@ -94,7 +95,7 @@ function SearchResultsHeader(props: Props) {
                             className='sidebar--right__expand'
                             icon={<Icon glyph={props.isExpanded ? <ArrowCollapseIcon/> : <ArrowExpandIcon/>}/>}
                             onClick={props.actions.toggleRhsExpanded}
-                            data-testid={`${testIdScope}.expand--button`}
+                            data-testid={part(testIdScope, 'expand', 'button')}
                             aria-label={expandOrCollapseSidebarButtonAriaLabel}
                         />
                     </WithTooltip>
@@ -102,7 +103,7 @@ function SearchResultsHeader(props: Props) {
                 {props.newWindowHandler && (
                     <PopoutButton
                         onClick={props.newWindowHandler}
-                        testId={`${testIdScope}.popout`}
+                        testId={part(testIdScope, 'popout')}
                     />
                 )}
                 {(!isPopoutWindow() || isChannelPopoutWindow()) &&
@@ -116,7 +117,7 @@ function SearchResultsHeader(props: Props) {
                     >
                         <IconButton
                             id='searchResultsCloseButton'
-                            data-testid={`${testIdScope}.close--button`}
+                            data-testid={part(testIdScope, 'close', 'button')}
                             size='small'
                             className='sidebar--right__close'
                             icon={<Icon glyph={<CloseIcon/>}/>}

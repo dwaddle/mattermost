@@ -7,6 +7,7 @@ import type {CSSProperties, JSX} from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 
 import {showMobileSubMenuModal} from 'actions/global_actions';
@@ -252,7 +253,7 @@ export class SubMenuItem extends React.PureComponent<Props, State> {
                 <div
                     className={classNames([{styleSelectableItemDiv: styleSelectableItem}])}
                     id={id}
-                    data-testid={slotTestId ?? (testId ? `${testId}--button` : undefined)}
+                    data-testid={slotTestId ?? (withRole(testId, 'button'))}
                     aria-label={ariaLabel}
                     onMouseEnter={this.show}
                     role='button'

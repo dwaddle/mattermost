@@ -9,6 +9,7 @@ import {BookmarkIcon, BookmarkOutlineIcon} from '@mattermost/compass-icons/compo
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {Locations, A11yCustomEventTypes} from 'utils/constants';
@@ -101,7 +102,7 @@ const PostFlagIcon = ({
             <IconButton
                 ref={buttonRef}
                 id={`${location}_flagIcon_${postId}`}
-                data-testid={testId ? `${testId}--button` : undefined}
+                data-testid={withRole(testId, 'button')}
                 size='small'
                 padding='compact'
                 className={classNames('post-menu__item', {

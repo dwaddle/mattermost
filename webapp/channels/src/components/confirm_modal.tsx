@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {GenericModal} from '@mattermost/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {focusElement} from 'utils/a11y_utils';
@@ -176,7 +177,7 @@ const ConfirmModal = ({
                 <label>
                     <input
                         type='checkbox'
-                        data-testid={testId && `${testId}.dont_show_again--checkbox`}
+                        data-testid={part(testId, 'dont_show_again', 'checkbox')}
                         onChange={handleCheckboxChange}
                         checked={checked}
                     />
@@ -245,7 +246,7 @@ const ConfirmModal = ({
                             destructive={destructive}
                             onClick={handleConfirm}
                             id='confirmModalButton'
-                            data-testid={testId ? `${testId}.confirm--button` : undefined}
+                            data-testid={part(testId, 'confirm', 'button')}
                             autoFocus={true}
                             disabled={confirmDisabled}
                         >

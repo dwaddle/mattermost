@@ -5,7 +5,7 @@ import React from 'react';
 import type {MessageDescriptor} from 'react-intl';
 import {useIntl} from 'react-intl';
 
-import {suggestionTestKey, type TestId} from '@mattermost/shared/utils/test_id';
+import {part, suggestionTestKey, type TestId} from '@mattermost/shared/utils/test_id';
 
 import LoadingSpinner from 'components/widgets/loading/loading_spinner';
 
@@ -52,7 +52,7 @@ const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListConte
             return (
                 <LoadingSpinner
                     key={term}
-                    testId={testId ? `${testId}.loading` : undefined}
+                    testId={part(testId, 'loading')}
                 />
             );
         }
@@ -70,7 +70,7 @@ const SuggestionListContents = React.forwardRef<HTMLElement, SuggestionListConte
                 onClick={onItemClick}
                 onMouseMove={onItemHover}
                 role='option'
-                {...(testId ? {'data-testid': `${testId}.item:${suggestionTestKey(term)}--option`} : {})}
+                {...(testId ? {'data-testid': part(testId, 'item', {key: suggestionTestKey(term)}, 'option')} : {})}
             />
         );
     }

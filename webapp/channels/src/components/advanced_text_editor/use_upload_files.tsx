@@ -5,6 +5,7 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ServerError} from '@mattermost/types/errors';
 import type {FileInfo} from '@mattermost/types/files';
@@ -175,7 +176,7 @@ const useUploadFiles = (
                 uploadsInProgress={draft.uploadsInProgress}
                 uploadsProgressPercent={uploadsProgressPercent}
                 disabledRemoveTooltip={removeTooltip}
-                testIdScope={testIdScope ? `${testIdScope}.file_previews` : undefined}
+                testIdScope={part(testIdScope, 'file_previews')}
             />
         );
     }

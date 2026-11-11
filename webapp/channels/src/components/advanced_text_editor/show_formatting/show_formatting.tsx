@@ -8,6 +8,7 @@ import {EyeOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import KeyboardShortcutSequence, {KEYBOARD_SHORTCUTS} from 'components/keyboard_shortcuts/keyboard_shortcuts_sequence';
@@ -37,7 +38,7 @@ const ShowFormatting = (props: ShowFormatProps): JSX.Element => {
         >
             <IconButton
                 id='PreviewInputTextButton'
-                data-testid={testId ? `${testId}--button` : undefined}
+                data-testid={withRole(testId, 'button')}
                 size='small'
                 onClick={onClick}
                 aria-label={buttonAriaLabel}

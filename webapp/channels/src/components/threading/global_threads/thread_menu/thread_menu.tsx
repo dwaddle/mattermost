@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {DotsVerticalIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserThread} from '@mattermost/types/threads';
 
@@ -111,7 +112,7 @@ function ThreadMenu({
         <Menu.Container
             menuButton={{
                 id: `${idPrefix}-${threadId}`,
-                dataTestId: testId ? `${testId}--button` : undefined,
+                dataTestId: withRole(testId, 'button'),
                 as: ThreadMenuTrigger,
                 'aria-label': formatMessage({
                     id: 'threading.threadHeader.menu',

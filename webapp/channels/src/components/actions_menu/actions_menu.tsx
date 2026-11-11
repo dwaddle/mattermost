@@ -6,7 +6,7 @@ import {createPortal} from 'react-dom';
 import type {IntlShape} from 'react-intl';
 import {injectIntl} from 'react-intl';
 
-import {pluginSlotTestId, type TestId} from '@mattermost/shared/utils/test_id';
+import {part, pluginSlotTestId, type TestId} from '@mattermost/shared/utils/test_id';
 import type {AppBinding} from '@mattermost/types/apps';
 import type {Post} from '@mattermost/types/posts';
 
@@ -316,7 +316,7 @@ export class ActionMenuClass extends React.PureComponent<Props, State> {
                         show={true}
                         text={formatMessage({id: 'post_info.marketplace', defaultMessage: 'App Marketplace'})}
                         icon={<ActionsMenuIcon name='icon-view-grid-plus-outline'/>}
-                        testId={menuScope ? `${menuScope}.marketplace` : undefined}
+                        testId={part(menuScope, 'marketplace')}
                         onClick={this.handleOpenMarketplace}
                     />
                 </React.Fragment>
@@ -379,7 +379,7 @@ export class ActionMenuClass extends React.PureComponent<Props, State> {
                         buttonId={buttonId}
                         popupId={popupId}
                         isMenuOpen={this.props.isMenuOpen}
-                        testId={this.props.testIdScope ? `${this.props.testIdScope}.actions` : undefined}
+                        testId={part(this.props.testIdScope, 'actions')}
                     />
                     {this.props.isMobileView ? createPortal(
                         <div
@@ -402,7 +402,7 @@ export class ActionMenuClass extends React.PureComponent<Props, State> {
                         onClick={this.openDropdown}
                         popupId={popupId}
                         isMenuOpen={this.props.isMenuOpen}
-                        testId={this.props.testIdScope ? `${this.props.testIdScope}.actions` : undefined}
+                        testId={part(this.props.testIdScope, 'actions')}
                     />
                     <ActionsMenuEmptyPopover
                         anchorElement={this.buttonElement}

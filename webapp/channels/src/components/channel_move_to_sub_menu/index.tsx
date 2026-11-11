@@ -14,6 +14,7 @@ import {
     CheckIcon,
 } from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {Channel} from '@mattermost/types/channels';
@@ -119,7 +120,7 @@ const ChannelMoveToSubMenu = (props: Props) => {
                 <Menu.Item
                     id={`moveToCategory-${props.channel.id}-${category.id}`}
                     key={`moveToCategory-${props.channel.id}-${category.id}`}
-                    data-testid={props.testIdScope ? `${props.testIdScope}.move_to_menu.category:${category.id}--menuitem` : undefined}
+                    data-testid={part(props.testIdScope, 'move_to_menu.category', {key: category.id}, 'menuitem')}
                     leadingElement={category.type === CategoryTypes.FAVORITES ? (<StarOutlineIcon size={18}/>) : (<FolderOutlineIcon size={18}/>)}
                     labels={text}
                     trailingElements={selectedCategory}
@@ -133,7 +134,7 @@ const ChannelMoveToSubMenu = (props: Props) => {
             <Menu.Item
                 id={`moveToNewCategory-${props.channel.id}`}
                 key={`moveToNewCategory-${props.channel.id}`}
-                data-testid={props.testIdScope ? `${props.testIdScope}.move_to_menu.new_category--menuitem` : undefined}
+                data-testid={part(props.testIdScope, 'move_to_menu.new_category', 'menuitem')}
                 aria-haspopup={true}
                 leadingElement={<FolderMoveOutlineIcon size={18}/>}
                 labels={
@@ -201,7 +202,7 @@ const ChannelMoveToSubMenu = (props: Props) => {
                 <div className='ChannelMoveToSubMenu__disabledContainer'>
                     <Menu.Item
                         id={`moveTo-${props.channel.id}`}
-                        data-testid={props.testIdScope ? `${props.testIdScope}.move_to--menuitem` : undefined}
+                        data-testid={part(props.testIdScope, 'move_to', 'menuitem')}
                         labels={
                             <FormattedMessage
                                 id='sidebar_left.sidebar_channel_menu.moveTo'
@@ -220,7 +221,7 @@ const ChannelMoveToSubMenu = (props: Props) => {
     return (
         <Menu.SubMenu
             id={`moveTo-${props.channel.id}`}
-            data-testid={props.testIdScope ? `${props.testIdScope}.move_to--menuitem` : undefined}
+            data-testid={part(props.testIdScope, 'move_to', 'menuitem')}
             labels={
                 <FormattedMessage
                     id='sidebar_left.sidebar_channel_menu.moveTo'

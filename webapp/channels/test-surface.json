@@ -95051,34 +95051,6 @@
       }
     },
     {
-      "template": "undefined--button",
-      "grammar": false,
-      "scope": [],
-      "name": "undefined--button",
-      "role": null,
-      "component": {
-        "name": "MenuItem",
-        "at": "channels/src/components/channel_info_rhs/menu.tsx#MenuItem"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/channel_info_rhs/menu.tsx#Menu"
-          ]
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": true,
-        "state": []
-      },
-      "effects": {
-        "ops": [],
-        "unknown": true,
-        "delegated": []
-      }
-    },
-    {
       "template": "undefinedhelp-text",
       "grammar": false,
       "scope": [],

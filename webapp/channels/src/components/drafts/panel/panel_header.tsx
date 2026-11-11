@@ -7,6 +7,7 @@ import {FormattedMessage} from 'react-intl';
 
 import {SyncIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Timestamp, {RelativeRanges} from 'components/timestamp';
@@ -57,7 +58,7 @@ function PanelHeader({
     return (
         <div
             className='PanelHeader'
-            data-testid={testIdScope ? `${testIdScope}.header` : undefined}
+            data-testid={part(testIdScope, 'header')}
         >
             <div className='PanelHeader__left'>{title}</div>
             <div className='PanelHeader__right'>
@@ -81,7 +82,7 @@ function PanelHeader({
                     )}
                     <div
                         className='PanelHeader__timestamp'
-                        data-testid={testIdScope ? `${testIdScope}.header.time--text` : undefined}
+                        data-testid={part(testIdScope, 'header.time', 'text')}
                     >
                         {
                             Boolean(timestamp) && kind === 'draft' && (
@@ -115,7 +116,7 @@ function PanelHeader({
 
                     {kind === 'scheduledPost' && repeatsWeekly && !error && (
                         <Tag
-                            data-testid={testIdScope ? `${testIdScope}.header.repeats_weekly--text` : undefined}
+                            data-testid={part(testIdScope, 'header.repeats_weekly', 'text')}
                             variant={'info'}
                             uppercase={false}
                             text={(

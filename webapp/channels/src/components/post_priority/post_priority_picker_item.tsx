@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import {CheckIcon, AlertOutlineIcon, AlertCircleOutlineIcon, MessageTextOutlineIcon, CheckCircleOutlineIcon, BellRingOutlineIcon} from '@mattermost/compass-icons/components';
 import {Switch} from '@mattermost/compass-ui/components/switch';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {MenuItem} from 'components/menu/menu_item';
@@ -126,7 +127,7 @@ function ToggleItem({
             leadingElement={icon}
             tabIndex={-1}
             role='menuitemcheckbox'
-            data-testid={testId ? `${testId}--menuitemcheckbox` : undefined}
+            data-testid={withRole(testId, 'menuitemcheckbox')}
             aria-checked={toggled}
             aria-label={ariaLabel}
             trailingElements={

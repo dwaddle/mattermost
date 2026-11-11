@@ -5,6 +5,7 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import {isMac} from '@mattermost/shared/utils/user_agent';
 
@@ -34,7 +35,7 @@ export default function EditPostFooter(props: Props) {
             <button
                 onClick={props.onSave}
                 className='save'
-                data-testid={props.testIdScope ? `${props.testIdScope}.save--button` : undefined}
+                data-testid={part(props.testIdScope, 'save', 'button')}
             >
                 <FormattedMessage
                     id='edit_post.action_buttons.save'
@@ -44,7 +45,7 @@ export default function EditPostFooter(props: Props) {
             <button
                 onClick={handleCancel}
                 className='cancel'
-                data-testid={props.testIdScope ? `${props.testIdScope}.cancel--button` : undefined}
+                data-testid={part(props.testIdScope, 'cancel', 'button')}
             >
                 <FormattedMessage
                     id='edit_post.action_buttons.cancel'

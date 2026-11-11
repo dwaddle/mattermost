@@ -6,6 +6,7 @@ import {FormattedMessage} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserThread} from '@mattermost/types/threads';
@@ -116,7 +117,7 @@ function ThreadFooter({
                 <Avatars
                     userIds={participantIds}
                     size='sm'
-                    testIdScope={testIdScope ? `${testIdScope}.participants` : undefined}
+                    testIdScope={part(testIdScope, 'participants')}
                 />
             ) : null}
 
@@ -124,7 +125,7 @@ function ThreadFooter({
                 <Button
                     onClick={handleReply}
                     className='ReplyButton separated'
-                    data-testid={testIdScope ? `${testIdScope}.reply--button` : undefined}
+                    data-testid={part(testIdScope, 'reply', 'button')}
                     prepend={
                         <span className='icon'>
                             <i className='icon-reply-outline'/>
@@ -143,7 +144,7 @@ function ThreadFooter({
                 isFollowing={isFollowing}
                 className='separated'
                 onClick={handleFollowing}
-                testId={testIdScope ? `${testIdScope}.follow` : undefined}
+                testId={part(testIdScope, 'follow')}
             />
 
             {Boolean(lastReplyAt) && (

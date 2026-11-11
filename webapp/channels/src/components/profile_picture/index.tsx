@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import ProfilePopover from 'components/profile_popover';
@@ -75,7 +76,7 @@ function ProfilePicture(props: Props) {
                     </span>
                     <StatusIcon
                         status={props.status}
-                        testId={props.testId ? `${props.testId}.status` : undefined}
+                        testId={part(props.testId, 'status')}
                     />
                 </>
             </ProfilePopover>
@@ -103,7 +104,7 @@ function ProfilePicture(props: Props) {
             ) : (
                 <StatusIcon
                     status={props.status}
-                    testId={props.testId ? `${props.testId}.status` : undefined}
+                    testId={part(props.testId, 'status')}
                 />
             )}
         </span>

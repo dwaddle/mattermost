@@ -6,6 +6,7 @@ import React, {memo} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostPriorityMetadata} from '@mattermost/types/posts';
 
@@ -47,7 +48,7 @@ function PriorityLabels({
                 <PriorityLabel
                     size='xs'
                     priority={priority}
-                    testId={testIdScope ? `${testIdScope}.priority` : undefined}
+                    testId={part(testIdScope, 'priority')}
                 />
             )}
             {persistentNotifications && (
@@ -59,14 +60,14 @@ function PriorityLabels({
                 >
                     <span
                         className='icon icon-bell-ring-outline'
-                        data-testid={testIdScope ? `${testIdScope}.persistent_notifications` : undefined}
+                        data-testid={part(testIdScope, 'persistent_notifications')}
                     />
                 </WithTooltip>
             )}
             {requestedAck && (
                 <div
                     className={classNames('priorityLabelsAcknowledgements', {hasError})}
-                    data-testid={testIdScope ? `${testIdScope}.acknowledgement` : undefined}
+                    data-testid={part(testIdScope, 'acknowledgement')}
                 >
                     <WithTooltip
                         title={intl.formatMessage({
@@ -99,7 +100,7 @@ function PriorityLabels({
                     <button
                         className='priorityLabelsClose close'
                         onClick={onRemove}
-                        data-testid={testIdScope ? `${testIdScope}.remove--button` : undefined}
+                        data-testid={part(testIdScope, 'remove', 'button')}
                     >
                         <span aria-hidden='true'>{'×'}</span>
                         <span className='sr-only'>

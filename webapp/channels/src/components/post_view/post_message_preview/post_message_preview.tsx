@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -87,7 +88,7 @@ const PostMessagePreview = (props: Props) => {
                 usePostAsSource={props.usePostAsSource}
                 overrideGenerateFileDownloadUrl={overrideGenerateFileDownloadUrl}
                 disableActions={disableActions}
-                testIdScope={props.testIdScope ? `${props.testIdScope}.attachments` : undefined}
+                testIdScope={part(props.testIdScope, 'attachments')}
             />
         );
     }
@@ -194,7 +195,7 @@ const PostMessagePreview = (props: Props) => {
                             <span className='d-flex mr-2 ml-1'>
                                 <PriorityLabel
                                     priority={previewPost.metadata.priority.priority}
-                                    testId={props.testIdScope ? `${props.testIdScope}.priority_label` : undefined}
+                                    testId={part(props.testIdScope, 'priority_label')}
                                 />
                             </span>
                         )}
@@ -223,7 +224,7 @@ const PostMessagePreview = (props: Props) => {
                     isChannelAutotranslated={isChannelAutotranslated}
                     disableInteractions={true}
                     messageBodyFooter={interactiveMessagesPreview}
-                    testId={props.testIdScope ? `${props.testIdScope}.message` : undefined}
+                    testId={part(props.testIdScope, 'message')}
                 />
                 {urlPreview}
                 {fileAttachmentPreview}

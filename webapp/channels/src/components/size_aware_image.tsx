@@ -11,6 +11,7 @@ import type {WrappedComponentProps} from 'react-intl';
 
 import {DownloadOutlineIcon, LinkVariantIcon, CheckIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part, withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 import type {PostImage} from '@mattermost/types/posts';
@@ -268,7 +269,7 @@ export class SizeAwareImage extends React.PureComponent<Props, State> {
             <img
                 {...props}
                 aria-label={ariaLabelImage}
-                data-testid={testId ? `${testId}--img` : undefined}
+                data-testid={withRole(testId, 'img')}
                 tabIndex={0}
                 onClick={this.handleImageClick}
                 onKeyDown={this.onEnterKeyDown}
@@ -480,7 +481,7 @@ export class SizeAwareImage extends React.PureComponent<Props, State> {
                 <figure
                     className={containerClass}
                     style={containerStyle}
-                    data-testid={this.props.testId ? `${this.props.testId}.frame` : undefined}
+                    data-testid={part(this.props.testId, 'frame')}
                 >
                     {children}
                 </figure>

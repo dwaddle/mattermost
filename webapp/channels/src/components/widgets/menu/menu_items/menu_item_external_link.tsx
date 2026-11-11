@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import ExternalLink from 'components/external_link';
@@ -22,7 +23,7 @@ export const MenuItemExternalLinkImpl: React.FC<Props> = ({url, text, iconClassN
     <ExternalLink
         href={url}
         onClick={onClick}
-        data-testid={testId ? `${testId}--link` : undefined}
+        data-testid={withRole(testId, 'link')}
         location='menu_item_external_link'
     >
         {iconClassName && <i className={`icon ${iconClassName}`}/>}

@@ -6,6 +6,7 @@ import {defineMessage, useIntl} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 import styled from 'styled-components';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelStats} from '@mattermost/types/channels';
 
@@ -98,7 +99,7 @@ function MenuItem(props: MenuItemProps) {
             aria-label={typeof text === 'string' ? text : undefined}
             type='button'
             id={id || ''}
-            data-testid={`${testId}--button`}
+            data-testid={withRole(testId, 'button')}
         >
             <Icon>{icon}</Icon>
             <MenuItemText>{text}</MenuItemText>

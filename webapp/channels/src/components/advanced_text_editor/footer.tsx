@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import type {ReactNode} from 'react';
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {ServerError} from '@mattermost/types/errors';
@@ -46,7 +47,7 @@ export default function Footer({
             {postError && (
                 <div
                     className={classNames('post-error', {errorClass})}
-                    data-testid={`${testIdScope}.error--text`}
+                    data-testid={part(testIdScope, 'error', 'text')}
                 >
                     {postError}
                 </div>

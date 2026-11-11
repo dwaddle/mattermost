@@ -12,6 +12,7 @@ import {useSelector} from 'react-redux';
 
 import {ChevronRightIcon, CreationOutlineIcon, PencilOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import * as Menu from 'components/menu';
@@ -147,7 +148,7 @@ const AIActionsMenu = ({
             <Menu.Container
                 menuButton={{
                     id: 'ai-actions-button',
-                    dataTestId: testIdScope ? `${testIdScope}.open--button` : undefined,
+                    dataTestId: part(testIdScope, 'open', 'button'),
                     as: AIActionsMenuTrigger,
                     class: 'control',
                     'aria-label': formatMessage({
@@ -218,7 +219,7 @@ const AIActionsMenu = ({
                 {aiRewriteEnabled && rewriteMenuProps && (
                     <Menu.Item
                         id='ai-action-rewrite'
-                        data-testid={testIdScope ? `${testIdScope}.menu.rewrite--menuitem` : undefined}
+                        data-testid={part(testIdScope, 'menu.rewrite', 'menuitem')}
                         role='menuitem'
                         aria-haspopup='menu'
                         aria-expanded={activeSubmenu === '__rewrite__'}
@@ -266,7 +267,7 @@ const AIActionsMenu = ({
                                     onCustomPromptKeyDown={rewriteMenuProps.onCustomPromptKeyDown}
                                     onCancelProcessing={rewriteMenuProps.onCancelProcessing}
                                     customPromptRef={rewriteMenuProps.customPromptRef}
-                                    testIdScope={testIdScope ? `${testIdScope}.rewrite` : undefined}
+                                    testIdScope={part(testIdScope, 'rewrite')}
                                 />
                                 <MuiMenuList
                                     sx={{py: 0}}

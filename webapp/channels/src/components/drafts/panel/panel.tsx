@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import React, {memo} from 'react';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {makeIsEligibleForClick} from 'utils/utils';
@@ -52,7 +53,7 @@ function Panel({
 
     return (
         <div
-            data-testid={testId ? `${testId}--link` : undefined}
+            data-testid={withRole(testId, 'link')}
             data-postid={dataPostId}
             className={classNames(
                 'Panel',

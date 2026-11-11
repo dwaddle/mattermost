@@ -25,6 +25,7 @@ import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useLayou
 import {flushSync} from 'react-dom';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
@@ -751,7 +752,7 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, Props>(({
                     channelId={channelId}
                     rootId={rootId}
                     onSubmit={submit}
-                    testId={testId ? `${testId}.suggestions` : undefined}
+                    testId={part(testId, 'suggestions')}
                 />
             )}
         </div>

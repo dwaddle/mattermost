@@ -8,6 +8,7 @@ import {FireIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type Props = {
@@ -58,7 +59,7 @@ const BurnOnReadButton = ({enabled, onToggle, disabled, durationMinutes, testIdS
         >
             <IconButton
                 id='burnOnReadButton'
-                data-testid={testIdScope ? `${testIdScope}.burn_on_read--button` : undefined}
+                data-testid={part(testIdScope, 'burn_on_read', 'button')}
                 className='control'
                 size='small'
                 disabled={disabled}

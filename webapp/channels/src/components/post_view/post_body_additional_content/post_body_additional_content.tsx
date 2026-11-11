@@ -5,6 +5,7 @@ import React, {type JSX} from 'react';
 import {injectIntl} from 'react-intl';
 import type {WrappedComponentProps} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import {isAppBinding, type AppBinding} from '@mattermost/types/apps';
 import {isMessageAttachmentArray} from '@mattermost/types/message_attachments';
@@ -93,7 +94,7 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                     imageMetadata={this.props.post.metadata.images[embed.url]}
                     link={embed.url}
                     post={this.props.post}
-                    testId={this.props.testIdScope ? `${this.props.testIdScope}.image_preview` : undefined}
+                    testId={part(this.props.testIdScope, 'image_preview')}
                 />
             );
 
@@ -142,7 +143,7 @@ class PostBodyAdditionalContent extends React.PureComponent<Props & WrappedCompo
                     <PostMessagePreview
                         metadata={embed.data}
                         handleFileDropdownOpened={this.props.handleFileDropdownOpened}
-                        testIdScope={this.props.testIdScope ? `${this.props.testIdScope}.permalink_preview` : undefined}
+                        testIdScope={part(this.props.testIdScope, 'permalink_preview')}
                     />
                 );
             }

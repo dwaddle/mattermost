@@ -18,6 +18,7 @@ import {
 } from '@mattermost/compass-icons/components';
 import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Agent} from '@mattermost/types/agents';
 
@@ -396,7 +397,7 @@ export function RewriteSubMenuHeader({
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyDown={onCustomPromptKeyDown}
-                    testId={testIdScope ? `${testIdScope}.prompt` : undefined}
+                    testId={part(testIdScope, 'prompt')}
                 />
             }
         </div>

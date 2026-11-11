@@ -4,6 +4,7 @@
 import React, {useCallback, useContext, useMemo, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserAutocomplete} from '@mattermost/types/autocomplete';
 import type {Channel} from '@mattermost/types/channels';
@@ -153,7 +154,7 @@ export const StaticSelectElement = ({element, postId, onAction, testIdScope}: St
                     onSelected={handleSelected}
                     placeholder={element.placeholder}
                     inputClassName='mm-blocks-select'
-                    testIdScope={testIdScope ? `${testIdScope}.select` : undefined}
+                    testIdScope={part(testIdScope, 'select')}
                     testKey={element.action_id}
                     value={value}
                     toggleFocus={handlePopupOpened}

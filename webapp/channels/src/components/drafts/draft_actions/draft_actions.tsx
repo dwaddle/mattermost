@@ -5,6 +5,7 @@ import React, {memo, useCallback} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useDispatch} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {SchedulingInfo} from '@mattermost/types/schedule_post';
 
@@ -95,7 +96,7 @@ function DraftActions({
                 icon='icon-trash-can-outline'
                 id='delete'
                 name='delete'
-                testId={testIdScope ? `${testIdScope}.delete` : undefined}
+                testId={part(testIdScope, 'delete')}
                 tooltipText={(
                     <FormattedMessage
                         id='drafts.actions.delete'
@@ -109,7 +110,7 @@ function DraftActions({
                     icon='icon-pencil-outline'
                     id='edit'
                     name='edit'
-                    testId={testIdScope ? `${testIdScope}.edit` : undefined}
+                    testId={part(testIdScope, 'edit')}
                     tooltipText={(
                         <FormattedMessage
                             id='drafts.actions.edit'
@@ -126,7 +127,7 @@ function DraftActions({
                     icon='icon-clock-send-outline'
                     id='reschedule'
                     name='reschedule'
-                    testId={testIdScope ? `${testIdScope}.reschedule` : undefined}
+                    testId={part(testIdScope, 'reschedule')}
                     tooltipText={scheduledDraft}
                     onClick={handleScheduleDraft}
                 />
@@ -137,7 +138,7 @@ function DraftActions({
                     icon='icon-send-outline'
                     id='send'
                     name='send'
-                    testId={testIdScope ? `${testIdScope}.send` : undefined}
+                    testId={part(testIdScope, 'send')}
                     tooltipText={(
                         <FormattedMessage
                             id='drafts.actions.send'

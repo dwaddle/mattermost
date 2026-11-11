@@ -11,6 +11,7 @@ import LinkVariantIcon from '@mattermost/compass-icons/components/link-variant';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {FileInfo} from '@mattermost/types/files';
 
@@ -108,7 +109,7 @@ const FilePreviewModalMainActions: React.FC<Props> = ({
                 icon={<Icon glyph={<CloseIcon/>}/>}
                 onClick={handleModalClose}
                 aria-label={closeMessage}
-                data-testid={testIdScope ? `${testIdScope}.close--button` : undefined}
+                data-testid={part(testIdScope, 'close', 'button')}
             />
         </WithTooltip>
     );
@@ -136,7 +137,7 @@ const FilePreviewModalMainActions: React.FC<Props> = ({
                 icon={<Icon glyph={<LinkVariantIcon/>}/>}
                 onClick={copyPublicLink}
                 aria-label={publicTooltipMessage}
-                data-testid={testIdScope ? `${testIdScope}.public_link--button` : undefined}
+                data-testid={part(testIdScope, 'public_link', 'button')}
             />
         </WithTooltip>
     );
@@ -158,7 +159,7 @@ const FilePreviewModalMainActions: React.FC<Props> = ({
                 aria-label={downloadMessage}
             >
                 <ExternalLink
-                    data-testid={testIdScope ? `${testIdScope}.download--link` : undefined}
+                    data-testid={part(testIdScope, 'download', 'link')}
                     href={fileURL}
                     location='file_preview_modal_main_actions'
                     download={filename}

@@ -9,6 +9,7 @@ import {EmoticonHappyOutlineIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Emoji} from '@mattermost/types/emojis';
 
@@ -77,7 +78,7 @@ export default function PostReaction({
             <WithTooltip title={ariaLabel}>
                 <IconButton
                     ref={setReference}
-                    data-testid={testId ? `${testId}--button` : undefined}
+                    data-testid={withRole(testId, 'button')}
                     id={`${location}_reaction_${postId}`}
                     size='small'
                     padding='compact'

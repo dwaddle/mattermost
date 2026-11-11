@@ -6,6 +6,7 @@ import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 import type {ChannelBanner} from '@mattermost/types/channels';
 
@@ -133,7 +134,7 @@ export default function ChannelBanner({channelId, testIdScope}: Props) {
                 style={channelBannerStyle}
             >
                 <span
-                    data-testid={`${testIdScope}.text--text`}
+                    data-testid={part(testIdScope, 'text', 'text')}
                     className='channel_banner_text'
                     aria-label={channelBannerTextAriaLabel}
                     style={channelBannerTextStyle}

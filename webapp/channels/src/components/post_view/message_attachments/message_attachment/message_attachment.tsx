@@ -6,6 +6,7 @@ import React from 'react';
 import type {CSSProperties, JSX, KeyboardEvent, MouseEvent} from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostActionOption} from '@mattermost/types/integration_actions';
 import type {
@@ -170,7 +171,7 @@ export default class MessageAttachment extends React.PureComponent<Props, State>
                 content.push(
                     <ActionButton
                         key={action.id}
-                        testId={this.props.testIdScope ? `${this.props.testIdScope}.action:${action.id}` : undefined}
+                        testId={part(this.props.testIdScope, 'action', {key: action.id})}
                         action={action}
                         disabled={action.disabled}
                         handleAction={this.handleAction}

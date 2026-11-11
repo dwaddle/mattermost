@@ -5,6 +5,7 @@ import React, {memo} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 import type {UserProfile} from '@mattermost/types/users';
@@ -60,7 +61,7 @@ const FilePreviewModalInfo: React.FC<Props> = (props: Props) => {
                     <span className='file-preview-modal__file-details-user-name'>{name}</span>
                     <span
                         className='file-preview-modal__channel'
-                        data-testid={props.testIdScope ? `${props.testIdScope}.channel--text` : undefined}
+                        data-testid={part(props.testIdScope, 'channel', 'text')}
                     >{channelName}</span>
                 </span>
             </>
@@ -72,7 +73,7 @@ const FilePreviewModalInfo: React.FC<Props> = (props: Props) => {
                 </h5>
                 <span
                     className='file-preview-modal__channel'
-                    data-testid={props.testIdScope ? `${props.testIdScope}.channel--text` : undefined}
+                    data-testid={part(props.testIdScope, 'channel', 'text')}
                 >{channelName}
                 </span>
             </>

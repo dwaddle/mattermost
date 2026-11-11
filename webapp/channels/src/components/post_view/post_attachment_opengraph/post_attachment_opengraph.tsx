@@ -7,6 +7,7 @@ import {useIntl} from 'react-intl';
 
 import {CloseIcon, MenuDownIcon, MenuRightIcon} from '@mattermost/compass-icons/components';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {
     OpenGraphMetadata,
@@ -162,7 +163,7 @@ const PostAttachmentOpenGraph = ({openGraphData, post, actions, link, isInPermal
             href={safeLink}
             title={openGraphData?.title || openGraphData?.url || link}
             location='post_attachment_opengraph'
-            data-testid={testIdScope ? `${testIdScope}.link_preview--link` : undefined}
+            data-testid={part(testIdScope, 'link_preview', 'link')}
             style={{
                 '--open-graph-thumbnail-size': `${OPEN_GRAPH_THUMBNAIL_SIZE}px`,
                 '--open-graph-max-image-width': `${OPEN_GRAPH_MAX_IMAGE_WIDTH}px`,
@@ -178,7 +179,7 @@ const PostAttachmentOpenGraph = ({openGraphData, post, actions, link, isInPermal
                         className='remove-button style--none'
                         aria-label={formatMessage({id: 'link_preview.remove_link_preview', defaultMessage: 'Remove link preview'})}
                         onClick={handleRemovePreview}
-                        data-testid={testIdScope ? `${testIdScope}.link_preview.remove--button` : undefined}
+                        data-testid={part(testIdScope, 'link_preview.remove', 'button')}
                     >
                         <CloseIcon
                             size={14}
@@ -192,7 +193,7 @@ const PostAttachmentOpenGraph = ({openGraphData, post, actions, link, isInPermal
                 sitename={openGraphData?.site_name}
                 title={openGraphData?.title || openGraphData?.url || link}
                 description={openGraphData?.description}
-                testIdScope={testIdScope ? `${testIdScope}.link_preview` : undefined}
+                testIdScope={part(testIdScope, 'link_preview')}
             />
             <PostAttachmentOpenGraphImage
                 imageMetadata={bestImageData}
@@ -200,7 +201,7 @@ const PostAttachmentOpenGraph = ({openGraphData, post, actions, link, isInPermal
                 isInPermalink={isInPermalink}
                 isEmbedVisible={rest.isEmbedVisible}
                 toggleEmbedVisibility={rest.toggleEmbedVisibility}
-                testIdScope={testIdScope ? `${testIdScope}.link_preview` : undefined}
+                testIdScope={part(testIdScope, 'link_preview')}
             />
         </ExternalLink>
     );
@@ -221,21 +222,21 @@ export const PostAttachmentOpenGraphBody = memo(({title, isInPermalink, sitename
             {(!isInPermalink && sitename) && (
                 <span
                     className='sitename'
-                    data-testid={testIdScope ? `${testIdScope}.site_name--text` : undefined}
+                    data-testid={part(testIdScope, 'site_name', 'text')}
                 >
                     {sitename}
                 </span>
             )}
             <span
                 className='title'
-                data-testid={testIdScope ? `${testIdScope}.title--text` : undefined}
+                data-testid={part(testIdScope, 'title', 'text')}
             >
                 {title}
             </span>
             {description && (
                 <span
                     className='description'
-                    data-testid={testIdScope ? `${testIdScope}.description--text` : undefined}
+                    data-testid={part(testIdScope, 'description', 'text')}
                 >
                     {description}
                 </span>
@@ -278,7 +279,7 @@ export const PostAttachmentOpenGraphImage = memo(({imageMetadata, isInPermalink,
     const imageCollapseButton = (
         <button
             className='preview-toggle style--none'
-            data-testid={testIdScope ? `${testIdScope}.toggle--button` : undefined}
+            data-testid={part(testIdScope, 'toggle', 'button')}
             onClick={toggleImagePreview}
             aria-label={isEmbedVisible ? expandedLabel : collapsedLabel}
         >
@@ -314,7 +315,7 @@ export const PostAttachmentOpenGraphImage = memo(({imageMetadata, isInPermalink,
                         showLoader={true}
                         alt={title}
                         hideUtilities={true}
-                        testId={testIdScope ? `${testIdScope}.image` : undefined}
+                        testId={part(testIdScope, 'image')}
                     />
                     {large && imageCollapseButton}
                 </>

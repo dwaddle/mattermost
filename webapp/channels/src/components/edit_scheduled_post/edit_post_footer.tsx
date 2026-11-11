@@ -5,6 +5,7 @@ import React, {memo} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import {isMac} from '@mattermost/shared/utils/user_agent';
 
@@ -29,7 +30,7 @@ const EditPostFooter = ({onSave, onCancel, testId}: Props) => {
             <button
                 onClick={onSave}
                 className='save'
-                data-testid={testId ? `${testId}.save--button` : undefined}
+                data-testid={part(testId, 'save', 'button')}
             >
                 <FormattedMessage
                     id='edit_post.action_buttons.save'
@@ -39,7 +40,7 @@ const EditPostFooter = ({onSave, onCancel, testId}: Props) => {
             <button
                 onClick={onCancel}
                 className='cancel'
-                data-testid={testId ? `${testId}.cancel--button` : undefined}
+                data-testid={part(testId, 'cancel', 'button')}
             >
                 <FormattedMessage
                     id='edit_post.action_buttons.cancel'

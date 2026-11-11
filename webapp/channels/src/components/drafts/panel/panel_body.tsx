@@ -4,6 +4,7 @@
 import React, {useCallback} from 'react';
 import {useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostPriorityMetadata} from '@mattermost/types/posts';
 import type {UserProfile, UserStatus} from '@mattermost/types/users';
@@ -70,11 +71,11 @@ function PanelBody({
     return (
         <div
             className='DraftPanelBody post'
-            data-testid={testIdScope ? `${testIdScope}.body` : undefined}
+            data-testid={part(testIdScope, 'body')}
         >
             <div
                 className='DraftPanelBody__left post__img'
-                data-testid={testIdScope ? `${testIdScope}.avatar` : undefined}
+                data-testid={part(testIdScope, 'avatar')}
             >
                 <ProfilePicture
                     status={status}
@@ -96,7 +97,7 @@ function PanelBody({
                         <div className='DraftPanelBody__right'>
                             <div
                                 className='post__header'
-                                data-testid={testIdScope ? `${testIdScope}.post_header` : undefined}
+                                data-testid={part(testIdScope, 'post_header')}
                             >
                                 <strong>{displayName}</strong>
                                 {priority && (
@@ -106,7 +107,7 @@ function PanelBody({
                                         persistentNotifications={priority.persistent_notifications}
                                         priority={priority.priority}
                                         requestedAck={priority.requested_ack}
-                                        testIdScope={testIdScope ? `${testIdScope}.priority_labels` : undefined}
+                                        testIdScope={part(testIdScope, 'priority_labels')}
                                     />
                                 )}
                                 {burnOnRead?.enabled && isBorFeatureEnabled && (
@@ -114,13 +115,13 @@ function PanelBody({
                                         canRemove={false}
                                         onRemove={() => {}}
                                         durationMinutes={burnOnReadDurationMinutes}
-                                        testId={testIdScope ? `${testIdScope}.burn_on_read_label` : undefined}
+                                        testId={part(testIdScope, 'burn_on_read_label')}
                                     />
                                 )}
                             </div>
                             <div
                                 className='post__body'
-                                data-testid={testIdScope ? `${testIdScope}.message` : undefined}
+                                data-testid={part(testIdScope, 'message')}
                             >
                                 <Markdown
                                     options={OPTIONS}

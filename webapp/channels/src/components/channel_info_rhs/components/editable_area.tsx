@@ -6,6 +6,7 @@ import {useIntl} from 'react-intl';
 import styled from 'styled-components';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 const EditButton = styled.button`
@@ -72,7 +73,7 @@ const EditableAreaBase = ({editable, content, emptyLabel, onEdit, className, edi
                 {!content && editable && (
                     <EmptyPlace
                         onClick={onEdit}
-                        data-testid={testId ? `${testId}.add--button` : undefined}
+                        data-testid={part(testId, 'add', 'button')}
                         aria-label={formatMessage({id: 'channel_info_rhs.edit_link', defaultMessage: 'Edit'})}
                     >
                         {emptyLabel}
@@ -85,7 +86,7 @@ const EditableAreaBase = ({editable, content, emptyLabel, onEdit, className, edi
                     <WithTooltip title={editTooltip || formatMessage({id: 'channel_info_rhs.edit_link', defaultMessage: 'Edit'})}>
                         <EditButton
                             onClick={onEdit}
-                            data-testid={testId ? `${testId}.edit--button` : undefined}
+                            data-testid={part(testId, 'edit', 'button')}
                             aria-label={formatMessage({id: 'channel_info_rhs.edit_link', defaultMessage: 'Edit'})}
                         >
                             <i className='icon icon-pencil-outline'/>

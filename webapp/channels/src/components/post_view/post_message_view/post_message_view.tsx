@@ -4,6 +4,7 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Post} from '@mattermost/types/posts';
 
@@ -105,7 +106,7 @@ export default class PostMessageView extends React.PureComponent<Props, State> {
 
     renderDeletedPost() {
         return (
-            <p data-testid={this.props.testId ? `${this.props.testId}--text` : undefined}>
+            <p data-testid={withRole(this.props.testId, 'text')}>
                 <FormattedMessage
                     id='post_body.deleted'
                     defaultMessage='(message deleted)'

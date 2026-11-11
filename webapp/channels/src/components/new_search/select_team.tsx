@@ -7,6 +7,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
 import {CheckIcon, ChevronDownIcon, MagnifyIcon as SearchIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 
 import {get} from 'mattermost-redux/selectors/entities/preferences';
@@ -108,7 +109,7 @@ const SelectTeam = (props: Props) => {
             <Menu.InputItem
                 key='filter_teams'
                 id='search_teams'
-                testId={`${props.testIdScope}.menu.filter`}
+                testId={part(props.testIdScope, 'menu.filter')}
                 type='text'
                 placeholder={intl.formatMessage({id: 'search_teams_selector.search_teams', defaultMessage: 'Search teams'})}
                 className='search-teams-selector-search'
@@ -119,11 +120,11 @@ const SelectTeam = (props: Props) => {
         ];
         if (currentlySelectedTeam) {
             elements.push(
-                renderTeam(currentlySelectedTeam.id, currentlySelectedTeam.display_name, currentlySelectedTeam.id, `${props.testIdScope}.menu.team:${currentlySelectedTeam.id}--menuitemradio`, 'search-teams-selector-current-team'),
+                renderTeam(currentlySelectedTeam.id, currentlySelectedTeam.display_name, currentlySelectedTeam.id, part(props.testIdScope, 'menu.team', {key: currentlySelectedTeam.id}, 'menuitemradio'), 'search-teams-selector-current-team'),
                 <Menu.Title
                     key='your-team-title'
                     role='separator'
-                    testId={`${props.testIdScope}.menu.your_teams`}
+                    testId={part(props.testIdScope, 'menu.your_teams')}
                 >
                     <FormattedMessage
                         id='search_teams_selector.your_teams'
@@ -141,7 +142,7 @@ const SelectTeam = (props: Props) => {
                 id: 'searchTeamsSelectorMenuButton',
                 class: classNames('search-teams-selector-menu-button', {'search-teams-selector-menu-button__different-team': isDifferentTeamSelected}),
                 children: button,
-                dataTestId: `${props.testIdScope}.open_menu--button`,
+                dataTestId: part(props.testIdScope, 'open_menu', 'button'),
             }}
             menu={{
                 id: 'searchTeamSelectorMenu',
@@ -151,10 +152,10 @@ const SelectTeam = (props: Props) => {
             anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
             transformOrigin={{vertical: 'top', horizontal: 'right'}}
         >
-            {renderTeam('', allTeamsText, 'all_teams', `${props.testIdScope}.menu.all_teams--menuitemradio`)}
+            {renderTeam('', allTeamsText, 'all_teams', part(props.testIdScope, 'menu.all_teams', 'menuitemradio'))}
             <Menu.Separator/>
             {showFilter && renderFilterArea()}
-            {teams.map((team) => renderTeam(team.id, team.display_name, team.id, `${props.testIdScope}.menu.team:${team.id}--menuitemradio`))}
+            {teams.map((team) => renderTeam(team.id, team.display_name, team.id, part(props.testIdScope, 'menu.team', {key: team.id}, 'menuitemradio')))}
         </Menu.Container>
     );
 };

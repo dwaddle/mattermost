@@ -5,6 +5,7 @@ import React, {memo, useCallback, useEffect, useState} from 'react';
 import {useIntl} from 'react-intl';
 
 import {EyeOutlineIcon, AlertCircleOutlineIcon} from '@mattermost/compass-icons/components';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import LoadingSpinner from 'components/widgets/loading/loading_spinner';
@@ -99,7 +100,7 @@ function BurnOnReadConcealedPlaceholder({
                     disabled={loading}
                     aria-label={ariaLabel}
                     tabIndex={0}
-                    data-testid={testIdScope ? `${testIdScope}.reveal--button` : undefined}
+                    data-testid={part(testIdScope, 'reveal', 'button')}
                 >
                     {loading ? (
                         <LoadingSpinner legacy={true}/>

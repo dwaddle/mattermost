@@ -6,6 +6,7 @@ import React, {memo, useCallback, useMemo} from 'react';
 
 import {Button} from '@mattermost/compass-ui/components/button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {PostAction, PostActionOption} from '@mattermost/types/integration_actions';
 
@@ -88,7 +89,7 @@ const ActionButton = ({
         <Button
             data-action-id={action.id}
             data-action-cookie={action.cookie}
-            data-testid={testId ? `${testId}--button` : undefined}
+            data-testid={withRole(testId, 'button')}
             disabled={disabled || actionExecuting}
             onClick={handleActionClick}
             size='small'

@@ -5,6 +5,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {CSSTransition} from 'react-transition-group';
 import styled from 'styled-components';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 interface LineLimiterProps {
@@ -69,7 +70,7 @@ const LineLimiterBase = ({children, maxLines, lineHeight, moreText, lessText, er
                 {needLimiter && (
                     <ToggleButton
                         className='LineLimiter__toggler'
-                        data-testid={testId ? `${testId}.toggle--button` : undefined}
+                        data-testid={part(testId, 'toggle', 'button')}
                         onClick={() => setOpen(!open)}
                     >
                         {open ? lessText : moreText}

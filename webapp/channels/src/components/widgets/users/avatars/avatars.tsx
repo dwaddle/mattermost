@@ -8,6 +8,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import tinycolor from 'tinycolor2';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {UserProfile} from '@mattermost/types/users';
 
@@ -144,7 +145,7 @@ function Avatars({
                     key={id}
                     userId={id}
                     size={size}
-                    data-testid={testIdScope ? `${testIdScope}.avatar:${id}--img` : undefined}
+                    data-testid={part(testIdScope, 'avatar', {key: id}, 'img')}
                 />
             ))}
             {Boolean(nonDisplayCount) && (
@@ -155,7 +156,7 @@ function Avatars({
                         style={avatarStyle}
                         size={size}
                         tabIndex={0}
-                        data-testid={testIdScope ? `${testIdScope}.others--text` : undefined}
+                        data-testid={part(testIdScope, 'others', 'text')}
                         text={nonDisplayCount > OTHERS_DISPLAY_LIMIT ? `${OTHERS_DISPLAY_LIMIT}+` : `+${nonDisplayCount}`}
                     />
                 </WithTooltip>

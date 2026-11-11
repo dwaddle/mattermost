@@ -7,6 +7,7 @@ import type {MouseEvent} from 'react';
 import {FormattedMessage, useIntl} from 'react-intl';
 
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {keyed, part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 import type {Emoji} from '@mattermost/types/emojis';
@@ -587,7 +588,7 @@ function PostComponent(props: Props) {
         visibleMessage = (
             <span
                 className='post__visibility'
-                data-testid={postTestIdScope ? `${postTestIdScope}.only_visible_to_you--text` : undefined}
+                data-testid={part(postTestIdScope, 'only_visible_to_you', 'text')}
             >
                 <FormattedMessage
                     id='post_info.message.visible'
@@ -617,7 +618,7 @@ function PostComponent(props: Props) {
                 compactDisplay={props.compactDisplay}
                 post={post}
                 userId={post.user_id}
-                testId={postTestIdScope ? `${postTestIdScope}.avatar` : undefined}
+                testId={part(postTestIdScope, 'avatar')}
             />
         );
 
@@ -663,7 +664,7 @@ function PostComponent(props: Props) {
                         mentionHighlight: props.isMentionSearch,
                     }}
                     isRHS={isRHS}
-                    testId={postTestIdScope ? `${postTestIdScope}.message` : undefined}
+                    testId={part(postTestIdScope, 'message')}
                     postTestIdScope={postTestIdScope}
                     isChannelAutotranslated={props.isChannelAutotranslated}
                     userLanguage={locale}
@@ -679,7 +680,7 @@ function PostComponent(props: Props) {
                 isRHS={isRHS}
                 compactDisplay={props.compactDisplay}
                 isChannelAutotranslated={props.isChannelAutotranslated}
-                testId={postTestIdScope ? `${postTestIdScope}.message` : undefined}
+                testId={part(postTestIdScope, 'message')}
                 testIdScope={postTestIdScope}
             />
         );
@@ -690,7 +691,7 @@ function PostComponent(props: Props) {
         <ThreadFooter
             threadId={post.id}
             replyClick={handleThreadClick}
-            testIdScope={postTestIdScope ? `${postTestIdScope}.thread_footer` : undefined}
+            testIdScope={part(postTestIdScope, 'thread_footer')}
         />
     ) : null;
     const channelDisplayName = getChannelName();
@@ -726,7 +727,7 @@ function PostComponent(props: Props) {
             <span className='d-flex'>
                 <PriorityLabel
                     priority={post.metadata.priority.priority}
-                    testId={postTestIdScope ? `${postTestIdScope}.priority_label` : undefined}
+                    testId={part(postTestIdScope, 'priority_label')}
                 />
             </span>
         );
@@ -801,7 +802,7 @@ function PostComponent(props: Props) {
             <PostAriaLabelDiv
                 ref={postRef}
                 id={getTestId()}
-                data-testid={postTestIdScope ? `${postTestIdScope}:${post.id}` : undefined}
+                data-testid={keyed(postTestIdScope, post.id)}
                 post={post}
                 className={getClassName()}
                 style={props.preventClickInteraction ? preventInteractionStyle : undefined}
@@ -847,7 +848,7 @@ function PostComponent(props: Props) {
                     className={classNames('post__content', {
                         center: props.center,
                     })}
-                    data-testid={postTestIdScope ? `${postTestIdScope}.content` : undefined}
+                    data-testid={part(postTestIdScope, 'content')}
                 >
                     <div className='post__img'>
                         {profilePic}
@@ -856,7 +857,7 @@ function PostComponent(props: Props) {
                         <div
                             className='post__header'
                             ref={postHeaderRef}
-                            data-testid={postTestIdScope ? `${postTestIdScope}.header` : undefined}
+                            data-testid={part(postTestIdScope, 'header')}
                         >
                             <PostUserProfile
                                 {...props}
@@ -871,7 +872,7 @@ function PostComponent(props: Props) {
                                         postId={post.id}
                                         location={props.location}
                                         timestampProps={{...props.timestampProps, style: props.isConsecutivePost && !props.compactDisplay ? 'narrow' : undefined}}
-                                        testId={postTestIdScope ? `${postTestIdScope}.time` : undefined}
+                                        testId={part(postTestIdScope, 'time')}
                                     />
                                 }
                                 {showPostHeaderBadge && (
@@ -948,7 +949,7 @@ function PostComponent(props: Props) {
                         <div
                             className={postClass}
                             id={isRHS ? undefined : `${post.id}_message`}
-                            data-testid={postTestIdScope ? `${postTestIdScope}.body` : undefined}
+                            data-testid={part(postTestIdScope, 'body')}
                         >
                             {post.failed && <FailedPostOptions post={post}/>}
                             <AutoHeightSwitcher
@@ -962,7 +963,7 @@ function PostComponent(props: Props) {
                                 showFileAttachments &&
                                 <FileAttachmentListContainer
                                     post={post}
-                                    testIdScope={postTestIdScope ? `${postTestIdScope}.attachments` : undefined}
+                                    testIdScope={part(postTestIdScope, 'attachments')}
                                     compactDisplay={props.compactDisplay}
                                     handleFileDropdownOpened={handleFileDropdownOpened}
                                 />
@@ -985,7 +986,7 @@ function PostComponent(props: Props) {
                                 {showReactions && (
                                     <ReactionList
                                         post={post}
-                                        testIdScope={postTestIdScope ? `${postTestIdScope}.reactions` : undefined}
+                                        testIdScope={part(postTestIdScope, 'reactions')}
                                     />
                                 )}
                             </div>

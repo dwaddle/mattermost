@@ -8,6 +8,7 @@ import {PlusIcon} from '@mattermost/compass-icons/components';
 import {Icon} from '@mattermost/compass-ui/components/icon';
 import {IconButton} from '@mattermost/compass-ui/components/icon-button';
 import {WithTooltip} from '@mattermost/shared/components/tooltip';
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 // Placeholder until messages can be created with attributes, which comes in a
@@ -37,7 +38,7 @@ const PostAttributesButton = ({testIdScope}: Props): JSX.Element => {
                 <button
                     type='button'
                     id='postAttributesButton'
-                    data-testid={`${testIdScope}.post_attributes--button`}
+                    data-testid={part(testIdScope, 'post_attributes', 'button')}
                 />
             </IconButton>
         </WithTooltip>

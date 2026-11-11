@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import type {CSSProperties} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {
     MmBlock,
@@ -357,13 +358,13 @@ const CollapsibleBlock = ({block, postId, onAction, testIdScope}: CollapsibleBlo
     return (
         <div
             className={classNames('mm-blocks-collapsible', {'mm-blocks-collapsible--expanded': !collapsed})}
-            data-testid={testIdScope ? `${testIdScope}.collapsible` : undefined}
+            data-testid={part(testIdScope, 'collapsible')}
         >
             <div className='mm-blocks-collapsible-header'>
                 <button
                     type='button'
                     className='mm-blocks-collapsible-header__toggle style--none'
-                    data-testid={testIdScope ? `${testIdScope}.collapsible.toggle--button` : undefined}
+                    data-testid={part(testIdScope, 'collapsible.toggle', 'button')}
                     onClick={toggleCollapsed}
                     aria-expanded={!collapsed}
                     aria-controls={contentId}
@@ -392,7 +393,7 @@ const CollapsibleBlock = ({block, postId, onAction, testIdScope}: CollapsibleBlo
             <div
                 id={contentId}
                 className='mm-blocks-collapsible-content'
-                data-testid={testIdScope ? `${testIdScope}.collapsible.content` : undefined}
+                data-testid={part(testIdScope, 'collapsible.content')}
                 aria-hidden={collapsed}
                 style={contentStyle}
                 onTransitionEnd={handleContentTransitionEnd}
