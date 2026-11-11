@@ -197,6 +197,11 @@
             },
             {
                 "rule": "role-fit",
+                "template": "*.actions_menu.plugin_submenu:{key}--menuitem",
+                "reason": "a plugin slot ends in the role menu items have (Q69); a post's actions menu renders a plugin's submenu with the older menu's SubMenuItem, whose testid sits on the role=button <div> inside the role=menuitem <li>. Moving it to the menu library makes the role fit without renaming the testid."
+            },
+            {
+                "rule": "role-fit",
                 "template": "channel_header.plugin_actions.menu.action:{key}--menuitem",
                 "reason": "a plugin slot ends in the role menu items have (Q69); the channel header's plugin dropdown is an older menu that renders each item as a link inside an <li>. Moving it to the menu library makes the role fit without renaming the testid."
             },
