@@ -13,8 +13,7 @@ test(
     async ({pw}) => {
         const {adminUser, team} = await pw.initSetup();
         const {app, channelsPage, systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // # Open the App Marketplace and install the first available plugin
         await channelsPage.globalHeader.openAppMarketplace();
