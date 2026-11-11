@@ -2,6 +2,7 @@
 // See LICENSE.txt for license information.
 
 import {
+    Api,
     ensureTestWebappPlugins,
     expect,
     getAdminClient,
@@ -39,27 +40,29 @@ test(
         };
 
         // # Open Plugin Management as a system admin
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await systemConsolePage.gotoPluginManagement();
-        const pluginManagement = systemConsolePage.pluginManagement;
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.adminConsolePage.goto({section: 'plugins/plugin_management'});
+        const setting = app.admin.setting('restrictUnauthenticatedWebappPlugins');
 
         // * Verify the setting is shown as true with help text about webapp.pre_auth
-        await expect(pluginManagement.restrictUnauthenticatedWebappPluginsTrue).toBeChecked();
-        await expect(pluginManagement.restrictUnauthenticatedWebappPluginsHelpText).toContainText('webapp.pre_auth');
+        await expect(setting.trueRadio.locator).toBeChecked();
+        await expect(setting.helpText.locator).toContainText('webapp.pre_auth');
 
         // # Set it to false and save
-        await pluginManagement.restrictUnauthenticatedWebappPluginsFalse.check();
-        await pluginManagement.save();
+        await setting.falseRadio.check();
+        await app.admin.saveButton.commit({wait: Api.PatchConfig});
+        await expect(app.admin.saveButton).toBeSaved();
 
         // * Verify the config is saved and every plugin is listed to unauthenticated requests
         expect((await adminClient.getConfig()).PluginSettings.RestrictUnauthenticatedWebappPlugins).toBe(false);
         expect((await anonymousPluginIds()).sort()).toEqual([postAuthTestPluginId, preAuthTestPluginId].sort());
 
         // # Reload, then set it back to true and save
-        await systemConsolePage.gotoPluginManagement();
-        await expect(pluginManagement.restrictUnauthenticatedWebappPluginsFalse).toBeChecked();
-        await pluginManagement.restrictUnauthenticatedWebappPluginsTrue.check();
-        await pluginManagement.save();
+        await app.adminConsolePage.goto({section: 'plugins/plugin_management'});
+        await expect(setting.falseRadio.locator).toBeChecked();
+        await setting.trueRadio.check();
+        await app.admin.saveButton.commit({wait: Api.PatchConfig});
+        await expect(app.admin.saveButton).toBeSaved();
 
         // * Verify the config is saved and only the pre-auth plugin is listed to unauthenticated requests
         expect((await adminClient.getConfig()).PluginSettings.RestrictUnauthenticatedWebappPlugins).toBe(true);

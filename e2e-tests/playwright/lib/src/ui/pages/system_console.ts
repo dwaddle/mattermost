@@ -25,7 +25,6 @@ import SystemProperties from '@/ui/components/system_console/sections/system_att
 import SessionAttributes from '@/ui/components/system_console/sections/system_attributes/session_attributes';
 import MembershipPolicies from '@/ui/components/system_console/sections/system_attributes/membership_policies';
 import FeatureDiscovery from '@/ui/components/system_console/sections/system_users/feature_discovery';
-import PluginManagement from '@/ui/components/system_console/sections/plugins/plugin_management';
 import OpenIdConnect from '@/ui/components/system_console/sections/authentication/openid_connect';
 import AdLdap from '@/ui/components/system_console/sections/authentication/ad_ldap';
 import PasswordSettings from '@/ui/components/system_console/sections/authentication/password';
@@ -72,7 +71,6 @@ export default class SystemConsolePage {
     readonly featureDiscovery: FeatureDiscovery;
 
     // Plugins
-    readonly pluginManagement: PluginManagement;
 
     // Authentication
     readonly openIdConnect: OpenIdConnect;
@@ -126,7 +124,6 @@ export default class SystemConsolePage {
         this.featureDiscovery = new FeatureDiscovery(adminConsoleWrapper);
 
         // Plugins
-        this.pluginManagement = new PluginManagement(adminConsoleWrapper);
 
         // Authentication
         this.openIdConnect = new OpenIdConnect(adminConsoleWrapper);
@@ -151,11 +148,6 @@ export default class SystemConsolePage {
     /** Notifications settings URL is environment/notifications (sidebar groups under Site Configuration). */
     async gotoNotificationsSettings() {
         await this.page.goto('/admin_console/environment/notifications');
-    }
-
-    async gotoPluginManagement() {
-        await this.page.goto('/admin_console/plugins/plugin_management');
-        await this.pluginManagement.toBeVisible();
     }
 
     async gotoEditionAndLicense() {
