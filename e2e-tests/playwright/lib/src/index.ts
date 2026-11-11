@@ -56,7 +56,7 @@ export {
     type PluginKey,
     type PluginKeys,
 } from './aria';
-export {settle, settleAll, SettleError, type SettleOptions} from './settle';
+export {settle, settleAll, SettleError, waitForApi, type ApiWaitOptions, type SettleOptions} from './settle';
 export * from './flows';
 export type {ExtendedFixtures} from './test_fixture';
 export {testConfig, TESTCONTAINERS_SERVICE_NAMES, SERVER_DEPLOYMENTS} from './test_config';

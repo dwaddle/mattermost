@@ -143,6 +143,112 @@ export function settleAll(
     return settleCore(el, act, opts, opts.count);
 }
 
+/** What `waitForApi` takes besides the operation. */
+export type ApiWaitOptions<W> = {
+    /** Bind the operation's path placeholders, so only the request for that entity counts: `{channel_id: channel.id}`. */
+    params?: PathParamsOf<W>;
+
+    /**
+     * Count only a response this holds for (the next page of posts, the channel once it's archived); others are
+     * skipped and the wait goes on. It sees the typed body and the response.
+     */
+    predicate?: (body: BodyOf<W>, response: Response) => boolean | Promise<boolean>;
+
+    /** Expect this status instead of a 2xx (negative tests). */
+    status?: number;
+
+    /** How long to wait, counted from the call (default 30 s). */
+    timeout?: number;
+};
+
+/**
+ * A wait for a response to `op` that the page issues on its own (a websocket event refetching, a page loading its
+ * data), not one an action of the test causes: for those use `settle`. It starts listening when called, so call it
+ * before whatever makes the page fetch and await it after; the same matching rules as `settle` apply (the app path,
+ * redirects, network retries, an HTTP error fails at once). `declared` are the operations whose `/me` forms count as
+ * their own operations (see `hasMeForm`); the lib's `waitForApi` passes the generated `Api`.
+ */
+export function waitForApiIn<W extends AnyEffect>(
+    page: Page,
+    op: W,
+    opts: ApiWaitOptions<W> = {},
+    declared: ReadonlyArray<Pick<Effect, 'method' | 'path'>> = [],
+): Promise<BodyOf<W>> {
+    const method = op.method.toUpperCase();
+    const re = pathPattern(op.path, opts.params, {notMe: hasMeForm(op, declared)});
+    const wanted = `${method} ${op.path} (${op.op})`;
+    const timeout = opts.timeout ?? 30_000;
+    const deadline = Date.now() + timeout;
+
+    // registered now, before the caller triggers anything: a request already in flight is never a candidate
+    const candidates: Request[] = [];
+    const issued: Request[] = [];
+    let arrived = signal();
+    const onRequest = (req: Request) => {
+        if (req.redirectedFrom()) {
+            return;
+        }
+        const path = appPath(req.url());
+        if (path.startsWith('/api/')) {
+            issued.push(req);
+        }
+        if (req.method() === method && re.test(path)) {
+            candidates.push(req);
+            arrived.resolve();
+            arrived = signal();
+        }
+    };
+    page.on('request', onRequest);
+
+    const wait = async (): Promise<BodyOf<W>> => {
+        const failed: Request[] = [];
+        let rejected = 0;
+        try {
+            for (let i = 0; ; i++) {
+                while (i >= candidates.length) {
+                    if ((await beforeDeadline(arrived.promise, deadline)) === TIMED_OUT) {
+                        const skipped = rejected
+                            ? ` that satisfies the predicate (${rejected} other${rejected === 1 ? '' : 's'} didn't)`
+                            : '';
+                        throw new SettleError(
+                            `waitForApi: no ${wanted}${skipped} within ${timeout} ms of the call.` +
+                                seenRequests(issued, failed, 'last'),
+                        );
+                    }
+                }
+                const req = candidates[i];
+                const res = await beforeDeadline(finalResponse(req), deadline);
+                if (res === TIMED_OUT) {
+                    throw new SettleError(
+                        `waitForApi: ${req.method()} ${appPath(req.url())} (${wanted}) had no response within ${timeout} ms of the call.`,
+                    );
+                }
+                if (!res) {
+                    failed.push(req);
+                    continue;
+                }
+                const body = (await parsedBody(
+                    res,
+                    opts.status,
+                    `while waiting for ${op.op}`,
+                    'waitForApi',
+                )) as BodyOf<W>;
+                if (!opts.predicate || (await opts.predicate(body, res))) {
+                    return body;
+                }
+                rejected++;
+            }
+        } finally {
+            page.off('request', onRequest);
+        }
+    };
+    const result = wait();
+
+    // a caller whose trigger throws before it awaits this would otherwise see an unhandled rejection later
+    result.catch(() => undefined);
+    return result;
+}
+
 /** The options any overload passes (the implementation's view). */
 export type AnyOptions = SettleOptions & {
     wait?: AnyEffect;
@@ -266,11 +372,16 @@ async function settleCore(el: Element, act: (el: any) => Promise<unknown>, opts:
 }
 
 async function bodyOf(res: Response, el: Element, opts: AnyOptions): Promise<unknown> {
-    const ok = opts.status === undefined ? res.ok() : res.status() === opts.status;
+    return parsedBody(res, opts.status, `after acting on ${describeElement(el.meta)}`, 'settle');
+}
+
+/** The response's body (parsed JSON, else text), or a SettleError when its status isn't the expected one. */
+async function parsedBody(res: Response, status: number | undefined, context: string, who: string): Promise<unknown> {
+    const ok = status === undefined ? res.ok() : res.status() === status;
     const text = await res.text().catch(() => '');
     if (!ok) {
         throw new SettleError(
-            `settle: ${res.request().method()} ${appPath(res.url())} returned ${res.status()}${opts.status ? `, expected ${opts.status}` : ''} after acting on ${describeElement(el.meta)}. ${text.slice(0, 300)}`,
+            `${who}: ${res.request().method()} ${appPath(res.url())} returned ${res.status()}${status ? `, expected ${status}` : ''} ${context}. ${text.slice(0, 300)}`,
         );
     }
     if (!text) {
@@ -283,15 +394,17 @@ async function bodyOf(res: Response, el: Element, opts: AnyOptions): Promise<unk
     }
 }
 
-function seenRequests(issued: Request[], failed: Request[]): string {
-    const lines = issued
-        .slice(0, 5)
-        .map((r) => `${r.method()} ${appPath(r.url())}${failed.includes(r) ? ' (failed)' : ''}`);
+function seenRequests(issued: Request[], failed: Request[], which: 'first' | 'last' = 'first'): string {
+    const shown = which === 'first' ? issued.slice(0, 5) : issued.slice(-5);
+    const lines = shown.map((r) => `${r.method()} ${appPath(r.url())}${failed.includes(r) ? ' (failed)' : ''}`);
     if (!lines.length) {
         return ' The page issued no API request.';
     }
-    const more = issued.length > lines.length ? ` (and ${issued.length - lines.length} more)` : '';
-    return ` API requests the page issued: ${lines.join(', ')}${more}.`;
+    const rest = issued.length - lines.length;
+    if (which === 'last') {
+        return ` The last API requests the page issued: ${lines.join(', ')}${rest ? ` (after ${rest} earlier)` : ''}.`;
+    }
+    return ` API requests the page issued: ${lines.join(', ')}${rest ? ` (and ${rest} more)` : ''}.`;
 }
 
 function signal(): {promise: Promise<void>; resolve: () => void} {
