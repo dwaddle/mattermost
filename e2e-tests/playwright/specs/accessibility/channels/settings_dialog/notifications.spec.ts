@@ -3,7 +3,7 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-import {EXPANDED_SECTION, expandedSection, selectorOf} from './support';
+import {expandedSection, expandedSectionSelector, selectorOf} from './support';
 
 test(
     'navigate on keyboard tab between interactive elements',
@@ -190,7 +190,7 @@ test(
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -230,7 +230,7 @@ test(
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -270,7 +270,7 @@ test(
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -326,7 +326,7 @@ test(
     `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -366,7 +366,7 @@ test(
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);

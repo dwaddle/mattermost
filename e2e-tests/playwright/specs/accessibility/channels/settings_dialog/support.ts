@@ -3,15 +3,17 @@
 
 import type {Locator} from '@playwright/test';
 
-import {generated, type App} from '@mattermost/playwright-lib';
+import {generated, testIdSelector, type App} from '@mattermost/playwright-lib';
 
 /** A CSS selector for a generated element, for axe's `include()` (which takes selectors, not locators). */
 export function selectorOf(driver: {meta: {testId: string}}) {
-    return `[data-testid="${driver.meta.testId}"]`;
+    return testIdSelector(driver);
 }
 
 /** The expanded settings section, as an axe `include()` selector (the open section is a `<section>`). */
-export const EXPANDED_SECTION = 'section[data-testid^="settings.section:"]';
+export function expandedSectionSelector(app: App) {
+    return testIdSelector(app.settings.sectionList, {tag: 'section'});
+}
 
 /** The open settings section: the one showing a Cancel button. */
 export function expandedSection(app: App): Locator {

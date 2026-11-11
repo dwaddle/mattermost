@@ -3,7 +3,7 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-import {EXPANDED_SECTION, expandedSection, selectorOf} from './support';
+import {expandedSection, expandedSectionSelector, selectorOf} from './support';
 
 /**
  * @objective Verify keyboard navigation works correctly through all interactive elements in the Sidebar settings panel
@@ -155,7 +155,7 @@ test(
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -204,7 +204,7 @@ test(
         // # Analyze the expanded section for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page)
-            .include(EXPANDED_SECTION)
+            .include(expandedSectionSelector(app))
             .exclude('#react-select-2-input') // Exclude react-select input that has a known accessibility issue
             .analyze();
 

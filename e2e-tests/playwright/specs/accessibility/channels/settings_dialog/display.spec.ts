@@ -3,7 +3,7 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-import {EXPANDED_SECTION, expandedSection, selectorOf} from './support';
+import {expandedSection, expandedSectionSelector, selectorOf} from './support';
 
 /**
  * @objective Verify keyboard navigation through interactive elements in Display settings
@@ -270,7 +270,7 @@ test(
         // # Analyze the expanded section for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page)
-            .include(EXPANDED_SECTION)
+            .include(expandedSectionSelector(app))
             .disableRules(['color-contrast'])
             .analyze();
 
@@ -326,7 +326,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -383,7 +383,7 @@ test(
         // # Analyze the expanded section for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page)
-            .include(EXPANDED_SECTION)
+            .include(expandedSectionSelector(app))
             .disableRules(['color-contrast', 'link-in-text-block'])
             .analyze();
 
@@ -441,7 +441,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -499,7 +499,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -555,7 +555,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -611,7 +611,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -667,7 +667,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -723,7 +723,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -779,7 +779,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -836,7 +836,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -892,7 +892,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -948,7 +948,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -1004,7 +1004,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(expandedSectionSelector(app)).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
