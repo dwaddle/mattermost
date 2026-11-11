@@ -1,0 +1,1 @@
+{"root": ".", "tsconfig": "tsconfig.json", "include": ["src"], "output": {"manifest": "test-surface.json"}}

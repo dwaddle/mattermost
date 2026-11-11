@@ -825,14 +825,17 @@ export class Scanner {
         return reads(fn!);
     }
 
-    /** Menu triggers: a testid read from `props.menuButton` of a component that also takes `menu` opens that menu. */
+    /**
+     * Menu triggers: a testid built from `props.menuButton` of a component that also takes `menu` opens that menu,
+     * however the component builds it (`props.menuButton.dataTestId`, `withRole(props.menuButton.testId, 'button')`).
+     */
     private menuOpens(e: Emission): {open: Open; usage: JsxTag} | null {
         const wrapped = wrapperMenu(e.landing.anchor);
         if (wrapped) {
             return {open: {kind: 'menu', target: tagName(wrapped), at: this.ix.where(wrapped)}, usage: wrapped};
         }
-        const pp = e.site.expr ? this.R.propsPath(e.site.expr) : null;
-        if (!pp || pp.path[0] !== 'menuButton' || !e.via.length) {
+        const reads = e.site.expr && e.via.length ? this.R.propsReads(e.site.expr) : [];
+        if (!reads.some((pp) => pp.path[0] === 'menuButton')) {
             return null;
         }
         const usage = this.usageByLoc.get(e.via[0]);

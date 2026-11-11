@@ -793,6 +793,38 @@ export class Resolver {
         return null;
     }
 
+    /**
+     * The props paths an expression is built from: read directly, or inside a template, a call's arguments
+     * (`withRole(props.menuButton.testId, 'button')`), a ternary or a fallback, and through the local values the
+     * resolver follows (`const id = …`, `useMemo`). Not into inline functions, and not on to the usages that pass
+     * the props.
+     */
+    propsReads(e: ts.Expression, depth = 0, seen = new Set<ts.Node>()): PropsRef[] {
+        const out: PropsRef[] = [];
+        const visit = (n: ts.Node): void => {
+            if (isFunctionLike(n)) {
+                return;
+            }
+            const pp = ts.isExpression(n) ? this.propsPath(n) : null;
+            if (pp) {
+                out.push(pp);
+                return;
+            }
+            if (ts.isIdentifier(n) && depth < MAX_RESOLVE_DEPTH && !seen.has(n)) {
+                seen.add(n);
+                for (const s of this.sources(n)) {
+                    if (!('marker' in s) && s.expr !== n && !seen.has(s.expr)) {
+                        out.push(...this.propsReads(s.expr, depth + 1, seen));
+                    }
+                }
+                return;
+            }
+            ts.forEachChild(n, visit);
+        };
+        visit(e);
+        return out;
+    }
+
     /** `...rest` destructured from props: a pass-through of the same props. */
     restPropsOf(e: ts.Expression): PropsRef | null {
         if (!ts.isIdentifier(e)) {
