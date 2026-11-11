@@ -7,7 +7,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Page} from '@playwright/test';
 
 import {duration, expect, setupFileServer, test, testConfig, DefaultChannel} from '@mattermost/playwright-lib';
-import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
+import type {App, PlaywrightClient4} from '@mattermost/playwright-lib';
 
 import {lastPost, watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
 
@@ -21,7 +21,6 @@ test.describe('Post list initial scroll in read channel', () => {
     let channel: ServerChannel;
 
     let app: App;
-    let channelsPage: ChannelsPage;
     let page: Page;
 
     let fileServerUrl: string;
@@ -41,7 +40,7 @@ test.describe('Post list initial scroll in read channel', () => {
 
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        ({app, channelsPage, page} = await pw.testBrowser.login(user));
+        ({app, page} = await pw.testBrowser.login(user));
     });
 
     // These tests create a read channel by only having the current user post in the channel.
@@ -153,7 +152,7 @@ test.describe('Post list initial scroll in read channel', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Open the web app directly to that channel
-                await channelsPage.goto(team.name, channel.name);
+                await app.channelsPage.goto({team, channel: channel.name});
 
                 if (testCase.name === 'with multiple pages of post previews') {
                     await settleAfterPermalinkPreviewsLoad(watcher);
@@ -172,7 +171,7 @@ test.describe('Post list initial scroll in read channel', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Start in Town Square and wait for its contents to load
-                await channelsPage.goto(team.name, DefaultChannel.TownSquare);
+                await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
                 await lastPost(app);
 
                 // # Switch to the channel

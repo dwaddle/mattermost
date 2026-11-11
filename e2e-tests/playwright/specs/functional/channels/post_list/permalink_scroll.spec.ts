@@ -8,7 +8,7 @@ import type {Page} from '@playwright/test';
 import type {Post} from '@mattermost/types/posts';
 
 import {expect, setupFileServer, test, testConfig, duration, DefaultChannel} from '@mattermost/playwright-lib';
-import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
+import type {App, PlaywrightClient4} from '@mattermost/playwright-lib';
 
 import {lastPost, linkIn, sendMessage, watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
 
@@ -22,7 +22,6 @@ test.describe('Post list scroll to permalink', () => {
     let channel: ServerChannel;
 
     let app: App;
-    let channelsPage: ChannelsPage;
     let page: Page;
 
     let fileServerUrl: string;
@@ -42,7 +41,7 @@ test.describe('Post list scroll to permalink', () => {
 
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        ({app, channelsPage, page} = await pw.testBrowser.login(user));
+        ({app, page} = await pw.testBrowser.login(user));
     });
 
     const testCases = [
@@ -222,7 +221,7 @@ test.describe('Post list scroll to permalink', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Start in Town Square and wait for its contents to load
-                await channelsPage.goto(team.name, DefaultChannel.TownSquare);
+                await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
                 await lastPost(app);
 
                 // # Post a permalink pointing to the other channel
@@ -244,7 +243,7 @@ test.describe('Post list scroll to permalink', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Open the web app directly to that channel
-                await channelsPage.goto(team.name, channel.name);
+                await app.channelsPage.goto({team, channel: channel.name});
 
                 // # Post a permalink pointing to that post
                 const permalinkPost = await sendMessage(app, linkedPostUrl);

@@ -17,7 +17,7 @@ import {
     watchElementSize,
     duration,
 } from '@mattermost/playwright-lib';
-import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
+import type {App, PlaywrightClient4} from '@mattermost/playwright-lib';
 
 type CenterPost = ReturnType<App['center']['postList']['post']>;
 
@@ -28,7 +28,6 @@ test.describe('Post height', () => {
     let channel: ServerChannel;
 
     let app: App;
-    let channelsPage: ChannelsPage;
     let page: Page;
 
     let fileServerUrl: string;
@@ -58,7 +57,7 @@ test.describe('Post height', () => {
         });
 
         // # Log in, but don't navigate to a channel yet
-        ({app, channelsPage, page} = await pw.testBrowser.login(user));
+        ({app, page} = await pw.testBrowser.login(user));
     });
 
     type PostHeightTestCase = {
@@ -581,8 +580,7 @@ test.describe('Post height', () => {
         await freezeAnimations(page);
 
         // # Navigate to the channel
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // # Get and return the post component
         const postComponent = app.center.postList.post({id: postId});

@@ -7,7 +7,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Page} from '@playwright/test';
 
 import {expect, setupFileServer, test, DefaultChannel} from '@mattermost/playwright-lib';
-import type {App, ChannelsPage, PlaywrightClient4} from '@mattermost/playwright-lib';
+import type {App, PlaywrightClient4} from '@mattermost/playwright-lib';
 
 import {lastPost, watchPostListScroll, type PostListScrollWatcher} from './scroll_helpers';
 
@@ -21,7 +21,6 @@ test.describe('Post list initial scroll in unread channel', () => {
     let channel: ServerChannel;
 
     let app: App;
-    let channelsPage: ChannelsPage;
     let page: Page;
 
     let fileServerUrl: string;
@@ -41,7 +40,7 @@ test.describe('Post list initial scroll in unread channel', () => {
 
         await adminClient.addToChannel(adminUser.id, channel.id);
 
-        ({app, channelsPage, page} = await pw.testBrowser.login(user));
+        ({app, page} = await pw.testBrowser.login(user));
     });
 
     // These tests create an unread channel by having the current user create some posts and then another user
@@ -185,7 +184,7 @@ test.describe('Post list initial scroll in unread channel', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Open the web app directly to that channel
-                await channelsPage.goto(team.name, channel.name);
+                await app.channelsPage.goto({team, channel: channel.name});
 
                 // * Verify that the New Messages line is actually visible
                 await expect(app.center.postList.newMessages.locator).toBeVisible();
@@ -201,7 +200,7 @@ test.describe('Post list initial scroll in unread channel', () => {
                 const watcher = await watchPostListScroll(page, channel.id);
 
                 // # Start in Town Square and wait for its contents to load
-                await channelsPage.goto(team.name, DefaultChannel.TownSquare);
+                await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
                 await lastPost(app);
 
                 // * Verify that the channel starts as unread
