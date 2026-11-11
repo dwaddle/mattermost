@@ -199,13 +199,13 @@ test.describe('Pre-auth webapp plugins', () => {
     test('loads all plugins on a full page load with a session', {tag: '@plugins'}, async ({pw}) => {
         // # Install the test plugins with the restriction on
         await ensureTestWebappPlugins();
-        const {user} = await pw.initSetup();
+        const {user, team} = await pw.initSetup();
         await setRestriction(true);
 
         // # Log in by API and open the app
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto();
-        await channelsPage.toBeVisible();
+        const {page, app} = await pw.testBrowser.login(user);
+        await app.teamPage.goto({team});
+        await expect(app.center.composer.locator).toBeVisible();
 
         // * Verify both plugins initialized
         await expect(page.getByTestId(testWebappPluginMarkerTestId(preAuthTestPluginId))).toBeAttached();

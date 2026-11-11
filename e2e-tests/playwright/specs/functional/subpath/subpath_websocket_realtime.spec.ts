@@ -16,9 +16,8 @@ test.describe('Subpath - websocket real-time delivery', {tag: '@subpath'}, () =>
         const {user, team, adminClient} = await pw.initSetup();
         const [otherUser] = await adminClient.createUsers(team.id, 1, 'subpathws');
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         const townSquare = await adminClient.getChannelByName(team.id, 'town-square');
         const message = `Subpath realtime message ${pw.random.id()}`;

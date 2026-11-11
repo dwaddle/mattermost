@@ -17,9 +17,8 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         const {user, team} = await pw.initSetup();
 
         // # Log in and go to town square
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
         // * Verify the channel loads
         await channelsPage.centerView.header.toHaveTitle('Town Square');
@@ -33,9 +32,8 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         const channel = await adminClient.createPublicChannel(team.id, 'Subpath Channel', 'subpath-channel');
         await adminClient.addToChannel(user.id, channel.id);
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {app, channelsPage, page} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // # Post a message and build its permalink from the id the server returned
         const message = `Subpath permalink message ${pw.random.id()}`;
@@ -49,7 +47,7 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         await channelsPage.centerView.header.toHaveTitle('Town Square');
 
         // # Visit the permalink
-        await channelsPage.page.goto(permalink);
+        await page.goto(permalink);
 
         // * Verify the channel is rejoined and the post is visible
         await channelsPage.centerView.header.toHaveTitle(channel.display_name);
