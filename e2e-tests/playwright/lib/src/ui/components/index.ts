@@ -28,41 +28,7 @@ import SystemConsoleSidebar from './system_console/sidebar';
 import SystemConsoleSidebarHeader from './system_console/sidebar_header';
 import Users from './system_console/sections/user_management/users';
 
-const components = {
-    // Shared / Global
-    GlobalHeader,
-    UserAccountMenu,
-
-    // Channels
-    ChannelsCenterView,
-    ChannelsHeader,
-    ChannelsPost,
-    ChannelsPostCreate,
-    ChannelSettingsModal,
-    ChannelsSidebarLeft,
-    ChannelsSidebarRight,
-    AddPeopleToChannelModal,
-    UserGroupsModal,
-    ChannelMenu,
-    NewChannelModal,
-    LinkPreview,
-    SearchBox,
-    SearchResultsPanel,
-    SwitchProductMenu,
-
-    // Burn-on-Read
-    BurnOnReadConcealedPlaceholder,
-
-    // System Console
-    SystemConsoleNavbar,
-    SystemConsoleSidebar,
-    SystemConsoleSidebarHeader,
-    Users,
-};
-
 export {
-    components,
-
     // Shared / Global
     GlobalHeader,
     UserAccountMenu,

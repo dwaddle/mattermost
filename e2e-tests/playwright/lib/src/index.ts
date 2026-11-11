@@ -3,9 +3,8 @@
 
 export {test, expect, PlaywrightExtended} from './test_fixture';
 
-// generated page objects (src/ui/generated), their runtime, and the framework's wait helper.
-// Tests reach page objects through `app`; the classes are under `generated` (some names match
-// hand-written classes that are still being migrated).
+// Generated page objects (src/ui/generated) and their runtime. Specs reach page objects through `app`; the classes
+// are under `generated`.
 export {Api, App, Msg, type Plugins} from './ui/generated';
 export * from './ui/generated/sets';
 export * as generated from './ui/generated';
@@ -155,25 +154,10 @@ export type {
 
 export {startStack, stopStack, withStackLock} from './containers';
 
-export {ChannelsPage, LoginPage, SystemConsolePage} from './ui/pages';
-
-export {
-    components,
-    GlobalHeader,
-    SearchBox,
-    ChannelsCenterView,
-    ChannelsSidebarLeft,
-    ChannelsSidebarRight,
-    ChannelsHeader,
-    ChannelsPostCreate,
-    ChannelsPost,
-    ChannelSettingsModal,
-    UserAccountMenu,
-} from './ui/components';
+// The hand-written channels page that `login()` still returns beside `app` (`generated.ChannelsPage` is the other one).
+export {ChannelsPage} from './ui/pages';
 
 export {setWysiwygUserPreference, WYSIWYG_PREF_CATEGORY, WYSIWYG_PREF_NAME} from './wysiwyg_helpers';
-
-export {expectFilesVisible, expectFilesRedacted} from './ui/components/channels/post';
 
 export {TestArgs, ScreenshotOptions} from './types';
 

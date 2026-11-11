@@ -5,11 +5,19 @@ import type {Page} from '@playwright/test';
 import {expect} from '@playwright/test';
 
 import {
+    AddPeopleToChannelModal,
+    ChannelMenu,
     ChannelsCenterView,
     ChannelSettingsModal,
-    NewChannelModal,
-    components,
     ChannelsSidebarLeft,
+    ChannelsSidebarRight,
+    GlobalHeader,
+    NewChannelModal,
+    SearchBox,
+    SearchResultsPanel,
+    SwitchProductMenu,
+    UserAccountMenu,
+    UserGroupsModal,
 } from '@/ui/components';
 
 export default class ChannelsPage {
@@ -34,24 +42,24 @@ export default class ChannelsPage {
         this.page = page;
 
         // The main areas of the app
-        this.globalHeader = new components.GlobalHeader(this, page.locator('#global-header'));
-        this.searchBox = new components.SearchBox(page.locator('#searchBox'));
+        this.globalHeader = new GlobalHeader(this, page.locator('#global-header'));
+        this.searchBox = new SearchBox(page.locator('#searchBox'));
         this.centerView = new ChannelsCenterView(page.getByTestId('channel_view'));
         this.sidebarLeft = new ChannelsSidebarLeft(page.locator('#SidebarContainer'));
-        this.sidebarRight = new components.ChannelsSidebarRight(page.locator('#sidebar-right'));
+        this.sidebarRight = new ChannelsSidebarRight(page.locator('#sidebar-right'));
         this.userAccountMenuButton = page.getByRole('button', {name: "User's account menu"});
 
         // Modals
         this.channelSettingsModal = new ChannelSettingsModal(page.getByRole('dialog', {name: 'Channel Settings'}));
         this.newChannelModal = new NewChannelModal(page.getByRole('dialog', {name: 'Create a new channel'}));
-        this.searchResultsPanel = new components.SearchResultsPanel(page.locator('#searchContainer'));
-        this.userGroupsModal = new components.UserGroupsModal(page.getByTestId('user_groups_modal'));
+        this.searchResultsPanel = new SearchResultsPanel(page.locator('#searchContainer'));
+        this.userGroupsModal = new UserGroupsModal(page.getByTestId('user_groups_modal'));
 
         // Menus
         // The channel header dropdown menu's accessible name is "<channel> Channel Menu".
-        this.channelMenu = new components.ChannelMenu(page.getByRole('menu', {name: /Channel Menu/i}));
-        this.userAccountMenu = new components.UserAccountMenu(page.locator('#userAccountMenu'));
-        this.switchProductMenu = new components.SwitchProductMenu(page.locator('#switchProductMenu'));
+        this.channelMenu = new ChannelMenu(page.getByRole('menu', {name: /Channel Menu/i}));
+        this.userAccountMenu = new UserAccountMenu(page.locator('#userAccountMenu'));
+        this.switchProductMenu = new SwitchProductMenu(page.locator('#switchProductMenu'));
     }
 
     async toBeVisible() {
@@ -63,7 +71,7 @@ export default class ChannelsPage {
     }
 
     getAddPeopleToChannelModal() {
-        return new components.AddPeopleToChannelModal(this.page.getByRole('dialog', {name: /Add people to/}));
+        return new AddPeopleToChannelModal(this.page.getByRole('dialog', {name: /Add people to/}));
     }
 
     async goto(teamName = '', channelName = '') {
@@ -90,16 +98,6 @@ export default class ChannelsPage {
     }
 
     /**
-     * Opens the channel header dropdown menu and returns it.
-     */
-    async openChannelMenu() {
-        await this.centerView.header.openChannelMenu();
-        await this.channelMenu.toBeVisible();
-
-        return this.channelMenu;
-    }
-
-    /**
      * Opens the search UI, runs a search for the given term, and waits for the
      * results panel to appear.
      */
@@ -108,27 +106,6 @@ export default class ChannelsPage {
         await this.searchBox.toBeVisible();
         await this.searchBox.search(term);
         await this.searchResultsPanel.toBeVisible();
-    }
-
-    async openChannelSettings(): Promise<ChannelSettingsModal> {
-        const channelMenu = await this.openChannelMenu();
-
-        const channelSettingsMenuItem = channelMenu.channelSettings;
-        const moreActionsMenuItem = channelMenu.item(/More actions/i);
-
-        const channelSettingsVisible = await channelSettingsMenuItem.isVisible({timeout: 1500}).catch(() => false);
-        if (!channelSettingsVisible) {
-            const moreActionsVisible = await moreActionsMenuItem.isVisible({timeout: 1500}).catch(() => false);
-            if (moreActionsVisible) {
-                await moreActionsMenuItem.click();
-            }
-        }
-
-        await expect(channelSettingsMenuItem).toBeVisible();
-        await channelSettingsMenuItem.click();
-        await this.channelSettingsModal.toBeVisible();
-
-        return this.channelSettingsModal;
     }
 
     async openNewChannelModal(): Promise<NewChannelModal> {

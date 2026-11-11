@@ -71,9 +71,7 @@ export default class ChannelsCenterView {
     }
 
     async waitUntilPostWithIdContains(id: string, text: string, timeout = duration.ten_sec) {
-        // A single retrying assertion, rather than polling around getPostById(): that helper waits
-        // on the locator itself, so a post that has not rendered yet consumes the whole budget in
-        // one iteration and the outer timeout reports nothing about what the post actually held.
+        // One retrying assertion, so a timeout reports what the post held.
         await expect(this.postById(id)).toContainText(text, {timeout});
     }
 }

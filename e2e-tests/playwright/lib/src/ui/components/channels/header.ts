@@ -20,15 +20,4 @@ export default class ChannelsHeader {
     async toHaveTitle(title: string) {
         await expect(this.title).toContainText(title);
     }
-
-    async openChannelMenu() {
-        const page = this.container.page();
-        const mobileMenuButton = page.locator('#navbar #channelHeaderDropdownButton');
-        const mobileVisible = await mobileMenuButton.isVisible({timeout: 1000}).catch(() => false);
-        const menuButton = mobileVisible ? mobileMenuButton : this.channelMenuDropdown;
-
-        await expect(menuButton).toBeVisible();
-        await menuButton.scrollIntoViewIfNeeded();
-        await menuButton.click();
-    }
 }

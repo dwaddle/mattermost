@@ -23,7 +23,7 @@ export default class ChannelsPostCreate {
     // Burn-on-Read elements
     readonly burnOnReadButton;
 
-    /** Generated from the webapp's testids; this class keeps the flows specs already use. */
+    /** The generated composer this class wraps. */
     readonly generated: PostCreate;
 
     constructor(container: Locator, isRHS = false) {
@@ -38,7 +38,6 @@ export default class ChannelsPostCreate {
         this.previewArea = container.locator('.textbox-preview-area');
 
         // Burn-on-Read elements
-        // Use a flexible locator that matches the aria-label pattern
         this.burnOnReadButton = container.getByRole('button', {name: /Burn-on-read/i});
     }
 
@@ -61,20 +60,11 @@ export default class ChannelsPostCreate {
     }
 
     /**
-     * Returns the value of the message input
-     */
-    async getInputValue() {
-        await expect(this.input).toBeVisible();
-        return this.input.inputValue();
-    }
-
-    /**
      * Sends the message already written in the input
      */
     async sendMessage() {
         await expect(this.input).toBeVisible();
-        const messageInputValue = await this.getInputValue();
-        expect(messageInputValue).not.toBe('');
+        expect(await this.generated.messageTextbox.value()).not.toBe('');
 
         await expect(this.sendMessageButton).toBeVisible();
         await expect(this.sendMessageButton).toBeEnabled();

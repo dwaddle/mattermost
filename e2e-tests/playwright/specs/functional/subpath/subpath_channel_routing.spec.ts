@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test, expect, generated, logIn, requireSubpathServer} from '@mattermost/playwright-lib';
+import {Api, test, expect, generated, logIn, requireSubpathServer} from '@mattermost/playwright-lib';
 
 test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
     let subpathBaseURL: string;
@@ -33,20 +33,19 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         const channel = await adminClient.createPublicChannel(team.id, 'Subpath Channel', 'subpath-channel');
         await adminClient.addToChannel(user.id, channel.id);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
+        const {app, channelsPage} = await pw.testBrowser.login(user);
         await channelsPage.goto(team.name, channel.name);
         await channelsPage.toBeVisible();
 
-        // # Post a message and build its permalink
+        // # Post a message and build its permalink from the id the server returned
         const message = `Subpath permalink message ${pw.random.id()}`;
-        await channelsPage.postMessage(message);
-        const lastPost = await channelsPage.getLastPost();
-        const postId = await lastPost.getId();
-        const permalink = `${subpathBaseURL}/${team.name}/pl/${postId}`;
+        await app.center.postCreate.fillMessageTextbox(message);
+        const post = await app.center.postCreate.sendButton.commit({wait: Api.CreatePost});
+        const permalink = `${subpathBaseURL}/${team.name}/pl/${post.id}`;
 
         // # Leave the channel
-        const channelMenu = await channelsPage.openChannelMenu();
-        await channelMenu.leaveChannel.click();
+        const menu = await app.channelHeader.clickOpenMenuButton();
+        await menu.leaveChannelMenuItem.commit({wait: Api.RemoveUserFromChannel});
         await channelsPage.centerView.header.toHaveTitle('Town Square');
 
         // # Visit the permalink
@@ -54,7 +53,7 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
 
         // * Verify the channel is rejoined and the post is visible
         await channelsPage.centerView.header.toHaveTitle(channel.display_name);
-        await channelsPage.centerView.waitUntilPostWithIdContains(postId, message);
+        await expect(app.center.postList.post(post).locator).toContainText(message);
     });
 
     /**

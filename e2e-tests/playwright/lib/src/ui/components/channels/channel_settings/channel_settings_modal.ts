@@ -18,7 +18,7 @@ export default class ChannelSettingsModal {
 
     readonly infoSettings;
 
-    /** Generated from the webapp's testids; this class keeps the flows specs already use. */
+    /** The generated modal this class wraps. */
     readonly generated: GeneratedChannelSettingsModal;
 
     constructor(container: Locator) {
