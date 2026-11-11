@@ -3,7 +3,7 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-import {SettingsModal} from './support';
+import {EXPANDED_SECTION, expandedSection, selectorOf} from './support';
 
 /**
  * @objective Verify keyboard navigation through interactive elements in Display settings
@@ -18,8 +18,8 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
-        const displaySettings = settingsModal.displaySettings;
+        const settingsModal = app.userSettingsModal;
+        const displaySettings = app.settings.panel('display');
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -30,78 +30,92 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible and focus should be on the modal
-        await expect(settingsModal.container).toBeVisible();
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.container)).toBe(true);
+        await expect(settingsModal.locator).toBeVisible();
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.locator)).toBe(true);
 
         // # Press Tab and verify focus is on Close button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton.locator)).toBe(true);
 
         // # Click on Display tab to open it
-        await settingsModal.displayTab.click();
+        await settingsModal.tabs.tab('display').select();
 
         // * Display Settings panel should be visible
-        await expect(displaySettings.container).toBeVisible();
+        await expect(displaySettings.locator).toBeVisible();
 
         // # Press Tab to move focus to first edit button (Theme)
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.themeEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('theme').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Clock Display button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.clockDisplayEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('clock').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Teammate Name Display button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.teammateNameDisplayEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('name_format').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Show online availability button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.availabilityStatusOnPostsEditButton)).toBe(true);
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('availabilityStatus').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Share last active time button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.lastActiveTimeEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('lastactive').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Timezone button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.timezoneEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('timezone').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Website Link Previews button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.showLinkPreviewsEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('linkpreview').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Default Appearance of Image Previews button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.collapseImagePreviewsEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('collapse').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Message Display button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.messageDisplayEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('message_display').editButton.locator)).toBe(
+            true,
+        );
 
         // # Press Tab to move focus to Click to open threads button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.clickToReplyEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('click_to_reply').editButton.locator)).toBe(
+            true,
+        );
 
         // # Press Tab to move focus to Channel Display button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.channelDisplayModeEditButton)).toBe(true);
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('channel_display_mode').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Collapse category with unread channels button
         await page.keyboard.press('Tab');
-        await pw.toBeFocusedWithFocusVisible(displaySettings.collapseCategoryWithUnreadsEditButton);
+        await pw.toBeFocusedWithFocusVisible(app.settings.section('collapse_category_with_unreads').editButton.locator);
 
         // # Press Tab to move focus to Quick reactions button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.oneClickReactionsEditButton)).toBe(true);
+        expect(
+            await pw.toBeFocusedWithFocusVisible(
+                app.settings.section('one_click_reactions_enabled').editButton.locator,
+            ),
+        ).toBe(true);
 
         // # Press Tab to move focus to Render emoticons button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.emojiPickerEditButton)).toBe(true);
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('renderEmoticonsAsEmoji').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Language button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(displaySettings.languageEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('languages').editButton.locator)).toBe(true);
     },
 );
 
@@ -118,7 +132,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -129,16 +143,16 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
+        await settingsModal.tabs.tab('display').select();
 
         // * Display Settings panel should be visible
-        await expect(settingsModal.displaySettings.container).toBeVisible();
+        await expect(app.settings.panel('display').locator).toBeVisible();
 
         // * Verify aria snapshot of Display settings tab
-        await expect(settingsModal.displaySettings.container).toMatchAriaSnapshot(`
+        await expect(app.settings.panel('display').locator).toMatchAriaSnapshot(`
           - tabpanel "display":
             - heading "Display Settings" [level=3]
             - heading "Theme" [level=4]
@@ -191,7 +205,7 @@ test(
         // * Analyze the Display settings panel for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page, {disableColorContrast: true})
-            .include(settingsModal.displaySettings.id)
+            .include(selectorOf(app.settings.panel('display')))
             .analyze();
 
         // * Should have no violation
@@ -212,7 +226,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -223,19 +237,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Theme section
-        await displaySettings.themeEditButton.click();
+        await app.settings.section('theme').editButton.click();
 
         // * Verify aria snapshot of Theme section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Theme" [level=4]
           - group "Theme":
             - text: Theme
@@ -258,7 +270,7 @@ test(
         // # Analyze the expanded section for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page)
-            .include(displaySettings.expandedSectionId)
+            .include(EXPANDED_SECTION)
             .disableRules(['color-contrast'])
             .analyze();
 
@@ -280,7 +292,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -291,19 +303,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Timezone section
-        await displaySettings.timezoneEditButton.click();
+        await app.settings.section('timezone').editButton.click();
 
         // * Verify aria snapshot of Timezone section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Timezone" [level=4]
           - checkbox "Automatic" [checked]
           - text: Automatic
@@ -316,7 +326,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -336,7 +346,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -347,19 +357,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Language section
-        await displaySettings.languageEditButton.click();
+        await app.settings.section('languages').editButton.click();
 
         // * Verify aria snapshot of Language section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Language" [level=4]
           - text: /.+/
           - log
@@ -375,7 +383,7 @@ test(
         // # Analyze the expanded section for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page)
-            .include(displaySettings.expandedSectionId)
+            .include(EXPANDED_SECTION)
             .disableRules(['color-contrast', 'link-in-text-block'])
             .analyze();
 
@@ -397,7 +405,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -408,19 +416,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Clock Display section
-        await displaySettings.clockDisplayEditButton.click();
+        await app.settings.section('clock').editButton.click();
 
         // * Verify aria snapshot of Clock Display section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Clock Display" [level=4]
           - group "Clock Display":
             - text: Clock Display
@@ -435,7 +441,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -455,7 +461,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -466,19 +472,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Teammate Name Display section
-        await displaySettings.teammateNameDisplayEditButton.click();
+        await app.settings.section('name_format').editButton.click();
 
         // * Verify aria snapshot of Teammate Name Display section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Teammate Name Display" [level=4]
           - group "Teammate Name Display":
             - text: Teammate Name Display
@@ -495,7 +499,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -515,7 +519,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -526,19 +530,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Message Display section
-        await displaySettings.messageDisplayEditButton.click();
+        await app.settings.section('message_display').editButton.click();
 
         // * Verify aria snapshot of Message Display section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Message Display" [level=4]
           - group "Message Display":
             - text: Message Display
@@ -553,7 +555,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -573,7 +575,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -584,19 +586,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Channel Display section
-        await displaySettings.channelDisplayModeEditButton.click();
+        await app.settings.section('channel_display_mode').editButton.click();
 
         // * Verify aria snapshot of Channel Display section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Channel Display" [level=4]
           - group "Channel Display":
             - text: Channel Display
@@ -611,7 +611,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -631,7 +631,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -642,19 +642,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Show online availability section
-        await displaySettings.availabilityStatusOnPostsEditButton.click();
+        await app.settings.section('availabilityStatus').editButton.click();
 
         // * Verify aria snapshot of Show online availability section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Show online availability on profile images" [level=4]
           - group "Show online availability on profile images":
             - text: Show online availability on profile images
@@ -669,7 +667,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -689,7 +687,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -700,19 +698,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Share last active time section
-        await displaySettings.lastActiveTimeEditButton.click();
+        await app.settings.section('lastactive').editButton.click();
 
         // * Verify aria snapshot of Share last active time section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Share last active time" [level=4]
           - group "Share last active time":
             - text: Share last active time
@@ -727,7 +723,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -747,7 +743,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -758,19 +754,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Website Link Previews section
-        await displaySettings.showLinkPreviewsEditButton.click();
+        await app.settings.section('linkpreview').editButton.click();
 
         // * Verify aria snapshot of Website Link Previews section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Website Link Previews" [level=4]
           - group "Website Link Previews":
             - text: Website Link Previews
@@ -785,7 +779,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -805,7 +799,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -816,20 +810,18 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Default Appearance of Image Previews section
-        await displaySettings.collapseImagePreviewsEditButton.scrollIntoViewIfNeeded();
-        await displaySettings.collapseImagePreviewsEditButton.click();
+        await app.settings.section('collapse').editButton.locator.scrollIntoViewIfNeeded();
+        await app.settings.section('collapse').editButton.click();
 
         // * Verify aria snapshot of Default Appearance of Image Previews section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Default Appearance of Image Previews" [level=4]
           - group "Default Appearance of Image Previews":
             - text: Default Appearance of Image Previews
@@ -844,7 +836,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -864,7 +856,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -875,19 +867,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Click to open threads section
-        await displaySettings.clickToReplyEditButton.click();
+        await app.settings.section('click_to_reply').editButton.click();
 
         // * Verify aria snapshot of Click to open threads section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Click to open threads" [level=4]
           - group "Click to open threads":
             - text: Click to open threads
@@ -902,7 +892,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -922,7 +912,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -933,19 +923,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Quick reactions on messages section
-        await displaySettings.oneClickReactionsEditButton.click();
+        await app.settings.section('one_click_reactions_enabled').editButton.click();
 
         // * Verify aria snapshot of Quick reactions on messages section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Quick reactions on messages" [level=4]
           - group "Quick reactions on messages":
             - text: Quick reactions on messages
@@ -960,7 +948,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -980,7 +968,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -991,19 +979,17 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Display tab
-        await settingsModal.displayTab.click();
-
-        const displaySettings = settingsModal.displaySettings;
+        await settingsModal.tabs.tab('display').select();
 
         // # Click Edit on Render emoticons as emojis section
-        await displaySettings.emojiPickerEditButton.click();
+        await app.settings.section('renderEmoticonsAsEmoji').editButton.click();
 
         // * Verify aria snapshot of Render emoticons as emojis section when expanded
-        await displaySettings.expandedSection.waitFor();
-        await expect(displaySettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
           - heading "Render emoticons as emojis" [level=4]
           - group "Render emoticons as emojis":
             - text: Render emoticons as emojis
@@ -1018,7 +1004,7 @@ test(
         `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(displaySettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);

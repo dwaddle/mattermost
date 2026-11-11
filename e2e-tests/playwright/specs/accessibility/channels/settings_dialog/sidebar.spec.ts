@@ -3,7 +3,7 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-import {SettingsModal} from './support';
+import {EXPANDED_SECTION, expandedSection, selectorOf} from './support';
 
 /**
  * @objective Verify keyboard navigation works correctly through all interactive elements in the Sidebar settings panel
@@ -18,8 +18,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
-        const sidebarSettings = settingsModal.sidebarSettings;
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -30,32 +29,36 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible and focus should be on the modal
-        await expect(settingsModal.container).toBeVisible();
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.container)).toBe(true);
+        await expect(settingsModal.locator).toBeVisible();
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.locator)).toBe(true);
 
         // # Press Tab and verify focus is on Close button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Notifications tab
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.notificationsTab)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('notifications').locator)).toBe(true);
 
         // # Press ArrowDown to navigate to Display tab
         await page.keyboard.press('ArrowDown');
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.displayTab)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('display').locator)).toBe(true);
 
         // # Press ArrowDown to navigate to Sidebar tab
         await page.keyboard.press('ArrowDown');
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.sidebarTab)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('sidebar').locator)).toBe(true);
 
         // # Press Tab to move focus to Group unread channels separately button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(sidebarSettings.groupUnreadEditButton)).toBe(true);
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('showUnreadsCategory').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Number of direct messages to show button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(sidebarSettings.limitVisibleDMsEditButton)).toBe(true);
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('limitVisibleGMsDMs').editButton.locator),
+        ).toBe(true);
     },
 );
 
@@ -72,7 +75,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -83,13 +86,14 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Sidebar tab
-        await settingsModal.openSidebarTab();
+        await settingsModal.tabs.tab('sidebar').select();
+        await expect(app.settings.panel('sidebar').locator).toBeVisible();
 
         // * Verify aria snapshot of Sidebar settings tab
-        await expect(settingsModal.sidebarSettings.container).toMatchAriaSnapshot(`
+        await expect(app.settings.panel('sidebar').locator).toMatchAriaSnapshot(`
           - tabpanel "sidebar":
             - heading "Sidebar Settings" [level=3]
             - heading "Group unread channels separately" [level=4]
@@ -103,7 +107,7 @@ test(
         // * Analyze the Sidebar settings panel for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page, {disableColorContrast: true})
-            .include(settingsModal.sidebarSettings.id)
+            .include(selectorOf(app.settings.panel('sidebar')))
             .analyze();
 
         // * Should have no violation
@@ -124,7 +128,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -135,24 +139,23 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Sidebar tab
-        await settingsModal.openSidebarTab();
-
-        const sidebarSettings = settingsModal.sidebarSettings;
+        await settingsModal.tabs.tab('sidebar').select();
+        await expect(app.settings.panel('sidebar').locator).toBeVisible();
 
         // # Click Edit on Group unread channels separately section
-        await sidebarSettings.groupUnreadEditButton.click();
+        await app.settings.section('showUnreadsCategory').editButton.click();
 
         // * Verify aria snapshot of Group unread channels separately section when expanded
-        await sidebarSettings.expandedSection.waitFor();
-        await expect(sidebarSettings.expandedSection).toMatchAriaSnapshot({
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot({
             name: 'group_unread_channels_section.yml',
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe.builder(page).include(sidebarSettings.expandedSectionId).analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -172,7 +175,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -183,26 +186,25 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Open Sidebar tab
-        await settingsModal.openSidebarTab();
-
-        const sidebarSettings = settingsModal.sidebarSettings;
+        await settingsModal.tabs.tab('sidebar').select();
+        await expect(app.settings.panel('sidebar').locator).toBeVisible();
 
         // # Click Edit on Number of direct messages to show section
-        await sidebarSettings.limitVisibleDMsEditButton.click();
+        await app.settings.section('limitVisibleGMsDMs').editButton.click();
 
         // * Verify aria snapshot of Number of direct messages to show section when expanded
-        await sidebarSettings.expandedSection.waitFor();
-        await expect(sidebarSettings.expandedSection).toMatchAriaSnapshot({
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot({
             name: 'number_of_direct_messages_section.yml',
         });
 
         // # Analyze the expanded section for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page)
-            .include(sidebarSettings.expandedSectionId)
+            .include(EXPANDED_SECTION)
             .exclude('#react-select-2-input') // Exclude react-select input that has a known accessibility issue
             .analyze();
 

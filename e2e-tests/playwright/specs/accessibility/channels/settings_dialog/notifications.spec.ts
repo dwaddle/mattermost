@@ -3,7 +3,7 @@
 
 import {expect, test} from '@mattermost/playwright-lib';
 
-import {SettingsModal} from './support';
+import {EXPANDED_SECTION, expandedSection, selectorOf} from './support';
 
 test(
     'navigate on keyboard tab between interactive elements',
@@ -15,8 +15,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
-        const notificationsSettings = settingsModal.notificationsSettings;
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -27,16 +26,16 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible and focus should be on the modal
-        await expect(settingsModal.container).toBeVisible();
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.container)).toBe(true);
+        await expect(settingsModal.locator).toBeVisible();
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.locator)).toBe(true);
 
         // # Press Tab and verify focus is on Close button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.closeButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Notifications tab
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.notificationsTab)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(settingsModal.tabs.tab('notifications').locator)).toBe(true);
 
         // # Press Tab to move focus to Learn more link
         await page.keyboard.press('Tab');
@@ -44,33 +43,37 @@ test(
 
         // # Press Tab to move focus to Desktop and mobile notifications button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(notificationsSettings.desktopAndMobileEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('desktopAndMobile').editButton.locator)).toBe(
+            true,
+        );
 
         // # Press Tab to move focus to Desktop notification sounds button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(notificationsSettings.desktopNotificationSoundEditButton)).toBe(
-            true,
-        );
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('desktopNotificationSound').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Email notifications button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(notificationsSettings.emailEditButton)).toBe(true);
+        expect(await pw.toBeFocusedWithFocusVisible(app.settings.section('email').editButton.locator)).toBe(true);
 
         // # Press Tab to move focus to Auto-follow threads on channel-wide mentions button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(notificationsSettings.channelMentionAutoFollowEditButton)).toBe(
-            true,
-        );
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('channelMentionAutoFollow').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Keywords that trigger notifications button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(notificationsSettings.keywordsTriggerNotificationsEditButton)).toBe(
-            true,
-        );
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('keywordsAndMentions').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Keywords that get highlighted (without notifications) button
         await page.keyboard.press('Tab');
-        expect(await pw.toBeFocusedWithFocusVisible(notificationsSettings.keywordsGetHighlightedEditButton)).toBe(true);
+        expect(
+            await pw.toBeFocusedWithFocusVisible(app.settings.section('keywordsAndHighlight').editButton.locator),
+        ).toBe(true);
 
         // # Press Tab to move focus to Send a test notification button
         await page.keyboard.press('Tab');
@@ -93,7 +96,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -104,10 +107,10 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
+        await expect(settingsModal.locator).toBeVisible();
 
         // * Verify aria snapshot of Notifications settings tab
-        await expect(settingsModal.notificationsSettings.container).toMatchAriaSnapshot(`
+        await expect(app.settings.panel('notifications').locator).toMatchAriaSnapshot(`
           - tabpanel "notifications":
             - heading "Notifications" [level=3]
             - link "Learn more about notifications":
@@ -142,7 +145,7 @@ test(
         // * Analyze the Notifications settings panel for accessibility issues
         const accessibilityScanResults = await axe
             .builder(page, {disableColorContrast: true})
-            .include(settingsModal.notificationsSettings.id)
+            .include(selectorOf(app.settings.panel('notifications')))
             .analyze();
 
         // * Should have no violation
@@ -164,7 +167,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -175,24 +178,19 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
-
-        const notificationsSettings = settingsModal.notificationsSettings;
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Click Edit on Desktop and mobile notifications section
-        await notificationsSettings.desktopAndMobileEditButton.click();
+        await app.settings.section('desktopAndMobile').editButton.click();
 
         // * Verify aria snapshot of Desktop and mobile notifications section when expanded
-        await notificationsSettings.expandedSection.waitFor();
-        await expect(notificationsSettings.expandedSection).toMatchAriaSnapshot({
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot({
             name: 'desktop_and_mobile_section.yml',
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe
-            .builder(page)
-            .include(notificationsSettings.expandedSectionId)
-            .analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -209,7 +207,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -220,24 +218,19 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
-
-        const notificationsSettings = settingsModal.notificationsSettings;
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Click Edit on Desktop notification sounds section
-        await notificationsSettings.desktopNotificationSoundEditButton.click();
+        await app.settings.section('desktopNotificationSound').editButton.click();
 
         // * Verify aria snapshot of Desktop notification sounds section when expanded
-        await notificationsSettings.expandedSection.waitFor();
-        await expect(notificationsSettings.expandedSection).toMatchAriaSnapshot({
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot({
             name: 'desktop_notification_sounds_section.yml',
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe
-            .builder(page)
-            .include(notificationsSettings.expandedSectionId)
-            .analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -254,7 +247,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -265,24 +258,19 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
-
-        const notificationsSettings = settingsModal.notificationsSettings;
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Click Edit on Email notifications section
-        await notificationsSettings.emailEditButton.click();
+        await app.settings.section('email').editButton.click();
 
         // * Verify aria snapshot of Email notifications section when expanded
-        await notificationsSettings.expandedSection.waitFor();
-        await expect(notificationsSettings.expandedSection).toMatchAriaSnapshot({
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot({
             name: 'email_notifications_section.yml',
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe
-            .builder(page)
-            .include(notificationsSettings.expandedSectionId)
-            .analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -299,7 +287,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -310,16 +298,14 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
-
-        const notificationsSettings = settingsModal.notificationsSettings;
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Click Edit on Keywords that trigger notifications section
-        await notificationsSettings.keywordsTriggerNotificationsEditButton.click();
+        await app.settings.section('keywordsAndMentions').editButton.click();
 
         // * Verify aria snapshot of Keywords that trigger notifications section when expanded
-        await notificationsSettings.expandedSection.waitFor();
-        await expect(notificationsSettings.expandedSection).toMatchAriaSnapshot(`
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot(`
       - heading "Keywords that trigger notifications" [level=4]
       - group "Keywords that trigger notifications":
         - checkbox "Your case-sensitive first name \\"${user.first_name}\\""
@@ -340,10 +326,7 @@ test(
     `);
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe
-            .builder(page)
-            .include(notificationsSettings.expandedSectionId)
-            .analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
@@ -360,7 +343,7 @@ test(
         // # Log in a user in new browser context
         const {app, page, channelsPage} = await pw.testBrowser.login(user);
         const globalHeader = app.globalHeader;
-        const settingsModal = new SettingsModal(app);
+        const settingsModal = app.userSettingsModal;
 
         // # Visit a default channel page
         await channelsPage.goto();
@@ -371,24 +354,19 @@ test(
         await page.keyboard.press('Enter');
 
         // * Settings modal should be visible
-        await expect(settingsModal.container).toBeVisible();
-
-        const notificationsSettings = settingsModal.notificationsSettings;
+        await expect(settingsModal.locator).toBeVisible();
 
         // # Click Edit on Keywords that get highlighted (without notifications) section
-        await notificationsSettings.keywordsGetHighlightedEditButton.click();
+        await app.settings.section('keywordsAndHighlight').editButton.click();
 
         // * Verify aria snapshot of Keywords that get highlighted (without notifications) section when expanded
-        await notificationsSettings.expandedSection.waitFor();
-        await expect(notificationsSettings.expandedSection).toMatchAriaSnapshot({
+        await expandedSection(app).waitFor();
+        await expect(expandedSection(app)).toMatchAriaSnapshot({
             name: 'keywords_that_get_highlighted_section.yml',
         });
 
         // # Analyze the expanded section for accessibility issues
-        const accessibilityScanResults = await axe
-            .builder(page)
-            .include(notificationsSettings.expandedSectionId)
-            .analyze();
+        const accessibilityScanResults = await axe.builder(page).include(EXPANDED_SECTION).analyze();
 
         // * Should have no violation
         expect(accessibilityScanResults.violations).toHaveLength(0);
