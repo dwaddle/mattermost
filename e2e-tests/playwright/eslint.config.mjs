@@ -323,6 +323,13 @@ const CROSS_AREA_IMPORTS = {
         // master's attribute specs (user_graph_value_picker, ranked values) share the channel attribute helpers; they move
         // to lib/src/flows with the ABAC PR, which removes this entry
         './functional/channels/channel_attributes/helpers.ts',
+
+        // an ABAC burn-on-read edge case schedules its message the way the scheduled-messages specs do
+        './functional/channels/scheduled_messages/support.ts',
+
+        // the masking specs check Team Settings' membership policies like the team settings specs, and close the
+        // dialog through their helper (it handles the unsaved-changes warning the lib's close doesn't)
+        './functional/channels/team_settings/surface.ts',
     ],
     'functional/channels': [
         // master's channel-settings spec for locked rules builds its fields with the ABAC support; it moves to the
