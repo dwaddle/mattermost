@@ -68,11 +68,10 @@ test('renders attribute chips on first paint without fetching values', {tag: '@p
 
         // # Start recording requests before the first navigation, since the channel
         // load is where a regression would show
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {page, channelsPage, app} = await pw.testBrowser.login(user);
         const valuesRequests = recordRequests(page, VALUES_ROUTE);
 
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // * Verify the chip is on screen with the option's name, not its stored id
         const postOnScreen = await channelsPage.centerView.getPostById(post.id);
@@ -97,11 +96,11 @@ test('asks the posts endpoint to hydrate', {tag: '@post_attributes'}, async ({pw
 
     // # Arm the wait before the navigation that triggers the fetch
     const {user, team} = await pw.initSetup();
-    const {page, channelsPage} = await pw.testBrowser.login(user);
+    const {page, app} = await pw.testBrowser.login(user);
     const hydrated = page.waitForResponse((response) => response.url().includes(HYDRATION_PARAM));
 
-    await channelsPage.goto(team.name);
-    await channelsPage.toBeVisible();
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // * Verify a posts request carried the hydration parameter. The wait is the
     // assertion: it resolves on the first matching response and fails the test on the
@@ -138,7 +137,7 @@ test('sends no parameter and draws no chips with the flag off', {tag: '@post_att
             {field_id: classification.id, value: optionId(classification, 'SECRET')},
         ]);
 
-        const {page, channelsPage} = await pw.testBrowser.login(user);
+        const {page, channelsPage, app} = await pw.testBrowser.login(user);
 
         // # Turn the flag off for this browser only. Patching the server config would
         // flip it for every spec running in parallel; rewriting the client config
@@ -152,8 +151,7 @@ test('sends no parameter and draws no chips with the flag off', {tag: '@post_att
 
         const hydrationRequests = recordRequests(page, HYDRATION_PARAM);
 
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // * Verify the post rendered but carries no chip row
         const postOnScreen = await channelsPage.centerView.getPostById(post.id);
@@ -203,9 +201,8 @@ test('renders chips on the RHS root and on a reply', {tag: '@post_attributes'}, 
             {field_id: classification.id, value: optionId(classification, 'UNCLASSIFIED')},
         ]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // * Verify the chip is on the root in the centre channel
         const rootInCenter = await channelsPage.centerView.getPostById(root.id);
@@ -267,9 +264,8 @@ test('renders two chips and a +1 badge for three set fields', {tag: '@post_attri
             {field_id: third.id, value: optionId(third, 'ORCON')},
         ]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         const postOnScreen = await channelsPage.centerView.getPostById(post.id);
 
@@ -313,9 +309,8 @@ test('draws no chip for a field that is not set', {tag: '@post_attributes'}, asy
         const post = await userClient.createTestPost({channel_id: channel.id, message: 'one of two set'});
         await setPostValues(adminClient, post.id, [{field_id: set.id, value: optionId(set, 'SECRET')}]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         const postOnScreen = await channelsPage.centerView.getPostById(post.id);
 
@@ -363,9 +358,8 @@ test('ignores a field scoped to a different channel', {tag: '@post_attributes'},
         const post = await userClient.createTestPost({channel_id: other.id, message: 'out of scope'});
         await setPostValues(adminClient, post.id, [{field_id: scoped.id, value: optionId(scoped, 'SECRET')}]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, other.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: other.name});
 
         const postOnScreen = await channelsPage.centerView.getPostById(post.id);
 
@@ -374,8 +368,7 @@ test('ignores a field scoped to a different channel', {tag: '@post_attributes'},
         await expect(postOnScreen.container.getByTestId(CHIPS)).toHaveCount(0);
 
         // # Open the channel the field does belong to
-        await channelsPage.goto(team.name, owning.name);
-        await channelsPage.toBeVisible();
+        await app.channelsPage.goto({team, channel: owning.name});
 
         // * Verify the field applies there, so the absence above was scope and not a
         // broken fixture
@@ -417,9 +410,8 @@ test('updates a chip when another session changes the value', {tag: '@post_attri
             {field_id: classification.id, value: optionId(classification, 'SECRET')},
         ]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         const postOnScreen = await channelsPage.centerView.getPostById(post.id);
         await expect(postOnScreen.container.getByText('SECRET', {exact: true})).toBeVisible();
@@ -485,9 +477,8 @@ test('renders every single-chip field type through its own renderer', {tag: '@po
         const userPost = await userClient.createTestPost({channel_id: channel.id, message: 'user field'});
         await setPostValues(adminClient, userPost.id, [{field_id: owner.id, value: user.id}]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // * Verify a text field renders its stored string through the text renderer
         const textOnScreen = await channelsPage.centerView.getPostById(textPost.id);
@@ -572,9 +563,8 @@ test('renders one chip per entry of a multiselect', {tag: '@post_attributes'}, a
             {field_id: caveats.id, value: [optionId(caveats, 'NOFORN'), optionId(caveats, 'ORCON')]},
         ]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         const postOnScreen = await channelsPage.centerView.getPostById(post.id);
 
@@ -643,9 +633,8 @@ test('colours a select chip from its option, falling back to neutral', {tag: '@p
             {field_id: classification.id, value: optionId(classification, 'ODD')},
         ]);
 
-        const {channelsPage} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, channel.name);
-        await channelsPage.toBeVisible();
+        const {channelsPage, app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: channel.name});
 
         // * Verify the palette token resolves to its background and to a derived
         // foreground, both opaque, so the pair holds its contrast in any theme
