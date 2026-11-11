@@ -27,7 +27,6 @@ type Props = {
     post: Post;
     binding: AppBinding;
 
-    /** The post's testid scope; the select is `<testIdScope>.binding_select:<location>`. */
     testIdScope?: TestId;
     actions: {
         handleBindingClick: HandleBindingClick;

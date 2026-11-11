@@ -28,7 +28,6 @@ type Props = {
      */
     options?: Partial<TextFormattingOptions>;
 
-    /** The post's testid scope; a select binding is `<testIdScope>.binding_select:<location>`. */
     testIdScope?: TestId;
 };
 

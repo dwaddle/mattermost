@@ -22,7 +22,6 @@ export type OwnProps = {
     action: PostAction;
     disabled?: boolean;
 
-    /** The post's testid scope; the menu is `<testIdScope>.action_select:<action id>`. */
     testIdScope?: TestId;
 };
 
