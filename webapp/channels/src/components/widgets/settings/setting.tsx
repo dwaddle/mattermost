@@ -3,6 +3,7 @@
 
 import React from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
     helpText?: React.ReactNode;
     footer?: React.ReactNode;
 
+    /** The row's parts render under it (`${testIdScope}.label--text`, `.help--text`); without it, none. */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row: `admin.setting:<key>`). */
@@ -33,12 +35,12 @@ const Setting: React.FC<Props> = ({
 }: Props) => {
     return (
         <div
-            data-testid={testIdScope ? testId ?? testIdScope : inputId}
+            data-testid={testIdScope ? testId ?? testIdScope : undefined}
             className='form-group'
         >
             {label && (
                 <label
-                    data-testid={testIdScope ? `${testIdScope}.label--text` : inputId + 'label'}
+                    data-testid={part(testIdScope, 'label', 'text')}
                     className={'control-label ' + labelClassName}
                     htmlFor={inputId}
                 >
@@ -48,7 +50,7 @@ const Setting: React.FC<Props> = ({
             <div className={inputClassName}>
                 {children}
                 <div
-                    data-testid={testIdScope ? `${testIdScope}.help--text` : inputId + 'help-text'}
+                    data-testid={part(testIdScope, 'help', 'text')}
                     className='help-text'
                 >
                     {helpText}

@@ -118,6 +118,7 @@ describe('components/edit_scheduled_post/edit_post', () => {
             const onDeleteScheduledPost = jest.fn().mockResolvedValue({});
             const editor = (
                 <EditScheduledPost
+                    testId='center.post.edit'
                     scheduledPost={scheduledPost}
                     afterSave={afterSave}
                     onCancel={onCancel}
@@ -138,7 +139,7 @@ describe('components/edit_scheduled_post/edit_post', () => {
             };
         }
 
-        const getTextbox = () => screen.getByTestId('edit_textbox') as HTMLTextAreaElement;
+        const getTextbox = () => screen.getByTestId('center.post.edit--textbox') as HTMLTextAreaElement;
 
         async function typeAndPersistDraft(store: ReturnType<typeof renderEditor>['store'], message: string) {
             fireEvent.input(getTextbox(), {target: {value: message}});

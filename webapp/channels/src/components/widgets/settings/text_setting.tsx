@@ -4,6 +4,7 @@
 import React from 'react';
 import type {ChangeEvent, ReactNode} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import Setting from './setting';
@@ -30,6 +31,7 @@ export type Props = {
     autoFocus?: boolean;
     multiple?: boolean;
 
+    /** The row's parts render under it (`${testIdScope}.value--textbox`, `--spinbutton` for numbers); without it, none. */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row). */
@@ -58,7 +60,7 @@ function TextSetting(props: Props) {
         input = (
             <textarea
                 id={props.id}
-                data-testid={props.testIdScope ? `${props.testIdScope}.value--textbox` : `${props.id}input`} // legacy: e2e tests rely on 'input' in the test id
+                data-testid={part(props.testIdScope, 'value', 'textbox')}
                 className='form-control'
                 autoFocus={props.autoFocus}
                 dir='auto'
@@ -73,9 +75,6 @@ function TextSetting(props: Props) {
         );
     } else {
         const inputType = INPUT_TYPES.includes(type) ? type : 'text';
-
-        // legacy (without testIdScope): e2e tests rely on 'input' being in the test id if it's a text/textarea input
-        const legacyTestId = inputType === 'text' ? `${props.id}input` : `${props.id}${inputType}`;
 
         // An incomplete number like "-" parses to NaN. Rendering NaN makes React overwrite the input
         // and discard what was typed, while an empty value leaves the browser's in-progress text alone.
@@ -97,13 +96,13 @@ function TextSetting(props: Props) {
             <input
                 {...inputProps}
                 type='number'
-                data-testid={props.testIdScope ? `${props.testIdScope}.value--spinbutton` : legacyTestId}
+                data-testid={part(props.testIdScope, 'value', 'spinbutton')}
             />
         ) : (
             <input
                 {...inputProps}
                 type={inputType}
-                data-testid={props.testIdScope ? `${props.testIdScope}.value--textbox` : legacyTestId}
+                data-testid={part(props.testIdScope, 'value', 'textbox')}
             />
         );
     }

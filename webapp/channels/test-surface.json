@@ -153734,37 +153734,6 @@
       ]
     },
     {
-      "template": "rank-badge",
-      "grammar": false,
-      "scope": [],
-      "name": "rank-badge",
-      "role": null,
-      "component": {
-        "name": "RankBadge",
-        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
-      },
-      "instances": [
-        {
-          "via": [
-            "channels/src/components/admin_console/system_properties/user_properties_rank_values.tsx#RankChip"
-          ]
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "!(rank === undefined || rank === null)",
-          "explained": "!(rank === undefined || rank === null)",
-          "kind": "prop"
-        }
-      ],
-      "unreachable": true
-    },
-    {
       "template": "rank-chip-{key}",
       "grammar": false,
       "scope": [],

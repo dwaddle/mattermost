@@ -4,6 +4,7 @@
 import React, {memo, useCallback, useMemo} from 'react';
 import type {ChangeEventHandler} from 'react';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 import type {MatrixConfig} from '@mattermost/types/apps';
 
@@ -16,6 +17,7 @@ type Props = {
     value?: string[];
     disabled?: boolean;
 
+    /** The row's parts render under it (`${testIdScope}.cell:<row>_<column>--checkbox` or `--radio`); without it, none. */
     testIdScope?: TestId;
 
     /** The row's own testid when it isn't the scope (a keyed row). */
@@ -103,12 +105,12 @@ const CheckboxMatrixSetting = ({
     return (
         <div
             className='form-group'
-            data-testid={testIdScope ? testId ?? testIdScope : id}
+            data-testid={testIdScope ? testId ?? testIdScope : undefined}
         >
             {label && (
                 <label
                     className='control-label'
-                    data-testid={testIdScope ? `${testIdScope}.label--text` : id + 'label'}
+                    data-testid={part(testIdScope, 'label', 'text')}
                 >
                     {label}
                 </label>
@@ -173,7 +175,7 @@ const CheckboxMatrixSetting = ({
             {helpText && (
                 <div
                     className='help-text'
-                    data-testid={testIdScope ? `${testIdScope}.help--text` : id + 'help-text'}
+                    data-testid={part(testIdScope, 'help', 'text')}
                 >
                     {helpText}
                 </div>

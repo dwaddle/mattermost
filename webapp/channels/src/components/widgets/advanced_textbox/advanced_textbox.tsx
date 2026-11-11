@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React, {useState, useEffect, type JSX} from 'react';
 import {useIntl} from 'react-intl';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import ShowFormat from 'components/advanced_text_editor/show_formatting/show_formatting';
@@ -158,7 +159,7 @@ const AdvancedTextbox = ({
                 {internalError && (
                     <div className='AdvancedTextbox__error-message'>
                         <i className='icon icon-alert-circle-outline'/>
-                        <span data-testid={testId ? `${testId}.error--text` : 'advanced-textbox-error-text'}>{internalError}</span>
+                        <span data-testid={part(testId, 'error', 'text')}>{internalError}</span>
                     </div>
                 )}
 
@@ -179,7 +180,7 @@ const AdvancedTextbox = ({
             {/* Error message display */}
             {(descriptionMessage && !internalError) && (
                 <p
-                    data-testid={testId ? `${testId}.description--text` : 'AdvancedTextbox__description'}
+                    data-testid={part(testId, 'description', 'text')}
                     className='AdvancedTextbox__description'
                 >
                     {descriptionMessage}

@@ -8,6 +8,7 @@ import type {DayModifiers, DayPickerProps} from 'react-day-picker';
 import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 
+import {part} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import {getCurrentLocale} from 'selectors/i18n';
@@ -525,7 +526,7 @@ const DateTimeInputContainer: React.FC<Props> = ({
                     <Menu.Container
                         menuButton={{
                             id: 'time_button',
-                            dataTestId: testIdScope ? `${testIdScope}.time--button` : 'time_button',
+                            dataTestId: part(testIdScope, 'time', 'button'),
                             'aria-label': formatMessage({
                                 id: 'datetime.time',
                                 defaultMessage: 'Time',
@@ -562,7 +563,7 @@ const DateTimeInputContainer: React.FC<Props> = ({
                             <Menu.Item
                                 key={index}
                                 id={`time_option_${index}`}
-                                data-testid={testIdScope ? `${testIdScope}.time_menu.time:${option.format('HHmm')}--menuitem` : `time_option_${index}`}
+                                data-testid={testIdScope ? `${testIdScope}.time_menu.time:${option.format('HHmm')}--menuitem` : undefined}
                                 labels={
                                     <span>{option.format(isMilitaryTime ? 'HH:mm' : 'LT')}</span>
                                 }

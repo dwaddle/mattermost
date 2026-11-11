@@ -9,29 +9,6 @@ import noOnlyTestsPlugin from 'eslint-plugin-no-only-tests';
 
 import eslintPlugin from '@mattermost/eslint-plugin';
 
-// Strict files where the testid rules' extended checks (every branch of a testid, such as a `testId ? new : 'legacy'`
-// fallback, and the testid helpers) found what the area-fix wave fixes: there the two rules stay warnings until then.
-const TESTID_LINT_PENDING = [
-    'src/components/admin_console/access_control/editors/table_editor/graph_value_cell.tsx',
-    'src/components/admin_console/access_control/editors/table_editor/multi_value_selector_menu.tsx',
-    'src/components/admin_console/access_control/editors/table_editor/single_value_selector_menu.tsx',
-    'src/components/admin_console/system_properties/rank_badge.tsx',
-    'src/components/channel_attributes/attribute_chip.tsx',
-    'src/components/color_input.tsx',
-    'src/components/datetime_input/datetime_input.tsx',
-    'src/components/post_view/burn_on_read_badge/burn_on_read_badge.tsx',
-    'src/components/post_view/burn_on_read_concealed_placeholder/burn_on_read_concealed_placeholder.tsx',
-    'src/components/post_view/burn_on_read_timer_chip/burn_on_read_timer_chip.tsx',
-    'src/components/post_view/commented_on_files_message/commented_on_files_message.tsx',
-    'src/components/property_fields/hierarchical_value_menu/hierarchical_value_menu.tsx',
-    'src/components/settings_sidebar/settings_sidebar.tsx',
-    'src/components/user_settings/general/user_settings_general.tsx',
-    'src/components/widgets/advanced_textbox/advanced_textbox.tsx',
-    'src/components/widgets/settings/checkbox_matrix_setting.tsx',
-    'src/components/widgets/settings/setting.tsx',
-    'src/components/widgets/settings/text_setting.tsx',
-];
-
 // Files the testid scan keeps at warnings (dead code, reviewed a11y cases): repo-relative paths become src/ globs.
 const STRICT_EXCEPTIONS = JSON.parse(readFileSync(new URL('./test-surface.config.json', import.meta.url), 'utf8')).checks.strictExceptions.
     map(({path}) => path.replace(/^channels\//, '')).
@@ -135,13 +112,6 @@ export default defineConfig([
             formatjs: {
                 additionalFunctionNames: ['localizeMessage', 'defineMessage'],
             },
-        },
-    },
-    {
-        files: TESTID_LINT_PENDING,
-        rules: {
-            '@mattermost/testid-grammar': 1,
-            '@mattermost/testid-no-unscoped-data': 1,
         },
     },
 ]);

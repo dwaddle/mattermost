@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {useIntl} from 'react-intl';
 
+import {withRole} from '@mattermost/shared/utils/test_id';
 import type {TestId} from '@mattermost/shared/utils/test_id';
 
 import './rank_badge.scss';
@@ -29,7 +30,7 @@ const RankBadge = ({rank, className, testId}: Props) => {
     return (
         <span
             className={classNames('rank-badge', className)}
-            data-testid={testId ? `${testId}--text` : 'rank-badge'}
+            data-testid={withRole(testId, 'text')}
             aria-label={formatMessage({
                 id: 'admin.system_properties.user_properties.rank_badge.aria_label',
                 defaultMessage: 'Rank {rank}',
