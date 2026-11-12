@@ -138,10 +138,10 @@ test(
         // # Archive the channel
         await adminClient.deleteChannel(privateChannel.id);
 
-        const {app, page, channelsPage} = await pw.testBrowser.login(adminUser);
+        const {app, page} = await pw.testBrowser.login(adminUser);
 
         // # Visit the archived channel directly
-        await channelsPage.goto(team.name, privateChannel.name);
+        await app.channelsPage.goto({team, channel: privateChannel.name});
 
         // # Wait for channel header to load (archived channels don't have post-create)
         // (the first load of a new team's channel can be slow on this server)

@@ -25,10 +25,10 @@ test(
         const {team, adminUser} = await pw.initSetup();
 
         // # Log in as admin
-        const {app, page, channelsPage} = await pw.testBrowser.login(adminUser);
+        const {app, page} = await pw.testBrowser.login(adminUser);
 
         // # Visit town-square channel
-        await channelsPage.goto(team.name, DefaultChannel.TownSquare);
+        await app.channelsPage.goto({team, channel: DefaultChannel.TownSquare});
         // (the first load of a new team's channel can be slow on this server)
         await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 

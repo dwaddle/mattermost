@@ -1,9 +1,11 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {demoPluginId, duration, expect, test} from '@mattermost/playwright-lib';
+import {demoPluginId, duration, expect, lastPost, test} from '@mattermost/playwright-lib';
 
 import {sendDemoSlashCommand} from '../../helpers';
+
+import {sendCommand} from './support';
 
 test('should toggle hooks on and off via /demo_plugin command', async ({pw}) => {
     // # Setup
@@ -34,30 +36,21 @@ test('should toggle hooks on and off via /demo_plugin command', async ({pw}) => 
     await adminClient.addToChannel(user.id, demoChannel.id);
 
     // # Login
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto();
-    await channelsPage.toBeVisible();
+    const {app, page} = await pw.testBrowser.login(user);
+    await app.teamPage.goto({team});
+    await expect(app.center.composer.locator).toBeVisible();
 
     // # Navigate to the Demo Plugin channel
-    await channelsPage.goto(team.name, 'demo_plugin');
-    await channelsPage.toBeVisible();
+    await app.channelsPage.goto({team, channel: 'demo_plugin'});
 
-    const hookStatus = channelsPage.page
-        .locator('span')
-        .filter({hasText: 'Demo Plugin:'})
-        .locator('..')
-        .locator('span')
-        .last();
+    const hookStatus = page.locator('span').filter({hasText: 'Demo Plugin:'}).locator('..').locator('span').last();
 
     // * Verify the last post does not contain a login event
-    const lastPost = await channelsPage.centerView.getLastPost();
-    await expect(lastPost.container).not.toContainText('ChannelHasBeenCreated');
+    const last = await lastPost(app.center.postList);
+    await expect(last.locator).not.toContainText('ChannelHasBeenCreated');
 
     // # Disable hooks
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/demo_plugin false');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
+    await sendDemoSlashCommand(page, () => sendCommand(app, '/demo_plugin false'));
     await expect(hookStatus).toHaveText('Disabled');
 
     // # Create first test channel (hooks off)
@@ -69,15 +62,10 @@ test('should toggle hooks on and off via /demo_plugin command', async ({pw}) => 
     await adminClient.createChannel(channel1);
 
     // * Verify no ChannelHasBeenCreated post for channel1
-    await expect(
-        channelsPage.centerView.container.getByText(`ChannelHasBeenCreated: ~${channel1.name}`),
-    ).not.toBeVisible();
+    await expect(app.center.locator.getByText(`ChannelHasBeenCreated: ~${channel1.name}`)).not.toBeVisible();
 
     // # Re-enable hooks
-    await sendDemoSlashCommand(channelsPage.page, async () => {
-        await channelsPage.centerView.postCreate.input.fill('/demo_plugin true');
-        await channelsPage.centerView.postCreate.sendMessage();
-    });
+    await sendDemoSlashCommand(page, () => sendCommand(app, '/demo_plugin true'));
 
     // * Verify the indicator shows Enabled
     await expect(hookStatus).toHaveText('Enabled');
@@ -91,7 +79,5 @@ test('should toggle hooks on and off via /demo_plugin command', async ({pw}) => 
     await adminClient.createChannel(channel2);
 
     // * Verify ChannelHasBeenCreated post appears for channel2
-    await expect(
-        channelsPage.centerView.container.getByText(`ChannelHasBeenCreated: ~${channel2.name}`, {exact: true}),
-    ).toBeVisible();
+    await expect(app.center.locator.getByText(`ChannelHasBeenCreated: ~${channel2.name}`, {exact: true})).toBeVisible();
 });

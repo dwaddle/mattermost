@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import type {Locator} from '@playwright/test';
+import type {Locator, Page} from '@playwright/test';
 import {expect} from '@playwright/test';
 
 /**
@@ -50,4 +50,12 @@ export default class SearchResultsPanel {
     async jumpToResultWithText(text: string) {
         await this.getResultByText(text).first().getByRole('link', {name: 'Jump'}).click();
     }
+}
+
+/**
+ * The panel on a page (the main window or a popout). Its elements carry no testids yet, so this is the one hand-written
+ * page object left for the channels page; the generated `app.search` covers the panel's header and results.
+ */
+export function searchResultsPanel(page: Page) {
+    return new SearchResultsPanel(page.locator('#searchContainer'));
 }

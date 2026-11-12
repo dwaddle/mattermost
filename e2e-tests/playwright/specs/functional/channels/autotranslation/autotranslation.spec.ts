@@ -156,8 +156,8 @@ test(
         });
         expect(created.autotranslation).toBeFalsy();
 
-        const {app, channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, channelName);
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: channelName});
         await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
         await enableAutotranslationConfig(adminClient, {
@@ -210,8 +210,8 @@ test(
             type: 'O',
         });
 
-        const {app, channelsPage} = await pw.testBrowser.login(adminUser);
-        await channelsPage.goto(team.name, channelName);
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.channelsPage.goto({team, channel: channelName});
         await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
         // Re-apply config right before the modal opens: a concurrent initSetup() can reset

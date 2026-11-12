@@ -4,6 +4,7 @@
 import type {Page} from '@playwright/test';
 
 import {
+    App,
     ensureTestWebappPlugins,
     expect,
     generated,
@@ -53,7 +54,7 @@ async function expectWindowNotReloaded(page: Page) {
 }
 
 // The login page once its form shows
-async function expectLoginForm(app: generated.App) {
+async function expectLoginForm(app: App) {
     await expect(app.login.loginIdTextbox.locator).toBeVisible();
     await expect(app.login.passwordTextbox.locator).toBeVisible();
 }
@@ -140,7 +141,7 @@ test.describe('Pre-auth webapp plugins', () => {
 
         // # Open the login page without a session
         await pw.hasSeenLandingPage();
-        const app = new generated.App(page);
+        const app = new App(page);
         const pageErrors: string[] = [];
         page.on('pageerror', (error) => pageErrors.push(error.message));
         await app.loginPage.goto();
@@ -171,7 +172,7 @@ test.describe('Pre-auth webapp plugins', () => {
 
             // # Open the login page with a redirect to the post-auth plugin's custom route
             await pw.hasSeenLandingPage();
-            const app = new generated.App(page);
+            const app = new App(page);
             const route = testWebappPluginRoute(postAuthTestPluginId);
             await page.goto(`${generated.LoginPage.path()}?redirect_to=${encodeURIComponent(route)}`);
             await expectLoginForm(app);
@@ -228,15 +229,16 @@ test.describe('Pre-auth webapp plugins', () => {
 
             // # Log in through the login page
             await pw.hasSeenLandingPage();
-            const app = new generated.App(page);
+            const app = new App(page);
             await app.loginPage.goto();
             await expectLoginForm(app);
             await logIn(app, user.username, user.password);
-            await pw.channelsPage.toBeVisible();
+            await expect(app.center.composer.locator).toBeVisible();
             await expect(page.getByTestId(testWebappPluginMarkerTestId(postAuthTestPluginId))).toBeAttached();
 
             // # Log out, which reloads the app on the login page without a session
-            await pw.channelsPage.logout();
+            const menu = await app.globalHeader.clickOpenAccountMenuButton();
+            await menu.logOutMenuItem.commit();
             await expectLoginForm(app);
 
             // * Verify only the pre-auth plugin is loaded on the reloaded login page
@@ -246,7 +248,7 @@ test.describe('Pre-auth webapp plugins', () => {
             // # Log in as the second user
             await markWindow(page);
             await logIn(app, otherUser.username, otherUser.password);
-            await pw.channelsPage.toBeVisible();
+            await expect(app.center.composer.locator).toBeVisible();
 
             // * Verify both plugins are loaded and the page did not reload
             await expect(page.getByTestId(testWebappPluginMarkerTestId(preAuthTestPluginId))).toBeAttached();

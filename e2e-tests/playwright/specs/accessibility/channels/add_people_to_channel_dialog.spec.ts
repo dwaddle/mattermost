@@ -48,10 +48,10 @@ test(
         }
 
         // # Log in as admin
-        const {app, page, channelsPage} = await pw.testBrowser.login(adminUser);
+        const {app, page} = await pw.testBrowser.login(adminUser);
 
         // # Visit the test channel
-        await channelsPage.goto(team.name, channel.name);
+        await app.channelsPage.goto({team, channel: channel.name});
         // (the first load of a new team's channel can be slow on this server)
         await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
@@ -133,10 +133,10 @@ test(
         }
 
         // # Log in as admin
-        const {app, page, channelsPage} = await pw.testBrowser.login(adminUser);
+        const {app, page} = await pw.testBrowser.login(adminUser);
 
         // # Visit the test channel
-        await channelsPage.goto(team.name, channel.name);
+        await app.channelsPage.goto({team, channel: channel.name});
         // (the first load of a new team's channel can be slow on this server)
         await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 

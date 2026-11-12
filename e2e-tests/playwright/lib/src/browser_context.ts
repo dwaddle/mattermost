@@ -37,7 +37,6 @@ export class TestBrowser {
         const page = await context.newPage();
         patchGotoToUseBaseUrl(page);
 
-        const channelsPage = new pages.ChannelsPage(page);
         const systemConsolePage = new pages.SystemConsolePage(page);
 
         // the generated page objects (from the webapp's testids)
@@ -48,7 +47,6 @@ export class TestBrowser {
         return {
             context,
             page,
-            channelsPage,
             systemConsolePage,
             app,
         };

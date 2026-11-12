@@ -17,11 +17,11 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         const {user, team, townSquare} = await pw.initSetup();
 
         // # Log in and go to town square
-        const {channelsPage, app} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 
         // * Verify the channel loads
-        await channelsPage.centerView.header.toHaveTitle('Town Square');
+        await expect(app.channelHeader.openMenuButton.locator).toContainText('Town Square');
     });
 
     /**
@@ -32,7 +32,7 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         const channel = await adminClient.createPublicChannel(team.id, 'Subpath Channel', 'subpath-channel');
         await adminClient.addToChannel(user.id, channel.id);
 
-        const {app, channelsPage, page} = await pw.testBrowser.login(user);
+        const {app, page} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: channel.name});
 
         // # Post a message and build its permalink from the id the server returned
@@ -44,13 +44,13 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         // # Leave the channel
         const menu = await app.channelHeader.clickOpenMenuButton();
         await menu.leaveChannelMenuItem.commit({wait: Api.RemoveUserFromChannel});
-        await channelsPage.centerView.header.toHaveTitle('Town Square');
+        await expect(app.channelHeader.openMenuButton.locator).toContainText('Town Square');
 
         // # Visit the permalink
         await page.goto(permalink);
 
         // * Verify the channel is rejoined and the post is visible
-        await channelsPage.centerView.header.toHaveTitle(channel.display_name);
+        await expect(app.channelHeader.openMenuButton.locator).toContainText(channel.display_name);
         await expect(app.center.postList.post(post).locator).toContainText(message);
     });
 

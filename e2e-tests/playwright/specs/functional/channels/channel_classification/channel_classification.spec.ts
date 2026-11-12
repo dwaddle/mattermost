@@ -98,8 +98,8 @@ async function openConfigurationOfNewChannel(pw: PlaywrightExtended) {
     );
     await adminClient.addToChannel(adminUser.id, channel.id);
 
-    const {app, channelsPage} = await pw.testBrowser.login(adminUser);
-    await channelsPage.goto(team.name, channel.name);
+    const {app} = await pw.testBrowser.login(adminUser);
+    await app.channelsPage.goto({team, channel: channel.name});
     await expect(app.center.postCreate.messageTextbox.locator).toBeVisible({timeout: duration.one_min});
 
     const settings = await (await app.channelHeader.clickOpenMenuButton()).clickChannelSettingsMenuItem();

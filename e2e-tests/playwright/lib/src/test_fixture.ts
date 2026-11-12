@@ -309,9 +309,6 @@ export class PlaywrightExtended {
     readonly loginPage;
     readonly keycloakLoginPage;
 
-    // Same default page as above, post-login, for specs that authenticate it directly.
-    readonly channelsPage;
-
     readonly hasSeenLandingPage;
 
     constructor(browser: Browser, page: Page) {
@@ -402,9 +399,6 @@ export class PlaywrightExtended {
         // unauthenticated page
         this.loginPage = new pages.LoginPage(page);
         this.keycloakLoginPage = new pages.KeycloakLoginPage(page);
-
-        // Same default page as above, post-login
-        this.channelsPage = new pages.ChannelsPage(page);
 
         // ./mock_browser_api
         this.stubNotification = stubNotification;

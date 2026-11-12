@@ -158,8 +158,9 @@ export type {
 
 export {startStack, stopStack, withStackLock} from './containers';
 
-// The hand-written channels page that `login()` still returns beside `app` (`generated.ChannelsPage` is the other one).
-export {ChannelsPage} from './ui/pages';
+// The Recent Mentions panel and its filters have no generated page object yet (their elements carry no testids).
+export {searchResultsPanel} from './ui/components/channels/search_results_panel';
+export {composerPreviewArea} from './ui/components/channels/composer_preview_area';
 
 export {setWysiwygUserPreference, WYSIWYG_PREF_CATEGORY, WYSIWYG_PREF_NAME} from './wysiwyg_helpers';
 
