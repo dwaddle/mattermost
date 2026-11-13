@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test, expect, requireSubpathServer} from '@mattermost/playwright-lib';
+import {test, expect, generated, logIn, requireSubpathServer} from '@mattermost/playwright-lib';
 
 test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
     let subpathBaseURL: string;
@@ -70,10 +70,10 @@ test.describe('Subpath - channel routing', {tag: '@subpath'}, () => {
         await page.goto(`${subpathBaseURL}/${team.name}/messages/@${otherUser.username}`);
 
         // # Log in
-        await pw.loginPage.toBeVisible();
-        await pw.loginPage.loginInput.fill(user.username);
-        await pw.loginPage.passwordInput.fill(user.password);
-        await pw.loginPage.signInButton.click();
+        const app = new generated.App(page);
+        await expect(app.login.loginIdTextbox.locator).toBeVisible();
+        await expect(app.login.passwordTextbox.locator).toBeVisible();
+        await logIn(app, user.username, user.password);
 
         // * Verify redirected into the DM, still under the subpath
         await expect.poll(() => page.url()).toBe(`${subpathBaseURL}/${team.name}/messages/@${otherUser.username}`);

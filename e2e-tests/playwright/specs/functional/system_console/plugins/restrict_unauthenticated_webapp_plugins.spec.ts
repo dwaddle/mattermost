@@ -24,14 +24,14 @@ test.afterAll(async () => {
 test(
     'system admin can toggle restricting webapp plugins available before login',
     {tag: '@system_console'},
-    async ({pw}) => {
+    async ({page, pw}) => {
         // # Install the test plugins with the restriction on
         await ensureTestWebappPlugins();
         const {adminClient, adminUser} = await pw.initSetup();
         await adminClient.patchConfig({PluginSettings: {RestrictUnauthenticatedWebappPlugins: true}});
 
         const anonymousPluginIds = async () => {
-            const response = await pw.loginPage.page.request.get('/api/v4/plugins/webapp', {
+            const response = await page.request.get('/api/v4/plugins/webapp', {
                 headers: {'X-Requested-With': 'XMLHttpRequest'},
             });
             expect(response.ok()).toBe(true);
