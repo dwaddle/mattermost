@@ -646,7 +646,7 @@ export default function LogList({
                 ref={searchInputRef}
                 type='text'
                 name='serverLogsSearch'
-                data-testid='admin.server_logs.search--textbox'
+                testId='admin.server_logs.search'
                 maxLength={SEARCH_MAX_LENGTH}
                 containerClassName='LogViewer__search'
                 placeholder={intl.formatMessage({id: 'admin.logs.search.placeholder', defaultMessage: 'Search logs'})}
@@ -660,6 +660,7 @@ export default function LogList({
                 }
                 inputSuffix={searchInput ? (
                     <button
+                        data-testid='admin.server_logs.clear_search--button'
                         className='LogViewer__search-clear btn btn-icon btn-xs'
                         onClick={clearSearch}
                         type='button'
@@ -677,11 +678,13 @@ export default function LogList({
                 <Menu.Container
                     menuButton={{
                         id: 'serverLogsNodeMenuButton',
+                        testId: 'admin.server_logs.node',
                         class: 'inputWithMenu',
                         'aria-label': intl.formatMessage({id: 'admin.logs.node.menuButtonAriaLabel', defaultMessage: 'Open menu to select a node'}),
                         as: 'div',
                         children: (
                             <Input
+                                testId='admin.server_logs.node'
                                 label={intl.formatMessage(messages.node)}
                                 name='serverLogsNode'
                                 value={selectedNode || intl.formatMessage(messages.allNodes)}
@@ -692,6 +695,7 @@ export default function LogList({
                     }}
                     menu={{
                         id: 'serverLogsNodeMenu',
+                        testId: 'admin.server_logs.node_menu',
                         'aria-label': intl.formatMessage({id: 'admin.logs.node.dropdownAriaLabel', defaultMessage: 'Node menu'}),
                         width: '260px',
                     }}
@@ -700,6 +704,7 @@ export default function LogList({
                         <Menu.Item
                             key={node}
                             id={node ? `serverLogsNode-node-${node}` : 'serverLogsNode-all'}
+                            data-testid={node ? `admin.server_logs.node_menu.node:${node}--menuitemradio` : 'admin.server_logs.node_menu.all--menuitemradio'}
                             role='menuitemradio'
                             aria-checked={selectedNode === node}
                             forceCloseOnSelect={true}
@@ -783,11 +788,13 @@ export default function LogList({
             <Menu.Container
                 menuButton={{
                     id: 'serverLogsLevelsMenuButton',
+                    testId: 'admin.server_logs.levels',
                     class: 'inputWithMenu',
                     'aria-label': intl.formatMessage({id: 'admin.logs.levels.menuButtonAriaLabel', defaultMessage: 'Open menu to select which log levels to show'}),
                     as: 'div',
                     children: (
                         <Input
+                            testId='admin.server_logs.levels'
                             label={intl.formatMessage({id: 'admin.logs.levels', defaultMessage: 'Levels'})}
                             name='serverLogsLevels'
                             value={allLevelsEnabled ? intl.formatMessage(messages.allLevels) : intl.formatMessage({id: 'admin.logs.levels.selected', defaultMessage: '{count} selected'}, {count: enabledLevelCount})}
@@ -798,6 +805,7 @@ export default function LogList({
                 }}
                 menu={{
                     id: 'serverLogsLevelsMenu',
+                    testId: 'admin.server_logs.levels_menu',
                     'aria-label': intl.formatMessage({id: 'admin.logs.levels.dropdownAriaLabel', defaultMessage: 'Log levels menu'}),
                     width: '260px',
                 }}
@@ -806,6 +814,7 @@ export default function LogList({
                     <Menu.Item
                         key={level}
                         id={`serverLogsLevel-${level}`}
+                        data-testid={`admin.server_logs.levels_menu.level:${level}--menuitemcheckbox`}
                         role='menuitemcheckbox'
                         aria-checked={enabledLevels.has(level)}
                         leadingElement={
@@ -829,6 +838,7 @@ export default function LogList({
                 <Menu.Separator/>
                 <Menu.Item
                     id='serverLogsLevelsSelectAll'
+                    data-testid='admin.server_logs.levels_menu.select_all--menuitem'
                     disabled={allLevelsEnabled}
                     labels={
                         <FormattedMessage
@@ -843,11 +853,13 @@ export default function LogList({
             <Menu.Container
                 menuButton={{
                     id: 'serverLogsLiveTailMenuButton',
+                    testId: 'admin.server_logs.live_tail',
                     class: 'inputWithMenu',
                     'aria-label': intl.formatMessage({id: 'admin.logs.liveTail.menuButtonAriaLabel', defaultMessage: 'Open menu to turn live tail on or off'}),
                     as: 'div',
                     children: (
                         <Input
+                            testId='admin.server_logs.live_tail'
                             label={intl.formatMessage(messages.liveTail)}
                             name='serverLogsLiveTail'
                             value={liveTailEnabled ? intl.formatMessage(pollIntervalLabels[pollInterval]) : intl.formatMessage(messages.liveTailOff)}
@@ -872,12 +884,14 @@ export default function LogList({
                 )}
                 menu={{
                     id: 'serverLogsLiveTailMenu',
+                    testId: 'admin.server_logs.live_tail_menu',
                     'aria-label': intl.formatMessage({id: 'admin.logs.liveTail.dropdownAriaLabel', defaultMessage: 'Live tail menu'}),
                     width: '220px',
                 }}
             >
                 <Menu.Item
                     id='serverLogsLiveTail-off'
+                    data-testid='admin.server_logs.live_tail_menu.off--menuitemradio'
                     role='menuitemradio'
                     aria-checked={!liveTailEnabled}
                     forceCloseOnSelect={true}
@@ -889,6 +903,7 @@ export default function LogList({
                     <Menu.Item
                         key={interval}
                         id={`serverLogsLiveTail-${interval}`}
+                        data-testid={`admin.server_logs.live_tail_menu.interval:${interval}--menuitemradio`}
                         role='menuitemradio'
                         disabled={customRange !== null}
                         aria-describedby={customRange ? LIVE_TAIL_UNAVAILABLE_ID : undefined}
@@ -904,6 +919,7 @@ export default function LogList({
             <Menu.Container
                 menuButton={{
                     id: 'serverLogsDurationMenuButton',
+                    testId: 'admin.server_logs.duration',
                     class: classNames('inputWithMenu', {
                         'LogViewer__duration--custom': customRange,
                         'LogViewer__duration--custom-year': showsYear,
@@ -912,6 +928,7 @@ export default function LogList({
                     as: 'div',
                     children: (
                         <Input
+                            testId='admin.server_logs.duration'
                             label={intl.formatMessage({id: 'admin.logs.duration', defaultMessage: 'Duration'})}
                             name='serverLogsDuration'
                             value={durationValue}
@@ -922,12 +939,14 @@ export default function LogList({
                 }}
                 menu={{
                     id: 'serverLogsDurationMenu',
+                    testId: 'admin.server_logs.duration_menu',
                     'aria-label': intl.formatMessage({id: 'admin.logs.duration.dropdownAriaLabel', defaultMessage: 'Time range menu'}),
                     width: '220px',
                 }}
             >
                 <Menu.Item
                     id='serverLogsDuration-all'
+                    data-testid='admin.server_logs.duration_menu.all--menuitemradio'
                     role='menuitemradio'
                     aria-checked={timeRange === null}
                     forceCloseOnSelect={true}
@@ -939,6 +958,7 @@ export default function LogList({
                     <Menu.Item
                         key={preset.minutes}
                         id={`serverLogsDuration-${preset.minutes}`}
+                        data-testid={`admin.server_logs.duration_menu.preset:${preset.minutes}--menuitemradio`}
                         role='menuitemradio'
                         aria-checked={timeRange === preset.minutes}
                         forceCloseOnSelect={true}
@@ -950,6 +970,7 @@ export default function LogList({
                 <Menu.Separator/>
                 <Menu.Item
                     id='serverLogsDuration-custom'
+                    data-testid='admin.server_logs.duration_menu.custom--menuitemradio'
                     role='menuitemradio'
                     aria-checked={customRange !== null}
                     forceCloseOnSelect={true}
@@ -974,6 +995,7 @@ export default function LogList({
             <div className='LogViewer__filters-spacer'/>
 
             <Button
+                data-testid='admin.server_logs.reload--button'
                 emphasis='tertiary'
                 size='medium'
                 onClick={onReload}
@@ -1034,6 +1056,7 @@ export default function LogList({
 
             {scanLimited.length > 0 && (
                 <SectionNotice
+                    data-testid='admin.server_logs.truncated--text'
                     className='LogViewer__notice'
                     type='info'
                     title={
@@ -1160,6 +1183,7 @@ export default function LogList({
                 >
                     {heldCount > 0 && (
                         <Button
+                            data-testid='admin.server_logs.new_entries--button'
                             emphasis='primary'
                             size='x-small'
                             onClick={showHeldLogs}
@@ -1177,6 +1201,7 @@ export default function LogList({
                     className='LogViewer__list'
                     ref={listRef}
                     role='list'
+                    data-testid='admin.server_logs.entries--list'
                     aria-label={intl.formatMessage({id: 'admin.logs.listLabel', defaultMessage: 'Server log entries'})}
                 >
                     {visibleLogs.map((log, idx) => (
@@ -1199,7 +1224,10 @@ export default function LogList({
             </div>
 
             <div className='LogViewer__footer'>
-                <span className='LogViewer__footer-info'>
+                <span
+                    className='LogViewer__footer-info'
+                    data-testid='admin.server_logs.footer_info--text'
+                >
                     {loading && (
                         <FormattedMessage
                             id='admin.logs.refreshing'

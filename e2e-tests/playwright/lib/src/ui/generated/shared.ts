@@ -837,6 +837,57 @@ export class AlertBanner extends Scope {
     }
 }
 
+/** Rendered at `admin.server_logs.duration`, `admin.server_logs.levels`, `admin.server_logs.live_tail`, `admin.server_logs.log_format`, `admin.server_logs.node`, `admin.server_logs.search`, `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`: one class, constructed with the scope it is mounted at. */
+export class Input extends Scope {
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.server_logs.duration.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get field() {
+        return drivers.container(this.byTestId(`${this.scope}.field`), {
+            testId: `${this.scope}.field`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.server_logs.duration.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get messageAlert() {
+        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
+            testId: `${this.scope}.message--alert`,
+            role: 'alert',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    /**
+     * `admin.server_logs.duration.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+}
+
 /** Rendered at `admin.setting.color`, `channel_settings_modal.configuration.banner_color`: one class, constructed with the scope it is mounted at. */
 export class ColorInput extends Scope {
     /**
@@ -898,57 +949,6 @@ export class ColorInput extends Scope {
 
     async fillValueTextbox(value: string): Promise<void> {
         await this.valueTextbox.fill(value);
-    }
-}
-
-/** Rendered at `admin.team.description`, `admin.team.name`, `admin.users.reset_email_modal.current_password`, `admin.users.reset_email_modal.new_email`, `center.post_create.ai_actions.rewrite.prompt`, `channel_settings_modal.info.name`, `convert_gm_to_channel_modal.name`, `invitation_modal.invite.member_profiles.member.first_name`, `invitation_modal.invite.member_profiles.member.last_name`, `invitation_modal.invite.member_profiles.member.username`, `modal.post_create.ai_actions.rewrite.prompt`, `new_channel_modal.name`, `plugin.post_create.ai_actions.rewrite.prompt`, `post_edit.editor.ai_actions.rewrite.prompt`, `rename_channel_modal.name`, `reset_password_modal.current_password`, `reset_password_modal.new_password`, `rhs.post_create.ai_actions.rewrite.prompt`, `search.team_selector.menu.filter`, `search_box.team_selector.menu.filter`, `settings.section.confirm_email`, `settings.section.current_password`, `settings.section.first_name`, `settings.section.last_name`, `settings.section.new_email`, `settings.section.username`, `settings.section.value`: one class, constructed with the scope it is mounted at. */
-export class Input extends Scope {
-    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
-    override get locator(): Locator {
-        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
-    }
-
-    /**
-     * `admin.team.description.field` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     */
-    get field() {
-        return drivers.container(this.byTestId(`${this.scope}.field`), {
-            testId: `${this.scope}.field`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `admin.team.description.message--alert` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     */
-    get messageAlert() {
-        return drivers.text(this.byTestId(`${this.scope}.message--alert`), {
-            testId: `${this.scope}.message--alert`,
-            role: 'alert',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    /**
-     * `admin.team.description.message--text` — Input (channels/src/components/widgets/inputs/input/input.tsx)
-     */
-    get messageText() {
-        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
-            testId: `${this.scope}.message--text`,
-            role: 'text',
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
-        });
-    }
-
-    getMessageText(): Promise<string> {
-        return this.messageText.text();
     }
 }
 

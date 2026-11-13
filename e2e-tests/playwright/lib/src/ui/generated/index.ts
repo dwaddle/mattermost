@@ -20,6 +20,7 @@ export * from './api';
 export * from './app';
 export * from './app_bar';
 export * from './archive_channel_modal';
+export * from './backstage';
 export * from './bot_token_delete_modal';
 export * from './bot_token_regenerate_modal';
 export * from './burn_on_read_confirmation_modal';

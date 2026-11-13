@@ -20449,6 +20449,2060 @@
       }
     },
     {
+      "template": "admin.server_logs.clear_search--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "clear_search",
+      "role": "button",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "searchInput",
+          "explained": "searchInput",
+          "kind": "local state"
+        },
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.custom_range",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "custom_range",
+      "role": null,
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/custom_range_modal.tsx#CustomRangeModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "none",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.custom_range.cancel--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "custom_range"
+      ],
+      "name": "cancel",
+      "role": "button",
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/custom_range_modal.tsx#CustomRangeModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.custom_range.close--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "custom_range"
+      ],
+      "name": "close",
+      "role": "button",
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/custom_range_modal.tsx#CustomRangeModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showHeader",
+          "explained": "showHeader",
+          "kind": "prop"
+        },
+        {
+          "expr": "showCloseButton",
+          "explained": "showCloseButton",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.custom_range.confirm--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "custom_range"
+      ],
+      "name": "confirm",
+      "role": "button",
+      "component": {
+        "name": "GenericModal",
+        "at": "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/custom_range_modal.tsx#CustomRangeModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "platform/components/src/generic_modal/generic_modal.tsx#GenericModal"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.duration--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "duration",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "serverLogsDurationMenu",
+          "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList",
+          "scope": "admin.server_logs.duration_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.duration--textbox",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "duration",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "form": {
+        "scope": "admin.server_logs",
+        "field": "duration",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "admin.server_logs.duration.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "duration"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.duration.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "duration"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.duration.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "duration"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.duration_menu",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "duration_menu",
+      "role": null,
+      "component": {
+        "name": "Menu",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menu",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.duration_menu.all--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "duration_menu"
+      ],
+      "name": "all",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.duration_menu.custom--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "duration_menu"
+      ],
+      "name": "custom",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "CustomRangeModal",
+          "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList",
+          "scope": "admin.server_logs.custom_range"
+        }
+      ],
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.duration_menu.preset:{key}--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "duration_menu"
+      ],
+      "name": "preset",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/logs.tsx#Logs"
+          ],
+          "keySet": [
+            "1440",
+            "15",
+            "5",
+            "60"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"1440\" | \"15\" | \"5\" | \"60\"",
+        "values": [
+          "1440",
+          "15",
+          "5",
+          "60"
+        ],
+        "set": "AdminPreset"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.entries--list",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "entries",
+      "role": "list",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "list",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.entry",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "entry",
+      "role": null,
+      "component": {
+        "name": "LogRow",
+        "at": "channels/src/components/admin_console/server_logs/log_row.tsx#LogRow"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "listitem",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.entry.caller--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "entry"
+      ],
+      "name": "caller",
+      "role": "text",
+      "component": {
+        "name": "LogRow",
+        "at": "channels/src/components/admin_console/server_logs/log_row.tsx#LogRow"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.entry.level--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "entry"
+      ],
+      "name": "level",
+      "role": "text",
+      "component": {
+        "name": "LogRow",
+        "at": "channels/src/components/admin_console/server_logs/log_row.tsx#LogRow"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.entry.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "entry"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "LogRow",
+        "at": "channels/src/components/admin_console/server_logs/log_row.tsx#LogRow"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.entry.node--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "entry"
+      ],
+      "name": "node",
+      "role": "text",
+      "component": {
+        "name": "LogRow",
+        "at": "channels/src/components/admin_console/server_logs/log_row.tsx#LogRow"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNode",
+          "explained": "showNode",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.entry.timestamp--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "entry"
+      ],
+      "name": "timestamp",
+      "role": "text",
+      "component": {
+        "name": "LogRow",
+        "at": "channels/src/components/admin_console/server_logs/log_row.tsx#LogRow"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.entry.toggle--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "entry"
+      ],
+      "name": "toggle",
+      "role": "button",
+      "component": {
+        "name": "LogRow",
+        "at": "channels/src/components/admin_console/server_logs/log_row.tsx#LogRow"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "aria-expanded"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.footer_info--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "footer_info",
+      "role": "text",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.levels--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "levels",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "serverLogsLevelsMenu",
+          "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList",
+          "scope": "admin.server_logs.levels_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.levels--textbox",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "levels",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "form": {
+        "scope": "admin.server_logs",
+        "field": "levels",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "admin.server_logs.levels.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "levels"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.levels.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "levels"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.levels.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "levels"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.levels_menu",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "levels_menu",
+      "role": null,
+      "component": {
+        "name": "Menu",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menu",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.levels_menu.level:{key}--menuitemcheckbox",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "levels_menu"
+      ],
+      "name": "level",
+      "role": "menuitemcheckbox",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": [],
+          "keySet": [
+            "debug",
+            "error",
+            "info",
+            "warn"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitemcheckbox",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"debug\" | \"error\" | \"info\" | \"warn\"",
+        "values": [
+          "debug",
+          "error",
+          "info",
+          "warn"
+        ],
+        "set": "AdminLevel"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.levels_menu.select_all--menuitem",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "levels_menu"
+      ],
+      "name": "select_all",
+      "role": "menuitem",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.line_numbers--togglebutton",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "line_numbers",
+      "role": "togglebutton",
+      "component": {
+        "name": "PlainLogList",
+        "at": "channels/src/components/admin_console/server_logs/plain_log_list.tsx#PlainLogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "togglebutton",
+        "native": true,
+        "state": [
+          "aria-pressed"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "isPlainLogs",
+          "explained": "isPlainLogs",
+          "kind": "local state"
+        }
+      ],
+      "form": {
+        "scope": "admin.server_logs",
+        "field": "line_numbers",
+        "valueType": "boolean"
+      }
+    },
+    {
+      "template": "admin.server_logs.live_tail--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "live_tail",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "serverLogsLiveTailMenu",
+          "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList",
+          "scope": "admin.server_logs.live_tail_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.live_tail--textbox",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "live_tail",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "form": {
+        "scope": "admin.server_logs",
+        "field": "live_tail",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "admin.server_logs.live_tail.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "live_tail"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.live_tail.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "live_tail"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.live_tail.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "live_tail"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.live_tail_menu",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "live_tail_menu",
+      "role": null,
+      "component": {
+        "name": "Menu",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menu",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.live_tail_menu.interval:{key}--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "live_tail_menu"
+      ],
+      "name": "interval",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/logs.tsx#Logs"
+          ],
+          "keySet": [
+            "10000",
+            "30000",
+            "60000"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"10000\" | \"30000\" | \"60000\"",
+        "values": [
+          "10000",
+          "30000",
+          "60000"
+        ],
+        "set": "AdminInterval"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.live_tail_menu.off--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "live_tail_menu"
+      ],
+      "name": "off",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.log_format--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "log_format",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "serverLogsFormatMenu",
+          "at": "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu",
+          "scope": "admin.server_logs.log_format_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      }
+    },
+    {
+      "template": "admin.server_logs.log_format--textbox",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "log_format",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "form": {
+        "scope": "admin.server_logs",
+        "field": "log_format",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "admin.server_logs.log_format.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "log_format"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.log_format.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "log_format"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.log_format.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "log_format"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.log_format_menu",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "log_format_menu",
+      "role": null,
+      "component": {
+        "name": "Menu",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menu",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.log_format_menu.plain--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "log_format_menu"
+      ],
+      "name": "plain",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogFormatMenu",
+        "at": "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!configIsPlainLogs",
+          "explained": "!configIsPlainLogs",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.log_format_menu.structured--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "log_format_menu"
+      ],
+      "name": "structured",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogFormatMenu",
+        "at": "channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!configIsPlainLogs",
+          "explained": "!configIsPlainLogs",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.new_entries--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "new_entries",
+      "role": "button",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "heldCount > 0",
+          "explained": "heldCount > 0",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.node--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "node",
+      "role": "button",
+      "component": {
+        "name": "renderMenuButton",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "menu",
+          "target": "serverLogsNodeMenu",
+          "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList",
+          "scope": "admin.server_logs.node_menu"
+        },
+        {
+          "kind": "modal",
+          "target": "MenuModal",
+          "at": "channels/src/components/menu/menu.tsx#Menu",
+          "menuForm": true,
+          "scope": "menu_modal"
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/menu/menu.tsx#Menu"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.node--textbox",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "node",
+      "role": "textbox",
+      "component": {
+        "name": "generateInput",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": [
+          "disabled"
+        ]
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/widgets/inputs/input/input.tsx#Input"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ],
+      "form": {
+        "scope": "admin.server_logs",
+        "field": "node",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "admin.server_logs.node.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "node"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.node.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "node"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.node.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "node"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.node_menu",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "node_menu",
+      "role": null,
+      "component": {
+        "name": "Menu",
+        "at": "channels/src/components/menu/menu.tsx#Menu"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menu",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.node_menu.all--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "node_menu"
+      ],
+      "name": "all",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.node_menu.node:{key}--menuitemradio",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "node_menu"
+      ],
+      "name": "node",
+      "role": "menuitemradio",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/logs.tsx#Logs"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "menuitemradio",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "showNodeMenu",
+          "explained": "showNodeMenu",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "admin.server_logs.reload--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "reload",
+      "role": "button",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetLogs",
+          "QueryLogs"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
       "template": "admin.server_logs.search--textbox",
       "grammar": true,
       "scope": [
@@ -20481,7 +22535,130 @@
         "delegated": [
           "channels/src/components/widgets/inputs/input/input.tsx#Input"
         ]
+      },
+      "form": {
+        "scope": "admin.server_logs",
+        "field": "search",
+        "valueType": "string"
       }
+    },
+    {
+      "template": "admin.server_logs.search.field",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "search"
+      ],
+      "name": "field",
+      "role": null,
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.search.message--alert",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "search"
+      ],
+      "name": "message",
+      "role": "alert",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.search.message--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs",
+        "search"
+      ],
+      "name": "message",
+      "role": "text",
+      "component": {
+        "name": "Input",
+        "at": "channels/src/components/widgets/inputs/input/input.tsx#Input"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "admin.server_logs.truncated--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "server_logs"
+      ],
+      "name": "truncated",
+      "role": "text",
+      "component": {
+        "name": "LogList",
+        "at": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "region",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "scanLimited.length > 0",
+          "explained": "scanLimited.length > 0",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!isPlainLogs",
+          "explained": "!isPlainLogs",
+          "kind": "local state"
+        }
+      ]
     },
     {
       "template": "admin.setting.color",
@@ -22227,6 +24404,92 @@
           "expr": "!isSectionHidden",
           "explained": "!isSectionHidden",
           "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "admin.sidebar.filter--textbox",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "sidebar"
+      ],
+      "name": "filter",
+      "role": "textbox",
+      "component": {
+        "name": "AdminSidebar",
+        "at": "channels/src/components/admin_console/admin_sidebar/admin_sidebar.tsx#AdminSidebar"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "textbox",
+        "native": true,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "'/admin_console/'",
+          "at": "channels/src/components/admin_console/admin_sidebar/admin_sidebar.tsx#AdminSidebar",
+          "page": "AdminConsolePage"
+        },
+        {
+          "kind": "page",
+          "target": "'/admin_console/' + section",
+          "at": "channels/src/components/admin_console/admin_sidebar/admin_sidebar.tsx#AdminSidebar",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [],
+        "unknown": true,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "mainRolesLoaded(props.roles)",
+          "explained": "mainRolesLoaded(props.roles)",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "admin.sidebar.filter.clear--button",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "sidebar",
+        "filter"
+      ],
+      "name": "clear",
+      "role": "button",
+      "component": {
+        "name": "QuickInput",
+        "at": "channels/src/components/quick_input/quick_input.tsx#QuickInput"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/quick_input/quick_input.tsx#forwarded",
+            "channels/src/components/admin_console/admin_sidebar/admin_sidebar.tsx#AdminSidebar"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "showClearButton",
+          "explained": "showClearButton",
+          "kind": "prop",
+          "viaLocal": true
         }
       ]
     },
@@ -73454,12 +75717,6 @@
           "via": [
             "channels/src/components/quick_input/quick_input.tsx#forwarded",
             "channels/src/components/admin_console/access_control/modals/job_details/searchable_sync_job_team_list.tsx#SearchableSyncJobTeamList"
-          ]
-        },
-        {
-          "via": [
-            "channels/src/components/quick_input/quick_input.tsx#forwarded",
-            "channels/src/components/admin_console/admin_sidebar/admin_sidebar.tsx#AdminSidebar"
           ]
         },
         {
@@ -139151,6 +141408,15 @@
       "source": "channels/src/components/admin_console/health_dashboard/group_by_control.tsx#GroupByControl"
     },
     {
+      "name": "AdminInterval",
+      "values": [
+        "10000",
+        "30000",
+        "60000"
+      ],
+      "source": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
+    },
+    {
       "name": "AdminItem",
       "values": [
         "active_users",
@@ -139164,6 +141430,16 @@
         "start_date"
       ],
       "source": "channels/src/components/admin_console/license_settings/enterprise_edition/enterprise_edition_left_panel.tsx#renderLicenseValues"
+    },
+    {
+      "name": "AdminLevel",
+      "values": [
+        "debug",
+        "error",
+        "info",
+        "warn"
+      ],
+      "source": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
     },
     {
       "name": "AdminNotification",
@@ -139188,6 +141464,16 @@
         "CUSTOM"
       ],
       "source": "channels/src/components/admin_console/radio_setting.tsx#RadioSetting"
+    },
+    {
+      "name": "AdminPreset",
+      "values": [
+        "1440",
+        "15",
+        "5",
+        "60"
+      ],
+      "source": "channels/src/components/admin_console/server_logs/log_list.tsx#LogList"
     },
     {
       "name": "AdminStat",
@@ -140580,6 +142866,13 @@
       "inSpec": true
     },
     {
+      "opId": "GetLogs",
+      "verb": "GET",
+      "path": "/api/v4/logs",
+      "body": "string[]",
+      "inSpec": true
+    },
+    {
       "opId": "GetPinnedPosts",
       "verb": "GET",
       "path": "/api/v4/channels/{channel_id}/pinned",
@@ -141242,6 +143535,16 @@
       "body": "StatusOK",
       "bodyImports": {
         "StatusOK": "@mattermost/types/client4"
+      },
+      "inSpec": true
+    },
+    {
+      "opId": "QueryLogs",
+      "verb": "POST",
+      "path": "/api/v4/logs/query",
+      "body": "LogsByNode",
+      "bodyImports": {
+        "LogsByNode": "@mattermost/types/admin"
       },
       "inSpec": true
     },
@@ -143376,6 +145679,7 @@
         "admin.sidebar",
         "admin.sidebar.category",
         "admin.sidebar.category.section",
+        "admin.sidebar.filter",
         "admin.sidebar.header",
         "admin.sidebar.header.info",
         "admin.sidebar.header.menu",
@@ -144149,6 +146453,14 @@
         "create_user_groups_modal.users.results",
         "profile_popover",
         "profile_popover.actions"
+      ]
+    },
+    {
+      "name": "CustomRangeModal",
+      "at": "channels/src/components/admin_console/server_logs/custom_range_modal.tsx#CustomRangeModal",
+      "scopes": [
+        "admin.server_logs",
+        "admin.server_logs.custom_range"
       ]
     },
     {

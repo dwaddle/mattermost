@@ -11,7 +11,7 @@ import type {
     CELExpressionError,
     PolicySimulationResponse,
 } from '@mattermost/types/access_control';
-import type {AnalyticsRow} from '@mattermost/types/admin';
+import type {AnalyticsRow, LogsByNode} from '@mattermost/types/admin';
 import type {ChannelCategory} from '@mattermost/types/channel_categories';
 import type {
     Channel,
@@ -437,6 +437,7 @@ export const Api = {
     GetJobsByType: effect<Job[]>()({op: 'GetJobsByType', method: 'GET', path: '/api/v4/jobs/type/{job_type}'}),
     GetLdapGroups: effect<unknown>()({op: 'GetLdapGroups', method: 'GET', path: '/api/v4/ldap/groups'}),
     GetLoginType: effect<unknown>()({op: 'GetLoginType', method: 'POST', path: '/api/v4/users/login/type'}),
+    GetLogs: effect<unknown>()({op: 'GetLogs', method: 'GET', path: '/api/v4/logs'}),
     GetPinnedPosts: effect<PostList>()({
         op: 'GetPinnedPosts',
         method: 'GET',
@@ -670,6 +671,7 @@ export const Api = {
         method: 'POST',
         path: '/api/v4/elasticsearch/purge_indexes',
     }),
+    QueryLogs: effect<LogsByNode>()({op: 'QueryLogs', method: 'POST', path: '/api/v4/logs/query'}),
     RegenCommandToken: effect<unknown>()({
         op: 'RegenCommandToken',
         method: 'PUT',

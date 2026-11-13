@@ -44,6 +44,14 @@ export const AdminGroupBy = {
 } as const;
 export type AdminGroupBy = (typeof AdminGroupBy)[keyof typeof AdminGroupBy];
 
+/** Keys of AdminInterval (from channels/src/components/admin_console/server_logs/log_list.tsx#LogList). */
+export const AdminInterval = {
+    N10000: '10000',
+    N30000: '30000',
+    N60000: '60000',
+} as const;
+export type AdminInterval = (typeof AdminInterval)[keyof typeof AdminInterval];
+
 /** Keys of AdminItem (from channels/src/components/admin_console/license_settings/enterprise_edition/enterprise_edition_left_panel.tsx#renderLicenseValues). */
 export const AdminItem = {
     ActiveUsers: 'active_users',
@@ -57,6 +65,15 @@ export const AdminItem = {
     StartDate: 'start_date',
 } as const;
 export type AdminItem = (typeof AdminItem)[keyof typeof AdminItem];
+
+/** Keys of AdminLevel (from channels/src/components/admin_console/server_logs/log_list.tsx#LogList). */
+export const AdminLevel = {
+    Debug: 'debug',
+    Error: 'error',
+    Info: 'info',
+    Warn: 'warn',
+} as const;
+export type AdminLevel = (typeof AdminLevel)[keyof typeof AdminLevel];
 
 /** Keys of AdminNotification (from channels/src/components/admin_console/checkbox_setting.tsx#CheckboxSetting). */
 export const AdminNotification = {
@@ -79,6 +96,15 @@ export const AdminOption = {
     CUSTOM: 'CUSTOM',
 } as const;
 export type AdminOption = (typeof AdminOption)[keyof typeof AdminOption];
+
+/** Keys of AdminPreset (from channels/src/components/admin_console/server_logs/log_list.tsx#LogList). */
+export const AdminPreset = {
+    N1440: '1440',
+    N15: '15',
+    N5: '5',
+    N60: '60',
+} as const;
+export type AdminPreset = (typeof AdminPreset)[keyof typeof AdminPreset];
 
 /** Keys of AdminStat (from channels/src/components/analytics/statistic_count.tsx#StatisticCount). */
 export const AdminStat = {

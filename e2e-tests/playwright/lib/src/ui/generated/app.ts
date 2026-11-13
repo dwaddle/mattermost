@@ -16,6 +16,7 @@ import {AddUsersToTeamModal} from './add_users_to_team_modal';
 import {Admin} from './admin';
 import {AppBar} from './app_bar';
 import {ArchiveChannelModal} from './archive_channel_modal';
+import {Backstage} from './backstage';
 import {BotTokenDeleteModal} from './bot_token_delete_modal';
 import {BotTokenRegenerateModal} from './bot_token_regenerate_modal';
 import {BurnOnReadConfirmationModal} from './burn_on_read_confirmation_modal';
@@ -192,6 +193,10 @@ export class App extends Scope {
      */
     get archiveChannelModal(): ArchiveChannelModal {
         return new ArchiveChannelModal(this.page, 'archive_channel_modal', this.root);
+    }
+
+    get backstage(): Backstage {
+        return new Backstage(this.page, 'backstage', this.root);
     }
 
     /**

@@ -40,9 +40,12 @@ import type {
     AdminCreate,
     AdminError,
     AdminGroupBy,
+    AdminInterval,
     AdminItem,
+    AdminLevel,
     AdminNotification,
     AdminOption,
+    AdminPreset,
     AdminStat,
     AdminStatisticsTable,
     AdminTab,
@@ -124,6 +127,16 @@ export type AdminRoleUsersRowRow = {
 /** The read-only parts of a `admin.section` item. */
 export type AdminSectionRow = {
     description: string | null;
+};
+/** The form fields of `admin.server_logs`. */
+export type AdminServerLogsFormValues = {
+    duration: string;
+    levels: string;
+    lineNumbers?: boolean;
+    liveTail: string;
+    logFormat: string;
+    node?: string;
+    search: string;
 };
 /** The form fields of `admin.setting`. */
 export type AdminSettingFormValues = {
@@ -7257,6 +7270,302 @@ export class AdminServerLogs extends Scope {
     }
 
     /**
+     * `admin.server_logs.clear_search--button` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when searchInput and !isPlainLogs.
+     */
+    get clearSearchButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear_search--button`), {
+            testId: `${this.scope}.clear_search--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    async clickClearSearchButton(): Promise<void> {
+        await this.clearSearchButton.click();
+    }
+
+    /**
+     * `admin.server_logs.duration--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu serverLogsDurationMenu (`admin.server_logs.duration_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get durationButton() {
+        return drivers.button(this.byTestId(`${this.scope}.duration--button`), {
+            testId: `${this.scope}.duration--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks durationButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickDurationButton(): Promise<AdminServerLogsDurationMenu> {
+        await this.durationButton.click();
+        return new AdminServerLogsDurationMenu(this.page, `${this.scope}.duration_menu`);
+    }
+
+    /**
+     * `admin.server_logs.duration--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get durationTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.duration--textbox`), {
+            testId: `${this.scope}.duration--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillDurationTextbox(value: string): Promise<void> {
+        await this.durationTextbox.fill(value);
+    }
+
+    /**
+     * `admin.server_logs.entries--list` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    get entriesList() {
+        return drivers.text(this.byTestId(`${this.scope}.entries--list`), {
+            testId: `${this.scope}.entries--list`,
+            role: 'list',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    /**
+     * `admin.server_logs.footer_info--text` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    get footerInfoText() {
+        return drivers.text(this.byTestId(`${this.scope}.footer_info--text`), {
+            testId: `${this.scope}.footer_info--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    getFooterInfoText(): Promise<string> {
+        return this.footerInfoText.text();
+    }
+
+    /**
+     * `admin.server_logs.levels--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu serverLogsLevelsMenu (`admin.server_logs.levels_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get levelsButton() {
+        return drivers.button(this.byTestId(`${this.scope}.levels--button`), {
+            testId: `${this.scope}.levels--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks levelsButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickLevelsButton(): Promise<AdminServerLogsLevelsMenu> {
+        await this.levelsButton.click();
+        return new AdminServerLogsLevelsMenu(this.page, `${this.scope}.levels_menu`);
+    }
+
+    /**
+     * `admin.server_logs.levels--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get levelsTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.levels--textbox`), {
+            testId: `${this.scope}.levels--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillLevelsTextbox(value: string): Promise<void> {
+        await this.levelsTextbox.fill(value);
+    }
+
+    /**
+     * `admin.server_logs.line_numbers--togglebutton` — PlainLogList (channels/src/components/admin_console/server_logs/plain_log_list.tsx)
+     * Renders only when isPlainLogs.
+     */
+    get lineNumbersToggleButton() {
+        return drivers.togglebutton(this.byTestId(`${this.scope}.line_numbers--togglebutton`), {
+            testId: `${this.scope}.line_numbers--togglebutton`,
+            role: 'togglebutton',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/plain_log_list.tsx#PlainLogList',
+        });
+    }
+
+    async setLineNumbersToggleButton(on: boolean): Promise<void> {
+        await this.lineNumbersToggleButton.setPressed(on);
+    }
+
+    /**
+     * `admin.server_logs.live_tail--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu serverLogsLiveTailMenu (`admin.server_logs.live_tail_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get liveTailButton() {
+        return drivers.button(this.byTestId(`${this.scope}.live_tail--button`), {
+            testId: `${this.scope}.live_tail--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks liveTailButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickLiveTailButton(): Promise<AdminServerLogsLiveTailMenu> {
+        await this.liveTailButton.click();
+        return new AdminServerLogsLiveTailMenu(this.page, `${this.scope}.live_tail_menu`);
+    }
+
+    /**
+     * `admin.server_logs.live_tail--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get liveTailTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.live_tail--textbox`), {
+            testId: `${this.scope}.live_tail--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillLiveTailTextbox(value: string): Promise<void> {
+        await this.liveTailTextbox.fill(value);
+    }
+
+    /**
+     * `admin.server_logs.log_format--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Opens menu serverLogsFormatMenu (`admin.server_logs.log_format_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get logFormatButton() {
+        return drivers.button(this.byTestId(`${this.scope}.log_format--button`), {
+            testId: `${this.scope}.log_format--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks logFormatButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickLogFormatButton(): Promise<AdminServerLogsLogFormatMenu> {
+        await this.logFormatButton.click();
+        return new AdminServerLogsLogFormatMenu(this.page, `${this.scope}.log_format_menu`);
+    }
+
+    /**
+     * `admin.server_logs.log_format--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     */
+    get logFormatTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.log_format--textbox`), {
+            testId: `${this.scope}.log_format--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillLogFormatTextbox(value: string): Promise<void> {
+        await this.logFormatTextbox.fill(value);
+    }
+
+    /**
+     * `admin.server_logs.new_entries--button` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when heldCount > 0 and !isPlainLogs.
+     */
+    get newEntriesButton() {
+        return drivers.button(this.byTestId(`${this.scope}.new_entries--button`), {
+            testId: `${this.scope}.new_entries--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    async clickNewEntriesButton(): Promise<void> {
+        await this.newEntriesButton.click();
+    }
+
+    /**
+     * `admin.server_logs.node--button` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when showNodeMenu.
+     * Opens menu serverLogsNodeMenu (`admin.server_logs.node_menu`).
+     * Opens modal MenuModal (`menu_modal`).
+     */
+    get nodeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.node--button`), {
+            testId: `${this.scope}.node--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/menu/menu.tsx#Menu',
+        });
+    }
+
+    /** Clicks nodeButton and returns what it opens (menu); the page object is returned at once, with no wait. In mobile view the menu opens as MenuModal (`menu_modal`). */
+    async clickNodeButton(): Promise<AdminServerLogsNodeMenu> {
+        await this.nodeButton.click();
+        return new AdminServerLogsNodeMenu(this.page, `${this.scope}.node_menu`);
+    }
+
+    /**
+     * `admin.server_logs.node--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
+     * Renders only when showNodeMenu.
+     */
+    get nodeTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.node--textbox`), {
+            testId: `${this.scope}.node--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/inputs/input/input.tsx#Input',
+        });
+    }
+
+    async fillNodeTextbox(value: string): Promise<void> {
+        await this.nodeTextbox.fill(value);
+    }
+
+    /**
+     * `admin.server_logs.reload--button` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    get reloadButton() {
+        return drivers.button(this.byTestId(`${this.scope}.reload--button`), {
+            testId: `${this.scope}.reload--button`,
+            role: 'button',
+            effects: [Api.GetLogs, Api.QueryLogs],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    async clickReloadButton(): Promise<void> {
+        await this.reloadButton.click();
+    }
+
+    /**
      * `admin.server_logs.search--textbox` — Input (channels/src/components/widgets/inputs/input/input.tsx)
      */
     get searchTextbox() {
@@ -7271,6 +7580,670 @@ export class AdminServerLogs extends Scope {
 
     async fillSearchTextbox(value: string): Promise<void> {
         await this.searchTextbox.fill(value);
+    }
+
+    /**
+     * `admin.server_logs.truncated--text` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when scanLimited.length > 0 and !isPlainLogs.
+     */
+    get truncatedText() {
+        return drivers.text(this.byTestId(`${this.scope}.truncated--text`), {
+            testId: `${this.scope}.truncated--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    getTruncatedText(): Promise<string> {
+        return this.truncatedText.text();
+    }
+
+    /**
+     * `admin.server_logs.custom_range` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get customRange(): AdminServerLogsCustomRange {
+        return new AdminServerLogsCustomRange(this.page, `${this.scope}.custom_range`, this.root);
+    }
+
+    get duration(): Input {
+        return new Input(this.page, `${this.scope}.duration`, this.root);
+    }
+
+    /**
+     * `admin.server_logs.duration_menu` — Menu (channels/src/components/menu/menu.tsx)
+     */
+    get durationMenu(): AdminServerLogsDurationMenu {
+        return new AdminServerLogsDurationMenu(this.page, `${this.scope}.duration_menu`);
+    }
+
+    /**
+     * `admin.server_logs.entry` — LogRow (channels/src/components/admin_console/server_logs/log_row.tsx)
+     */
+    get entry(): AdminServerLogsEntry {
+        return new AdminServerLogsEntry(this.page, `${this.scope}.entry`, this.root);
+    }
+
+    get levels(): Input {
+        return new Input(this.page, `${this.scope}.levels`, this.root);
+    }
+
+    /**
+     * `admin.server_logs.levels_menu` — Menu (channels/src/components/menu/menu.tsx)
+     */
+    get levelsMenu(): AdminServerLogsLevelsMenu {
+        return new AdminServerLogsLevelsMenu(this.page, `${this.scope}.levels_menu`);
+    }
+
+    get liveTail(): Input {
+        return new Input(this.page, `${this.scope}.live_tail`, this.root);
+    }
+
+    /**
+     * `admin.server_logs.live_tail_menu` — Menu (channels/src/components/menu/menu.tsx)
+     */
+    get liveTailMenu(): AdminServerLogsLiveTailMenu {
+        return new AdminServerLogsLiveTailMenu(this.page, `${this.scope}.live_tail_menu`);
+    }
+
+    get logFormat(): Input {
+        return new Input(this.page, `${this.scope}.log_format`, this.root);
+    }
+
+    /**
+     * `admin.server_logs.log_format_menu` — Menu (channels/src/components/menu/menu.tsx)
+     */
+    get logFormatMenu(): AdminServerLogsLogFormatMenu {
+        return new AdminServerLogsLogFormatMenu(this.page, `${this.scope}.log_format_menu`);
+    }
+
+    get node(): Input {
+        return new Input(this.page, `${this.scope}.node`, this.root);
+    }
+
+    /**
+     * `admin.server_logs.node_menu` — Menu (channels/src/components/menu/menu.tsx)
+     * Renders only when showNodeMenu.
+     */
+    get nodeMenu(): AdminServerLogsNodeMenu {
+        return new AdminServerLogsNodeMenu(this.page, `${this.scope}.node_menu`);
+    }
+
+    get search(): Input {
+        return new Input(this.page, `${this.scope}.search`, this.root);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<AdminServerLogsFormValues>): Promise<void> {
+        if (values.duration !== undefined) {
+            await this.durationTextbox.fill(values.duration);
+        }
+        if (values.levels !== undefined) {
+            await this.levelsTextbox.fill(values.levels);
+        }
+        if (values.lineNumbers !== undefined) {
+            await this.lineNumbersToggleButton.setPressed(values.lineNumbers);
+        }
+        if (values.liveTail !== undefined) {
+            await this.liveTailTextbox.fill(values.liveTail);
+        }
+        if (values.logFormat !== undefined) {
+            await this.logFormatTextbox.fill(values.logFormat);
+        }
+        if (values.node !== undefined) {
+            await this.nodeTextbox.fill(values.node);
+        }
+        if (values.search !== undefined) {
+            await this.searchTextbox.fill(values.search);
+        }
+    }
+
+    /** Reads every field (a field that isn't rendered reads as `undefined`). */
+    async read(): Promise<AdminServerLogsFormValues> {
+        const vDuration = await this.durationTextbox.value();
+        const vLevels = await this.levelsTextbox.value();
+        const vLiveTail = await this.liveTailTextbox.value();
+        const vLogFormat = await this.logFormatTextbox.value();
+        const vSearch = await this.searchTextbox.value();
+        const vLineNumbers = (await this.lineNumbersToggleButton.locator.count())
+            ? await this.lineNumbersToggleButton.isPressed()
+            : undefined;
+        const vNode = (await this.nodeTextbox.locator.count()) ? await this.nodeTextbox.value() : undefined;
+        return {
+            duration: vDuration,
+            levels: vLevels,
+            lineNumbers: vLineNumbers,
+            liveTail: vLiveTail,
+            logFormat: vLogFormat,
+            node: vNode,
+            search: vSearch,
+        };
+    }
+}
+
+/** Scope `admin.server_logs.custom_range`. */
+export class AdminServerLogsCustomRange extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.custom_range', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.custom_range.cancel--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get cancelButton() {
+        return drivers.button(this.byTestId(`${this.scope}.cancel--button`), {
+            testId: `${this.scope}.cancel--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCancelButton(): Promise<void> {
+        await this.cancelButton.click();
+    }
+
+    /**
+     * `admin.server_logs.custom_range.close--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     * Renders only when showHeader and showCloseButton.
+     */
+    get closeButton() {
+        return drivers.button(this.byTestId(`${this.scope}.close--button`), {
+            testId: `${this.scope}.close--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickCloseButton(): Promise<void> {
+        await this.closeButton.click();
+    }
+
+    /**
+     * `admin.server_logs.custom_range.confirm--button` — GenericModal (platform/components/src/generic_modal/generic_modal.tsx)
+     */
+    get confirmButton() {
+        return drivers.button(this.byTestId(`${this.scope}.confirm--button`), {
+            testId: `${this.scope}.confirm--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'platform/components/src/generic_modal/generic_modal.tsx#GenericModal',
+        });
+    }
+
+    async clickConfirmButton(): Promise<void> {
+        await this.confirmButton.click();
+    }
+}
+
+/** Scope `admin.server_logs.duration_menu`. */
+export class AdminServerLogsDurationMenu extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.duration_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.duration_menu.all--menuitemradio` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    get allMenuItemRadio() {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.all--menuitemradio`), {
+            testId: `${this.scope}.all--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    async clickAllMenuItemRadio(): Promise<void> {
+        await this.allMenuItemRadio.click();
+    }
+
+    /**
+     * `admin.server_logs.duration_menu.custom--menuitemradio` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     * Opens modal CustomRangeModal (`admin.server_logs.custom_range`).
+     */
+    get customMenuItemRadio() {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.custom--menuitemradio`), {
+            testId: `${this.scope}.custom--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    /** Clicks customMenuItemRadio and returns what it opens (modal); the page object is returned at once, with no wait. */
+    async clickCustomMenuItemRadio(): Promise<AdminServerLogsCustomRange> {
+        await this.customMenuItemRadio.click();
+        return new AdminServerLogsCustomRange(this.page, 'admin.server_logs.custom_range');
+    }
+
+    /**
+     * `admin.server_logs.duration_menu.preset:{key}--menuitemradio` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    preset(preset: AdminPreset) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.preset:${preset}--menuitemradio`), {
+            testId: `${this.scope}.preset:${preset}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    /** Every `admin.server_logs.duration_menu.preset:{key}--menuitemradio` in the scope. */
+    get presetItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.preset:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.server_logs.duration_menu.preset:{key}--menuitemradio` in the scope, in document order. */
+    presetKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.preset:`, '--menuitemradio');
+    }
+
+    get n1440MenuItemRadio() {
+        return this.preset('1440');
+    }
+
+    get n15MenuItemRadio() {
+        return this.preset('15');
+    }
+
+    get n5MenuItemRadio() {
+        return this.preset('5');
+    }
+
+    get n60MenuItemRadio() {
+        return this.preset('60');
+    }
+
+    /** Every `admin.server_logs.duration_menu.preset:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.presetList).toHaveKeys([…])`. */
+    get presetList() {
+        return this.keyedList(`${this.scope}.preset:`, '--menuitemradio', (key: AdminPreset) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.preset:${key}--menuitemradio`), {
+                testId: `${this.scope}.preset:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.server_logs.entry`. */
+export class AdminServerLogsEntry extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.entry', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.entry.caller--text` — LogRow (channels/src/components/admin_console/server_logs/log_row.tsx)
+     */
+    get callerText() {
+        return drivers.text(this.byTestId(`${this.scope}.caller--text`), {
+            testId: `${this.scope}.caller--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_row.tsx#LogRow',
+        });
+    }
+
+    getCallerText(): Promise<string> {
+        return this.callerText.text();
+    }
+
+    /**
+     * `admin.server_logs.entry.level--text` — LogRow (channels/src/components/admin_console/server_logs/log_row.tsx)
+     */
+    get levelText() {
+        return drivers.text(this.byTestId(`${this.scope}.level--text`), {
+            testId: `${this.scope}.level--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_row.tsx#LogRow',
+        });
+    }
+
+    getLevelText(): Promise<string> {
+        return this.levelText.text();
+    }
+
+    /**
+     * `admin.server_logs.entry.message--text` — LogRow (channels/src/components/admin_console/server_logs/log_row.tsx)
+     */
+    get messageText() {
+        return drivers.text(this.byTestId(`${this.scope}.message--text`), {
+            testId: `${this.scope}.message--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_row.tsx#LogRow',
+        });
+    }
+
+    getMessageText(): Promise<string> {
+        return this.messageText.text();
+    }
+
+    /**
+     * `admin.server_logs.entry.node--text` — LogRow (channels/src/components/admin_console/server_logs/log_row.tsx)
+     * Renders only when showNode.
+     */
+    get nodeText() {
+        return drivers.text(this.byTestId(`${this.scope}.node--text`), {
+            testId: `${this.scope}.node--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_row.tsx#LogRow',
+        });
+    }
+
+    getNodeText(): Promise<string> {
+        return this.nodeText.text();
+    }
+
+    /**
+     * `admin.server_logs.entry.timestamp--text` — LogRow (channels/src/components/admin_console/server_logs/log_row.tsx)
+     */
+    get timestampText() {
+        return drivers.text(this.byTestId(`${this.scope}.timestamp--text`), {
+            testId: `${this.scope}.timestamp--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_row.tsx#LogRow',
+        });
+    }
+
+    getTimestampText(): Promise<string> {
+        return this.timestampText.text();
+    }
+
+    /**
+     * `admin.server_logs.entry.toggle--button` — LogRow (channels/src/components/admin_console/server_logs/log_row.tsx)
+     */
+    get toggleButton() {
+        return drivers.button(this.byTestId(`${this.scope}.toggle--button`), {
+            testId: `${this.scope}.toggle--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_row.tsx#LogRow',
+        });
+    }
+
+    async clickToggleButton(): Promise<void> {
+        await this.toggleButton.click();
+    }
+}
+
+/** Scope `admin.server_logs.levels_menu`. */
+export class AdminServerLogsLevelsMenu extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.levels_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.levels_menu.level:{key}--menuitemcheckbox` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    level(level: AdminLevel) {
+        return drivers.menuitemcheckbox(this.byTestId(`${this.scope}.level:${level}--menuitemcheckbox`), {
+            testId: `${this.scope}.level:${level}--menuitemcheckbox`,
+            role: 'menuitemcheckbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    /** Every `admin.server_logs.levels_menu.level:{key}--menuitemcheckbox` in the scope. */
+    get levelItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.level:`, '--menuitemcheckbox');
+    }
+
+    /** The keys of every `admin.server_logs.levels_menu.level:{key}--menuitemcheckbox` in the scope, in document order. */
+    levelKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.level:`, '--menuitemcheckbox');
+    }
+
+    get debugMenuItemCheckbox() {
+        return this.level('debug');
+    }
+
+    get errorMenuItemCheckbox() {
+        return this.level('error');
+    }
+
+    get infoMenuItemCheckbox() {
+        return this.level('info');
+    }
+
+    get warnMenuItemCheckbox() {
+        return this.level('warn');
+    }
+
+    /**
+     * `admin.server_logs.levels_menu.select_all--menuitem` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    get selectAllMenuItem() {
+        return drivers.menuitem(this.byTestId(`${this.scope}.select_all--menuitem`), {
+            testId: `${this.scope}.select_all--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    async clickSelectAllMenuItem(): Promise<void> {
+        await this.selectAllMenuItem.click();
+    }
+
+    /** Every `admin.server_logs.levels_menu.level:{key}--menuitemcheckbox` in the scope as a list by key, for the list matchers: `expect(x.levelList).toHaveKeys([…])`. */
+    get levelList() {
+        return this.keyedList(`${this.scope}.level:`, '--menuitemcheckbox', (key: AdminLevel) =>
+            drivers.menuitemcheckbox(this.byTestId(`${this.scope}.level:${key}--menuitemcheckbox`), {
+                testId: `${this.scope}.level:${key}--menuitemcheckbox`,
+                role: 'menuitemcheckbox',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.server_logs.live_tail_menu`. */
+export class AdminServerLogsLiveTailMenu extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.live_tail_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.live_tail_menu.interval:{key}--menuitemradio` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    interval(interval: AdminInterval) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.interval:${interval}--menuitemradio`), {
+            testId: `${this.scope}.interval:${interval}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    /** Every `admin.server_logs.live_tail_menu.interval:{key}--menuitemradio` in the scope. */
+    get intervalItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.interval:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.server_logs.live_tail_menu.interval:{key}--menuitemradio` in the scope, in document order. */
+    intervalKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.interval:`, '--menuitemradio');
+    }
+
+    get n10000MenuItemRadio() {
+        return this.interval('10000');
+    }
+
+    get n30000MenuItemRadio() {
+        return this.interval('30000');
+    }
+
+    get n60000MenuItemRadio() {
+        return this.interval('60000');
+    }
+
+    /**
+     * `admin.server_logs.live_tail_menu.off--menuitemradio` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when !isPlainLogs.
+     */
+    get offMenuItemRadio() {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.off--menuitemradio`), {
+            testId: `${this.scope}.off--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    async clickOffMenuItemRadio(): Promise<void> {
+        await this.offMenuItemRadio.click();
+    }
+
+    /** Every `admin.server_logs.live_tail_menu.interval:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.intervalList).toHaveKeys([…])`. */
+    get intervalList() {
+        return this.keyedList(`${this.scope}.interval:`, '--menuitemradio', (key: AdminInterval) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.interval:${key}--menuitemradio`), {
+                testId: `${this.scope}.interval:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+            }),
+        );
+    }
+}
+
+/** Scope `admin.server_logs.log_format_menu`. */
+export class AdminServerLogsLogFormatMenu extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.log_format_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.log_format_menu.plain--menuitemradio` — LogFormatMenu (channels/src/components/admin_console/server_logs/log_format_menu.tsx)
+     * Renders only when !configIsPlainLogs.
+     */
+    get plainMenuItemRadio() {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.plain--menuitemradio`), {
+            testId: `${this.scope}.plain--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu',
+        });
+    }
+
+    async clickPlainMenuItemRadio(): Promise<void> {
+        await this.plainMenuItemRadio.click();
+    }
+
+    /**
+     * `admin.server_logs.log_format_menu.structured--menuitemradio` — LogFormatMenu (channels/src/components/admin_console/server_logs/log_format_menu.tsx)
+     * Renders only when !configIsPlainLogs.
+     */
+    get structuredMenuItemRadio() {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.structured--menuitemradio`), {
+            testId: `${this.scope}.structured--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_format_menu.tsx#LogFormatMenu',
+        });
+    }
+
+    async clickStructuredMenuItemRadio(): Promise<void> {
+        await this.structuredMenuItemRadio.click();
+    }
+}
+
+/** Scope `admin.server_logs.node_menu`. */
+export class AdminServerLogsNodeMenu extends Scope {
+    constructor(page: Page, scope = 'admin.server_logs.node_menu', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `admin.server_logs.node_menu.all--menuitemradio` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when showNodeMenu and !isPlainLogs.
+     */
+    get allMenuItemRadio() {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.all--menuitemradio`), {
+            testId: `${this.scope}.all--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    async clickAllMenuItemRadio(): Promise<void> {
+        await this.allMenuItemRadio.click();
+    }
+
+    /**
+     * `admin.server_logs.node_menu.node:{key}--menuitemradio` — LogList (channels/src/components/admin_console/server_logs/log_list.tsx)
+     * Renders only when showNodeMenu and !isPlainLogs.
+     */
+    node(node: string) {
+        return drivers.menuitemradio(this.byTestId(`${this.scope}.node:${node}--menuitemradio`), {
+            testId: `${this.scope}.node:${node}--menuitemradio`,
+            role: 'menuitemradio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+        });
+    }
+
+    /** Every `admin.server_logs.node_menu.node:{key}--menuitemradio` in the scope. */
+    get nodeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.node:`, '--menuitemradio');
+    }
+
+    /** The keys of every `admin.server_logs.node_menu.node:{key}--menuitemradio` in the scope, in document order. */
+    nodeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.node:`, '--menuitemradio');
+    }
+
+    /** Every `admin.server_logs.node_menu.node:{key}--menuitemradio` in the scope as a list by key, for the list matchers: `expect(x.nodeList).toHaveKeys([…])`. */
+    get nodeList() {
+        return this.keyedList(`${this.scope}.node:`, '--menuitemradio', (key: string) =>
+            drivers.menuitemradio(this.byTestId(`${this.scope}.node:${key}--menuitemradio`), {
+                testId: `${this.scope}.node:${key}--menuitemradio`,
+                role: 'menuitemradio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/admin_console/server_logs/log_list.tsx#LogList',
+            }),
+        );
     }
 }
 
@@ -7690,6 +8663,27 @@ export class AdminSidebar extends Scope {
     }
 
     /**
+     * `admin.sidebar.filter--textbox` — AdminSidebar (channels/src/components/admin_console/admin_sidebar/admin_sidebar.tsx)
+     * Renders only when mainRolesLoaded(props.roles).
+     * Goes to '/admin_console/' (AdminConsolePage).
+     * Goes to '/admin_console/' + section.
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get filterTextbox() {
+        return drivers.textbox(this.byTestId(`${this.scope}.filter--textbox`), {
+            testId: `${this.scope}.filter--textbox`,
+            role: 'textbox',
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/admin_console/admin_sidebar/admin_sidebar.tsx#AdminSidebar',
+        });
+    }
+
+    async fillFilterTextbox(value: string): Promise<void> {
+        await this.filterTextbox.fill(value);
+    }
+
+    /**
      * `admin.sidebar.category:{key}` — AdminSidebarCategory (channels/src/components/admin_console/admin_sidebar/admin_sidebar_category.tsx)
      * Renders only when !isSectionHidden.
      */
@@ -7709,6 +8703,10 @@ export class AdminSidebar extends Scope {
     /** The keys of every `admin.sidebar.category:{key}` in the scope, in document order. */
     categoryKeys(): Promise<string[]> {
         return this.keysOf(`${this.scope}.category:`, '');
+    }
+
+    get filter(): AdminSidebarFilter {
+        return new AdminSidebarFilter(this.page, `${this.scope}.filter`, this.root);
     }
 
     get header(): AdminSidebarHeader {
@@ -7890,6 +8888,36 @@ export class AdminSidebarCategorySection extends Scope {
 
     async clickTitleLink(): Promise<void> {
         await this.titleLink.click();
+    }
+}
+
+/** Scope `admin.sidebar.filter`. */
+export class AdminSidebarFilter extends Scope {
+    constructor(page: Page, scope = 'admin.sidebar.filter', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `admin.sidebar.filter.clear--button` — QuickInput (channels/src/components/quick_input/quick_input.tsx)
+     * Renders only when showClearButton.
+     */
+    get clearButton() {
+        return drivers.button(this.byTestId(`${this.scope}.clear--button`), {
+            testId: `${this.scope}.clear--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/quick_input/quick_input.tsx#QuickInput',
+        });
+    }
+
+    async clickClearButton(): Promise<void> {
+        await this.clearButton.click();
     }
 }
 

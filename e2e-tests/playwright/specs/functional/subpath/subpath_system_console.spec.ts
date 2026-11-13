@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {test, requireSubpathServer} from '@mattermost/playwright-lib';
+import {expect, Msg, requireSubpathServer, test} from '@mattermost/playwright-lib';
 
 test.describe('Subpath - System Console', {tag: '@subpath'}, () => {
     test.beforeAll(() => {
@@ -14,14 +14,18 @@ test.describe('Subpath - System Console', {tag: '@subpath'}, () => {
     test('loads System Console under the subpath and navigates a sidebar section', async ({pw}) => {
         const {adminUser} = await pw.initSetup();
 
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await systemConsolePage.goto();
-        await systemConsolePage.toBeVisible();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.adminConsolePage.goto();
+
+        // * Verify the console's navbar and sidebar show
+        await expect(app.backstage.navbar.backLink.locator).toBeVisible();
+        await expect(app.admin.sidebar.header.info.locator).toContainMessage(Msg.admin.sidebarHeader.systemConsole);
+        await expect(app.admin.sidebar.filterTextbox.locator).toBeVisible();
 
         // # Navigate to a sidebar section
-        await systemConsolePage.sidebar.users.click();
+        await app.admin.sidebar.category('user_management').section('users').titleLink.click();
 
         // * Verify the section loads
-        await systemConsolePage.users.toBeVisible();
+        await expect(app.admin.header).toContainMessage(Msg.admin.system_users.title, {siteName: 'Mattermost'});
     });
 });

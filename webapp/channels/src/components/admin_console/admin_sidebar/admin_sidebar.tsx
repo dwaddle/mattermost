@@ -287,6 +287,8 @@ class AdminSidebar extends React.PureComponent<Props, State> {
                         placeholder={this.props.intl.formatMessage({id: 'admin.sidebar.filter', defaultMessage: 'Find settings'})}
                         ref={this.searchRef}
                         id='adminSidebarFilter'
+                        data-testid='admin.sidebar.filter--textbox'
+                        clearTestId='admin.sidebar.filter.clear'
                         clearable={true}
                         onClear={this.handleClearFilter}
                     />

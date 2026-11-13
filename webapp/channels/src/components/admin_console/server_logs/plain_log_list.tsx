@@ -461,6 +461,7 @@ export default function PlainLogList({
                         The sort and wrap buttons carry their state in their label instead. */}
                     <button
                         type='button'
+                        data-testid='admin.server_logs.line_numbers--togglebutton'
                         className={`btn btn-sm ${showLineNumbers ? 'btn-tertiary' : 'btn-quaternary'}`}
                         onClick={() => setShowLineNumbers(!showLineNumbers)}
                         aria-pressed={showLineNumbers}

@@ -123,6 +123,7 @@ export default defineConfig([
             'src/components/app_bar/app_bar.tsx',
             'src/components/app_bar/app_bar_plugin_component.tsx',
             'src/components/at_mention',
+            'src/components/backstage/components/backstage_navbar.tsx',
             'src/components/block_renderer/**',
             'src/components/burn_on_read/**',
             'src/components/burn_on_read_confirmation_modal/**',

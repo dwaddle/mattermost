@@ -98,6 +98,7 @@
             "channels/src/components/app_bar/app_bar.tsx",
             "channels/src/components/app_bar/app_bar_plugin_component.tsx",
             "channels/src/components/at_mention",
+            "channels/src/components/backstage/components/backstage_navbar.tsx",
             "channels/src/components/block_renderer/",
             "channels/src/components/burn_on_read/",
             "channels/src/components/burn_on_read_confirmation_modal/",
