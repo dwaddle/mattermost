@@ -69,13 +69,13 @@ test.describe('System Console - Classification markings', () => {
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
             // # Log in and open the classification markings URL
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
+            const {page} = await pw.testBrowser.login(adminUser);
+            await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
 
             // * URL stays on the classification markings section
-            await expect(systemConsolePage.page).toHaveURL(/classification_markings/);
+            await expect(page).toHaveURL(/classification_markings/);
             // * Page title is visible
-            await expect(systemConsolePage.page.getByText('Classification Markings').first()).toBeVisible();
+            await expect(page.getByText('Classification Markings').first()).toBeVisible();
         },
     );
 
@@ -95,17 +95,15 @@ test.describe('System Console - Classification markings', () => {
             // # Enable feature flag and ensure no classification field exists
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            await systemConsolePage.page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
+            const {page} = await pw.testBrowser.login(adminUser);
+            await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
 
             // # Enable classification markings without choosing a preset or adding levels
-            await systemConsolePage.page.locator('input[name="classificationEnabled"][value="true"]').click();
-            await systemConsolePage.page.getByRole('button', {name: 'Save', exact: true}).click();
+            await page.locator('input[name="classificationEnabled"][value="true"]').click();
+            await page.getByRole('button', {name: 'Save', exact: true}).click();
 
             // * Validation error is shown
-            await expect(
-                systemConsolePage.page.getByText(/At least one classification level is required/i),
-            ).toBeVisible();
+            await expect(page.getByText(/At least one classification level is required/i)).toBeVisible();
         },
     );
 
@@ -130,8 +128,7 @@ test.describe('System Console - Classification markings', () => {
             // # Enable flag and start from no classification field
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
 
             // # Enable markings and choose NATO preset
@@ -169,8 +166,7 @@ test.describe('System Console - Classification markings', () => {
             // # Enable flag and clear field, then prepare saved UK levels
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
 
             await page.locator('input[name="classificationEnabled"][value="true"]').click();
@@ -215,8 +211,7 @@ test.describe('System Console - Classification markings', () => {
             // # Enable flag and save Canada preset as baseline
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
 
             await page.locator('input[name="classificationEnabled"][value="true"]').click();
@@ -252,8 +247,7 @@ test.describe('System Console - Classification markings', () => {
 
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
             await page.waitForLoadState('networkidle');
 
@@ -282,8 +276,7 @@ test.describe('System Console - Classification markings', () => {
 
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
             await page.waitForLoadState('networkidle');
 
@@ -357,8 +350,7 @@ test.describe('System Console - Classification markings', () => {
                 {levelId: 'natounclassified0000000000', enabled: true, placement: 'top'},
             );
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
             await page.waitForLoadState('networkidle');
 
@@ -411,8 +403,7 @@ test.describe('System Console - Classification markings', () => {
                 {levelId: 'lvlunclassified00000000000', enabled: true, placement: 'top'},
             );
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
             await page.waitForLoadState('networkidle');
 
@@ -459,8 +450,7 @@ test.describe('System Console - Classification markings', () => {
 
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
             await page.waitForLoadState('networkidle');
 
@@ -523,8 +513,7 @@ test.describe('System Console - Classification markings', () => {
 
             await deleteClassificationMarkingsFieldIfExists(adminClient);
 
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const {page} = systemConsolePage;
+            const {page} = await pw.testBrowser.login(adminUser);
             await page.goto(CLASSIFICATION_MARKINGS_ADMIN_PATH);
             await page.waitForLoadState('networkidle');
 
