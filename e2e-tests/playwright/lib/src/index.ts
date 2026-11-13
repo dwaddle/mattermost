@@ -85,7 +85,6 @@ export {type SizeObservation, type SizeWatcher, watchElementSize} from './layout
 export {pasteHtml} from './paste';
 
 // react-day-picker, a library calendar with no testids of its own: its days by date, and month navigation
-export {getDayPickerDayCell, goToDisplayedMonth} from './ui/components/day_picker';
 export {duration, getRandomId, wait, newTestPassword} from './util';
 export {
     DefaultChannel,
@@ -159,8 +158,6 @@ export type {
 export {startStack, stopStack, withStackLock} from './containers';
 
 // The Recent Mentions panel and its filters have no generated page object yet (their elements carry no testids).
-export {searchResultsPanel} from './ui/components/channels/search_results_panel';
-export {composerPreviewArea} from './ui/components/channels/composer_preview_area';
 
 export {setWysiwygUserPreference, WYSIWYG_PREF_CATEGORY, WYSIWYG_PREF_NAME} from './wysiwyg_helpers';
 

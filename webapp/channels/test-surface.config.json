@@ -559,6 +559,11 @@
                 "rule": "aria",
                 "template": "rhs.channel_members.policy.tag:{key}/{key}",
                 "reason": "AlertTag renders a <button> when it has a click handler and a <span> otherwise (TagElement's `as`), which the scan can't resolve. Reviewed in the a11y-channels-core tracking issue (draft): not a gap, the entry stays."
+            },
+            {
+                "rule": "aria",
+                "template": "*.preview",
+                "reason": "the composer's preview area is a focus target that forwards its key presses (send, mention and emoji shortcuts) to the composer; what it shows is read-only rendered markdown, so it has no role of its own."
             }
         ],
         "keyFields": {

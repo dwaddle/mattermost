@@ -306,7 +306,6 @@ export class PlaywrightExtended {
     readonly random;
 
     // unauthenticated page
-    readonly loginPage;
     readonly keycloakLoginPage;
 
     readonly hasSeenLandingPage;
@@ -397,7 +396,6 @@ export class PlaywrightExtended {
         this.logFocusedElement = logFocusedElement;
 
         // unauthenticated page
-        this.loginPage = new pages.LoginPage(page);
         this.keycloakLoginPage = new pages.KeycloakLoginPage(page);
 
         // ./mock_browser_api

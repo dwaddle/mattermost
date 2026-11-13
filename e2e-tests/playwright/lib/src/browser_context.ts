@@ -37,6 +37,7 @@ export class TestBrowser {
         const page = await context.newPage();
         patchGotoToUseBaseUrl(page);
 
+        // master's global attribute listing specs and permission policy bot scope spec still use the hand-written object
         const systemConsolePage = new pages.SystemConsolePage(page);
 
         // the generated page objects (from the webapp's testids)

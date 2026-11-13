@@ -27,14 +27,13 @@ test(
         const pluginName = (await adminClient.getPlugins()).active.find((p) => p.id === postAuthTestPluginId)!.name;
 
         // # Search the System Console for the first word of the plugin name and open its settings page
-        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-        await systemConsolePage.goto();
-        await systemConsolePage.toBeVisible();
-        await systemConsolePage.sidebar.search('E2E');
-        await systemConsolePage.sidebar.container.getByRole('link', {name: pluginName}).click();
+        const {app} = await pw.testBrowser.login(adminUser);
+        await app.page.goto('/admin_console');
+        await app.admin.sidebar.filter.fillInputTextbox('E2E');
+        await app.admin.sidebar.locator.getByRole('link', {name: pluginName}).click();
 
         // * Verify the search term is highlighted in the header
-        const header = systemConsolePage.header.title;
+        const header = app.admin.header.locator;
         await expect(header.locator('mark').first()).toHaveText('E2E');
 
         // * Verify the highlighted name renders as one run of text rather than being split apart
