@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, getDayPickerDayCell, openChannel, test} from '@mattermost/playwright-lib';
+import {expect, openChannel, pickDate, test} from '@mattermost/playwright-lib';
 
 import {sendDemoSlashCommand} from '../../helpers';
 
@@ -32,12 +32,13 @@ test('should open /dialog date and post submit confirmation after selecting date
     // # Pick the 20th for the meeting date (any month has one)
     await date.clickDateButton();
     await expect(date.calendar.locator).toBeVisible();
-    await getDayPickerDayCell(date.calendar.locator, 20).click();
+    const thisMonth = new Date();
+    await pickDate(date.calendar, new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 20));
 
     // # Pick the 22nd at 3:00 PM for the meeting date and time
     await dateTime.clickDateButton();
     await expect(dateTime.calendar.locator).toBeVisible();
-    await getDayPickerDayCell(dateTime.calendar.locator, 22).click();
+    await pickDate(dateTime.calendar, new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 22));
     const times = await dateTime.clickTimeButton();
     await times.time('1500').click();
 
