@@ -561,6 +561,30 @@ export class RhsChannelInfoMenu extends Scope {
     }
 
     /**
+     * `rhs.channel_info.menu.plugin:{key}--menuitem` — MenuItem (channels/src/components/channel_info_rhs/menu.tsx)
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    plugin(plugin: PluginKey) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin:${plugin as string}--menuitem`), {
+            testId: `${this.scope}.plugin:${plugin as string}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/channel_info_rhs/menu.tsx#MenuItem',
+        });
+    }
+
+    /** Every `rhs.channel_info.menu.plugin:{key}--menuitem` in the scope. */
+    get pluginItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--menuitem');
+    }
+
+    /** The keys of every `rhs.channel_info.menu.plugin:{key}--menuitem` in the scope, in document order. */
+    pluginKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.plugin:`, '--menuitem');
+    }
+
+    /**
      * `rhs.channel_info.menu.settings--button` — MenuItem (channels/src/components/channel_info_rhs/menu.tsx)
      * Renders only when showChannelSettings && canAccessChannelSettings(state, channel.id).
      * Opens modal ChannelSettingsModal.
@@ -577,6 +601,19 @@ export class RhsChannelInfoMenu extends Scope {
 
     async clickSettingsButton(): Promise<void> {
         await this.settingsButton.click();
+    }
+
+    /** Every `rhs.channel_info.menu.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    get pluginList() {
+        return this.keyedList(`${this.scope}.plugin:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin:${key}--menuitem`), {
+                testId: `${this.scope}.plugin:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: true,
+                source: 'channels/src/components/channel_info_rhs/menu.tsx#MenuItem',
+            }),
+        );
     }
 }
 

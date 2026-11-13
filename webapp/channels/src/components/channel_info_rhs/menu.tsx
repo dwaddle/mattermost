@@ -6,8 +6,8 @@ import {defineMessage, useIntl} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 import styled from 'styled-components';
 
-import {withRole} from '@mattermost/shared/utils/test_id';
-import type {TestId} from '@mattermost/shared/utils/test_id';
+import {pluginSlotTestId, withRole} from '@mattermost/shared/utils/test_id';
+import type {TestId, TestIdWithRole} from '@mattermost/shared/utils/test_id';
 import type {Channel, ChannelStats} from '@mattermost/types/channels';
 
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
@@ -85,11 +85,16 @@ interface MenuItemProps {
     badge?: React.ReactNode;
     onClick: () => void;
     id?: string;
-    testId: TestId;
+
+    /** The item is `<testId>--button`. */
+    testId?: TestId;
+
+    /** The item's whole testid, for a plugin's item (`pluginSlotTestId('channel_info_menu_item', pluginId)`). */
+    slotTestId?: TestIdWithRole;
 }
 
 function MenuItem(props: MenuItemProps) {
-    const {icon, text, opensSubpanel, badge, onClick, id, testId} = props;
+    const {icon, text, opensSubpanel, badge, onClick, id, testId, slotTestId} = props;
     const hasBadge = badge != null;
     const hasRightSide = hasBadge || opensSubpanel;
 
@@ -99,7 +104,7 @@ function MenuItem(props: MenuItemProps) {
             aria-label={typeof text === 'string' ? text : undefined}
             type='button'
             id={id || ''}
-            data-testid={withRole(testId, 'button')}
+            data-testid={slotTestId ?? withRole(testId, 'button')}
         >
             <Icon>{icon}</Icon>
             <MenuItemText>{text}</MenuItemText>
@@ -259,6 +264,7 @@ export default function Menu(props: MenuProps) {
                 <MenuItem
                     key={item.id}
                     id={`channelInfoRHSPlugin_${item.id}`}
+                    slotTestId={pluginSlotTestId('channel_info_menu_item', item.pluginId)}
                     icon={item.icon}
                     text={item.text}
                     opensSubpanel={item.opensSubpanel}

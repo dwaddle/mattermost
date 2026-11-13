@@ -820,8 +820,8 @@ describe('components/dot_menu/DotMenu', () => {
                 initialState,
             );
 
-            await userEvent.click(screen.getByTestId(`PostDotMenu-Button-${quotedPost.id}`));
-            await userEvent.click(screen.getByTestId(`quote_post_${quotedPost.id}`));
+            await userEvent.click(screen.getByTestId('center.post_list.post.menu.dot_menu--button'));
+            await userEvent.click(screen.getByTestId('post_dot_menu.quote--menuitem'));
 
             await waitFor(() => expect(quoteTextFromPost).toHaveBeenCalledWith(quotedPost.id, isRHS, 'line one\n\nline two'));
         });
@@ -838,7 +838,7 @@ describe('components/dot_menu/DotMenu', () => {
                 initialState,
             );
 
-            await userEvent.click(screen.getByTestId(`PostDotMenu-Button-${quotedPost.id}`));
+            await userEvent.click(screen.getByTestId('center.post_list.post.menu.dot_menu--button'));
             screen.getByRole('menu').focus();
             await userEvent.keyboard('q');
 
@@ -869,12 +869,12 @@ describe('components/dot_menu/DotMenu', () => {
                 state,
             );
 
-            await userEvent.click(screen.getByTestId(`PostDotMenu-Button-${post1.id}`));
+            await userEvent.click(screen.getByTestId('center.post_list.post.menu.dot_menu--button'));
 
             if (expected === 'show') {
-                expect(screen.getByTestId(`quote_post_${post1.id}`)).toBeInTheDocument();
+                expect(screen.getByTestId('post_dot_menu.quote--menuitem')).toBeInTheDocument();
             } else {
-                expect(screen.queryByTestId(`quote_post_${post1.id}`)).not.toBeInTheDocument();
+                expect(screen.queryByTestId('post_dot_menu.quote--menuitem')).not.toBeInTheDocument();
             }
         });
 
@@ -888,9 +888,9 @@ describe('components/dot_menu/DotMenu', () => {
                 initialState,
             );
 
-            await userEvent.click(screen.getByTestId(`PostDotMenu-Button-${quotedPost.id}`));
+            await userEvent.click(screen.getByTestId('center.post_list.post.menu.dot_menu--button'));
 
-            expect(screen.queryByTestId(`quote_post_${quotedPost.id}`)).not.toBeInTheDocument();
+            expect(screen.queryByTestId('post_dot_menu.quote--menuitem')).not.toBeInTheDocument();
         });
 
         test('should not show quote for a post without text', async () => {
@@ -903,9 +903,9 @@ describe('components/dot_menu/DotMenu', () => {
                 initialState,
             );
 
-            await userEvent.click(screen.getByTestId(`PostDotMenu-Button-${post.id}`));
+            await userEvent.click(screen.getByTestId('center.post_list.post.menu.dot_menu--button'));
 
-            expect(screen.queryByTestId(`quote_post_${post.id}`)).not.toBeInTheDocument();
+            expect(screen.queryByTestId('post_dot_menu.quote--menuitem')).not.toBeInTheDocument();
         });
     });
 });

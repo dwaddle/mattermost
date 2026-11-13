@@ -889,6 +889,44 @@ export class ChannelHeaderMenuBookmarks extends Scope {
     async clickAttachFileMenuItem(): Promise<void> {
         await this.attachFileMenuItem.click();
     }
+
+    /**
+     * `channel_header.menu.bookmarks.plugin:{key}--menuitem` — ChannelBookmarksSubmenu (channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx)
+     * Renders only when !isGuest(user.roles) && isChannelBookmarksEnabled and !isArchived && !isGuest(user.roles) && isChannelBookmarksEnabled and !isArchived.
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    plugin(plugin: PluginKey) {
+        return drivers.menuitem(this.byTestId(`${this.scope}.plugin:${plugin as string}--menuitem`), {
+            testId: `${this.scope}.plugin:${plugin as string}--menuitem`,
+            role: 'menuitem',
+            effects: [],
+            unknownEffects: true,
+            source: 'channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx#ChannelBookmarksSubmenu',
+        });
+    }
+
+    /** Every `channel_header.menu.bookmarks.plugin:{key}--menuitem` in the scope. */
+    get pluginItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.plugin:`, '--menuitem');
+    }
+
+    /** The keys of every `channel_header.menu.bookmarks.plugin:{key}--menuitem` in the scope, in document order. */
+    pluginKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.plugin:`, '--menuitem');
+    }
+
+    /** Every `channel_header.menu.bookmarks.plugin:{key}--menuitem` in the scope as a list by key, for the list matchers: `expect(x.pluginList).toHaveKeys([…])`. */
+    get pluginList() {
+        return this.keyedList(`${this.scope}.plugin:`, '--menuitem', (key: string) =>
+            drivers.menuitem(this.byTestId(`${this.scope}.plugin:${key}--menuitem`), {
+                testId: `${this.scope}.plugin:${key}--menuitem`,
+                role: 'menuitem',
+                effects: [],
+                unknownEffects: true,
+                source: 'channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx#ChannelBookmarksSubmenu',
+            }),
+        );
+    }
 }
 
 /** Scope `channel_header.plugin_actions`. */

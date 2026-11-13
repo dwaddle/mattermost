@@ -139,6 +139,8 @@ export const PLUGIN_SLOT_TEST_IDS = {
     channel_header_button: 'channel_header.plugin_actions.action:{plugin}--button',
     channel_header_dropdown_item: 'channel_header.plugin_actions.menu.action:{plugin}--menuitem',
     channel_header_menu_item: 'channel_header.menu.plugin:{plugin}--menuitem',
+    channel_header_bookmarks_menu_item: 'channel_header.menu.bookmarks.plugin:{plugin}--menuitem',
+    channel_info_menu_item: 'rhs.channel_info.menu.plugin:{plugin}--menuitem',
 
     // a file's "..." menu wherever an attachment renders (a post, a thread, a preview…): `*` is the attachment
     // list's scope (`<post>.attachments`)
@@ -171,6 +173,8 @@ export const PLUGIN_SLOT_REGISTRY_METHODS: Record<PluginSlot, readonly string[]>
     channel_header_button: ['registerChannelHeaderButtonAction'],
     channel_header_dropdown_item: ['registerChannelHeaderButtonAction'],
     channel_header_menu_item: ['registerChannelHeaderMenuAction'],
+    channel_header_bookmarks_menu_item: ['registerChannelBookmarksMenuAction'],
+    channel_info_menu_item: ['registerChannelInfoMenuAction'],
     file_menu_item: ['registerFileDropdownMenuAction'],
     file_upload_method: ['registerFileUploadMethod'],
     lhs_browse_or_add_menu_item: ['registerSidebarBrowseOrAddChannelMenuAction'],

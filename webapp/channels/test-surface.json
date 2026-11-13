@@ -25104,6 +25104,69 @@
       ]
     },
     {
+      "template": "channel_header.menu.bookmarks.plugin:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "channel_header",
+        "menu",
+        "bookmarks"
+      ],
+      "name": "plugin",
+      "role": "menuitem",
+      "component": {
+        "name": "ChannelBookmarksSubmenu",
+        "at": "channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx#ChannelBookmarksSubmenu"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": "menuitem",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "plugin",
+        "type": "PluginKey"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": true,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!isGuest(user.roles) && isChannelBookmarksEnabled",
+          "explained": "!isGuest(user.roles) && isChannelBookmarksEnabled",
+          "kind": "prop"
+        },
+        {
+          "expr": "!isArchived && !isGuest(user.roles) && isChannelBookmarksEnabled",
+          "explained": "!isArchived && !isGuest(user.roles) && isChannelBookmarksEnabled",
+          "kind": "prop"
+        },
+        {
+          "expr": "!isArchived",
+          "explained": "!isArchived",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "isChannelBookmarksEnabled",
+          "explained": "isChannelBookmarksEnabled",
+          "kind": "prop"
+        },
+        {
+          "expr": "canAdd",
+          "explained": "canAdd",
+          "kind": "permission",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
       "template": "channel_header.menu.channel_settings--menuitem",
       "grammar": true,
       "scope": [
@@ -65648,6 +65711,42 @@
       }
     },
     {
+      "template": "rhs.channel_info.menu.plugin:{key}--menuitem",
+      "grammar": true,
+      "scope": [
+        "rhs",
+        "channel_info",
+        "menu"
+      ],
+      "name": "plugin",
+      "role": "menuitem",
+      "component": {
+        "name": "MenuItem",
+        "at": "channels/src/components/channel_info_rhs/menu.tsx#MenuItem"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/channel_info_rhs/menu.tsx#Menu"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": true,
+        "state": []
+      },
+      "key": {
+        "kind": "plugin",
+        "type": "PluginKey"
+      },
+      "effects": {
+        "ops": [],
+        "unknown": true,
+        "delegated": []
+      }
+    },
+    {
       "template": "rhs.channel_info.menu.settings--button",
       "grammar": true,
       "scope": [
@@ -103021,6 +103120,14 @@
       "at": "platform/shared/src/utils/test_id/index.ts"
     },
     {
+      "slot": "channel_header_bookmarks_menu_item",
+      "template": "channel_header.menu.bookmarks.plugin:{key}--menuitem",
+      "registry": [
+        "registerChannelBookmarksMenuAction"
+      ],
+      "at": "platform/shared/src/utils/test_id/index.ts"
+    },
+    {
       "slot": "channel_header_button",
       "template": "channel_header.plugin_actions.action:{key}--button",
       "registry": [
@@ -103041,6 +103148,14 @@
       "template": "channel_header.menu.plugin:{key}--menuitem",
       "registry": [
         "registerChannelHeaderMenuAction"
+      ],
+      "at": "platform/shared/src/utils/test_id/index.ts"
+    },
+    {
+      "slot": "channel_info_menu_item",
+      "template": "rhs.channel_info.menu.plugin:{key}--menuitem",
+      "registry": [
+        "registerChannelInfoMenuAction"
       ],
       "at": "platform/shared/src/utils/test_id/index.ts"
     },

@@ -12,6 +12,7 @@ import {
     PaperclipIcon,
     BookmarkOutlineIcon,
 } from '@mattermost/compass-icons/components';
+import {pluginSlotTestId} from '@mattermost/shared/utils/test_id';
 import type {Channel} from '@mattermost/types/channels';
 
 import {getChannelBookmarks} from 'mattermost-redux/selectors/entities/channel_bookmarks';
@@ -120,6 +121,7 @@ const ChannelBookmarksSubmenu = (props: Props) => {
                 <Menu.Item
                     key={item.id}
                     id={`channel-menu-${channelId}-bookmarks-plugin-${item.id}`}
+                    data-testid={pluginSlotTestId('channel_header_bookmarks_menu_item', item.pluginId)}
                     leadingElement={item.icon}
                     aria-disabled={limitReached}
                     labels={addItemLabels(<>{item.text}</>)}

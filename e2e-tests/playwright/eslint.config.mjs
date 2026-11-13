@@ -151,6 +151,15 @@ const CROSS_AREA_IMPORTS = {
 
         // the ABAC burn-on-read specs test the same feature as the channels ones, through its helpers
         './functional/channels/burn_on_read/support.ts',
+
+        // master's attribute specs (user_graph_value_picker, ranked values) share the channel attribute helpers; they move
+        // to lib/src/flows with the ABAC PR, which removes this entry
+        './functional/channels/channel_attributes/helpers.ts',
+    ],
+    'functional/channels': [
+        // master's channel-settings spec for locked rules builds its fields with the ABAC support; it moves to the
+        // generated objects and the lib flows with the ABAC PR, which removes this entry
+        './functional/system_console/abac/support.ts',
     ],
 };
 

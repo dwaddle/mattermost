@@ -4302,6 +4302,21 @@
                         "canAdd"
                     ],
                     "source": "channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx#ChannelBookmarksSubmenu"
+                },
+                {
+                    "testId": "channel_header.menu.bookmarks.plugin:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "PluginKey",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "renderedWhen": [
+                        "!isGuest(user.roles) && isChannelBookmarksEnabled",
+                        "!isArchived && !isGuest(user.roles) && isChannelBookmarksEnabled",
+                        "!isArchived",
+                        "isChannelBookmarksEnabled",
+                        "canAdd"
+                    ],
+                    "source": "channels/src/components/channel_header_menu/menu_items/channel_bookmarks_submenu.tsx#ChannelBookmarksSubmenu"
                 }
             ]
         },
@@ -10498,6 +10513,14 @@
                     "source": "channels/src/components/channel_info_rhs/menu.tsx#MenuItem"
                 },
                 {
+                    "testId": "rhs.channel_info.menu.plugin:{key}--menuitem",
+                    "role": "menuitem",
+                    "key": "PluginKey",
+                    "effects": [],
+                    "unknownEffects": true,
+                    "source": "channels/src/components/channel_info_rhs/menu.tsx#MenuItem"
+                },
+                {
                     "testId": "rhs.channel_info.menu.settings--button",
                     "role": "button",
                     "opens": [
@@ -16392,6 +16415,12 @@
             "registry": ["registerAppBarComponent", "registerChannelHeaderButtonAction"]
         },
         {
+            "slot": "channel_header_bookmarks_menu_item",
+            "testId": "channel_header.menu.bookmarks.plugin:{key}--menuitem",
+            "key": "PluginKey",
+            "registry": ["registerChannelBookmarksMenuAction"]
+        },
+        {
             "slot": "channel_header_button",
             "testId": "channel_header.plugin_actions.action:{key}--button",
             "key": "PluginKey",
@@ -16408,6 +16437,12 @@
             "testId": "channel_header.menu.plugin:{key}--menuitem",
             "key": "PluginKey",
             "registry": ["registerChannelHeaderMenuAction"]
+        },
+        {
+            "slot": "channel_info_menu_item",
+            "testId": "rhs.channel_info.menu.plugin:{key}--menuitem",
+            "key": "PluginKey",
+            "registry": ["registerChannelInfoMenuAction"]
         },
         {
             "slot": "file_menu_item",
