@@ -148,7 +148,7 @@ describe('components/user_settings/display/UserSettingsDisplay', () => {
     });
 
     describe('dividers around the Performance Debugging section', () => {
-        const getSettingRow = (title: string) => screen.getByRole('heading', {name: title}).closest('[data-testid="section-min"]')!;
+        const getSettingRow = (title: string) => screen.getByRole('heading', {name: title}).closest('.section-min')!;
         const isDivider = (element: Element | null) => element?.classList.contains('divider-light') ?? false;
 
         const renderWithPerformanceDebugging = (enabled: boolean) => renderWithContext(
