@@ -23,6 +23,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {FilterVariantIcon} from '@mattermost/compass-icons/components';
 import {Button} from '@mattermost/compass-ui/components/button';
 import {Icon} from '@mattermost/compass-ui/components/icon';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {getIsCrossTeamSearchEnabled} from 'mattermost-redux/selectors/entities/general';
 import {getMyTeams} from 'mattermost-redux/selectors/entities/teams';
@@ -49,7 +51,11 @@ function isKeyboardEvent(event?: Event) {
     return event instanceof KeyboardEvent || (event instanceof MouseEvent && event.detail === 0);
 }
 
-export default function MentionFiltersButton() {
+type Props = {
+    testIdScope: TestIdScope;
+};
+
+export default function MentionFiltersButton({testIdScope}: Props) {
     const {formatMessage} = useIntl();
     const dispatch = useDispatch();
 
@@ -129,7 +135,7 @@ export default function MentionFiltersButton() {
         <>
             <Button
                 id='mentionFiltersButton'
-                data-testid='mentionFiltersButton'
+                data-testid={part(testIdScope, 'trigger', 'button')}
                 ref={refs.setReference}
                 className='MentionFilters__trigger'
                 emphasis='quaternary'
@@ -166,7 +172,8 @@ export default function MentionFiltersButton() {
                             ref={refs.setFloating}
                             style={floatingStyles}
                             className='MentionFilters__floating'
-                            data-testid='mentionFiltersPopover'
+                            role='dialog'
+                            data-testid={part(testIdScope, 'popover', 'dialog')}
                             aria-label={formatMessage({id: 'search_results.mention_filters.button', defaultMessage: 'Filters'})}
                             {...getFloatingProps()}
                         >
@@ -176,6 +183,7 @@ export default function MentionFiltersButton() {
                             >
                                 <MentionFiltersPopover
                                     key={openCount}
+                                    testIdScope={part(testIdScope, 'popover')}
                                     filters={filters}
                                     teamId={teamId}
                                     showTeamSelector={showTeamSelector}

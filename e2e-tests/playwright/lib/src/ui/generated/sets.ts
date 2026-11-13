@@ -148,3 +148,27 @@ export const SearchBoxType = {
     Messages: 'messages',
 } as const;
 export type SearchBoxType = (typeof SearchBoxType)[keyof typeof SearchBoxType];
+
+/** Keys of SearchChip (from channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips). */
+export const SearchChip = {
+    Direct: 'direct',
+    Group: 'group',
+    Keyword: 'keyword',
+} as const;
+export type SearchChip = (typeof SearchChip)[keyof typeof SearchChip];
+
+/** Keys of SearchDate (from channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover). */
+export const SearchDate = {
+    Any: 'any',
+    Last7Days: 'last_7_days',
+    Today: 'today',
+} as const;
+export type SearchDate = (typeof SearchDate)[keyof typeof SearchDate];
+
+/** Keys of SearchMentionType (from channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover). */
+export const SearchMentionType = {
+    Direct: 'direct',
+    Group: 'group',
+    Keyword: 'keyword',
+} as const;
+export type SearchMentionType = (typeof SearchMentionType)[keyof typeof SearchMentionType];

@@ -4,7 +4,6 @@
 import type {Locator} from '@playwright/test';
 import {expect} from '@playwright/test';
 
-import MentionFilters from './mention_filters';
 import SearchTeamSelector from './search_team_selector';
 
 /**
@@ -15,13 +14,11 @@ export default class SearchResultsPanel {
     readonly container: Locator;
     readonly filesTab: Locator;
     readonly teamSelector: SearchTeamSelector;
-    readonly mentionFilters: MentionFilters;
 
     constructor(container: Locator) {
         this.container = container;
         this.filesTab = container.getByRole('tab', {name: /^Files/});
         this.teamSelector = new SearchTeamSelector(container.getByTestId('search.team_selector'));
-        this.mentionFilters = new MentionFilters(container);
     }
 
     async toBeVisible() {

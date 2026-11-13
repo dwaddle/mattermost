@@ -5,8 +5,10 @@
 // Regenerate with `test-surface scan && test-surface generate` (see test-surface.config.json).
 
 import type {Locator, Page} from '@playwright/test';
+import type {Channel} from '@mattermost/types/channels';
 import type {FileInfo} from '@mattermost/types/files';
 import type {Post} from '@mattermost/types/posts';
+import type {Team} from '@mattermost/types/teams';
 
 import type {PluginKey} from '../../aria';
 import {Scope, drivers} from '../../aria';
@@ -14,7 +16,13 @@ import {Scope, drivers} from '../../aria';
 import {Api} from './api';
 import {FilePreviewModal} from './file_preview_modal';
 import {Header, PostItem, TeamSelector} from './shared';
+import type {SearchChip, SearchDate, SearchMentionType} from './sets';
 
+/** The form fields of `search.mention_filters.popover`. */
+export type SearchMentionFiltersPopoverFormValues = {
+    channels?: string;
+    team?: string;
+};
 /** Scope `search`. */
 export class Search extends Scope {
     constructor(page: Page, scope = 'search', root?: Locator) {
@@ -27,10 +35,28 @@ export class Search extends Scope {
     }
 
     /**
+     * `search.panel` — SearchResults (channels/src/components/search_results/search_results.tsx)
+     * Renders only when searchVisible.
+     */
+    get panel() {
+        return drivers.container(this.byTestId(`${this.scope}.panel`), {
+            testId: `${this.scope}.panel`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/search_results.tsx#SearchResults',
+        });
+    }
+
+    /**
      * `search.header` — SearchResultsHeader (channels/src/components/search_results_header/search_results_header.tsx)
      */
     get header(): Header {
         return new Header(this.page, `${this.scope}.header`, this.root);
+    }
+
+    get mentionFilters(): SearchMentionFilters {
+        return new SearchMentionFilters(this.page, `${this.scope}.mention_filters`, this.root);
     }
 
     get mobileBar(): SearchMobileBar {
@@ -51,6 +77,425 @@ export class Search extends Scope {
      */
     get teamSelector(): TeamSelector {
         return new TeamSelector(this.page, `${this.scope}.team_selector`, this.root);
+    }
+}
+
+/** Scope `search.mention_filters`. */
+export class SearchMentionFilters extends Scope {
+    constructor(page: Page, scope = 'search.mention_filters', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `search.mention_filters.popover--dialog` — MentionFiltersButton (channels/src/components/search_results/mention_filters/index.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    get popoverDialog() {
+        return drivers.text(this.byTestId(`${this.scope}.popover--dialog`), {
+            testId: `${this.scope}.popover--dialog`,
+            role: 'dialog',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton',
+        });
+    }
+
+    /**
+     * `search.mention_filters.trigger--button` — MentionFiltersButton (channels/src/components/search_results/mention_filters/index.tsx)
+     * Renders only when isMentionSearch.
+     */
+    get triggerButton() {
+        return drivers.button(this.byTestId(`${this.scope}.trigger--button`), {
+            testId: `${this.scope}.trigger--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton',
+        });
+    }
+
+    async clickTriggerButton(): Promise<void> {
+        await this.triggerButton.click();
+    }
+
+    /**
+     * `search.mention_filters.chips` — MentionFilterChips (channels/src/components/search_results/mention_filters/mention_filter_chips.tsx)
+     * Renders only when hasFilters and isMentionSearch.
+     */
+    get chips(): SearchMentionFiltersChips {
+        return new SearchMentionFiltersChips(this.page, `${this.scope}.chips`, this.root);
+    }
+
+    get popover(): SearchMentionFiltersPopover {
+        return new SearchMentionFiltersPopover(this.page, `${this.scope}.popover`, this.root);
+    }
+}
+
+/** Scope `search.mention_filters.chips`. */
+export class SearchMentionFiltersChips extends Scope {
+    constructor(page: Page, scope = 'search.mention_filters.chips', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `search.mention_filters.chips.chip:{key}--button` — MentionFilterChips (channels/src/components/search_results/mention_filters/mention_filter_chips.tsx)
+     * Renders only when hasFilters and isMentionSearch.
+     */
+    chip(chip: SearchChip | (string & {})) {
+        return drivers.button(this.byTestId(`${this.scope}.chip:${chip}--button`), {
+            testId: `${this.scope}.chip:${chip}--button`,
+            role: 'button',
+            effects: [
+                Api.GetChannel,
+                Api.GetChannelMemberMe,
+                Api.GetChannelMembers,
+                Api.GetGroupsByNames,
+                Api.GetRolesByNames,
+                Api.GetUsersByIds,
+                Api.GetUsersByUsernames,
+                Api.GetUsersStatusesByIds,
+                Api.SearchFiles,
+                Api.SearchPostsInAllTeams,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips',
+        });
+    }
+
+    /** Every `search.mention_filters.chips.chip:{key}--button` in the scope. */
+    get chipItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.chip:`, '--button');
+    }
+
+    /** The keys of every `search.mention_filters.chips.chip:{key}--button` in the scope, in document order. */
+    chipKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.chip:`, '--button');
+    }
+
+    get directButton() {
+        return this.chip('direct');
+    }
+
+    get groupButton() {
+        return this.chip('group');
+    }
+
+    get keywordButton() {
+        return this.chip('keyword');
+    }
+
+    /** Every `search.mention_filters.chips.chip:{key}--button` in the scope as a list by key, for the list matchers: `expect(x.chipList).toHaveKeys([…])`. */
+    get chipList() {
+        return this.keyedList(`${this.scope}.chip:`, '--button', (key: string) =>
+            drivers.button(this.byTestId(`${this.scope}.chip:${key}--button`), {
+                testId: `${this.scope}.chip:${key}--button`,
+                role: 'button',
+                effects: [
+                    Api.GetChannel,
+                    Api.GetChannelMemberMe,
+                    Api.GetChannelMembers,
+                    Api.GetGroupsByNames,
+                    Api.GetRolesByNames,
+                    Api.GetUsersByIds,
+                    Api.GetUsersByUsernames,
+                    Api.GetUsersStatusesByIds,
+                    Api.SearchFiles,
+                    Api.SearchPostsInAllTeams,
+                ],
+                unknownEffects: false,
+                source: 'channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips',
+            }),
+        );
+    }
+}
+
+/** Scope `search.mention_filters.popover`. */
+export class SearchMentionFiltersPopover extends Scope {
+    constructor(page: Page, scope = 'search.mention_filters.popover', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /** This scope renders no element of its own (only its parts have testids): assert on a part. */
+    override get locator(): Locator {
+        throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `search.mention_filters.popover.apply--button` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    get applyButton() {
+        return drivers.button(this.byTestId(`${this.scope}.apply--button`), {
+            testId: `${this.scope}.apply--button`,
+            role: 'button',
+            effects: [
+                Api.GetChannel,
+                Api.GetChannelMemberMe,
+                Api.GetChannelMembers,
+                Api.GetGroupsByNames,
+                Api.GetRolesByNames,
+                Api.GetUsersByIds,
+                Api.GetUsersByUsernames,
+                Api.GetUsersStatusesByIds,
+                Api.SearchFiles,
+                Api.SearchPostsInAllTeams,
+            ],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    async clickApplyButton(): Promise<void> {
+        await this.applyButton.click();
+    }
+
+    /**
+     * `search.mention_filters.popover.channel_option:{key}--option` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    channelOption(channelOption: Pick<Channel, 'id'>) {
+        return drivers.option(this.byTestId(`${this.scope}.channel_option:${channelOption.id}--option`, true), {
+            testId: `${this.scope}.channel_option:${channelOption.id}--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    /** Every `search.mention_filters.popover.channel_option:{key}--option` in the scope. */
+    get channelOptionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.channel_option:`, '--option', true);
+    }
+
+    /** The keys of every `search.mention_filters.popover.channel_option:{key}--option` in the scope, in document order. */
+    channelOptionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.channel_option:`, '--option', true);
+    }
+
+    /**
+     * `search.mention_filters.popover.channels--combobox` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    get channelsCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.channels--combobox`), {
+            testId: `${this.scope}.channels--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    async chooseChannelsCombobox(option: string | RegExp): Promise<void> {
+        await this.channelsCombobox.choose(option);
+    }
+
+    /**
+     * `search.mention_filters.popover.date:{key}--radio` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    date(date: SearchDate) {
+        return drivers.radio(this.byTestId(`${this.scope}.date:${date}--radio`), {
+            testId: `${this.scope}.date:${date}--radio`,
+            role: 'radio',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    /** Every `search.mention_filters.popover.date:{key}--radio` in the scope. */
+    get dateItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.date:`, '--radio');
+    }
+
+    /** The keys of every `search.mention_filters.popover.date:{key}--radio` in the scope, in document order. */
+    dateKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.date:`, '--radio');
+    }
+
+    get anyRadio() {
+        return this.date('any');
+    }
+
+    get last7DaysRadio() {
+        return this.date('last_7_days');
+    }
+
+    get todayRadio() {
+        return this.date('today');
+    }
+
+    /**
+     * `search.mention_filters.popover.mention_type:{key}--checkbox` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    mentionType(mentionType: SearchMentionType) {
+        return drivers.checkbox(this.byTestId(`${this.scope}.mention_type:${mentionType}--checkbox`), {
+            testId: `${this.scope}.mention_type:${mentionType}--checkbox`,
+            role: 'checkbox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    /** Every `search.mention_filters.popover.mention_type:{key}--checkbox` in the scope. */
+    get mentionTypeItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.mention_type:`, '--checkbox');
+    }
+
+    /** The keys of every `search.mention_filters.popover.mention_type:{key}--checkbox` in the scope, in document order. */
+    mentionTypeKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.mention_type:`, '--checkbox');
+    }
+
+    get directCheckbox() {
+        return this.mentionType('direct');
+    }
+
+    get groupCheckbox() {
+        return this.mentionType('group');
+    }
+
+    get keywordCheckbox() {
+        return this.mentionType('keyword');
+    }
+
+    /**
+     * `search.mention_filters.popover.reset--button` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    get resetButton() {
+        return drivers.button(this.byTestId(`${this.scope}.reset--button`), {
+            testId: `${this.scope}.reset--button`,
+            role: 'button',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    async clickResetButton(): Promise<void> {
+        await this.resetButton.click();
+    }
+
+    /**
+     * `search.mention_filters.popover.team--combobox` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and showTeamSelector and isMentionSearch.
+     */
+    get teamCombobox() {
+        return drivers.combobox(this.byTestId(`${this.scope}.team--combobox`), {
+            testId: `${this.scope}.team--combobox`,
+            role: 'combobox',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    async chooseTeamCombobox(option: string | RegExp): Promise<void> {
+        await this.teamCombobox.choose(option);
+    }
+
+    /**
+     * `search.mention_filters.popover.team_option:{key}--option` — MentionFiltersPopover (channels/src/components/search_results/mention_filters/mention_filters_popover.tsx)
+     * Renders only when isMounted and isMentionSearch.
+     */
+    teamOption(teamOption: Pick<Team, 'id'>) {
+        return drivers.option(this.byTestId(`${this.scope}.team_option:${teamOption.id}--option`, true), {
+            testId: `${this.scope}.team_option:${teamOption.id}--option`,
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+        });
+    }
+
+    /** Every `search.mention_filters.popover.team_option:{key}--option` in the scope. */
+    get teamOptionItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.team_option:`, '--option', true);
+    }
+
+    /** The keys of every `search.mention_filters.popover.team_option:{key}--option` in the scope, in document order. */
+    teamOptionKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.team_option:`, '--option', true);
+    }
+
+    /** Fills the given fields; others are left as they are. */
+    async fill(values: Partial<SearchMentionFiltersPopoverFormValues>): Promise<void> {
+        if (values.channels !== undefined) {
+            await this.channelsCombobox.choose(values.channels);
+        }
+        if (values.team !== undefined) {
+            await this.teamCombobox.choose(values.team);
+        }
+    }
+
+    /** Every `search.mention_filters.popover.channel_option:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.channelOptionList).toHaveKeys([…])`. */
+    get channelOptionList() {
+        return this.keyedList(
+            `${this.scope}.channel_option:`,
+            '--option',
+            (key: string) =>
+                drivers.option(this.byTestId(`${this.scope}.channel_option:${key}--option`, true), {
+                    testId: `${this.scope}.channel_option:${key}--option`,
+                    role: 'option',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+                }),
+            true,
+        );
+    }
+
+    /** Every `search.mention_filters.popover.date:{key}--radio` in the scope as a list by key, for the list matchers: `expect(x.dateList).toHaveKeys([…])`. */
+    get dateList() {
+        return this.keyedList(`${this.scope}.date:`, '--radio', (key: SearchDate) =>
+            drivers.radio(this.byTestId(`${this.scope}.date:${key}--radio`), {
+                testId: `${this.scope}.date:${key}--radio`,
+                role: 'radio',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+            }),
+        );
+    }
+
+    /** Every `search.mention_filters.popover.mention_type:{key}--checkbox` in the scope as a list by key, for the list matchers: `expect(x.mentionTypeList).toHaveKeys([…])`. */
+    get mentionTypeList() {
+        return this.keyedList(`${this.scope}.mention_type:`, '--checkbox', (key: SearchMentionType) =>
+            drivers.checkbox(this.byTestId(`${this.scope}.mention_type:${key}--checkbox`), {
+                testId: `${this.scope}.mention_type:${key}--checkbox`,
+                role: 'checkbox',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+            }),
+        );
+    }
+
+    /** Every `search.mention_filters.popover.team_option:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.teamOptionList).toHaveKeys([…])`. */
+    get teamOptionList() {
+        return this.keyedList(
+            `${this.scope}.team_option:`,
+            '--option',
+            (key: string) =>
+                drivers.option(this.byTestId(`${this.scope}.team_option:${key}--option`, true), {
+                    testId: `${this.scope}.team_option:${key}--option`,
+                    role: 'option',
+                    effects: [],
+                    unknownEffects: false,
+                    source: 'channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover',
+                }),
+            true,
+        );
     }
 }
 
@@ -120,6 +565,20 @@ export class SearchResults extends Scope {
     /** This scope renders no element of its own (only its parts have testids): assert on a part. */
     override get locator(): Locator {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
+    }
+
+    /**
+     * `search.results.date_separator` — BasicSeparator (channels/src/components/widgets/separator/basic-separator.tsx)
+     * Renders only when searchType === DataSearchTypes.MESSAGES_SEARCH_TYPE && !props.isChannelFiles and typeof item === 'string' && isDateLine(item).
+     */
+    get dateSeparator() {
+        return drivers.container(this.byTestId(`${this.scope}.date_separator`), {
+            testId: `${this.scope}.date_separator`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/widgets/separator/basic-separator.tsx#BasicSeparator',
+        });
     }
 
     /**

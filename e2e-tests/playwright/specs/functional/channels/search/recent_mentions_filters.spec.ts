@@ -1,21 +1,75 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {Channel} from '@mattermost/types/channels';
+import type {Team} from '@mattermost/types/teams';
 import type {UserProfile} from '@mattermost/types/users';
 
-import {ChannelsPage, expect, test, type PlaywrightExtended} from '@mattermost/playwright-lib';
+import {expect, generated, Msg, removeChip, test, type App, type PlaywrightExtended} from '@mattermost/playwright-lib';
+
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * The Recent Mentions panel on the generated `app.search` objects: its Filters button, popover and chips, and the
+ * result posts. The page is the main window or a popout.
+ */
+function recentMentions(app: App) {
+    const filters = app.search.mentionFilters;
+    const {popover, chips} = filters;
+
+    return {
+        panel: app.search.panel,
+        results: app.search.results.postItems,
+        resultsWith: (text: string) => app.search.results.postItems.filter({hasText: text}),
+        chips,
+        button: filters.triggerButton,
+        popoutButton: app.search.header.popoutButton,
+
+        async open() {
+            await filters.triggerButton.click();
+            await expect(filters.popoverDialog.locator).toBeVisible();
+        },
+
+        popover,
+
+        async selectTeam(team: Pick<Team, 'display_name'>) {
+            await popover.chooseTeamCombobox(team.display_name);
+        },
+
+        /**
+         * Picks a channel in the channel picker, then closes its menu so it doesn't cover the rest of the popover.
+         * A channel's option can carry its team name too, so its name is matched as a substring.
+         */
+        async selectChannel(channel: Pick<Channel, 'display_name'>) {
+            const picker = popover.channelsCombobox;
+            await popover.chooseChannelsCombobox(new RegExp(escapeRegExp(channel.display_name)));
+            if (await picker.isExpanded()) {
+                await picker.press('Escape');
+            }
+            await expect(picker).not.toBeExpanded();
+        },
+
+        async apply() {
+            await popover.clickApplyButton();
+            await expect(filters.popoverDialog.locator).not.toBeVisible();
+        },
+
+        /** Removes a chip by its key: the id of the team or channel, the mention type or the date range. */
+        removeChip: (key: string) => removeChip(chips.chip(key)),
+    };
+}
 
 /** Opens Recent Mentions on a freshly logged in page. */
 async function openRecentMentions(pw: PlaywrightExtended, user: UserProfile, teamName: string) {
-    const {channelsPage, page, app} = await pw.testBrowser.login(user);
+    const {page, app} = await pw.testBrowser.login(user);
     await app.teamPage.goto({team: teamName});
     await expect(app.center.composer.locator).toBeVisible();
-    await channelsPage.globalHeader.openRecentMentions();
+    await app.globalHeader.clickRecentMentionsButton();
 
-    const panel = channelsPage.searchResultsPanel;
-    await panel.toBeVisible();
+    const mentions = recentMentions(app);
+    await expect(mentions.panel.locator).toBeVisible();
 
-    return {channelsPage, page, panel, filters: panel.mentionFilters};
+    return {app, page, mentions};
 }
 
 /**
@@ -55,24 +109,24 @@ test('channel filter narrows recent mentions to the selected channel', {tag: '@s
     const {team, user, otherChannel, townSquareMention, otherChannelMention} = await setupMentionsInTwoChannels(pw);
 
     // # Log in and open Recent Mentions
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // * Verify both mentions are listed before any filter is applied
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
-    await expect(panel.getResultByText(otherChannelMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(otherChannelMention)).toHaveCount(1);
 
     // # Filter down to one of the two channels
-    await filters.open();
-    await filters.selectChannel(otherChannel.display_name);
-    await filters.apply();
+    await mentions.open();
+    await mentions.selectChannel(otherChannel);
+    await mentions.apply();
 
     // * Verify only the mention from the selected channel remains
-    await expect(panel.getResultItems()).toHaveCount(1);
-    await expect(panel.getResultByText(otherChannelMention)).toHaveCount(1);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(0);
+    await expect(mentions.results).toHaveCount(1);
+    await expect(mentions.resultsWith(otherChannelMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(0);
 
     // * Verify a chip names the channel being filtered on
-    await expect(filters.chips).toContainText(otherChannel.display_name);
+    await expect(mentions.chips.locator).toContainText(otherChannel.display_name);
 });
 
 /**
@@ -83,24 +137,23 @@ test('removing a filter chip restores the excluded mentions', {tag: '@search'}, 
     const {team, user, otherChannel, townSquareMention, otherChannelMention} = await setupMentionsInTwoChannels(pw);
 
     // # Log in, open Recent Mentions and filter down to one channel
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
-    await filters.open();
-    await filters.selectChannel(otherChannel.display_name);
-    await filters.apply();
-    await expect(panel.getResultItems()).toHaveCount(1);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(0);
+    await mentions.open();
+    await mentions.selectChannel(otherChannel);
+    await mentions.apply();
+    await expect(mentions.results).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(0);
 
-    // # Remove the channel chip. The team selector is left on all teams, so the chip names the
-    // channel's team alongside it and the accessible name is wider than the channel name alone.
-    await filters.removeChip(otherChannel.display_name);
+    // # Remove the channel chip
+    await mentions.removeChip(otherChannel.id);
 
     // * Verify both mentions are listed again
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
-    await expect(panel.getResultByText(otherChannelMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(otherChannelMention)).toHaveCount(1);
 
     // * Verify the chip row is gone once nothing is filtered
-    await expect(filters.chips).toHaveCount(0);
+    await expect(mentions.chips.locator).toHaveCount(0);
 });
 
 /**
@@ -121,21 +174,21 @@ test('mention type filter separates direct mentions from keyword mentions', {tag
     await adminClient.createPost({channel_id: townSquare.id, user_id: mentioningUser.id, message: keywordMention});
 
     // # Log in and open Recent Mentions
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // * Verify both kinds of mention are listed before any filter is applied
-    await expect(panel.getResultByText(directMention)).toHaveCount(1);
-    await expect(panel.getResultByText(keywordMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(directMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(keywordMention)).toHaveCount(1);
 
     // # Keep only direct mentions
-    await filters.open();
-    await filters.selectMentionType('Directly mentioning you');
-    await filters.apply();
+    await mentions.open();
+    await mentions.popover.mentionType('direct').check();
+    await mentions.apply();
 
     // * Verify the keyword mention is excluded
-    await expect(panel.getResultItems()).toHaveCount(1);
-    await expect(panel.getResultByText(directMention)).toHaveCount(1);
-    await expect(panel.getResultByText(keywordMention)).toHaveCount(0);
+    await expect(mentions.results).toHaveCount(1);
+    await expect(mentions.resultsWith(directMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(keywordMention)).toHaveCount(0);
 });
 
 /**
@@ -165,23 +218,23 @@ test('a team and its channels picked together are both applied', {tag: '@search'
     });
 
     // # Log in and open Recent Mentions
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // * Verify mentions from both teams are listed before any filter is applied
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
-    await expect(panel.getResultByText(secondTeamMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(secondTeamMention)).toHaveCount(1);
 
     // # Pick the second team and one of its channels without closing the popover in between
-    await filters.open();
-    await filters.selectTeam(secondTeam.display_name);
-    await filters.selectChannel(secondTeamChannel.display_name);
-    await filters.apply();
+    await mentions.open();
+    await mentions.selectTeam(secondTeam);
+    await mentions.selectChannel(secondTeamChannel);
+    await mentions.apply();
 
     // * Verify the channel filter survived being applied alongside the team change
-    await expect(filters.chips).toContainText(secondTeamChannel.display_name);
-    await expect(panel.getResultItems()).toHaveCount(1);
-    await expect(panel.getResultByText(secondTeamMention)).toHaveCount(1);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(0);
+    await expect(mentions.chips.locator).toContainText(secondTeamChannel.display_name);
+    await expect(mentions.results).toHaveCount(1);
+    await expect(mentions.resultsWith(secondTeamMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(0);
 });
 
 /**
@@ -192,28 +245,28 @@ test('popping out a filtered mentions panel keeps the filters', {tag: '@search'}
     const {team, user, otherChannel, townSquareMention, otherChannelMention} = await setupMentionsInTwoChannels(pw);
 
     // # Log in, open Recent Mentions and filter down to one channel
-    const {page, panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {page, mentions} = await openRecentMentions(pw, user, team.name);
 
-    await filters.open();
-    await filters.selectChannel(otherChannel.display_name);
-    await filters.apply();
-    await expect(panel.getResultItems()).toHaveCount(1);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(0);
+    await mentions.open();
+    await mentions.selectChannel(otherChannel);
+    await mentions.apply();
+    await expect(mentions.results).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(0);
 
     // # Pop the panel out into its own window
-    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), panel.getPopoutButton().click()]);
+    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), mentions.popoutButton.click()]);
     await popoutPage.waitForLoadState('domcontentloaded');
-    const popoutPanel = new ChannelsPage(popoutPage).searchResultsPanel;
+    const popoutMentions = recentMentions(new generated.App(popoutPage));
 
     // * Verify the filter travelled in the URL rather than being dropped
     expect(popoutPage.url()).toContain('mode=mention');
     expect(popoutPage.url()).toContain(`mentionChannels=${otherChannel.id}`);
 
     // * Verify the popped out window shows the same filtered results, with the chip still on it
-    await expect(popoutPanel.mentionFilters.chips).toContainText(otherChannel.display_name);
-    await expect(popoutPanel.getResultItems()).toHaveCount(1);
-    await expect(popoutPanel.getResultByText(otherChannelMention)).toBeVisible();
-    await expect(popoutPanel.getResultByText(townSquareMention)).toHaveCount(0);
+    await expect(popoutMentions.chips.locator).toContainText(otherChannel.display_name);
+    await expect(popoutMentions.results).toHaveCount(1);
+    await expect(popoutMentions.resultsWith(otherChannelMention)).toBeVisible();
+    await expect(popoutMentions.resultsWith(townSquareMention)).toHaveCount(0);
 
     await popoutPage.close();
 });
@@ -283,36 +336,36 @@ test('the date filter narrows mentions by when they arrived', {tag: '@search'}, 
         });
     }
 
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // * Verify all three are listed before any filter is applied
-    await expect(panel.getResultByText(todayMention)).toHaveCount(1);
-    await expect(panel.getResultByText(threeDaysMention)).toHaveCount(1);
-    await expect(panel.getResultByText(tenDaysMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(todayMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(threeDaysMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(tenDaysMention)).toHaveCount(1);
 
     // # Narrow to today
-    await filters.open();
-    await filters.selectDate('Today');
-    await filters.apply();
+    await mentions.open();
+    await mentions.popover.date('today').check();
+    await mentions.apply();
 
     // * Verify only today's mention survives, with a chip naming the range
-    await expect(filters.chips).toContainText('Today');
-    await expect(panel.getResultItems()).toHaveCount(1);
-    await expect(panel.getResultByText(todayMention)).toHaveCount(1);
-    await expect(panel.getResultByText(threeDaysMention)).toHaveCount(0);
-    await expect(panel.getResultByText(tenDaysMention)).toHaveCount(0);
+    await expect(mentions.chips.locator).toContainText('Today');
+    await expect(mentions.results).toHaveCount(1);
+    await expect(mentions.resultsWith(todayMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(threeDaysMention)).toHaveCount(0);
+    await expect(mentions.resultsWith(tenDaysMention)).toHaveCount(0);
 
     // # Widen to the last 7 days
-    await filters.open();
-    await filters.selectDate('Last 7 days');
-    await filters.apply();
+    await mentions.open();
+    await mentions.popover.date('last_7_days').check();
+    await mentions.apply();
 
     // * Verify the range now reaches the three day old mention but still not the ten day old one
-    await expect(filters.chips).toContainText('Last 7 days');
-    await expect(panel.getResultItems()).toHaveCount(2);
-    await expect(panel.getResultByText(todayMention)).toHaveCount(1);
-    await expect(panel.getResultByText(threeDaysMention)).toHaveCount(1);
-    await expect(panel.getResultByText(tenDaysMention)).toHaveCount(0);
+    await expect(mentions.chips.locator).toContainText('Last 7 days');
+    await expect(mentions.results).toHaveCount(2);
+    await expect(mentions.resultsWith(todayMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(threeDaysMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(tenDaysMention)).toHaveCount(0);
 });
 
 /**
@@ -323,24 +376,24 @@ test('removing the team chip clears the channel chips', {tag: '@search'}, async 
     const {team, secondTeam, user, secondTeamChannel, townSquareMention, secondTeamMention} =
         await setupMentionsOnTwoTeams(pw);
 
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // # Filter down to a channel on the second team
-    await filters.open();
-    await filters.selectTeam(secondTeam.display_name);
-    await filters.selectChannel(secondTeamChannel.display_name);
-    await filters.apply();
+    await mentions.open();
+    await mentions.selectTeam(secondTeam);
+    await mentions.selectChannel(secondTeamChannel);
+    await mentions.apply();
 
     // * Verify both a team chip and a channel chip are showing
-    await expect(filters.getChipRemoveButtons()).toHaveCount(2);
+    await expect(mentions.chips.chipList).toHaveKeyCount(2);
 
     // # Remove the team chip alone
-    await filters.removeChip(secondTeam.display_name);
+    await mentions.removeChip(secondTeam.id);
 
     // * Verify the channel chip went with it and the results widened back out
-    await expect(filters.chips).toHaveCount(0);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
-    await expect(panel.getResultByText(secondTeamMention)).toHaveCount(1);
+    await expect(mentions.chips.locator).toHaveCount(0);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(secondTeamMention)).toHaveCount(1);
 });
 
 /**
@@ -351,23 +404,23 @@ test('filters by channels from two teams at once', {tag: '@search'}, async ({pw}
     const {team, user, firstTeamChannel, secondTeamChannel, townSquareMention, firstTeamMention, secondTeamMention} =
         await setupMentionsOnTwoTeams(pw);
 
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // # With the team left on all teams, pick one channel from each team
-    await filters.open();
+    await mentions.open();
     for (const channel of [firstTeamChannel, secondTeamChannel]) {
-        await filters.selectChannel(channel.display_name);
+        await mentions.selectChannel(channel);
     }
-    await filters.apply();
+    await mentions.apply();
 
     // * Verify a chip per channel, each naming its team since the names span teams
-    await expect(filters.getChipRemoveButtons()).toHaveCount(2);
+    await expect(mentions.chips.chipList).toHaveKeyCount(2);
 
     // * Verify both channels' mentions are kept and the unselected channel's is dropped
-    await expect(panel.getResultItems()).toHaveCount(2);
-    await expect(panel.getResultByText(firstTeamMention)).toHaveCount(1);
-    await expect(panel.getResultByText(secondTeamMention)).toHaveCount(1);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(0);
+    await expect(mentions.results).toHaveCount(2);
+    await expect(mentions.resultsWith(firstTeamMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(secondTeamMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(0);
 });
 
 /**
@@ -377,29 +430,29 @@ test('filters by channels from two teams at once', {tag: '@search'}, async ({pw}
 test('the filter count matches the chips, and Reset clears them', {tag: '@search'}, async ({pw}) => {
     const {team, secondTeam, user, secondTeamChannel, townSquareMention} = await setupMentionsOnTwoTeams(pw);
 
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // # Apply one filter of every kind: team, channel, mention type and date
-    await filters.open();
-    await filters.selectTeam(secondTeam.display_name);
-    await filters.selectChannel(secondTeamChannel.display_name);
-    await filters.selectMentionType('Directly mentioning you');
-    await filters.selectDate('Last 7 days');
-    await filters.apply();
+    await mentions.open();
+    await mentions.selectTeam(secondTeam);
+    await mentions.selectChannel(secondTeamChannel);
+    await mentions.popover.mentionType('direct').check();
+    await mentions.popover.date('last_7_days').check();
+    await mentions.apply();
 
     // * Verify the button counts exactly what the chip row shows
-    await expect(filters.button).toHaveText('Filters (4)');
-    await expect(filters.getChipRemoveButtons()).toHaveCount(4);
+    await expect(mentions.button).toHaveMessage(Msg.search_results.mention_filters.button_with_count, {count: 4});
+    await expect(mentions.chips.chipList).toHaveKeyCount(4);
 
     // # Reset the popover and apply it
-    await filters.open();
-    await filters.reset();
-    await filters.apply();
+    await mentions.open();
+    await mentions.popover.clickResetButton();
+    await mentions.apply();
 
     // * Verify nothing is counted, no chips are left and every mention is back
-    await expect(filters.button).toHaveText('Filters');
-    await expect(filters.chips).toHaveCount(0);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
+    await expect(mentions.button).toHaveMessage(Msg.search_results.mention_filters.button);
+    await expect(mentions.chips.locator).toHaveCount(0);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
 });
 
 /**
@@ -409,34 +462,34 @@ test('the filter count matches the chips, and Reset clears them', {tag: '@search
 test('removing every chip one at a time clears the filters', {tag: '@search'}, async ({pw}) => {
     const {team, user, otherChannel, townSquareMention, otherChannelMention} = await setupMentionsInTwoChannels(pw);
 
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // # Apply a channel, a mention type and a date filter
-    await filters.open();
-    await filters.selectChannel(otherChannel.display_name);
-    await filters.selectMentionType('Directly mentioning you');
-    await filters.selectDate('Last 7 days');
-    await filters.apply();
+    await mentions.open();
+    await mentions.selectChannel(otherChannel);
+    await mentions.popover.mentionType('direct').check();
+    await mentions.popover.date('last_7_days').check();
+    await mentions.apply();
 
-    await expect(filters.button).toHaveText('Filters (3)');
-    await expect(panel.getResultItems()).toHaveCount(1);
+    await expect(mentions.button).toHaveMessage(Msg.search_results.mention_filters.button_with_count, {count: 3});
+    await expect(mentions.results).toHaveCount(1);
 
     // # Remove the chips one by one
-    await filters.removeChip(otherChannel.display_name);
-    await expect(filters.button).toHaveText('Filters (2)');
-    await expect(filters.getChipRemoveButtons()).toHaveCount(2);
+    await mentions.removeChip(otherChannel.id);
+    await expect(mentions.button).toHaveMessage(Msg.search_results.mention_filters.button_with_count, {count: 2});
+    await expect(mentions.chips.chipList).toHaveKeyCount(2);
 
-    await filters.removeChip('Directly mentioning you');
-    await expect(filters.button).toHaveText('Filters (1)');
-    await expect(filters.getChipRemoveButtons()).toHaveCount(1);
+    await mentions.removeChip('direct');
+    await expect(mentions.button).toHaveMessage(Msg.search_results.mention_filters.button_with_count, {count: 1});
+    await expect(mentions.chips.chipList).toHaveKeyCount(1);
 
-    await filters.removeChip('Last 7 days');
+    await mentions.removeChip('last_7_days');
 
     // * Verify nothing is counted, the chip row is gone and both mentions are back
-    await expect(filters.button).toHaveText('Filters');
-    await expect(filters.chips).toHaveCount(0);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
-    await expect(panel.getResultByText(otherChannelMention)).toHaveCount(1);
+    await expect(mentions.button).toHaveMessage(Msg.search_results.mention_filters.button);
+    await expect(mentions.chips.locator).toHaveCount(0);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(otherChannelMention)).toHaveCount(1);
 });
 
 /**
@@ -446,38 +499,38 @@ test('removing every chip one at a time clears the filters', {tag: '@search'}, a
 test('the mentions button and its shortcut return to all mentions', {tag: '@search'}, async ({pw}) => {
     const {team, user, otherChannel, townSquareMention, otherChannelMention} = await setupMentionsInTwoChannels(pw);
 
-    const {channelsPage, page, panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {app, page, mentions} = await openRecentMentions(pw, user, team.name);
 
     const applyChannelFilter = async () => {
-        await filters.open();
-        await filters.selectChannel(otherChannel.display_name);
-        await filters.apply();
-        await expect(panel.getResultItems()).toHaveCount(1);
-        await expect(panel.getResultByText(townSquareMention)).toHaveCount(0);
+        await mentions.open();
+        await mentions.selectChannel(otherChannel);
+        await mentions.apply();
+        await expect(mentions.results).toHaveCount(1);
+        await expect(mentions.resultsWith(townSquareMention)).toHaveCount(0);
     };
 
     // # Filter to one channel, then press the Recent mentions button again
     await applyChannelFilter();
-    await channelsPage.globalHeader.openRecentMentions();
+    await app.globalHeader.clickRecentMentionsButton();
 
     // * Verify the panel stayed open and widened back out instead of closing
-    await panel.toBeVisible();
-    await expect(filters.chips).toHaveCount(0);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
-    await expect(panel.getResultByText(otherChannelMention)).toHaveCount(1);
+    await expect(mentions.panel.locator).toBeVisible();
+    await expect(mentions.chips.locator).toHaveCount(0);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(otherChannelMention)).toHaveCount(1);
 
     // # Filter again, then use the keyboard shortcut for the same button
     await applyChannelFilter();
     await page.keyboard.press('ControlOrMeta+Shift+M');
 
     // * Verify the shortcut widened the panel out rather than closing it
-    await panel.toBeVisible();
-    await expect(filters.chips).toHaveCount(0);
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
+    await expect(mentions.panel.locator).toBeVisible();
+    await expect(mentions.chips.locator).toHaveCount(0);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
 
     // * Verify the shortcut still closes the panel once nothing is filtered
     await page.keyboard.press('ControlOrMeta+Shift+M');
-    await expect(panel.container).not.toBeVisible();
+    await expect(mentions.panel.locator).not.toBeVisible();
 });
 
 /**
@@ -487,25 +540,25 @@ test('the mentions button and its shortcut return to all mentions', {tag: '@sear
 test('popping out an unfiltered mentions panel keeps every team', {tag: '@search'}, async ({pw}) => {
     const {team, user, townSquareMention, secondTeamMention} = await setupMentionsOnTwoTeams(pw);
 
-    const {page, panel} = await openRecentMentions(pw, user, team.name);
+    const {page, mentions} = await openRecentMentions(pw, user, team.name);
 
     // * Verify the panel spans both teams before it is popped out
-    await expect(panel.getResultByText(townSquareMention)).toHaveCount(1);
-    await expect(panel.getResultByText(secondTeamMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(townSquareMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(secondTeamMention)).toHaveCount(1);
 
     // # Pop the panel out into its own window
-    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), panel.getPopoutButton().click()]);
+    const [popoutPage] = await Promise.all([page.waitForEvent('popup'), mentions.popoutButton.click()]);
     await popoutPage.waitForLoadState('domcontentloaded');
-    const popoutPanel = new ChannelsPage(popoutPage).searchResultsPanel;
+    const popoutMentions = recentMentions(new generated.App(popoutPage));
 
     // * Verify no filter travelled, since none was applied
     expect(popoutPage.url()).toContain('mode=mention');
     expect(popoutPage.url()).not.toContain('mentionChannels=');
 
     // * Verify the popped out window still spans both teams rather than the one it was opened from
-    await expect(popoutPanel.getResultByText(townSquareMention)).toBeVisible();
-    await expect(popoutPanel.getResultByText(secondTeamMention)).toBeVisible();
-    await expect(popoutPanel.mentionFilters.chips).toHaveCount(0);
+    await expect(popoutMentions.resultsWith(townSquareMention)).toBeVisible();
+    await expect(popoutMentions.resultsWith(secondTeamMention)).toBeVisible();
+    await expect(popoutMentions.chips.locator).toHaveCount(0);
 
     await popoutPage.close();
 });
@@ -524,16 +577,16 @@ test('a keyword shaped like a search modifier still finds mentions', {tag: '@sea
     const keywordMention = `on:call rotation starts ${pw.random.id()}`;
     await adminClient.createPost({channel_id: townSquare.id, user_id: mentioningUser.id, message: keywordMention});
 
-    const {panel, filters} = await openRecentMentions(pw, user, team.name);
+    const {mentions} = await openRecentMentions(pw, user, team.name);
 
     // * Verify the keyword mention is found rather than filtered away as a date
-    await expect(panel.getResultByText(keywordMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(keywordMention)).toHaveCount(1);
 
     // # Keep only keyword mentions, so the query is the keyword alone with nothing else to carry it
-    await filters.open();
-    await filters.selectMentionType('Keywords triggering mentions');
-    await filters.apply();
+    await mentions.open();
+    await mentions.popover.mentionType('keyword').check();
+    await mentions.apply();
 
     // * Verify it survives on its own
-    await expect(panel.getResultByText(keywordMention)).toHaveCount(1);
+    await expect(mentions.resultsWith(keywordMention)).toHaveCount(1);
 });

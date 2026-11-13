@@ -657,6 +657,23 @@ export class DraftsScheduledPostEditor extends Scope {
     }
 
     /**
+     * `drafts.scheduled.post.editor.preview` — Textbox (channels/src/components/textbox/textbox.tsx)
+     * Renders only when !(!getChannelSelector(state, channelId) && !isScheduledPost) and isEditing.
+     * Opens modal DeletePostModal (`delete_post_modal`).
+     * Opens modal DeleteScheduledPostModal (`delete_scheduled_post_modal`).
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get preview() {
+        return drivers.container(this.byTestId(`${this.scope}.preview`), {
+            testId: `${this.scope}.preview`,
+            role: null,
+            effects: [Api.DeleteScheduledPost, Api.PatchPost, Api.UpdateScheduledPost],
+            unknownEffects: true,
+            source: 'channels/src/components/textbox/textbox.tsx#Textbox',
+        });
+    }
+
+    /**
      * `drafts.scheduled.post.editor.save--button` — EditPostFooter (channels/src/components/edit_scheduled_post/edit_post_footer.tsx)
      * Renders only when !(!getChannelSelector(state, channelId) && !isScheduledPost) and isEditing.
      * Opens modal DeletePostModal (`delete_post_modal`).

@@ -7,6 +7,8 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {CalendarOutlineIcon} from '@mattermost/compass-icons/components';
 import {Chip} from '@mattermost/compass-ui/components/chip';
+import {part} from '@mattermost/shared/utils/test_id';
+import type {TestIdScope} from '@mattermost/shared/utils/test_id';
 
 import {getTeam} from 'mattermost-redux/selectors/entities/teams';
 
@@ -22,8 +24,13 @@ import {dateRangeLabels, mentionTypeLabels} from './labels';
 import useFilterableChannels, {useTeamNames} from './use_filterable_channels';
 
 // MentionFilterChips lists the filters currently narrowing the mentions panel, each removable on its
-// own. It renders nothing when no filter is applied.
-export default function MentionFilterChips() {
+// own. It renders nothing when no filter is applied. Each chip is keyed by what it filters on: the team's
+// or channel's id, the mention type, or the date range.
+type Props = {
+    testIdScope: TestIdScope;
+};
+
+export default function MentionFilterChips({testIdScope}: Props) {
     const {formatMessage} = useIntl();
     const dispatch = useDispatch();
 
@@ -81,11 +88,13 @@ export default function MentionFilterChips() {
     return (
         <div
             className='MentionFilterChips'
-            data-testid='mentionFilterChips'
+            data-testid={part(testIdScope, 'chips')}
         >
             {team && (
                 <Chip
                     size='small'
+                    role='button'
+                    data-testid={part(testIdScope, 'chips.chip', {key: team.id}, 'button')}
                     aria-label={removeLabel(team.display_name)}
                     onRemove={removeTeam}
                 >
@@ -98,6 +107,8 @@ export default function MentionFilterChips() {
                     <Chip
                         key={channelId}
                         size='small'
+                        role='button'
+                        data-testid={part(testIdScope, 'chips.chip', {key: channelId}, 'button')}
                         aria-label={removeLabel(label)}
                         onRemove={() => removeChannel(channelId)}
                     >
@@ -111,6 +122,8 @@ export default function MentionFilterChips() {
                     <Chip
                         key={type}
                         size='small'
+                        role='button'
+                        data-testid={part(testIdScope, 'chips.chip', {key: type}, 'button')}
                         aria-label={removeLabel(label)}
                         onRemove={() => removeMentionType(type)}
                     >
@@ -121,6 +134,8 @@ export default function MentionFilterChips() {
             {filters.date !== 'any' && (
                 <Chip
                     size='small'
+                    role='button'
+                    data-testid={part(testIdScope, 'chips.chip', {key: filters.date}, 'button')}
                     aria-label={removeLabel(formatMessage(dateRangeLabels[filters.date]))}
                     leadingIcon={<CalendarOutlineIcon/>}
                     onRemove={removeDate}

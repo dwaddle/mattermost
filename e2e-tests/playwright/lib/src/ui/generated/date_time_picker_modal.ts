@@ -228,20 +228,6 @@ export class DateTimePickerModalWhen extends Scope {
     }
 
     /**
-     * `date_time_picker_modal.when.calendar` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
-     * Renders only when isPopperOpen.
-     */
-    get calendar() {
-        return drivers.container(this.byTestId(`${this.scope}.calendar`), {
-            testId: `${this.scope}.calendar`,
-            role: null,
-            effects: [],
-            unknownEffects: false,
-            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
-        });
-    }
-
-    /**
      * `date_time_picker_modal.when.date--button` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
      */
     get dateButton() {
@@ -280,8 +266,85 @@ export class DateTimePickerModalWhen extends Scope {
         return new DateTimePickerModalWhenTimeMenu(this.page, `${this.scope}.time_menu`);
     }
 
+    /**
+     * `date_time_picker_modal.when.calendar` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     * Renders only when isPopperOpen.
+     */
+    get calendar(): DateTimePickerModalWhenCalendar {
+        return new DateTimePickerModalWhenCalendar(this.page, `${this.scope}.calendar`, this.root);
+    }
+
     get timeMenu(): DateTimePickerModalWhenTimeMenu {
         return new DateTimePickerModalWhenTimeMenu(this.page, `${this.scope}.time_menu`);
+    }
+}
+
+/** Scope `date_time_picker_modal.when.calendar`. */
+export class DateTimePickerModalWhenCalendar extends Scope {
+    constructor(page: Page, scope = 'date_time_picker_modal.when.calendar', root?: Locator) {
+        super(page, scope, root);
+    }
+
+    /**
+     * `date_time_picker_modal.when.calendar.day:{key}--text` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    day(day: string) {
+        return drivers.text(this.byTestId(`${this.scope}.day:${day}--text`), {
+            testId: `${this.scope}.day:${day}--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `date_time_picker_modal.when.calendar.day:{key}--text` in the scope. */
+    get dayItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.day:`, '--text');
+    }
+
+    /** The keys of every `date_time_picker_modal.when.calendar.day:{key}--text` in the scope, in document order. */
+    dayKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.day:`, '--text');
+    }
+
+    /**
+     * `date_time_picker_modal.when.calendar.next_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    get nextMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.next_month`), {
+            testId: `${this.scope}.next_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /**
+     * `date_time_picker_modal.when.calendar.previous_month` — DatePicker (channels/src/components/date_picker/date_picker.tsx)
+     */
+    get previousMonth() {
+        return drivers.container(this.byTestId(`${this.scope}.previous_month`), {
+            testId: `${this.scope}.previous_month`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+        });
+    }
+
+    /** Every `date_time_picker_modal.when.calendar.day:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.dayList).toHaveKeys([…])`. */
+    get dayList() {
+        return this.keyedList(`${this.scope}.day:`, '--text', (key: string) =>
+            drivers.text(this.byTestId(`${this.scope}.day:${key}--text`), {
+                testId: `${this.scope}.day:${key}--text`,
+                role: 'text',
+                effects: [],
+                unknownEffects: false,
+                source: 'channels/src/components/date_picker/date_picker.tsx#DatePicker',
+            }),
+        );
     }
 }
 

@@ -13968,6 +13968,196 @@
       }
     },
     {
+      "template": "center.post_create.message.preview",
+      "grammar": true,
+      "scope": [
+        "center",
+        "post_create",
+        "message"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "AppsFormContainer",
+          "at": "channels/src/actions/apps.ts#openAppsModal"
+        },
+        {
+          "kind": "modal",
+          "target": "DeletePostModal",
+          "at": "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor",
+          "scope": "delete_post_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelHeaderModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "edit_channel_header_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelPurposeModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "KeyboardShortcutsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "LeaveChannelModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "MarketplaceModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "NotifyConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "notify_confirm_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "PersistNotificationConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_priority.tsx#usePriority"
+        },
+        {
+          "kind": "modal",
+          "target": "PostDeletedModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "post_deleted_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "ReactionLimitReachedModal",
+          "at": "channels/src/actions/post_actions.ts#addReaction"
+        },
+        {
+          "kind": "modal",
+          "target": "ResetStatusModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "UserSettingsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/channels/${redirectChannel}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation.substring(siteURL.length)",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "CreatePost",
+          "CreateScheduledPost",
+          "DeleteDraftMe",
+          "DeleteReaction",
+          "ExecuteCommand",
+          "GetChannel",
+          "GetChannelByNameForTeamName",
+          "GetChannelMemberCountsByGroup",
+          "GetChannelMemberMe",
+          "GetChannelMembers",
+          "GetChannelMembersTimezones",
+          "GetEmojisByNames",
+          "GetGroups",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUser",
+          "GetUserByUsername",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "Logout",
+          "PatchPost",
+          "SaveReaction",
+          "SearchFiles",
+          "SearchPostsInAllTeams",
+          "UpdatePreferences",
+          "UpdateSidebarCategoriesForTeamForUser",
+          "UpsertDraft",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#emitLocalUserTypingEvent",
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded",
+          "channels/src/actions/views/create_comment.tsx#submitPost",
+          "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "channels/src/packages/mattermost-redux/src/actions/posts.ts#createPost",
+          "channels/src/packages/mattermost-redux/src/utils/event_emitter.ts#EventEmitter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!wysiwygEnabled",
+          "explained": "!wysiwygEnabled",
+          "kind": "store selector"
+        }
+      ],
+      "renders": [
+        "markdown"
+      ]
+    },
+    {
       "template": "center.post_create.message.suggestions.group:{key}",
       "grammar": true,
       "scope": [
@@ -29872,6 +30062,94 @@
       ]
     },
     {
+      "template": "date_time_picker_modal.when.calendar.day:{key}--text",
+      "grammar": true,
+      "scope": [
+        "date_time_picker_modal",
+        "when",
+        "calendar"
+      ],
+      "name": "day",
+      "role": "text",
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/date_time_picker_modal/date_time_picker_modal.tsx#DateTimePickerModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string"
+      }
+    },
+    {
+      "template": "date_time_picker_modal.when.calendar.next_month",
+      "grammar": true,
+      "scope": [
+        "date_time_picker_modal",
+        "when",
+        "calendar"
+      ],
+      "name": "next_month",
+      "role": null,
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/date_time_picker_modal/date_time_picker_modal.tsx#DateTimePickerModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
+      "template": "date_time_picker_modal.when.calendar.previous_month",
+      "grammar": true,
+      "scope": [
+        "date_time_picker_modal",
+        "when",
+        "calendar"
+      ],
+      "name": "previous_month",
+      "role": null,
+      "component": {
+        "name": "DatePicker",
+        "at": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/datetime_input/datetime_input.tsx#DateTimeInputContainer",
+            "channels/src/components/date_time_picker_modal/date_time_picker_modal.tsx#DateTimePickerModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "date_time_picker_modal.when.date--button",
       "grammar": true,
       "scope": [
@@ -32480,6 +32758,76 @@
       ]
     },
     {
+      "template": "drafts.scheduled.post.editor.preview",
+      "grammar": true,
+      "scope": [
+        "drafts",
+        "scheduled",
+        "post",
+        "editor"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/edit_scheduled_post/edit_post.tsx#EditPost",
+            "channels/src/components/drafts/draft_row.tsx#DraftRow"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "DeletePostModal",
+          "at": "channels/src/components/edit_scheduled_post/edit_post.tsx#EditPost",
+          "scope": "delete_post_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "DeleteScheduledPostModal",
+          "at": "channels/src/components/edit_scheduled_post/edit_post.tsx#EditPost",
+          "dialogOps": [
+            "DeleteScheduledPost"
+          ],
+          "scope": "delete_scheduled_post_modal"
+        }
+      ],
+      "effects": {
+        "ops": [
+          "DeleteScheduledPost",
+          "PatchPost",
+          "UpdateScheduledPost"
+        ],
+        "unknown": true,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(!channel && !isScheduledPost)",
+          "explained": "!(!getChannelSelector(state, channelId) && !isScheduledPost)",
+          "kind": "store selector"
+        },
+        {
+          "expr": "isEditing",
+          "explained": "isEditing",
+          "kind": "local state"
+        }
+      ],
+      "renders": [
+        "markdown"
+      ]
+    },
+    {
       "template": "drafts.scheduled.post.editor.save--button",
       "grammar": true,
       "scope": [
@@ -33462,6 +33810,44 @@
           "channels/src/components/suggestion/suggestion_box/suggestion_box.tsx#SuggestionBox"
         ]
       }
+    },
+    {
+      "template": "edit_channel_header_modal.header.preview",
+      "grammar": true,
+      "scope": [
+        "edit_channel_header_modal",
+        "header"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/edit_channel_header_modal/edit_channel_header_modal.tsx#EditChannelHeaderModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "PatchChannel"
+        ],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/textbox/textbox.tsx#Textbox"
+        ]
+      },
+      "renders": [
+        "markdown"
+      ]
     },
     {
       "template": "edit_channel_header_modal.header.suggestions.group:{key}",
@@ -36746,6 +37132,81 @@
           "channels/src/components/suggestion/suggestion_box/suggestion_box.tsx#SuggestionBox"
         ]
       }
+    },
+    {
+      "template": "forward_post_modal.comment.preview",
+      "grammar": true,
+      "scope": [
+        "forward_post_modal",
+        "comment"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/forward_post_modal/forward_post_comment_input.tsx#ForwardPostCommentInput"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/${channel.name}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/channels/${channel.name}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/channels/${gmChannel.name}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/messages/@${channel.name}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "AddChannelMember",
+          "CreateDirectChannel",
+          "CreatePost",
+          "GetChannel",
+          "GetChannelByName",
+          "GetChannelMember",
+          "GetPropertyValues",
+          "GetRolesByNames",
+          "UpdatePreferences"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/components/forward_post_modal/forward_post_comment_input.tsx#ForwardPostCommentInput",
+          "channels/src/components/forward_post_modal/index.tsx#ForwardPostModal",
+          "channels/src/components/textbox/textbox.tsx#Textbox",
+          "channels/src/packages/mattermost-redux/src/actions/posts.ts#createPost"
+        ]
+      },
+      "renders": [
+        "markdown"
+      ]
     },
     {
       "template": "forward_post_modal.comment.suggestions.group:{key}",
@@ -46938,162 +47399,6 @@
       ]
     },
     {
-      "template": "mentionFilterChips",
-      "grammar": false,
-      "scope": [],
-      "name": "mentionFilterChips",
-      "role": null,
-      "component": {
-        "name": "MentionFilterChips",
-        "at": "channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "hasFilters",
-          "explained": "hasFilters",
-          "kind": "store selector",
-          "viaLocal": true
-        },
-        {
-          "expr": "isMentionSearch",
-          "explained": "isMentionSearch",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "mentionFiltersButton",
-      "grammar": false,
-      "scope": [],
-      "name": "mentionFiltersButton",
-      "role": null,
-      "component": {
-        "name": "MentionFiltersButton",
-        "at": "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": "button",
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "isMentionSearch",
-          "explained": "isMentionSearch",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "mentionFiltersChannelSelector",
-      "grammar": false,
-      "scope": [],
-      "name": "mentionFiltersChannelSelector",
-      "role": null,
-      "component": {
-        "name": "MentionFiltersPopover",
-        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "isMounted",
-          "explained": "isMounted",
-          "kind": "other"
-        }
-      ]
-    },
-    {
-      "template": "mentionFiltersPopover",
-      "grammar": false,
-      "scope": [],
-      "name": "mentionFiltersPopover",
-      "role": null,
-      "component": {
-        "name": "MentionFiltersButton",
-        "at": "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "isMounted",
-          "explained": "isMounted",
-          "kind": "other"
-        },
-        {
-          "expr": "isMentionSearch",
-          "explained": "isMentionSearch",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "mentionFiltersTeamSelector",
-      "grammar": false,
-      "scope": [],
-      "name": "mentionFiltersTeamSelector",
-      "role": null,
-      "component": {
-        "name": "MentionFiltersPopover",
-        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "isMounted",
-          "explained": "isMounted",
-          "kind": "other"
-        },
-        {
-          "expr": "showTeamSelector",
-          "explained": "showTeamSelector",
-          "kind": "prop"
-        }
-      ]
-    },
-    {
       "template": "mentionInput",
       "grammar": false,
       "scope": [],
@@ -49151,6 +49456,196 @@
           "channels/src/packages/mattermost-redux/src/utils/event_emitter.ts#EventEmitter"
         ]
       }
+    },
+    {
+      "template": "modal.post_create.message.preview",
+      "grammar": true,
+      "scope": [
+        "modal",
+        "post_create",
+        "message"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "AppsFormContainer",
+          "at": "channels/src/actions/apps.ts#openAppsModal"
+        },
+        {
+          "kind": "modal",
+          "target": "DeletePostModal",
+          "at": "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor",
+          "scope": "delete_post_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelHeaderModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "edit_channel_header_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelPurposeModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "KeyboardShortcutsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "LeaveChannelModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "MarketplaceModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "NotifyConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "notify_confirm_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "PersistNotificationConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_priority.tsx#usePriority"
+        },
+        {
+          "kind": "modal",
+          "target": "PostDeletedModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "post_deleted_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "ReactionLimitReachedModal",
+          "at": "channels/src/actions/post_actions.ts#addReaction"
+        },
+        {
+          "kind": "modal",
+          "target": "ResetStatusModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "UserSettingsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/channels/${redirectChannel}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation.substring(siteURL.length)",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "CreatePost",
+          "CreateScheduledPost",
+          "DeleteDraftMe",
+          "DeleteReaction",
+          "ExecuteCommand",
+          "GetChannel",
+          "GetChannelByNameForTeamName",
+          "GetChannelMemberCountsByGroup",
+          "GetChannelMemberMe",
+          "GetChannelMembers",
+          "GetChannelMembersTimezones",
+          "GetEmojisByNames",
+          "GetGroups",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUser",
+          "GetUserByUsername",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "Logout",
+          "PatchPost",
+          "SaveReaction",
+          "SearchFiles",
+          "SearchPostsInAllTeams",
+          "UpdatePreferences",
+          "UpdateSidebarCategoriesForTeamForUser",
+          "UpsertDraft",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#emitLocalUserTypingEvent",
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded",
+          "channels/src/actions/views/create_comment.tsx#submitPost",
+          "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "channels/src/packages/mattermost-redux/src/actions/posts.ts#createPost",
+          "channels/src/packages/mattermost-redux/src/utils/event_emitter.ts#EventEmitter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!wysiwygEnabled",
+          "explained": "!wysiwygEnabled",
+          "kind": "store selector"
+        }
+      ],
+      "renders": [
+        "markdown"
+      ]
     },
     {
       "template": "modal.post_create.message.suggestions.group:{key}",
@@ -54205,6 +54700,196 @@
       }
     },
     {
+      "template": "plugin.post_create.message.preview",
+      "grammar": true,
+      "scope": [
+        "plugin",
+        "post_create",
+        "message"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "AppsFormContainer",
+          "at": "channels/src/actions/apps.ts#openAppsModal"
+        },
+        {
+          "kind": "modal",
+          "target": "DeletePostModal",
+          "at": "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor",
+          "scope": "delete_post_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelHeaderModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "edit_channel_header_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelPurposeModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "KeyboardShortcutsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "LeaveChannelModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "MarketplaceModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "NotifyConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "notify_confirm_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "PersistNotificationConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_priority.tsx#usePriority"
+        },
+        {
+          "kind": "modal",
+          "target": "PostDeletedModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "post_deleted_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "ReactionLimitReachedModal",
+          "at": "channels/src/actions/post_actions.ts#addReaction"
+        },
+        {
+          "kind": "modal",
+          "target": "ResetStatusModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "UserSettingsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/channels/${redirectChannel}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation.substring(siteURL.length)",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "CreatePost",
+          "CreateScheduledPost",
+          "DeleteDraftMe",
+          "DeleteReaction",
+          "ExecuteCommand",
+          "GetChannel",
+          "GetChannelByNameForTeamName",
+          "GetChannelMemberCountsByGroup",
+          "GetChannelMemberMe",
+          "GetChannelMembers",
+          "GetChannelMembersTimezones",
+          "GetEmojisByNames",
+          "GetGroups",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUser",
+          "GetUserByUsername",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "Logout",
+          "PatchPost",
+          "SaveReaction",
+          "SearchFiles",
+          "SearchPostsInAllTeams",
+          "UpdatePreferences",
+          "UpdateSidebarCategoriesForTeamForUser",
+          "UpsertDraft",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#emitLocalUserTypingEvent",
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded",
+          "channels/src/actions/views/create_comment.tsx#submitPost",
+          "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "channels/src/packages/mattermost-redux/src/actions/posts.ts#createPost",
+          "channels/src/packages/mattermost-redux/src/utils/event_emitter.ts#EventEmitter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!wysiwygEnabled",
+          "explained": "!wysiwygEnabled",
+          "kind": "store selector"
+        }
+      ],
+      "renders": [
+        "markdown"
+      ]
+    },
+    {
       "template": "plugin.post_create.message.suggestions.group:{key}",
       "grammar": true,
       "scope": [
@@ -58045,6 +58730,196 @@
           "channels/src/packages/mattermost-redux/src/utils/event_emitter.ts#EventEmitter"
         ]
       }
+    },
+    {
+      "template": "post_edit.editor.message.preview",
+      "grammar": true,
+      "scope": [
+        "post_edit",
+        "editor",
+        "message"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "AppsFormContainer",
+          "at": "channels/src/actions/apps.ts#openAppsModal"
+        },
+        {
+          "kind": "modal",
+          "target": "DeletePostModal",
+          "at": "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor",
+          "scope": "delete_post_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelHeaderModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "edit_channel_header_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelPurposeModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "KeyboardShortcutsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "LeaveChannelModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "MarketplaceModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "NotifyConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "notify_confirm_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "PersistNotificationConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_priority.tsx#usePriority"
+        },
+        {
+          "kind": "modal",
+          "target": "PostDeletedModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "post_deleted_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "ReactionLimitReachedModal",
+          "at": "channels/src/actions/post_actions.ts#addReaction"
+        },
+        {
+          "kind": "modal",
+          "target": "ResetStatusModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "UserSettingsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/channels/${redirectChannel}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation.substring(siteURL.length)",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "CreatePost",
+          "CreateScheduledPost",
+          "DeleteDraftMe",
+          "DeleteReaction",
+          "ExecuteCommand",
+          "GetChannel",
+          "GetChannelByNameForTeamName",
+          "GetChannelMemberCountsByGroup",
+          "GetChannelMemberMe",
+          "GetChannelMembers",
+          "GetChannelMembersTimezones",
+          "GetEmojisByNames",
+          "GetGroups",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUser",
+          "GetUserByUsername",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "Logout",
+          "PatchPost",
+          "SaveReaction",
+          "SearchFiles",
+          "SearchPostsInAllTeams",
+          "UpdatePreferences",
+          "UpdateSidebarCategoriesForTeamForUser",
+          "UpsertDraft",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#emitLocalUserTypingEvent",
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded",
+          "channels/src/actions/views/create_comment.tsx#submitPost",
+          "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "channels/src/packages/mattermost-redux/src/actions/posts.ts#createPost",
+          "channels/src/packages/mattermost-redux/src/utils/event_emitter.ts#EventEmitter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!wysiwygEnabled",
+          "explained": "!wysiwygEnabled",
+          "kind": "store selector"
+        }
+      ],
+      "renders": [
+        "markdown"
+      ]
     },
     {
       "template": "post_edit.editor.message.suggestions.group:{key}",
@@ -68344,6 +69219,196 @@
       }
     },
     {
+      "template": "rhs.post_create.message.preview",
+      "grammar": true,
+      "scope": [
+        "rhs",
+        "post_create",
+        "message"
+      ],
+      "name": "preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "opens": [
+        {
+          "kind": "modal",
+          "target": "AppsFormContainer",
+          "at": "channels/src/actions/apps.ts#openAppsModal"
+        },
+        {
+          "kind": "modal",
+          "target": "DeletePostModal",
+          "at": "channels/src/components/advanced_text_editor/advanced_text_editor.tsx#AdvancedTextEditor",
+          "scope": "delete_post_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelHeaderModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "edit_channel_header_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "EditChannelPurposeModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "KeyboardShortcutsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "LeaveChannelModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "MarketplaceModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "modal",
+          "target": "NotifyConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "notify_confirm_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "PersistNotificationConfirmModal",
+          "at": "channels/src/components/advanced_text_editor/use_priority.tsx#usePriority"
+        },
+        {
+          "kind": "modal",
+          "target": "PostDeletedModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "scope": "post_deleted_modal"
+        },
+        {
+          "kind": "modal",
+          "target": "ReactionLimitReachedModal",
+          "at": "channels/src/actions/post_actions.ts#addReaction"
+        },
+        {
+          "kind": "modal",
+          "target": "ResetStatusModal",
+          "at": "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit"
+        },
+        {
+          "kind": "modal",
+          "target": "UserSettingsModal",
+          "at": "channels/src/actions/command.ts#executeCommand"
+        },
+        {
+          "kind": "page",
+          "target": "`${teamUrl}/channels/${redirectChannel}`",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "goToLocation.substring(siteURL.length)",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "navigateURL",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "redirectTo",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        },
+        {
+          "kind": "page",
+          "target": "url",
+          "at": "channels/src/components/textbox/textbox.tsx#Textbox",
+          "conditional": true
+        }
+      ],
+      "effects": {
+        "ops": [
+          "CreatePost",
+          "CreateScheduledPost",
+          "DeleteDraftMe",
+          "DeleteReaction",
+          "ExecuteCommand",
+          "GetChannel",
+          "GetChannelByNameForTeamName",
+          "GetChannelMemberCountsByGroup",
+          "GetChannelMemberMe",
+          "GetChannelMembers",
+          "GetChannelMembersTimezones",
+          "GetEmojisByNames",
+          "GetGroups",
+          "GetGroupsByNames",
+          "GetPostThread",
+          "GetRolesByNames",
+          "GetUser",
+          "GetUserByUsername",
+          "GetUsersByGroupChannelIds",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "Logout",
+          "PatchPost",
+          "SaveReaction",
+          "SearchFiles",
+          "SearchPostsInAllTeams",
+          "UpdatePreferences",
+          "UpdateSidebarCategoriesForTeamForUser",
+          "UpsertDraft",
+          "ViewChannelMe"
+        ],
+        "unknown": true,
+        "delegated": [
+          "channels/src/actions/global_actions.tsx#emitLocalUserTypingEvent",
+          "channels/src/actions/global_actions.tsx#sendEphemeralPost",
+          "channels/src/actions/user_actions.ts#loadNewDMIfNeeded",
+          "channels/src/actions/user_actions.ts#loadNewGMIfNeeded",
+          "channels/src/actions/views/create_comment.tsx#submitPost",
+          "channels/src/components/advanced_text_editor/use_submit.tsx#useSubmit",
+          "channels/src/packages/mattermost-redux/src/actions/posts.ts#createPost",
+          "channels/src/packages/mattermost-redux/src/utils/event_emitter.ts#EventEmitter"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "!wysiwygEnabled",
+          "explained": "!wysiwygEnabled",
+          "kind": "store selector"
+        }
+      ],
+      "renders": [
+        "markdown"
+      ]
+    },
+    {
       "template": "rhs.post_create.message.suggestions.group:{key}",
       "grammar": true,
       "scope": [
@@ -77491,6 +78556,598 @@
       ]
     },
     {
+      "template": "search.mention_filters.chips",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters"
+      ],
+      "name": "chips",
+      "role": null,
+      "component": {
+        "name": "MentionFilterChips",
+        "at": "channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasFilters",
+          "explained": "hasFilters",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.chips.chip:{key}--button",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "chips"
+      ],
+      "name": "chip",
+      "role": "button",
+      "component": {
+        "name": "MentionFilterChips",
+        "at": "channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ],
+          "keySet": [
+            "direct",
+            "group",
+            "keyword"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "string",
+        "type": "string",
+        "values": [
+          "direct",
+          "group",
+          "keyword"
+        ],
+        "set": "SearchChip"
+      },
+      "effects": {
+        "ops": [
+          "GetChannel",
+          "GetChannelMemberMe",
+          "GetChannelMembers",
+          "GetGroupsByNames",
+          "GetRolesByNames",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "SearchFiles",
+          "SearchPostsInAllTeams"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "hasFilters",
+          "explained": "hasFilters",
+          "kind": "store selector",
+          "viaLocal": true
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.popover--dialog",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters"
+      ],
+      "name": "popover",
+      "role": "dialog",
+      "component": {
+        "name": "MentionFiltersButton",
+        "at": "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "dialog",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.popover.apply--button",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "apply",
+      "role": "button",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [
+          "GetChannel",
+          "GetChannelMemberMe",
+          "GetChannelMembers",
+          "GetGroupsByNames",
+          "GetRolesByNames",
+          "GetUsersByIds",
+          "GetUsersByUsernames",
+          "GetUsersStatusesByIds",
+          "SearchFiles",
+          "SearchPostsInAllTeams"
+        ],
+        "unknown": false,
+        "delegated": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.popover.channel_option:{key}--option",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "channel_option",
+      "role": "option",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "Channel",
+        "field": "id",
+        "module": "@mattermost/types/channels",
+        "type": "Pick<Channel, 'id'>"
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.popover.channels--combobox",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "channels",
+      "role": "combobox",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "combobox",
+        "native": false,
+        "state": [
+          "value"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ],
+      "form": {
+        "scope": "search.mention_filters.popover",
+        "field": "channels",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "search.mention_filters.popover.date:{key}--radio",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "date",
+      "role": "radio",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ],
+          "keySet": [
+            "any",
+            "last_7_days",
+            "today"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "radio",
+        "native": false,
+        "state": [
+          "checked"
+        ]
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"any\" | \"last_7_days\" | \"today\"",
+        "values": [
+          "any",
+          "last_7_days",
+          "today"
+        ],
+        "set": "SearchDate"
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.popover.mention_type:{key}--checkbox",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "mention_type",
+      "role": "checkbox",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ],
+          "keySet": [
+            "direct",
+            "group",
+            "keyword"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "checkbox",
+        "native": false,
+        "state": [
+          "checked"
+        ]
+      },
+      "key": {
+        "kind": "set",
+        "type": "\"direct\" | \"group\" | \"keyword\"",
+        "values": [
+          "direct",
+          "group",
+          "keyword"
+        ],
+        "set": "SearchMentionType"
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.popover.reset--button",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "reset",
+      "role": "button",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": [
+          "disabled"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.popover.team--combobox",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "team",
+      "role": "combobox",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "combobox",
+        "native": false,
+        "state": [
+          "value"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "showTeamSelector",
+          "explained": "showTeamSelector",
+          "kind": "prop"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ],
+      "form": {
+        "scope": "search.mention_filters.popover",
+        "field": "team",
+        "valueType": "string"
+      }
+    },
+    {
+      "template": "search.mention_filters.popover.team_option:{key}--option",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters",
+        "popover"
+      ],
+      "name": "team_option",
+      "role": "option",
+      "component": {
+        "name": "MentionFiltersPopover",
+        "at": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton",
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ],
+          "keySet": [
+            "all_teams"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "key": {
+        "kind": "entity",
+        "entity": "Team",
+        "field": "id",
+        "module": "@mattermost/types/teams",
+        "type": "Pick<Team, 'id'>",
+        "values": [
+          "all_teams"
+        ]
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMounted",
+          "explained": "isMounted",
+          "kind": "other"
+        },
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
+      "template": "search.mention_filters.trigger--button",
+      "grammar": true,
+      "scope": [
+        "search",
+        "mention_filters"
+      ],
+      "name": "trigger",
+      "role": "button",
+      "component": {
+        "name": "MentionFiltersButton",
+        "at": "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/search_results/search_results.tsx#SearchResults"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "button",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "isMentionSearch",
+          "explained": "isMentionSearch",
+          "kind": "prop"
+        }
+      ]
+    },
+    {
       "template": "search.mobile_bar.back--button",
       "grammar": true,
       "scope": [
@@ -77553,6 +79210,36 @@
         "unknown": false,
         "delegated": []
       }
+    },
+    {
+      "template": "search.panel",
+      "grammar": true,
+      "scope": [
+        "search"
+      ],
+      "name": "panel",
+      "role": null,
+      "component": {
+        "name": "SearchResults",
+        "at": "channels/src/components/search_results/search_results.tsx#SearchResults"
+      },
+      "instances": [
+        {
+          "via": []
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "searchVisible",
+          "explained": "searchVisible",
+          "kind": "prop"
+        }
+      ]
     },
     {
       "template": "search.results.date_separator",
@@ -97401,6 +99088,36 @@
       ]
     },
     {
+      "template": "{key}.preview",
+      "grammar": false,
+      "scope": [],
+      "name": "{key}.preview",
+      "role": null,
+      "component": {
+        "name": "Textbox",
+        "at": "channels/src/components/textbox/textbox.tsx#Textbox"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/plugins/textbox/index.tsx#PluginTextbox"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "effects": {
+        "ops": [],
+        "unknown": false,
+        "delegated": [
+          "channels/src/components/textbox/textbox.tsx#Textbox"
+        ]
+      }
+    },
+    {
       "template": "{key}.{key}",
       "grammar": false,
       "scope": [],
@@ -98531,6 +100248,33 @@
         "messages"
       ],
       "source": "channels/src/components/new_search/search_box_type_selector.tsx#SearchTypeSelector"
+    },
+    {
+      "name": "SearchChip",
+      "values": [
+        "direct",
+        "group",
+        "keyword"
+      ],
+      "source": "channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips"
+    },
+    {
+      "name": "SearchDate",
+      "values": [
+        "any",
+        "last_7_days",
+        "today"
+      ],
+      "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+    },
+    {
+      "name": "SearchMentionType",
+      "values": [
+        "direct",
+        "group",
+        "keyword"
+      ],
+      "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
     }
   ],
   "operations": [
@@ -99878,6 +101622,7 @@
         "center.post_create.ai_actions.rewrite.prompt",
         "center.post_create.ai_actions.rewrite.prompt.field",
         "center.post_create.formatting_bar",
+        "center.post_create.message.preview",
         "center.post_create.message.suggestions",
         "center.post_create.message.suggestions.loading",
         "center.post_create.scheduled_post_indicator",
@@ -99897,6 +101642,7 @@
         "modal.post_create.ai_actions.rewrite.prompt",
         "modal.post_create.ai_actions.rewrite.prompt.field",
         "modal.post_create.formatting_bar",
+        "modal.post_create.message.preview",
         "modal.post_create.message.suggestions",
         "modal.post_create.message.suggestions.loading",
         "no_results",
@@ -99907,6 +101653,7 @@
         "plugin.post_create.ai_actions.rewrite.prompt",
         "plugin.post_create.ai_actions.rewrite.prompt.field",
         "plugin.post_create.formatting_bar",
+        "plugin.post_create.message.preview",
         "plugin.post_create.message.suggestions",
         "plugin.post_create.message.suggestions.loading",
         "post_edit.editor",
@@ -99916,6 +101663,7 @@
         "post_edit.editor.ai_actions.rewrite.prompt",
         "post_edit.editor.ai_actions.rewrite.prompt.field",
         "post_edit.editor.formatting_bar",
+        "post_edit.editor.message.preview",
         "post_edit.editor.message.suggestions",
         "post_edit.editor.message.suggestions.loading",
         "profile_popover",
@@ -99928,6 +101676,7 @@
         "rhs.post_create.ai_actions.rewrite.prompt",
         "rhs.post_create.ai_actions.rewrite.prompt.field",
         "rhs.post_create.formatting_bar",
+        "rhs.post_create.message.preview",
         "rhs.post_create.message.suggestions",
         "rhs.post_create.message.suggestions.loading",
         "rhs.post_create.scheduled_post_indicator",
@@ -100123,6 +101872,7 @@
         "center.post_create.ai_actions.rewrite.prompt",
         "center.post_create.ai_actions.rewrite.prompt.field",
         "center.post_create.formatting_bar",
+        "center.post_create.message.preview",
         "center.post_create.message.suggestions",
         "center.post_create.message.suggestions.loading",
         "center.post_create.scheduled_post_indicator",
@@ -100179,6 +101929,7 @@
         "modal.post_create.ai_actions.rewrite.prompt",
         "modal.post_create.ai_actions.rewrite.prompt.field",
         "modal.post_create.formatting_bar",
+        "modal.post_create.message.preview",
         "modal.post_create.message.suggestions",
         "modal.post_create.message.suggestions.loading",
         "no_results",
@@ -100189,6 +101940,7 @@
         "plugin.post_create.ai_actions.rewrite.prompt",
         "plugin.post_create.ai_actions.rewrite.prompt.field",
         "plugin.post_create.formatting_bar",
+        "plugin.post_create.message.preview",
         "plugin.post_create.message.suggestions",
         "plugin.post_create.message.suggestions.loading",
         "post_dot_menu",
@@ -100201,6 +101953,7 @@
         "post_edit.editor.ai_actions.rewrite.prompt",
         "post_edit.editor.ai_actions.rewrite.prompt.field",
         "post_edit.editor.formatting_bar",
+        "post_edit.editor.message.preview",
         "post_edit.editor.message.suggestions",
         "post_edit.editor.message.suggestions.loading",
         "profile_popover",
@@ -100213,6 +101966,7 @@
         "rhs.post_create.ai_actions.rewrite.prompt",
         "rhs.post_create.ai_actions.rewrite.prompt.field",
         "rhs.post_create.formatting_bar",
+        "rhs.post_create.message.preview",
         "rhs.post_create.message.suggestions",
         "rhs.post_create.message.suggestions.loading",
         "rhs.post_create.scheduled_post_indicator",
@@ -100391,6 +102145,7 @@
         "center.post_create.ai_actions.rewrite.prompt",
         "center.post_create.ai_actions.rewrite.prompt.field",
         "center.post_create.formatting_bar",
+        "center.post_create.message.preview",
         "center.post_create.message.suggestions",
         "center.post_create.message.suggestions.loading",
         "center.post_create.scheduled_post_indicator",
@@ -100455,6 +102210,7 @@
         "modal.post_create.ai_actions.rewrite.prompt",
         "modal.post_create.ai_actions.rewrite.prompt.field",
         "modal.post_create.formatting_bar",
+        "modal.post_create.message.preview",
         "modal.post_create.message.suggestions",
         "modal.post_create.message.suggestions.loading",
         "no_results",
@@ -100465,6 +102221,7 @@
         "plugin.post_create.ai_actions.rewrite.prompt",
         "plugin.post_create.ai_actions.rewrite.prompt.field",
         "plugin.post_create.formatting_bar",
+        "plugin.post_create.message.preview",
         "plugin.post_create.message.suggestions",
         "plugin.post_create.message.suggestions.loading",
         "post_dot_menu",
@@ -100477,6 +102234,7 @@
         "post_edit.editor.ai_actions.rewrite.prompt",
         "post_edit.editor.ai_actions.rewrite.prompt.field",
         "post_edit.editor.formatting_bar",
+        "post_edit.editor.message.preview",
         "post_edit.editor.message.suggestions",
         "post_edit.editor.message.suggestions.loading",
         "profile_popover",
@@ -100515,6 +102273,7 @@
         "rhs.post_create.ai_actions.rewrite.prompt",
         "rhs.post_create.ai_actions.rewrite.prompt.field",
         "rhs.post_create.formatting_bar",
+        "rhs.post_create.message.preview",
         "rhs.post_create.message.suggestions",
         "rhs.post_create.message.suggestions.loading",
         "rhs.post_create.scheduled_post_indicator",
@@ -100573,7 +102332,11 @@
         "rhs.thread.scroller",
         "rhs.thread.toast",
         "search.header",
+        "search.mention_filters",
+        "search.mention_filters.chips",
+        "search.mention_filters.popover",
         "search.mobile_bar",
+        "search.panel",
         "search.results",
         "search.results.date_separator",
         "search.results.file",
@@ -100706,6 +102469,7 @@
         "center.post_create.ai_actions.rewrite.prompt",
         "center.post_create.ai_actions.rewrite.prompt.field",
         "center.post_create.formatting_bar",
+        "center.post_create.message.preview",
         "center.post_create.message.suggestions",
         "center.post_create.message.suggestions.loading",
         "center.post_create.scheduled_post_indicator",
@@ -100762,6 +102526,7 @@
         "modal.post_create.ai_actions.rewrite.prompt",
         "modal.post_create.ai_actions.rewrite.prompt.field",
         "modal.post_create.formatting_bar",
+        "modal.post_create.message.preview",
         "modal.post_create.message.suggestions",
         "modal.post_create.message.suggestions.loading",
         "no_results",
@@ -100772,6 +102537,7 @@
         "plugin.post_create.ai_actions.rewrite.prompt",
         "plugin.post_create.ai_actions.rewrite.prompt.field",
         "plugin.post_create.formatting_bar",
+        "plugin.post_create.message.preview",
         "plugin.post_create.message.suggestions",
         "plugin.post_create.message.suggestions.loading",
         "post_dot_menu",
@@ -100784,6 +102550,7 @@
         "post_edit.editor.ai_actions.rewrite.prompt",
         "post_edit.editor.ai_actions.rewrite.prompt.field",
         "post_edit.editor.formatting_bar",
+        "post_edit.editor.message.preview",
         "post_edit.editor.message.suggestions",
         "post_edit.editor.message.suggestions.loading",
         "profile_popover",
@@ -100796,6 +102563,7 @@
         "rhs.post_create.ai_actions.rewrite.prompt",
         "rhs.post_create.ai_actions.rewrite.prompt.field",
         "rhs.post_create.formatting_bar",
+        "rhs.post_create.message.preview",
         "rhs.post_create.message.suggestions",
         "rhs.post_create.message.suggestions.loading",
         "rhs.post_create.scheduled_post_indicator",
@@ -101571,6 +103339,7 @@
       "at": "channels/src/components/edit_channel_header_modal/edit_channel_header_modal.tsx#EditChannelHeaderModal",
       "scopes": [
         "edit_channel_header_modal",
+        "edit_channel_header_modal.header",
         "markdown",
         "no_results",
         "profile_popover",
@@ -101610,6 +103379,7 @@
       "at": "channels/src/components/forward_post_modal/index.tsx#ForwardPostModal",
       "scopes": [
         "forward_post_modal",
+        "forward_post_modal.comment",
         "forward_post_modal.notification",
         "forward_post_modal.preview",
         "forward_post_modal.preview.attachments",
@@ -101785,6 +103555,7 @@
       "scopes": [
         "date_time_picker_modal",
         "date_time_picker_modal.when",
+        "date_time_picker_modal.when.calendar",
         "date_time_picker_modal.when.time_menu"
       ]
     },
@@ -101799,6 +103570,7 @@
         "center.post_create.ai_actions.rewrite",
         "center.post_create.ai_actions.rewrite.prompt",
         "center.post_create.formatting_bar",
+        "center.post_create.message",
         "center.post_create.message.suggestions",
         "center.post_create.scheduled_post_indicator",
         "center.post_list",
@@ -101837,6 +103609,7 @@
         "modal.post_create.ai_actions.rewrite",
         "modal.post_create.ai_actions.rewrite.prompt",
         "modal.post_create.formatting_bar",
+        "modal.post_create.message",
         "modal.post_create.message.suggestions",
         "plugin",
         "plugin.post_create",
@@ -101845,6 +103618,7 @@
         "plugin.post_create.ai_actions.rewrite",
         "plugin.post_create.ai_actions.rewrite.prompt",
         "plugin.post_create.formatting_bar",
+        "plugin.post_create.message",
         "plugin.post_create.message.suggestions",
         "post_dot_menu",
         "post_dot_menu.remind_menu",
@@ -101855,6 +103629,7 @@
         "post_edit.editor.ai_actions.rewrite",
         "post_edit.editor.ai_actions.rewrite.prompt",
         "post_edit.editor.formatting_bar",
+        "post_edit.editor.message",
         "post_edit.editor.message.suggestions",
         "profile_popover",
         "profile_popover.actions",
@@ -101865,6 +103640,7 @@
         "rhs.post_create.ai_actions.rewrite",
         "rhs.post_create.ai_actions.rewrite.prompt",
         "rhs.post_create.formatting_bar",
+        "rhs.post_create.message",
         "rhs.post_create.message.suggestions",
         "rhs.post_create.scheduled_post_indicator",
         "rhs.thread",
@@ -101993,6 +103769,7 @@
       "scopes": [
         "date_time_picker_modal",
         "date_time_picker_modal.when",
+        "date_time_picker_modal.when.calendar",
         "date_time_picker_modal.when.time_menu"
       ]
     },

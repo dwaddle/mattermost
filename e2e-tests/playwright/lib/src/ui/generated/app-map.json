@@ -152,6 +152,7 @@
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
+                "center.post_create.message.preview",
                 "center.post_create.message.suggestions",
                 "center.post_create.message.suggestions.loading",
                 "center.post_create.scheduled_post_indicator",
@@ -216,6 +217,7 @@
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
+                "modal.post_create.message.preview",
                 "modal.post_create.message.suggestions",
                 "modal.post_create.message.suggestions.loading",
                 "no_results",
@@ -226,6 +228,7 @@
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
+                "plugin.post_create.message.preview",
                 "plugin.post_create.message.suggestions",
                 "plugin.post_create.message.suggestions.loading",
                 "post_dot_menu",
@@ -238,6 +241,7 @@
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
+                "post_edit.editor.message.preview",
                 "post_edit.editor.message.suggestions",
                 "post_edit.editor.message.suggestions.loading",
                 "profile_popover",
@@ -276,6 +280,7 @@
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
+                "rhs.post_create.message.preview",
                 "rhs.post_create.message.suggestions",
                 "rhs.post_create.message.suggestions.loading",
                 "rhs.post_create.scheduled_post_indicator",
@@ -334,7 +339,11 @@
                 "rhs.thread.scroller",
                 "rhs.thread.toast",
                 "search.header",
+                "search.mention_filters",
+                "search.mention_filters.chips",
+                "search.mention_filters.popover",
                 "search.mobile_bar",
+                "search.panel",
                 "search.results",
                 "search.results.date_separator",
                 "search.results.file",
@@ -425,6 +434,7 @@
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
+                "center.post_create.message.preview",
                 "center.post_create.message.suggestions",
                 "center.post_create.message.suggestions.loading",
                 "center.post_create.scheduled_post_indicator",
@@ -444,6 +454,7 @@
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
+                "modal.post_create.message.preview",
                 "modal.post_create.message.suggestions",
                 "modal.post_create.message.suggestions.loading",
                 "no_results",
@@ -454,6 +465,7 @@
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
+                "plugin.post_create.message.preview",
                 "plugin.post_create.message.suggestions",
                 "plugin.post_create.message.suggestions.loading",
                 "post_edit.editor",
@@ -463,6 +475,7 @@
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
+                "post_edit.editor.message.preview",
                 "post_edit.editor.message.suggestions",
                 "post_edit.editor.message.suggestions.loading",
                 "profile_popover",
@@ -475,6 +488,7 @@
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
+                "rhs.post_create.message.preview",
                 "rhs.post_create.message.suggestions",
                 "rhs.post_create.message.suggestions.loading",
                 "rhs.post_create.scheduled_post_indicator",
@@ -784,6 +798,7 @@
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
+                "center.post_create.message.preview",
                 "center.post_create.message.suggestions",
                 "center.post_create.message.suggestions.loading",
                 "center.post_create.scheduled_post_indicator",
@@ -840,6 +855,7 @@
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
+                "modal.post_create.message.preview",
                 "modal.post_create.message.suggestions",
                 "modal.post_create.message.suggestions.loading",
                 "no_results",
@@ -850,6 +866,7 @@
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
+                "plugin.post_create.message.preview",
                 "plugin.post_create.message.suggestions",
                 "plugin.post_create.message.suggestions.loading",
                 "post_dot_menu",
@@ -862,6 +879,7 @@
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
+                "post_edit.editor.message.preview",
                 "post_edit.editor.message.suggestions",
                 "post_edit.editor.message.suggestions.loading",
                 "profile_popover",
@@ -874,6 +892,7 @@
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
+                "rhs.post_create.message.preview",
                 "rhs.post_create.message.suggestions",
                 "rhs.post_create.message.suggestions.loading",
                 "rhs.post_create.scheduled_post_indicator",
@@ -1002,6 +1021,7 @@
                 "center.post_create.ai_actions.rewrite.prompt",
                 "center.post_create.ai_actions.rewrite.prompt.field",
                 "center.post_create.formatting_bar",
+                "center.post_create.message.preview",
                 "center.post_create.message.suggestions",
                 "center.post_create.message.suggestions.loading",
                 "center.post_create.scheduled_post_indicator",
@@ -1058,6 +1078,7 @@
                 "modal.post_create.ai_actions.rewrite.prompt",
                 "modal.post_create.ai_actions.rewrite.prompt.field",
                 "modal.post_create.formatting_bar",
+                "modal.post_create.message.preview",
                 "modal.post_create.message.suggestions",
                 "modal.post_create.message.suggestions.loading",
                 "no_results",
@@ -1068,6 +1089,7 @@
                 "plugin.post_create.ai_actions.rewrite.prompt",
                 "plugin.post_create.ai_actions.rewrite.prompt.field",
                 "plugin.post_create.formatting_bar",
+                "plugin.post_create.message.preview",
                 "plugin.post_create.message.suggestions",
                 "plugin.post_create.message.suggestions.loading",
                 "post_dot_menu",
@@ -1080,6 +1102,7 @@
                 "post_edit.editor.ai_actions.rewrite.prompt",
                 "post_edit.editor.ai_actions.rewrite.prompt.field",
                 "post_edit.editor.formatting_bar",
+                "post_edit.editor.message.preview",
                 "post_edit.editor.message.suggestions",
                 "post_edit.editor.message.suggestions.loading",
                 "profile_popover",
@@ -1092,6 +1115,7 @@
                 "rhs.post_create.ai_actions.rewrite.prompt",
                 "rhs.post_create.ai_actions.rewrite.prompt.field",
                 "rhs.post_create.formatting_bar",
+                "rhs.post_create.message.preview",
                 "rhs.post_create.message.suggestions",
                 "rhs.post_create.message.suggestions.loading",
                 "rhs.post_create.scheduled_post_indicator",
@@ -1965,7 +1989,130 @@
         {
             "scope": "center.post_create.message",
             "class": "Message",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "center.post_create.message.preview",
+                    "role": null,
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "DeletePostModal",
+                            "scope": "delete_post_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelHeaderModal",
+                            "scope": "edit_channel_header_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelPurposeModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "KeyboardShortcutsModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "LeaveChannelModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MarketplaceModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "NotifyConfirmModal",
+                            "scope": "notify_confirm_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PersistNotificationConfirmModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PostDeletedModal",
+                            "scope": "post_deleted_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ReactionLimitReachedModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ResetStatusModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "UserSettingsModal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${redirectChannel}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation.substring(siteURL.length)"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "CreatePost",
+                        "CreateScheduledPost",
+                        "DeleteDraftMe",
+                        "DeleteReaction",
+                        "ExecuteCommand",
+                        "GetChannel",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMemberCountsByGroup",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersTimezones",
+                        "GetEmojisByNames",
+                        "GetGroups",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUser",
+                        "GetUserByUsername",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "Logout",
+                        "PatchPost",
+                        "SaveReaction",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences",
+                        "UpdateSidebarCategoriesForTeamForUser",
+                        "UpsertDraft",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!wysiwygEnabled"],
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                }
+            ]
         },
         {
             "scope": "center.post_create.message.suggestions",
@@ -4381,12 +4528,6 @@
             "class": "DateTimePickerModalWhen",
             "elements": [
                 {
-                    "testId": "date_time_picker_modal.when.calendar",
-                    "role": null,
-                    "renderedWhen": ["isPopperOpen"],
-                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
-                },
-                {
                     "testId": "date_time_picker_modal.when.date--button",
                     "role": "button",
                     "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
@@ -4408,6 +4549,29 @@
                     ],
                     "renderedWhen": ["!manualTimeEntry"],
                     "source": "channels/src/components/menu/menu.tsx#Menu"
+                }
+            ]
+        },
+        {
+            "scope": "date_time_picker_modal.when.calendar",
+            "class": "DateTimePickerModalWhenCalendar",
+            "container": "channels/src/components/date_picker/date_picker.tsx#DatePicker",
+            "elements": [
+                {
+                    "testId": "date_time_picker_modal.when.calendar.day:{key}--text",
+                    "role": "text",
+                    "key": "string",
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "date_time_picker_modal.when.calendar.next_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
+                },
+                {
+                    "testId": "date_time_picker_modal.when.calendar.previous_month",
+                    "role": null,
+                    "source": "channels/src/components/date_picker/date_picker.tsx#DatePicker"
                 }
             ]
         },
@@ -4953,6 +5117,27 @@
                     "source": "channels/src/components/edit_scheduled_post/edit_post_footer.tsx#EditPostFooter"
                 },
                 {
+                    "testId": "drafts.scheduled.post.editor.preview",
+                    "role": null,
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "DeletePostModal",
+                            "scope": "delete_post_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "DeleteScheduledPostModal",
+                            "scope": "delete_scheduled_post_modal",
+                            "dialogOps": ["DeleteScheduledPost"]
+                        }
+                    ],
+                    "effects": ["DeleteScheduledPost", "PatchPost", "UpdateScheduledPost"],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!(!getChannelSelector(state, channelId) && !isScheduledPost)", "isEditing"],
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                },
+                {
                     "testId": "drafts.scheduled.post.editor.save--button",
                     "role": "button",
                     "opens": [
@@ -5124,7 +5309,14 @@
         {
             "scope": "edit_channel_header_modal.header",
             "class": "Message",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "edit_channel_header_modal.header.preview",
+                    "role": null,
+                    "effects": ["PatchChannel"],
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                }
+            ]
         },
         {
             "scope": "edit_channel_header_modal.header.suggestions",
@@ -5392,7 +5584,43 @@
         {
             "scope": "forward_post_modal.comment",
             "class": "Message",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "forward_post_modal.comment.preview",
+                    "role": null,
+                    "opens": [
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${channel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${gmChannel.name}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/messages/@${channel.name}`"
+                        }
+                    ],
+                    "effects": [
+                        "AddChannelMember",
+                        "CreateDirectChannel",
+                        "CreatePost",
+                        "GetChannel",
+                        "GetChannelByName",
+                        "GetChannelMember",
+                        "GetPropertyValues",
+                        "GetRolesByNames",
+                        "UpdatePreferences"
+                    ],
+                    "unknownEffects": true,
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                }
+            ]
         },
         {
             "scope": "forward_post_modal.comment.suggestions",
@@ -7283,7 +7511,130 @@
         {
             "scope": "modal.post_create.message",
             "class": "Message",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "modal.post_create.message.preview",
+                    "role": null,
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "DeletePostModal",
+                            "scope": "delete_post_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelHeaderModal",
+                            "scope": "edit_channel_header_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelPurposeModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "KeyboardShortcutsModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "LeaveChannelModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MarketplaceModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "NotifyConfirmModal",
+                            "scope": "notify_confirm_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PersistNotificationConfirmModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PostDeletedModal",
+                            "scope": "post_deleted_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ReactionLimitReachedModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ResetStatusModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "UserSettingsModal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${redirectChannel}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation.substring(siteURL.length)"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "CreatePost",
+                        "CreateScheduledPost",
+                        "DeleteDraftMe",
+                        "DeleteReaction",
+                        "ExecuteCommand",
+                        "GetChannel",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMemberCountsByGroup",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersTimezones",
+                        "GetEmojisByNames",
+                        "GetGroups",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUser",
+                        "GetUserByUsername",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "Logout",
+                        "PatchPost",
+                        "SaveReaction",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences",
+                        "UpdateSidebarCategoriesForTeamForUser",
+                        "UpsertDraft",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!wysiwygEnabled"],
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                }
+            ]
         },
         {
             "scope": "modal.post_create.message.suggestions",
@@ -8105,7 +8456,130 @@
         {
             "scope": "plugin.post_create.message",
             "class": "Message",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "plugin.post_create.message.preview",
+                    "role": null,
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "DeletePostModal",
+                            "scope": "delete_post_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelHeaderModal",
+                            "scope": "edit_channel_header_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelPurposeModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "KeyboardShortcutsModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "LeaveChannelModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MarketplaceModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "NotifyConfirmModal",
+                            "scope": "notify_confirm_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PersistNotificationConfirmModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PostDeletedModal",
+                            "scope": "post_deleted_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ReactionLimitReachedModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ResetStatusModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "UserSettingsModal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${redirectChannel}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation.substring(siteURL.length)"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "CreatePost",
+                        "CreateScheduledPost",
+                        "DeleteDraftMe",
+                        "DeleteReaction",
+                        "ExecuteCommand",
+                        "GetChannel",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMemberCountsByGroup",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersTimezones",
+                        "GetEmojisByNames",
+                        "GetGroups",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUser",
+                        "GetUserByUsername",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "Logout",
+                        "PatchPost",
+                        "SaveReaction",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences",
+                        "UpdateSidebarCategoriesForTeamForUser",
+                        "UpsertDraft",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!wysiwygEnabled"],
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                }
+            ]
         },
         {
             "scope": "plugin.post_create.message.suggestions",
@@ -8984,7 +9458,130 @@
         {
             "scope": "post_edit.editor.message",
             "class": "Message",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "post_edit.editor.message.preview",
+                    "role": null,
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "DeletePostModal",
+                            "scope": "delete_post_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelHeaderModal",
+                            "scope": "edit_channel_header_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelPurposeModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "KeyboardShortcutsModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "LeaveChannelModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MarketplaceModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "NotifyConfirmModal",
+                            "scope": "notify_confirm_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PersistNotificationConfirmModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PostDeletedModal",
+                            "scope": "post_deleted_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ReactionLimitReachedModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ResetStatusModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "UserSettingsModal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${redirectChannel}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation.substring(siteURL.length)"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "CreatePost",
+                        "CreateScheduledPost",
+                        "DeleteDraftMe",
+                        "DeleteReaction",
+                        "ExecuteCommand",
+                        "GetChannel",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMemberCountsByGroup",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersTimezones",
+                        "GetEmojisByNames",
+                        "GetGroups",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUser",
+                        "GetUserByUsername",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "Logout",
+                        "PatchPost",
+                        "SaveReaction",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences",
+                        "UpdateSidebarCategoriesForTeamForUser",
+                        "UpsertDraft",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!wysiwygEnabled"],
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                }
+            ]
         },
         {
             "scope": "post_edit.editor.message.suggestions",
@@ -11058,7 +11655,130 @@
         {
             "scope": "rhs.post_create.message",
             "class": "Message",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "rhs.post_create.message.preview",
+                    "role": null,
+                    "opens": [
+                        {
+                            "kind": "modal",
+                            "target": "AppsFormContainer"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "DeletePostModal",
+                            "scope": "delete_post_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelHeaderModal",
+                            "scope": "edit_channel_header_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "EditChannelPurposeModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "KeyboardShortcutsModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "LeaveChannelModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "MarketplaceModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "NotifyConfirmModal",
+                            "scope": "notify_confirm_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PersistNotificationConfirmModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "PostDeletedModal",
+                            "scope": "post_deleted_modal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ReactionLimitReachedModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "ResetStatusModal"
+                        },
+                        {
+                            "kind": "modal",
+                            "target": "UserSettingsModal"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "`${teamUrl}/channels/${redirectChannel}`"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "goToLocation.substring(siteURL.length)"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "navigateURL"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "redirectTo"
+                        },
+                        {
+                            "kind": "page",
+                            "target": "url"
+                        }
+                    ],
+                    "effects": [
+                        "CreatePost",
+                        "CreateScheduledPost",
+                        "DeleteDraftMe",
+                        "DeleteReaction",
+                        "ExecuteCommand",
+                        "GetChannel",
+                        "GetChannelByNameForTeamName",
+                        "GetChannelMemberCountsByGroup",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetChannelMembersTimezones",
+                        "GetEmojisByNames",
+                        "GetGroups",
+                        "GetGroupsByNames",
+                        "GetPostThread",
+                        "GetRolesByNames",
+                        "GetUser",
+                        "GetUserByUsername",
+                        "GetUsersByGroupChannelIds",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "Logout",
+                        "PatchPost",
+                        "SaveReaction",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams",
+                        "UpdatePreferences",
+                        "UpdateSidebarCategoriesForTeamForUser",
+                        "UpsertDraft",
+                        "ViewChannelMe"
+                    ],
+                    "unknownEffects": true,
+                    "renderedWhen": ["!wysiwygEnabled"],
+                    "source": "channels/src/components/textbox/textbox.tsx#Textbox"
+                }
+            ]
         },
         {
             "scope": "rhs.post_create.message.suggestions",
@@ -12655,7 +13375,14 @@
         {
             "scope": "search",
             "class": "Search",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "search.panel",
+                    "role": null,
+                    "renderedWhen": ["searchVisible"],
+                    "source": "channels/src/components/search_results/search_results.tsx#SearchResults"
+                }
+            ]
         },
         {
             "scope": "search.header",
@@ -12685,6 +13412,120 @@
                     "role": "button",
                     "renderedWhen": ["canPopout()"],
                     "source": "channels/src/components/popout_button.tsx#PopoutButton"
+                }
+            ]
+        },
+        {
+            "scope": "search.mention_filters",
+            "class": "SearchMentionFilters",
+            "elements": [
+                {
+                    "testId": "search.mention_filters.popover--dialog",
+                    "role": "dialog",
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton"
+                },
+                {
+                    "testId": "search.mention_filters.trigger--button",
+                    "role": "button",
+                    "renderedWhen": ["isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/index.tsx#MentionFiltersButton"
+                }
+            ]
+        },
+        {
+            "scope": "search.mention_filters.chips",
+            "class": "SearchMentionFiltersChips",
+            "container": "channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips",
+            "elements": [
+                {
+                    "testId": "search.mention_filters.chips.chip:{key}--button",
+                    "role": "button",
+                    "key": "string",
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetGroupsByNames",
+                        "GetRolesByNames",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams"
+                    ],
+                    "renderedWhen": ["hasFilters", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filter_chips.tsx#MentionFilterChips"
+                }
+            ]
+        },
+        {
+            "scope": "search.mention_filters.popover",
+            "class": "SearchMentionFiltersPopover",
+            "elements": [
+                {
+                    "testId": "search.mention_filters.popover.apply--button",
+                    "role": "button",
+                    "effects": [
+                        "GetChannel",
+                        "GetChannelMemberMe",
+                        "GetChannelMembers",
+                        "GetGroupsByNames",
+                        "GetRolesByNames",
+                        "GetUsersByIds",
+                        "GetUsersByUsernames",
+                        "GetUsersStatusesByIds",
+                        "SearchFiles",
+                        "SearchPostsInAllTeams"
+                    ],
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+                },
+                {
+                    "testId": "search.mention_filters.popover.channel_option:{key}--option",
+                    "role": "option",
+                    "key": "Pick<Channel, 'id'>",
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+                },
+                {
+                    "testId": "search.mention_filters.popover.channels--combobox",
+                    "role": "combobox",
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+                },
+                {
+                    "testId": "search.mention_filters.popover.date:{key}--radio",
+                    "role": "radio",
+                    "key": "\"any\" | \"last_7_days\" | \"today\"",
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+                },
+                {
+                    "testId": "search.mention_filters.popover.mention_type:{key}--checkbox",
+                    "role": "checkbox",
+                    "key": "\"direct\" | \"group\" | \"keyword\"",
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+                },
+                {
+                    "testId": "search.mention_filters.popover.reset--button",
+                    "role": "button",
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+                },
+                {
+                    "testId": "search.mention_filters.popover.team--combobox",
+                    "role": "combobox",
+                    "renderedWhen": ["isMounted", "showTeamSelector", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
+                },
+                {
+                    "testId": "search.mention_filters.popover.team_option:{key}--option",
+                    "role": "option",
+                    "key": "Pick<Team, 'id'>",
+                    "renderedWhen": ["isMounted", "isMentionSearch"],
+                    "source": "channels/src/components/search_results/mention_filters/mention_filters_popover.tsx#MentionFiltersPopover"
                 }
             ]
         },
@@ -12719,7 +13560,17 @@
         {
             "scope": "search.results",
             "class": "SearchResults",
-            "elements": []
+            "elements": [
+                {
+                    "testId": "search.results.date_separator",
+                    "role": null,
+                    "renderedWhen": [
+                        "searchType === DataSearchTypes.MESSAGES_SEARCH_TYPE && !props.isChannelFiles",
+                        "typeof item === 'string' && isDateLine(item)"
+                    ],
+                    "source": "channels/src/components/widgets/separator/basic-separator.tsx#BasicSeparator"
+                }
+            ]
         },
         {
             "scope": "search.results.file",

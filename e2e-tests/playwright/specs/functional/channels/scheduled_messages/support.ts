@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, generated, getDayPickerDayCell, goToDisplayedMonth, type App} from '@mattermost/playwright-lib';
+import {expect, generated, pickDate, type App} from '@mattermost/playwright-lib';
 
 /**
  * Scheduled messages on the generated page objects: the composers' schedule menu, the date/time dialog, the composer
@@ -29,10 +29,8 @@ export async function pickTime(
     const target = new Date();
     target.setDate(target.getDate() + dayFromToday);
     await modal.when.dateButton.click();
-    const calendar = modal.when.calendar.locator;
-    await goToDisplayedMonth(calendar, target);
-    await getDayPickerDayCell(calendar, target.getDate()).click();
-    await expect(calendar).not.toBeVisible();
+    await pickDate(modal.when.calendar, target);
+    await expect(modal.when.calendar.locator).not.toBeVisible();
     const dateText = (await modal.when.dateButton.locator.textContent()) ?? '';
 
     const menu = await modal.when.clickTimeButton();

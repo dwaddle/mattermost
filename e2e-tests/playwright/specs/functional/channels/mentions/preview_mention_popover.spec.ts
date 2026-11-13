@@ -25,13 +25,13 @@ test(
         await adminClient.addToTeam(team.id, mentionedUser.id);
         await adminClient.addToChannel(mentionedUser.id, townSquare.id);
 
-        const {app, channelsPage} = await pw.testBrowser.login(user);
+        const {app} = await pw.testBrowser.login(user);
         await app.channelsPage.goto({team, channel: townSquare});
 
         const unique = `preview-mention-${pw.random.id()}`;
         const composer = app.center.postCreate;
         const input = composer.messageTextbox.locator;
-        const {previewArea} = channelsPage.centerView.postCreate;
+        const previewArea = composer.message.preview.locator;
 
         // # Type a draft that mentions the other user, picking them from the autocomplete so the mention resolves
         await input.pressSequentially(`@${mentionedUser.username}`);

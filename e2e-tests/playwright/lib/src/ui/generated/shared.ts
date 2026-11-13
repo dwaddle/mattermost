@@ -853,6 +853,62 @@ export class Message extends Scope {
         throw new Error(`${this.scope} renders no element of its own; assert on one of its parts`);
     }
 
+    /**
+     * `center.post_create.message.preview` — Textbox (channels/src/components/textbox/textbox.tsx)
+     * Renders only when !wysiwygEnabled.
+     * Opens modal AppsFormContainer.
+     * Opens modal DeletePostModal (`delete_post_modal`).
+     * Opens modal EditChannelHeaderModal (`edit_channel_header_modal`).
+     * Calls through data (registries, plugin hooks): pass `wait` to settle.
+     */
+    get preview() {
+        return drivers.container(this.byTestId(`${this.scope}.preview`), {
+            testId: `${this.scope}.preview`,
+            role: null,
+            effects: [
+                Api.AddChannelMember,
+                Api.CreateDirectChannel,
+                Api.CreatePost,
+                Api.CreateScheduledPost,
+                Api.DeleteDraftMe,
+                Api.DeleteReaction,
+                Api.ExecuteCommand,
+                Api.GetChannel,
+                Api.GetChannelByName,
+                Api.GetChannelByNameForTeamName,
+                Api.GetChannelMember,
+                Api.GetChannelMemberCountsByGroup,
+                Api.GetChannelMemberMe,
+                Api.GetChannelMembers,
+                Api.GetChannelMembersTimezones,
+                Api.GetEmojisByNames,
+                Api.GetGroups,
+                Api.GetGroupsByNames,
+                Api.GetPostThread,
+                Api.GetPropertyValues,
+                Api.GetRolesByNames,
+                Api.GetUser,
+                Api.GetUserByUsername,
+                Api.GetUsersByGroupChannelIds,
+                Api.GetUsersByIds,
+                Api.GetUsersByUsernames,
+                Api.GetUsersStatusesByIds,
+                Api.Logout,
+                Api.PatchChannel,
+                Api.PatchPost,
+                Api.SaveReaction,
+                Api.SearchFiles,
+                Api.SearchPostsInAllTeams,
+                Api.UpdatePreferences,
+                Api.UpdateSidebarCategoriesForTeamForUser,
+                Api.UpsertDraft,
+                Api.ViewChannelMe,
+            ],
+            unknownEffects: true,
+            source: 'channels/src/components/textbox/textbox.tsx#Textbox',
+        });
+    }
+
     get suggestions(): Suggestions {
         return new Suggestions(this.page, `${this.scope}.suggestions`, this.root);
     }
