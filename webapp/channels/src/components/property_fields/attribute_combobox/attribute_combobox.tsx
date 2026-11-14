@@ -125,7 +125,7 @@ function optionVisual(option: PropertyFieldOption, type: AttributeComboboxType, 
         return (
             <AttributeOptionSwatch
                 color={option.color}
-                testId={part(testIdScope, inRow ? 'choice.swatch' : 'swatch')}
+                testId={inRow ? part(testIdScope, 'choice.swatch') : part(testIdScope, 'swatch')}
             />
         );
     }
@@ -134,7 +134,7 @@ function optionVisual(option: PropertyFieldOption, type: AttributeComboboxType, 
         return (
             <RankBadge
                 rank={rank}
-                testId={part(testIdScope, inRow ? 'choice.badge' : 'badge')}
+                testId={inRow ? part(testIdScope, 'choice.badge') : part(testIdScope, 'badge')}
             />
         );
     }
