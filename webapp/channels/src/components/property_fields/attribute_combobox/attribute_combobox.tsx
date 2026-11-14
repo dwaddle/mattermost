@@ -119,13 +119,24 @@ function optionRank(option: PropertyFieldOption, type: AttributeComboboxType): n
     return type === 'rank' && typeof option.rank === 'number' ? option.rank : undefined;
 }
 
-function optionVisual(option: PropertyFieldOption, type: AttributeComboboxType): ReactElement | undefined {
+// A row's visual is `<scope>.choice.swatch` or `.choice.badge`; the closed field's own is `<scope>.swatch` or `.badge`.
+function optionVisual(option: PropertyFieldOption, type: AttributeComboboxType, testIdScope: TestId | undefined, inRow: boolean): ReactElement | undefined {
     if (option.color) {
-        return <AttributeOptionSwatch color={option.color}/>;
+        return (
+            <AttributeOptionSwatch
+                color={option.color}
+                testId={part(testIdScope, inRow ? 'choice.swatch' : 'swatch')}
+            />
+        );
     }
     const rank = optionRank(option, type);
     if (rank !== undefined) {
-        return <RankBadge rank={rank}/>;
+        return (
+            <RankBadge
+                rank={rank}
+                testId={part(testIdScope, inRow ? 'choice.badge' : 'badge')}
+            />
+        );
     }
     return undefined;
 }
@@ -136,7 +147,7 @@ function toComboboxOptions(
     formatMessage: IntlShape['formatMessage'],
     testIdScope?: TestId,
 ): ComboboxOption[] {
-    const visuals = options.map((option) => optionVisual(option, type));
+    const visuals = options.map((option) => optionVisual(option, type, testIdScope, true));
 
     // Compass reserves the leading slot per row, so rows without a visual need a placeholder to stay aligned.
     // Not in a multiselect: Compass copies a row's visual into its chip, where a placeholder is an empty gap.
@@ -154,7 +165,7 @@ function toComboboxOptions(
         if (visuals[index]) {
             comboboxOption.leadingVisual = visuals[index];
         } else if (reserveSlot) {
-            comboboxOption.leadingVisual = <AttributeOptionVisualPlaceholder/>;
+            comboboxOption.leadingVisual = <AttributeOptionVisualPlaceholder testId={part(testIdScope, 'choice.placeholder')}/>;
         }
         return comboboxOption;
     });
@@ -206,7 +217,7 @@ export function AttributeCombobox({
         () => (multiple ? undefined : options.find((option) => option.id === values[0])),
         [multiple, options, values],
     );
-    const leadingIcon = useMemo(() => (selected ? optionVisual(selected, type) : undefined), [selected, type]);
+    const leadingIcon = useMemo(() => (selected ? optionVisual(selected, type, testIdScope, false) : undefined), [selected, type, testIdScope]);
 
     // The leading icon is hidden from assistive tech too, so the closed field describes its rank.
     const selectedRank = selected ? optionRank(selected, type) : undefined;

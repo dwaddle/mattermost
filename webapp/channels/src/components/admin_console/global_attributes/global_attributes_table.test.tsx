@@ -157,7 +157,7 @@ describe('GlobalAttributesTable', () => {
     // Plugin-owned rows fetch plugin statuses after first paint. That update
     // remounts the actions menu if it is already open, so wait it out first.
     async function openActionsMenu(fieldId = 'field-1') {
-        const trigger = await screen.findByTestId(`admin.attributes.actions:${fieldId}--button`);
+        const trigger = await within(await screen.findByTestId(`admin.attributes.row:${fieldId}`)).findByTestId('admin.attributes.row.actions--button');
         await waitFor(() => expect(Client4.getPluginStatuses).toHaveBeenCalled());
         await act(async () => {
             await Promise.resolve();
@@ -1127,7 +1127,7 @@ describe('GlobalAttributesTable', () => {
         }
 
         async function openDeleteModal(fieldId = 'field-1') {
-            await userEvent.click(await screen.findByTestId(`admin.attributes.actions:${fieldId}--button`));
+            await userEvent.click(await within(await screen.findByTestId(`admin.attributes.row:${fieldId}`)).findByTestId('admin.attributes.row.actions--button'));
 
             const del = screen.getAllByRole('menuitem').find((el) => el.textContent?.includes('Delete attribute'));
             await userEvent.click(del!);
@@ -1437,7 +1437,7 @@ describe('GlobalAttributesTable', () => {
             }
 
             async function clickActionsAndFindDelete(fieldId: string) {
-                await userEvent.click(await screen.findByTestId(`admin.attributes.actions:${fieldId}--button`));
+                await userEvent.click(await within(await screen.findByTestId(`admin.attributes.row:${fieldId}`)).findByTestId('admin.attributes.row.actions--button'));
                 return (await screen.findAllByRole('menuitem')).find((el) => el.textContent?.includes('Delete attribute'))!;
             }
 
@@ -1528,15 +1528,15 @@ describe('GlobalAttributesTable', () => {
             renderWithContext(<GlobalAttributesTable/>, getReachableState());
 
             expect(await screen.findByTestId('admin.attributes.row.name--text')).toHaveTextContent('Classification');
-            expect(await screen.findByTestId('admin.attributes.classification_subtitle:field-1--text')).toHaveTextContent('Definition is read-only');
+            expect(await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.classification_subtitle--text')).toHaveTextContent('Definition is read-only');
 
-            const link = screen.getByTestId('admin.attributes.classification_link:field-1--link');
+            const link = within(screen.getByTestId('admin.attributes.row:field-1')).getByTestId('admin.attributes.row.classification_link--link');
             expect(link).toHaveAttribute('href', CLASSIFICATIONS_MARKINGS_ADMIN_URL);
             expect(link).toHaveAccessibleName('Open Classification Markings');
 
             // * The definition is edited on Classification Markings; this row must not
             // offer a duplicate Edit/More-actions menu next to the open-in-new link
-            expect(screen.queryByTestId('admin.attributes.actions:field-1--button')).not.toBeInTheDocument();
+            expect(within(screen.getByTestId('admin.attributes.row:field-1')).queryByTestId('admin.attributes.row.actions--button')).not.toBeInTheDocument();
 
             // * The Source column also identifies this row's true source, rather than the
             // generic "Managed here" every other native field gets
@@ -1548,8 +1548,8 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getReachableState({channelAttributesFlagOn: false}));
 
-            expect(await screen.findByTestId('admin.attributes.classification_link:field-1--link')).toBeInTheDocument();
-            expect(screen.queryByTestId('admin.attributes.actions:field-1--button')).not.toBeInTheDocument();
+            expect(await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.classification_link--link')).toBeInTheDocument();
+            expect(within(screen.getByTestId('admin.attributes.row:field-1')).queryByTestId('admin.attributes.row.actions--button')).not.toBeInTheDocument();
         });
 
         it('renders the open-in-new link on mobile with its tooltip disabled', async () => {
@@ -1557,7 +1557,7 @@ describe('GlobalAttributesTable', () => {
 
             renderWithContext(<GlobalAttributesTable/>, getMobileState());
 
-            const link = await screen.findByTestId('admin.attributes.classification_link:field-1--link');
+            const link = await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.classification_link--link');
             expect(link).toHaveAttribute('href', CLASSIFICATIONS_MARKINGS_ADMIN_URL);
             expect(link).toHaveAccessibleName('Open Classification Markings');
 
@@ -1581,7 +1581,7 @@ describe('GlobalAttributesTable', () => {
             // * Dimming the row on top of its "Definition is read-only" subtitle made a
             // correctly configured attribute look disabled
             expect(classificationName.className).toBe(ordinaryName.className);
-            expect(screen.getByTestId('admin.attributes.classification_subtitle:field-1--text').className).
+            expect(within(screen.getByTestId('admin.attributes.row:field-1')).getByTestId('admin.attributes.row.classification_subtitle--text').className).
                 toBe('GlobalAttributesTable__subtitle');
         });
 
@@ -1593,7 +1593,7 @@ describe('GlobalAttributesTable', () => {
             const trigger = await within(await screen.findByTestId('admin.attributes.row:field-1')).findByTestId('admin.attributes.row.actions--button');
             expect(trigger).toBeInTheDocument();
 
-            expect(screen.queryByTestId('admin.attributes.classification_link:field-1--link')).not.toBeInTheDocument();
+            expect(within(screen.getByTestId('admin.attributes.row:field-1')).queryByTestId('admin.attributes.row.classification_link--link')).not.toBeInTheDocument();
         });
 
         it('treats a wrong-typed template named classification as an ordinary attribute, so it can be repaired', async () => {
@@ -1606,8 +1606,8 @@ describe('GlobalAttributesTable', () => {
             renderWithContext(<GlobalAttributesTable/>, getReachableState());
 
             expect(await screen.findByTestId('admin.attributes.row.name--text')).toHaveTextContent('Classification');
-            expect(screen.queryByTestId('admin.attributes.classification_subtitle:field-1--text')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('admin.attributes.classification_link:field-1--link')).not.toBeInTheDocument();
+            expect(within(screen.getByTestId('admin.attributes.row:field-1')).queryByTestId('admin.attributes.row.classification_subtitle--text')).not.toBeInTheDocument();
+            expect(within(screen.getByTestId('admin.attributes.row:field-1')).queryByTestId('admin.attributes.row.classification_link--link')).not.toBeInTheDocument();
             expect(screen.getByTestId('admin.attributes.row.source--text')).toHaveTextContent('Managed here');
 
             await userEvent.click(within(screen.getByTestId('admin.attributes.row:field-1')).getByTestId('admin.attributes.row.actions--button'));
@@ -1650,7 +1650,7 @@ describe('GlobalAttributesTable', () => {
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
             const clearanceRow = await findRowByName('Clearance');
-            const warning = within(clearanceRow).getByTestId(`admin.attributes.name_conflict:${clearanceTemplate.id}--img`);
+            const warning = within(clearanceRow).getByTestId('admin.attributes.row.name_conflict--img');
 
             // * Both halves of what this row hides: the unique name an admin would
             // write in a CEL rule, and the attribute that name actually resolves to.
@@ -1682,7 +1682,7 @@ describe('GlobalAttributesTable', () => {
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
             const clearanceRow = await findRowByName('Clearance');
-            const warning = within(clearanceRow).getByTestId(`admin.attributes.name_conflict:${clearanceTemplate.id}--img`);
+            const warning = within(clearanceRow).getByTestId('admin.attributes.row.name_conflict--img');
 
             expect(warning).toHaveAccessibleName(/standalone user attribute named "clearance"/);
             expect(warning).not.toHaveAccessibleName(/linked to/);
@@ -1707,11 +1707,11 @@ describe('GlobalAttributesTable', () => {
             renderWithContext(<GlobalAttributesTable/>, getBaseState());
 
             const lowercaseRow = await findRowByName('clearance');
-            expect(within(lowercaseRow).getByTestId('admin.attributes.name_conflict:user-clearance-lower--img')).
+            expect(within(lowercaseRow).getByTestId('admin.attributes.row.name_conflict--img')).
                 toHaveAccessibleName(/standalone user attribute named "Clearance"/);
 
             const uppercaseRow = await findRowByName('Clearance');
-            expect(within(uppercaseRow).getByTestId('admin.attributes.name_conflict:user-clearance-upper--img')).
+            expect(within(uppercaseRow).getByTestId('admin.attributes.row.name_conflict--img')).
                 toHaveAccessibleName(/standalone user attribute named "clearance"/);
         });
 
@@ -1722,7 +1722,7 @@ describe('GlobalAttributesTable', () => {
 
             async function findWarning(): Promise<HTMLElement> {
                 const clearanceRow = await findRowByName('Clearance');
-                return within(clearanceRow).getByTestId(`admin.attributes.name_conflict:${clearanceTemplate.id}--img`);
+                return within(clearanceRow).getByTestId('admin.attributes.row.name_conflict--img');
             }
 
             it('reveals the warning on hover, so the mouse path spells out the conflict in full', async () => {

@@ -38,9 +38,9 @@ const RANKS_WITH_UNRANKED: PropertyFieldOption[] = [
 ];
 
 const TEST_ID = 'x.attr' as const;
-const SWATCH = 'attribute-option-swatch';
-const PLACEHOLDER = 'attribute-option-visual-placeholder';
-const BADGE = 'rank-badge';
+const SWATCH = /^x\.attr\.(choice\.)?swatch$/;
+const PLACEHOLDER = 'x.attr.choice.placeholder';
+const BADGE = /^x\.attr\.(choice\.)?badge--text$/;
 
 type ExtraProps = Partial<Pick<AttributeComboboxProps, 'type' | 'options' | 'required' | 'onBlur'>>;
 
@@ -738,6 +738,7 @@ describe('AttributeCombobox', () => {
         test('a disabled single field still shows the swatch', () => {
             const {container} = renderWithContext(
                 <AttributeCombobox
+                    testIdScope={TEST_ID}
                     label='Department'
                     options={COLOURED}
                     value='red'

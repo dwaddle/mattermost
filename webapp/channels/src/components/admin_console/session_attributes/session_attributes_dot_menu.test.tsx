@@ -135,11 +135,11 @@ describe('SessionAttributesDotMenu', () => {
     it('does not offer a 30 second TTL preset', async () => {
         renderMenu(enabledField);
 
-        await userEvent.click(screen.getByTestId(`session-attribute-dotmenu-${enabledField.id}`));
+        await userEvent.click(screen.getByTestId('admin.session_attributes.row.actions--button'));
         await userEvent.hover(screen.getByRole('menuitem', {name: /Time-to-live/}));
 
-        await screen.findByTestId(`session-attribute-ttl-option-${enabledField.id}-60`);
-        expect(screen.queryByTestId(`session-attribute-ttl-option-${enabledField.id}-30`)).not.toBeInTheDocument();
+        await screen.findByTestId('admin.session_attributes.actions_menu.ttl:60--menuitemradio');
+        expect(screen.queryByTestId('admin.session_attributes.actions_menu.ttl:30--menuitemradio')).not.toBeInTheDocument();
     });
 
     it('hides the TTL and Grace submenus for server-sourced attributes', async () => {

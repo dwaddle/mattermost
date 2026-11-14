@@ -151,10 +151,10 @@ describe('components/user_settings/general/UserSettingsGeneral custom attribute 
         test('a select field without ranks shows no rank text or badge', async () => {
             renderEditor(buildField('select'), 'opt1');
 
-            expect(screen.queryByTestId('rank-badge')).not.toBeInTheDocument();
+            expect(screen.queryByTestId(/^settings\.section\.(choice\.)?badge--text$/)).not.toBeInTheDocument();
             await userEvent.click(getCombobox());
 
-            expect(screen.queryByTestId('rank-badge')).not.toBeInTheDocument();
+            expect(screen.queryByTestId(/^settings\.section\.(choice\.)?badge--text$/)).not.toBeInTheDocument();
             expect(screen.queryByText(/Rank/)).not.toBeInTheDocument();
             expect(screen.getByRole('option', {name: 'Option 1'})).toBeInTheDocument();
         });
@@ -186,7 +186,7 @@ describe('components/user_settings/general/UserSettingsGeneral custom attribute 
             expect(combobox).toHaveValue('Junior');
             expect(screen.getByTestId(`${TEST_ID_SCOPE}.clear--button`)).toBeInTheDocument();
             expect(screen.queryByRole('toolbar')).not.toBeInTheDocument();
-            expect(within(container).getByTestId('rank-badge')).toHaveTextContent('1');
+            expect(within(container).getByTestId(/^settings\.section\.(choice\.)?badge--text$/)).toHaveTextContent('1');
             expect(combobox).toHaveAccessibleDescription('Rank 1');
 
             await userEvent.click(combobox);
@@ -197,7 +197,7 @@ describe('components/user_settings/general/UserSettingsGeneral custom attribute 
             ]);
             const midRow = screen.getByTestId(`${TEST_ID_SCOPE}.choice:mid--option`);
             expect(midRow).toHaveAccessibleName('Mid, Rank 2');
-            expect(within(midRow).getByTestId('rank-badge')).toHaveTextContent('2');
+            expect(within(midRow).getByTestId(/^settings\.section\.(choice\.)?badge--text$/)).toHaveTextContent('2');
             expect(midRow).not.toHaveTextContent(/Rank/);
             await userEvent.click(screen.getByRole('option', {name: 'Mid, Rank 2'}));
             await userEvent.click(screen.getByRole('button', {name: 'Save'}));

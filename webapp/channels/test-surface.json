@@ -55661,6 +55661,168 @@
       }
     },
     {
+      "template": "admin.user.attribute.badge--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user",
+        "attribute"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "admin.user.attribute.choice.badge--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user",
+        "attribute",
+        "choice"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "admin.user.attribute.choice.placeholder",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user",
+        "attribute",
+        "choice"
+      ],
+      "name": "placeholder",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionVisualPlaceholder",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(visuals[index])",
+          "explained": "!(visuals[index])",
+          "kind": "other"
+        },
+        {
+          "expr": "reserveSlot",
+          "explained": "reserveSlot",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "admin.user.attribute.choice.swatch",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user",
+        "attribute",
+        "choice"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
+        }
+      ]
+    },
+    {
       "template": "admin.user.attribute.choice:{key}--option",
       "grammar": true,
       "scope": [
@@ -55810,6 +55972,33 @@
       }
     },
     {
+      "template": "admin.user.attribute.name--text",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user",
+        "attribute"
+      ],
+      "name": "name",
+      "role": "text",
+      "component": {
+        "name": "UserAttributeField",
+        "at": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      }
+    },
+    {
       "template": "admin.user.attribute.owner:{key}--text",
       "grammar": true,
       "scope": [
@@ -55897,6 +56086,42 @@
           "explained": "hasSyncedSources",
           "kind": "prop",
           "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "admin.user.attribute.swatch",
+      "grammar": true,
+      "scope": [
+        "admin",
+        "user",
+        "attribute"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/admin_console/system_user_detail/system_user_detail.tsx#SystemUserDetail"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
         }
       ]
     },
@@ -62873,67 +63098,6 @@
           "expr": "!hideConfirm",
           "explained": "!hideConfirm",
           "kind": "prop"
-        }
-      ]
-    },
-    {
-      "template": "attribute-option-swatch",
-      "grammar": false,
-      "scope": [],
-      "name": "attribute-option-swatch",
-      "role": null,
-      "component": {
-        "name": "AttributeOptionSwatch",
-        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "option.color",
-          "explained": "option.color",
-          "kind": "other"
-        }
-      ]
-    },
-    {
-      "template": "attribute-option-visual-placeholder",
-      "grammar": false,
-      "scope": [],
-      "name": "attribute-option-visual-placeholder",
-      "role": null,
-      "component": {
-        "name": "AttributeOptionVisualPlaceholder",
-        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
-      },
-      "instances": [
-        {
-          "via": []
-        }
-      ],
-      "aria": {
-        "role": null,
-        "native": false,
-        "state": []
-      },
-      "renderedWhen": [
-        {
-          "expr": "!(visuals[index])",
-          "explained": "!(visuals[index])",
-          "kind": "other"
-        },
-        {
-          "expr": "reserveSlot",
-          "explained": "reserveSlot",
-          "kind": "other"
         }
       ]
     },
@@ -108754,6 +108918,176 @@
       ]
     },
     {
+      "template": "integrations.bot_form.attributes.attribute.badge--text",
+      "grammar": true,
+      "scope": [
+        "integrations",
+        "bot_form",
+        "attributes",
+        "attribute"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx#UserAttributeFields",
+            "channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "integrations.bot_form.attributes.attribute.choice.badge--text",
+      "grammar": true,
+      "scope": [
+        "integrations",
+        "bot_form",
+        "attributes",
+        "attribute",
+        "choice"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx#UserAttributeFields",
+            "channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "integrations.bot_form.attributes.attribute.choice.placeholder",
+      "grammar": true,
+      "scope": [
+        "integrations",
+        "bot_form",
+        "attributes",
+        "attribute",
+        "choice"
+      ],
+      "name": "placeholder",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionVisualPlaceholder",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx#UserAttributeFields",
+            "channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(visuals[index])",
+          "explained": "!(visuals[index])",
+          "kind": "other"
+        },
+        {
+          "expr": "reserveSlot",
+          "explained": "reserveSlot",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "integrations.bot_form.attributes.attribute.choice.swatch",
+      "grammar": true,
+      "scope": [
+        "integrations",
+        "bot_form",
+        "attributes",
+        "attribute",
+        "choice"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx#UserAttributeFields",
+            "channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
+        }
+      ]
+    },
+    {
       "template": "integrations.bot_form.attributes.attribute.choice:{key}--option",
       "grammar": true,
       "scope": [
@@ -108933,6 +109267,43 @@
       }
     },
     {
+      "template": "integrations.bot_form.attributes.attribute.name--text",
+      "grammar": true,
+      "scope": [
+        "integrations",
+        "bot_form",
+        "attributes",
+        "attribute"
+      ],
+      "name": "name",
+      "role": "text",
+      "component": {
+        "name": "UserAttributeField",
+        "at": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx#UserAttributeFields",
+            "channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "rowFields.length > 0",
+          "explained": "rowFields.length > 0",
+          "kind": "prop",
+          "viaLocal": true
+        }
+      ]
+    },
+    {
       "template": "integrations.bot_form.attributes.attribute.owner:{key}--text",
       "grammar": true,
       "scope": [
@@ -109080,6 +109451,44 @@
           "explained": "hasSyncedSources",
           "kind": "prop",
           "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "integrations.bot_form.attributes.attribute.swatch",
+      "grammar": true,
+      "scope": [
+        "integrations",
+        "bot_form",
+        "attributes",
+        "attribute"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField",
+            "channels/src/components/property_fields/user_attribute_fields/user_attribute_fields.tsx#UserAttributeFields",
+            "channels/src/components/integrations/bots/add_bot/bot_attributes_section.tsx#BotAttributesSection"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
         }
       ]
     },
@@ -122452,6 +122861,252 @@
       ]
     },
     {
+      "template": "new_channel_modal.attributes.attribute.badge--text",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "attributes",
+        "attribute"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "!(supported.length === 0)",
+          "explained": "!(supported.length === 0)",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!supportsHierarchy(field)",
+          "explained": "!supportsHierarchy(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "!isTextField(field)",
+          "explained": "!isTextField(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "isBuiltInType(type)",
+          "explained": "isBuiltInType(type)",
+          "kind": "local state"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.attributes.attribute.choice.badge--text",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "attributes",
+        "attribute",
+        "choice"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "!(supported.length === 0)",
+          "explained": "!(supported.length === 0)",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!supportsHierarchy(field)",
+          "explained": "!supportsHierarchy(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "!isTextField(field)",
+          "explained": "!isTextField(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "isBuiltInType(type)",
+          "explained": "isBuiltInType(type)",
+          "kind": "local state"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.attributes.attribute.choice.placeholder",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "attributes",
+        "attribute",
+        "choice"
+      ],
+      "name": "placeholder",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionVisualPlaceholder",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions",
+            "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(supported.length === 0)",
+          "explained": "!(supported.length === 0)",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!supportsHierarchy(field)",
+          "explained": "!supportsHierarchy(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "!isTextField(field)",
+          "explained": "!isTextField(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "isBuiltInType(type)",
+          "explained": "isBuiltInType(type)",
+          "kind": "local state"
+        },
+        {
+          "expr": "!(visuals[index])",
+          "explained": "!(visuals[index])",
+          "kind": "other"
+        },
+        {
+          "expr": "reserveSlot",
+          "explained": "reserveSlot",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.attributes.attribute.choice.swatch",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "attributes",
+        "attribute",
+        "choice"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(supported.length === 0)",
+          "explained": "!(supported.length === 0)",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!supportsHierarchy(field)",
+          "explained": "!supportsHierarchy(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "!isTextField(field)",
+          "explained": "!isTextField(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "isBuiltInType(type)",
+          "explained": "isBuiltInType(type)",
+          "kind": "local state"
+        },
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
+        }
+      ]
+    },
+    {
       "template": "new_channel_modal.attributes.attribute.choice:{key}--option",
       "grammar": true,
       "scope": [
@@ -122557,6 +123212,109 @@
           "expr": "isBuiltInType(type)",
           "explained": "isBuiltInType(type)",
           "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.attributes.attribute.error--alert",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "attributes",
+        "attribute"
+      ],
+      "name": "error",
+      "role": "alert",
+      "component": {
+        "name": "ChannelAttributesForm",
+        "at": "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": "alert",
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(supported.length === 0)",
+          "explained": "!(supported.length === 0)",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "showError",
+          "explained": "showError",
+          "kind": "local state",
+          "viaLocal": true
+        },
+        {
+          "expr": "isBuiltInType(type)",
+          "explained": "isBuiltInType(type)",
+          "kind": "local state"
+        }
+      ]
+    },
+    {
+      "template": "new_channel_modal.attributes.attribute.swatch",
+      "grammar": true,
+      "scope": [
+        "new_channel_modal",
+        "attributes",
+        "attribute"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm",
+            "channels/src/components/new_channel_modal/new_channel_modal.tsx#NewChannelModal"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(supported.length === 0)",
+          "explained": "!(supported.length === 0)",
+          "kind": "prop",
+          "viaLocal": true
+        },
+        {
+          "expr": "!supportsHierarchy(field)",
+          "explained": "!supportsHierarchy(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "!isTextField(field)",
+          "explained": "!isTextField(field)",
+          "kind": "other"
+        },
+        {
+          "expr": "isBuiltInType(type)",
+          "explained": "isBuiltInType(type)",
+          "kind": "local state"
+        },
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
         }
       ]
     },
@@ -136265,11 +137023,6 @@
           "via": [
             "channels/src/components/admin_console/system_properties/user_properties_rank_values.tsx#RankChip"
           ]
-        },
-        {
-          "via": [
-            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual"
-          ]
         }
       ],
       "aria": {
@@ -136283,7 +137036,8 @@
           "explained": "!(rank === undefined || rank === null)",
           "kind": "prop"
         }
-      ]
+      ],
+      "unreachable": true
     },
     {
       "template": "rank-chip-{key}",
@@ -172608,6 +173362,66 @@
       ]
     },
     {
+      "template": "settings.section.badge--text",
+      "grammar": true,
+      "scope": [
+        "settings",
+        "section"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/user_settings/general/user_settings_general.tsx#UserSettingsGeneralTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        },
+        {
+          "expr": "!(this.props.customProfileAttributeFields == null)",
+          "explained": "!(this.props.customProfileAttributeFields == null)",
+          "kind": "other"
+        },
+        {
+          "expr": "active",
+          "explained": "active",
+          "kind": "other"
+        },
+        {
+          "expr": "!isReadOnly",
+          "explained": "!isReadOnly",
+          "kind": "permission",
+          "viaLocal": true
+        },
+        {
+          "expr": "valueRefersToOptions(attribute)",
+          "explained": "valueRefersToOptions(attribute)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
       "template": "settings.section.cancel--button",
       "grammar": true,
       "scope": [
@@ -172643,6 +173457,184 @@
         "unknown": true,
         "delegated": []
       }
+    },
+    {
+      "template": "settings.section.choice.badge--text",
+      "grammar": true,
+      "scope": [
+        "settings",
+        "section",
+        "choice"
+      ],
+      "name": "badge",
+      "role": "text",
+      "component": {
+        "name": "RankBadge",
+        "at": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/user_settings/general/user_settings_general.tsx#UserSettingsGeneralTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(rank === undefined || rank === null)",
+          "explained": "!(rank === undefined || rank === null)",
+          "kind": "prop"
+        },
+        {
+          "expr": "rank !== undefined",
+          "explained": "rank !== undefined",
+          "kind": "other"
+        },
+        {
+          "expr": "!(this.props.customProfileAttributeFields == null)",
+          "explained": "!(this.props.customProfileAttributeFields == null)",
+          "kind": "other"
+        },
+        {
+          "expr": "active",
+          "explained": "active",
+          "kind": "other"
+        },
+        {
+          "expr": "!isReadOnly",
+          "explained": "!isReadOnly",
+          "kind": "permission",
+          "viaLocal": true
+        },
+        {
+          "expr": "valueRefersToOptions(attribute)",
+          "explained": "valueRefersToOptions(attribute)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "settings.section.choice.placeholder",
+      "grammar": true,
+      "scope": [
+        "settings",
+        "section",
+        "choice"
+      ],
+      "name": "placeholder",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionVisualPlaceholder",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions",
+            "channels/src/components/user_settings/general/user_settings_general.tsx#UserSettingsGeneralTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "!(visuals[index])",
+          "explained": "!(visuals[index])",
+          "kind": "other"
+        },
+        {
+          "expr": "reserveSlot",
+          "explained": "reserveSlot",
+          "kind": "other"
+        },
+        {
+          "expr": "!(this.props.customProfileAttributeFields == null)",
+          "explained": "!(this.props.customProfileAttributeFields == null)",
+          "kind": "other"
+        },
+        {
+          "expr": "active",
+          "explained": "active",
+          "kind": "other"
+        },
+        {
+          "expr": "!isReadOnly",
+          "explained": "!isReadOnly",
+          "kind": "permission",
+          "viaLocal": true
+        },
+        {
+          "expr": "valueRefersToOptions(attribute)",
+          "explained": "valueRefersToOptions(attribute)",
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "template": "settings.section.choice.swatch",
+      "grammar": true,
+      "scope": [
+        "settings",
+        "section",
+        "choice"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/user_settings/general/user_settings_general.tsx#UserSettingsGeneralTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
+        },
+        {
+          "expr": "!(this.props.customProfileAttributeFields == null)",
+          "explained": "!(this.props.customProfileAttributeFields == null)",
+          "kind": "other"
+        },
+        {
+          "expr": "active",
+          "explained": "active",
+          "kind": "other"
+        },
+        {
+          "expr": "!isReadOnly",
+          "explained": "!isReadOnly",
+          "kind": "permission",
+          "viaLocal": true
+        },
+        {
+          "expr": "valueRefersToOptions(attribute)",
+          "explained": "valueRefersToOptions(attribute)",
+          "kind": "other"
+        }
+      ]
     },
     {
       "template": "settings.section.choice:{key}--option",
@@ -174628,6 +175620,61 @@
           "explained": "displayCustom && this.props.allowCustomThemes",
           "kind": "local state",
           "viaLocal": true
+        }
+      ]
+    },
+    {
+      "template": "settings.section.swatch",
+      "grammar": true,
+      "scope": [
+        "settings",
+        "section"
+      ],
+      "name": "swatch",
+      "role": null,
+      "component": {
+        "name": "AttributeOptionSwatch",
+        "at": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+      },
+      "instances": [
+        {
+          "via": [
+            "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#optionVisual",
+            "channels/src/components/user_settings/general/user_settings_general.tsx#UserSettingsGeneralTab"
+          ]
+        }
+      ],
+      "aria": {
+        "role": null,
+        "native": false,
+        "state": []
+      },
+      "renderedWhen": [
+        {
+          "expr": "option.color",
+          "explained": "option.color",
+          "kind": "other"
+        },
+        {
+          "expr": "!(this.props.customProfileAttributeFields == null)",
+          "explained": "!(this.props.customProfileAttributeFields == null)",
+          "kind": "other"
+        },
+        {
+          "expr": "active",
+          "explained": "active",
+          "kind": "other"
+        },
+        {
+          "expr": "!isReadOnly",
+          "explained": "!isReadOnly",
+          "kind": "permission",
+          "viaLocal": true
+        },
+        {
+          "expr": "valueRefersToOptions(attribute)",
+          "explained": "valueRefersToOptions(attribute)",
+          "kind": "other"
         }
       ]
     },

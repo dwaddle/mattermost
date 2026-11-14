@@ -151,10 +151,9 @@ describe('UserAttributeFields', () => {
         unmount();
 
         renderFields({onRemove: jest.fn()});
-        const label = screen.getByText('department').closest('label')!;
-        expect(label.parentElement).toHaveClass('UserAttributeField__row');
-        expect(label.parentElement).toHaveAttribute('data-testid', 'test.attribute:field-1');
-        expect(label.querySelector('button')).toBeNull();
+        const row = screen.getByTestId('test.attribute:field-1');
+        expect(row).toHaveClass('UserAttributeField__row');
+        expect(row.querySelector('label button')).toBeNull();
         expect(screen.getByRole('textbox', {name: 'department'})).toBeInTheDocument();
     });
 
@@ -422,7 +421,7 @@ describe('UserAttributeFields', () => {
             renderFields({fields: [buildField({type: 'rank'}, {options: RANK_OPTIONS})], values: {'field-1': 'low'}});
 
             const root = screen.getByTestId('test.attribute:field-1');
-            expect(within(root).getByTestId('rank-badge')).toHaveTextContent('1');
+            expect(within(root).getByTestId(/^test\.attribute\.(choice\.)?badge--text$/)).toHaveTextContent('1');
             expect(screen.getByRole('combobox', {name: 'department'})).toHaveAccessibleDescription('Rank 1');
 
             await user.click(screen.getByRole('combobox', {name: 'department'}));
@@ -434,9 +433,9 @@ describe('UserAttributeFields', () => {
             ]);
             const top = within(screen.getByTestId('test.attribute.choice:top--option'));
             const mid = within(screen.getByTestId('test.attribute.choice:mid--option'));
-            expect(top.getByTestId('rank-badge')).toHaveTextContent('3');
-            expect(mid.getByTestId('attribute-option-swatch')).toBeInTheDocument();
-            expect(mid.queryByTestId('rank-badge')).not.toBeInTheDocument();
+            expect(top.getByTestId(/^test\.attribute\.(choice\.)?badge--text$/)).toHaveTextContent('3');
+            expect(mid.getByTestId(/^test\.attribute\.(choice\.)?swatch$/)).toBeInTheDocument();
+            expect(mid.queryByTestId(/^test\.attribute\.(choice\.)?badge--text$/)).not.toBeInTheDocument();
             expect(screen.getByTestId('test.attribute.choice:top--option')).toHaveAccessibleName('Top, Rank 3');
             expect(screen.getByTestId('test.attribute.choice:mid--option')).toHaveAccessibleName('Mid, Rank 2');
         });

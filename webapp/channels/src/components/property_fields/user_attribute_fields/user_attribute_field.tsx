@@ -322,11 +322,13 @@ export default function UserAttributeField({
                 htmlFor={controlId}
                 onClick={onNameClick}
             >
-                <FormattedMessage
-                    id='admin.userManagement.userDetail.cpaField'
-                    defaultMessage='{fieldName}'
-                    values={{fieldName: fieldLabel}}
-                />
+                <span data-testid={part(testIdScope, 'name', 'text')}>
+                    <FormattedMessage
+                        id='admin.userManagement.userDetail.cpaField'
+                        defaultMessage='{fieldName}'
+                        values={{fieldName: fieldLabel}}
+                    />
+                </span>
             </label>
             {control}
             {error && (

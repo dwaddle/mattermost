@@ -67,6 +67,10 @@ export type DataGridRowRow = {
     displayName: string | null;
     email: string | null;
 };
+/** The read-only parts of a `admin.user.attribute.choice` item. */
+export type ChoiceRow = {
+    badge: string | null;
+};
 /** The read-only parts of a `center.post_list.post` item. */
 export type PostItemRow = {
     edited: string | null;
@@ -2303,6 +2307,80 @@ export class Rules extends Scope {
             '',
             (key: string) => new RulesRow(this.page, `${this.scope}.row`, this.byTestId(`${this.scope}.row:${key}`)),
         );
+    }
+}
+
+/** Rendered at `admin.user.attribute.choice`, `integrations.bot_form.attributes.attribute.choice`, `new_channel_modal.attributes.attribute.choice`, `settings.section.choice`: one class, constructed with the scope it is mounted at. */
+export class Choice extends Scope {
+    /**
+     * `admin.user.attribute.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     */
+    get option() {
+        return drivers.option(this.root, {
+            testId: 'admin.user.attribute.choice:{key}--option',
+            role: 'option',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions',
+        });
+    }
+
+    /** The item's element (matchers take the item: `expect(item).toContainMessage(…)`). */
+    override get locator(): Locator {
+        return this.root;
+    }
+
+    /**
+     * `admin.user.attribute.choice.badge--text` — RankBadge (channels/src/components/admin_console/system_properties/rank_badge.tsx)
+     * Renders only when !(rank === undefined || rank === null) and rank !== undefined.
+     */
+    get badgeText() {
+        return drivers.text(this.byTestId(`${this.scope}.badge--text`), {
+            testId: `${this.scope}.badge--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge',
+        });
+    }
+
+    getBadgeText(): Promise<string> {
+        return this.badgeText.text();
+    }
+
+    /**
+     * `admin.user.attribute.choice.placeholder` — AttributeOptionVisualPlaceholder (channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx)
+     * Renders only when !(visuals[index]) and reserveSlot.
+     */
+    get placeholder() {
+        return drivers.container(this.byTestId(`${this.scope}.placeholder`), {
+            testId: `${this.scope}.placeholder`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder',
+        });
+    }
+
+    /**
+     * `admin.user.attribute.choice.swatch` — AttributeOptionSwatch (channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx)
+     * Renders only when option.color.
+     */
+    get swatch() {
+        return drivers.container(this.byTestId(`${this.scope}.swatch`), {
+            testId: `${this.scope}.swatch`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch',
+        });
+    }
+
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<ChoiceRow> {
+        return {
+            badge: await this.badgeText.textIfPresent(),
+        };
     }
 }
 

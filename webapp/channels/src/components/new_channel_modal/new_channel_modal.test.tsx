@@ -1487,7 +1487,7 @@ describe('components/new_channel_modal - channel attributes', () => {
     const getProgramCombobox = () => screen.getByRole('combobox', {name: 'Program'});
     const getChips = () => Array.from(document.querySelectorAll<HTMLElement>('[data-chip]'));
     const createButton = () => screen.getByRole('button', {name: 'Create channel'}).closest('button');
-    const alertIn = (name: string) => within(screen.getByTestId(`channelAttributeRow-${name}`)).queryByRole('alert');
+    const alertIn = (name: string) => within(screen.getByTestId(`new_channel_modal.attributes.attribute:f_${name}`)).queryByRole('alert');
 
     async function fillName() {
         await userEvent.type(screen.getByPlaceholderText('Enter a name for your new channel'), 'My Channel');
@@ -1865,7 +1865,7 @@ describe('components/new_channel_modal - channel attributes', () => {
         await fillAndSelect();
         expect(createButton()).toBeEnabled();
 
-        await userEvent.click(screen.getByTestId('channelAttribute-program-clear'));
+        await userEvent.click(screen.getByTestId('new_channel_modal.attributes.attribute.clear--button'));
 
         expect(createButton()).toBeDisabled();
         expect(alertIn('program')).toHaveTextContent('This field is required');
@@ -1901,7 +1901,7 @@ describe('components/new_channel_modal - channel attributes', () => {
 
             const combobox = screen.getByRole('combobox', {name: 'Classification'});
             expect(combobox).toHaveAttribute('aria-required', 'true');
-            expect(screen.getByTestId('channelAttributeRow-classification')).toHaveTextContent('Classification*');
+            expect(screen.getByTestId('new_channel_modal.attributes.attribute:f_classification')).toHaveTextContent('Classification*');
             expect(createButton()).toBeDisabled();
 
             await userEvent.click(combobox);
@@ -1931,7 +1931,7 @@ describe('components/new_channel_modal - channel attributes', () => {
 
             const combobox = screen.getByRole('combobox', {name: 'Classification'});
             expect(combobox).not.toHaveAttribute('aria-required');
-            expect(screen.getByTestId('channelAttributeRow-classification')).not.toHaveTextContent('Classification*');
+            expect(screen.getByTestId('new_channel_modal.attributes.attribute:f_classification')).not.toHaveTextContent('Classification*');
 
             await fillName();
             expect(createButton()).toBeEnabled();
@@ -1944,7 +1944,7 @@ describe('components/new_channel_modal - channel attributes', () => {
 
             await user.click(combobox);
             await user.click(screen.getByRole('option', {name: 'SECRET, Rank 2'}));
-            await user.click(screen.getByTestId('channelAttribute-classification-clear'));
+            await user.click(screen.getByTestId('new_channel_modal.attributes.attribute.clear--button'));
 
             expect(alertIn('classification')).not.toBeInTheDocument();
             expect(createButton()).toBeEnabled();

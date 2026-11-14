@@ -35,6 +35,7 @@ import {ResetPasswordModal} from './reset_password_modal';
 import {
     AlertBanner,
     Channels,
+    Choice,
     ColorInput,
     ConfirmModal,
     DataGrid,
@@ -294,6 +295,11 @@ export type AdminUserFormValues = {
 export type AdminUserAttributeFormValues = {
     valueCombobox: string;
     valueTextbox: string;
+};
+/** The read-only parts of a `admin.user.attribute` item. */
+export type AdminUserAttributeRow = {
+    badge: string | null;
+    name: string | null;
 };
 /** The form fields of `admin.users.reset_email_modal`. */
 export type AdminUsersResetEmailModalFormValues = {
@@ -18611,26 +18617,21 @@ export class AdminUserAttribute extends Scope {
     }
 
     /**
-     * `admin.user.attribute.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     * `admin.user.attribute.badge--text` — RankBadge (channels/src/components/admin_console/system_properties/rank_badge.tsx)
+     * Renders only when !(rank === undefined || rank === null) and rank !== undefined.
      */
-    choice(choice: Pick<PropertyFieldOption, 'id'>) {
-        return drivers.option(this.byTestId(`${this.scope}.choice:${choice.id}--option`, true), {
-            testId: `${this.scope}.choice:${choice.id}--option`,
-            role: 'option',
+    get badgeText() {
+        return drivers.text(this.byTestId(`${this.scope}.badge--text`), {
+            testId: `${this.scope}.badge--text`,
+            role: 'text',
             effects: [],
             unknownEffects: false,
-            source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions',
+            source: 'channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge',
         });
     }
 
-    /** Every `admin.user.attribute.choice:{key}--option` in the scope. */
-    get choiceItems(): Locator {
-        return this.byTestIdPattern(`${this.scope}.choice:`, '--option', true);
-    }
-
-    /** The keys of every `admin.user.attribute.choice:{key}--option` in the scope, in document order. */
-    choiceKeys(): Promise<string[]> {
-        return this.keysOf(`${this.scope}.choice:`, '--option', true);
+    getBadgeText(): Promise<string> {
+        return this.badgeText.text();
     }
 
     /**
@@ -18683,6 +18684,23 @@ export class AdminUserAttribute extends Scope {
     async clickGraphButton(): Promise<Admin> {
         await this.graphButton.click();
         return new Admin(this.page, 'admin');
+    }
+
+    /**
+     * `admin.user.attribute.name--text` — UserAttributeField (channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx)
+     */
+    get nameText() {
+        return drivers.text(this.byTestId(`${this.scope}.name--text`), {
+            testId: `${this.scope}.name--text`,
+            role: 'text',
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField',
+        });
+    }
+
+    getNameText(): Promise<string> {
+        return this.nameText.text();
     }
 
     /**
@@ -18746,6 +18764,20 @@ export class AdminUserAttribute extends Scope {
     }
 
     /**
+     * `admin.user.attribute.swatch` — AttributeOptionSwatch (channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx)
+     * Renders only when option.color.
+     */
+    get swatch() {
+        return drivers.container(this.byTestId(`${this.scope}.swatch`), {
+            testId: `${this.scope}.swatch`,
+            role: null,
+            effects: [],
+            unknownEffects: false,
+            source: 'channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch',
+        });
+    }
+
+    /**
      * `admin.user.attribute.value--combobox` — AttributeCombobox (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
      */
     get valueCombobox() {
@@ -18779,6 +18811,27 @@ export class AdminUserAttribute extends Scope {
         await this.valueTextbox.fill(value);
     }
 
+    /**
+     * `admin.user.attribute.choice:{key}--option` — toComboboxOptions (channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx)
+     */
+    choice(choice: Pick<PropertyFieldOption, 'id'>): Choice {
+        return new Choice(
+            this.page,
+            `${this.scope}.choice`,
+            this.byTestId(`${this.scope}.choice:${choice.id}--option`, true),
+        );
+    }
+
+    /** Every `admin.user.attribute.choice:{key}--option` in the scope. */
+    get choiceItems(): Locator {
+        return this.byTestIdPattern(`${this.scope}.choice:`, '--option', true);
+    }
+
+    /** The keys of every `admin.user.attribute.choice:{key}--option` in the scope, in document order. */
+    choiceKeys(): Promise<string[]> {
+        return this.keysOf(`${this.scope}.choice:`, '--option', true);
+    }
+
     /** Fills the given fields; others are left as they are. */
     async fill(values: Partial<AdminUserAttributeFormValues>): Promise<void> {
         if (values.valueCombobox !== undefined) {
@@ -18789,21 +18842,12 @@ export class AdminUserAttribute extends Scope {
         }
     }
 
-    /** Every `admin.user.attribute.choice:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.choiceList).toHaveKeys([…])`. */
-    get choiceList() {
-        return this.keyedList(
-            `${this.scope}.choice:`,
-            '--option',
-            (key: string) =>
-                drivers.option(this.byTestId(`${this.scope}.choice:${key}--option`, true), {
-                    testId: `${this.scope}.choice:${key}--option`,
-                    role: 'option',
-                    effects: [],
-                    unknownEffects: false,
-                    source: 'channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions',
-                }),
-            true,
-        );
+    /** Reads the item's read-only parts (`null` where one isn't rendered). */
+    async read(): Promise<AdminUserAttributeRow> {
+        return {
+            badge: await this.badgeText.textIfPresent(),
+            name: await this.nameText.textIfPresent(),
+        };
     }
 
     /** Every `admin.user.attribute.owner:{key}--text` in the scope as a list by key, for the list matchers: `expect(x.ownerList).toHaveKeys([…])`. */
@@ -18829,6 +18873,21 @@ export class AdminUserAttribute extends Scope {
                 unknownEffects: false,
                 source: 'channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator',
             }),
+        );
+    }
+
+    /** Every `admin.user.attribute.choice:{key}--option` in the scope as a list by key, for the list matchers: `expect(x.choiceList).toHaveKeys([…])`. */
+    get choiceList() {
+        return this.keyedList(
+            `${this.scope}.choice:`,
+            '--option',
+            (key: string) =>
+                new Choice(
+                    this.page,
+                    `${this.scope}.choice`,
+                    this.byTestId(`${this.scope}.choice:${key}--option`, true),
+                ),
+            true,
         );
     }
 }

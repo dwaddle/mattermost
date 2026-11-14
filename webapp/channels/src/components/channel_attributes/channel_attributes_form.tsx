@@ -198,6 +198,7 @@ const ChannelAttributesForm = ({fields, values, onChange, disabled, testId}: Pro
                                     id={errorId}
                                     className='channel-attributes-form__error'
                                     role='alert'
+                                    data-testid={part(testId, 'attribute.error', 'alert')}
                                 >
                                     <i
                                         className='icon icon-alert-circle-outline'

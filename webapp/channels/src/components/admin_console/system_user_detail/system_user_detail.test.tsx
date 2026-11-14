@@ -853,7 +853,7 @@ describe('SystemUserDetail', () => {
                 renderWithField(field, 'opt-1');
                 await waitForLoadingToFinish();
 
-                await userEvent.click(screen.getByTestId('user-detail-custom-attribute-combobox-cpa-1-clear'));
+                await userEvent.click(screen.getByTestId('admin.user.attribute.clear--button'));
 
                 expect(fieldAlert()).toHaveTextContent(REQUIRED);
                 expect(saveButton()).toBeDisabled();

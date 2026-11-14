@@ -12431,10 +12431,10 @@
             "class": "AdminUserAttribute",
             "elements": [
                 {
-                    "testId": "admin.user.attribute.choice:{key}--option",
-                    "role": "option",
-                    "key": "Pick<PropertyFieldOption, 'id'>",
-                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
+                    "testId": "admin.user.attribute.badge--text",
+                    "role": "text",
+                    "renderedWhen": ["!(rank === undefined || rank === null)", "rank !== undefined"],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
                 },
                 {
                     "testId": "admin.user.attribute.clear--button",
@@ -12465,6 +12465,11 @@
                     "source": "channels/src/components/menu/menu.tsx#Menu"
                 },
                 {
+                    "testId": "admin.user.attribute.name--text",
+                    "role": "text",
+                    "source": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField"
+                },
+                {
                     "testId": "admin.user.attribute.owner:{key}--text",
                     "role": "text",
                     "key": "string",
@@ -12477,6 +12482,12 @@
                     "key": "\"ldap\" | \"openid\" | \"saml\"",
                     "renderedWhen": ["hasSyncedSources"],
                     "source": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator"
+                },
+                {
+                    "testId": "admin.user.attribute.swatch",
+                    "role": null,
+                    "renderedWhen": ["option.color"],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
                 },
                 {
                     "testId": "admin.user.attribute.value--combobox",
@@ -12493,6 +12504,36 @@
                     "role": null,
                     "key": "Pick<UserPropertyField, 'id'>",
                     "source": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField"
+                }
+            ]
+        },
+        {
+            "scope": "admin.user.attribute.choice",
+            "class": "Choice",
+            "elements": [
+                {
+                    "testId": "admin.user.attribute.choice.badge--text",
+                    "role": "text",
+                    "renderedWhen": ["!(rank === undefined || rank === null)", "rank !== undefined"],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+                },
+                {
+                    "testId": "admin.user.attribute.choice.placeholder",
+                    "role": null,
+                    "renderedWhen": ["!(visuals[index])", "reserveSlot"],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+                },
+                {
+                    "testId": "admin.user.attribute.choice.swatch",
+                    "role": null,
+                    "renderedWhen": ["option.color"],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+                },
+                {
+                    "testId": "admin.user.attribute.choice:{key}--option",
+                    "role": "option",
+                    "key": "Pick<PropertyFieldOption, 'id'>",
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
                 }
             ]
         },
@@ -23848,11 +23889,10 @@
             "class": "IntegrationsBotFormAttributesAttribute",
             "elements": [
                 {
-                    "testId": "integrations.bot_form.attributes.attribute.choice:{key}--option",
-                    "role": "option",
-                    "key": "Pick<PropertyFieldOption, 'id'>",
-                    "renderedWhen": ["rowFields.length > 0"],
-                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
+                    "testId": "integrations.bot_form.attributes.attribute.badge--text",
+                    "role": "text",
+                    "renderedWhen": ["!(rank === undefined || rank === null)", "rank !== undefined"],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
                 },
                 {
                     "testId": "integrations.bot_form.attributes.attribute.clear--button",
@@ -23884,6 +23924,12 @@
                     "source": "channels/src/components/menu/menu.tsx#Menu"
                 },
                 {
+                    "testId": "integrations.bot_form.attributes.attribute.name--text",
+                    "role": "text",
+                    "renderedWhen": ["rowFields.length > 0"],
+                    "source": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField"
+                },
+                {
                     "testId": "integrations.bot_form.attributes.attribute.owner:{key}--text",
                     "role": "text",
                     "key": "string",
@@ -23904,6 +23950,12 @@
                     "source": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#CpaFieldManagementIndicator"
                 },
                 {
+                    "testId": "integrations.bot_form.attributes.attribute.swatch",
+                    "role": null,
+                    "renderedWhen": ["option.color"],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+                },
+                {
                     "testId": "integrations.bot_form.attributes.attribute.value--combobox",
                     "role": "combobox",
                     "renderedWhen": ["rowFields.length > 0"],
@@ -23921,6 +23973,37 @@
                     "key": "Pick<UserPropertyField, 'id'>",
                     "renderedWhen": ["rowFields.length > 0"],
                     "source": "channels/src/components/property_fields/user_attribute_fields/user_attribute_field.tsx#UserAttributeField"
+                }
+            ]
+        },
+        {
+            "scope": "integrations.bot_form.attributes.attribute.choice",
+            "class": "Choice",
+            "elements": [
+                {
+                    "testId": "integrations.bot_form.attributes.attribute.choice.badge--text",
+                    "role": "text",
+                    "renderedWhen": ["!(rank === undefined || rank === null)", "rank !== undefined"],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+                },
+                {
+                    "testId": "integrations.bot_form.attributes.attribute.choice.placeholder",
+                    "role": null,
+                    "renderedWhen": ["!(visuals[index])", "reserveSlot"],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+                },
+                {
+                    "testId": "integrations.bot_form.attributes.attribute.choice.swatch",
+                    "role": null,
+                    "renderedWhen": ["option.color"],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+                },
+                {
+                    "testId": "integrations.bot_form.attributes.attribute.choice:{key}--option",
+                    "role": "option",
+                    "key": "Pick<PropertyFieldOption, 'id'>",
+                    "renderedWhen": ["rowFields.length > 0"],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
                 }
             ]
         },
@@ -26933,16 +27016,16 @@
             "class": "NewChannelModalAttributesAttribute",
             "elements": [
                 {
-                    "testId": "new_channel_modal.attributes.attribute.choice:{key}--option",
-                    "role": "option",
-                    "key": "Pick<PropertyFieldOption, 'id'>",
+                    "testId": "new_channel_modal.attributes.attribute.badge--text",
+                    "role": "text",
                     "renderedWhen": [
+                        "!(rank === undefined || rank === null)",
                         "!(supported.length === 0)",
                         "!supportsHierarchy(field)",
                         "!isTextField(field)",
                         "isBuiltInType(type)"
                     ],
-                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
                 },
                 {
                     "testId": "new_channel_modal.attributes.attribute.clear--button",
@@ -26954,6 +27037,24 @@
                         "isBuiltInType(type)"
                     ],
                     "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#AttributeCombobox"
+                },
+                {
+                    "testId": "new_channel_modal.attributes.attribute.error--alert",
+                    "role": "alert",
+                    "renderedWhen": ["!(supported.length === 0)", "showError", "isBuiltInType(type)"],
+                    "source": "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm"
+                },
+                {
+                    "testId": "new_channel_modal.attributes.attribute.swatch",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(supported.length === 0)",
+                        "!supportsHierarchy(field)",
+                        "!isTextField(field)",
+                        "isBuiltInType(type)",
+                        "option.color"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
                 },
                 {
                     "testId": "new_channel_modal.attributes.attribute.value--button",
@@ -27000,6 +27101,60 @@
                     "key": "Pick<PropertyField, 'id'>",
                     "renderedWhen": ["!(supported.length === 0)", "isBuiltInType(type)"],
                     "source": "channels/src/components/channel_attributes/channel_attributes_form.tsx#ChannelAttributesForm"
+                }
+            ]
+        },
+        {
+            "scope": "new_channel_modal.attributes.attribute.choice",
+            "class": "Choice",
+            "elements": [
+                {
+                    "testId": "new_channel_modal.attributes.attribute.choice.badge--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!(rank === undefined || rank === null)",
+                        "!(supported.length === 0)",
+                        "!supportsHierarchy(field)",
+                        "!isTextField(field)",
+                        "isBuiltInType(type)"
+                    ],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+                },
+                {
+                    "testId": "new_channel_modal.attributes.attribute.choice.placeholder",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(supported.length === 0)",
+                        "!supportsHierarchy(field)",
+                        "!isTextField(field)",
+                        "isBuiltInType(type)",
+                        "!(visuals[index])"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+                },
+                {
+                    "testId": "new_channel_modal.attributes.attribute.choice.swatch",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(supported.length === 0)",
+                        "!supportsHierarchy(field)",
+                        "!isTextField(field)",
+                        "isBuiltInType(type)",
+                        "option.color"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+                },
+                {
+                    "testId": "new_channel_modal.attributes.attribute.choice:{key}--option",
+                    "role": "option",
+                    "key": "Pick<PropertyFieldOption, 'id'>",
+                    "renderedWhen": [
+                        "!(supported.length === 0)",
+                        "!supportsHierarchy(field)",
+                        "!isTextField(field)",
+                        "isBuiltInType(type)"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
                 }
             ]
         },
@@ -38161,6 +38316,18 @@
             "class": "SettingsSectionItem",
             "elements": [
                 {
+                    "testId": "settings.section.badge--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!(rank === undefined || rank === null)",
+                        "rank !== undefined",
+                        "!(this.props.customProfileAttributeFields == null)",
+                        "active",
+                        "!isReadOnly"
+                    ],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+                },
+                {
                     "testId": "settings.section.cancel--button",
                     "role": "button",
                     "opens": [
@@ -38173,18 +38340,6 @@
                     "effects": [],
                     "unknownEffects": true,
                     "source": "channels/src/components/setting_item_max.tsx#SettingItemMax"
-                },
-                {
-                    "testId": "settings.section.choice:{key}--option",
-                    "role": "option",
-                    "key": "Pick<PropertyFieldOption, 'id'>",
-                    "renderedWhen": [
-                        "!(this.props.customProfileAttributeFields == null)",
-                        "active",
-                        "!isReadOnly",
-                        "valueRefersToOptions(attribute)"
-                    ],
-                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
                 },
                 {
                     "testId": "settings.section.clear--button",
@@ -38348,6 +38503,18 @@
                     "source": "channels/src/components/user_settings/display/user_settings_theme/custom_theme_chooser/custom_theme_chooser.tsx#CustomThemeChooser"
                 },
                 {
+                    "testId": "settings.section.swatch",
+                    "role": null,
+                    "renderedWhen": [
+                        "option.color",
+                        "!(this.props.customProfileAttributeFields == null)",
+                        "active",
+                        "!isReadOnly",
+                        "valueRefersToOptions(attribute)"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+                },
+                {
                     "testId": "settings.section.switch_to:{key}--link",
                     "role": "link",
                     "key": "\"email\" | \"gitlab\" | \"google\" | \"ldap\" | \"office365\" | \"openid\" | \"saml\"",
@@ -38435,6 +38602,60 @@
                     "effects": [],
                     "unknownEffects": true,
                     "source": "channels/src/components/setting_item_max.tsx#SettingItemMax"
+                }
+            ]
+        },
+        {
+            "scope": "settings.section.choice",
+            "class": "Choice",
+            "elements": [
+                {
+                    "testId": "settings.section.choice.badge--text",
+                    "role": "text",
+                    "renderedWhen": [
+                        "!(rank === undefined || rank === null)",
+                        "rank !== undefined",
+                        "!(this.props.customProfileAttributeFields == null)",
+                        "active",
+                        "!isReadOnly"
+                    ],
+                    "source": "channels/src/components/admin_console/system_properties/rank_badge.tsx#RankBadge"
+                },
+                {
+                    "testId": "settings.section.choice.placeholder",
+                    "role": null,
+                    "renderedWhen": [
+                        "!(visuals[index])",
+                        "reserveSlot",
+                        "!(this.props.customProfileAttributeFields == null)",
+                        "active",
+                        "!isReadOnly"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionVisualPlaceholder"
+                },
+                {
+                    "testId": "settings.section.choice.swatch",
+                    "role": null,
+                    "renderedWhen": [
+                        "option.color",
+                        "!(this.props.customProfileAttributeFields == null)",
+                        "active",
+                        "!isReadOnly",
+                        "valueRefersToOptions(attribute)"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_option_swatch.tsx#AttributeOptionSwatch"
+                },
+                {
+                    "testId": "settings.section.choice:{key}--option",
+                    "role": "option",
+                    "key": "Pick<PropertyFieldOption, 'id'>",
+                    "renderedWhen": [
+                        "!(this.props.customProfileAttributeFields == null)",
+                        "active",
+                        "!isReadOnly",
+                        "valueRefersToOptions(attribute)"
+                    ],
+                    "source": "channels/src/components/property_fields/attribute_combobox/attribute_combobox.tsx#toComboboxOptions"
                 }
             ]
         },

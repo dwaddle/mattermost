@@ -370,7 +370,7 @@ describe('AttributeSelectorMenu', () => {
     });
 
     describe('selectableAttributes', () => {
-        const openMenu = () => fireEvent.click(screen.getByTestId('attributeSelectorMenuButton'));
+        const openMenu = () => fireEvent.click(screen.getByTestId(`${ROW}.attribute--button`));
 
         test('lists only the selectable subset', () => {
             renderWithContext(
@@ -400,7 +400,7 @@ describe('AttributeSelectorMenu', () => {
                 />,
             );
 
-            const label = screen.getByTestId('attributeSelectorMenuButton').querySelector('.field-selector-menu-button__label');
+            const label = screen.getByTestId(`${ROW}.attribute--button`).querySelector('.field-selector-menu-button__label');
             expect(label).toHaveTextContent('Email');
 
             openMenu();

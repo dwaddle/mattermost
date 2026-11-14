@@ -324,9 +324,9 @@ describe('ChannelAttributesForm', () => {
         ]);
 
         const secret = within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:l3--option'));
-        expect(secret.getByTestId('attribute-option-swatch')).toBeInTheDocument();
-        expect(secret.queryByTestId('rank-badge')).not.toBeInTheDocument();
-        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:l2--option')).getByTestId('rank-badge')).toHaveTextContent('2');
+        expect(secret.getByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?swatch$/)).toBeInTheDocument();
+        expect(secret.queryByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?badge--text$/)).not.toBeInTheDocument();
+        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:l2--option')).getByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?badge--text$/)).toHaveTextContent('2');
         for (const id of ['l3', 'l2', 'l1']) {
             expect(screen.getByTestId(`${T}.attribute.choice:${id}--option`)).not.toHaveTextContent(/Rank/);
         }
@@ -346,12 +346,12 @@ describe('ChannelAttributesForm', () => {
             />,
         );
 
-        expect(within(container).getByTestId('attribute-option-swatch')).toHaveStyle({backgroundColor: 'rgb(30, 50, 92)'});
+        expect(within(container).getByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?swatch$/)).toHaveStyle({backgroundColor: 'rgb(30, 50, 92)'});
 
         await userEvent.click(screen.getByRole('combobox', {name: 'Colour'}));
 
-        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_a--option')).getByTestId('attribute-option-swatch')).toBeInTheDocument();
-        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_b--option')).getByTestId('attribute-option-visual-placeholder')).toBeInTheDocument();
+        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_a--option')).getByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?swatch$/)).toBeInTheDocument();
+        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_b--option')).getByTestId('new_channel_modal.attributes.attribute.choice.placeholder')).toBeInTheDocument();
     });
 
     test('shows a swatch for a coloured multiselect in its row and chip', async () => {
@@ -372,14 +372,14 @@ describe('ChannelAttributesForm', () => {
 
         const chips = within(screen.getByRole('toolbar', {name: 'Tags selections'})).getAllByRole('button');
         expect(chips.map((c) => c.textContent)).toEqual(['NOFORN', 'ORCON']);
-        expect(within(chips[0]).getByTestId('attribute-option-swatch')).toHaveStyle({backgroundColor: 'rgb(30, 50, 92)'});
-        expect(within(chips[1]).queryByTestId('attribute-option-swatch')).not.toBeInTheDocument();
+        expect(within(chips[0]).getByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?swatch$/)).toHaveStyle({backgroundColor: 'rgb(30, 50, 92)'});
+        expect(within(chips[1]).queryByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?swatch$/)).not.toBeInTheDocument();
 
         await userEvent.click(screen.getByRole('combobox', {name: 'Tags'}));
 
-        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_a--option')).getByTestId('attribute-option-swatch')).toBeInTheDocument();
-        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_b--option')).queryByTestId('attribute-option-swatch')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('attribute-option-visual-placeholder')).not.toBeInTheDocument();
+        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_a--option')).getByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?swatch$/)).toBeInTheDocument();
+        expect(within(screen.getByTestId('new_channel_modal.attributes.attribute.choice:opt_b--option')).queryByTestId(/^new_channel_modal\.attributes\.attribute\.(choice\.)?swatch$/)).not.toBeInTheDocument();
+        expect(screen.queryByTestId('new_channel_modal.attributes.attribute.choice.placeholder')).not.toBeInTheDocument();
     });
 
     test('marks required comboboxes aria-required and leaves optional ones unmarked', () => {
