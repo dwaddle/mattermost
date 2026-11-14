@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {AdminRole, expect, test, type App, duration, Msg} from '@mattermost/playwright-lib';
+import {AdminRole, expect, formatMessage, test, type App, duration, Msg} from '@mattermost/playwright-lib';
 
 import {ensureUserAttributes} from '../support';
 import {openPermissionPolicies, setAbacEnabled, setCelExpression} from '../surface';
@@ -168,43 +168,35 @@ test.describe('Permission Policies - Create Policy', () => {
         'keeps Simulate rules disabled until a permission is added without falling back to Test access rule',
         {tag: '@abac'},
         async ({pw}) => {
-            test.setTimeout(120000);
+            test.setTimeout(duration.two_min);
             await pw.skipIfNoLicense();
             const {adminUser, adminClient} = await pw.initSetup();
             await ensureUserAttributes(adminClient);
-            const {systemConsolePage} = await pw.testBrowser.login(adminUser);
-            const page = systemConsolePage.page;
+            const {app} = await pw.testBrowser.login(adminUser);
 
-            // # Open the create form, keeping the default Members role
-            await enableABAC(page);
-            await navigateToPermissionPoliciesPage(page);
-            await page.getByRole('button', {name: 'Add policy'}).click();
-            await page.waitForLoadState('networkidle');
-
-            // # Enter a valid rule without adding a permission
-            await page.getByRole('button', {name: 'Switch to Advanced Mode'}).click();
-            await page.locator('.monaco-editor').first().waitFor({state: 'visible', timeout: 5000});
-            await page.locator('.monaco-editor .view-lines').first().click({force: true});
-            await page.waitForTimeout(300);
-            await page.keyboard.press(process.platform === 'darwin' ? 'Meta+a' : 'Control+a');
-            await page.waitForTimeout(100);
-            await page.keyboard.type('user.attributes.Department == "Engineering"', {delay: 10});
+            // # Open the create form, keeping the default Members role, and enter a valid rule without adding a permission
+            const {policy} = await openNewPermissionPolicy(app);
+            await setCelExpression(app, policy, 'user.attributes.Department == "Engineering"');
 
             // * Simulate rules is shown disabled, and the expression-only Test access rule is not offered
-            const simulateButton = page.getByRole('button', {name: 'Simulate rules'});
+            const simulateButton = policy.cel.testButton.locator;
             await expect(simulateButton).toBeVisible();
             await expect(simulateButton).toBeDisabled();
-            await expect(page.getByRole('button', {name: 'Test access rule'})).toHaveCount(0);
+            await expect(simulateButton).toHaveText('Simulate rules');
+            await expect(
+                app.page.getByRole('button', {
+                    name: formatMessage(Msg.admin.access_control.table_editor.test_access_rule),
+                }),
+            ).toHaveCount(0);
 
             // # Add a permission
-            await page.getByRole('button', {name: 'Add permission'}).click();
-            await page.locator('#pp-add-permission-download_file_attachment').click();
+            await (await policy.clickAddPermissionButton()).permission('download_file_attachment').click();
 
             // * Simulate rules becomes available and opens the simulator, not the membership test results
-            await expect(simulateButton).toBeEnabled({timeout: 10000});
-            await simulateButton.click();
-            await expect(page.getByRole('dialog', {name: 'Simulate access'})).toBeVisible();
-            await expect(page.getByText('Access Rule Test Results')).toHaveCount(0);
+            await expect(simulateButton).toBeEnabled({timeout: duration.ten_sec});
+            await policy.cel.clickTestButton();
+            await expect(app.admin.simulateAccess.locator).toBeVisible();
+            await expect(app.page.getByText(formatMessage(Msg.admin.access_control.testResults))).toHaveCount(0);
         },
     );
 });

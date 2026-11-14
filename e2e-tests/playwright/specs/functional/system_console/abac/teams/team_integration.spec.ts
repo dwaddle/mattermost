@@ -30,14 +30,7 @@ import {
 import {getUserAttributeFieldByName} from '../support';
 import {addRule, fillRuleValue, MEMBERSHIP_POLICIES_PATH} from '../surface';
 
-import {
-    assignTeamsToPolicy,
-    createTeamMembershipParentPolicy,
-    enableTeamMembershipPolicies,
-    findPolicyRow,
-    openTeamConfig,
-    setToggle,
-} from './helpers';
+import {assignTeamsToPolicy, createTeamMembershipParentPolicy, enableTeamMembershipPolicies} from './helpers';
 
 /**
  * ABAC — Team Membership (per-team System Console page)

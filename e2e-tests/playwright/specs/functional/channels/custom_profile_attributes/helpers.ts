@@ -170,7 +170,7 @@ async function pickOptions(
         if ((await section.valueCombobox.locator.getAttribute('aria-expanded')) !== 'true') {
             await section.valueCombobox.locator.click();
         }
-        await section.choice({id: options[index].id}).select();
+        await section.choice({id: options[index].id}).option.select();
     }
 }
 

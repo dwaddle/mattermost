@@ -27,6 +27,8 @@ import {
     type App,
     duration,
     Msg,
+    comboboxChips,
+    removeComboboxChip,
 } from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../channels/custom_profile_attributes/helpers';
@@ -34,7 +36,6 @@ import {
     setupCustomProfileAttributeFields,
     setupCustomProfileAttributeValuesForUser,
     deleteCustomProfileAttributes,
-    getFieldIdByName,
 } from '../../channels/custom_profile_attributes/helpers';
 import {optionId} from '../../channels/channel_attributes/helpers';
 
@@ -344,33 +345,90 @@ test.describe('System Console - Admin User Profile Editing', () => {
 
     test('Should edit custom select attribute and save', async () => {
         const userDetail = app!.admin.user;
+        const locationField = field(cpaFieldNames.location);
+        const location = userDetail.attribute(locationField);
+        const combobox = location.valueCombobox.locator;
 
-        // # Find Location select field
-        const location = userDetail.attribute(field(cpaFieldNames.location)).valueCombobox;
+        // * Verify the Location combobox starts empty with its placeholder
+        await expect(combobox).toHaveValue('');
+        await expect(combobox).toHaveAttribute('placeholder', 'Select an option');
 
-        // # Pick an option
-        await location.choose('Remote');
+        // # Open the Location combobox
+        await combobox.click();
+
+        // * Verify the options are listed in definition order
+        await expect(location.choiceItems).toHaveText(['Remote', 'Office', 'Hybrid']);
+
+        // # Type part of an option name
+        await combobox.fill('Off');
+
+        // * Verify only the matching option is listed
+        await expect(location.choiceItems).toHaveText(['Office']);
+
+        // # Pick Office
+        await location.choice({id: optionId(locationField, 'Office')}).locator.click();
+
+        // * Verify the menu closes and the input shows the option label
+        await expect(combobox).toHaveAttribute('aria-expanded', 'false');
+        await expect(combobox).toHaveValue('Office');
 
         // # Click Save button and confirm
-        const confirm = await userDetail.clickSaveButton();
+        let confirm = await userDetail.clickSaveButton();
         await confirm.clickConfirmButton();
 
-        // * Verify success and persistence
-        await expect(userDetail.saveErrorText.locator).not.toBeVisible();
-        // Don't check exact value since it's a generated ID, just verify it's not empty
-        const selectedValue = await location.locator.inputValue();
-        expect(selectedValue).toBeTruthy();
+        // * Verify success; the input still shows the label
         await expect(userDetail.saveButton.locator).toBeSaved();
+        await expect(userDetail.saveErrorText.locator).not.toBeVisible();
+        await expect(combobox).toHaveValue('Office');
+
+        // * Verify the option id was stored
+        await expect
+            .poll(() => adminClient.getUserCustomProfileAttributesValues(testUser.id))
+            .toMatchObject({[locationField.id]: optionId(locationField, 'Office')});
+
+        // # Clear the selection with the clear button
+        await location.clickClearButton();
+
+        // * Verify the input is empty and the clear button is gone
+        await expect(combobox).toHaveValue('');
+        await expect(location.clearButton.locator).not.toBeVisible();
+
+        // # Click Save button and confirm
+        confirm = await userDetail.clickSaveButton();
+        await confirm.clickConfirmButton();
+
+        // * Verify success and that the stored value was cleared
+        await expect(userDetail.saveButton.locator).toBeSaved();
+        await expect(userDetail.saveErrorText.locator).not.toBeVisible();
+        await expect
+            .poll(() => adminClient.getUserCustomProfileAttributesValues(testUser.id))
+            .toMatchObject({[locationField.id]: ''});
     });
 
     test('Should display custom multiselect attribute and save form', async () => {
         const userDetail = app!.admin.user;
+        const skillsField = field(cpaFieldNames.skills);
+        const skills = userDetail.attribute(skillsField);
+        const chips = comboboxChips(skills);
 
-        // * Verify Skills multiselect component is displayed
-        const skillsColumn = userDetail.attribute(field(cpaFieldNames.skills)).locator;
-        await expect(skillsColumn).toBeVisible();
+        // * Verify Skills multiselect component is displayed with no chips
+        await expect(skills.valueCombobox.locator).toBeVisible();
+        await expect(chips).toHaveCount(0);
 
-        // # Make a change to a different field to trigger save state
+        // # Pick JavaScript and React
+        await skills.valueCombobox.choose('JavaScript');
+        await skills.valueCombobox.choose('React');
+
+        // * Verify both show as chips in pick order
+        await expect(chips).toHaveText(['JavaScript', 'React']);
+
+        // # Remove the React chip
+        await removeComboboxChip(skills, 'React');
+
+        // * Verify only JavaScript remains
+        await expect(chips).toHaveText(['JavaScript']);
+
+        // # Make a change to a different field too
         const departmentInput = attributeInput(cpaFieldNames.department);
         await departmentInput.fill('Engineering Updated');
 
@@ -381,13 +439,11 @@ test.describe('System Console - Admin User Profile Editing', () => {
         const confirm = await userDetail.clickSaveButton();
         await confirm.clickConfirmButton();
 
-        // * Verify success (no error message)
+        // * Verify the save completed without an error message
         await expect(userDetail.saveErrorText.locator).not.toBeVisible();
-
-        // * Verify save completed
         await expect(userDetail.saveButton.locator).toBeSaved();
 
-        // * Verify the change persisted
+        // * Verify the changes persisted in the UI and on the server
         await expect(departmentInput).toHaveValue('Engineering Updated');
         await expect(chips).toHaveText(['JavaScript']);
         await expect
@@ -402,30 +458,26 @@ test.describe('System Console - Admin User Profile Editing', () => {
         'clicking a multiselect attribute name focuses its input and keeps its chips',
         {tag: '@user_management'},
         async () => {
-            const {userDetail} = systemConsolePage!.users;
-            const {userCard} = userDetail;
-            const skills = cpaDisplayLabels.skills;
-            const skillsFieldId = getFieldIdByName(attributeFieldsMap, cpaFieldNames.skills);
-            const comboboxId = `user-detail-custom-attribute-combobox-${skillsFieldId}`;
-            const skillsCombobox = userCard.getCpaCombobox(skills);
-            const skillsLabel = userCard.getCpaFieldLabel(skills);
-            const chips = userCard.getCpaChips(skills);
+            const userDetail = app!.admin.user;
+            const skillsField = field(cpaFieldNames.skills);
+            const skills = userDetail.attribute(skillsField);
+            const skillsCombobox = skills.valueCombobox.locator;
+            const skillsLabel = skills.nameText.locator;
+            const chips = comboboxChips(skills);
 
-            // * Verify the field name is a label pointing at the combobox
-            await expect(skillsCombobox).toHaveAttribute('id', comboboxId);
-            await expect(skillsLabel).toHaveAttribute('for', comboboxId);
+            // * Verify the field name is the combobox's label
+            await expect(skillsCombobox).toHaveAccessibleName(skillsField.attrs?.display_name || skillsField.name);
 
             // # Pick two skills and save them
-            await userCard.selectCpaOption(skills, 'JavaScript');
-            await userCard.selectCpaOption(skills, 'React');
+            await skills.valueCombobox.choose('JavaScript');
+            await skills.valueCombobox.choose('React');
             await expect(chips).toHaveText(['JavaScript', 'React']);
-            await userDetail.save();
-            await userDetail.saveChangesModal.confirm();
-            await userDetail.waitForSaveComplete();
+            const confirm = await userDetail.clickSaveButton();
+            await confirm.clickConfirmButton();
+            await expect(userDetail.saveButton.locator).toBeSaved();
 
             // # Move focus to another field
-            const departmentInput = userCard.getFieldInputByExactLabel(cpaDisplayLabels.department);
-            await departmentInput.focus();
+            await attributeInput(cpaFieldNames.department).focus();
             await expect(skillsCombobox).not.toBeFocused();
 
             // # Click the Skills field name
@@ -434,8 +486,8 @@ test.describe('System Console - Admin User Profile Editing', () => {
             // * Verify the combobox is focused, both chips remain, and nothing changed
             await expect(skillsCombobox).toBeFocused();
             await expect(chips).toHaveText(['JavaScript', 'React']);
-            await expect(userDetail.saveButton).toBeDisabled();
-            await expect(userDetail.cancelButton).not.toBeVisible();
+            await expect(userDetail.saveButton.locator).toBeDisabled();
+            await expect(userDetail.cancelButton.locator).not.toBeVisible();
         },
     );
 
