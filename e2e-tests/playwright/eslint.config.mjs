@@ -13,6 +13,31 @@ const LITERAL_LOCATOR_EXCEPTIONS = {
         'test.skip for a master regression), so a port to the generated API could not be run to check it',
     'specs/functional/plugins/demo_plugin/server/slash_commands/demo_plugin_hook_toggle.spec.ts':
         'test.fixme on master: it does not run in CI, so a port could not be checked there either',
+    // master's specs and helpers written after this stack's migration began, on raw locators (about 190 sites):
+    'specs/functional/system_console/abac/teams/team_advanced_rules.spec.ts':
+        "master's 1,000-line spec for the team rules' Advanced (CEL) editor drives Monaco, the confirm dialogs and the " +
+        'team page by selectors; porting it to the generated objects needs runs against a licensed server with ABAC ' +
+        "to check each step, which this pass didn't have. Its testids and the team settings flow follow this stack's names",
+    'specs/functional/system_console/abac/teams/team_advanced_rules_flag_off.spec.ts':
+        "master's companion to team_advanced_rules: two raw checks that the feature-flagged controls are absent",
+    'specs/functional/system_console/abac/teams/helpers.ts':
+        "master's raw helpers for team_advanced_rules and join_enforcement_gate (Monaco typing, team lookup by name)",
+    'specs/functional/system_console/abac/policies/permission_policies_bot_scope.spec.ts':
+        "master's spec for the Bot accounts permission policy scope: raw role selectors and the table editor's rows",
+    'specs/functional/system_console/abac/support.ts':
+        'createPermissionPolicy, testAccessRule, getPolicyIdByName and navigateToPermissionPoliciesPage, kept because ' +
+        "master's permission policy bot scope and team_advanced_rules specs call them; the generated-object versions " +
+        'live in abac/surface.ts and take different arguments',
+    'specs/functional/channels/team_settings/helpers.ts':
+        "addAttributeRule, kept because master's team_advanced_rules spec calls it (the generated-object version is addRule)",
+    'specs/functional/channels/channel_settings/channel_settings_access_rules_locked.spec.ts':
+        "master's spec for the locked membership policy tab: the locked notice's status line and rule code have no testids",
+    'specs/functional/system_console/global_attributes/global_attributes_listing_source_filter.spec.ts':
+        "master's listing spec, written on the hand-written Global Attributes object (kept for master's four listing specs)",
+    'specs/functional/system_console/plugins/plugin_settings_search_highlight.spec.ts':
+        'the search highlight is a <mark> in the page header, which has no testid',
+    'specs/functional/system_console/system_users/user_graph_value_picker.spec.ts':
+        "the graph picker's menu and its rows are the library's menu with no testids",
     'specs/functional/system_console/desktop_app_update_required.spec.ts':
         'the server renders the desktop app update page, not the webapp: no page object can exist, so its role ' +
         'selectors are the agreed way in',

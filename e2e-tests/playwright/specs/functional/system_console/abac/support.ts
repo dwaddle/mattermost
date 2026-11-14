@@ -6,23 +6,31 @@
  * These functions are used across multiple ABAC test files to reduce duplication
  */
 
-import {expect} from '@playwright/test';
+import {expect, type Page} from '@playwright/test';
 import type {Client4} from '@mattermost/client';
 import type {UserProfile} from '@mattermost/types/users';
 import type {Channel} from '@mattermost/types/channels';
 import type {UserPropertyField} from '@mattermost/types/properties_user';
 
-import {getRandomId, newTestPassword} from '@mattermost/playwright-lib';
+import {duration, getRandomId, newTestPassword} from '@mattermost/playwright-lib';
 
 import type {CustomProfileAttribute} from '../../channels/custom_profile_attributes/helpers';
 import {setupCustomProfileAttributeValuesForUser} from '../../channels/custom_profile_attributes/helpers';
 
 import {permissionPolicyIdByName} from './surface';
 
+// The access rule table's controls, in whichever rule table is on the page: every table is `<area>.rules`, each rule
+// `<area>.rules.row:<n>` with these parts.
+export const RULE_ATTRIBUTE_BUTTON = /\.rules\.row\.attribute--button$/;
+export const RULE_OPERATOR_BUTTON = /\.rules\.row\.operator--button$/;
+export const RULE_VALUE_BUTTON = /\.rules\.row\.value--button$/;
+export const RULE_VALUE_TEXTBOX = /\.rules\.row\.value--textbox$/;
+export const RULE_VALUE_CONTROL = /\.rules\.row\.value--(button|textbox)$/;
+
 /**
  * Create user attribute field via API
  */
-async function createUserAttributeField(client: Client4, name: string, type: string = 'text'): Promise<any> {
+export async function createUserAttributeField(client: Client4, name: string, type: string = 'text'): Promise<any> {
     const url = `${client.getBaseRoute()}/custom_profile_attributes/fields`;
     const field = {
         name,
@@ -333,5 +341,303 @@ export async function cleanupAllPermissionPolicies(client: Client4): Promise<voi
         }
 
         cursor = policies[policies.length - 1].id;
+    }
+}
+
+export interface TestAccessRuleResult {
+    totalMatches: number;
+    matchingUsernames: string[];
+    expectedUsersMatch: boolean;
+    unexpectedUsersMatch: boolean;
+}
+
+// Master's permission policy bot scope and team advanced rules specs drive these on the page itself.
+/**
+ * Test Access Rule Helper
+ * Clicks the "Test access rule" button and verifies which users match the policy
+ */
+export async function testAccessRule(
+    page: Page,
+    options: {
+        expectedMatchingUsers?: string[]; // usernames that SHOULD match
+        expectedNonMatchingUsers?: string[]; // usernames that should NOT match
+        searchForUser?: string; // optional: search for a specific user in the modal
+    } = {},
+): Promise<TestAccessRuleResult> {
+    const testButton = page.getByRole('button', {name: /test access rule/i});
+    await expect(testButton).toBeVisible();
+    await expect(testButton).toBeEnabled({timeout: duration.half_min});
+    await testButton.click();
+
+    const modal = page.locator('[role="dialog"], .modal').filter({hasText: 'Access Rule Test Results'});
+    await modal.waitFor({state: 'visible', timeout: duration.ten_sec});
+
+    await page.waitForTimeout(1000);
+    let totalMatches = 0;
+
+    const countText = await modal
+        .locator('text=/\\d+.*(?:members|total|match)/i')
+        .first()
+        .textContent({timeout: duration.ten_sec})
+        .catch(() => null);
+
+    if (countText) {
+        const totalMatch = countText.match(/of\s*(\d+)\s*total/i);
+        if (totalMatch) {
+            totalMatches = parseInt(totalMatch[1], 10);
+        } else {
+            const matchesMatch = countText.match(/(\d+)\s*match/i);
+            if (matchesMatch) {
+                totalMatches = parseInt(matchesMatch[1], 10);
+            }
+        }
+    }
+
+    const matchingUsernames: string[] = [];
+    const userButtons = modal.locator('.more-modal__name button, [class*="more-modal__name"] button');
+    const count = await userButtons.count();
+
+    for (let i = 0; i < count; i++) {
+        const username = await userButtons.nth(i).textContent();
+        if (username) {
+            const cleanUsername = username.replace('@', '').trim();
+            matchingUsernames.push(cleanUsername);
+        }
+    }
+
+    if (options.searchForUser) {
+        const searchInput = modal.locator('input[placeholder*="Search" i]').first();
+        if (await searchInput.isVisible({timeout: duration.two_sec})) {
+            await searchInput.fill(options.searchForUser);
+            await page.waitForTimeout(500);
+        }
+    }
+
+    let expectedUsersMatch = true;
+    if (options.expectedMatchingUsers && options.expectedMatchingUsers.length > 0) {
+        for (const expectedUser of options.expectedMatchingUsers) {
+            const searchInput = modal.locator('input[placeholder*="Search" i]').first();
+            if (await searchInput.isVisible({timeout: duration.two_sec})) {
+                await searchInput.fill(expectedUser);
+                await page.waitForTimeout(1000);
+
+                const userInResults = modal.locator(`text=@${expectedUser}`).first();
+                const isVisible = await userInResults.isVisible({timeout: duration.ten_sec});
+
+                if (!isVisible) {
+                    // console.error(`✗ Expected user "${expectedUser}" NOT found in matching results`);
+                    expectedUsersMatch = false;
+                }
+
+                await searchInput.fill('');
+                await page.waitForTimeout(500);
+            }
+        }
+    }
+
+    let unexpectedUsersMatch = false;
+    if (options.expectedNonMatchingUsers && options.expectedNonMatchingUsers.length > 0) {
+        for (const unexpectedUser of options.expectedNonMatchingUsers) {
+            const searchInput = modal.locator('input[placeholder*="Search" i]').first();
+            if (await searchInput.isVisible({timeout: duration.two_sec})) {
+                await searchInput.fill(unexpectedUser);
+                await page.waitForTimeout(500);
+
+                const userInResults = modal.locator(`text=@${unexpectedUser}`).first();
+                const isVisible = await userInResults.isVisible({timeout: duration.two_sec});
+
+                if (isVisible) {
+                    // console.error(`✗ Non-matching user "${unexpectedUser}" FOUND in results (should NOT be there)`);
+                    unexpectedUsersMatch = true;
+                }
+
+                await searchInput.fill('');
+                await page.waitForTimeout(300);
+            }
+        }
+    }
+
+    const closeButton = modal.locator('button[aria-label*="Close" i], button:has-text("×"), .close').first();
+    if (await closeButton.isVisible({timeout: duration.one_sec})) {
+        await closeButton.click();
+        await page.waitForTimeout(500);
+    } else {
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(500);
+    }
+
+    return {
+        totalMatches,
+        matchingUsernames,
+        expectedUsersMatch,
+        unexpectedUsersMatch,
+    };
+}
+
+/**
+ * Get policy ID by name using search API (with retry)
+ */
+export async function getPolicyIdByName(
+    client: Client4,
+    policyName: string,
+    retries: number = 3,
+): Promise<string | null> {
+    const searchUrl = `${client.getBaseRoute()}/access_control_policies/search`;
+
+    // Extract the base name without the random ID suffix for search
+    // e.g., "Auto-Add Policy 48b0141" -> "Auto-Add Policy"
+    const baseNameMatch = policyName.match(/^(.+?)\s+[a-z0-9]+$/i);
+    const searchTerm = baseNameMatch ? baseNameMatch[1] : policyName;
+
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            // Use the search API
+            const result = await (client as any).doFetch(searchUrl, {
+                method: 'POST',
+                body: JSON.stringify({
+                    term: searchTerm,
+                }),
+            });
+
+            const policies = result?.policies || [];
+
+            if (policies.length > 0) {
+                // Try exact match first
+                let policy = policies.find((p: any) => p.name === policyName);
+
+                // If no exact match, try partial match
+                if (!policy) {
+                    policy = policies.find((p: any) => p.name.includes(searchTerm));
+                }
+
+                // If still no match, just take the first result
+                if (!policy && policies.length > 0) {
+                    policy = policies[0];
+                }
+
+                if (policy) {
+                    return policy.id;
+                }
+                // Wait before retrying
+                if (attempt < retries) {
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                }
+            } else if (attempt < retries) {
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+            }
+        } catch {
+            // console.error(`Failed to search policies (attempt ${attempt}):`, _error.message || String(_error));
+
+            if (attempt < retries) {
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+            }
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Create a permission policy using the CEL (Advanced) editor.
+ * Caller must already be on the Permission Policies list page.
+ * Available permissions: 'Download Files' | 'Upload Files' | 'Create Burn-on-Read Message'
+ * Available roles: 'system_guest' | 'system_user' | 'system_admin' | 'system_bot' (Bot accounts)
+ */
+export async function createPermissionPolicy(
+    page: Page,
+    options: {
+        name: string;
+        celExpression: string;
+        permissions: Array<'Download Files' | 'Upload Files' | 'Create Burn-on-Read Message'>;
+        role?: 'system_guest' | 'system_user' | 'system_admin' | 'system_bot';
+        adminClient?: Client4;
+    },
+): Promise<void> {
+    // Ensure user attributes exist — a parallel test may have deleted all CPA fields,
+    // which disables the "Switch to Advanced Mode" button in the permission policy editor.
+    if (options.adminClient) {
+        await ensureUserAttributes(options.adminClient);
+    }
+
+    await navigateToPermissionPoliciesPage(page);
+
+    const addPolicyButton = page.getByRole('button', {name: 'Add policy'});
+    await addPolicyButton.waitFor({state: 'visible', timeout: duration.half_min});
+    await addPolicyButton.click();
+    await page.waitForLoadState('networkidle');
+
+    // Fill policy name
+    await page.getByPlaceholder('Add a unique policy name').fill(options.name);
+
+    // Set role if not the default (system_user) using the role dropdown
+    if (options.role && options.role !== 'system_user') {
+        await page.locator('#pp-role-selector-btn').click();
+        await page.locator(`#pp-role-option-${options.role}`).click();
+    }
+
+    // Switch to Advanced (CEL) mode and enter expression.
+    // The button is disabled when no user-attribute fields exist. If another test's
+    // afterEach deleted all CPA fields between our ensureUserAttributes call and now,
+    // re-create them and reload the "Add policy" form before clicking.
+    const switchBtn = page.getByRole('button', {name: 'Switch to Advanced Mode'});
+    if (await switchBtn.isDisabled()) {
+        if (options.adminClient) {
+            await ensureUserAttributes(options.adminClient);
+        }
+        await navigateToPermissionPoliciesPage(page);
+        const addPolicyRetry = page.getByRole('button', {name: 'Add policy'});
+        await addPolicyRetry.waitFor({state: 'visible', timeout: duration.half_min});
+        await addPolicyRetry.click();
+        await page.waitForLoadState('networkidle');
+        // Re-fill policy name and role after the form reload.
+        await page.getByPlaceholder('Add a unique policy name').fill(options.name);
+        if (options.role && options.role !== 'system_user') {
+            await page.locator('#pp-role-selector-btn').click();
+            await page.locator(`#pp-role-option-${options.role}`).click();
+        }
+    }
+    await expect(switchBtn).toBeEnabled();
+    await switchBtn.click();
+
+    const monacoContainer = page.locator('.monaco-editor').first();
+    await monacoContainer.waitFor({state: 'visible', timeout: duration.ten_sec});
+
+    const editorLines = page.locator('.monaco-editor .view-lines').first();
+    await editorLines.click({force: true});
+    await page.waitForTimeout(300);
+
+    const isMac = process.platform === 'darwin';
+    await page.keyboard.press(isMac ? 'Meta+a' : 'Control+a');
+    await page.waitForTimeout(100);
+    await page.keyboard.type(options.celExpression, {delay: 10});
+
+    // Add each permission via the menu.
+    // Items are keyed by their action value, e.g. pp-add-permission-download_file_attachment.
+    const permissionIdMap: Record<string, string> = {
+        'Download Files': 'pp-add-permission-download_file_attachment',
+        'Upload Files': 'pp-add-permission-upload_file_attachment',
+        'Create Burn-on-Read Message': 'pp-add-permission-create_burn_on_read_post',
+    };
+    for (const permission of options.permissions) {
+        await page.getByRole('button', {name: 'Add permission'}).click();
+        await page.locator(`#${permissionIdMap[permission]}`).click();
+    }
+
+    await page.getByRole('button', {name: 'Save'}).last().click();
+    await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Navigate to Permission Policies and ensure the route is available.
+ * Throws a clear error when the webapp bundle does not include this page.
+ */
+export async function navigateToPermissionPoliciesPage(page: Page): Promise<void> {
+    await page.goto('/admin_console/system_attributes/permission_policies');
+    await page.waitForLoadState('networkidle');
+
+    if (page.url().includes('/admin_console/about/license')) {
+        throw new Error(
+            'Permission Policies page is unavailable and redirected to License. Rebuild and run webapp from a branch that includes the permission policies route before running ABAC tests.',
+        );
     }
 }

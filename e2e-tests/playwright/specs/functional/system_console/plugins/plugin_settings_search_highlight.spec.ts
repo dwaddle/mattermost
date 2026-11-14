@@ -29,7 +29,7 @@ test(
         // # Search the System Console for the first word of the plugin name and open its settings page
         const {app} = await pw.testBrowser.login(adminUser);
         await app.page.goto('/admin_console');
-        await app.admin.sidebar.filter.fillInputTextbox('E2E');
+        await app.admin.sidebar.fillFilterTextbox('E2E');
         await app.admin.sidebar.locator.getByRole('link', {name: pluginName}).click();
 
         // * Verify the search term is highlighted in the header

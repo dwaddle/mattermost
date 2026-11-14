@@ -328,7 +328,7 @@ test.describe('Permission Policies - Bot accounts scope', () => {
 
             // * Verify the details page shows the Bot accounts scope and the rule in table mode
             await expect(page.locator('#pp-role-selector-btn')).toContainText('Bot accounts');
-            const table = page.getByTestId('table-editor');
+            const table = page.getByTestId('admin.permission_policy.rules');
             await expect(table).toBeVisible({timeout: 15_000});
             await expect(table.locator('.table-editor__row')).toHaveCount(1);
             await expect(page.locator('#attribute-selector-button-0')).toContainText(fieldName);

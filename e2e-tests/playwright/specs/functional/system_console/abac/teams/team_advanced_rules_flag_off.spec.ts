@@ -42,7 +42,7 @@ test.describe('ABAC - Team Advanced membership rules (flag off)', {tag: ['@abac'
         const {page} = await pw.testBrowser.login(adminUser);
         await openTeamConfig(page, team.display_name);
 
-        await expect(page.locator('[data-testid="policy-enforce-toggle-button"]')).toHaveCount(0);
+        await expect(page.locator('[data-testid="admin.team.policy_enforce--switch"]')).toHaveCount(0);
         await expect(page.locator('#team_level_access_rules')).toHaveCount(0);
     });
 });

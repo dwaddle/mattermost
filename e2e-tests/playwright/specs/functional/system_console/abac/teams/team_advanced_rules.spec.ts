@@ -13,7 +13,7 @@ import type {UserProfile} from '@mattermost/types/users';
 import type {Page} from '@playwright/test';
 
 import {
-    ChannelsPage,
+    openTeamSettings,
     expect,
     getAdminClient,
     getRandomId,
@@ -274,7 +274,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
 
         await addAttributeRule(rulesPanel, page, 'Engineering', DEPT);
 
-        const toggle = page.getByTestId('team-rules-editor-mode-toggle');
+        const toggle = page.getByTestId('admin.team.access_rules.switch_mode--button');
         await expect(toggle).toHaveText('Switch to Advanced Mode');
 
         await switchTeamRulesMode(page);
@@ -302,7 +302,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
             (resp) => resp.url().endsWith('/api/v4/jobs') && resp.request().method() === 'POST',
             {timeout: 30_000},
         );
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
 
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Apply membership policy'});
         await expect(confirmModal).toBeVisible({timeout: 15_000});
@@ -324,7 +324,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         const rulesPanel = await openTeamRules(page, team);
 
         await expect(rulesPanel.locator('.monaco-editor')).toBeVisible({timeout: 15_000});
-        const toggle = page.getByTestId('team-rules-editor-mode-toggle');
+        const toggle = page.getByTestId('admin.team.access_rules.switch_mode--button');
         await expect(toggle).toHaveText('Switch to Simple Mode');
         await expect(toggle).toBeDisabled();
     });
@@ -339,7 +339,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await typeTeamRulesCel(page, simpleRule());
         await waitForTeamRulesValidation(page, 'validated');
 
-        const toggle = page.getByTestId('team-rules-editor-mode-toggle');
+        const toggle = page.getByTestId('admin.team.access_rules.switch_mode--button');
         await expect(toggle).toBeEnabled();
         await toggle.click();
 
@@ -356,7 +356,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         const {page} = await pw.testBrowser.login(adminUser);
         await openTeamRules(page, team);
 
-        await page.locator('[data-testid="link-to-a-policy"]').click();
+        await page.locator('[data-testid="admin.team.access_policy.link--button"]').click();
         const modal = page.locator('[role="dialog"]').filter({hasText: 'Select a Membership Policy'});
         await modal.waitFor({state: 'visible', timeout: 5000});
         const policyRow = await findPolicyRow(modal, parentName);
@@ -369,9 +369,9 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await typeTeamRulesCel(page, invalidRule());
         await waitForTeamRulesValidation(page, 'error');
 
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
 
-        await expect(page.getByTestId('saveChangesPanel-errorMessage')).toContainText('Fix the errors');
+        await expect(page.getByTestId('admin.team.save_panel.error--text')).toContainText('Fix the errors');
         await expect(page.locator('.ConfirmModal')).toHaveCount(0);
 
         expect((await adminClient.getTeam(team.id)).policy_enforced).toBeFalsy();
@@ -387,9 +387,9 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
 
         await switchTeamRulesMode(page);
         await typeTeamRulesCel(page, invalidRule());
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
 
-        await expect(page.getByTestId('saveChangesPanel-errorMessage')).toContainText('Fix the errors', {
+        await expect(page.getByTestId('admin.team.save_panel.error--text')).toContainText('Fix the errors', {
             timeout: 10_000,
         });
         await expect(page.locator('.ConfirmModal')).toHaveCount(0);
@@ -408,8 +408,8 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
 
         await expect(rulesPanel.locator('[role="alert"]').filter({hasText: 'resource attributes'})).toBeVisible();
 
-        await page.getByTestId('saveSetting').click();
-        await expect(page.getByTestId('saveChangesPanel-errorMessage')).toContainText('Fix the errors');
+        await page.getByTestId('admin.team.save_panel.save--button').click();
+        await expect(page.getByTestId('admin.team.save_panel.error--text')).toContainText('Fix the errors');
         await expect(page.locator('.ConfirmModal')).toHaveCount(0);
     });
 
@@ -432,8 +432,8 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await waitForTeamRulesValidation(page, 'error');
         await expect(statusBar).toContainText('session attributes');
 
-        await page.getByTestId('saveSetting').click();
-        await expect(page.getByTestId('saveChangesPanel-errorMessage')).toContainText('Fix the errors');
+        await page.getByTestId('admin.team.save_panel.save--button').click();
+        await expect(page.getByTestId('admin.team.save_panel.error--text')).toContainText('Fix the errors');
         await expect(page.locator('.ConfirmModal')).toHaveCount(0);
     });
 
@@ -531,9 +531,9 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await switchTeamRulesMode(page);
         await typeTeamRulesCel(page, orRule());
         await waitForTeamRulesValidation(page, 'validated');
-        await rulesPanel.getByTestId('team-auto-add-members-checkbox').check();
+        await rulesPanel.getByTestId('admin.team.auto_add_members--checkbox').check();
 
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Apply membership policy'});
         await expect(confirmModal).toBeVisible({timeout: 15_000});
         await confirmModal.getByRole('button', {name: 'Apply'}).click();
@@ -596,7 +596,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         const editedRule = `(${orRule()}) && ${engineeringRule()}`;
         await typeTeamRulesCel(page, editedRule);
         await waitForTeamRulesValidation(page, 'validated');
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Apply membership policy'});
         await expect(confirmModal).toBeVisible({timeout: 15_000});
         await confirmModal.getByRole('button', {name: 'Apply'}).click();
@@ -633,7 +633,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await expect(rulesPanel.locator('.monaco-editor')).toBeVisible({timeout: 15_000});
 
         await clearMonaco(page);
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
         await expect(page.locator('.ConfirmModal').filter({hasText: 'Apply membership policy'})).toHaveCount(0);
 
         await expect
@@ -654,7 +654,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await expect(rulesPanel.locator('.monaco-editor')).toBeVisible({timeout: 15_000});
 
         await clearMonaco(page);
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Apply membership policy'});
         await expect(confirmModal).toBeVisible({timeout: 15_000});
         await confirmModal.getByRole('button', {name: 'Apply'}).click();
@@ -691,7 +691,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
             const {page} = await pw.testBrowser.login(adminUser);
             await openTeamConfig(page, team.display_name);
 
-            await expect(page.locator('[data-testid="policy-enforce-toggle-button"]')).toHaveCount(0);
+            await expect(page.locator('[data-testid="admin.team.policy_enforce--switch"]')).toHaveCount(0);
             await expect(page.locator('#team_level_access_rules')).toHaveCount(0);
         });
     });
@@ -704,25 +704,22 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         createdUserIds.push(teamAdmin.id);
         await createTeamMembershipPolicy(adminClient, team.id, orRule(), false);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app, page} = await pw.testBrowser.login(teamAdmin);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.container.getByTestId('team_membership-tab-button').click();
-        await expect(teamSettings.container.locator('.TeamMembershipTab')).toBeVisible({timeout: 10_000});
+        const teamSettings = await openTeamSettings(app, 'team_membership');
+        await expect(teamSettings.locator.locator('.TeamMembershipTab')).toBeVisible({timeout: 10_000});
 
-        await expect(page.getByTestId('team-rules-editor-mode-toggle')).toHaveCount(0);
+        await expect(page.getByTestId('admin.team.access_rules.switch_mode--button')).toHaveCount(0);
         await expect(page.locator('.monaco-editor')).toHaveCount(0);
 
         // Read-only, not an empty table a team admin could save over.
-        const locked = teamSettings.container.getByTestId('team-membership-locked-rules');
+        const locked = teamSettings.locator.getByTestId('team_settings_modal.membership.locked_rules');
         await expect(locked).toBeVisible();
         await expect(locked.getByRole('status')).toContainText('can only be edited in the System Console');
         await expect(locked).toContainText(orRule());
-        await expect(teamSettings.container.getByTestId('table-editor')).toHaveCount(0);
-        await expect(teamSettings.container.locator('#autoAddMembersCheckbox')).toBeDisabled();
+        await expect(teamSettings.locator.getByTestId('team_settings_modal.membership.rules')).toHaveCount(0);
+        await expect(teamSettings.locator.locator('#autoAddMembersCheckbox')).toBeDisabled();
 
         expect(await getMembershipExpression(adminClient, team.id)).toBe(orRule());
     });
@@ -737,19 +734,18 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         const rule = `user.attributes.${DEPT} == "R&&D"`;
         await createTeamMembershipPolicy(adminClient, team.id, rule, false);
 
-        const {page} = await pw.testBrowser.login(teamAdmin);
-        const channelsPage = new ChannelsPage(page);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(teamAdmin);
+        await app.channelsPage.goto({team, channel: 'town-square'});
 
-        const teamSettings = await channelsPage.openTeamSettings();
-        await teamSettings.container.getByTestId('team_membership-tab-button').click();
-        await expect(teamSettings.container.locator('.TeamMembershipTab')).toBeVisible({timeout: 10_000});
+        const teamSettings = await openTeamSettings(app, 'team_membership');
+        await expect(teamSettings.locator.locator('.TeamMembershipTab')).toBeVisible({timeout: 10_000});
 
         // * The rule is editable in the table, not locked
-        await expect(teamSettings.container.getByTestId('table-editor')).toBeVisible({timeout: 15_000});
-        await expect(teamSettings.container.getByTestId('team-membership-locked-rules')).toHaveCount(0);
-        await expect(teamSettings.container.locator('#autoAddMembersCheckbox')).toBeEnabled();
+        await expect(teamSettings.locator.getByTestId('team_settings_modal.membership.rules')).toBeVisible({
+            timeout: 15_000,
+        });
+        await expect(teamSettings.locator.getByTestId('team_settings_modal.membership.locked_rules')).toHaveCount(0);
+        await expect(teamSettings.locator.locator('#autoAddMembersCheckbox')).toBeEnabled();
     });
 
     test('MM-71104-T16c the Team Admin settings modal keeps a masked rule editable and saves without losing hidden values', async ({
@@ -772,20 +768,17 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
             // Masking only hides values of fields whose values are shared only with holders.
             await setFieldAsSharedOnly(fieldId);
 
-            const {page} = await pw.testBrowser.login(teamAdmin);
-            const channelsPage = new ChannelsPage(page);
-            await channelsPage.goto(team.name, 'town-square');
-            await channelsPage.toBeVisible();
+            const {app, page} = await pw.testBrowser.login(teamAdmin);
+            await app.channelsPage.goto({team, channel: 'town-square'});
 
-            const teamSettings = await channelsPage.openTeamSettings();
-            await teamSettings.container.getByTestId('team_membership-tab-button').click();
-            const tab = teamSettings.container.locator('.TeamMembershipTab');
+            const teamSettings = await openTeamSettings(app, 'team_membership');
+            const tab = teamSettings.locator.locator('.TeamMembershipTab');
             await expect(tab).toBeVisible({timeout: 10_000});
 
             // * The masked rule is shown in the table, not locked
-            await expect(tab.getByTestId('table-editor')).toBeVisible({timeout: 15_000});
+            await expect(tab.getByTestId('team_settings_modal.membership.rules')).toBeVisible({timeout: 15_000});
             await expect(tab.locator('.select__multi-value--masked').first()).toBeVisible({timeout: 10_000});
-            await expect(tab.getByTestId('team-membership-locked-rules')).toHaveCount(0);
+            await expect(tab.getByTestId('team_settings_modal.membership.locked_rules')).toHaveCount(0);
 
             // # Turn on auto-add and save
             const autoAdd = tab.locator('#autoAddMembersCheckbox');
@@ -793,12 +786,14 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
             await autoAdd.click();
             await expect(autoAdd).toBeChecked();
 
-            await tab.locator('[data-testid="SaveChangesPanel__save-btn"]').click();
+            await tab.getByTestId('team_settings_modal.save_panel.save--button').click();
             const confirmModal = page.locator('.ConfirmModal');
             await expect(confirmModal).toBeVisible({timeout: 15_000});
             await confirmModal.getByRole('button', {name: 'Save'}).click();
             await expect(confirmModal).not.toBeVisible({timeout: 10_000});
-            await expect(tab.locator('[data-testid="SaveChangesPanel__save-btn"]')).not.toBeVisible({timeout: 10_000});
+            await expect(tab.getByTestId('team_settings_modal.save_panel.save--button')).not.toBeVisible({
+                timeout: 10_000,
+            });
 
             // * The hidden value survived the save. Read the DB: the API masks for every
             //   admin, and the sysadmin holds neither value.
@@ -845,7 +840,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         const {page} = await pw.testBrowser.login(adminUser);
         const rulesPanel = await openTeamRules(page, team);
 
-        const toggle = page.getByTestId('team-rules-editor-mode-toggle');
+        const toggle = page.getByTestId('admin.team.access_rules.switch_mode--button');
         await expect(toggle).toBeEnabled({timeout: 60_000});
         await toggle.focus();
         await page.keyboard.press('Enter');
@@ -957,8 +952,8 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await expect(rulesPanel.locator('.cel-editor__status-bar')).toContainText('the conditional operator (?:)');
 
         // * Save is blocked before anything is written
-        await page.getByTestId('saveSetting').click();
-        await expect(page.getByTestId('saveChangesPanel-errorMessage')).toContainText('Fix the errors');
+        await page.getByTestId('admin.team.save_panel.save--button').click();
+        await expect(page.getByTestId('admin.team.save_panel.error--text')).toContainText('Fix the errors');
         await expect(page.locator('.ConfirmModal')).toHaveCount(0);
 
         // * Nothing was persisted
@@ -980,7 +975,7 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         const {page} = await pw.testBrowser.login(adminUser);
         await openTeamRules(page, team);
 
-        await page.locator('[data-testid="link-to-a-policy"]').click();
+        await page.locator('[data-testid="admin.team.access_policy.link--button"]').click();
         const modal = page.locator('[role="dialog"]').filter({hasText: 'Select a Membership Policy'});
         await modal.waitFor({state: 'visible', timeout: 5000});
         await (await findPolicyRow(modal, parentName)).click();
@@ -988,10 +983,10 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
         await switchTeamRulesMode(page);
         await typeTeamRulesCel(page, ternaryRule());
         await waitForTeamRulesValidation(page, 'validated');
-        await page.getByTestId('saveSetting').click();
+        await page.getByTestId('admin.team.save_panel.save--button').click();
 
         const confirmModal = page.locator('.ConfirmModal').filter({hasText: 'Apply membership policy'});
-        const errorMessage = page.getByTestId('saveChangesPanel-errorMessage');
+        const errorMessage = page.getByTestId('admin.team.save_panel.error--text');
         await expect(confirmModal.or(errorMessage)).toBeVisible({timeout: 15_000});
         if (await confirmModal.isVisible()) {
             await confirmModal.getByRole('button', {name: 'Apply'}).click();
@@ -1049,9 +1044,9 @@ test.describe('ABAC - Team Advanced membership rules', {tag: ['@abac', '@team_me
 
         // * The access control settings are stripped from a System Manager's config, so the
         //   whole ABAC section stays hidden: no enforce toggle, no rules, no Advanced toggle
-        await expect(page.getByTestId('policy-enforce-toggle-button')).toHaveCount(0);
+        await expect(page.getByTestId('admin.team.policy_enforce--switch')).toHaveCount(0);
         await expect(page.locator('#team_level_access_rules')).toHaveCount(0);
-        await expect(page.getByTestId('team-rules-editor-mode-toggle')).toHaveCount(0);
+        await expect(page.getByTestId('admin.team.access_rules.switch_mode--button')).toHaveCount(0);
 
         expect(await getMembershipExpression(adminClient, team.id)).toBe(orRule());
     });

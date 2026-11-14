@@ -6,8 +6,6 @@ import type {Locator, Page} from '@playwright/test';
 
 import {expect, generated} from '@mattermost/playwright-lib';
 
-import {expect} from '@mattermost/playwright-lib';
-
 /**
  * Enable team-membership ABAC end to end: the umbrella attribute-based access
  * control setting plus the `TeamMembershipAccessControl` feature flag that gates

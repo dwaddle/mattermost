@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {expect, setWysiwygUserPreference, test, WysiwygEditor} from '@mattermost/playwright-lib';
+import {expect, lastPost, setWysiwygUserPreference, test} from '@mattermost/playwright-lib';
 
 const TAGS = {tag: '@channels'};
 
@@ -17,31 +17,30 @@ const QUOTE = ['> Ullamcorper eu mi, dictumst nec.', '>', '> Diam sapien **pelle
 test('quotes a post into the channel message box from the post menu', TAGS, async ({pw}) => {
     const {user, userClient, team} = await pw.initSetup();
     const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-    await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
+    const created = await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the post menu and click Quote
-    const post = await channelsPage.getLastPost();
-    await post.hover();
-    await post.postMenu.openDotMenu();
-    await channelsPage.postDotMenu.quoteMenuItem.click();
+    const post = app.center.postList.post(created);
+    await post.locator.hover();
+    const menu = await post.menu.clickDotMenuButton();
+    await menu.quoteMenuItem.click();
 
     // * Verify the message is quoted with its Markdown, followed by an empty line, and the box is focused
-    const {postCreate} = channelsPage.centerView;
-    await expect(postCreate.input).toHaveValue(QUOTE);
-    await expect(postCreate.input).toBeFocused();
+    const composer = app.center.postCreate;
+    await expect(composer.messageTextbox.locator).toHaveValue(QUOTE);
+    await expect(composer.messageTextbox.locator).toBeFocused();
 
     // # Type a reply below the quote and send it
-    await page.keyboard.type('What do you mean?');
-    await postCreate.sendMessage();
+    await app.page.keyboard.type('What do you mean?');
+    await composer.sendButton.click();
 
     // * Verify the posted message contains the quote followed by the reply
-    const reply = await channelsPage.getLastPost();
-    await expect(reply.body.locator('blockquote')).toContainText('Diam sapien pellentesque vestibulum.');
-    await reply.toContainText('What do you mean?');
+    const reply = (await lastPost(app.center.postList)).messageText.locator;
+    await expect(reply.getByRole('blockquote')).toContainText('Diam sapien pellentesque vestibulum.');
+    await expect(reply).toContainText('What do you mean?');
 });
 
 /**
@@ -50,22 +49,21 @@ test('quotes a post into the channel message box from the post menu', TAGS, asyn
 test('quotes a post with the Q shortcut in the post menu', TAGS, async ({pw}) => {
     const {user, userClient, team} = await pw.initSetup();
     const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-    await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
+    const created = await userClient.createPost({channel_id: townSquare.id, message: MESSAGE});
 
-    const {channelsPage, page} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the post menu and press Q
-    const post = await channelsPage.getLastPost();
-    await post.hover();
-    await post.postMenu.openDotMenu();
-    await channelsPage.postDotMenu.toBeVisible();
-    await page.keyboard.press('q');
+    const post = app.center.postList.post(created);
+    await post.locator.hover();
+    const menu = await post.menu.clickDotMenuButton();
+    await expect(menu.locator).toBeVisible();
+    await app.page.keyboard.press('q');
 
     // * Verify the menu closed and the message is quoted into the message box
-    await expect(channelsPage.postDotMenu.container).toBeHidden();
-    await expect(channelsPage.centerView.postCreate.input).toHaveValue(QUOTE);
+    await expect(menu.locator).toBeHidden();
+    await expect(app.center.postCreate.messageTextbox.locator).toHaveValue(QUOTE);
 });
 
 /**
@@ -79,26 +77,26 @@ test('quotes a reply in the RHS into the thread reply box', TAGS, async ({pw}) =
         channel_id: townSquare.id,
         message: 'What are we doing for the logging points?',
     });
-    await userClient.createPost({channel_id: townSquare.id, root_id: root.id, message: MESSAGE});
+    const replyPost = await userClient.createPost({channel_id: townSquare.id, root_id: root.id, message: MESSAGE});
 
-    const {channelsPage} = await pw.testBrowser.login(user);
-    await channelsPage.goto(team.name, 'town-square');
-    await channelsPage.toBeVisible();
+    const {app} = await pw.testBrowser.login(user);
+    await app.channelsPage.goto({team, channel: townSquare});
 
     // # Open the thread in the RHS
-    const rootPost = await channelsPage.centerView.getPostById(root.id);
-    await rootPost.reply();
-    await channelsPage.sidebarRight.toBeVisible();
+    const rootPost = app.center.postList.post(root);
+    await rootPost.locator.hover();
+    await rootPost.menu.clickReplyButton();
+    await expect(app.rhs.thread.post(replyPost).locator).toBeVisible();
 
     // # Quote the reply from its post menu
-    const replyPost = await channelsPage.sidebarRight.getLastPost();
-    await replyPost.hover();
-    await replyPost.postMenu.openDotMenu();
-    await channelsPage.postDotMenu.quoteMenuItem.click();
+    const threadReply = app.rhs.thread.post(replyPost);
+    await threadReply.locator.hover();
+    const menu = await threadReply.menu.clickDotMenuButton();
+    await menu.quoteMenuItem.click();
 
     // * Verify the quote went into the thread reply box and not the channel message box
-    await expect(channelsPage.sidebarRight.postCreate.input).toHaveValue(QUOTE);
-    await expect(channelsPage.centerView.postCreate.input).toHaveValue('');
+    await expect(app.rhs.postCreate.messageTextbox.locator).toHaveValue(QUOTE);
+    await expect(app.center.postCreate.messageTextbox.locator).toHaveValue('');
 });
 
 test.describe('WYSIWYG editor', {tag: ['@channels', '@wysiwyg_editor']}, () => {
@@ -114,38 +112,42 @@ test.describe('WYSIWYG editor', {tag: ['@channels', '@wysiwyg_editor']}, () => {
         const {user, userClient, team} = await pw.initSetup();
         await setWysiwygUserPreference(userClient, user.id, true);
         const townSquare = await userClient.getChannelByName(team.id, 'town-square');
-        await userClient.createPost({channel_id: townSquare.id, message: 'Diam sapien pellentesque vestibulum.'});
+        const created = await userClient.createPost({
+            channel_id: townSquare.id,
+            message: 'Diam sapien pellentesque vestibulum.',
+        });
 
-        const {channelsPage, page} = await pw.testBrowser.login(user);
-        await channelsPage.goto(team.name, 'town-square');
-        await channelsPage.toBeVisible();
+        const {app} = await pw.testBrowser.login(user);
+        await app.channelsPage.goto({team, channel: townSquare});
 
-        const editor = new WysiwygEditor(page.getByTestId('post-create'));
-        await editor.toBeVisible();
+        const composer = app.center.postCreate;
+        const editor = composer.messageTextbox.locator;
+        await expect(editor).toHaveAttribute('contenteditable', 'true');
 
         // # Quote the post from its post menu
-        const post = await channelsPage.getLastPost();
-        await post.hover();
-        await post.postMenu.openDotMenu();
-        await channelsPage.postDotMenu.quoteMenuItem.click();
+        const post = app.center.postList.post(created);
+        await post.locator.hover();
+        const menu = await post.menu.clickDotMenuButton();
+        await menu.quoteMenuItem.click();
 
         // * Verify the editor has the quote and is focused
-        await expect(editor.input.locator('blockquote')).toHaveText('Diam sapien pellentesque vestibulum.');
-        await expect(editor.input).toBeFocused();
+        await expect(editor.getByRole('blockquote')).toHaveText('Diam sapien pellentesque vestibulum.');
+        await expect(editor).toBeFocused();
 
         // # Type a reply without moving the caret
-        await page.keyboard.type('What do you mean?');
+        await app.page.keyboard.type('What do you mean?');
 
         // * Verify the reply went below the quote, not into it
-        await expect(editor.input.locator('blockquote')).toHaveText('Diam sapien pellentesque vestibulum.');
-        await expect(editor.input.locator(':scope > p').filter({hasText: 'What do you mean?'})).toBeVisible();
+        await expect(editor.getByRole('blockquote')).toHaveText('Diam sapien pellentesque vestibulum.');
+        await expect(editor.getByRole('paragraph').last()).toHaveText('What do you mean?');
 
         // # Send the message
-        await editor.sendByEnter();
+        await expect(composer.sendButton.locator).toBeEnabled();
+        await composer.messageTextbox.press('Enter');
 
         // * Verify the posted message contains the quote followed by the reply
-        const reply = await channelsPage.getLastPost();
-        await expect(reply.body.locator('blockquote')).toHaveText('Diam sapien pellentesque vestibulum.');
-        await reply.toContainText('What do you mean?');
+        const reply = (await lastPost(app.center.postList)).messageText.locator;
+        await expect(reply.getByRole('blockquote')).toHaveText('Diam sapien pellentesque vestibulum.');
+        await expect(reply).toContainText('What do you mean?');
     });
 });
